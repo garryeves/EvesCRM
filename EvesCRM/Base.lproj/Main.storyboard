@@ -107,7 +107,7 @@
                                     <constraint firstAttribute="height" constant="30" id="WHr-eM-DgZ"/>
                                     <constraint firstAttribute="width" constant="300" id="oOJ-VB-x4c"/>
                                 </constraints>
-                                <state key="normal" title="Omnifocus"/>
+                                <state key="normal" title="Reminders"/>
                                 <variation key="default">
                                     <mask key="constraints">
                                         <exclude reference="U7y-2K-23d"/>
@@ -138,7 +138,7 @@
                                         <variation key="heightClass=regular-widthClass=regular" constant="250"/>
                                     </constraint>
                                 </constraints>
-                                <state key="normal" title="Evernote"/>
+                                <state key="normal" title="Mail"/>
                                 <variation key="default">
                                     <mask key="constraints">
                                         <exclude reference="958-5Q-NfA"/>

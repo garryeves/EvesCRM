@@ -36,7 +36,7 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var setSelectionButton: UIButton!
     
-    var TableOptions = ["Contact Details", "Calender", "Omnifocus", "Evernote", "Mail", "Twitter", "Facebook", "LinkedIn"]
+    var TableOptions = ["Contact Details", "Calender", "Omnifocus", "Evernote", "Mail", "Twitter", "Facebook", "LinkedIn", "Reminders"]
     
     // Store the tag number of the button pressed so that we can make sure we update the correct button text and table
     var callingTable = 0
@@ -60,6 +60,9 @@ class ViewController: UIViewController {
     var personSelected = ""
     var personSelectedIndex: NSIndexPath = NSIndexPath()
     var table1SelectedIndex: NSIndexPath = NSIndexPath()
+    var table2SelectedIndex: NSIndexPath = NSIndexPath()
+    var table3SelectedIndex: NSIndexPath = NSIndexPath()
+    var table4SelectedIndex: NSIndexPath = NSIndexPath()
     
     var adbk : ABAddressBook!
     
@@ -71,6 +74,9 @@ class ViewController: UIViewController {
        // Initial population of contact list
         self.peopleTable.registerClass(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
         self.dataTable1.registerClass(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
+        self.dataTable2.registerClass(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
+        self.dataTable3.registerClass(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
+        self.dataTable4.registerClass(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
         
         TableTypeSelection1.hidden = true
         setSelectionButton.hidden = true
@@ -171,6 +177,7 @@ class ViewController: UIViewController {
             dataTable3.hidden = false
             dataTable4.hidden = false
             StartLabel.hidden = true
+            
         }
         
     }
@@ -267,6 +274,18 @@ class ViewController: UIViewController {
         {
             retVal = self.table1Contents.count ?? 0
         }
+        else if (tableView == dataTable2)
+        {
+            retVal = self.table2Contents.count ?? 0
+        }
+        else if (tableView == dataTable3)
+        {
+            retVal = self.table3Contents.count ?? 0
+        }
+        else if (tableView == dataTable4)
+        {
+            retVal = self.table4Contents.count ?? 0
+        }
         return retVal
     }
     
@@ -291,24 +310,23 @@ class ViewController: UIViewController {
         {
             let cell = dataTable2.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
             cell.textLabel!.text = table2Contents[indexPath.row]
-            table1SelectedIndex = indexPath
+            table2SelectedIndex = indexPath
             return cell
         }
         else if (tableView == dataTable3)
         {
             let cell = dataTable3.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
             cell.textLabel!.text = table3Contents[indexPath.row]
-            table1SelectedIndex = indexPath
+            table3SelectedIndex = indexPath
             return cell
         }
         else if (tableView == dataTable4)
         {
             let cell = dataTable4.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
             cell.textLabel!.text = table4Contents[indexPath.row]
-            table1SelectedIndex = indexPath
+            table4SelectedIndex = indexPath
             return cell
         }
-
         else
         {
             // Dummy statements to allow use of else
@@ -334,10 +352,15 @@ class ViewController: UIViewController {
             dataTable4.hidden = false
             StartLabel.hidden = true
             
-            
             table1Contents = Array()
+            table2Contents = Array()
+            table3Contents = Array()
+            table4Contents = Array()
             
-            table1Contents = parseContactDetails(contactDetails![indexPath.row])
+            populateArraysForTables(indexPath.row, inTable: "Table1")
+            populateArraysForTables(indexPath.row, inTable: "Table2")
+            populateArraysForTables(indexPath.row, inTable: "Table3")
+            populateArraysForTables(indexPath.row, inTable: "Table4")
  
             /*  Debugging rows to see array contents
             var item: String
@@ -347,14 +370,91 @@ class ViewController: UIViewController {
             */
             
             dataTable1.reloadData()
+            dataTable2.reloadData()
+            dataTable3.reloadData()
+            dataTable4.reloadData()
         }
             
         else if tableView == dataTable1
         {
             println("Click \(table1Contents[indexPath.row])")
         }
+        else if tableView == dataTable2
+        {
+            println("Click \(table2Contents[indexPath.row])")
+        }
+        else if tableView == dataTable3
+        {
+            println("Click \(table3Contents[indexPath.row])")
+        }
+        else if tableView == dataTable4
+        {
+            println("Click \(table4Contents[indexPath.row])")
+        }
         
     }
+   
+    func populateArraysForTables(rowID: Int, inTable : String)
+    {
+        // work out the table we are populating so we can then use this later
+        switch inTable
+        {
+            case "Table1":
+                table1Contents = populateArrayDetails(rowID, inTable: inTable)
+            
+            case "Table2":
+                table2Contents = populateArrayDetails(rowID, inTable: inTable)
+            
+            case "Table3":
+                table3Contents = populateArrayDetails(rowID, inTable: inTable)
+            
+            case "Table4":
+                table4Contents = populateArrayDetails(rowID, inTable: inTable)
+            
+            default:
+                println("populateArraysForTables: hit default for some reason")
+            
+        }
+    }
     
+    func populateArrayDetails(rowID: Int, inTable: String ) -> [String]
+    {
+        var workArray: [String] = [""]
+        var dataType: String = ""
+        
+        // First we need to work out the type of data in the table, we get this from the button
+        
+        switch inTable
+        {
+            case "Table1":
+                dataType = TableTypeButton1.currentTitle!
+            
+            case "Table2":
+                dataType = TableTypeButton2.currentTitle!
+            
+            case "Table3":
+                dataType = TableTypeButton3.currentTitle!
+            
+            case "Table4":
+                dataType = TableTypeButton4.currentTitle!
+
+            
+            default:
+                println("populateArrayDetails: inTable hit default for some reason")
+            
+        }
+        
+        // This is where we have the logic to work out which type of data we are goign to populate with
+        switch dataType
+        {
+            case "Contact Details":
+                workArray = parseContactDetails(contactDetails![rowID])
+            default:
+                println("populateArrayDetails: dataType hit default for some reason")
+        }
+        
+        return workArray
+        
+    }
 }
 
