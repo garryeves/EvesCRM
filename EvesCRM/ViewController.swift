@@ -10,6 +10,8 @@ import UIKit
 import AddressBook
 
 private let CONTACT_CELL_IDENTIFER = "contactNameCell"
+private let dataTable1_CELL_IDENTIFER = "dataTable1Cell"
+
 
 class ViewController: UIViewController {
 
@@ -30,6 +32,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var dataTable3: UITableView!
     @IBOutlet weak var dataTable4: UITableView!
     
+    @IBOutlet weak var StartLabel: UILabel!
     
     @IBOutlet weak var setSelectionButton: UIButton!
     
@@ -46,10 +49,17 @@ class ViewController: UIViewController {
     var contacts:[String]?
     var contactDetails:[ABRecord]?
     
+    // define arrasy to store the table displays
+    
+    var table1Contents:[String] = [""]
+    var table2Contents:[String] = [""]
+    var table3Contents:[String] = [""]
+    var table4Contents:[String] = [""]
+    
     // store the name of the person selected in the People table
     var personSelected = ""
     var personSelectedIndex: NSIndexPath = NSIndexPath()
-    
+    var table1SelectedIndex: NSIndexPath = NSIndexPath()
     
     var adbk : ABAddressBook!
     
@@ -60,8 +70,23 @@ class ViewController: UIViewController {
         
        // Initial population of contact list
         self.peopleTable.registerClass(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
-        populateContactList()
+        self.dataTable1.registerClass(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
+        
+        TableTypeSelection1.hidden = true
+        setSelectionButton.hidden = true
+        TableTypeButton1.hidden = true
+        TableTypeButton2.hidden = true
+        TableTypeButton3.hidden = true
+        TableTypeButton4.hidden = true
+        dataTable1.hidden = true
+        dataTable2.hidden = true
+        dataTable3.hidden = true
+        dataTable4.hidden = true
+        StartLabel.hidden = false
+        
+        peopleTable.hidden = false
 
+        populateContactList()
     }
 
     override func didReceiveMemoryWarning() {
@@ -106,6 +131,7 @@ class ViewController: UIViewController {
         dataTable2.hidden = true
         dataTable3.hidden = true
         dataTable4.hidden = true
+        StartLabel.hidden = true
         
         peopleTable.hidden = true
     
@@ -144,12 +170,10 @@ class ViewController: UIViewController {
             dataTable2.hidden = false
             dataTable3.hidden = false
             dataTable4.hidden = false
+            StartLabel.hidden = true
         }
         
     }
-    
-    
-
     
     func createAddressBook() -> Bool {
         if self.adbk != nil {
@@ -231,32 +255,104 @@ class ViewController: UIViewController {
     }
     
     
-    func tableView(peopleTable: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.contacts?.count ?? 0
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    {
+        
+        var retVal: Int = 0
+        if (tableView == peopleTable)
+        {
+            retVal = self.contacts?.count ?? 0
+        }
+        else if (tableView == dataTable1)
+        {
+            retVal = self.table1Contents.count ?? 0
+        }
+        return retVal
     }
     
-    func tableView(peopleTable: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = peopleTable.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
-        cell.textLabel!.text = contacts![indexPath.row]
-        personSelectedIndex = indexPath
-        return cell
+    
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+    {
+        if (tableView == peopleTable)
+        {
+            let cell = peopleTable.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
+            cell.textLabel!.text = contacts![indexPath.row]
+            personSelectedIndex = indexPath
+            return cell
+        }
+        else if (tableView == dataTable1)
+        {
+            let cell = dataTable1.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
+            cell.textLabel!.text = table1Contents[indexPath.row]
+            table1SelectedIndex = indexPath
+            return cell
+        }
+        else if (tableView == dataTable2)
+        {
+            let cell = dataTable2.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
+            cell.textLabel!.text = table2Contents[indexPath.row]
+            table1SelectedIndex = indexPath
+            return cell
+        }
+        else if (tableView == dataTable3)
+        {
+            let cell = dataTable3.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
+            cell.textLabel!.text = table3Contents[indexPath.row]
+            table1SelectedIndex = indexPath
+            return cell
+        }
+        else if (tableView == dataTable4)
+        {
+            let cell = dataTable4.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
+            cell.textLabel!.text = table4Contents[indexPath.row]
+            table1SelectedIndex = indexPath
+            return cell
+        }
+
+        else
+        {
+            // Dummy statements to allow use of else
+            let cell = peopleTable.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
+            return cell
+        }
     }
     
-    func tableView(peopleTable: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
 
-        println("Selected someone: \(contacts![indexPath.row])")
-
-        parseContactDetails(contactDetails![indexPath.row])
-        
-//        var contactRecord: ABRecord =  contactDetails![indexPath.row]
-        
-//        let firstName = ABRecordCopyValue(contactRecord, kABPersonFirstNameProperty)
-        
-//        let fn:String = (firstName.takeRetainedValue() as? String) ?? ""
-                
-//        println("Row2: \(fn)")
-        
-        
+  
+        if (tableView == peopleTable)
+        {
+            TableTypeSelection1.hidden = true
+            setSelectionButton.hidden = true
+            TableTypeButton1.hidden = false
+            TableTypeButton2.hidden = false
+            TableTypeButton3.hidden = false
+            TableTypeButton4.hidden = false
+            dataTable1.hidden = false
+            dataTable2.hidden = false
+            dataTable3.hidden = false
+            dataTable4.hidden = false
+            StartLabel.hidden = true
+            
+            
+            table1Contents = Array()
+            
+            table1Contents = parseContactDetails(contactDetails![indexPath.row])
+ 
+            /*  Debugging rows to see array contents
+            var item: String
+            for item in table1Contents {
+                println("array item = \(item)")
+            }
+            */
+            
+            dataTable1.reloadData()
+        }
+            
+        else if tableView == dataTable1
+        {
+            println("Click \(table1Contents[indexPath.row])")
+        }
         
     }
     

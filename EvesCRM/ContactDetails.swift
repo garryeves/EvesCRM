@@ -45,15 +45,20 @@ var contactComponentsProperty: [String: ABPropertyID] = [
     kABPersonURLProperty
 ]
 
+    var tableContents:[String] = [" "]
 
 
-func parseContactDetails (contactRecord: ABRecord)
+func parseContactDetails (contactRecord: ABRecord)-> [String]
 {
+
+    tableContents.removeAll()
 
     for (itemDescription, itemKey) in contactComponentsProperty
     {
         addToContactDetailTable (contactRecord, itemDescription, itemKey)
     }
+    
+    return tableContents
  
 }
 
@@ -93,7 +98,7 @@ func addToContactDetailTable (contactRecord: ABRecord, rowDescription: String, r
                 {
                     line4 = decode[kABPersonAddressZIPKey as String] as! String
                 }
-                println("Address : \(line1) \(line2) \(line3) \(line4)")
+                writeRowToArray("Address : " + line1 + " " + line2 + " " + line3 + " " + line4)
                 
             }
         }
@@ -125,10 +130,10 @@ func addToContactDetailTable (contactRecord: ABRecord, rowDescription: String, r
                     {
                         case 0:
                     
-                                println("Anniversary = \(dateString)")
+                                writeRowToArray("Anniversary = " + dateString)
                     
                         default:  // Do nothing
-                                println("Unknown date = \(dateString)")
+                                writeRowToArray("Unknown date = " + dateString)
                     }
                 }
             }
@@ -147,22 +152,22 @@ func addToContactDetailTable (contactRecord: ABRecord, rowDescription: String, r
             {
                 switch loopCount
                 {
-                    case 0: println("Mobile = \(ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue())")
+                    case 0: writeRowToArray("Mobile = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String))
 
-                    case 1: println("iPhone = \(ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue())")
+                    case 1: writeRowToArray("iPhone = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String))
 
-                    case 2: println("Main = \(ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue())")
+                    case 2: writeRowToArray("Main = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String))
 
-                    case 3: println("Home Fax = \(ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue())")
+                    case 3: writeRowToArray("Home Fax = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String))
 
-                    case 4: println("Work Fax = \(ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue())")
+                    case 4: writeRowToArray("Work Fax = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String))
 
-                    case 5: println("Other Fax = \(ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue())")
+                    case 5: writeRowToArray("Other Fax = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String))
 
-                    case 6: println("Pager = \(ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue())")
+                    case 6: writeRowToArray("Pager = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String))
                 
                     default:  // Do nothing
-                    println("Unknown phone = \(ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue())")
+                    writeRowToArray("Unknown phone = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String))
                 }
             }
         }
@@ -178,27 +183,30 @@ func addToContactDetailTable (contactRecord: ABRecord, rowDescription: String, r
             {
                 switch loopCount
                 {
-                case 0: println("Email = \(ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue())")
+                case 0: writeRowToArray("Email = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String))
                 
-                case 1: println("Email = \(ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue())")
+                case 1: writeRowToArray("Email = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String))
                 
-                case 2: println("Email = \(ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue())")
+                case 2: writeRowToArray("Email = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String))
                 
-                case 3: println("Email = \(ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue())")
+                case 3: writeRowToArray("Email = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String))
                 
-                case 4: println("Email = \(ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue())")
+                case 4: writeRowToArray("Email = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String))
                 
-                case 5: println("Email = \(ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue())")
+                case 5: writeRowToArray("Email = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String))
                 
-                case 6: println("Email = \(ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue())")
+                case 6: writeRowToArray("Email = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String))
                 
                 default:  // Do nothing
-                println("Unknown Email = \(ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue())")
+                writeRowToArray("Unknown Email = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String))
                 }
             }
         }
         
     case kABPersonInstantMessageProperty:
+        
+        var strHolder :String = ""
+        
         let decodeProperty : ABMultiValueRef = ABRecordCopyValue(contactRecord, kABPersonInstantMessageProperty).takeUnretainedValue() as ABMultiValueRef
         
         if ABMultiValueGetCount(decodeProperty) > 0
@@ -211,48 +219,61 @@ func addToContactDetailTable (contactRecord: ABRecord, rowDescription: String, r
                 
                 if decode[kABPersonInstantMessageServiceYahoo as String]?.length > 0
                 {
-                    println("Yahoo : \(decode[kABPersonInstantMessageServiceYahoo as String])")
+                    strHolder = decode[kABPersonInstantMessageServiceYahoo as String]! as! String
+                    writeRowToArray("Yahoo : " + strHolder)
                 }
                 if decode[kABPersonInstantMessageServiceJabber as String]?.length > 0
                 {
-                    println("Jabber : \(decode[kABPersonInstantMessageServiceJabber as String])")
+                    strHolder = decode[kABPersonInstantMessageServiceJabber as  String]! as! String
+                    writeRowToArray("Jabber : " + strHolder )
                 }
                 if decode[kABPersonInstantMessageServiceMSN as String]?.length > 0
                 {
-                    println("MSN : \(decode[kABPersonInstantMessageServiceMSN as String])")
+                    strHolder = decode[kABPersonInstantMessageServiceMSN as String]! as! String
+                    writeRowToArray("MSN : " + strHolder)
                 }
                 if decode[kABPersonInstantMessageServiceICQ as String]?.length > 0
                 {
-                    println("ICQ : \(decode[kABPersonInstantMessageServiceICQ as String])")
+                    strHolder = decode[kABPersonInstantMessageServiceICQ as String]! as! String
+                    writeRowToArray("ICQ : " + strHolder)
                 }
                 if decode[kABPersonInstantMessageServiceAIM as String]?.length > 0
                 {
-                    println("AIM : \(decode[kABPersonInstantMessageServiceAIM as String])")
+                    strHolder = decode[kABPersonInstantMessageServiceAIM as String]! as! String
+                    writeRowToArray("AIM : " + strHolder)
                 }
                 if decode[kABPersonInstantMessageServiceQQ as String]?.length > 0
                 {
-                    println("QQ : \(decode[kABPersonInstantMessageServiceQQ as String])")
+                    strHolder = decode[kABPersonInstantMessageServiceQQ as String]! as! String
+                    writeRowToArray("QQ : " + strHolder)
                 }
                 if decode[kABPersonInstantMessageServiceGoogleTalk as String]?.length > 0
                 {
-                    println("Google Talk : \(decode[kABPersonInstantMessageServiceGoogleTalk as String])")
+                    strHolder = decode[kABPersonInstantMessageServiceGoogleTalk as String]! as! String
+                    writeRowToArray("Google Talk : " + strHolder)
                 }
                 if decode[kABPersonInstantMessageServiceSkype as String]?.length > 0
                 {
-                    println("Skype : \(decode[kABPersonInstantMessageServiceSkype as String])")
+                    strHolder = decode[kABPersonInstantMessageServiceSkype as String]! as! String
+                    writeRowToArray("Skype : " + strHolder)
                 }
                 if decode[kABPersonInstantMessageServiceFacebook as String]?.length > 0
                 {
-                    println("Facebook IM : \(decode[kABPersonInstantMessageServiceFacebook as String])")
+                    strHolder = decode[kABPersonInstantMessageServiceFacebook as String]! as! String
+                    writeRowToArray("Facebook IM : " + strHolder )
                 }
                 if decode[kABPersonInstantMessageServiceGaduGadu as String]?.length > 0
                 {
-                    println("GaduGadu : \(decode[kABPersonInstantMessageServiceGaduGadu as String])")
+                    strHolder = decode[kABPersonInstantMessageServiceGaduGadu as String]! as! String
+                    writeRowToArray("GaduGadu : " + strHolder)
                 }
             }
         }
         
     case kABPersonSocialProfileProperty:
+        
+        var strHolder :String = ""
+        
         let decodeProperty : ABMultiValueRef = ABRecordCopyValue(contactRecord, kABPersonSocialProfileProperty).takeUnretainedValue() as ABMultiValueRef
         
         if ABMultiValueGetCount(decodeProperty) > 0
@@ -265,31 +286,38 @@ func addToContactDetailTable (contactRecord: ABRecord, rowDescription: String, r
                 
                 if decode[kABPersonSocialProfileServiceTwitter as String]?.length > 0
                 {
-                    println("Twitter : \(decode[kABPersonSocialProfileUsernameKey as String])")
+                    strHolder = decode[kABPersonSocialProfileUsernameKey as String]! as! String
+                    writeRowToArray("Twitter : " + strHolder)
                 }
                 if decode[kABPersonSocialProfileServiceGameCenter as String]?.length > 0
                 {
-                    println("Game Center : \(decode[kABPersonSocialProfileUsernameKey as String])")
+                    strHolder = decode[kABPersonSocialProfileUsernameKey as String]! as! String
+                    writeRowToArray("Game Center : " + strHolder)
                 }
                 if decode[kABPersonSocialProfileServiceSinaWeibo as String]?.length > 0
                 {
-                    println("Sina Weibo : \(decode[kABPersonSocialProfileUsernameKey as String])")
+                    strHolder = decode[kABPersonSocialProfileUsernameKey as String]! as! String
+                    writeRowToArray("Sina Weibo : " + strHolder)
                 }
                 if decode[kABPersonSocialProfileServiceFacebook as String]?.length > 0
                 {
-                    println("Facebook : \(decode[kABPersonSocialProfileUsernameKey as String])")
+                    strHolder = decode[kABPersonSocialProfileUsernameKey as String]! as! String
+                    writeRowToArray("Facebook : " + strHolder)
                 }
                 if decode[kABPersonSocialProfileServiceMyspace as String]?.length > 0
                 {
-                    println("Myspace : \(decode[kABPersonSocialProfileUsernameKey as String])")
+                    strHolder = decode[kABPersonSocialProfileUsernameKey as String]! as! String
+                    writeRowToArray("Myspace : " + strHolder)
                 }
                 if decode[kABPersonSocialProfileServiceLinkedIn as String]?.length > 0
                 {
-                    println("LinkedIn : \(decode[kABPersonSocialProfileUsernameKey as String])")
+                    strHolder = decode[kABPersonSocialProfileUsernameKey as String]! as! String
+                    writeRowToArray("LinkedIn : " + strHolder)
                 }
                 if decode[kABPersonSocialProfileServiceFlickr as String]?.length > 0
                 {
-                    println("Flickr : \(decode[kABPersonSocialProfileUsernameKey as String])")
+                    strHolder = decode[kABPersonSocialProfileUsernameKey as String]! as! String
+                    writeRowToArray("Flickr : " + strHolder)
                 }
             }
         }
@@ -306,15 +334,38 @@ func addToContactDetailTable (contactRecord: ABRecord, rowDescription: String, r
             {
                 switch loopCount
                 {
-                case 0: println("Home Page = \(ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue())")
+                case 0: writeRowToArray("Home Page = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String))
                     
  
                 default:  // Do nothing
-                    println("Unknown home page = \(ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue())")
+                    writeRowToArray("Unknown home page = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String))
                 }
             }
         }
         
+    case kABPersonBirthdayProperty:
+        // need to make sure there is something there for birthday
+        
+        let decodePart1 = ABRecordCopyValue(contactRecord, kABPersonBirthdayProperty)
+        
+        if decodePart1 != nil
+        {
+        
+            let decodeProperty : NSDate = ABRecordCopyValue(contactRecord, kABPersonBirthdayProperty).takeUnretainedValue() as! NSDate
+
+            let initialDate: NSDate = decodeProperty as NSDate
+                
+            var dateFormatter = NSDateFormatter()
+                
+            var dateFormat = NSDateFormatterStyle.ShortStyle
+                
+            dateFormatter.dateStyle = dateFormat
+                
+            var dateString = dateFormatter.stringFromDate(initialDate)
+                
+            writeRowToArray("Birthday = " + dateString)
+        }
+    
     default:        if  ABRecordCopyValue(contactRecord, rowType) == nil
                     {
                                 // Do nothing
@@ -326,10 +377,16 @@ func addToContactDetailTable (contactRecord: ABRecord, rowDescription: String, r
         
                             let fn = (firstName.takeRetainedValue() as? String) ?? ""
                         
-                            println("\(rowDescription): \(fn)")
+                            writeRowToArray(rowDescription + ": " + fn)
         
                     }
     }
 
     
+}
+
+
+func writeRowToArray(inStr: String)
+{
+        tableContents.append(inStr)
 }
