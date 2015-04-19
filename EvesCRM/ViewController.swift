@@ -58,11 +58,11 @@ class ViewController: UIViewController {
     
     // store the name of the person selected in the People table
     var personSelected = ""
-    var personSelectedIndex: NSIndexPath = NSIndexPath()
-    var table1SelectedIndex: NSIndexPath = NSIndexPath()
-    var table2SelectedIndex: NSIndexPath = NSIndexPath()
-    var table3SelectedIndex: NSIndexPath = NSIndexPath()
-    var table4SelectedIndex: NSIndexPath = NSIndexPath()
+    var personSelectedIndex: Int = 0
+    var table1SelectedIndex: Int = 0
+    var table2SelectedIndex: Int = 0
+    var table3SelectedIndex: Int = 0
+    var table4SelectedIndex: Int = 0
     
     var adbk : ABAddressBook!
     
@@ -178,8 +178,14 @@ class ViewController: UIViewController {
             dataTable4.hidden = false
             StartLabel.hidden = true
             
+            populateArraysForTables(personSelectedIndex, inTable: "Table1")
+            populateArraysForTables(personSelectedIndex, inTable: "Table2")
+            populateArraysForTables(personSelectedIndex, inTable: "Table3")
+            populateArraysForTables(personSelectedIndex, inTable: "Table4")
+            
+            reloadDataTables()
+            
         }
-        
     }
     
     func createAddressBook() -> Bool {
@@ -296,35 +302,30 @@ class ViewController: UIViewController {
         {
             let cell = peopleTable.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
             cell.textLabel!.text = contacts![indexPath.row]
-            personSelectedIndex = indexPath
             return cell
         }
         else if (tableView == dataTable1)
         {
             let cell = dataTable1.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
             cell.textLabel!.text = table1Contents[indexPath.row]
-            table1SelectedIndex = indexPath
             return cell
         }
         else if (tableView == dataTable2)
         {
             let cell = dataTable2.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
             cell.textLabel!.text = table2Contents[indexPath.row]
-            table2SelectedIndex = indexPath
             return cell
         }
         else if (tableView == dataTable3)
         {
             let cell = dataTable3.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
             cell.textLabel!.text = table3Contents[indexPath.row]
-            table3SelectedIndex = indexPath
             return cell
         }
         else if (tableView == dataTable4)
         {
             let cell = dataTable4.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
             cell.textLabel!.text = table4Contents[indexPath.row]
-            table4SelectedIndex = indexPath
             return cell
         }
         else
@@ -352,6 +353,8 @@ class ViewController: UIViewController {
             dataTable4.hidden = false
             StartLabel.hidden = true
             
+            personSelectedIndex = indexPath.row
+            
             table1Contents = Array()
             table2Contents = Array()
             table3Contents = Array()
@@ -361,34 +364,28 @@ class ViewController: UIViewController {
             populateArraysForTables(indexPath.row, inTable: "Table2")
             populateArraysForTables(indexPath.row, inTable: "Table3")
             populateArraysForTables(indexPath.row, inTable: "Table4")
- 
-            /*  Debugging rows to see array contents
-            var item: String
-            for item in table1Contents {
-                println("array item = \(item)")
-            }
-            */
             
-            dataTable1.reloadData()
-            dataTable2.reloadData()
-            dataTable3.reloadData()
-            dataTable4.reloadData()
+            reloadDataTables()
         }
             
         else if tableView == dataTable1
         {
+            table1SelectedIndex = indexPath.row
             println("Click \(table1Contents[indexPath.row])")
         }
         else if tableView == dataTable2
         {
+            table2SelectedIndex = indexPath.row
             println("Click \(table2Contents[indexPath.row])")
         }
         else if tableView == dataTable3
         {
+            table3SelectedIndex = indexPath.row
             println("Click \(table3Contents[indexPath.row])")
         }
         else if tableView == dataTable4
         {
+            table4SelectedIndex = indexPath.row
             println("Click \(table4Contents[indexPath.row])")
         }
         
@@ -454,6 +451,14 @@ class ViewController: UIViewController {
         }
         return workArray
         
+    }
+    
+    func reloadDataTables()
+    {
+        dataTable1.reloadData()
+        dataTable2.reloadData()
+        dataTable3.reloadData()
+        dataTable4.reloadData()
     }
 }
 
