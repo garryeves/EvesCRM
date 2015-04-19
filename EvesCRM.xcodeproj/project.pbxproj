@@ -16,6 +16,7 @@
 		340650841ADDF8FF00C90CBB /* EvesCRMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340650831ADDF8FF00C90CBB /* EvesCRMTests.swift */; };
 		3406508F1ADDF93600C90CBB /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3406508D1ADDF93600C90CBB /* AddressBook.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		340650901ADDF93600C90CBB /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3406508E1ADDF93600C90CBB /* AddressBookUI.framework */; };
+		347518D91AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347518D81AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift */; };
 		348E6D4B1ADF74C800697268 /* ContactDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348E6D4A1ADF74C800697268 /* ContactDetails.swift */; };
 		348E6D4C1ADF74C800697268 /* ContactDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348E6D4A1ADF74C800697268 /* ContactDetails.swift */; };
 /* End PBXBuildFile section */
@@ -44,6 +45,7 @@
 		340650831ADDF8FF00C90CBB /* EvesCRMTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvesCRMTests.swift; sourceTree = "<group>"; };
 		3406508D1ADDF93600C90CBB /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		3406508E1ADDF93600C90CBB /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
+		347518D81AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EvesCRMSharedFiles.swift; sourceTree = "<group>"; };
 		348E6D4A1ADF74C800697268 /* ContactDetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactDetails.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -98,6 +100,7 @@
 				3406506C1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld */,
 				340650681ADDF8FF00C90CBB /* Supporting Files */,
 				348E6D4A1ADF74C800697268 /* ContactDetails.swift */,
+				347518D81AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift */,
 			);
 			path = EvesCRM;
 			sourceTree = "<group>";
@@ -227,6 +230,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				347518D91AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift in Sources */,
 				340650701ADDF8FF00C90CBB /* ViewController.swift in Sources */,
 				348E6D4B1ADF74C800697268 /* ContactDetails.swift in Sources */,
 				3406506B1ADDF8FF00C90CBB /* AppDelegate.swift in Sources */,

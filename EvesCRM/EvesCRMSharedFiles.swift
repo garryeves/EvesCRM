@@ -1,5 +1,5 @@
 //
-//  EvesCRMSharedFunctions.swift
+//  EvesCRMSharedFiles.swift
 //  EvesCRM
 //
 //  Created by Garry Eves on 19/04/2015.
