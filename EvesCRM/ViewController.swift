@@ -452,7 +452,6 @@ class ViewController: UIViewController {
             default:
                 println("populateArrayDetails: dataType hit default for some reason")
         }
-        
         return workArray
         
     }

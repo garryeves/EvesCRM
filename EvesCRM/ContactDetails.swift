@@ -12,6 +12,8 @@ import Foundation
 import AddressBook
 
 
+
+
 var contactComponentsProperty: [String: ABPropertyID] = [
     "Prefix":
     kABPersonPrefixProperty,
@@ -98,6 +100,7 @@ func addToContactDetailTable (contactRecord: ABRecord, rowDescription: String, r
                 {
                     line4 = decode[kABPersonAddressZIPKey as String] as! String
                 }
+                
                 writeRowToArray("Address : " + line1 + " " + line2 + " " + line3 + " " + line4, &tableContents)
                 
             }
