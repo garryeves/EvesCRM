@@ -56,8 +56,9 @@
                                         <exclude reference="jaK-a5-xRz"/>
                                     </mask>
                                 </variation>
-                                <variation key="heightClass=regular-widthClass=regular">
+                                <variation key="heightClass=regular-widthClass=regular" misplaced="YES">
                                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
+                                    <rect key="frame" x="268" y="27" width="275" height="30"/>
                                     <mask key="constraints">
                                         <include reference="8Rs-cU-wnR"/>
                                         <exclude reference="Th0-6V-CbQ"/>
@@ -78,7 +79,7 @@
                                     <constraint firstAttribute="height" constant="30" id="GIK-sA-3Ow"/>
                                     <constraint firstAttribute="width" constant="300" id="U9V-HG-ryV"/>
                                 </constraints>
-                                <state key="normal" title="Calender"/>
+                                <state key="normal" title="Calendar"/>
                                 <variation key="default">
                                     <mask key="constraints">
                                         <exclude reference="0RH-O1-s08"/>
@@ -86,8 +87,9 @@
                                         <exclude reference="U9V-HG-ryV"/>
                                     </mask>
                                 </variation>
-                                <variation key="heightClass=regular-widthClass=regular">
+                                <variation key="heightClass=regular-widthClass=regular" misplaced="YES">
                                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
+                                    <rect key="frame" x="544" y="28" width="275" height="30"/>
                                     <mask key="constraints">
                                         <exclude reference="0RH-O1-s08"/>
                                         <include reference="GIK-sA-3Ow"/>
@@ -179,7 +181,8 @@
                                         <exclude reference="zzf-Dd-5w8"/>
                                     </mask>
                                 </variation>
-                                <variation key="heightClass=regular-widthClass=regular">
+                                <variation key="heightClass=regular-widthClass=regular" misplaced="YES">
+                                    <rect key="frame" x="268" y="58" width="275" height="356"/>
                                     <mask key="constraints">
                                         <exclude reference="AI2-PB-0fb"/>
                                         <exclude reference="RIm-2g-F2L"/>
@@ -215,7 +218,8 @@
                                         <exclude reference="kar-ON-R2F"/>
                                     </mask>
                                 </variation>
-                                <variation key="heightClass=regular-widthClass=regular">
+                                <variation key="heightClass=regular-widthClass=regular" misplaced="YES">
+                                    <rect key="frame" x="544" y="59" width="275" height="356"/>
                                     <mask key="constraints">
                                         <exclude reference="4DE-1S-CA2"/>
                                         <exclude reference="GV5-hp-vV8"/>

@@ -8,10 +8,10 @@
 
 import UIKit
 import AddressBook
+import EventKit
 
 private let CONTACT_CELL_IDENTIFER = "contactNameCell"
 private let dataTable1_CELL_IDENTIFER = "dataTable1Cell"
-
 
 class ViewController: UIViewController {
 
@@ -36,7 +36,7 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var setSelectionButton: UIButton!
     
-    var TableOptions = ["Contact Details", "Calender", "Omnifocus", "Evernote", "Mail", "Twitter", "Facebook", "LinkedIn", "Reminders"]
+    var TableOptions = ["Contact Details", "Calendar", "Omnifocus", "Evernote", "Mail", "Twitter", "Facebook", "LinkedIn", "Reminders"]
     
     // Store the tag number of the button pressed so that we can make sure we update the correct button text and table
     var callingTable = 0
@@ -69,6 +69,31 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        
+        // Setup for calendar access
+        // 1
+        let eventStore = EKEventStore()
+        
+        // 2
+        switch EKEventStore.authorizationStatusForEntityType(EKEntityTypeEvent) {
+        case .Authorized:
+            println("Calendar Access granted")
+        case .Denied:
+            println("Calendar Access denied")
+        case .NotDetermined:
+            // 3
+            eventStore.requestAccessToEntityType(EKEntityTypeEvent, completion:
+                {[weak self] (granted: Bool, error: NSError!) -> Void in
+                    if granted {
+                        println("Calendar Access granted")
+                    } else {
+                        println("Calendar Access denied")
+                    }
+                })
+        default:
+            println("Calendar Case Default")
+        }
         
         
        // Initial population of contact list
@@ -240,9 +265,17 @@ class ViewController: UIViewController {
         contacts=Array()
         contactDetails=Array()
         
-        var addressBook: ABAddressBookRef? = extractABAddressBookRef(ABAddressBookCreateWithOptions(nil, &errorRef))
+        var addressBook: ABAddressBookRef! = extractABAddressBookRef(ABAddressBookCreateWithOptions(nil, &errorRef))
+
+        var source: ABRecord! = ABAddressBookCopyDefaultSource(addressBook).takeRetainedValue();
         
-        var contactList: NSArray = ABAddressBookCopyArrayOfAllPeople(addressBook).takeRetainedValue()
+        var contactList = ABAddressBookCopyArrayOfAllPeopleInSourceWithSortOrdering(addressBook, source, ABPersonSortOrdering(kABPersonSortByLastName)).takeRetainedValue() as [ABRecordRef]
+
+/*
+need something here to allow sorting by first and last name
+        var contactList = ABAddressBookCopyArrayOfAllPeopleInSourceWithSortOrdering(addressBook, source, ABPersonSortOrdering(kABPersonSortByLastName)).takeRetainedValue() as [ABRecordRef]
+        
+*/
         
         for record:ABRecordRef in contactList {
             var contactName: String = ABRecordCopyCompositeName(record).takeRetainedValue() as String
@@ -441,13 +474,30 @@ class ViewController: UIViewController {
             
         }
         
-        // This is where we have the logic to work out which type of data we are goign to populate with
-        switch dataType
+        let start = dataType.startIndex
+        let end = find(dataType, " ")
+        
+        var selectedType: String = ""
+        
+        if end != nil
         {
-            case "Contact Details":
+            let myEnd = end?.predecessor()
+            selectedType = dataType[start...myEnd!]
+        }
+        else
+        { // no space found
+            selectedType = dataType
+        }
+        
+        // This is where we have the logic to work out which type of data we are goign to populate with
+        switch selectedType
+        {
+            case "Contact":
                 workArray = parseContactDetails(contactDetails![rowID])
+            case "Calendar":
+                workArray = parseCalendarDetails(contactDetails![rowID])
             default:
-                println("populateArrayDetails: dataType hit default for some reason")
+                println("populateArrayDetails: dataType hit default for some reason : \(selectedType)")
         }
         return workArray
         

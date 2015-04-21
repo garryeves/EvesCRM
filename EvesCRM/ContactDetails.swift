@@ -11,9 +11,6 @@
 import Foundation
 import AddressBook
 
-
-
-
 var contactComponentsProperty: [String: ABPropertyID] = [
     "Prefix":
     kABPersonPrefixProperty,
@@ -47,24 +44,25 @@ var contactComponentsProperty: [String: ABPropertyID] = [
     kABPersonURLProperty
 ]
 
-    var tableContents:[String] = [" "]
 
 
 func parseContactDetails (contactRecord: ABRecord)-> [String]
 {
 
+    var tableContents:[String] = [" "]
+
     tableContents.removeAll()
 
     for (itemDescription, itemKey) in contactComponentsProperty
     {
-        addToContactDetailTable (contactRecord, itemDescription, itemKey)
+        addToContactDetailTable (contactRecord, itemDescription, itemKey, &tableContents)
     }
     
     return tableContents
  
 }
 
-func addToContactDetailTable (contactRecord: ABRecord, rowDescription: String, rowType: ABPropertyID)
+func addToContactDetailTable (contactRecord: ABRecord, rowDescription: String, rowType: ABPropertyID, inout tableContents: [String])
 {
     var line1:String = ""
     var line2:String = ""
@@ -101,7 +99,7 @@ func addToContactDetailTable (contactRecord: ABRecord, rowDescription: String, r
                     line4 = decode[kABPersonAddressZIPKey as String] as! String
                 }
                 
-                writeRowToArray("Address : " + line1 + " " + line2 + " " + line3 + " " + line4, &tableContents)
+                writeRowToArray("Address : " + line1 + "\n" + line2 + "\n" + line3 + "\n" + line4, &tableContents)
                 
             }
         }
