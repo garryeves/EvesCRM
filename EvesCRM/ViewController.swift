@@ -412,9 +412,6 @@ class ViewController: UIViewController {
                 if (loopCount - 1) == indexPath.row
                 {
                     foundHeader = true
-                    
-                    println("Loopcount = \(loopCount) inex = \(indexPath.row)  value = \(contacts![indexPath.row])")
-                    
                 }
             }
             if foundHeader
@@ -486,9 +483,6 @@ class ViewController: UIViewController {
                 if (loopCount - 1) == indexPath.row
                 {
                     foundHeader = true
-                    
-                    println("Loopcount = \(loopCount) inex = \(indexPath.row)  value = \(contacts![indexPath.row])")
-                    
                 }
             }
             if !foundHeader

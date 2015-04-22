@@ -83,6 +83,14 @@ func parseCalendar(inEmail: String, inout tableContents: [String])
         "Completed",
         "In Process"
     ]
+    
+    let recurType = [
+        "days",
+        "weeks",
+        "months",
+        "year",
+        "Unknown"
+    ]
 
     // Seup Date format for display
     var startDateFormatter = NSDateFormatter()
@@ -96,17 +104,21 @@ func parseCalendar(inEmail: String, inout tableContents: [String])
     
     /* Instantiate the event store */
     let eventStore = EKEventStore()
- 
     
-    /* The event starts from today, right now */
-    let startDate = NSDate()
+    let baseDate = NSDate()
     
-    /* The end date will be 1 year from today */
+     /* The event starts from 1 week ago, right now */
+    //Calculate
+    // Days * hours * mins * secs
+    
+    let startDate = baseDate.dateByAddingTimeInterval(-7 * 24 * 60 * 60)
+    
+    /* The end date will be 1 month from today */
     //Calculate
     // Days * hours * mins * secs
     
     
-    let endDate = startDate.dateByAddingTimeInterval(14 * 24 * 60 * 60)
+    let endDate = baseDate.dateByAddingTimeInterval(31 * 24 * 60 * 60)
     
     /* Create the predicate that we can later pass to the
     event store in order to fetch the events */
@@ -143,10 +155,32 @@ func parseCalendar(inEmail: String, inout tableContents: [String])
                             let attendStatus = attendeeStatus[Int(attendee.participantStatus.value)]
                             let type = attendeeType[Int(attendee.participantType.value)]
                             
+                            var myRecurrence: String = ""
+                            if event.recurrenceRules != nil
+                            {
+                                // This is a recurring event
+                                var myWorkingRecur: NSArray = event.recurrenceRules
+                                
+                                for myItem in myWorkingRecur
+                                {
+                                    var myRecurDisplay: String = "\(myItem.interval)"
+                                    
+                                    var testFrequency: EKRecurrenceFrequency = myItem.frequency
+                                    
+                                    var myFrequency: String = recurType[Int(testFrequency.value)]
+ 
+                                    myRecurrence =  ("\(myRecurDisplay) \(myFrequency)")
+                                }
+                            }
+
                             // Build up the details we want to show ing the calendar
                             
                             var myString = "\(event.title)\n"
                             myString += "\(dateStart) - \(dateEnd)\n"
+                            if !myRecurrence.isEmpty
+                            {
+                                myString += "Occurs every \(myRecurrence)\n"
+                            }
                             if event.location != ""
                             {
                                 myString += "At \(event.location)\n"
