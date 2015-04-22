@@ -69,8 +69,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        
-        
+
         // Setup for calendar access
         // 1
         let eventStore = EKEventStore()
@@ -299,7 +298,58 @@ need something here to allow sorting by first and last name
         
         peopleTable.reloadData()
     }
+
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
+    {
+
+        var retVal: CGFloat = 0.0
     
+        
+        if (tableView == peopleTable)
+        {
+            let cell = peopleTable.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
+            let titleText = contacts![indexPath.row]
+            let titleRect = titleText.boundingRectWithSize(CGSizeMake(self.view.frame.size.width - 64, 128), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: nil, context: nil)
+            
+            retVal = titleRect.height
+        }
+        if (tableView == dataTable1)
+        {
+            let cell = dataTable1.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
+            let titleText = table1Contents[indexPath.row]
+            let titleRect = titleText.boundingRectWithSize(CGSizeMake(self.view.frame.size.width - 64, 128), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: nil, context: nil)
+            
+            retVal = titleRect.height
+        }
+        if (tableView == dataTable2)
+        {
+            let cell = dataTable2.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
+            let titleText = table2Contents[indexPath.row]
+            let titleRect = titleText.boundingRectWithSize(CGSizeMake(self.view.frame.size.width - 64, 128), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: nil, context: nil)
+            
+            retVal = titleRect.height
+        }
+        if (tableView == dataTable3)
+        {
+            let cell = dataTable3.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
+            let titleText = table3Contents[indexPath.row]
+            let titleRect = titleText.boundingRectWithSize(CGSizeMake(self.view.frame.size.width - 64, 128), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: nil, context: nil)
+            
+            retVal = titleRect.height
+        }
+        if (tableView == dataTable4)
+        {
+            let cell = dataTable4.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
+            let titleText = table4Contents[indexPath.row]
+            let titleRect = titleText.boundingRectWithSize(CGSizeMake(self.view.frame.size.width - 64, 128), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: nil, context: nil)
+            
+            retVal = titleRect.height
+        }
+        
+        return retVal + 36.0
+    }
+
+
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
@@ -335,36 +385,48 @@ need something here to allow sorting by first and last name
         {
             let cell = peopleTable.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
             cell.textLabel!.text = contacts![indexPath.row]
+            cell.textLabel!.numberOfLines = 0;
+            cell.textLabel!.lineBreakMode = NSLineBreakMode.ByWordWrapping;
             return cell
         }
         else if (tableView == dataTable1)
         {
             let cell = dataTable1.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
             cell.textLabel!.text = table1Contents[indexPath.row]
+            cell.textLabel!.numberOfLines = 0;
+            cell.textLabel!.lineBreakMode = NSLineBreakMode.ByWordWrapping;
             return cell
         }
         else if (tableView == dataTable2)
         {
             let cell = dataTable2.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
             cell.textLabel!.text = table2Contents[indexPath.row]
+            cell.textLabel!.numberOfLines = 0;
+            cell.textLabel!.lineBreakMode = NSLineBreakMode.ByWordWrapping;
             return cell
         }
         else if (tableView == dataTable3)
         {
             let cell = dataTable3.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
             cell.textLabel!.text = table3Contents[indexPath.row]
+            cell.textLabel!.numberOfLines = 0;
+            cell.textLabel!.lineBreakMode = NSLineBreakMode.ByWordWrapping;
             return cell
         }
         else if (tableView == dataTable4)
         {
             let cell = dataTable4.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
             cell.textLabel!.text = table4Contents[indexPath.row]
+            cell.textLabel!.numberOfLines = 0;
+            cell.textLabel!.lineBreakMode = NSLineBreakMode.ByWordWrapping;
             return cell
         }
         else
         {
             // Dummy statements to allow use of else
             let cell = peopleTable.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
+            cell.textLabel!.numberOfLines = 0;
+            cell.textLabel!.lineBreakMode = NSLineBreakMode.ByWordWrapping;
             return cell
         }
     }
@@ -495,7 +557,13 @@ need something here to allow sorting by first and last name
             case "Contact":
                 workArray = parseContactDetails(contactDetails![rowID])
             case "Calendar":
-                workArray = parseCalendarDetails(contactDetails![rowID])
+                workArray = parseCalendarDetails("Calendar",contactDetails![rowID])
+            case "Reminders":
+                workArray = parseCalendarDetails("Reminders",contactDetails![rowID])
+            
+            case "Mail":
+                let a = 1
+            
             default:
                 println("populateArrayDetails: dataType hit default for some reason : \(selectedType)")
         }

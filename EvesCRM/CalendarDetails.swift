@@ -14,7 +14,7 @@ import EventKit
 var events: [EKEvent] = []
 
 
-func parseCalendarDetails (contactRecord: ABRecord)-> [String]
+func parseCalendarDetails (inType: String, contactRecord: ABRecord)-> [String]
 {
     
     var emailAddresses:[String] = [" "]
@@ -25,88 +25,139 @@ func parseCalendarDetails (contactRecord: ABRecord)-> [String]
     
     // First we need to find out the email addresses for the person so can check through calendar entries
 
-    addToContactDetailTable (contactRecord, "", kABPersonEmailProperty, &emailAddresses)
+//    addToContactDetailTable (contactRecord, "", kABPersonEmailProperty, &emailAddresses)
 
-    
-    for email in emailAddresses
+    if inType == "Calendar"
     {
-        println(email)
-  
+        let decodeProperty : ABMultiValueRef = ABRecordCopyValue(contactRecord, kABPersonEmailProperty).takeUnretainedValue() as ABMultiValueRef
+    
+        let recordCount = ABMultiValueGetCount(decodeProperty)
+    
+        if recordCount > 0
+        {
+            for loopCount in 0...recordCount-1
+            {
+  //          emailAddresses.append(ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String)
+                parseCalendar(ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String, &tableContents)
+            
+            }
+        }
     }
-    
-    parseCalendar()
-    
-    
-    
-//    for (itemDescription, itemKey) in contactComponentsProperty
-//    {
-//        addToContactDetailTable (contactRecord, itemDescription, itemKey, &tableContents)
-//    }
-    
+    else if inType == "Reminders"
+    {
+        var myString = "Reminders"
+        writeRowToArray(myString, &tableContents )
+    }
+
     return tableContents
-    
 }
 
 
-func parseCalendar()
+func parseCalendar(inEmail: String, inout tableContents: [String])
 {
     // Find calendar entries based on email addresses and invitees
+    
+    let attendeeType = [
+        "Unknown",
+        "Person",
+        "Room",
+        "Resource",
+        "Group"
+    ]
+    
+    let attendeeRole = [
+        "Unknown",
+        "Required",
+        "Optional",
+        "Chair",
+        "Nonparticipant"
+    ]
+
+    let attendeeStatus = [
+        "Unknown",
+        "Pending",
+        "Accepted",
+        "Declined",
+        "Tentative",
+        "Delegated",
+        "Completed",
+        "In Process"
+    ]
+
+    // Seup Date format for display
+    var startDateFormatter = NSDateFormatter()
+    var endDateFormatter = NSDateFormatter()
+    
+    var dateFormat = NSDateFormatterStyle.MediumStyle
+    var timeFormat = NSDateFormatterStyle.ShortStyle
+    startDateFormatter.dateStyle = dateFormat
+    startDateFormatter.timeStyle = timeFormat
+    endDateFormatter.timeStyle = timeFormat
     
     /* Instantiate the event store */
     let eventStore = EKEventStore()
  
-    /*
-    let icloudSource = sourceInEventStore(eventStore,
-        EKSourceTypeCalDAV,
-        "iCloud")
-    
-    if icloudSource == nil{
-        println("You have not configured iCloud for your device.")
-        return
-    }
-    
-    let calendar = calendarWithTitle("Calendar",
-        EKCalendarTypeCalDAV,
-        icloudSource!,
-        EKEntityTypeEvent)
-    
-    if calendar == nil{
-        println("Could not find the calendar we were looking for.")
-        return
-    }
-    
-*/
-
     
     /* The event starts from today, right now */
     let startDate = NSDate()
     
-    /* The end date will be 1 day from today */
-    let endDate = startDate.dateByAddingTimeInterval(24 * 60 * 60)
+    /* The end date will be 1 year from today */
+    //Calculate
+    // Days * hours * mins * secs
+    
+    
+    let endDate = startDate.dateByAddingTimeInterval(14 * 24 * 60 * 60)
     
     /* Create the predicate that we can later pass to the
     event store in order to fetch the events */
     let searchPredicate = eventStore.predicateForEventsWithStartDate(
-        startDate,
-        endDate: endDate,
-        calendars: nil)
-    //calendars: [calendar!])
-    
+            startDate,
+            endDate: endDate,
+            calendars: nil)
+  
     /* Fetch all the events that fall between
-    the starting and the ending dates */
-    events = eventStore.eventsMatchingPredicate(searchPredicate)
-        as! [EKEvent]
+        the starting and the ending dates */
+    events = eventStore.eventsMatchingPredicate(searchPredicate) as! [EKEvent]
     
-    if events.count == 0 {
-        println("No events could be found")
-    } else {
-        
+    if events.count >  0
+    {
         // Go through all the events and print them to the console
         for event in events{
-            
-            println("Event title = \(event.title)")
-            println("Event start date = \(event.startDate)")
-            println("Event end date = \(event.endDate)")
+            if event.attendees != nil
+            {
+                if event.attendees.count > 0
+                {
+                    for attendee in event.attendees as! [EKParticipant]
+                    {
+                        var emailText: String = "\(attendee.URL)"
+                        var emailStartPos = find(emailText,":")
+                        var nextPlace = emailStartPos?.successor()
+                        var emailEndPos = emailText.endIndex.predecessor()
+                        let emailAddress = emailText[nextPlace!...emailEndPos]
+                        
+                        if emailAddress == inEmail
+                        {
+                            let dateStart = startDateFormatter.stringFromDate(event.startDate)
+                            let dateEnd = endDateFormatter.stringFromDate(event.endDate)
+                        
+                            let attendStatus = attendeeStatus[Int(attendee.participantStatus.value)]
+                            let type = attendeeType[Int(attendee.participantType.value)]
+                            
+                            // Build up the details we want to show ing the calendar
+                            
+                            var myString = "\(event.title)\n"
+                            myString += "\(dateStart) - \(dateEnd)\n"
+                            if event.location != ""
+                            {
+                                myString += "At \(event.location)\n"
+                            }
+                            myString += "Status = \(attendStatus)"
+                        
+                            writeRowToArray(myString, &tableContents )
+                        }
+                    }
+                }
+            }
         }
     }
 }

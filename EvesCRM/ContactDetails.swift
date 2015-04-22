@@ -99,7 +99,7 @@ func addToContactDetailTable (contactRecord: ABRecord, rowDescription: String, r
                     line4 = decode[kABPersonAddressZIPKey as String] as! String
                 }
                 
-                writeRowToArray("Address : " + line1 + "\n" + line2 + "\n" + line3 + "\n" + line4, &tableContents)
+                writeRowToArray("Address : \(line1)\n\(line2)\n\(line3)\n\(line4)", &tableContents)
                 
             }
         }
