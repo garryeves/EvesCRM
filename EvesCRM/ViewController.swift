@@ -48,6 +48,7 @@ class ViewController: UIViewController {
     
     var contacts:[String]?
     var contactDetails:[ABRecord]?
+    var headerRows:[Int]?
     
     // define arrasy to store the table displays
     
@@ -263,26 +264,44 @@ class ViewController: UIViewController {
         
         contacts=Array()
         contactDetails=Array()
+        headerRows=Array()
         
         var addressBook: ABAddressBookRef! = extractABAddressBookRef(ABAddressBookCreateWithOptions(nil, &errorRef))
 
-        var source: ABRecord! = ABAddressBookCopyDefaultSource(addressBook).takeRetainedValue();
+        var sources: NSArray = ABAddressBookCopyArrayOfAllSources(addressBook).takeRetainedValue()
         
-        var contactList = ABAddressBookCopyArrayOfAllPeopleInSourceWithSortOrdering(addressBook, source, ABPersonSortOrdering(kABPersonSortByLastName)).takeRetainedValue() as [ABRecordRef]
-
-/*
-need something here to allow sorting by first and last name
-        var contactList = ABAddressBookCopyArrayOfAllPeopleInSourceWithSortOrdering(addressBook, source, ABPersonSortOrdering(kABPersonSortByLastName)).takeRetainedValue() as [ABRecordRef]
-        
-*/
-        
-        for record:ABRecordRef in contactList {
-            var contactName: String = ABRecordCopyCompositeName(record).takeRetainedValue() as String
-            contacts!.append(contactName)
-            contactDetails!.append(record)
+        for source in sources
+        {
+            
+         //   source.
+            var dummyTitle: String = (ABRecordCopyValue(source, kABSourceNameProperty).takeRetainedValue() as! String)
+            
+            switch dummyTitle
+            {
+                case "Card" : dummyTitle = "iCloud"
+                
+                case "Address Book" : dummyTitle = "Google"
+                
+                default : dummyTitle = "Unknown"
+            }
+            
+            contacts!.append(dummyTitle)
+            let dummyRecord: ABRecordRef = "Title" as ABRecordRef
+            contactDetails!.append(dummyRecord)
+            headerRows!.append(contacts!.count)
+            
+            var contactList = ABAddressBookCopyArrayOfAllPeopleInSourceWithSortOrdering(addressBook, source, ABPersonSortOrdering(kABPersonSortByLastName)).takeRetainedValue() as [ABRecordRef]
+            
+            
+            for record:ABRecordRef in contactList {
+                var contactName: String = ABRecordCopyCompositeName(record).takeRetainedValue() as String
+                
+                contacts!.append(contactName)
+                contactDetails!.append(record)
+            }
         }
     }
-    
+
     func extractABAddressBookRef(abRef: Unmanaged<ABAddressBookRef>!) -> ABAddressBookRef? {
         if let ab = abRef {
             return Unmanaged<NSObject>.fromOpaque(ab.toOpaque()).takeUnretainedValue()
@@ -308,6 +327,7 @@ need something here to allow sorting by first and last name
         if (tableView == peopleTable)
         {
             let cell = peopleTable.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
+            
             let titleText = contacts![indexPath.row]
             let titleRect = titleText.boundingRectWithSize(CGSizeMake(self.view.frame.size.width - 64, 128), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: nil, context: nil)
             
@@ -348,8 +368,6 @@ need something here to allow sorting by first and last name
         
         return retVal + 36.0
     }
-
-
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
@@ -384,6 +402,30 @@ need something here to allow sorting by first and last name
         if (tableView == peopleTable)
         {
             let cell = peopleTable.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
+            
+            // check to see if we are a header row, as if so need to change the font details
+            
+            var foundHeader = false
+            
+            for loopCount in headerRows!
+            {
+                if (loopCount - 1) == indexPath.row
+                {
+                    foundHeader = true
+                    
+                    println("Loopcount = \(loopCount) inex = \(indexPath.row)  value = \(contacts![indexPath.row])")
+                    
+                }
+            }
+            if foundHeader
+            {
+                cell.textLabel!.font = UIFont.boldSystemFontOfSize(30.0)
+            }
+            else
+            {
+                cell.textLabel!.font = UIFont.systemFontOfSize(UIFont.systemFontSize())
+            }
+
             cell.textLabel!.text = contacts![indexPath.row]
             cell.textLabel!.numberOfLines = 0;
             cell.textLabel!.lineBreakMode = NSLineBreakMode.ByWordWrapping;
@@ -436,31 +478,47 @@ need something here to allow sorting by first and last name
   
         if (tableView == peopleTable)
         {
-            TableTypeSelection1.hidden = true
-            setSelectionButton.hidden = true
-            TableTypeButton1.hidden = false
-            TableTypeButton2.hidden = false
-            TableTypeButton3.hidden = false
-            TableTypeButton4.hidden = false
-            dataTable1.hidden = false
-            dataTable2.hidden = false
-            dataTable3.hidden = false
-            dataTable4.hidden = false
-            StartLabel.hidden = true
+            //  Here we are checking to seeif a Header row was clicked, so we do not try and populate details for a Header
+            var foundHeader = false
             
-            personSelectedIndex = indexPath.row
+            for loopCount in headerRows!
+            {
+                if (loopCount - 1) == indexPath.row
+                {
+                    foundHeader = true
+                    
+                    println("Loopcount = \(loopCount) inex = \(indexPath.row)  value = \(contacts![indexPath.row])")
+                    
+                }
+            }
+            if !foundHeader
+            {
+                TableTypeSelection1.hidden = true
+                setSelectionButton.hidden = true
+                TableTypeButton1.hidden = false
+                TableTypeButton2.hidden = false
+                TableTypeButton3.hidden = false
+                TableTypeButton4.hidden = false
+                dataTable1.hidden = false
+                dataTable2.hidden = false
+                dataTable3.hidden = false
+                dataTable4.hidden = false
+                StartLabel.hidden = true
             
-            table1Contents = Array()
-            table2Contents = Array()
-            table3Contents = Array()
-            table4Contents = Array()
+                personSelectedIndex = indexPath.row
             
-            populateArraysForTables(indexPath.row, inTable: "Table1")
-            populateArraysForTables(indexPath.row, inTable: "Table2")
-            populateArraysForTables(indexPath.row, inTable: "Table3")
-            populateArraysForTables(indexPath.row, inTable: "Table4")
+                table1Contents = Array()
+                table2Contents = Array()
+                table3Contents = Array()
+                table4Contents = Array()
             
-            reloadDataTables()
+                populateArraysForTables(indexPath.row, inTable: "Table1")
+                populateArraysForTables(indexPath.row, inTable: "Table2")
+                populateArraysForTables(indexPath.row, inTable: "Table3")
+                populateArraysForTables(indexPath.row, inTable: "Table4")
+            
+                reloadDataTables()
+            }
         }
             
         else if tableView == dataTable1
