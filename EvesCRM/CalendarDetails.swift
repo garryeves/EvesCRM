@@ -129,65 +129,72 @@ func parseCalendar(inEmail: String, inout tableContents: [String])
   
     /* Fetch all the events that fall between
         the starting and the ending dates */
-    events = eventStore.eventsMatchingPredicate(searchPredicate) as! [EKEvent]
     
-    if events.count >  0
+    if eventStore.sources().count > 0
     {
-        // Go through all the events and print them to the console
-        for event in events{
-            if event.attendees != nil
+        if eventStore.eventsMatchingPredicate(searchPredicate) != nil
+        {
+            events = eventStore.eventsMatchingPredicate(searchPredicate) as! [EKEvent]
+    
+            if events.count >  0
             {
-                if event.attendees.count > 0
-                {
-                    for attendee in event.attendees as! [EKParticipant]
+                // Go through all the events and print them to the console
+                for event in events{
+                    if event.attendees != nil
                     {
-                        var emailText: String = "\(attendee.URL)"
-                        var emailStartPos = find(emailText,":")
-                        var nextPlace = emailStartPos?.successor()
-                        var emailEndPos = emailText.endIndex.predecessor()
-                        let emailAddress = emailText[nextPlace!...emailEndPos]
-                        
-                        if emailAddress == inEmail
+                        if event.attendees.count > 0
                         {
-                            let dateStart = startDateFormatter.stringFromDate(event.startDate)
-                            let dateEnd = endDateFormatter.stringFromDate(event.endDate)
-                        
-                            let attendStatus = attendeeStatus[Int(attendee.participantStatus.value)]
-                            let type = attendeeType[Int(attendee.participantType.value)]
-                            
-                            var myRecurrence: String = ""
-                            if event.recurrenceRules != nil
+                            for attendee in event.attendees as! [EKParticipant]
                             {
-                                // This is a recurring event
-                                var myWorkingRecur: NSArray = event.recurrenceRules
-                                
-                                for myItem in myWorkingRecur
+                                var emailText: String = "\(attendee.URL)"
+                                var emailStartPos = find(emailText,":")
+                                var nextPlace = emailStartPos?.successor()
+                                var emailEndPos = emailText.endIndex.predecessor()
+                                let emailAddress = emailText[nextPlace!...emailEndPos]
+                        
+                                if emailAddress == inEmail
                                 {
-                                    var myRecurDisplay: String = "\(myItem.interval)"
+                                    let dateStart = startDateFormatter.stringFromDate(event.startDate)
+                                    let dateEnd = endDateFormatter.stringFromDate(event.endDate)
+                        
+                                    let attendStatus = attendeeStatus[Int(attendee.participantStatus.value)]
+                                    let type = attendeeType[Int(attendee.participantType.value)]
+                            
+                                    var myRecurrence: String = ""
+                                    if event.recurrenceRules != nil
+                                    {
+                                        // This is a recurring event
+                                        var myWorkingRecur: NSArray = event.recurrenceRules
+                                
+                                        for myItem in myWorkingRecur
+                                        {
+                                            var myRecurDisplay: String = "\(myItem.interval)"
                                     
-                                    var testFrequency: EKRecurrenceFrequency = myItem.frequency
+                                            var testFrequency: EKRecurrenceFrequency = myItem.frequency
                                     
-                                    var myFrequency: String = recurType[Int(testFrequency.value)]
+                                            var myFrequency: String = recurType[Int(testFrequency.value)]
  
-                                    myRecurrence =  ("\(myRecurDisplay) \(myFrequency)")
+                                            myRecurrence =  ("\(myRecurDisplay) \(myFrequency)")
+                                        }
+                                    }
+
+                                    // Build up the details we want to show ing the calendar
+                            
+                                    var myString = "\(event.title)\n"
+                                    myString += "\(dateStart) - \(dateEnd)\n"
+                                    if !myRecurrence.isEmpty
+                                    {
+                                        myString += "Occurs every \(myRecurrence)\n"
+                                    }
+                                    if event.location != ""
+                                    {
+                                        myString += "At \(event.location)\n"
+                                    }
+                                    myString += "Status = \(attendStatus)"
+                        
+                                    writeRowToArray(myString, &tableContents)
                                 }
                             }
-
-                            // Build up the details we want to show ing the calendar
-                            
-                            var myString = "\(event.title)\n"
-                            myString += "\(dateStart) - \(dateEnd)\n"
-                            if !myRecurrence.isEmpty
-                            {
-                                myString += "Occurs every \(myRecurrence)\n"
-                            }
-                            if event.location != ""
-                            {
-                                myString += "At \(event.location)\n"
-                            }
-                            myString += "Status = \(attendStatus)"
-                        
-                            writeRowToArray(myString, &tableContents )
                         }
                     }
                 }

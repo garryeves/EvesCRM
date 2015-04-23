@@ -192,7 +192,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 340650601ADDF8FF00C90CBB /* Build configuration list for PBXProject "EvesCRM" */;
+			buildConfigurationList = 340650601ADDF8FF00C90CBB /* Build configuration list for PBXProject "Contacts Dashboard" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -322,7 +322,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -361,7 +361,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -430,7 +430,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		340650601ADDF8FF00C90CBB /* Build configuration list for PBXProject "EvesCRM" */ = {
+		340650601ADDF8FF00C90CBB /* Build configuration list for PBXProject "Contacts Dashboard" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				340650851ADDF8FF00C90CBB /* Debug */,

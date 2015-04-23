@@ -272,9 +272,12 @@ class ViewController: UIViewController {
         
         for source in sources
         {
+            var dummyTitle: String = ""
             
-         //   source.
-            var dummyTitle: String = (ABRecordCopyValue(source, kABSourceNameProperty).takeRetainedValue() as! String)
+            if ABRecordCopyValue(source, kABSourceNameProperty) != nil
+            {
+                dummyTitle = (ABRecordCopyValue(source, kABSourceNameProperty).takeRetainedValue() as! String)
+            }
             
             switch dummyTitle
             {
