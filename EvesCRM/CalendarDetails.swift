@@ -10,15 +10,16 @@ import Foundation
 import AddressBook
 import EventKit
 
+var eventStore: EKEventStore!
+var targetReminderCal: EKCalendar!
 
-var events: [EKEvent] = []
-
-
-func parseCalendarDetails (inType: String, contactRecord: ABRecord)-> [String]
+func parseCalendarDetails (inType: String, contactRecord: ABRecord, inEventStore: EKEventStore)-> [String]
 {
     
     var emailAddresses:[String] = [" "]
     var tableContents:[String] = [" "]
+    
+    eventStore = inEventStore
     
     emailAddresses.removeAll()
     tableContents.removeAll()
@@ -37,7 +38,6 @@ func parseCalendarDetails (inType: String, contactRecord: ABRecord)-> [String]
         {
             for loopCount in 0...recordCount-1
             {
-  //          emailAddresses.append(ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String)
                 parseCalendar(ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String, &tableContents)
             
             }
@@ -45,8 +45,7 @@ func parseCalendarDetails (inType: String, contactRecord: ABRecord)-> [String]
     }
     else if inType == "Reminders"
     {
-        var myString = "Reminders"
-        writeRowToArray(myString, &tableContents )
+                parseReminders(contactRecord, &tableContents)
     }
 
     return tableContents
@@ -57,6 +56,8 @@ func parseCalendar(inEmail: String, inout tableContents: [String])
 {
     // Find calendar entries based on email addresses and invitees
     
+    var events: [EKEvent] = []
+
     let attendeeType = [
         "Unknown",
         "Person",
@@ -103,8 +104,6 @@ func parseCalendar(inEmail: String, inout tableContents: [String])
     endDateFormatter.timeStyle = timeFormat
     
     /* Instantiate the event store */
-    let eventStore = EKEventStore()
-    
     let baseDate = NSDate()
     
      /* The event starts from 1 week ago, right now */
@@ -203,37 +202,66 @@ func parseCalendar(inEmail: String, inout tableContents: [String])
     }
 }
 
-func sourceInEventStore(
-    eventStore: EKEventStore,
-    type: EKSourceType,
-    title: String) -> EKSource?{
-        
-        for source in eventStore.sources() as! [EKSource]{
-            if source.sourceType.value == type.value &&
-                source.title.caseInsensitiveCompare(title) ==
-                NSComparisonResult.OrderedSame{
-                    return source
+func parseReminders(contactRecord: ABRecord, inout tableContents: [String])
+{
+    var reminders: [EKReminder] = Array()
+
+    var reminderStore = EKEventStore()
+    
+    reminderStore.requestAccessToEntityType(EKEntityTypeReminder,
+        completion: {(granted: Bool, error:NSError!) in
+            if !granted {
+                println("Access to store not granted")
             }
+    })
+    
+    var cals = reminderStore.calendarsForEntityType(EKEntityTypeReminder) as! [EKCalendar]
+    var myString: String = ""
+    var myCalFound = false
+    var workingName: String = ABRecordCopyCompositeName(contactRecord).takeUnretainedValue() as String
+    
+    for cal in cals
+    {
+        if cal.title == workingName
+        {
+            myCalFound = true
+            
+            targetReminderCal = cal
+        }
+    }
+    
+    if !myCalFound
+    {
+        myString = "No reminders list found"
+        writeRowToArray(myString, &tableContents)
+    }
+    else
+    {
+        var predicate = reminderStore.predicateForIncompleteRemindersWithDueDateStarting(nil, ending: nil, calendars: [targetReminderCal])
+        
+        var myDisplayStrings: [String] = Array()
+
+        var asyncDone = false
+        
+        reminderStore.fetchRemindersMatchingPredicate(predicate, completion: {reminders in
+            for reminder in reminders {
+                    var workingString: String = reminder.title!!
+                    myDisplayStrings.append(workingString)
+            }
+            asyncDone = true
+            })
+   
+        
+        // Bit of a nasty workaround but this is to allow async to finish
+        
+        while !asyncDone
+        {
+            usleep(500)
         }
         
-        return nil
-}
-/*
-func calendarWithTitle(
-    title: String,
-    type: EKCalendarType,
-    source: EKSource,
-    eventType: EKEntityType) -> EKCalendar?{
-        
-        for calendar in source.calendarsForEntityType(eventType)
-            as [EKCalendar]{
-                if calendar.title.caseInsensitiveCompare(title) ==
-                    NSComparisonResult.OrderedSame &&
-                    calendar.type.value == type.value{
-                        return calendar
-                }
+        for displayString in myDisplayStrings
+        {
+            writeRowToArray(displayString, &tableContents)
         }
-        
-        return nil
+    }
 }
-*/

@@ -67,15 +67,13 @@ class ViewController: UIViewController {
     
     var adbk : ABAddressBook!
     
+    var eventStore: EKEventStore!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
 
-        // Setup for calendar access
-        // 1
-        let eventStore = EKEventStore()
+        eventStore = EKEventStore()
         
-        // 2
         switch EKEventStore.authorizationStatusForEntityType(EKEntityTypeEvent) {
         case .Authorized:
             println("Calendar Access granted")
@@ -94,8 +92,7 @@ class ViewController: UIViewController {
         default:
             println("Calendar Case Default")
         }
-        
-        
+
        // Initial population of contact list
         self.peopleTable.registerClass(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
         self.dataTable1.registerClass(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
@@ -423,7 +420,7 @@ class ViewController: UIViewController {
             }
             else
             {
-                cell.textLabel!.font = UIFont.systemFontOfSize(UIFont.systemFontSize())
+                cell.textLabel!.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
             }
 
             cell.textLabel!.text = contacts![indexPath.row]
@@ -612,9 +609,9 @@ class ViewController: UIViewController {
             case "Contact":
                 workArray = parseContactDetails(contactDetails![rowID])
             case "Calendar":
-                workArray = parseCalendarDetails("Calendar",contactDetails![rowID])
+                workArray = parseCalendarDetails("Calendar",contactDetails![rowID], eventStore)
             case "Reminders":
-                workArray = parseCalendarDetails("Reminders",contactDetails![rowID])
+                workArray = parseCalendarDetails("Reminders",contactDetails![rowID], eventStore)
             
             case "Mail":
                 let a = 1
