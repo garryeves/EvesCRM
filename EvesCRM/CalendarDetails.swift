@@ -13,11 +13,11 @@ import EventKit
 var eventStore: EKEventStore!
 var targetReminderCal: EKCalendar!
 
-func parseCalendarDetails (inType: String, contactRecord: ABRecord, inEventStore: EKEventStore)-> [String]
+func parseCalendarDetails (inType: String, contactRecord: ABRecord, inEventStore: EKEventStore)-> [TableData]
 {
     
     var emailAddresses:[String] = [" "]
-    var tableContents:[String] = [" "]
+    var tableContents:[TableData] = [TableData]()
     
     eventStore = inEventStore
     
@@ -52,7 +52,7 @@ func parseCalendarDetails (inType: String, contactRecord: ABRecord, inEventStore
 }
 
 
-func parseCalendar(inEmail: String, inout tableContents: [String])
+func parseCalendar(inEmail: String, inout tableContents: [TableData])
 {
     // Find calendar entries based on email addresses and invitees
     
@@ -191,7 +191,16 @@ func parseCalendar(inEmail: String, inout tableContents: [String])
                                     }
                                     myString += "Status = \(attendStatus)"
                         
-                                    writeRowToArray(myString, &tableContents)
+                                    
+                                    
+                                    if event.startDate.compare(NSDate()) == NSComparisonResult.OrderedAscending
+                                    {
+                                        // Event is in the past
+                                        writeRowToArray(myString, &tableContents, inDisplayFormat: "Gray")
+                                    } else
+                                    {
+                                        writeRowToArray(myString, &tableContents)
+                                    }
                                 }
                             }
                         }
@@ -202,7 +211,7 @@ func parseCalendar(inEmail: String, inout tableContents: [String])
     }
 }
 
-func parseReminders(contactRecord: ABRecord, inout tableContents: [String])
+func parseReminders(contactRecord: ABRecord, inout tableContents: [TableData])
 {
     var reminders: [EKReminder] = Array()
 
@@ -239,14 +248,21 @@ func parseReminders(contactRecord: ABRecord, inout tableContents: [String])
     {
         var predicate = reminderStore.predicateForIncompleteRemindersWithDueDateStarting(nil, ending: nil, calendars: [targetReminderCal])
         
-        var myDisplayStrings: [String] = Array()
+        var myDisplayStrings: [ReminderData] = Array()
 
         var asyncDone = false
         
         reminderStore.fetchRemindersMatchingPredicate(predicate, completion: {reminders in
             for reminder in reminders {
-                    var workingString: String = reminder.title!!
-                    myDisplayStrings.append(workingString)
+                var workingString: ReminderData = ReminderData(reminderText: reminder.title!!, reminderCalendar: reminder.calendar)
+ 
+                if reminder.notes! != nil
+                {
+                    workingString.notes = reminder.notes!
+                }
+                workingString.priority = reminder.priority
+                
+                myDisplayStrings.append(workingString)
             }
             asyncDone = true
             })
@@ -260,8 +276,15 @@ func parseReminders(contactRecord: ABRecord, inout tableContents: [String])
         }
         
         for displayString in myDisplayStrings
-        {
-            writeRowToArray(displayString, &tableContents)
+        {            
+            switch displayString.priority
+            {
+                case 1: writeRowToArray(displayString.reminderText , &tableContents, inDisplayFormat: "Red")  //  High priority
+                
+                case 5: writeRowToArray(displayString.reminderText , &tableContents, inDisplayFormat: "Orange") // Medium priority
+                
+                default: writeRowToArray(displayString.reminderText , &tableContents)
+            }
         }
     }
 }

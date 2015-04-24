@@ -46,16 +46,14 @@ class ViewController: UIViewController {
     
     // Define array to hold the contact names
     
-    var contacts:[String]?
-    var contactDetails:[ABRecord]?
-    var headerRows:[Int]?
+    var contacts:[PeopleData] = [PeopleData]()
     
     // define arrasy to store the table displays
     
-    var table1Contents:[String] = [""]
-    var table2Contents:[String] = [""]
-    var table3Contents:[String] = [""]
-    var table4Contents:[String] = [""]
+    var table1Contents:[TableData] = [TableData]()
+    var table2Contents:[TableData] = [TableData]()
+    var table3Contents:[TableData] = [TableData]()
+    var table4Contents:[TableData] = [TableData]()
     
     // store the name of the person selected in the People table
     var personSelected = ""
@@ -260,8 +258,6 @@ class ViewController: UIViewController {
         var errorRef: Unmanaged<CFError>?
         
         contacts=Array()
-        contactDetails=Array()
-        headerRows=Array()
         
         var addressBook: ABAddressBookRef! = extractABAddressBookRef(ABAddressBookCreateWithOptions(nil, &errorRef))
 
@@ -284,20 +280,23 @@ class ViewController: UIViewController {
                 
                 default : dummyTitle = "Unknown"
             }
-            
-            contacts!.append(dummyTitle)
+
             let dummyRecord: ABRecordRef = "Title" as ABRecordRef
-            contactDetails!.append(dummyRecord)
-            headerRows!.append(contacts!.count)
+
+            var myRecord: PeopleData = PeopleData(fullName: dummyTitle, inRecord: dummyRecord)
+            myRecord.displaySpecialFormat = "Large Bold"
             
+            contacts.append(myRecord)
+
             var contactList = ABAddressBookCopyArrayOfAllPeopleInSourceWithSortOrdering(addressBook, source, ABPersonSortOrdering(kABPersonSortByLastName)).takeRetainedValue() as [ABRecordRef]
             
             
             for record:ABRecordRef in contactList {
                 var contactName: String = ABRecordCopyCompositeName(record).takeRetainedValue() as String
-                
-                contacts!.append(contactName)
-                contactDetails!.append(record)
+
+                myRecord = PeopleData(fullName: contactName, inRecord: record)
+
+                contacts.append(myRecord)
             }
         }
     }
@@ -328,7 +327,7 @@ class ViewController: UIViewController {
         {
             let cell = peopleTable.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
             
-            let titleText = contacts![indexPath.row]
+            let titleText = contacts[indexPath.row].fullName
             let titleRect = titleText.boundingRectWithSize(CGSizeMake(self.view.frame.size.width - 64, 128), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: nil, context: nil)
             
             retVal = titleRect.height
@@ -336,7 +335,7 @@ class ViewController: UIViewController {
         if (tableView == dataTable1)
         {
             let cell = dataTable1.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
-            let titleText = table1Contents[indexPath.row]
+            let titleText = table1Contents[indexPath.row].displayText
             let titleRect = titleText.boundingRectWithSize(CGSizeMake(self.view.frame.size.width - 64, 128), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: nil, context: nil)
             
             retVal = titleRect.height
@@ -344,7 +343,7 @@ class ViewController: UIViewController {
         if (tableView == dataTable2)
         {
             let cell = dataTable2.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
-            let titleText = table2Contents[indexPath.row]
+            let titleText = table2Contents[indexPath.row].displayText
             let titleRect = titleText.boundingRectWithSize(CGSizeMake(self.view.frame.size.width - 64, 128), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: nil, context: nil)
             
             retVal = titleRect.height
@@ -352,7 +351,7 @@ class ViewController: UIViewController {
         if (tableView == dataTable3)
         {
             let cell = dataTable3.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
-            let titleText = table3Contents[indexPath.row]
+            let titleText = table3Contents[indexPath.row].displayText
             let titleRect = titleText.boundingRectWithSize(CGSizeMake(self.view.frame.size.width - 64, 128), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: nil, context: nil)
             
             retVal = titleRect.height
@@ -360,7 +359,7 @@ class ViewController: UIViewController {
         if (tableView == dataTable4)
         {
             let cell = dataTable4.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
-            let titleText = table4Contents[indexPath.row]
+            let titleText = table4Contents[indexPath.row].displayText
             let titleRect = titleText.boundingRectWithSize(CGSizeMake(self.view.frame.size.width - 64, 128), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: nil, context: nil)
             
             retVal = titleRect.height
@@ -375,7 +374,7 @@ class ViewController: UIViewController {
         var retVal: Int = 0
         if (tableView == peopleTable)
         {
-            retVal = self.contacts?.count ?? 0
+            retVal = self.contacts.count ?? 0
         }
         else if (tableView == dataTable1)
         {
@@ -404,61 +403,37 @@ class ViewController: UIViewController {
             let cell = peopleTable.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
             
             // check to see if we are a header row, as if so need to change the font details
-            
-            var foundHeader = false
-            
-            for loopCount in headerRows!
-            {
-                if (loopCount - 1) == indexPath.row
-                {
-                    foundHeader = true
-                }
-            }
-            if foundHeader
-            {
-                cell.textLabel!.font = UIFont.boldSystemFontOfSize(30.0)
-            }
-            else
-            {
-                cell.textLabel!.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
-            }
 
-            cell.textLabel!.text = contacts![indexPath.row]
-            cell.textLabel!.numberOfLines = 0;
-            cell.textLabel!.lineBreakMode = NSLineBreakMode.ByWordWrapping;
-            return cell
+            cell.textLabel!.text = contacts[indexPath.row].fullName
+            return setCellFormatting(cell, inDisplayFormat: contacts[indexPath.row].displaySpecialFormat)
         }
         else if (tableView == dataTable1)
         {
             let cell = dataTable1.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
-            cell.textLabel!.text = table1Contents[indexPath.row]
-            cell.textLabel!.numberOfLines = 0;
-            cell.textLabel!.lineBreakMode = NSLineBreakMode.ByWordWrapping;
-            return cell
+            cell.textLabel!.text = table1Contents[indexPath.row].displayText
+            return setCellFormatting(cell,inDisplayFormat: table1Contents[indexPath.row].displaySpecialFormat)
+
         }
         else if (tableView == dataTable2)
         {
             let cell = dataTable2.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
-            cell.textLabel!.text = table2Contents[indexPath.row]
-            cell.textLabel!.numberOfLines = 0;
-            cell.textLabel!.lineBreakMode = NSLineBreakMode.ByWordWrapping;
-            return cell
+            cell.textLabel!.text = table2Contents[indexPath.row].displayText
+            
+            return setCellFormatting(cell,inDisplayFormat: table2Contents[indexPath.row].displaySpecialFormat)
         }
         else if (tableView == dataTable3)
         {
             let cell = dataTable3.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
-            cell.textLabel!.text = table3Contents[indexPath.row]
-            cell.textLabel!.numberOfLines = 0;
-            cell.textLabel!.lineBreakMode = NSLineBreakMode.ByWordWrapping;
-            return cell
+            cell.textLabel!.text = table3Contents[indexPath.row].displayText
+            return setCellFormatting(cell,inDisplayFormat: table3Contents[indexPath.row].displaySpecialFormat)
+
         }
         else if (tableView == dataTable4)
         {
             let cell = dataTable4.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
-            cell.textLabel!.text = table4Contents[indexPath.row]
-            cell.textLabel!.numberOfLines = 0;
-            cell.textLabel!.lineBreakMode = NSLineBreakMode.ByWordWrapping;
-            return cell
+            cell.textLabel!.text = table4Contents[indexPath.row].displayText
+            return setCellFormatting(cell,inDisplayFormat: table4Contents[indexPath.row].displaySpecialFormat)
+
         }
         else
         {
@@ -477,14 +452,13 @@ class ViewController: UIViewController {
         {
             //  Here we are checking to seeif a Header row was clicked, so we do not try and populate details for a Header
             var foundHeader = false
-            
-            for loopCount in headerRows!
+
+            if contacts[indexPath.row].displaySpecialFormat != ""
             {
-                if (loopCount - 1) == indexPath.row
-                {
-                    foundHeader = true
-                }
+                // If there is something in the font then it is a header row, so don nothing
+                foundHeader = true
             }
+            
             if !foundHeader
             {
                 TableTypeSelection1.hidden = true
@@ -561,9 +535,9 @@ class ViewController: UIViewController {
         }
     }
     
-    func populateArrayDetails(rowID: Int, inTable: String ) -> [String]
+    func populateArrayDetails(rowID: Int, inTable: String ) -> [TableData]
     {
-        var workArray: [String] = [""]
+        var workArray: [TableData] = [TableData]()
         var dataType: String = ""
         
         // First we need to work out the type of data in the table, we get this from the button
@@ -607,11 +581,11 @@ class ViewController: UIViewController {
         switch selectedType
         {
             case "Contact":
-                workArray = parseContactDetails(contactDetails![rowID])
+                workArray = parseContactDetails(contacts[rowID].personRecord)
             case "Calendar":
-                workArray = parseCalendarDetails("Calendar",contactDetails![rowID], eventStore)
+                workArray = parseCalendarDetails("Calendar",contacts[rowID].personRecord, eventStore)
             case "Reminders":
-                workArray = parseCalendarDetails("Reminders",contactDetails![rowID], eventStore)
+                workArray = parseCalendarDetails("Reminders",contacts[rowID].personRecord, eventStore)
             
             case "Mail":
                 let a = 1
@@ -630,5 +604,45 @@ class ViewController: UIViewController {
         dataTable3.reloadData()
         dataTable4.reloadData()
     }
+    
+    func setCellFormatting (inCell: UITableViewCell, inDisplayFormat: String) -> UITableViewCell
+    {
+        inCell.textLabel!.numberOfLines = 0;
+        inCell.textLabel!.lineBreakMode = NSLineBreakMode.ByWordWrapping;
+        
+        if inDisplayFormat != ""
+        {
+            switch inDisplayFormat
+            {
+            case "Gray" :
+                inCell.textLabel!.textColor = UIColor.grayColor()
+
+            case "Red" :
+                inCell.textLabel!.textColor = UIColor.redColor()
+
+            case "Yellow" :
+                inCell.textLabel!.textColor = UIColor.yellowColor()
+
+            case "Orange" :
+                inCell.textLabel!.textColor = UIColor.orangeColor()
+
+            case "Large Bold":
+                inCell.textLabel!.font = UIFont.boldSystemFontOfSize(24.0)
+
+            default:
+                inCell.textLabel!.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
+                inCell.textLabel!.textColor = UIColor.blackColor()
+            }
+        }
+        else
+        {
+            inCell.textLabel!.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
+            inCell.textLabel!.textColor = UIColor.blackColor()
+        }
+        
+        return inCell
+        
+    }
+
 }
 

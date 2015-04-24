@@ -46,10 +46,10 @@ var contactComponentsProperty: [String: ABPropertyID] = [
 
 
 
-func parseContactDetails (contactRecord: ABRecord)-> [String]
+func parseContactDetails (contactRecord: ABRecord)-> [TableData]
 {
 
-    var tableContents:[String] = [" "]
+    var tableContents:[TableData] = [TableData]()
 
     tableContents.removeAll()
 
@@ -62,7 +62,7 @@ func parseContactDetails (contactRecord: ABRecord)-> [String]
  
 }
 
-func addToContactDetailTable (contactRecord: ABRecord, rowDescription: String, rowType: ABPropertyID, inout tableContents: [String])
+func addToContactDetailTable (contactRecord: ABRecord, rowDescription: String, rowType: ABPropertyID, inout tableContents: [TableData])
 {
     var line1:String = ""
     var line2:String = ""
