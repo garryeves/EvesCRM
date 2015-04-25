@@ -58,10 +58,6 @@ class ViewController: UIViewController {
     // store the name of the person selected in the People table
     var personSelected = ""
     var personSelectedIndex: Int = 0
-    var table1SelectedIndex: Int = 0
-    var table2SelectedIndex: Int = 0
-    var table3SelectedIndex: Int = 0
-    var table4SelectedIndex: Int = 0
     
     var adbk : ABAddressBook!
     
@@ -111,7 +107,7 @@ class ViewController: UIViewController {
         StartLabel.hidden = false
         
         peopleTable.hidden = false
-
+        
         populateContactList()
     }
 
@@ -486,32 +482,37 @@ class ViewController: UIViewController {
                 populateArraysForTables(indexPath.row, inTable: "Table4")
             
                 reloadDataTables()
+                
+                // Here is where we will set the titles for the buttons
+                
+                TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: contacts[indexPath.row].fullName), forState: .Normal)
+                TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: contacts[indexPath.row].fullName), forState: .Normal)
+                TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: contacts[indexPath.row].fullName), forState: .Normal)
+                TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: contacts[indexPath.row].fullName), forState: .Normal)
             }
         }
             
         else if tableView == dataTable1
         {
-            table1SelectedIndex = indexPath.row
-            println("Click \(table1Contents[indexPath.row])")
+            dataCellClicked(indexPath.row, inTable: "Table1", inRecord: table1Contents[indexPath.row])
         }
         else if tableView == dataTable2
         {
-            table2SelectedIndex = indexPath.row
-            println("Click \(table2Contents[indexPath.row])")
+            dataCellClicked(indexPath.row, inTable: "Table2", inRecord: table2Contents[indexPath.row])
         }
         else if tableView == dataTable3
         {
-            table3SelectedIndex = indexPath.row
-            println("Click \(table3Contents[indexPath.row])")
+            dataCellClicked(indexPath.row, inTable: "Table3", inRecord: table3Contents[indexPath.row])
         }
         else if tableView == dataTable4
         {
-            table4SelectedIndex = indexPath.row
-            println("Click \(table4Contents[indexPath.row])")
+            dataCellClicked(indexPath.row, inTable: "Table4", inRecord: table4Contents[indexPath.row])
         }
         
     }
-   
+  
+
+    
     func populateArraysForTables(rowID: Int, inTable : String)
     {
         // work out the table we are populating so we can then use this later
@@ -644,5 +645,90 @@ class ViewController: UIViewController {
         
     }
 
+    func dataCellClicked(rowID: Int, inTable: String, inRecord: TableData)
+    {
+        var dataType: String = ""
+        // First we need to work out the type of data in the table, we get this from the button
+        
+        switch inTable
+        {
+        case "Table1":
+            dataType = TableTypeButton1.currentTitle!
+
+        case "Table2":
+            dataType = TableTypeButton2.currentTitle!
+            
+        case "Table3":
+            dataType = TableTypeButton3.currentTitle!
+            
+        case "Table4":
+            dataType = TableTypeButton4.currentTitle!
+
+        default:
+            println("dataCellClicked: inTable hit default for some reason")
+            
+        }
+  
+        let start = dataType.startIndex
+        let end = find(dataType, " ")
+        
+        var selectedType: String = ""
+        
+        if end != nil
+        {
+            let myEnd = end?.predecessor()
+            selectedType = dataType[start...myEnd!]
+        }
+        else
+        { // no space found
+            selectedType = dataType
+        }
+        
+        switch selectedType
+        {
+        case "Reminders":
+           // workArray = parseCalendarDetails("Reminders",contacts[rowID].personRecord, eventStore)
+println("Reminder \(inRecord.displayText)")
+
+        default:
+            let a = 1
+        }
+    }
+    
+    func setButtonTitle(inButton: UIButton, inTitle: String) -> String
+    {
+        var workString: String = ""
+        
+        let dataType = inButton.currentTitle!
+        let start = dataType.startIndex
+        let end = find(dataType, " ")
+        
+        var selectedType: String = ""
+        
+        if end != nil
+        {
+            let myEnd = end?.predecessor()
+            selectedType = dataType[start...myEnd!]
+        }
+        else
+        { // no space found
+            selectedType = dataType
+        }
+        
+        // This is where we have the logic to work out which type of data we are goign to populate with
+        switch selectedType
+        {
+            case "Contact":
+                workString = "Contact Details"
+            
+            case "Reminders":
+                workString = "Reminders - use List '\(inTitle)'"
+            
+            default:
+                workString = inButton.currentTitle!
+        }
+        return workString
+    }
+    
 }
 

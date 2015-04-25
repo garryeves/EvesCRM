@@ -261,7 +261,7 @@ func parseReminders(contactRecord: ABRecord, inout tableContents: [TableData])
                     workingString.notes = reminder.notes!
                 }
                 workingString.priority = reminder.priority
-                
+                workingString.calendarItemIdentifier = reminder.calendarItemIdentifier
                 myDisplayStrings.append(workingString)
             }
             asyncDone = true
@@ -276,14 +276,14 @@ func parseReminders(contactRecord: ABRecord, inout tableContents: [TableData])
         }
         
         for displayString in myDisplayStrings
-        {            
+        {
             switch displayString.priority
             {
-                case 1: writeRowToArray(displayString.reminderText , &tableContents, inDisplayFormat: "Red")  //  High priority
+            case 1: writeRowToArray("Red", displayString, &tableContents)  //  High priority
                 
-                case 5: writeRowToArray(displayString.reminderText , &tableContents, inDisplayFormat: "Orange") // Medium priority
+                case 5: writeRowToArray("Orange", displayString , &tableContents) // Medium priority
                 
-                default: writeRowToArray(displayString.reminderText , &tableContents)
+                default: writeRowToArray("None:", displayString , &tableContents)
             }
         }
     }
