@@ -2,7 +2,7 @@
 //  ViewController.swift
 //  EvesCRM
 //
-//  Created by Garry Eves on 15/04/2015.
+//  Created by Garry Eves /Users/garryeves/Documents/xcode/EvesCRM/EvesCRM/reminderViewController.swifton 15/04/2015.
 //  Copyright (c) 2015 Garry Eves. All rights reserved.
 //
 
@@ -13,7 +13,7 @@ import EventKit
 private let CONTACT_CELL_IDENTIFER = "contactNameCell"
 private let dataTable1_CELL_IDENTIFER = "dataTable1Cell"
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, MyReminderDelegate {
 
     @IBOutlet weak var peopleTable: UITableView!
     
@@ -36,13 +36,13 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var setSelectionButton: UIButton!
     
-    var TableOptions = ["Contact Details", "Calendar", "Omnifocus", "Evernote", "Mail", "Twitter", "Facebook", "LinkedIn", "Reminders"]
+    var TableOptions = ["Details", "Calendar", "Omnifocus", "Evernote", "Mail", "Twitter", "Facebook", "LinkedIn", "Reminders"]
     
     // Store the tag number of the button pressed so that we can make sure we update the correct button text and table
     var callingTable = 0
     
     // Default for the table type selected
-    var itemSelected = "Contact Details"
+    var itemSelected = "Details"
     
     // Define array to hold the contact names
     
@@ -62,6 +62,12 @@ class ViewController: UIViewController {
     var adbk : ABAddressBook!
     
     var eventStore: EKEventStore!
+    
+    // Do not like this workaround, but is best way I can find to store for rebuilding tables
+    
+    var reBuildTableName: String = ""
+    var reBuildTableIndex: Int = 0
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -503,6 +509,7 @@ class ViewController: UIViewController {
         else if tableView == dataTable3
         {
             dataCellClicked(indexPath.row, inTable: "Table3", inRecord: table3Contents[indexPath.row])
+//GRE            self.performSegueWithIdentifier("Table3" , sender: indexPath)
         }
         else if tableView == dataTable4
         {
@@ -581,7 +588,7 @@ class ViewController: UIViewController {
         // This is where we have the logic to work out which type of data we are goign to populate with
         switch selectedType
         {
-            case "Contact":
+            case "Details":
                 workArray = parseContactDetails(contacts[rowID].personRecord)
             case "Calendar":
                 workArray = parseCalendarDetails("Calendar",contacts[rowID].personRecord, eventStore)
@@ -688,8 +695,12 @@ class ViewController: UIViewController {
         {
         case "Reminders":
            // workArray = parseCalendarDetails("Reminders",contacts[rowID].personRecord, eventStore)
-println("Reminder \(inRecord.displayText)")
 
+            reBuildTableIndex = rowID
+            reBuildTableName = inTable
+            
+openReminderEditView(inRecord.calendarItemIdentifier)
+            
         default:
             let a = 1
         }
@@ -718,9 +729,6 @@ println("Reminder \(inRecord.displayText)")
         // This is where we have the logic to work out which type of data we are goign to populate with
         switch selectedType
         {
-            case "Contact":
-                workString = "Contact Details"
-            
             case "Reminders":
                 workString = "Reminders - use List '\(inTitle)'"
             
@@ -729,6 +737,42 @@ println("Reminder \(inRecord.displayText)")
         }
         return workString
     }
+
+    func returnFromSecondaryView(inTable: String, inRowID: Int)
+    {
+        populateArrayDetails(inRowID, inTable: inTable)
+        println("rebuilding tables")
+        reloadDataTables()
+    }
+
     
+    func openReminderEditView(inReminderID: String)
+    {
+
+        let reminderViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("Reminders") as! reminderViewController
+        
+        reminderViewControl.inAction = "Edit"
+        reminderViewControl.inReminderID = inReminderID
+        reminderViewControl.delegate = self
+        
+        self.presentViewController(reminderViewControl, animated: true, completion: nil)
+    }
+    
+    func myReminderDidFinish(controller:reminderViewController, actionType: String)
+    {
+        if actionType != "Cancel"
+        {
+            populateArraysForTables(reBuildTableIndex, inTable: reBuildTableName)
+            reloadDataTables()
+    println("reloaded")
+        }
+        else
+        {
+    println("Cancelled")
+        }
+        controller.dismissViewControllerAnimated(true, completion: nil)
+    }
+
+
 }
 

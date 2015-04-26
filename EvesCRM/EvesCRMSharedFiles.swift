@@ -218,4 +218,3 @@ func writeRowToArray(inDisplayText: String, inout inTable: [TableData], inDispla
         
     inTable.append(myDisplay)
 }
-

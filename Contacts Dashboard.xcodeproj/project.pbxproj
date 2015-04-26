@@ -16,6 +16,8 @@
 		340650841ADDF8FF00C90CBB /* EvesCRMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340650831ADDF8FF00C90CBB /* EvesCRMTests.swift */; };
 		3406508F1ADDF93600C90CBB /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3406508D1ADDF93600C90CBB /* AddressBook.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		340650901ADDF93600C90CBB /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3406508E1ADDF93600C90CBB /* AddressBookUI.framework */; };
+		34111C3A1AEC898B003090EB /* reminderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34111C391AEC898B003090EB /* reminderViewController.swift */; };
+		341DD2371AECA9FF001DCF65 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 340650711ADDF8FF00C90CBB /* Main.storyboard */; };
 		346D5E021AE5F9C700F858E7 /* CalendarDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346D5E011AE5F9C700F858E7 /* CalendarDetails.swift */; };
 		346D5E031AE5F9C700F858E7 /* CalendarDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346D5E011AE5F9C700F858E7 /* CalendarDetails.swift */; };
 		347518D91AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347518D81AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift */; };
@@ -48,6 +50,7 @@
 		340650831ADDF8FF00C90CBB /* EvesCRMTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvesCRMTests.swift; sourceTree = "<group>"; };
 		3406508D1ADDF93600C90CBB /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		3406508E1ADDF93600C90CBB /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
+		34111C391AEC898B003090EB /* reminderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = reminderViewController.swift; sourceTree = "<group>"; };
 		346D5E011AE5F9C700F858E7 /* CalendarDetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarDetails.swift; sourceTree = "<group>"; };
 		347518D81AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EvesCRMSharedFiles.swift; sourceTree = "<group>"; };
 		348E6D4A1ADF74C800697268 /* ContactDetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactDetails.swift; sourceTree = "<group>"; };
@@ -106,6 +109,7 @@
 				348E6D4A1ADF74C800697268 /* ContactDetails.swift */,
 				347518D81AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift */,
 				346D5E011AE5F9C700F858E7 /* CalendarDetails.swift */,
+				34111C391AEC898B003090EB /* reminderViewController.swift */,
 			);
 			path = EvesCRM;
 			sourceTree = "<group>";
@@ -226,6 +230,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				341DD2371AECA9FF001DCF65 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -237,6 +242,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				346D5E021AE5F9C700F858E7 /* CalendarDetails.swift in Sources */,
+				34111C3A1AEC898B003090EB /* reminderViewController.swift in Sources */,
 				347518D91AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift in Sources */,
 				340650701ADDF8FF00C90CBB /* ViewController.swift in Sources */,
 				348E6D4B1ADF74C800697268 /* ContactDetails.swift in Sources */,
