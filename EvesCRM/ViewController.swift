@@ -760,15 +760,12 @@ openReminderEditView(inRecord.calendarItemIdentifier)
     
     func myReminderDidFinish(controller:reminderViewController, actionType: String)
     {
-        if actionType != "Cancel"
+        if actionType == "Changed"
         {
             populateArraysForTables(reBuildTableIndex, inTable: reBuildTableName)
             reloadDataTables()
-    println("reloaded")
-        }
-        else
-        {
-    println("Cancelled")
+            println("reloaded")
+
         }
         controller.dismissViewControllerAnimated(true, completion: nil)
     }
