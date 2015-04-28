@@ -25,7 +25,12 @@ class ViewController: UIViewController, MyReminderDelegate {
     @IBOutlet weak var TableTypeButton3: UIButton!
     @IBOutlet weak var TableTypeButton4: UIButton!
     
+
+    @IBOutlet weak var buttonAdd3: UIButton!
     
+    @IBOutlet weak var buttonAdd4: UIButton!
+    @IBOutlet weak var buttonAdd2: UIButton!
+    @IBOutlet weak var buttonAdd1: UIButton!
     // Setup data tables for initial values
     @IBOutlet weak var dataTable1: UITableView!
     @IBOutlet weak var dataTable2: UITableView!
@@ -66,8 +71,6 @@ class ViewController: UIViewController, MyReminderDelegate {
     // Do not like this workaround, but is best way I can find to store for rebuilding tables
     
     var reBuildTableName: String = ""
-    var reBuildTableIndex: Int = 0
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -113,7 +116,11 @@ class ViewController: UIViewController, MyReminderDelegate {
         StartLabel.hidden = false
         
         peopleTable.hidden = false
-        
+        buttonAdd1.hidden = true
+        buttonAdd2.hidden = true
+        buttonAdd3.hidden = true
+        buttonAdd4.hidden = true
+
         populateContactList()
     }
 
@@ -162,7 +169,6 @@ class ViewController: UIViewController, MyReminderDelegate {
         StartLabel.hidden = true
         
         peopleTable.hidden = true
-    
     }
 
     @IBAction func setSelectionButtonTouchUp(sender: UIButton) {
@@ -175,18 +181,18 @@ class ViewController: UIViewController, MyReminderDelegate {
         {
             switch callingTable
             {
-            case 1: TableTypeButton1.setTitle(itemSelected, forState: .Normal )
+                case 1: TableTypeButton1.setTitle(itemSelected, forState: .Normal )
             
-            case 2: TableTypeButton2.setTitle(itemSelected, forState: .Normal )
+                case 2: TableTypeButton2.setTitle(itemSelected, forState: .Normal )
             
-            case 3: TableTypeButton3.setTitle(itemSelected, forState: .Normal )
+                case 3: TableTypeButton3.setTitle(itemSelected, forState: .Normal )
             
-            case 4: TableTypeButton4.setTitle(itemSelected, forState: .Normal )
+                case 4: TableTypeButton4.setTitle(itemSelected, forState: .Normal )
             
-            default: break
+                default: break
             
             }
-
+            
             TableTypeSelection1.hidden = true
             setSelectionButton.hidden = true
             TableTypeButton1.hidden = false
@@ -199,7 +205,9 @@ class ViewController: UIViewController, MyReminderDelegate {
             dataTable3.hidden = false
             dataTable4.hidden = false
             StartLabel.hidden = true
-            
+
+            setAddButtonState(callingTable, inTitle: itemSelected)
+
             populateArraysForTables(personSelectedIndex, inTable: "Table1")
             populateArraysForTables(personSelectedIndex, inTable: "Table2")
             populateArraysForTables(personSelectedIndex, inTable: "Table3")
@@ -509,7 +517,6 @@ class ViewController: UIViewController, MyReminderDelegate {
         else if tableView == dataTable3
         {
             dataCellClicked(indexPath.row, inTable: "Table3", inRecord: table3Contents[indexPath.row])
-//GRE            self.performSegueWithIdentifier("Table3" , sender: indexPath)
         }
         else if tableView == dataTable4
         {
@@ -518,10 +525,9 @@ class ViewController: UIViewController, MyReminderDelegate {
         
     }
   
-
-    
     func populateArraysForTables(rowID: Int, inTable : String)
     {
+        
         // work out the table we are populating so we can then use this later
         switch inTable
         {
@@ -570,21 +576,7 @@ class ViewController: UIViewController, MyReminderDelegate {
             
         }
         
-        let start = dataType.startIndex
-        let end = find(dataType, " ")
-        
-        var selectedType: String = ""
-        
-        if end != nil
-        {
-            let myEnd = end?.predecessor()
-            selectedType = dataType[start...myEnd!]
-        }
-        else
-        { // no space found
-            selectedType = dataType
-        }
-        
+        var selectedType: String = getFirstPartofString(dataType)
         // This is where we have the logic to work out which type of data we are goign to populate with
         switch selectedType
         {
@@ -656,53 +648,62 @@ class ViewController: UIViewController, MyReminderDelegate {
     {
         var dataType: String = ""
         // First we need to work out the type of data in the table, we get this from the button
+
+        // Also depending on which table is clicked, we now need to do a check to make sure the row clicked is a valid task row.  If not then no need to try and edit it
+
+
+        var myTaskFound = true
         
         switch inTable
         {
-        case "Table1":
-            dataType = TableTypeButton1.currentTitle!
+            case "Table1":
+                dataType = TableTypeButton1.currentTitle!
+                if table1Contents[rowID].displayText == "No reminders list found"
+                {
+                    myTaskFound = false
+                }
 
-        case "Table2":
-            dataType = TableTypeButton2.currentTitle!
+            case "Table2":
+                dataType = TableTypeButton2.currentTitle!
+                if table2Contents[rowID].displayText == "No reminders list found"
+                {
+                    myTaskFound = false
+            }
             
-        case "Table3":
-            dataType = TableTypeButton3.currentTitle!
+            case "Table3":
+                dataType = TableTypeButton3.currentTitle!
+                if table3Contents[rowID].displayText == "No reminders list found"
+                {
+                    myTaskFound = false
+            }
             
-        case "Table4":
-            dataType = TableTypeButton4.currentTitle!
+            case "Table4":
+                dataType = TableTypeButton4.currentTitle!
+                if table4Contents[rowID].displayText == "No reminders list found"
+                {
+                    myTaskFound = false
+            }
 
-        default:
-            println("dataCellClicked: inTable hit default for some reason")
+            default:
+                println("dataCellClicked: inTable hit default for some reason")
             
         }
   
-        let start = dataType.startIndex
-        let end = find(dataType, " ")
-        
-        var selectedType: String = ""
-        
-        if end != nil
+        if myTaskFound
         {
-            let myEnd = end?.predecessor()
-            selectedType = dataType[start...myEnd!]
-        }
-        else
-        { // no space found
-            selectedType = dataType
-        }
-        
-        switch selectedType
-        {
-        case "Reminders":
-           // workArray = parseCalendarDetails("Reminders",contacts[rowID].personRecord, eventStore)
+            var selectedType: String = getFirstPartofString(dataType)
 
-            reBuildTableIndex = rowID
-            reBuildTableName = inTable
+            switch selectedType
+            {
+                case "Reminders":
+                
+                    reBuildTableName = inTable
             
-openReminderEditView(inRecord.calendarItemIdentifier)
+                    openReminderEditView(inRecord.calendarItemIdentifier, inCalendarName: contacts[personSelectedIndex].fullName)
             
-        default:
-            let a = 1
+            default:
+                let a = 1
+            }
         }
     }
     
@@ -711,20 +712,8 @@ openReminderEditView(inRecord.calendarItemIdentifier)
         var workString: String = ""
         
         let dataType = inButton.currentTitle!
-        let start = dataType.startIndex
-        let end = find(dataType, " ")
         
-        var selectedType: String = ""
-        
-        if end != nil
-        {
-            let myEnd = end?.predecessor()
-            selectedType = dataType[start...myEnd!]
-        }
-        else
-        { // no space found
-            selectedType = dataType
-        }
+        var selectedType: String = getFirstPartofString(dataType)
         
         // This is where we have the logic to work out which type of data we are goign to populate with
         switch selectedType
@@ -735,18 +724,20 @@ openReminderEditView(inRecord.calendarItemIdentifier)
             default:
                 workString = inButton.currentTitle!
         }
+        
+        setAddButtonState(inButton.tag, inTitle: workString)
+        
         return workString
     }
 
     func returnFromSecondaryView(inTable: String, inRowID: Int)
     {
         populateArrayDetails(inRowID, inTable: inTable)
-        println("rebuilding tables")
         reloadDataTables()
     }
 
     
-    func openReminderEditView(inReminderID: String)
+    func openReminderEditView(inReminderID: String, inCalendarName: String)
     {
 
         let reminderViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("Reminders") as! reminderViewController
@@ -754,22 +745,133 @@ openReminderEditView(inRecord.calendarItemIdentifier)
         reminderViewControl.inAction = "Edit"
         reminderViewControl.inReminderID = inReminderID
         reminderViewControl.delegate = self
+        reminderViewControl.inCalendarName = inCalendarName
         
         self.presentViewController(reminderViewControl, animated: true, completion: nil)
     }
+    
+    
+    func openReminderAddView(inCalendarName: String)
+    {
+        
+        let reminderViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("Reminders") as! reminderViewController
+        
+        reminderViewControl.inAction = "Add"
+        reminderViewControl.delegate = self
+        reminderViewControl.inCalendarName = inCalendarName
+        
+        self.presentViewController(reminderViewControl, animated: true, completion: nil)
+    }
+
     
     func myReminderDidFinish(controller:reminderViewController, actionType: String)
     {
         if actionType == "Changed"
         {
-            populateArraysForTables(reBuildTableIndex, inTable: reBuildTableName)
+            populateArraysForTables(personSelectedIndex, inTable: reBuildTableName)
             reloadDataTables()
-            println("reloaded")
-
         }
         controller.dismissViewControllerAnimated(true, completion: nil)
     }
+    
+    @IBAction func buttonAddClicked(sender: UIButton) {
+        var dataType: String = ""
+        
+        // First we need to work out the type of data in the table, we get this from the button
+        
+        // Also depending on which table is clicked, we now need to do a check to make sure the row clicked is a valid task row.  If not then no need to try and edit it
+        
+        switch sender.tag
+        {
+        case 1:
+            dataType = TableTypeButton1.currentTitle!
+            reBuildTableName = "Table1"
+            
+        case 2:
+            dataType = TableTypeButton2.currentTitle!
+            reBuildTableName = "Table2"
+            
+        case 3:
+            dataType = TableTypeButton3.currentTitle!
+            reBuildTableName = "Table3"
+            
+        case 4:
+            dataType = TableTypeButton4.currentTitle!
+            reBuildTableName = "Table4"
+            
+        default:
+            println("btnAddClicked: tag hit default for some reason")
+            
+        }
+        
+        var selectedType: String = getFirstPartofString(dataType)
+        
+        switch selectedType
+        {
+        case "Reminders":
+            
+            openReminderAddView(contacts[personSelectedIndex].fullName)
+            
+        default:
+            let a = 1
+        }
 
+    }
+    
+    func setAddButtonState(inTable: Int, inTitle: String)
+    {
+        // Hide all of the buttons
+        // Decide which buttons to show
+        
+        var selectedType: String = getFirstPartofString(inTitle)
 
+        switch inTable
+        {
+            case 1:
+                switch selectedType
+                {
+                case "Reminders":
+                    buttonAdd1.hidden = false
+                
+                default:
+                    buttonAdd1.hidden = true
+                }
+
+            case 2:
+                switch selectedType
+                {
+                    case "Reminders":
+                        buttonAdd2.hidden = false
+                
+                    default:
+                        buttonAdd2.hidden = true
+                }
+            
+            case 3:
+                switch selectedType
+                {
+                case "Reminders":
+                    buttonAdd3.hidden = false
+                
+                default:
+                    buttonAdd3.hidden = true
+
+                }
+            
+            case 4:
+                switch selectedType
+                {
+                    case "Reminders":
+                        buttonAdd4.hidden = false
+                
+                    default:
+                        buttonAdd4.hidden = true
+                }
+            
+            default: break
+
+        }
+    }
+    
 }
 

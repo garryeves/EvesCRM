@@ -218,3 +218,23 @@ func writeRowToArray(inDisplayText: String, inout inTable: [TableData], inDispla
         
     inTable.append(myDisplay)
 }
+
+func getFirstPartofString(inText: String) -> String
+{
+    let start = inText.startIndex
+    let end = find(inText, " ")
+    
+    var selectedType: String = ""
+    
+    if end != nil
+    {
+        let myEnd = end?.predecessor()
+        selectedType = inText[start...myEnd!]
+    }
+    else
+    { // no space found
+        selectedType = inText
+    }
+    return selectedType
+}
+
