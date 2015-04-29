@@ -11,40 +11,6 @@
 import Foundation
 import AddressBook
 
-var contactComponentsProperty: [String: ABPropertyID] = [
-    "Prefix":
-    kABPersonPrefixProperty,
-    "Suffix":
-    kABPersonSuffixProperty,
-    "Nickname":
-    kABPersonNicknameProperty,
-    "Organisation":
-    kABPersonOrganizationProperty,
-    "Job Title":
-    kABPersonJobTitleProperty,
-    "Dept":
-    kABPersonDepartmentProperty,
-    "Email":
-    kABPersonEmailProperty,
-    "Birthday":
-    kABPersonBirthdayProperty,
-    "Note":
-    kABPersonNoteProperty,
-    "Address Prop":
-    kABPersonAddressProperty,
-    "DOB":
-    kABPersonDateProperty,
-    "Phone":
-    kABPersonPhoneProperty,
-    "IM":
-    kABPersonInstantMessageProperty,
-    "Social Media":
-    kABPersonSocialProfileProperty,
-    "Home Page":
-    kABPersonURLProperty
-]
-
-
 
 func parseContactDetails (contactRecord: ABRecord)-> [TableData]
 {
@@ -53,13 +19,22 @@ func parseContactDetails (contactRecord: ABRecord)-> [TableData]
 
     tableContents.removeAll()
 
-    for (itemDescription, itemKey) in contactComponentsProperty
-    {
-        addToContactDetailTable (contactRecord, itemDescription, itemKey, &tableContents)
-    }
+    addToContactDetailTable (contactRecord, "Name", kABPersonFirstNameProperty, &tableContents)
+    addToContactDetailTable (contactRecord, "Address", kABPersonAddressProperty, &tableContents)
+    addToContactDetailTable (contactRecord, "Organisation", kABPersonOrganizationProperty, &tableContents)
+    addToContactDetailTable (contactRecord, "Job Title", kABPersonJobTitleProperty, &tableContents)
+    addToContactDetailTable (contactRecord, "Dept", kABPersonDepartmentProperty, &tableContents)
+    addToContactDetailTable (contactRecord, "Phone", kABPersonPhoneProperty, &tableContents)
+    addToContactDetailTable (contactRecord, "Email", kABPersonEmailProperty, &tableContents)
+    addToContactDetailTable (contactRecord, "Note", kABPersonNoteProperty, &tableContents)
+    addToContactDetailTable (contactRecord, "DOB", kABPersonDateProperty, &tableContents)
+    addToContactDetailTable (contactRecord, "IM", kABPersonInstantMessageProperty, &tableContents)
+    addToContactDetailTable (contactRecord, "Social Media", kABPersonSocialProfileProperty, &tableContents)
+    addToContactDetailTable (contactRecord, "Home Page", kABPersonURLProperty, &tableContents)
+    addToContactDetailTable (contactRecord, "Birthday", kABPersonBirthdayProperty, &tableContents)
+    addToContactDetailTable (contactRecord, "Nickname", kABPersonNicknameProperty, &tableContents)
     
     return tableContents
- 
 }
 
 func addToContactDetailTable (contactRecord: ABRecord, rowDescription: String, rowType: ABPropertyID, inout tableContents: [TableData])
@@ -370,6 +345,37 @@ func addToContactDetailTable (contactRecord: ABRecord, rowDescription: String, r
                 
             writeRowToArray("Birthday = " + dateString, &tableContents)
         }
+        
+    case kABPersonFirstNameProperty:
+        
+        
+        let prefix = ABRecordCopyValue(contactRecord, kABPersonPrefixProperty)
+        let firstName = ABRecordCopyValue(contactRecord, kABPersonFirstNameProperty)
+        let lastName = ABRecordCopyValue(contactRecord, kABPersonLastNameProperty)
+        let suffix = ABRecordCopyValue(contactRecord, kABPersonSuffixProperty)
+        
+        var fullname: String = ""
+        
+//        if prefix.takeRetainedValue().length > 0
+        if prefix != nil
+        {
+            fullname += prefix.takeRetainedValue() as! String
+            fullname += " "
+        }
+        
+        fullname += firstName.takeRetainedValue() as! String
+        fullname += " "
+        fullname += lastName.takeRetainedValue() as! String
+
+   //     if suffix.takeRetainedValue().length > 0
+        if suffix != nil
+        {
+            fullname += " "
+            fullname += suffix.takeRetainedValue() as! String
+        }
+        
+        writeRowToArray(rowDescription + ": " + fullname, &tableContents)
+        
     
     default:        if  ABRecordCopyValue(contactRecord, rowType) == nil
                     {

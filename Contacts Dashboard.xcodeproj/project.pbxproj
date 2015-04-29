@@ -18,12 +18,16 @@
 		340650901ADDF93600C90CBB /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3406508E1ADDF93600C90CBB /* AddressBookUI.framework */; };
 		34111C3A1AEC898B003090EB /* reminderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34111C391AEC898B003090EB /* reminderViewController.swift */; };
 		341DD2371AECA9FF001DCF65 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 340650711ADDF8FF00C90CBB /* Main.storyboard */; };
+		345E027F1AEF714800BE8D0A /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 345E027E1AEF714800BE8D0A /* Social.framework */; };
+		345E02811AEF715700BE8D0A /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 345E02801AEF715700BE8D0A /* MessageUI.framework */; };
+		345E02831AEF71CF00BE8D0A /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 345E02821AEF71CF00BE8D0A /* Accounts.framework */; };
 		346D5E021AE5F9C700F858E7 /* CalendarDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346D5E011AE5F9C700F858E7 /* CalendarDetails.swift */; };
 		346D5E031AE5F9C700F858E7 /* CalendarDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346D5E011AE5F9C700F858E7 /* CalendarDetails.swift */; };
 		347518D91AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347518D81AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift */; };
 		347518DC1AE3635100FF1C46 /* EvesCRMSharedFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347518D81AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift */; };
 		348E6D4B1ADF74C800697268 /* ContactDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348E6D4A1ADF74C800697268 /* ContactDetails.swift */; };
 		348E6D4C1ADF74C800697268 /* ContactDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348E6D4A1ADF74C800697268 /* ContactDetails.swift */; };
+		34B3BDA01AF0979E00C5B09D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406506F1ADDF8FF00C90CBB /* ViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +55,9 @@
 		3406508D1ADDF93600C90CBB /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		3406508E1ADDF93600C90CBB /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		34111C391AEC898B003090EB /* reminderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = reminderViewController.swift; sourceTree = "<group>"; };
+		345E027E1AEF714800BE8D0A /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
+		345E02801AEF715700BE8D0A /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
+		345E02821AEF71CF00BE8D0A /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		346D5E011AE5F9C700F858E7 /* CalendarDetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarDetails.swift; sourceTree = "<group>"; };
 		347518D81AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EvesCRMSharedFiles.swift; sourceTree = "<group>"; };
 		348E6D4A1ADF74C800697268 /* ContactDetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactDetails.swift; sourceTree = "<group>"; };
@@ -61,6 +68,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				345E02831AEF71CF00BE8D0A /* Accounts.framework in Frameworks */,
+				345E02811AEF715700BE8D0A /* MessageUI.framework in Frameworks */,
+				345E027F1AEF714800BE8D0A /* Social.framework in Frameworks */,
 				3406508F1ADDF93600C90CBB /* AddressBook.framework in Frameworks */,
 				340650901ADDF93600C90CBB /* AddressBookUI.framework in Frameworks */,
 			);
@@ -79,6 +89,9 @@
 		3406505C1ADDF8FF00C90CBB = {
 			isa = PBXGroup;
 			children = (
+				345E02821AEF71CF00BE8D0A /* Accounts.framework */,
+				345E02801AEF715700BE8D0A /* MessageUI.framework */,
+				345E027E1AEF714800BE8D0A /* Social.framework */,
 				3406508D1ADDF93600C90CBB /* AddressBook.framework */,
 				3406508E1ADDF93600C90CBB /* AddressBookUI.framework */,
 				340650671ADDF8FF00C90CBB /* EvesCRM */,
@@ -255,6 +268,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34B3BDA01AF0979E00C5B09D /* ViewController.swift in Sources */,
 				346D5E031AE5F9C700F858E7 /* CalendarDetails.swift in Sources */,
 				347518DC1AE3635100FF1C46 /* EvesCRMSharedFiles.swift in Sources */,
 				340650841ADDF8FF00C90CBB /* EvesCRMTests.swift in Sources */,
@@ -383,7 +397,7 @@
 				INFOPLIST_FILE = EvesCRM/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Debug;
 		};
@@ -395,7 +409,7 @@
 				INFOPLIST_FILE = EvesCRM/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Release;
 		};
@@ -414,6 +428,7 @@
 				INFOPLIST_FILE = EvesCRMTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/EvesCRM.app/EvesCRM";
 			};
 			name = Debug;
@@ -429,6 +444,7 @@
 				INFOPLIST_FILE = EvesCRMTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/EvesCRM.app/EvesCRM";
 			};
 			name = Release;

@@ -8,14 +8,15 @@
 
 import UIKit
 import AddressBook
+import AddressBookUI
 import EventKit
+
+// PeoplePicker code
 
 private let CONTACT_CELL_IDENTIFER = "contactNameCell"
 private let dataTable1_CELL_IDENTIFER = "dataTable1Cell"
 
-class ViewController: UIViewController, MyReminderDelegate {
-
-    @IBOutlet weak var peopleTable: UITableView!
+class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate {
     
     @IBOutlet weak var TableTypeSelection1: UIPickerView!
     
@@ -41,6 +42,7 @@ class ViewController: UIViewController, MyReminderDelegate {
     
     @IBOutlet weak var setSelectionButton: UIButton!
     
+    @IBOutlet weak var peoplePickerButton: UIButton!
     var TableOptions = ["Details", "Calendar", "Omnifocus", "Evernote", "Mail", "Twitter", "Facebook", "LinkedIn", "Reminders"]
     
     // Store the tag number of the button pressed so that we can make sure we update the correct button text and table
@@ -48,10 +50,6 @@ class ViewController: UIViewController, MyReminderDelegate {
     
     // Default for the table type selected
     var itemSelected = "Details"
-    
-    // Define array to hold the contact names
-    
-    var contacts:[PeopleData] = [PeopleData]()
     
     // define arrasy to store the table displays
     
@@ -61,8 +59,7 @@ class ViewController: UIViewController, MyReminderDelegate {
     var table4Contents:[TableData] = [TableData]()
     
     // store the name of the person selected in the People table
-    var personSelected = ""
-    var personSelectedIndex: Int = 0
+    var personSelected: ABRecord!
     
     var adbk : ABAddressBook!
     
@@ -71,6 +68,8 @@ class ViewController: UIViewController, MyReminderDelegate {
     // Do not like this workaround, but is best way I can find to store for rebuilding tables
     
     var reBuildTableName: String = ""
+    
+    // Peoplepicker settings
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -97,7 +96,6 @@ class ViewController: UIViewController, MyReminderDelegate {
         }
 
        // Initial population of contact list
-        self.peopleTable.registerClass(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
         self.dataTable1.registerClass(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
         self.dataTable2.registerClass(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
         self.dataTable3.registerClass(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
@@ -115,13 +113,19 @@ class ViewController: UIViewController, MyReminderDelegate {
         dataTable4.hidden = true
         StartLabel.hidden = false
         
-        peopleTable.hidden = false
         buttonAdd1.hidden = true
         buttonAdd2.hidden = true
         buttonAdd3.hidden = true
         buttonAdd4.hidden = true
 
         populateContactList()
+        
+        let picker = ABPeoplePickerNavigationController()
+        
+        picker.peoplePickerDelegate = self
+        presentViewController(picker, animated: true, completion: nil)
+        
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -129,7 +133,6 @@ class ViewController: UIViewController, MyReminderDelegate {
         // Dispose of any resources that can be recreated.
     }
     
-
 
     func numberOfComponentsInPickerView(TableTypeSelection1: UIPickerView) -> Int {
         return 1
@@ -167,8 +170,6 @@ class ViewController: UIViewController, MyReminderDelegate {
         dataTable3.hidden = true
         dataTable4.hidden = true
         StartLabel.hidden = true
-        
-        peopleTable.hidden = true
     }
 
     @IBAction func setSelectionButtonTouchUp(sender: UIButton) {
@@ -199,7 +200,6 @@ class ViewController: UIViewController, MyReminderDelegate {
             TableTypeButton2.hidden = false
             TableTypeButton3.hidden = false
             TableTypeButton4.hidden = false
-            peopleTable.hidden = false
             dataTable1.hidden = false
             dataTable2.hidden = false
             dataTable3.hidden = false
@@ -208,10 +208,10 @@ class ViewController: UIViewController, MyReminderDelegate {
 
             setAddButtonState(callingTable, inTitle: itemSelected)
 
-            populateArraysForTables(personSelectedIndex, inTable: "Table1")
-            populateArraysForTables(personSelectedIndex, inTable: "Table2")
-            populateArraysForTables(personSelectedIndex, inTable: "Table3")
-            populateArraysForTables(personSelectedIndex, inTable: "Table4")
+            populateArraysForTables("Table1")
+            populateArraysForTables("Table2")
+            populateArraysForTables("Table3")
+            populateArraysForTables("Table4")
             
             reloadDataTables()
             
@@ -263,54 +263,6 @@ class ViewController: UIViewController, MyReminderDelegate {
         }
     }
     
-    func getContactNames()
-    {
-        var errorRef: Unmanaged<CFError>?
-        
-        contacts=Array()
-        
-        var addressBook: ABAddressBookRef! = extractABAddressBookRef(ABAddressBookCreateWithOptions(nil, &errorRef))
-
-        var sources: NSArray = ABAddressBookCopyArrayOfAllSources(addressBook).takeRetainedValue()
-        
-        for source in sources
-        {
-            var dummyTitle: String = ""
-            
-            if ABRecordCopyValue(source, kABSourceNameProperty) != nil
-            {
-                dummyTitle = (ABRecordCopyValue(source, kABSourceNameProperty).takeRetainedValue() as! String)
-            }
-            
-            switch dummyTitle
-            {
-                case "Card" : dummyTitle = "iCloud"
-                
-                case "Address Book" : dummyTitle = "Google"
-                
-                default : dummyTitle = "Unknown"
-            }
-
-            let dummyRecord: ABRecordRef = "Title" as ABRecordRef
-
-            var myRecord: PeopleData = PeopleData(fullName: dummyTitle, inRecord: dummyRecord)
-            myRecord.displaySpecialFormat = "Large Bold"
-            
-            contacts.append(myRecord)
-
-            var contactList = ABAddressBookCopyArrayOfAllPeopleInSourceWithSortOrdering(addressBook, source, ABPersonSortOrdering(kABPersonSortByLastName)).takeRetainedValue() as [ABRecordRef]
-            
-            
-            for record:ABRecordRef in contactList {
-                var contactName: String = ABRecordCopyCompositeName(record).takeRetainedValue() as String
-
-                myRecord = PeopleData(fullName: contactName, inRecord: record)
-
-                contacts.append(myRecord)
-            }
-        }
-    }
-
     func extractABAddressBookRef(abRef: Unmanaged<ABAddressBookRef>!) -> ABAddressBookRef? {
         if let ab = abRef {
             return Unmanaged<NSObject>.fromOpaque(ab.toOpaque()).takeUnretainedValue()
@@ -322,9 +274,6 @@ class ViewController: UIViewController, MyReminderDelegate {
     {
         createAddressBook()
         determineStatus()
-        getContactNames()
-        
-        peopleTable.reloadData()
     }
 
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
@@ -332,16 +281,6 @@ class ViewController: UIViewController, MyReminderDelegate {
 
         var retVal: CGFloat = 0.0
     
-        
-        if (tableView == peopleTable)
-        {
-            let cell = peopleTable.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
-            
-            let titleText = contacts[indexPath.row].fullName
-            let titleRect = titleText.boundingRectWithSize(CGSizeMake(self.view.frame.size.width - 64, 128), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: nil, context: nil)
-            
-            retVal = titleRect.height
-        }
         if (tableView == dataTable1)
         {
             let cell = dataTable1.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
@@ -382,11 +321,8 @@ class ViewController: UIViewController, MyReminderDelegate {
     {
         
         var retVal: Int = 0
-        if (tableView == peopleTable)
-        {
-            retVal = self.contacts.count ?? 0
-        }
-        else if (tableView == dataTable1)
+        
+        if (tableView == dataTable1)
         {
             retVal = self.table1Contents.count ?? 0
         }
@@ -408,16 +344,7 @@ class ViewController: UIViewController, MyReminderDelegate {
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
-        if (tableView == peopleTable)
-        {
-            let cell = peopleTable.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
-            
-            // check to see if we are a header row, as if so need to change the font details
-
-            cell.textLabel!.text = contacts[indexPath.row].fullName
-            return setCellFormatting(cell, inDisplayFormat: contacts[indexPath.row].displaySpecialFormat)
-        }
-        else if (tableView == dataTable1)
+        if (tableView == dataTable1)
         {
             let cell = dataTable1.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
             cell.textLabel!.text = table1Contents[indexPath.row].displayText
@@ -448,65 +375,14 @@ class ViewController: UIViewController, MyReminderDelegate {
         else
         {
             // Dummy statements to allow use of else
-            let cell = peopleTable.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
-            cell.textLabel!.numberOfLines = 0;
-            cell.textLabel!.lineBreakMode = NSLineBreakMode.ByWordWrapping;
+            let cell = dataTable3.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
             return cell
         }
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
 
-  
-        if (tableView == peopleTable)
-        {
-            //  Here we are checking to seeif a Header row was clicked, so we do not try and populate details for a Header
-            var foundHeader = false
-
-            if contacts[indexPath.row].displaySpecialFormat != ""
-            {
-                // If there is something in the font then it is a header row, so don nothing
-                foundHeader = true
-            }
-            
-            if !foundHeader
-            {
-                TableTypeSelection1.hidden = true
-                setSelectionButton.hidden = true
-                TableTypeButton1.hidden = false
-                TableTypeButton2.hidden = false
-                TableTypeButton3.hidden = false
-                TableTypeButton4.hidden = false
-                dataTable1.hidden = false
-                dataTable2.hidden = false
-                dataTable3.hidden = false
-                dataTable4.hidden = false
-                StartLabel.hidden = true
-            
-                personSelectedIndex = indexPath.row
-            
-                table1Contents = Array()
-                table2Contents = Array()
-                table3Contents = Array()
-                table4Contents = Array()
-            
-                populateArraysForTables(indexPath.row, inTable: "Table1")
-                populateArraysForTables(indexPath.row, inTable: "Table2")
-                populateArraysForTables(indexPath.row, inTable: "Table3")
-                populateArraysForTables(indexPath.row, inTable: "Table4")
-            
-                reloadDataTables()
-                
-                // Here is where we will set the titles for the buttons
-                
-                TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: contacts[indexPath.row].fullName), forState: .Normal)
-                TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: contacts[indexPath.row].fullName), forState: .Normal)
-                TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: contacts[indexPath.row].fullName), forState: .Normal)
-                TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: contacts[indexPath.row].fullName), forState: .Normal)
-            }
-        }
-            
-        else if tableView == dataTable1
+        if tableView == dataTable1
         {
             dataCellClicked(indexPath.row, inTable: "Table1", inRecord: table1Contents[indexPath.row])
         }
@@ -525,31 +401,32 @@ class ViewController: UIViewController, MyReminderDelegate {
         
     }
   
-    func populateArraysForTables(rowID: Int, inTable : String)
+    func populateArraysForTables(inTable : String)
     {
         
         // work out the table we are populating so we can then use this later
         switch inTable
         {
-            case "Table1":
-                table1Contents = populateArrayDetails(rowID, inTable: inTable)
+        case "Table1":
+            table1Contents = populateArrayDetails(inTable)
             
-            case "Table2":
-                table2Contents = populateArrayDetails(rowID, inTable: inTable)
+        case "Table2":
+            table2Contents = populateArrayDetails(inTable)
             
-            case "Table3":
-                table3Contents = populateArrayDetails(rowID, inTable: inTable)
+        case "Table3":
+            table3Contents = populateArrayDetails(inTable)
             
-            case "Table4":
-                table4Contents = populateArrayDetails(rowID, inTable: inTable)
+        case "Table4":
+            table4Contents = populateArrayDetails(inTable)
             
-            default:
-                println("populateArraysForTables: hit default for some reason")
+        default:
+            println("populateArraysForTables: hit default for some reason")
             
         }
     }
+
     
-    func populateArrayDetails(rowID: Int, inTable: String ) -> [TableData]
+    func populateArrayDetails(inTable: String) -> [TableData]
     {
         var workArray: [TableData] = [TableData]()
         var dataType: String = ""
@@ -570,7 +447,6 @@ class ViewController: UIViewController, MyReminderDelegate {
             case "Table4":
                 dataType = TableTypeButton4.currentTitle!
 
-            
             default:
                 println("populateArrayDetails: inTable hit default for some reason")
             
@@ -581,11 +457,11 @@ class ViewController: UIViewController, MyReminderDelegate {
         switch selectedType
         {
             case "Details":
-                workArray = parseContactDetails(contacts[rowID].personRecord)
+                workArray = parseContactDetails(personSelected)
             case "Calendar":
-                workArray = parseCalendarDetails("Calendar",contacts[rowID].personRecord, eventStore)
+                workArray = parseCalendarDetails("Calendar",personSelected, eventStore)
             case "Reminders":
-                workArray = parseCalendarDetails("Reminders",contacts[rowID].personRecord, eventStore)
+                workArray = parseCalendarDetails("Reminders",personSelected, eventStore)
             
             case "Mail":
                 let a = 1
@@ -626,8 +502,9 @@ class ViewController: UIViewController, MyReminderDelegate {
             case "Orange" :
                 inCell.textLabel!.textColor = UIColor.orangeColor()
 
-            case "Large Bold":
+            case "Header":
                 inCell.textLabel!.font = UIFont.boldSystemFontOfSize(24.0)
+                inCell.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
 
             default:
                 inCell.textLabel!.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
@@ -698,9 +575,10 @@ class ViewController: UIViewController, MyReminderDelegate {
                 case "Reminders":
                 
                     reBuildTableName = inTable
-            
-                    openReminderEditView(inRecord.calendarItemIdentifier, inCalendarName: contacts[personSelectedIndex].fullName)
-            
+
+                    let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+                    openReminderEditView(inRecord.calendarItemIdentifier, inCalendarName: myFullName)
+                
             default:
                 let a = 1
             }
@@ -732,7 +610,7 @@ class ViewController: UIViewController, MyReminderDelegate {
 
     func returnFromSecondaryView(inTable: String, inRowID: Int)
     {
-        populateArrayDetails(inRowID, inTable: inTable)
+        populateArrayDetails(inTable)
         reloadDataTables()
     }
 
@@ -768,7 +646,7 @@ class ViewController: UIViewController, MyReminderDelegate {
     {
         if actionType == "Changed"
         {
-            populateArraysForTables(personSelectedIndex, inTable: reBuildTableName)
+            populateArraysForTables(reBuildTableName)
             reloadDataTables()
         }
         controller.dismissViewControllerAnimated(true, completion: nil)
@@ -809,8 +687,8 @@ class ViewController: UIViewController, MyReminderDelegate {
         switch selectedType
         {
         case "Reminders":
-            
-            openReminderAddView(contacts[personSelectedIndex].fullName)
+            let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+            openReminderAddView(myFullName)
             
         default:
             let a = 1
@@ -873,5 +751,72 @@ class ViewController: UIViewController, MyReminderDelegate {
         }
     }
     
+// Peoplepicker code
+    
+
+    @IBAction func peoplePickerButtonClick(sender: UIButton)
+    {
+        let picker = ABPeoplePickerNavigationController()
+        
+        picker.peoplePickerDelegate = self
+        presentViewController(picker, animated: true, completion: nil)
+    }
+    
+    func peoplePickerNavigationController(peoplePicker: ABPeoplePickerNavigationController!, didSelectPerson person: ABRecordRef!)
+    {
+        TableTypeSelection1.hidden = true
+        setSelectionButton.hidden = true
+        TableTypeButton1.hidden = false
+        TableTypeButton2.hidden = false
+        TableTypeButton3.hidden = false
+        TableTypeButton4.hidden = false
+        dataTable1.hidden = false
+        dataTable2.hidden = false
+        dataTable3.hidden = false
+        dataTable4.hidden = false
+        StartLabel.hidden = true
+        
+        personSelected = person as ABRecord
+        
+        table1Contents = Array()
+        table2Contents = Array()
+        table3Contents = Array()
+        table4Contents = Array()
+
+        populateArraysForTables("Table1")
+        populateArraysForTables("Table2")
+        populateArraysForTables("Table3")
+        populateArraysForTables("Table4")
+        
+        reloadDataTables()
+        
+        // Here is where we will set the titles for the buttons
+        
+        let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+        
+        TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: myFullName), forState: .Normal)
+        TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myFullName), forState: .Normal)
+        TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myFullName), forState: .Normal)
+        TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myFullName), forState: .Normal)
+    }
+
+/*
+    func peoplePickerNavigationController(peoplePicker: ABPeoplePickerNavigationController!, shouldContinueAfterSelectingPerson person: ABRecordRef!) -> Bool {
+    
+    //peoplePickerNavigationController(peoplePicker, didSelectPerson: person)
+    println("George")
+        
+    peoplePicker.dismissViewControllerAnimated(true, completion: nil)
+    
+    return false;
+    }
+
+*/
+
+    func peoplePickerNavigationControllerDidCancel(peoplePicker: ABPeoplePickerNavigationController!)
+    {
+        peoplePicker.dismissViewControllerAnimated(true, completion: nil)
+    }
+
 }
 
