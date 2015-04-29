@@ -117,39 +117,67 @@ func addToContactDetailTable (contactRecord: ABRecord, rowDescription: String, r
        
  
     case kABPersonPhoneProperty:
-        let decodeProperty : ABMultiValueRef = ABRecordCopyValue(contactRecord, kABPersonPhoneProperty).takeUnretainedValue() as ABMultiValueRef
-    
-        let recordCount = ABMultiValueGetCount(decodeProperty)
-
         
-        if recordCount > 0
+        let decodeProperty = ABRecordCopyValue(contactRecord, kABPersonPhoneProperty)
+        let phonesNums: ABMultiValueRef = Unmanaged.fromOpaque(decodeProperty.toOpaque()).takeUnretainedValue() as NSObject as ABMultiValueRef
+        
+        let recordCount = ABMultiValueGetCount(phonesNums)
+        
+        var myString: String = ""
+        
+        for index in 0..<recordCount
         {
-            for loopCount in 0...recordCount-1
+            var myType: CFString!
+            
+            if ABMultiValueCopyLabelAtIndex(phonesNums, index) != nil
             {
-                switch loopCount
-                {
-                    case 0: writeRowToArray("Home = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String), &tableContents)
-
-                    case 1: writeRowToArray("Mobile = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String), &tableContents)
-
-                    case 2: writeRowToArray("iPhone = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String), &tableContents)
-
-                    case 3: writeRowToArray("Main = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String), &tableContents)
-
-                    case 4: writeRowToArray("Home Fax = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String), &tableContents)
-
-                    case 5: writeRowToArray("Work Fax = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String), &tableContents)
-
-                    case 6: writeRowToArray("Other Fax = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String), &tableContents)
-
-                    case 7: writeRowToArray("Pager = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String), &tableContents)
-
-                    case 8: writeRowToArray("Pager = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String), &tableContents)
-
-                    default:  // Do nothing
-                    writeRowToArray("Unknown phone = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String), &tableContents)
-                }
+                myType = ABMultiValueCopyLabelAtIndex(phonesNums, index).takeRetainedValue() as CFStringRef
             }
+            else
+            {
+                myType = "Unknown"
+            }
+            
+            if myType == kABPersonPhoneMainLabel
+            {
+                myString = "Main : "
+            }
+            else if myType == "_$!<Home>!$_"
+            {
+                myString = "Home : "
+            }
+            else if myType == kABPersonPhoneMobileLabel
+            {
+                myString = "Mobile : "
+            }
+            else if myType == kABPersonPhoneIPhoneLabel
+            {
+                myString = "iPhone : "
+            }
+            else if myType == kABPersonPhoneHomeFAXLabel
+            {
+                myString = "Home Fax : "
+            }
+            else if myType == kABPersonPhoneWorkFAXLabel
+            {
+                myString = "Work Fax : "
+            }
+            else if myType == kABPersonPhoneOtherFAXLabel
+            {
+                myString = "Other Fax : "
+            }
+            else if myType == kABPersonPhonePagerLabel
+            {
+                myString = "Pager : "
+            }
+            else
+            {
+                myString = "Unknown : "
+            }
+            
+            myString += ABMultiValueCopyValueAtIndex(phonesNums, index).takeRetainedValue() as! String
+            
+            writeRowToArray(myString, &tableContents)
         }
 
     case kABPersonEmailProperty:
@@ -356,21 +384,39 @@ func addToContactDetailTable (contactRecord: ABRecord, rowDescription: String, r
         
         var fullname: String = ""
         
-//        if prefix.takeRetainedValue().length > 0
+        var initialSpaceAdd: Bool = false
+        
         if prefix != nil
         {
             fullname += prefix.takeRetainedValue() as! String
-            fullname += " "
+            initialSpaceAdd = true
         }
         
-        fullname += firstName.takeRetainedValue() as! String
-        fullname += " "
-        fullname += lastName.takeRetainedValue() as! String
-
-   //     if suffix.takeRetainedValue().length > 0
+        if firstName != nil
+        {
+            if initialSpaceAdd
+            {
+                fullname += " "
+            }
+            fullname += firstName.takeRetainedValue() as! String
+            initialSpaceAdd = true
+        }
+        
+        if lastName != nil
+        {
+            if initialSpaceAdd
+            {
+                fullname += " "
+            }
+            fullname += lastName.takeRetainedValue() as! String
+        }
+        
         if suffix != nil
         {
-            fullname += " "
+            if initialSpaceAdd
+            {
+                fullname += " "
+            }
             fullname += suffix.takeRetainedValue() as! String
         }
         
@@ -394,4 +440,21 @@ func addToContactDetailTable (contactRecord: ABRecord, rowDescription: String, r
     }
 }
 
+
+/*
+func decodePhone(decodeType: String, decodeProperty: ABMultiValueRef, inComingType: CFString, inout tableContents: [TableData])
+{
+    var myIndex: Int = inComingType.toInt()!
+    
+    if ABMultiValueCopyValueAtIndex(decodeProperty,myIndex) != nil
+    {
+        var myPhone = ABMultiValueCopyValueAtIndex(decodeProperty,myIndex).takeRetainedValue() as! String
+    
+        if myPhone != ""
+        {
+            writeRowToArray(decodeType + " = " + myPhone, &tableContents)
+        }
+    }
+}
+*/
 

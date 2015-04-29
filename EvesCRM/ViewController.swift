@@ -117,6 +117,11 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         buttonAdd2.hidden = true
         buttonAdd3.hidden = true
         buttonAdd4.hidden = true
+        
+        dataTable1.tableFooterView = UIView(frame:CGRectZero)
+        dataTable2.tableFooterView = UIView(frame:CGRectZero)
+        dataTable3.tableFooterView = UIView(frame:CGRectZero)
+        dataTable4.tableFooterView = UIView(frame:CGRectZero)
 
         populateContactList()
         
