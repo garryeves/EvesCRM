@@ -135,7 +135,7 @@
                                         <variation key="heightClass=regular-widthClass=regular" constant="250"/>
                                     </constraint>
                                 </constraints>
-                                <state key="normal" title="Mail"/>
+                                <state key="normal" title="Evernote"/>
                                 <variation key="default">
                                     <mask key="constraints">
                                         <exclude reference="958-5Q-NfA"/>

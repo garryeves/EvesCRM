@@ -43,7 +43,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     @IBOutlet weak var setSelectionButton: UIButton!
     
     @IBOutlet weak var peoplePickerButton: UIButton!
-    var TableOptions = ["Details", "Calendar", "Omnifocus", "Evernote", "Mail", "Twitter", "Facebook", "LinkedIn", "Reminders"]
+    var TableOptions = ["Calendar", "Details", "Evernote", "Reminders"]
     
     // Store the tag number of the button pressed so that we can make sure we update the correct button text and table
     var callingTable = 0
@@ -118,6 +118,8 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         buttonAdd3.hidden = true
         buttonAdd4.hidden = true
         
+        peoplePickerButton.hidden = false
+        
         dataTable1.tableFooterView = UIView(frame:CGRectZero)
         dataTable2.tableFooterView = UIView(frame:CGRectZero)
         dataTable3.tableFooterView = UIView(frame:CGRectZero)
@@ -175,6 +177,16 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         dataTable3.hidden = true
         dataTable4.hidden = true
         StartLabel.hidden = true
+        peoplePickerButton.hidden = true
+        
+        
+        buttonAdd1.hidden = true
+        buttonAdd2.hidden = true
+        buttonAdd3.hidden = true
+        buttonAdd4.hidden = true
+        
+        let myIndex = find(TableOptions,getFirstPartofString(sender.currentTitle!))
+        TableTypeSelection1.selectRow(myIndex!, inComponent: 0, animated: true)
     }
 
     @IBAction func setSelectionButtonTouchUp(sender: UIButton) {
@@ -185,15 +197,26 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         }
         else
         {
+            
+            let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+            
             switch callingTable
             {
-                case 1: TableTypeButton1.setTitle(itemSelected, forState: .Normal )
+                case 1:
+                    TableTypeButton1.setTitle(itemSelected, forState: .Normal)
+                    TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: myFullName), forState: .Normal)
             
-                case 2: TableTypeButton2.setTitle(itemSelected, forState: .Normal )
+                case 2:
+                    TableTypeButton2.setTitle(itemSelected, forState: .Normal)
+                    TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myFullName), forState: .Normal)
             
-                case 3: TableTypeButton3.setTitle(itemSelected, forState: .Normal )
+                case 3:
+                    TableTypeButton3.setTitle(itemSelected, forState: .Normal)
+                    TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myFullName), forState: .Normal)
             
-                case 4: TableTypeButton4.setTitle(itemSelected, forState: .Normal )
+                case 4:
+                    TableTypeButton4.setTitle(itemSelected, forState: .Normal)
+                    TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myFullName), forState: .Normal)
             
                 default: break
             
@@ -210,8 +233,12 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             dataTable3.hidden = false
             dataTable4.hidden = false
             StartLabel.hidden = true
+            peoplePickerButton.hidden = false
 
-            setAddButtonState(callingTable, inTitle: itemSelected)
+            setAddButtonState(1)
+            setAddButtonState(2)
+            setAddButtonState(3)
+            setAddButtonState(4)
 
             populateArraysForTables("Table1")
             populateArraysForTables("Table2")
@@ -608,7 +635,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 workString = inButton.currentTitle!
         }
         
-        setAddButtonState(inButton.tag, inTitle: workString)
+        setAddButtonState(inButton.tag)
         
         return workString
     }
@@ -701,26 +728,31 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
 
     }
     
-    func setAddButtonState(inTable: Int, inTitle: String)
+    func setAddButtonState(inTable: Int)
     {
         // Hide all of the buttons
         // Decide which buttons to show
         
-        var selectedType: String = getFirstPartofString(inTitle)
-
+        var selectedType: String = ""
+        
         switch inTable
         {
             case 1:
+                selectedType = getFirstPartofString(TableTypeButton1.currentTitle!)
+
                 switch selectedType
                 {
-                case "Reminders":
-                    buttonAdd1.hidden = false
+                    case "Reminders":
                 
-                default:
-                    buttonAdd1.hidden = true
+                        buttonAdd1.hidden = false
+                
+                    default:
+                        buttonAdd1.hidden = true
                 }
-
+            
             case 2:
+                selectedType = getFirstPartofString(TableTypeButton2.currentTitle!)
+
                 switch selectedType
                 {
                     case "Reminders":
@@ -731,17 +763,20 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 }
             
             case 3:
+                selectedType = getFirstPartofString(TableTypeButton3.currentTitle!)
+
                 switch selectedType
                 {
-                case "Reminders":
-                    buttonAdd3.hidden = false
+                    case "Reminders":
+                        buttonAdd3.hidden = false
                 
-                default:
-                    buttonAdd3.hidden = true
-
+                    default:
+                        buttonAdd3.hidden = true
                 }
             
             case 4:
+                selectedType = getFirstPartofString(TableTypeButton4.currentTitle!)
+
                 switch selectedType
                 {
                     case "Reminders":
@@ -752,7 +787,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 }
             
             default: break
-
         }
     }
     
