@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "EvesCRM/ContactDetails.swift"
-            timestampString = "452007382.883427"
+            timestampString = "452052717.359356"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "230"
-            endingLineNumber = "230"
+            startingLineNumber = "244"
+            endingLineNumber = "244"
             landmarkName = "addToContactDetailTable(_:_:_:_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -376,11 +376,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "EvesCRM/ContactDetails.swift"
-            timestampString = "452007382.883427"
+            timestampString = "452052717.359356"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "455"
-            endingLineNumber = "455">
+            startingLineNumber = "469"
+            endingLineNumber = "469">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

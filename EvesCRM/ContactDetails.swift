@@ -181,33 +181,47 @@ func addToContactDetailTable (contactRecord: ABRecord, rowDescription: String, r
         }
 
     case kABPersonEmailProperty:
-        let decodeProperty : ABMultiValueRef = ABRecordCopyValue(contactRecord, kABPersonEmailProperty).takeUnretainedValue() as ABMultiValueRef
+        let decodeProperty = ABRecordCopyValue(contactRecord, kABPersonEmailProperty)
+        let emailAddrs: ABMultiValueRef = Unmanaged.fromOpaque(decodeProperty.toOpaque()).takeUnretainedValue() as NSObject as ABMultiValueRef
         
-        let recordCount = ABMultiValueGetCount(decodeProperty)
-        
+        let recordCount = ABMultiValueGetCount(emailAddrs)
+        var myType: CFString!
+        var myString: String = ""
+            
         if recordCount > 0
         {
             for loopCount in 0...recordCount-1
             {
-                switch loopCount
+                
+                if ABMultiValueCopyLabelAtIndex(emailAddrs, loopCount) != nil
                 {
-                case 0: writeRowToArray("Email = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String), &tableContents)
-                
-                case 1: writeRowToArray("Email = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String), &tableContents)
-                
-                case 2: writeRowToArray("Email = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String), &tableContents)
-                
-                case 3: writeRowToArray("Email = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String), &tableContents)
-                
-                case 4: writeRowToArray("Email = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String), &tableContents)
-                
-                case 5: writeRowToArray("Email = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String), &tableContents)
-                
-                case 6: writeRowToArray("Email = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String), &tableContents)
-                
-                default:  // Do nothing
-                writeRowToArray("Unknown Email = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String), &tableContents)
+                    myType = ABMultiValueCopyLabelAtIndex(emailAddrs, loopCount).takeRetainedValue() as CFStringRef
                 }
+                else
+                {
+                    myType = "Unknown"
+                }
+
+                if myType == "_$!<Work>!$_"
+                {
+                    myString = "Work : "
+                }
+                else if myType == "_$!<Home>!$_"
+                {
+                    myString = "Home : "
+                }
+                else if myType == "_$!<Other>!$_"
+                {
+                    myString = "Other : "
+                }
+                else
+                {
+                    myString = "Email : "
+                }
+                
+                myString += ABMultiValueCopyValueAtIndex(emailAddrs, loopCount).takeRetainedValue() as! String
+                
+                writeRowToArray(myString, &tableContents)
             }
         }
         
