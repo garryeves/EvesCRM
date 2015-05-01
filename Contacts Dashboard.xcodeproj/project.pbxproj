@@ -18,6 +18,11 @@
 		340650901ADDF93600C90CBB /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3406508E1ADDF93600C90CBB /* AddressBookUI.framework */; };
 		34111C3A1AEC898B003090EB /* reminderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34111C391AEC898B003090EB /* reminderViewController.swift */; };
 		341DD2371AECA9FF001DCF65 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 340650711ADDF8FF00C90CBB /* Main.storyboard */; };
+		344F226B1AF1DC20002C373E /* ENSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 344F22691AF1DC20002C373E /* ENSDK.framework */; };
+		344F226C1AF1DC20002C373E /* ENSDKResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 344F226A1AF1DC20002C373E /* ENSDKResources.bundle */; };
+		344F226E1AF1DD04002C373E /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 344F226D1AF1DD04002C373E /* MobileCoreServices.framework */; };
+		344F22701AF1DD13002C373E /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 344F226F1AF1DD13002C373E /* libxml2.dylib */; };
+		344F22721AF1DFF3002C373E /* evernoteDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344F22711AF1DFF3002C373E /* evernoteDetails.swift */; };
 		345E027F1AEF714800BE8D0A /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 345E027E1AEF714800BE8D0A /* Social.framework */; };
 		345E02811AEF715700BE8D0A /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 345E02801AEF715700BE8D0A /* MessageUI.framework */; };
 		345E02831AEF71CF00BE8D0A /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 345E02821AEF71CF00BE8D0A /* Accounts.framework */; };
@@ -55,6 +60,11 @@
 		3406508D1ADDF93600C90CBB /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		3406508E1ADDF93600C90CBB /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		34111C391AEC898B003090EB /* reminderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = reminderViewController.swift; sourceTree = "<group>"; };
+		344F22691AF1DC20002C373E /* ENSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ENSDK.framework; sourceTree = "<group>"; };
+		344F226A1AF1DC20002C373E /* ENSDKResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ENSDKResources.bundle; sourceTree = "<group>"; };
+		344F226D1AF1DD04002C373E /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		344F226F1AF1DD13002C373E /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
+		344F22711AF1DFF3002C373E /* evernoteDetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = evernoteDetails.swift; sourceTree = "<group>"; };
 		345E027E1AEF714800BE8D0A /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		345E02801AEF715700BE8D0A /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		345E02821AEF71CF00BE8D0A /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
@@ -68,6 +78,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				344F22701AF1DD13002C373E /* libxml2.dylib in Frameworks */,
+				344F226E1AF1DD04002C373E /* MobileCoreServices.framework in Frameworks */,
+				344F226B1AF1DC20002C373E /* ENSDK.framework in Frameworks */,
 				345E02831AEF71CF00BE8D0A /* Accounts.framework in Frameworks */,
 				345E02811AEF715700BE8D0A /* MessageUI.framework in Frameworks */,
 				345E027F1AEF714800BE8D0A /* Social.framework in Frameworks */,
@@ -89,14 +102,18 @@
 		3406505C1ADDF8FF00C90CBB = {
 			isa = PBXGroup;
 			children = (
+				344F226F1AF1DD13002C373E /* libxml2.dylib */,
+				344F226D1AF1DD04002C373E /* MobileCoreServices.framework */,
 				345E02821AEF71CF00BE8D0A /* Accounts.framework */,
 				345E02801AEF715700BE8D0A /* MessageUI.framework */,
 				345E027E1AEF714800BE8D0A /* Social.framework */,
 				3406508D1ADDF93600C90CBB /* AddressBook.framework */,
 				3406508E1ADDF93600C90CBB /* AddressBookUI.framework */,
 				340650671ADDF8FF00C90CBB /* EvesCRM */,
-				340650801ADDF8FF00C90CBB /* EvesCRMTests */,
 				340650661ADDF8FF00C90CBB /* Products */,
+				344F22691AF1DC20002C373E /* ENSDK.framework */,
+				344F226A1AF1DC20002C373E /* ENSDKResources.bundle */,
+				340650801ADDF8FF00C90CBB /* EvesCRMTests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -123,6 +140,7 @@
 				347518D81AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift */,
 				346D5E011AE5F9C700F858E7 /* CalendarDetails.swift */,
 				34111C391AEC898B003090EB /* reminderViewController.swift */,
+				344F22711AF1DFF3002C373E /* evernoteDetails.swift */,
 			);
 			path = EvesCRM;
 			sourceTree = "<group>";
@@ -234,6 +252,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				340650731ADDF8FF00C90CBB /* Main.storyboard in Resources */,
+				344F226C1AF1DC20002C373E /* ENSDKResources.bundle in Resources */,
 				340650781ADDF8FF00C90CBB /* LaunchScreen.xib in Resources */,
 				340650751ADDF8FF00C90CBB /* Images.xcassets in Resources */,
 			);
@@ -260,6 +279,7 @@
 				340650701ADDF8FF00C90CBB /* ViewController.swift in Sources */,
 				348E6D4B1ADF74C800697268 /* ContactDetails.swift in Sources */,
 				3406506B1ADDF8FF00C90CBB /* AppDelegate.swift in Sources */,
+				344F22721AF1DFF3002C373E /* evernoteDetails.swift in Sources */,
 				3406506E1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -392,11 +412,23 @@
 		340650881ADDF8FF00C90CBB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"${SDKROOT}/usr/include/libxml2",
+				);
 				INFOPLIST_FILE = EvesCRM/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = ENSDK.framework/Headers/ENSDK.h;
+				"SWIFT_OBJC_BRIDGING_HEADER[arch=*]" = ENSDK.framework/Headers/Advanced/ENSDKAdvanced.h;
 				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Debug;
@@ -404,11 +436,23 @@
 		340650891ADDF8FF00C90CBB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"${SDKROOT}/usr/include/libxml2",
+				);
 				INFOPLIST_FILE = EvesCRM/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = ENSDK.framework/Headers/ENSDK.h;
+				"SWIFT_OBJC_BRIDGING_HEADER[arch=*]" = ENSDK.framework/Headers/Advanced/ENSDKAdvanced.h;
 				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Release;

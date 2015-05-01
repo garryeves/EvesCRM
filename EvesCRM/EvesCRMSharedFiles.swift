@@ -181,6 +181,60 @@ struct ReminderData
 
 }
 
+struct EvernoteData
+{
+    private var myTitle: String
+    private var myUpdateDate: NSDate!
+    private var myCreateDate: NSDate!
+    private var myIdentifier: String
+
+    var title: String
+        {
+        get {
+            return myTitle
+        }
+        set {
+            myTitle = newValue
+        }
+    }
+    
+    var updateDate: NSDate
+        {
+        get {
+            return myUpdateDate
+        }
+        set {
+            myUpdateDate = newValue
+        }
+    }
+    
+    var createDate: NSDate
+        {
+        get {
+            return myCreateDate
+        }
+        set {
+            myCreateDate = newValue
+        }
+    }
+    
+    var identifier: String
+        {
+        get {
+            return myIdentifier
+        }
+        set {
+            myIdentifier = newValue
+        }
+    }
+    
+    init()
+    {
+        self.myTitle = ""
+        self.myIdentifier = ""
+    }
+    
+}
 
 // Overloading writeRowToArray a number of times to allow for collection of structs where I am going to allow user to interact and change data inside the app,rather than them having to go to source app.  The number of these will be kept to a minimum.
 

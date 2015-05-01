@@ -10,6 +10,7 @@ import UIKit
 import AddressBook
 import AddressBookUI
 import EventKit
+//import "ENSDK/Headers/ENSDK.h"
 
 // PeoplePicker code
 
@@ -69,6 +70,14 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     
     var reBuildTableName: String = ""
     
+    var evernoteSession: ENSession!
+    var myEvernote: EvernoteDetails!
+    var evernotePass1: Bool = false
+    var EvernoteTimer = NSTimer()
+    var EvernoteTargetTable: String = "'"
+    var EvernoteTimerCount: Int = 0
+    
+    
     // Peoplepicker settings
     
     override func viewDidLoad() {
@@ -95,6 +104,13 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             println("Calendar Case Default")
         }
 
+        // Now we will try and open Evernote
+        
+        
+        evernoteSession = ENSession.sharedSession()
+        connectToEvernote()
+        
+        
        // Initial population of contact list
         self.dataTable1.registerClass(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
         self.dataTable2.registerClass(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
@@ -126,13 +142,11 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         dataTable4.tableFooterView = UIView(frame:CGRectZero)
 
         populateContactList()
-        
+
         let picker = ABPeoplePickerNavigationController()
         
         picker.peoplePickerDelegate = self
         presentViewController(picker, animated: true, completion: nil)
-        
-        
     }
 
     override func didReceiveMemoryWarning() {
@@ -250,6 +264,33 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         }
     }
     
+    
+    func connectToEvernote()
+    {
+        // Authenticate to Evernote if needed
+    
+        if !evernotePass1
+        {
+            evernoteSession.authenticateWithViewController (self, preferRegistration:false, completion: {
+                (error: NSError?) in
+                if error != nil
+                {
+                    // authentication failed
+                    // show an alert, etc
+                    // ...
+                }
+                else
+                {
+                    // authentication succeeded
+                    // do something now that we're authenticated
+                    // ...
+                    self.myEvernote = EvernoteDetails(inSession: self.evernoteSession)
+                }
+            })
+        }
+        evernotePass1 = true  // This is to allow only one attempt to launch Evernote
+    }
+
     func createAddressBook() -> Bool {
         if self.adbk != nil {
             return true
@@ -494,7 +535,14 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 workArray = parseCalendarDetails("Calendar",personSelected, eventStore)
             case "Reminders":
                 workArray = parseCalendarDetails("Reminders",personSelected, eventStore)
+            case "Evernote":
+                myEvernote.findEvernoteNotes(personSelected)
+               // workArray = myEvernote.parseEvernoteDetails(evernoteConnected, personSelected: personSelected, inTableNumber: inTable)
+                EvernoteTargetTable = inTable
+                EvernoteTimerCount = 0
+                EvernoteTimer = NSTimer.scheduledTimerWithTimeInterval(1, target:self, selector: Selector("EvernoteComplete"), userInfo: nil, repeats: false)
             
+
             case "Mail":
                 let a = 1
             
@@ -502,7 +550,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 println("populateArrayDetails: dataType hit default for some reason : \(selectedType)")
         }
         return workArray
-        
     }
     
     func reloadDataTables()
@@ -560,60 +607,58 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
 
         // Also depending on which table is clicked, we now need to do a check to make sure the row clicked is a valid task row.  If not then no need to try and edit it
 
-
-        var myTaskFound = true
+        var myRowContents: String = "'"
         
         switch inTable
         {
             case "Table1":
                 dataType = TableTypeButton1.currentTitle!
-                if table1Contents[rowID].displayText == "No reminders list found"
-                {
-                    myTaskFound = false
-                }
+                myRowContents = table1Contents[rowID].displayText
 
             case "Table2":
                 dataType = TableTypeButton2.currentTitle!
-                if table2Contents[rowID].displayText == "No reminders list found"
-                {
-                    myTaskFound = false
-            }
+                myRowContents = table2Contents[rowID].displayText
             
             case "Table3":
                 dataType = TableTypeButton3.currentTitle!
-                if table3Contents[rowID].displayText == "No reminders list found"
-                {
-                    myTaskFound = false
-            }
+                myRowContents = table3Contents[rowID].displayText
             
             case "Table4":
                 dataType = TableTypeButton4.currentTitle!
-                if table4Contents[rowID].displayText == "No reminders list found"
-                {
-                    myTaskFound = false
-            }
+                myRowContents = table4Contents[rowID].displayText
 
             default:
                 println("dataCellClicked: inTable hit default for some reason")
             
         }
   
-        if myTaskFound
-        {
-            var selectedType: String = getFirstPartofString(dataType)
+        var selectedType: String = getFirstPartofString(dataType)
 
-            switch selectedType
-            {
-                case "Reminders":
-                
+        switch selectedType
+        {
+            case "Reminders":
+                if myRowContents != "No reminders list found"
+                {
                     reBuildTableName = inTable
 
                     let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
                     openReminderEditView(inRecord.calendarItemIdentifier, inCalendarName: myFullName)
+                }
+            case "Evernote":
+                if myRowContents != "No Notes found"
+                {
+                    reBuildTableName = inTable
+                    
+                    var myEvernoteDataArray = myEvernote.getEvernoteDataArray()
+                    
+                    var myGuid = myEvernoteDataArray[rowID].identifier
+                    
+                    let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+                    openEvernoteEditView(myGuid, inCalendarName: myFullName)
+            }
                 
             default:
                 let a = 1
-            }
         }
     }
     
@@ -630,6 +675,10 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         {
             case "Reminders":
                 workString = "Reminders - use List '\(inTitle)'"
+
+        case "Evernote":
+            workString = "Evernote - use Tag '\(inTitle)'"
+
             
             default:
                 workString = inButton.currentTitle!
@@ -745,7 +794,10 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     case "Reminders":
                 
                         buttonAdd1.hidden = false
-                
+
+                    case "Evernote":
+                        buttonAdd1.hidden = false
+
                     default:
                         buttonAdd1.hidden = true
                 }
@@ -756,6 +808,9 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 switch selectedType
                 {
                     case "Reminders":
+                        buttonAdd2.hidden = false
+
+                    case "Evernote":
                         buttonAdd2.hidden = false
                 
                     default:
@@ -769,6 +824,10 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 {
                     case "Reminders":
                         buttonAdd3.hidden = false
+                    
+                    case "Evernote":
+                        buttonAdd3.hidden = false
+
                 
                     default:
                         buttonAdd3.hidden = true
@@ -781,6 +840,10 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 {
                     case "Reminders":
                         buttonAdd4.hidden = false
+                    
+                    case "Evernote":
+                        buttonAdd4.hidden = false
+
                 
                     default:
                         buttonAdd4.hidden = true
@@ -821,7 +884,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         table2Contents = Array()
         table3Contents = Array()
         table4Contents = Array()
-
+        
         populateArraysForTables("Table1")
         populateArraysForTables("Table2")
         populateArraysForTables("Table3")
@@ -855,6 +918,65 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     func peoplePickerNavigationControllerDidCancel(peoplePicker: ABPeoplePickerNavigationController!)
     {
         peoplePicker.dismissViewControllerAnimated(true, completion: nil)
+    }
+
+    func EvernoteComplete()
+    {
+        var myTable: [TableData] = Array()
+
+        if !myEvernote.isAsyncDone()
+        {  // Async not yet complete
+            if EvernoteTimerCount > 5
+            {
+                    writeRowToArray("Unable to retrieve Evernote data in timely manner", &myTable)
+            }
+            else
+            {
+                EvernoteTimerCount = EvernoteTimerCount + 1
+                EvernoteTimer = NSTimer.scheduledTimerWithTimeInterval(1, target:self, selector: Selector("EvernoteComplete"), userInfo: nil, repeats: false)
+            }
+        }
+        else
+        {
+            myTable = myEvernote.getWriteString()
+        }
+        
+        switch EvernoteTargetTable
+        {
+        case "Table1":
+            table1Contents = myTable
+            dataTable1.reloadData()
+            
+        case "Table2":
+            table2Contents = myTable
+            dataTable2.reloadData()
+            
+        case "Table3":
+            table3Contents = myTable
+            dataTable3.reloadData()
+            
+        case "Table4":
+            table4Contents = myTable
+            dataTable4.reloadData()
+            
+        default:
+            println("EvernoteComplete has incorrect table")
+        }
+    }
+    
+    func openEvernoteEditView(inReminderID: String, inCalendarName: String)
+    {
+
+println("Guid = \(inReminderID)")
+
+    //    let reminderViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("Reminders") as! reminderViewController
+        
+    //    reminderViewControl.inAction = "Edit"
+    //    reminderViewControl.inReminderID = inReminderID
+    //    reminderViewControl.delegate = self
+    //    reminderViewControl.inCalendarName = inCalendarName
+        
+     //   self.presentViewController(reminderViewControl, animated: true, completion: nil)
     }
 
 }

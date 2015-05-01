@@ -17,9 +17,35 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
+        
+            // Initial development is done on the sandbox service
+            // Change this to BootstrapServerBaseURLStringUS to use the production Evernote service
+            // Change this to BootstrapServerBaseURLStringCN to use the Yinxiang Biji production service
+            // Bootstrapping is supported by default with either BootstrapServerBaseURLStringUS or BootstrapServerBaseURLStringCN
+            // BootstrapServerBaseURLStringSandbox does not support the  Yinxiang Biji service
+ //           NSString *EVERNOTE_HOST = BootstrapServerBaseURLStringUS;
+            
+            // Fill in the consumer key and secret with the values that you received from Evernote
+            // To get an API key, visit http://dev.evernote.com/documentation/cloud/
+ //           NSString *CONSUMER_KEY = @"garryeves";
+ //           NSString *CONSUMER_SECRET = @"527092b280bfd300";
+        
+       
+        ENSession.setSharedSessionDeveloperToken("S=s2:U=1be4f:E=15460135598:C=14d086227c0:P=1cd:A=en-devtoken:V=2:H=31d18476ae197914f35d507e3ec34251", noteStoreUrl: "https://www.evernote.com/shard/s2/notestore")
+      //  ENSession.setSharedSessionConsumerKey("garryeves", consumerSecret: "527092b280bfd300", optionalHost: "sandbox.evernote.com")
+        
+//        ENSession.setSharedSessionConsumerKey("garryeves", consumerSecret: "527092b280bfd300", optionalHost: "www.evernote.com")
+        
         return true
     }
 
+    
+    func application(application: UIApplication, handleOpenURL url: NSURL) -> Bool {
+        return ENSession.sharedSession().handleOpenURL(url)
+    }
+    
+    
+    
     func applicationWillResignActive(application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
@@ -32,10 +58,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillEnterForeground(application: UIApplication) {
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+        
+        ENSession.sharedSession().listNotebooksWithCompletion{(a :[AnyObject]!, b : NSError!) -> Void in print(a)}
     }
 
     func applicationDidBecomeActive(application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+        
+      //  ENSession.handleDidBecomeActive
     }
 
     func applicationWillTerminate(application: UIApplication) {

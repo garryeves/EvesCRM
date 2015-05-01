@@ -134,6 +134,11 @@ class reminderViewController: UIViewController {
         var earliestDate = NSCalendar.currentCalendar().dateByAddingComponents(components, toDate: currDate, options: NSCalendarOptions(0))
         dueDatePicker.minimumDate = earliestDate
         
+        var borderColor : UIColor = UIColor(red: 0.85, green: 0.85, blue: 0.85, alpha: 1.0)
+        notesText.layer.borderWidth = 0.5
+        notesText.layer.borderColor = borderColor.CGColor
+        notesText.layer.cornerRadius = 5.0
+        
     }
  
     func numberOfComponentsInPickerView(priorityPicker: UIPickerView) -> Int {
