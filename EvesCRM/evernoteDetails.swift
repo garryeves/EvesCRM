@@ -87,6 +87,7 @@ class EvernoteDetails
                         myData.updateDate = result.updated
                         myData.createDate = result.created
                         myData.identifier = result.noteRef!.guid
+                        myData.NoteRef = result.noteRef
   
                         // Each ENSessionFindNotesResult has a noteRef along with other important metadata.
                         
@@ -102,8 +103,11 @@ class EvernoteDetails
                 
                         let lastUpdateDate = startDateFormatter.stringFromDate(result.updated)
 
-                        var myString = "\(result.title!!)  - (last updated \(lastUpdateDate))"
+                        var myString = "\(result.title!!)\n"
+                        
+                        myString += "last updated \(lastUpdateDate)"
                         myDisplayStrings.append(myString)
+                        
                         self.retrievedData.append(myData)
                     }
                     self.asyncDone = true

@@ -76,6 +76,13 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     var EvernoteTimer = NSTimer()
     var EvernoteTargetTable: String = "'"
     var EvernoteTimerCount: Int = 0
+    var myEvernoteShard: String = ""
+    var myEvernoteUserID: Int = 0
+    var myEvernoteUserTimer = NSTimer()
+    var EvernoteUserDone: Bool = false
+    var EvernoteUserTimerCount: Int = 0
+    var myEvernoteGUID: String = ""
+    
     
     
     // Peoplepicker settings
@@ -219,18 +226,32 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 case 1:
                     TableTypeButton1.setTitle(itemSelected, forState: .Normal)
                     TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: myFullName), forState: .Normal)
+                    setAddButtonState(1)
+                    populateArraysForTables("Table1")
+                    dataTable1.reloadData()
             
                 case 2:
                     TableTypeButton2.setTitle(itemSelected, forState: .Normal)
                     TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myFullName), forState: .Normal)
-            
+                    setAddButtonState(2)
+                    populateArraysForTables("Table2")
+                    dataTable2.reloadData()
+
                 case 3:
                     TableTypeButton3.setTitle(itemSelected, forState: .Normal)
                     TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myFullName), forState: .Normal)
+                    setAddButtonState(3)
+                    populateArraysForTables("Table3")
+                    dataTable3.reloadData()
             
                 case 4:
                     TableTypeButton4.setTitle(itemSelected, forState: .Normal)
                     TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myFullName), forState: .Normal)
+                    
+                    setAddButtonState(4)
+                    populateArraysForTables("Table4")
+                    dataTable4.reloadData()
+
             
                 default: break
             
@@ -248,19 +269,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             dataTable4.hidden = false
             StartLabel.hidden = true
             peoplePickerButton.hidden = false
-
-            setAddButtonState(1)
-            setAddButtonState(2)
-            setAddButtonState(3)
-            setAddButtonState(4)
-
-            populateArraysForTables("Table1")
-            populateArraysForTables("Table2")
-            populateArraysForTables("Table3")
-            populateArraysForTables("Table4")
-            
-            reloadDataTables()
-            
         }
     }
     
@@ -536,8 +544,8 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             case "Reminders":
                 workArray = parseCalendarDetails("Reminders",personSelected, eventStore)
             case "Evernote":
+                writeRowToArray("Loading Evernote data.  Pane will refresh when finished", &workArray)
                 myEvernote.findEvernoteNotes(personSelected)
-               // workArray = myEvernote.parseEvernoteDetails(evernoteConnected, personSelected: personSelected, inTableNumber: inTable)
                 EvernoteTargetTable = inTable
                 EvernoteTimerCount = 0
                 EvernoteTimer = NSTimer.scheduledTimerWithTimeInterval(1, target:self, selector: Selector("EvernoteComplete"), userInfo: nil, repeats: false)
@@ -652,9 +660,9 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     var myEvernoteDataArray = myEvernote.getEvernoteDataArray()
                     
                     var myGuid = myEvernoteDataArray[rowID].identifier
+                    var myNoteRef = myEvernoteDataArray[rowID].NoteRef
                     
-                    let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
-                    openEvernoteEditView(myGuid, inCalendarName: myFullName)
+                    openEvernoteEditView(myGuid, inNoteRef: myNoteRef)
             }
                 
             default:
@@ -767,12 +775,16 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         
         switch selectedType
         {
-        case "Reminders":
+            case "Reminders":
+                let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+                openReminderAddView(myFullName)
+
+        case "Evernote":
             let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
-            openReminderAddView(myFullName)
-            
-        default:
-            let a = 1
+            openEvernoteAddView(myFullName)
+
+            default:
+                let a = 1
         }
 
     }
@@ -964,20 +976,100 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         }
     }
     
-    func openEvernoteEditView(inReminderID: String, inCalendarName: String)
+    func openEvernoteEditView(inGUID: String, inNoteRef:ENNoteRef)
     {
 
-println("Guid = \(inReminderID)")
-
-    //    let reminderViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("Reminders") as! reminderViewController
+        myEvernoteGUID = inGUID
+       
+        let myEnUserStore = evernoteSession.userStore
         
-    //    reminderViewControl.inAction = "Edit"
-    //    reminderViewControl.inReminderID = inReminderID
-    //    reminderViewControl.delegate = self
-    //    reminderViewControl.inCalendarName = inCalendarName
-        
-     //   self.presentViewController(reminderViewControl, animated: true, completion: nil)
+        myEnUserStore.getUserWithSuccess({
+            (findNotesResults) in
+            self.myEvernoteShard = findNotesResults.shardId
+            self.myEvernoteUserID = findNotesResults.id as Int
+            self.EvernoteUserDone = true
+        }
+            , failure: {
+                (findNotesError) in
+                println("Failure")
+                self.EvernoteUserDone = true
+                self.myEvernoteShard = ""
+                self.myEvernoteUserID = 0
+        })
+      
+        myEvernoteUserTimer = NSTimer.scheduledTimerWithTimeInterval(1, target:self, selector: Selector("myEvernoteUserDidFinish"), userInfo: nil, repeats: false)
     }
 
+    func openEvernoteAddView(inFullName: String)
+    {
+        // Lets build the date string
+        var myDateFormatter = NSDateFormatter()
+        
+        var dateFormat = NSDateFormatterStyle.MediumStyle
+        var timeFormat = NSDateFormatterStyle.ShortStyle
+        myDateFormatter.dateStyle = dateFormat
+        myDateFormatter.timeStyle = timeFormat
+        
+        /* Instantiate the event store */
+        let myDate = myDateFormatter.stringFromDate(NSDate())
+
+        
+        let myTempPath = "evernote://x-callback-url/new-note?type=text&title=\(inFullName) : \(myDate)"
+  
+        let myEnUrlPath = stringByChangingChars(myTempPath, " ", "%20")
+
+        var myEnUrl: NSURL = NSURL(string: myEnUrlPath)!
+        
+        if UIApplication.sharedApplication().canOpenURL(myEnUrl) == true
+        {
+            UIApplication.sharedApplication().openURL(myEnUrl)
+        }
+    }
+    
+    func myEvernoteUserDidFinish()
+    {
+        if !EvernoteUserDone
+        {  // Async not yet complete
+            if EvernoteUserTimerCount > 5
+            {
+                var alert = UIAlertController(title: "Evernote", message:
+                    "Unable to load Evernote in a timely manner", preferredStyle: UIAlertControllerStyle.Alert)
+                
+                self.presentViewController(alert, animated: false, completion: nil)
+                
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+                    handler: nil))
+            }
+            else
+            {
+                EvernoteUserTimerCount = EvernoteUserTimerCount + 1
+                myEvernoteUserTimer = NSTimer.scheduledTimerWithTimeInterval(1, target:self, selector: Selector("myEvernoteUserDidFinish"), userInfo: nil, repeats: false)
+            }
+        }
+        else
+        {
+            if myEvernoteShard != ""
+            {
+                let myEnUrlPath = "evernote:///view/\(myEvernoteUserID)/\(myEvernoteShard)/\(myEvernoteGUID)/\(myEvernoteGUID)/"
+        
+                var myEnUrl: NSURL = NSURL(string: myEnUrlPath)!
+                
+                if UIApplication.sharedApplication().canOpenURL(myEnUrl) == true
+                {
+                    UIApplication.sharedApplication().openURL(myEnUrl)
+                }
+           }
+            else
+            {
+                var alert = UIAlertController(title: "Evernote", message:
+                    "Unable to load Evernote for this Note", preferredStyle: UIAlertControllerStyle.Alert)
+                
+                self.presentViewController(alert, animated: false, completion: nil)
+                
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+                    handler: nil))
+            }
+        }
+    }
 }
 

@@ -110,7 +110,7 @@ func parseCalendar(inEmail: String, inout tableContents: [TableData])
     //Calculate
     // Days * hours * mins * secs
     
-    let startDate = baseDate.dateByAddingTimeInterval(-7 * 24 * 60 * 60)
+    let startDate = baseDate.dateByAddingTimeInterval(-8 * 24 * 60 * 60)
     
     /* The end date will be 1 month from today */
     //Calculate

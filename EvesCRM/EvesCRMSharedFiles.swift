@@ -187,6 +187,7 @@ struct EvernoteData
     private var myUpdateDate: NSDate!
     private var myCreateDate: NSDate!
     private var myIdentifier: String
+    private var myNoteRef: ENNoteRef!
 
     var title: String
         {
@@ -227,6 +228,17 @@ struct EvernoteData
             myIdentifier = newValue
         }
     }
+
+    var NoteRef: ENNoteRef
+        {
+        get {
+            return myNoteRef
+        }
+        set {
+            myNoteRef = newValue
+        }
+    }
+
     
     init()
     {
@@ -290,5 +302,15 @@ func getFirstPartofString(inText: String) -> String
         selectedType = inText
     }
     return selectedType
+}
+
+func stringByChangingChars(inString: String, inOldChar: String, inNewChar: String) -> String
+{
+    var error:NSError?
+    
+    let regex = NSRegularExpression(pattern:inOldChar, options:.CaseInsensitive, error:&error)!
+    let myString = regex.stringByReplacingMatchesInString(inString, options:  NSMatchingOptions.allZeros, range: NSMakeRange(0, count(inString)), withTemplate:inNewChar)
+    
+    return myString
 }
 
