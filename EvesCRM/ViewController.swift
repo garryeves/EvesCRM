@@ -10,6 +10,9 @@ import UIKit
 import AddressBook
 import AddressBookUI
 import EventKit
+import CoreData
+
+
 //import "ENSDK/Headers/ENSDK.h"
 
 // PeoplePicker code
@@ -17,7 +20,7 @@ import EventKit
 private let CONTACT_CELL_IDENTIFER = "contactNameCell"
 private let dataTable1_CELL_IDENTIFER = "dataTable1Cell"
 
-class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate {
+class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate {
     
     @IBOutlet weak var TableTypeSelection1: UIPickerView!
     
@@ -38,7 +41,9 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     @IBOutlet weak var dataTable2: UITableView!
     @IBOutlet weak var dataTable3: UITableView!
     @IBOutlet weak var dataTable4: UITableView!
+    @IBOutlet weak var buttonMaintainProjects: UIButton!
     
+    @IBOutlet weak var buttonSelectProject: UIButton!
     @IBOutlet weak var StartLabel: UILabel!
     
     @IBOutlet weak var setSelectionButton: UIButton!
@@ -80,10 +85,12 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     var myEvernoteUserID: Int = 0
     var myEvernoteUserTimer = NSTimer()
     var EvernoteUserDone: Bool = false
+    var EvernoteAuthenticationDone: Bool = false
     var EvernoteUserTimerCount: Int = 0
     var myEvernoteGUID: String = ""
     
     
+    let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
     
     // Peoplepicker settings
     
@@ -117,7 +124,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         evernoteSession = ENSession.sharedSession()
         connectToEvernote()
         
-        
        // Initial population of contact list
         self.dataTable1.registerClass(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
         self.dataTable2.registerClass(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
@@ -149,11 +155,25 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         dataTable4.tableFooterView = UIView(frame:CGRectZero)
 
         populateContactList()
-
+/*  No longer want to automatically open the PeoplePicker, as adding in logic to do Projects
         let picker = ABPeoplePickerNavigationController()
         
         picker.peoplePickerDelegate = self
         presentViewController(picker, animated: true, completion: nil)
+*/
+        
+        // Work out if a project has been added to the data store, so we can then select it
+        let myProjects = getProjects()
+        
+        if myProjects.count > 0
+        {
+            buttonSelectProject.hidden = false
+        }
+        else
+        {
+            buttonSelectProject.hidden = true
+        }
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -161,7 +181,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         // Dispose of any resources that can be recreated.
     }
     
-
+    
     func numberOfComponentsInPickerView(TableTypeSelection1: UIPickerView) -> Int {
         return 1
     }
@@ -294,8 +314,12 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     // ...
                     self.myEvernote = EvernoteDetails(inSession: self.evernoteSession)
                 }
+                self.EvernoteAuthenticationDone = true
             })
         }
+        
+        myEvernoteUserTimer = NSTimer.scheduledTimerWithTimeInterval(1, target:self, selector: Selector("myEvernoteAuthenticationDidFinish"), userInfo: nil, repeats: false)
+
         evernotePass1 = true  // This is to allow only one attempt to launch Evernote
     }
 
@@ -789,6 +813,37 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
 
     }
     
+    @IBAction func buttonMaintainProjects(sender: UIButton) {
+        let MaintainProjectViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("MaintainProject") as! MaintainProjectViewController
+        
+        MaintainProjectViewControl.delegate = self
+        MaintainProjectViewControl.myActionType = "Add"
+
+        self.presentViewController(MaintainProjectViewControl, animated: true, completion: nil)
+    }
+    
+    @IBAction func buttonSelectProject(sender: UIButton)
+    {
+        let MaintainProjectViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("MaintainProject") as! MaintainProjectViewController
+        
+        MaintainProjectViewControl.delegate = self
+        MaintainProjectViewControl.myActionType = "Select"
+        
+        self.presentViewController(MaintainProjectViewControl, animated: true, completion: nil)
+
+    }
+    
+    func myMaintainProjectDidFinish(controller:MaintainProjectViewController, actionType: String)
+    {
+        if actionType == "Changed"
+        {
+       //     populateArraysForTables(reBuildTableName)
+         //   reloadDataTables()
+        }
+        controller.dismissViewControllerAnimated(true, completion: nil)
+    }
+
+    
     func setAddButtonState(inTable: Int)
     {
         // Hide all of the buttons
@@ -978,26 +1033,27 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     
     func openEvernoteEditView(inGUID: String, inNoteRef:ENNoteRef)
     {
+        if myEvernoteShard != ""
+        {
+            let myEnUrlPath = "evernote:///view/\(myEvernoteUserID)/\(myEvernoteShard)/\(inGUID)/\(inGUID)/"
 
-        myEvernoteGUID = inGUID
-       
-        let myEnUserStore = evernoteSession.userStore
-        
-        myEnUserStore.getUserWithSuccess({
-            (findNotesResults) in
-            self.myEvernoteShard = findNotesResults.shardId
-            self.myEvernoteUserID = findNotesResults.id as Int
-            self.EvernoteUserDone = true
+            var myEnUrl: NSURL = NSURL(string: myEnUrlPath)!
+            
+            if UIApplication.sharedApplication().canOpenURL(myEnUrl) == true
+            {
+                UIApplication.sharedApplication().openURL(myEnUrl)
+            }
         }
-            , failure: {
-                (findNotesError) in
-                println("Failure")
-                self.EvernoteUserDone = true
-                self.myEvernoteShard = ""
-                self.myEvernoteUserID = 0
-        })
-      
-        myEvernoteUserTimer = NSTimer.scheduledTimerWithTimeInterval(1, target:self, selector: Selector("myEvernoteUserDidFinish"), userInfo: nil, repeats: false)
+        else
+        {
+            var alert = UIAlertController(title: "Evernote", message:
+                "Unable to load Evernote for this Note", preferredStyle: UIAlertControllerStyle.Alert)
+            
+            self.presentViewController(alert, animated: false, completion: nil)
+            
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+                handler: nil))
+        }
     }
 
     func openEvernoteAddView(inFullName: String)
@@ -1025,6 +1081,50 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             UIApplication.sharedApplication().openURL(myEnUrl)
         }
     }
+        
+    func myEvernoteAuthenticationDidFinish()
+    {
+        if !EvernoteAuthenticationDone
+        {  // Async not yet complete
+            if EvernoteUserTimerCount > 5
+            {
+                var alert = UIAlertController(title: "Evernote", message:
+                    "Unable to load Evernote in a timely manner", preferredStyle: UIAlertControllerStyle.Alert)
+                
+                self.presentViewController(alert, animated: false, completion: nil)
+                
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+                    handler: nil))
+            }
+            else
+            {
+                EvernoteUserTimerCount = EvernoteUserTimerCount + 1
+                myEvernoteUserTimer = NSTimer.scheduledTimerWithTimeInterval(1, target:self, selector: Selector("myEvernoteAuthenticationDidFinish"), userInfo: nil, repeats: false)
+            }
+        }
+        else
+        {
+            //Now we are authenticated we can get the used id and shard details
+            let myEnUserStore = evernoteSession.userStore
+            myEnUserStore.getUserWithSuccess({
+            (findNotesResults) in
+            self.myEvernoteShard = findNotesResults.shardId
+            self.myEvernoteUserID = findNotesResults.id as Int
+            self.EvernoteUserDone = true
+            }
+            , failure: {
+            (findNotesError) in
+            println("Failure")
+            self.EvernoteUserDone = true
+            self.myEvernoteShard = ""
+            self.myEvernoteUserID = 0
+            })
+            
+            EvernoteUserTimerCount = 0
+            
+            myEvernoteUserTimer = NSTimer.scheduledTimerWithTimeInterval(1, target:self, selector: Selector("myEvernoteUserDidFinish"), userInfo: nil, repeats: false)
+        }
+    }
     
     func myEvernoteUserDidFinish()
     {
@@ -1046,30 +1146,5 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 myEvernoteUserTimer = NSTimer.scheduledTimerWithTimeInterval(1, target:self, selector: Selector("myEvernoteUserDidFinish"), userInfo: nil, repeats: false)
             }
         }
-        else
-        {
-            if myEvernoteShard != ""
-            {
-                let myEnUrlPath = "evernote:///view/\(myEvernoteUserID)/\(myEvernoteShard)/\(myEvernoteGUID)/\(myEvernoteGUID)/"
-        
-                var myEnUrl: NSURL = NSURL(string: myEnUrlPath)!
-                
-                if UIApplication.sharedApplication().canOpenURL(myEnUrl) == true
-                {
-                    UIApplication.sharedApplication().openURL(myEnUrl)
-                }
-           }
-            else
-            {
-                var alert = UIAlertController(title: "Evernote", message:
-                    "Unable to load Evernote for this Note", preferredStyle: UIAlertControllerStyle.Alert)
-                
-                self.presentViewController(alert, animated: false, completion: nil)
-                
-                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
-                    handler: nil))
-            }
-        }
     }
 }
-

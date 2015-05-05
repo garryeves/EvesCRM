@@ -9,6 +9,11 @@
 import Foundation
 import AddressBook
 import EventKit
+import CoreData
+
+
+let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
+
 
 // Here I am definging my own struct to use in the Display array.  This is to allow passing of multiple different types of information
 
@@ -312,5 +317,134 @@ func stringByChangingChars(inString: String, inOldChar: String, inNewChar: Strin
     let myString = regex.stringByReplacingMatchesInString(inString, options:  NSMatchingOptions.allZeros, range: NSMakeRange(0, count(inString)), withTemplate:inNewChar)
     
     return myString
+}
+
+func getProjects()->[Projects]
+{
+    
+    
+  //  let sortDescriptor = NSSortDescriptor(key: "title", ascending: true)
+    
+    // Set the list of sort descriptors in the fetch request,
+    // so it includes the sort descriptor
+  //  fetchRequest.sortDescriptors = [sortDescriptor]
+     let fetchRequest = NSFetchRequest(entityName: "Projects")
+    
+    // Create a new predicate that filters out any object that
+    // doesn't have a title of "Best Language" exactly.
+    let predicate = NSPredicate(format: "projectStatus != \"Archived\"")
+    
+    // Set the predicate on the fetch request
+    fetchRequest.predicate = predicate
+    
+    // Create a new fetch request using the entity
+    
+    // Execute the fetch request, and cast the results to an array of LogItem objects
+    let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Projects]
+ 
+    return fetchResults!
+}
+
+func getRoles()->[Roles]
+{
+    let fetchRequest = NSFetchRequest(entityName: "Roles")
+    
+    // Execute the fetch request, and cast the results to an array of  objects
+    let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Roles]
+    
+    return fetchResults!
+}
+
+func populateRoles()
+{
+    
+/*
+    let fetchRequest = NSFetchRequest(entityName: "Roles")
+    
+    // Execute the fetch request, and cast the results to an array of  objects
+    let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Roles]
+
+    //var bas: NSManagedObject!
+    
+    for bas  in fetchResults!
+    {
+        managedObjectContext!.deleteObject(bas as NSManagedObject)
+println("delete")
+    }
+    var error : NSError?
+    
+    if(managedObjectContext!.save(&error) )
+    {
+        println(error?.localizedDescription)
+    }
+*/
+    
+    var initialRoles = ["Project Manager",
+                        "Project Executive",
+                        "Project Sponsor",
+                        "Technical Stakeholder",
+                        "Business Stakeholder",
+                        "Developer",
+                        "Tester"
+                        ]
+    
+    var rowCount: Int = 1
+ 
+    var mySelectedRole: Roles
+    var error : NSError?
+    
+    for initialRole in initialRoles
+    {
+           mySelectedRole = NSEntityDescription.insertNewObjectForEntityForName("Roles", inManagedObjectContext: managedObjectContext!) as! Roles
+          mySelectedRole.roleID = rowCount
+            mySelectedRole.roleDescription = initialRole
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+
+        rowCount = rowCount + 1
+    }
+}
+
+func getTeamMembers(inProjectID: NSNumber)->[ProjectTeamMembers]
+{
+    let fetchRequest = NSFetchRequest(entityName: "ProjectTeamMembers")
+
+    // Create a new predicate that filters out any object that
+    // doesn't have a title of "Best Language" exactly.
+    let predicate = NSPredicate(format: "projectID == \(inProjectID)")
+    
+    // Set the predicate on the fetch request
+    fetchRequest.predicate = predicate
+
+    // Execute the fetch request, and cast the results to an array of LogItem objects
+    let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [ProjectTeamMembers]
+    
+    return fetchResults!
+}
+
+func getRoleDescription(inRoleID: NSNumber)->String
+{
+    let fetchRequest = NSFetchRequest(entityName: "Roles")
+    let predicate = NSPredicate(format: "roleID == \(inRoleID)")
+    
+    // Set the predicate on the fetch request
+    fetchRequest.predicate = predicate
+    
+    // Execute the fetch request, and cast the results to an array of  objects
+    let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Roles]
+    
+    if fetchResults!.count == 0
+    {
+        return ""
+    }
+    else
+    {
+        return fetchResults![0].roleDescription
+        
+     //   return "found one"
+    }
 }
 

@@ -26,6 +26,15 @@
 		345E027F1AEF714800BE8D0A /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 345E027E1AEF714800BE8D0A /* Social.framework */; };
 		345E02811AEF715700BE8D0A /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 345E02801AEF715700BE8D0A /* MessageUI.framework */; };
 		345E02831AEF71CF00BE8D0A /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 345E02821AEF71CF00BE8D0A /* Accounts.framework */; };
+		346B70DE1AF70B8F005E1BC2 /* maintainProjectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346B70DD1AF70B8F005E1BC2 /* maintainProjectViewController.swift */; };
+		346B70DF1AF70B8F005E1BC2 /* maintainProjectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346B70DD1AF70B8F005E1BC2 /* maintainProjectViewController.swift */; };
+		346B70F31AF75F47005E1BC2 /* EvesCRM.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3406506C1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld */; };
+		346B70F71AF75FF4005E1BC2 /* Roles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346B70F41AF75FF4005E1BC2 /* Roles.swift */; };
+		346B70F81AF75FF4005E1BC2 /* Roles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346B70F41AF75FF4005E1BC2 /* Roles.swift */; };
+		346B70F91AF75FF4005E1BC2 /* ProjectTeamMembers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346B70F51AF75FF4005E1BC2 /* ProjectTeamMembers.swift */; };
+		346B70FA1AF75FF4005E1BC2 /* ProjectTeamMembers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346B70F51AF75FF4005E1BC2 /* ProjectTeamMembers.swift */; };
+		346B70FB1AF75FF4005E1BC2 /* Projects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346B70F61AF75FF4005E1BC2 /* Projects.swift */; };
+		346B70FC1AF75FF4005E1BC2 /* Projects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346B70F61AF75FF4005E1BC2 /* Projects.swift */; };
 		346D5E021AE5F9C700F858E7 /* CalendarDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346D5E011AE5F9C700F858E7 /* CalendarDetails.swift */; };
 		346D5E031AE5F9C700F858E7 /* CalendarDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346D5E011AE5F9C700F858E7 /* CalendarDetails.swift */; };
 		347518D91AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347518D81AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift */; };
@@ -33,6 +42,8 @@
 		348E6D4B1ADF74C800697268 /* ContactDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348E6D4A1ADF74C800697268 /* ContactDetails.swift */; };
 		348E6D4C1ADF74C800697268 /* ContactDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348E6D4A1ADF74C800697268 /* ContactDetails.swift */; };
 		34B3BDA01AF0979E00C5B09D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406506F1ADDF8FF00C90CBB /* ViewController.swift */; };
+		34F199BF1AF6060200963ABF /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34F199BE1AF6060200963ABF /* CoreData.framework */; };
+		34F199C11AF6ECE900963ABF /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34F199C01AF6ECE900963ABF /* CloudKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,9 +79,17 @@
 		345E027E1AEF714800BE8D0A /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		345E02801AEF715700BE8D0A /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		345E02821AEF71CF00BE8D0A /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
+		346B70DD1AF70B8F005E1BC2 /* maintainProjectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = maintainProjectViewController.swift; sourceTree = "<group>"; };
+		346B70F21AF75EFE005E1BC2 /* EvesCRM 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 2.xcdatamodel"; sourceTree = "<group>"; };
+		346B70F41AF75FF4005E1BC2 /* Roles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Roles.swift; sourceTree = "<group>"; };
+		346B70F51AF75FF4005E1BC2 /* ProjectTeamMembers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectTeamMembers.swift; sourceTree = "<group>"; };
+		346B70F61AF75FF4005E1BC2 /* Projects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Projects.swift; sourceTree = "<group>"; };
 		346D5E011AE5F9C700F858E7 /* CalendarDetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarDetails.swift; sourceTree = "<group>"; };
 		347518D81AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EvesCRMSharedFiles.swift; sourceTree = "<group>"; };
 		348E6D4A1ADF74C800697268 /* ContactDetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactDetails.swift; sourceTree = "<group>"; };
+		34F199BB1AF6046A00963ABF /* EvesCRM.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = EvesCRM.entitlements; sourceTree = "<group>"; };
+		34F199BE1AF6060200963ABF /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		34F199C01AF6ECE900963ABF /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,10 +97,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34F199BF1AF6060200963ABF /* CoreData.framework in Frameworks */,
 				344F22701AF1DD13002C373E /* libxml2.dylib in Frameworks */,
 				344F226E1AF1DD04002C373E /* MobileCoreServices.framework in Frameworks */,
 				344F226B1AF1DC20002C373E /* ENSDK.framework in Frameworks */,
 				345E02831AEF71CF00BE8D0A /* Accounts.framework in Frameworks */,
+				34F199C11AF6ECE900963ABF /* CloudKit.framework in Frameworks */,
 				345E02811AEF715700BE8D0A /* MessageUI.framework in Frameworks */,
 				345E027F1AEF714800BE8D0A /* Social.framework in Frameworks */,
 				3406508F1ADDF93600C90CBB /* AddressBook.framework in Frameworks */,
@@ -102,6 +123,8 @@
 		3406505C1ADDF8FF00C90CBB = {
 			isa = PBXGroup;
 			children = (
+				34F199C01AF6ECE900963ABF /* CloudKit.framework */,
+				34F199BE1AF6060200963ABF /* CoreData.framework */,
 				344F226F1AF1DD13002C373E /* libxml2.dylib */,
 				344F226D1AF1DD04002C373E /* MobileCoreServices.framework */,
 				345E02821AEF71CF00BE8D0A /* Accounts.framework */,
@@ -129,6 +152,10 @@
 		340650671ADDF8FF00C90CBB /* EvesCRM */ = {
 			isa = PBXGroup;
 			children = (
+				346B70F41AF75FF4005E1BC2 /* Roles.swift */,
+				346B70F51AF75FF4005E1BC2 /* ProjectTeamMembers.swift */,
+				346B70F61AF75FF4005E1BC2 /* Projects.swift */,
+				34F199BB1AF6046A00963ABF /* EvesCRM.entitlements */,
 				3406506A1ADDF8FF00C90CBB /* AppDelegate.swift */,
 				3406506F1ADDF8FF00C90CBB /* ViewController.swift */,
 				340650711ADDF8FF00C90CBB /* Main.storyboard */,
@@ -141,6 +168,7 @@
 				346D5E011AE5F9C700F858E7 /* CalendarDetails.swift */,
 				34111C391AEC898B003090EB /* reminderViewController.swift */,
 				344F22711AF1DFF3002C373E /* evernoteDetails.swift */,
+				346B70DD1AF70B8F005E1BC2 /* maintainProjectViewController.swift */,
 			);
 			path = EvesCRM;
 			sourceTree = "<group>";
@@ -220,6 +248,11 @@
 					340650641ADDF8FF00C90CBB = {
 						CreatedOnToolsVersion = 6.3;
 						DevelopmentTeam = 76YDDNPU7W;
+						SystemCapabilities = {
+							com.apple.iCloud = {
+								enabled = 1;
+							};
+						};
 					};
 					3406507C1ADDF8FF00C90CBB = {
 						CreatedOnToolsVersion = 6.3;
@@ -273,12 +306,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				346B70F91AF75FF4005E1BC2 /* ProjectTeamMembers.swift in Sources */,
 				346D5E021AE5F9C700F858E7 /* CalendarDetails.swift in Sources */,
+				346B70DE1AF70B8F005E1BC2 /* maintainProjectViewController.swift in Sources */,
 				34111C3A1AEC898B003090EB /* reminderViewController.swift in Sources */,
 				347518D91AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift in Sources */,
 				340650701ADDF8FF00C90CBB /* ViewController.swift in Sources */,
+				346B70F71AF75FF4005E1BC2 /* Roles.swift in Sources */,
 				348E6D4B1ADF74C800697268 /* ContactDetails.swift in Sources */,
 				3406506B1ADDF8FF00C90CBB /* AppDelegate.swift in Sources */,
+				346B70FB1AF75FF4005E1BC2 /* Projects.swift in Sources */,
 				344F22721AF1DFF3002C373E /* evernoteDetails.swift in Sources */,
 				3406506E1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld in Sources */,
 			);
@@ -289,9 +326,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				34B3BDA01AF0979E00C5B09D /* ViewController.swift in Sources */,
+				346B70F81AF75FF4005E1BC2 /* Roles.swift in Sources */,
+				346B70DF1AF70B8F005E1BC2 /* maintainProjectViewController.swift in Sources */,
+				346B70FA1AF75FF4005E1BC2 /* ProjectTeamMembers.swift in Sources */,
 				346D5E031AE5F9C700F858E7 /* CalendarDetails.swift in Sources */,
+				346B70F31AF75F47005E1BC2 /* EvesCRM.xcdatamodeld in Sources */,
 				347518DC1AE3635100FF1C46 /* EvesCRMSharedFiles.swift in Sources */,
 				340650841ADDF8FF00C90CBB /* EvesCRMTests.swift in Sources */,
+				346B70FC1AF75FF4005E1BC2 /* Projects.swift in Sources */,
 				348E6D4C1ADF74C800697268 /* ContactDetails.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -414,7 +456,9 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = EvesCRM/EvesCRM.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -427,6 +471,7 @@
 				INFOPLIST_FILE = EvesCRM/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = ENSDK.framework/Headers/ENSDK.h;
 				"SWIFT_OBJC_BRIDGING_HEADER[arch=*]" = ENSDK.framework/Headers/Advanced/ENSDKAdvanced.h;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -438,7 +483,9 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = EvesCRM/EvesCRM.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -451,6 +498,7 @@
 				INFOPLIST_FILE = EvesCRM/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = ENSDK.framework/Headers/ENSDK.h;
 				"SWIFT_OBJC_BRIDGING_HEADER[arch=*]" = ENSDK.framework/Headers/Advanced/ENSDKAdvanced.h;
 				TARGETED_DEVICE_FAMILY = 2;
@@ -529,9 +577,10 @@
 		3406506C1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				346B70F21AF75EFE005E1BC2 /* EvesCRM 2.xcdatamodel */,
 				3406506D1ADDF8FF00C90CBB /* EvesCRM.xcdatamodel */,
 			);
-			currentVersion = 3406506D1ADDF8FF00C90CBB /* EvesCRM.xcdatamodel */;
+			currentVersion = 346B70F21AF75EFE005E1BC2 /* EvesCRM 2.xcdatamodel */;
 			path = EvesCRM.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
