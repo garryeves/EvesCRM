@@ -26,6 +26,9 @@ class reminderViewController: UIViewController {
     var inAction: String!
     var inReminderID: String!
     var inCalendarName: String!
+    var myDisplayType: String!
+    var myProjectName: String!
+
     
     private var itemSelected: String = ""
 

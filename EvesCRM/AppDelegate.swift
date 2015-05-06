@@ -103,11 +103,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     //    options.setValue(YES, forKey: "NSInferMappingModelAutomaticallyOption")
         
         let mOptions = [NSMigratePersistentStoresAutomaticallyOption: true,
-            NSInferMappingModelAutomaticallyOption: true]
+            NSInferMappingModelAutomaticallyOption: true,
+            NSPersistentStoreUbiquitousContentNameKey : "EvesCRMStore"]
       
         //_persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
        // if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error]) {
 
+        
+  //       self.registerCoordinatorForStoreNotifications (coordinator!)
         
   // GRE end add section
         
@@ -154,5 +157,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
+    // GRE Added notification for iCloud storage
+    
+    func registerCoordinatorForStoreNotifications (coordinator : NSPersistentStoreCoordinator) {
+        let nc : NSNotificationCenter = NSNotificationCenter.defaultCenter();
+        
+        nc.addObserver(self, selector: "handleStoresWillChange:",
+            name: NSPersistentStoreCoordinatorStoresWillChangeNotification,
+            object: coordinator)
+        
+        nc.addObserver(self, selector: "handleStoresDidChange:",
+            name: NSPersistentStoreCoordinatorStoresDidChangeNotification,
+            object: coordinator)
+        
+        nc.addObserver(self, selector: "handleStoresWillRemove:",
+            name: NSPersistentStoreCoordinatorWillRemoveStoreNotification,
+            object: coordinator)
+        
+        nc.addObserver(self, selector: "handleStoreChangedUbiquitousContent:",
+            name: NSPersistentStoreDidImportUbiquitousContentChangesNotification,
+            object: coordinator)
+    }
 }
 

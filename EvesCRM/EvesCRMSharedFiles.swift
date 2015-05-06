@@ -293,7 +293,7 @@ func writeRowToArray(inDisplayText: String, inout inTable: [TableData], inDispla
 func getFirstPartofString(inText: String) -> String
 {
     let start = inText.startIndex
-    let end = find(inText, " ")
+    let end = find(inText, ":")
     
     var selectedType: String = ""
     
@@ -342,6 +342,45 @@ func getProjects()->[Projects]
     // Execute the fetch request, and cast the results to an array of LogItem objects
     let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Projects]
  
+    return fetchResults!
+}
+
+func getProjectDetails(myProjectID: NSNumber)->[Projects]
+{
+    
+    let fetchRequest = NSFetchRequest(entityName: "Projects")
+    
+    // Create a new predicate that filters out any object that
+    // doesn't have a title of "Best Language" exactly.
+    let predicate = NSPredicate(format: "projectID == \(myProjectID)")
+    
+    // Set the predicate on the fetch request
+    fetchRequest.predicate = predicate
+    
+    // Create a new fetch request using the entity
+    
+    // Execute the fetch request, and cast the results to an array of LogItem objects
+    let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Projects]
+    
+    return fetchResults!
+}
+
+
+func getAllProjects()->[Projects]
+{
+    
+    
+    //  let sortDescriptor = NSSortDescriptor(key: "title", ascending: true)
+    
+    // Set the list of sort descriptors in the fetch request,
+    // so it includes the sort descriptor
+    //  fetchRequest.sortDescriptors = [sortDescriptor]
+    
+    let fetchRequest = NSFetchRequest(entityName: "Projects")
+    
+    // Execute the fetch request, and cast the results to an array of objects
+    let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Projects]
+    
     return fetchResults!
 }
 
@@ -425,6 +464,27 @@ func getTeamMembers(inProjectID: NSNumber)->[ProjectTeamMembers]
     return fetchResults!
 }
 
+func getProjectsForPerson(inPersonName: String)->[ProjectTeamMembers]
+{
+    let fetchRequest = NSFetchRequest(entityName: "ProjectTeamMembers")
+    
+    // Create a new predicate that filters out any object that
+    // doesn't have a title of "Best Language" exactly.
+    
+    var predicate: NSPredicate
+    
+    predicate = NSPredicate(format: "teamMember == \"\(inPersonName)\"")
+    
+    // Set the predicate on the fetch request
+    fetchRequest.predicate = predicate
+    
+    // Execute the fetch request, and cast the results to an array of LogItem objects
+    let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [ProjectTeamMembers]
+    
+    return fetchResults!
+}
+
+
 func getRoleDescription(inRoleID: NSNumber)->String
 {
     let fetchRequest = NSFetchRequest(entityName: "Roles")
@@ -443,8 +503,76 @@ func getRoleDescription(inRoleID: NSNumber)->String
     else
     {
         return fetchResults![0].roleDescription
-        
-     //   return "found one"
     }
 }
 
+func parseProjectDetails(myProjectID: NSNumber)->[TableData]
+{
+    var tableContents:[TableData] = [TableData]()
+    var myDateFormatter = NSDateFormatter()
+    
+    var dateFormat = NSDateFormatterStyle.FullStyle
+    myDateFormatter.dateStyle = dateFormat
+    
+    let myProjects = getProjectDetails(myProjectID)
+    
+    if myProjects.count == 0
+    {
+        writeRowToArray("No Project data is available", &tableContents)
+    }
+    else
+    {
+        let dateStart = myDateFormatter.stringFromDate(myProjects[0].projectStartDate)
+        let dateEnd = myDateFormatter.stringFromDate(myProjects[0].projectEndDate)
+        
+        writeRowToArray("Start Date = \(dateStart)", &tableContents)
+        writeRowToArray("End Date = \(dateEnd)", &tableContents)
+        writeRowToArray("Status = \(myProjects[0].projectStatus)", &tableContents)
+    }
+   
+    return tableContents
+}
+
+func displayTeamMembers(inProjectID: NSNumber)->[TableData]
+{
+    var tableContents:[TableData] = [TableData]()
+    
+    let myTeamMembers = getTeamMembers(inProjectID)
+    var titleText: String = ""
+    
+    for myTeamMember in myTeamMembers
+    {
+        titleText = myTeamMember.teamMember
+        titleText += " : "
+        titleText += getRoleDescription(myTeamMember.roleID)
+        
+        writeRowToArray(titleText, &tableContents)
+    }
+    
+    return tableContents
+}
+
+func displayProjectsForPerson(inPerson: String) -> [TableData]
+{
+    var tableContents:[TableData] = [TableData]()
+
+    let myProjects = getProjectsForPerson(inPerson)
+    
+    if myProjects.count == 0
+    {
+        writeRowToArray("Not a member of any Project", &tableContents)
+    }
+    else
+    {
+        for myProject in myProjects
+        {
+            let myDetails = getProjectDetails(myProject.projectID)
+        
+            if myDetails[0].projectStatus != "Archived"
+            {
+            writeRowToArray(myDetails[0].projectName, &tableContents)
+            }
+        }
+    }
+    return tableContents
+}

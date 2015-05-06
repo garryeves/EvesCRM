@@ -49,7 +49,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     @IBOutlet weak var setSelectionButton: UIButton!
     
     @IBOutlet weak var peoplePickerButton: UIButton!
-    var TableOptions = ["Calendar", "Details", "Evernote", "Reminders"]
+    var TableOptions = ["Calendar", "Details", "Evernote", "Project Membership", "Reminders"]
     
     // Store the tag number of the button pressed so that we can make sure we update the correct button text and table
     var callingTable = 0
@@ -88,6 +88,9 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     var EvernoteAuthenticationDone: Bool = false
     var EvernoteUserTimerCount: Int = 0
     var myEvernoteGUID: String = ""
+    var myDisplayType: String = ""
+    var myProjectID: NSNumber!
+    var myProjectName: String = ""
     
     
     let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
@@ -226,7 +229,10 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         buttonAdd3.hidden = true
         buttonAdd4.hidden = true
         
-        let myIndex = find(TableOptions,getFirstPartofString(sender.currentTitle!))
+        let startString = getFirstPartofString(sender.currentTitle!)
+
+        let myIndex = find(TableOptions, getFirstPartofString(sender.currentTitle!))
+
         TableTypeSelection1.selectRow(myIndex!, inComponent: 0, animated: true)
     }
 
@@ -238,8 +244,15 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         }
         else
         {
-            
-            let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+            var myFullName: String
+            if myDisplayType == "Project"
+            {
+                myFullName = myProjectName
+            }
+            else
+            {
+                myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+            }
             
             switch callingTable
             {
@@ -562,18 +575,57 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         switch selectedType
         {
             case "Details":
-                workArray = parseContactDetails(personSelected)
+                if myDisplayType == "Project"
+                {
+                    workArray = parseProjectDetails(myProjectID)
+                }
+                else
+                {
+                    workArray = parseContactDetails(personSelected)
+                }
             case "Calendar":
-                workArray = parseCalendarDetails("Calendar",personSelected, eventStore)
+                if myDisplayType == "Project"
+                {
+                   workArray = parseCalendarDetails("Calendar", myProjectName, eventStore)                   }
+                else
+                {
+                    workArray = parseCalendarDetails("Calendar",personSelected, eventStore)
+                }
             case "Reminders":
-                workArray = parseCalendarDetails("Reminders",personSelected, eventStore)
+                if myDisplayType == "Project"
+                {
+                    workArray = parseCalendarDetails("Reminders", myProjectName, eventStore)
+                }
+                else
+                {
+                    workArray = parseCalendarDetails("Reminders", personSelected, eventStore)
+                }
             case "Evernote":
                 writeRowToArray("Loading Evernote data.  Pane will refresh when finished", &workArray)
-                myEvernote.findEvernoteNotes(personSelected)
+                if myDisplayType == "Project"
+                {
+                    myEvernote.findEvernoteNotes(myProjectName)
+                }
+                else
+                {
+                    let searchString = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+                    myEvernote.findEvernoteNotes(searchString)
+                }
                 EvernoteTargetTable = inTable
                 EvernoteTimerCount = 0
                 EvernoteTimer = NSTimer.scheduledTimerWithTimeInterval(1, target:self, selector: Selector("EvernoteComplete"), userInfo: nil, repeats: false)
             
+            case "Project Membership":
+                // Project team membership details
+                if myDisplayType == "Project"
+                {
+                    workArray = displayTeamMembers(myProjectID)
+                }
+                else
+                {
+                    let searchString = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+                    workArray = displayProjectsForPerson(searchString)
+                }
 
             case "Mail":
                 let a = 1
@@ -673,7 +725,15 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 {
                     reBuildTableName = inTable
 
-                    let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+                    var myFullName: String
+                    if myDisplayType == "Project"
+                    {
+                        myFullName = myProjectName
+                    }
+                    else
+                    {
+                        myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+                    }
                     openReminderEditView(inRecord.calendarItemIdentifier, inCalendarName: myFullName)
                 }
             case "Evernote":
@@ -685,7 +745,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     
                     var myGuid = myEvernoteDataArray[rowID].identifier
                     var myNoteRef = myEvernoteDataArray[rowID].NoteRef
-                    
+
                     openEvernoteEditView(myGuid, inNoteRef: myNoteRef)
             }
                 
@@ -706,10 +766,10 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         switch selectedType
         {
             case "Reminders":
-                workString = "Reminders - use List '\(inTitle)'"
+                workString = "Reminders: use List '\(inTitle)'"
 
-        case "Evernote":
-            workString = "Evernote - use Tag '\(inTitle)'"
+            case "Evernote":
+                workString = "Evernote: use Tag '\(inTitle)'"
 
             
             default:
@@ -737,7 +797,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         reminderViewControl.inReminderID = inReminderID
         reminderViewControl.delegate = self
         reminderViewControl.inCalendarName = inCalendarName
-        
+ 
         self.presentViewController(reminderViewControl, animated: true, completion: nil)
     }
     
@@ -800,11 +860,29 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         switch selectedType
         {
             case "Reminders":
-                let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+                var myFullName: String
+                if myDisplayType == "Project"
+                {
+                    myFullName = myProjectName
+                }
+                else
+                {
+                    myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+                }
+
                 openReminderAddView(myFullName)
 
         case "Evernote":
-            let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+            var myFullName: String
+            if myDisplayType == "Project"
+            {
+                myFullName = myProjectName
+            }
+            else
+            {
+                myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+            }
+
             openEvernoteAddView(myFullName)
 
             default:
@@ -837,12 +915,54 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     {
         if actionType == "Changed"
         {
-       //     populateArraysForTables(reBuildTableName)
-         //   reloadDataTables()
+            populateArraysForTables(reBuildTableName)
+            reloadDataTables()
         }
         controller.dismissViewControllerAnimated(true, completion: nil)
     }
 
+    func myMaintainProjectSelect(controller:MaintainProjectViewController, projectID: NSNumber, projectName: String){
+    
+        TableTypeSelection1.hidden = true
+        setSelectionButton.hidden = true
+        TableTypeButton1.hidden = false
+        TableTypeButton2.hidden = false
+        TableTypeButton3.hidden = false
+        TableTypeButton4.hidden = false
+        dataTable1.hidden = false
+        dataTable2.hidden = false
+        dataTable3.hidden = false
+        dataTable4.hidden = false
+        StartLabel.hidden = true
+        
+        myDisplayType = "Project"
+        myProjectID = projectID
+        myProjectName = projectName
+        
+        controller.dismissViewControllerAnimated(true, completion: nil)
+        
+        table1Contents = Array()
+        table2Contents = Array()
+        table3Contents = Array()
+        table4Contents = Array()
+        
+        populateArraysForTables("Table1")
+        populateArraysForTables("Table2")
+        populateArraysForTables("Table3")
+        populateArraysForTables("Table4")
+        
+        reloadDataTables()
+        
+        // Here is where we will set the titles for the buttons
+        
+        TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: projectName), forState: .Normal)
+        TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: projectName), forState: .Normal)
+        TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: projectName), forState: .Normal)
+        TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: projectName), forState: .Normal)
+       
+
+    }
+    
     
     func setAddButtonState(inTable: Int)
     {
@@ -944,6 +1064,8 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         dataTable3.hidden = false
         dataTable4.hidden = false
         StartLabel.hidden = true
+        
+        myDisplayType = "Person"
         
         personSelected = person as ABRecord
         

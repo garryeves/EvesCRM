@@ -13,6 +13,7 @@ import AddressBookUI
 
 protocol MyMaintainProjectDelegate{
     func myMaintainProjectDidFinish(controller:MaintainProjectViewController, actionType: String)
+    func myMaintainProjectSelect(controller:MaintainProjectViewController, projectID: NSNumber, projectName: String)
 }
 
 class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationControllerDelegate
@@ -35,7 +36,10 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     @IBOutlet weak var labelTeamMemberName: UILabel!
     @IBOutlet weak var pickerPersonRole: UIPickerView!
     @IBOutlet weak var buttonConfirmTeamMember: UIButton!
+    @IBOutlet weak var buttonDeleteTeamMember: UIButton!
     
+    @IBOutlet weak var switchArchive: UISwitch!
+    @IBOutlet weak var labelSwitchArchive: UILabel!
     @IBOutlet weak var lableNoProjects: UILabel!
     var delegate: MyMaintainProjectDelegate?
     
@@ -53,6 +57,8 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     private var myRoles: [Roles]!
     private var mySelectedRoles: [ProjectTeamMembers]!
     private var personSelected: ABRecord!
+    private var mySelectedTeamMember: ProjectTeamMembers!
+    private var teamMemberAction: String = ""
     
     override func viewDidLoad()
     {
@@ -74,23 +80,22 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
             myRoles = getRoles()
         }
         
-        for disrole in myRoles
-        {
-            println("ID = \(disrole.roleID) name = \(disrole.roleDescription)")
-        }
-        
-        
         if myProjects.count > 0
         {
             // Populate the collection view
             projectList.hidden = false
             lableNoProjects.hidden = true
+            switchArchive.hidden = false
+            labelSwitchArchive.hidden = false
+            switchArchive.setOn(false, animated: true)
         }
         else
         {
             // Hide the collection view as there is nothing to display
             projectList.hidden = true
             lableNoProjects.hidden = false
+            switchArchive.hidden = true
+            labelSwitchArchive.hidden = true
         }
         
         
@@ -99,17 +104,25 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
             projectNameText.enabled = false
             startDatePicker.enabled = false
             endDatePicker.enabled = false
+            buttonSave.hidden = true
+            
         //    statusPicker.setUserInteractionEnabled = false
             
+            buttonSave.hidden = true
             buttonAddTeamMember.hidden = true
         }
+        else
+        {
+            buttonAddTeamMember.hidden = false
+        }
         
-        teamMembersTable.hidden = true
-        buttonAddTeamMember.hidden = true
-        teamMembersLabel.hidden = true
+        statusSelected = statusOptions[0]
+        teamMembersTable.hidden = false
+        teamMembersLabel.hidden = false
         labelTeamMemberName.hidden = true
         pickerPersonRole.hidden = true
         buttonConfirmTeamMember.hidden = true
+        buttonDeleteTeamMember.hidden = true
         
         teamMembersTable.tableFooterView = UIView(frame:CGRectZero)
         projectList.tableFooterView = UIView(frame:CGRectZero)
@@ -255,10 +268,6 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
             var titleText: String = ""
             if mySelectedRoles != nil
             {
-                
-  println(mySelectedRoles[indexPath.row].teamMember)
-  println(mySelectedRoles[indexPath.row].roleID)
-                
                 titleText = mySelectedRoles[indexPath.row].teamMember
                 titleText += " : "
                 titleText += getRoleDescription(mySelectedRoles[indexPath.row].roleID)
@@ -279,22 +288,35 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         
         if tableView == projectList
         {
+            
             mySelectedProject = myProjects[indexPath.row]
             
             projectNameText.text = myProjects[indexPath.row].projectName
            // statusPicker.currentText = myProjects[indexPath.row].projectStatus
             startDatePicker.date = myProjects[indexPath.row].projectStartDate
             endDatePicker.date = myProjects[indexPath.row].projectEndDate
+
+            if myActionType == "Select"
+            {
+                buttonSave.hidden = false
+                buttonAddTeamMember.hidden = true
+            }
+            else
+            {
+                myActionType = "Edit"
+                buttonSave.setTitle("Save", forState: UIControlState.Normal)
+                buttonAddTeamMember.hidden = false
+            }
             
-            myActionType = "Edit"
-            
-            buttonSave.setTitle("Save", forState: UIControlState.Normal)
             teamMembersTable.hidden = false
-            buttonAddTeamMember.hidden = false
             teamMembersLabel.hidden = false
             
             mySelectedRoles = getTeamMembers(mySelectedProject.projectID)
             teamMembersTable.reloadData()
+            labelTeamMemberName.hidden = true
+            pickerPersonRole.hidden = true
+            buttonConfirmTeamMember.hidden = true
+            buttonDeleteTeamMember.hidden = true
             
             // Due to the way the Picker works, I need to know the Index of the entry to display.
             // So parse through the array to find the entry that matches the saved text and then display that one
@@ -318,7 +340,26 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
  
         else if tableView == teamMembersTable
         {
-          //  dataCellClicked(indexPath.row, inTable: "Table2", inRecord: table2Contents[indexPath.row])
+            if myActionType == "Select"
+            {
+                buttonAddTeamMember.hidden = true
+            }
+            else
+            {
+                buttonDeleteTeamMember.hidden = false
+                buttonConfirmTeamMember.hidden = false
+                labelTeamMemberName.hidden = false
+                teamMembersTable.hidden = true
+                pickerPersonRole.hidden = false
+            
+                mySelectedTeamMember = mySelectedRoles[indexPath.row]
+                labelTeamMemberName.text = mySelectedTeamMember.teamMember
+                let myRoleRow = mySelectedTeamMember.roleID as Int - 1
+                pickerPersonRole.selectRow(myRoleRow, inComponent: 0, animated: true)
+                teamMemberAction = "Edit"
+                buttonAddTeamMember.hidden = true
+                buttonConfirmTeamMember.setTitle("Update Project Team Member", forState: UIControlState.Normal)
+            }
         }
     }
     
@@ -333,9 +374,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         
         if myActionType == "Select"
         {
-        
-    println("Hit the Select piece.  Still need to do the coding")
-            delegate?.myMaintainProjectDidFinish(self, actionType: "Selected")
+            delegate?.myMaintainProjectSelect(self, projectID: mySelectedProject.projectID, projectName: mySelectedProject.projectName)
         }
         else
         {
@@ -351,22 +390,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
             }
             else
             {
-                if myActionType == "Add"
-                {
-                    mySelectedProject = NSEntityDescription.insertNewObjectForEntityForName("Projects", inManagedObjectContext: self.managedObjectContext!) as! Projects
-                    mySelectedProject.projectID = getProjects().count + 1
-                }
-            
-                mySelectedProject.projectName = projectNameText.text
-                mySelectedProject.projectStartDate = startDatePicker.date
-                mySelectedProject.projectEndDate = endDatePicker.date
-                mySelectedProject.projectStatus = statusSelected
-            
-                var error : NSError?
-                if(managedObjectContext!.save(&error) )
-                {
-                    println(error?.localizedDescription)
-                }
+                saveProject()
                 delegate?.myMaintainProjectDidFinish(self, actionType: "Changed")
             }
         }
@@ -375,27 +399,57 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         
     @IBAction func buttonAddTeamMember(sender: UIButton)
     {
+        buttonAddTeamMember.hidden = true
+        // Save current changes
+        saveProject()
+        myActionType = "Edit"
+        if switchArchive.on
+        {
+            myProjects = getAllProjects()
+        }
+        else
+        {
+            myProjects = getProjects()
+        }
+        projectList.reloadData()
+        teamMemberAction = "Add"
+        buttonConfirmTeamMember.setTitle("Add to Project Team Members", forState: UIControlState.Normal)
+        
+        pickerPersonRole.selectRow(0, inComponent: 0, animated: true)
+        roleSelected = 1
+        
+        buttonSave.setTitle("Save", forState: UIControlState.Normal)
+        
         let picker = ABPeoplePickerNavigationController()
         
         picker.peoplePickerDelegate = self
         presentViewController(picker, animated: true, completion: nil)
-
     }
     
     @IBAction func buttonConfirmTeamMember(sender: UIButton)
     {
         // We are now going to add in the team member and redisplay the team member grid
 
+        var myProjectTeam: ProjectTeamMembers
         
-        let myProjectTeam = NSEntityDescription.insertNewObjectForEntityForName("ProjectTeamMembers", inManagedObjectContext: self.managedObjectContext!) as! ProjectTeamMembers
+        if teamMemberAction == "Add"
+        {
+            myProjectTeam = NSEntityDescription.insertNewObjectForEntityForName("ProjectTeamMembers", inManagedObjectContext: self.managedObjectContext!) as! ProjectTeamMembers
+            myProjectTeam.projectID = mySelectedProject.projectID
+            myProjectTeam.teamMember = labelTeamMemberName.text!
+
+        }
+        else
+        {
+            myProjectTeam = mySelectedTeamMember
+        }
         
-        myProjectTeam.projectID = mySelectedProject.projectID
         myProjectTeam.roleID = roleSelected
-        myProjectTeam.teamMember = labelTeamMemberName.text!
         
         var error : NSError?
-        if(managedObjectContext!.save(&error) )
+        if !managedObjectContext!.save(&error)
         {
+            print("buttonConfirmTeamMember")
             println(error?.localizedDescription)
         }
         
@@ -405,6 +459,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         labelTeamMemberName.hidden = true
         pickerPersonRole.hidden = true
         buttonConfirmTeamMember.hidden = true
+        buttonDeleteTeamMember.hidden = true
         buttonAddTeamMember.hidden = false
         teamMembersTable.hidden = false
         buttonSave.hidden = false
@@ -431,5 +486,63 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     func peoplePickerNavigationControllerDidCancel(peoplePicker: ABPeoplePickerNavigationController!)
     {
         peoplePicker.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func saveProject()
+    {
+        if myActionType == "Add"
+        {
+            mySelectedProject = NSEntityDescription.insertNewObjectForEntityForName("Projects", inManagedObjectContext: self.managedObjectContext!) as! Projects
+            mySelectedProject.projectID = getAllProjects().count + 1
+        }
+        
+        mySelectedProject.projectName = projectNameText.text
+        mySelectedProject.projectStartDate = startDatePicker.date
+        mySelectedProject.projectEndDate = endDatePicker.date
+        mySelectedProject.projectStatus = statusSelected
+        
+        var error : NSError?
+        if !managedObjectContext!.save(&error)
+        {
+            print("saveProject")
+            println(error?.localizedDescription)
+        }
+    }
+    
+    @IBAction func buttonDeleteTeamMember(sender: UIButton)
+    {
+        managedObjectContext!.deleteObject(mySelectedTeamMember)
+    
+        var error : NSError?
+        
+        if !managedObjectContext!.save(&error)
+        {
+            println(error?.localizedDescription)
+        }
+        mySelectedRoles = getTeamMembers(mySelectedProject.projectID)
+        teamMembersTable.reloadData()
+        
+        labelTeamMemberName.hidden = true
+        pickerPersonRole.hidden = true
+        buttonConfirmTeamMember.hidden = true
+        buttonDeleteTeamMember.hidden = true
+        buttonAddTeamMember.hidden = false
+        teamMembersTable.hidden = false
+        buttonSave.hidden = false
+    }
+   
+    @IBAction func switchArchive(sender: UISwitch)
+    {
+        if switchArchive.on
+        {
+            myProjects = getAllProjects()
+        }
+        else
+        {
+            myProjects = getProjects()
+        }
+
+        projectList.reloadData()
+
     }
 }

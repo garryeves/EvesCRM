@@ -47,7 +47,7 @@ class EvernoteDetails
         return tableContents
     }
 */
-    func findEvernoteNotes(personSelected: ABRecord)
+    func findEvernoteNotes(searchString: String)
     {
     
         var searchText: ENNoteSearch!
@@ -59,6 +59,7 @@ class EvernoteDetails
         var myDisplayStrings: [String] = Array()
 
         tableContents.removeAll(keepCapacity: false)
+        retrievedData.removeAll(keepCapacity: false)
         asyncDone = false
         
         if !isConnected
@@ -68,7 +69,6 @@ class EvernoteDetails
         }
         else
         {
-            let searchString = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
             searchText = ENNoteSearch(searchString: searchString)
 
             myENSession.findNotesWithSearch(searchText, inNotebook: searchNotebook, orScope:searchScope, sortOrder: searchOrder, maxResults: searchMaxResults, completion: {
