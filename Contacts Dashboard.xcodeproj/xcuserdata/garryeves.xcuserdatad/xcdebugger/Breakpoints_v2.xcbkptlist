@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "EvesCRM/ViewController.swift"
-            timestampString = "452594390.86577"
+            timestampString = "452761694.37261"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "439"
-            endingLineNumber = "439"
+            startingLineNumber = "445"
+            endingLineNumber = "445"
             landmarkName = "tableView(_:numberOfRowsInSection:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -74,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "EvesCRM/ViewController.swift"
-            timestampString = "452594390.86577"
+            timestampString = "452761694.37261"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "467"
-            endingLineNumber = "467"
+            startingLineNumber = "473"
+            endingLineNumber = "473"
             landmarkName = "tableView(_:cellForRowAtIndexPath:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -90,11 +90,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "EvesCRM/ViewController.swift"
-            timestampString = "452594390.86577"
+            timestampString = "452761694.37261"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "468"
-            endingLineNumber = "468"
+            startingLineNumber = "474"
+            endingLineNumber = "474"
             landmarkName = "tableView(_:cellForRowAtIndexPath:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -106,11 +106,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "EvesCRM/ViewController.swift"
-            timestampString = "452594390.86577"
+            timestampString = "452761694.37261"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "549"
-            endingLineNumber = "549"
+            startingLineNumber = "555"
+            endingLineNumber = "555"
             landmarkName = "populateArrayDetails(_:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -122,11 +122,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "EvesCRM/ViewController.swift"
-            timestampString = "452594390.86577"
+            timestampString = "452761694.37261"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "304"
-            endingLineNumber = "304"
+            startingLineNumber = "310"
+            endingLineNumber = "310"
             landmarkName = "setSelectionButtonTouchUp(_:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -138,11 +138,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "EvesCRM/ViewController.swift"
-            timestampString = "452594390.86577"
+            timestampString = "452761694.37261"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "640"
-            endingLineNumber = "640"
+            startingLineNumber = "653"
+            endingLineNumber = "653"
             landmarkName = "reloadDataTables()"
             landmarkType = "5">
          </BreakpointContent>
@@ -154,11 +154,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "EvesCRM/ViewController.swift"
-            timestampString = "452594390.86577"
+            timestampString = "452761694.37261"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "641"
-            endingLineNumber = "641"
+            startingLineNumber = "654"
+            endingLineNumber = "654"
             landmarkName = "reloadDataTables()"
             landmarkType = "5">
          </BreakpointContent>
@@ -170,11 +170,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "EvesCRM/ViewController.swift"
-            timestampString = "452594390.86577"
+            timestampString = "452761694.37261"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "642"
-            endingLineNumber = "642"
+            startingLineNumber = "655"
+            endingLineNumber = "655"
             landmarkName = "reloadDataTables()"
             landmarkType = "5">
          </BreakpointContent>
@@ -186,11 +186,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "EvesCRM/ViewController.swift"
-            timestampString = "452594390.86577"
+            timestampString = "452761694.37261"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "643"
-            endingLineNumber = "643"
+            startingLineNumber = "656"
+            endingLineNumber = "656"
             landmarkName = "reloadDataTables()"
             landmarkType = "5">
          </BreakpointContent>
@@ -218,11 +218,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "EvesCRM/EvesCRMSharedFiles.swift"
-            timestampString = "452421226.408784"
+            timestampString = "452663892.706215"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "86"
-            endingLineNumber = "86"
+            startingLineNumber = "84"
+            endingLineNumber = "84"
             landmarkName = "init(displayText:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -250,11 +250,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "EvesCRM/EvesCRMSharedFiles.swift"
-            timestampString = "452421226.408784"
+            timestampString = "452663892.706215"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "169"
-            endingLineNumber = "169"
+            startingLineNumber = "167"
+            endingLineNumber = "167"
             landmarkName = "init(reminderText:reminderCalendar:)"
             landmarkType = "5">
          </BreakpointContent>
@@ -266,11 +266,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "EvesCRM/EvesCRMSharedFiles.swift"
-            timestampString = "452421226.408784"
+            timestampString = "452663892.706215"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "179"
-            endingLineNumber = "179"
+            startingLineNumber = "177"
+            endingLineNumber = "177"
             landmarkName = "init()"
             landmarkType = "5">
          </BreakpointContent>
@@ -282,11 +282,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "EvesCRM/ViewController.swift"
-            timestampString = "452594390.86577"
+            timestampString = "452766209.645369"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1276"
-            endingLineNumber = "1276"
+            startingLineNumber = "1622"
+            endingLineNumber = "1622"
             landmarkName = "ViewController"
             landmarkType = "3">
          </BreakpointContent>
@@ -479,6 +479,22 @@
             endingLineNumber = "381"
             landmarkName = "buttonSave(_:)"
             landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "EvesCRM/DropboxSyncService.swift"
+            timestampString = "452684303.167223"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "98"
+            endingLineNumber = "98"
+            landmarkName = "DropboxSyncService"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

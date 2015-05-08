@@ -18,6 +18,18 @@
 		340650901ADDF93600C90CBB /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3406508E1ADDF93600C90CBB /* AddressBookUI.framework */; };
 		34111C3A1AEC898B003090EB /* reminderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34111C391AEC898B003090EB /* reminderViewController.swift */; };
 		341DD2371AECA9FF001DCF65 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 340650711ADDF8FF00C90CBB /* Main.storyboard */; };
+		341F22F81AFB299B00FC2883 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341F22F71AFB299B00FC2883 /* CFNetwork.framework */; };
+		341F22FA1AFB29A500FC2883 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341F22F91AFB29A500FC2883 /* Security.framework */; };
+		341F22FC1AFB29B000FC2883 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341F22FB1AFB29B000FC2883 /* SystemConfiguration.framework */; };
+		341F22FE1AFB29C100FC2883 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341F22FD1AFB29C100FC2883 /* QuartzCore.framework */; };
+		341F23001AFB29D700FC2883 /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 341F22FF1AFB29D700FC2883 /* libc++.dylib */; };
+		341F23021AFB29E600FC2883 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 341F23011AFB29E600FC2883 /* libz.dylib */; };
+		341F230B1AFB2DD600FC2883 /* Dropbox.m in Sources */ = {isa = PBXBuildFile; fileRef = 341F230A1AFB2DD600FC2883 /* Dropbox.m */; };
+		341F230C1AFB2DD600FC2883 /* Dropbox.m in Sources */ = {isa = PBXBuildFile; fileRef = 341F230A1AFB2DD600FC2883 /* Dropbox.m */; };
+		341F230F1AFB560200FC2883 /* DropboxSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341F230E1AFB560200FC2883 /* DropboxSDK.framework */; };
+		341F23101AFB560200FC2883 /* DropboxSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341F230E1AFB560200FC2883 /* DropboxSDK.framework */; };
+		341F23121AFC284400FC2883 /* DropboxCoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341F23111AFC284400FC2883 /* DropboxCoreService.swift */; };
+		341F23131AFC284400FC2883 /* DropboxCoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341F23111AFC284400FC2883 /* DropboxCoreService.swift */; };
 		344F226B1AF1DC20002C373E /* ENSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 344F22691AF1DC20002C373E /* ENSDK.framework */; };
 		344F226C1AF1DC20002C373E /* ENSDKResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 344F226A1AF1DC20002C373E /* ENSDKResources.bundle */; };
 		344F226E1AF1DD04002C373E /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 344F226D1AF1DD04002C373E /* MobileCoreServices.framework */; };
@@ -71,6 +83,17 @@
 		3406508D1ADDF93600C90CBB /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		3406508E1ADDF93600C90CBB /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		34111C391AEC898B003090EB /* reminderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = reminderViewController.swift; sourceTree = "<group>"; };
+		341F22F71AFB299B00FC2883 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		341F22F91AFB29A500FC2883 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		341F22FB1AFB29B000FC2883 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		341F22FD1AFB29C100FC2883 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		341F22FF1AFB29D700FC2883 /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
+		341F23011AFB29E600FC2883 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		341F23031AFB2AC000FC2883 /* EvesCRMTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "EvesCRMTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		341F230A1AFB2DD600FC2883 /* Dropbox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Dropbox.m; sourceTree = "<group>"; };
+		341F230D1AFB305F00FC2883 /* EvesCRMBridging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EvesCRMBridging.h; sourceTree = "<group>"; };
+		341F230E1AFB560200FC2883 /* DropboxSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DropboxSDK.framework; sourceTree = "<group>"; };
+		341F23111AFC284400FC2883 /* DropboxCoreService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DropboxCoreService.swift; sourceTree = "<group>"; };
 		344F22691AF1DC20002C373E /* ENSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ENSDK.framework; sourceTree = "<group>"; };
 		344F226A1AF1DC20002C373E /* ENSDKResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ENSDKResources.bundle; sourceTree = "<group>"; };
 		344F226D1AF1DD04002C373E /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
@@ -97,6 +120,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				341F23021AFB29E600FC2883 /* libz.dylib in Frameworks */,
+				341F23001AFB29D700FC2883 /* libc++.dylib in Frameworks */,
+				341F22FE1AFB29C100FC2883 /* QuartzCore.framework in Frameworks */,
+				341F22FC1AFB29B000FC2883 /* SystemConfiguration.framework in Frameworks */,
+				341F22FA1AFB29A500FC2883 /* Security.framework in Frameworks */,
+				341F22F81AFB299B00FC2883 /* CFNetwork.framework in Frameworks */,
 				34F199BF1AF6060200963ABF /* CoreData.framework in Frameworks */,
 				344F22701AF1DD13002C373E /* libxml2.dylib in Frameworks */,
 				344F226E1AF1DD04002C373E /* MobileCoreServices.framework in Frameworks */,
@@ -104,6 +133,7 @@
 				345E02831AEF71CF00BE8D0A /* Accounts.framework in Frameworks */,
 				34F199C11AF6ECE900963ABF /* CloudKit.framework in Frameworks */,
 				345E02811AEF715700BE8D0A /* MessageUI.framework in Frameworks */,
+				341F230F1AFB560200FC2883 /* DropboxSDK.framework in Frameworks */,
 				345E027F1AEF714800BE8D0A /* Social.framework in Frameworks */,
 				3406508F1ADDF93600C90CBB /* AddressBook.framework in Frameworks */,
 				340650901ADDF93600C90CBB /* AddressBookUI.framework in Frameworks */,
@@ -114,6 +144,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				341F23101AFB560200FC2883 /* DropboxSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -123,6 +154,12 @@
 		3406505C1ADDF8FF00C90CBB = {
 			isa = PBXGroup;
 			children = (
+				341F23011AFB29E600FC2883 /* libz.dylib */,
+				341F22FF1AFB29D700FC2883 /* libc++.dylib */,
+				341F22FD1AFB29C100FC2883 /* QuartzCore.framework */,
+				341F22FB1AFB29B000FC2883 /* SystemConfiguration.framework */,
+				341F22F91AFB29A500FC2883 /* Security.framework */,
+				341F22F71AFB299B00FC2883 /* CFNetwork.framework */,
 				34F199C01AF6ECE900963ABF /* CloudKit.framework */,
 				34F199BE1AF6060200963ABF /* CoreData.framework */,
 				344F226F1AF1DD13002C373E /* libxml2.dylib */,
@@ -152,6 +189,7 @@
 		340650671ADDF8FF00C90CBB /* EvesCRM */ = {
 			isa = PBXGroup;
 			children = (
+				341F230E1AFB560200FC2883 /* DropboxSDK.framework */,
 				346B70F41AF75FF4005E1BC2 /* Roles.swift */,
 				346B70F51AF75FF4005E1BC2 /* ProjectTeamMembers.swift */,
 				346B70F61AF75FF4005E1BC2 /* Projects.swift */,
@@ -169,6 +207,10 @@
 				34111C391AEC898B003090EB /* reminderViewController.swift */,
 				344F22711AF1DFF3002C373E /* evernoteDetails.swift */,
 				346B70DD1AF70B8F005E1BC2 /* maintainProjectViewController.swift */,
+				341F23031AFB2AC000FC2883 /* EvesCRMTests-Bridging-Header.h */,
+				341F230A1AFB2DD600FC2883 /* Dropbox.m */,
+				341F230D1AFB305F00FC2883 /* EvesCRMBridging.h */,
+				341F23111AFC284400FC2883 /* DropboxCoreService.swift */,
 			);
 			path = EvesCRM;
 			sourceTree = "<group>";
@@ -316,7 +358,9 @@
 				348E6D4B1ADF74C800697268 /* ContactDetails.swift in Sources */,
 				3406506B1ADDF8FF00C90CBB /* AppDelegate.swift in Sources */,
 				346B70FB1AF75FF4005E1BC2 /* Projects.swift in Sources */,
+				341F23121AFC284400FC2883 /* DropboxCoreService.swift in Sources */,
 				344F22721AF1DFF3002C373E /* evernoteDetails.swift in Sources */,
+				341F230B1AFB2DD600FC2883 /* Dropbox.m in Sources */,
 				3406506E1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -327,9 +371,11 @@
 			files = (
 				34B3BDA01AF0979E00C5B09D /* ViewController.swift in Sources */,
 				346B70F81AF75FF4005E1BC2 /* Roles.swift in Sources */,
+				341F230C1AFB2DD600FC2883 /* Dropbox.m in Sources */,
 				346B70DF1AF70B8F005E1BC2 /* maintainProjectViewController.swift in Sources */,
 				346B70FA1AF75FF4005E1BC2 /* ProjectTeamMembers.swift in Sources */,
 				346D5E031AE5F9C700F858E7 /* CalendarDetails.swift in Sources */,
+				341F23131AFC284400FC2883 /* DropboxCoreService.swift in Sources */,
 				346B70F31AF75F47005E1BC2 /* EvesCRM.xcdatamodeld in Sources */,
 				347518DC1AE3635100FF1C46 /* EvesCRMSharedFiles.swift in Sources */,
 				340650841ADDF8FF00C90CBB /* EvesCRMTests.swift in Sources */,
@@ -462,6 +508,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/EvesCRM",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -472,8 +519,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				SWIFT_OBJC_BRIDGING_HEADER = ENSDK.framework/Headers/ENSDK.h;
-				"SWIFT_OBJC_BRIDGING_HEADER[arch=*]" = ENSDK.framework/Headers/Advanced/ENSDKAdvanced.h;
+				SWIFT_OBJC_BRIDGING_HEADER = EvesCRMBridging.h;
+				"SWIFT_OBJC_BRIDGING_HEADER[arch=*]" = EvesCRM/EvesCRMBridging.h;
 				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Debug;
@@ -489,6 +536,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/EvesCRM",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -499,8 +547,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				SWIFT_OBJC_BRIDGING_HEADER = ENSDK.framework/Headers/ENSDK.h;
-				"SWIFT_OBJC_BRIDGING_HEADER[arch=*]" = ENSDK.framework/Headers/Advanced/ENSDKAdvanced.h;
+				SWIFT_OBJC_BRIDGING_HEADER = "ENSDK.framework/Headers/ENSDK.h Dropbox.framework/Headers/Dropbox.h";
+				"SWIFT_OBJC_BRIDGING_HEADER[arch=*]" = EvesCRM/EvesCRMBridging.h;
 				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Release;
@@ -509,9 +557,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
+					"$(PROJECT_DIR)/EvesCRM",
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -520,6 +570,8 @@
 				INFOPLIST_FILE = EvesCRMTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "EvesCRM/EvesCRMTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = 2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/EvesCRM.app/EvesCRM";
 			};
@@ -529,13 +581,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
 					"$(inherited)",
+					"$(PROJECT_DIR)/EvesCRM",
 				);
 				INFOPLIST_FILE = EvesCRMTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "EvesCRM/EvesCRMTests-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = 2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/EvesCRM.app/EvesCRM";
 			};

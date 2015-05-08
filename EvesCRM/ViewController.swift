@@ -20,7 +20,9 @@ import CoreData
 private let CONTACT_CELL_IDENTIFER = "contactNameCell"
 private let dataTable1_CELL_IDENTIFER = "dataTable1Cell"
 
-class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate {
+var dropboxCoreService: DropboxCoreService = DropboxCoreService()
+
+class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate {
     
     @IBOutlet weak var TableTypeSelection1: UIPickerView!
     
@@ -49,7 +51,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     @IBOutlet weak var setSelectionButton: UIButton!
     
     @IBOutlet weak var peoplePickerButton: UIButton!
-    var TableOptions = ["Calendar", "Details", "Evernote", "Project Membership", "Reminders"]
+    var TableOptions = ["Calendar", "Details", "Evernote", "Omnifocus", "Project Membership", "Reminders"]
     
     // Store the tag number of the button pressed so that we can make sure we update the correct button text and table
     var callingTable = 0
@@ -91,9 +93,20 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     var myDisplayType: String = ""
     var myProjectID: NSNumber!
     var myProjectName: String = ""
+    var omniTableToRefresh: String = ""
+    var omniLinkArray: [String] = Array()
     
     
     let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
+    
+    var document: MyDocument?
+    var documentURL: NSURL?
+    var ubiquityURL: NSURL?
+    var metaDataQuery: NSMetadataQuery?
+    
+    var dropboxConnected: Bool = false
+    
+    var dbRestClient: DBRestClient?
     
     // Peoplepicker settings
     
@@ -158,12 +171,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         dataTable4.tableFooterView = UIView(frame:CGRectZero)
 
         populateContactList()
-/*  No longer want to automatically open the PeoplePicker, as adding in logic to do Projects
-        let picker = ABPeoplePickerNavigationController()
-        
-        picker.peoplePickerDelegate = self
-        presentViewController(picker, animated: true, completion: nil)
-*/
         
         // Work out if a project has been added to the data store, so we can then select it
         let myProjects = getProjects()
@@ -176,7 +183,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         {
             buttonSelectProject.hidden = true
         }
-        
     }
 
     override func didReceiveMemoryWarning() {
@@ -627,6 +633,13 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     workArray = displayProjectsForPerson(searchString)
                 }
 
+            case "Omnifocus":
+                writeRowToArray("Loading Omnifocus data.  Pane will refresh when finished", &workArray)
+            
+                omniTableToRefresh = inTable
+                
+                openOmnifocusDropbox()
+            
             case "Mail":
                 let a = 1
             
@@ -747,8 +760,18 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     var myNoteRef = myEvernoteDataArray[rowID].NoteRef
 
                     openEvernoteEditView(myGuid, inNoteRef: myNoteRef)
-            }
+                }
+
+            case "Omnifocus":
+                let myOmniUrlPath = omniLinkArray[rowID]
+               
+                var myOmniUrl: NSURL = NSURL(string: myOmniUrlPath)!
                 
+                if UIApplication.sharedApplication().canOpenURL(myOmniUrl) == true
+                {
+                    UIApplication.sharedApplication().openURL(myOmniUrl)
+                }
+
             default:
                 let a = 1
         }
@@ -771,6 +794,15 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             case "Evernote":
                 workString = "Evernote: use Tag '\(inTitle)'"
 
+            case "Omnifocus":
+                if myDisplayType == "Project"
+                {
+                    workString = "Omnifocus: use Project '\(inTitle)'"
+                }
+                else
+                {
+                    workString = "Omnifocus: use Context '\(inTitle)'"
+                }
             
             default:
                 workString = inButton.currentTitle!
@@ -872,18 +904,40 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
 
                 openReminderAddView(myFullName)
 
-        case "Evernote":
-            var myFullName: String
-            if myDisplayType == "Project"
-            {
-                myFullName = myProjectName
-            }
-            else
-            {
-                myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
-            }
+            case "Evernote":
+                var myFullName: String
+                if myDisplayType == "Project"
+                {
+                    myFullName = myProjectName
+                }
+                else
+                {
+                    myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+                }
 
-            openEvernoteAddView(myFullName)
+                openEvernoteAddView(myFullName)
+
+            case "Omnifocus":
+                var myOmniUrlPath: String
+                
+                if myDisplayType == "Project"
+                {
+                    myOmniUrlPath = "omnifocus:///add?name=Set Project to '\(myProjectName)'"
+                }
+                else
+                {
+                    let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+                    myOmniUrlPath = "omnifocus:///add?name=Set Context to '\(myFullName)'"
+                }
+
+                var escapedURL = myOmniUrlPath.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
+                
+                var myOmniUrl: NSURL = NSURL(string: escapedURL!)!
+                
+                if UIApplication.sharedApplication().canOpenURL(myOmniUrl) == true
+                {
+                    UIApplication.sharedApplication().openURL(myOmniUrl)
+            }
 
             default:
                 let a = 1
@@ -985,6 +1039,9 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     case "Evernote":
                         buttonAdd1.hidden = false
 
+                    case "Omnifocus":
+                        buttonAdd1.hidden = false
+
                     default:
                         buttonAdd1.hidden = true
                 }
@@ -999,7 +1056,10 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
 
                     case "Evernote":
                         buttonAdd2.hidden = false
-                
+                    
+                    case "Omnifocus":
+                        buttonAdd2.hidden = false
+                    
                     default:
                         buttonAdd2.hidden = true
                 }
@@ -1014,8 +1074,10 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     
                     case "Evernote":
                         buttonAdd3.hidden = false
-
-                
+                    
+                    case "Omnifocus":
+                        buttonAdd3.hidden = false
+                    
                     default:
                         buttonAdd3.hidden = true
                 }
@@ -1030,7 +1092,9 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     
                     case "Evernote":
                         buttonAdd4.hidden = false
-
+                    
+                    case "Omnifocus":
+                        buttonAdd4.hidden = false
                 
                     default:
                         buttonAdd4.hidden = true
@@ -1267,6 +1331,288 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 EvernoteUserTimerCount = EvernoteUserTimerCount + 1
                 myEvernoteUserTimer = NSTimer.scheduledTimerWithTimeInterval(1, target:self, selector: Selector("myEvernoteUserDidFinish"), userInfo: nil, repeats: false)
             }
+        }
+    }
+
+    func connectToDropbox()
+    {   
+        if !dropboxCoreService.isAlreadyInitialised()
+        {
+            dropboxCoreService.initiateAuthentication(self)
+            dropboxConnected = true
+        }
+    }
+    
+    func openOmnifocusDropbox()
+    {
+        dropboxCoreService.delegate = self
+        connectToDropbox()  // GRE move to button once we have one
+        
+        let fileName = "OmniOutput.txt"
+        
+        let dirPaths:[String]? = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.AllDomainsMask, true) as? [String]
+        
+        let directories:[String] = dirPaths!
+        let docsDir = directories[0]
+        let docsDirDAT = docsDir + "/" + fileName
+        let dropboxPath = "/EvesCRM/" + fileName
+        
+     //   dropboxCoreService.listFolders("/")
+        
+        dropboxCoreService.loadFile(dropboxPath, targetFile: docsDirDAT)
+    }
+    
+    func myDropboxFileDidLoad(fileName: String)
+    {
+        readOmnifocusFileContents(fileName)
+    }
+    
+    func myDropboxFileLoadFailed(error:NSError)
+    {
+        var alert = UIAlertController(title: "Dropbox", message:
+            "Unable to load Dropbox file.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        self.presentViewController(alert, animated: false, completion: nil)
+        
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+            handler: nil))
+    }
+    
+    func myDropboxFileProgress(fileName: String, progress:CGFloat)
+    {
+println("Dropbox status = \(progress)")
+    }
+    
+    func myDropboxMetadataLoaded(metadata:DBMetadata)
+    {
+        if metadata.contents != nil
+        {
+                for myEntry in metadata.contents
+                {
+        println("Entry = \(myEntry.filename)")
+                }
+        }
+        else
+        {
+println("Nothing found")
+        }
+    }
+    
+    func myDropboxMetadataFailed(error:NSError)
+    {
+        var alert = UIAlertController(title: "Dropbox", message:
+            "Unable to load Dropbox directory list.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        self.presentViewController(alert, animated: false, completion: nil)
+        
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+            handler: nil))
+    }
+    
+    func myDropboxLoadAccountInfo(info:DBAccountInfo)
+    {
+        println("Dropbox Account Info = \(info)")
+    }
+
+    func myDropboxLoadAccountInfoFailed(error:NSError)
+    {
+        var alert = UIAlertController(title: "Dropbox", message:
+            "Unable to load Dropbox account info.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        self.presentViewController(alert, animated: false, completion: nil)
+        
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+            handler: nil))
+    }
+
+    func myDropboxFileDidUpload(destPath:String, srcPath:String, metadata:DBMetadata)
+    {
+        println("Dropbox Upload = \(destPath), \(srcPath)")
+    }
+
+    func myDropboxFileUploadFailed(error:NSError)
+    {
+        var alert = UIAlertController(title: "Dropbox", message:
+            "Unable to upload file to Dropbox.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        self.presentViewController(alert, animated: false, completion: nil)
+        
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+            handler: nil))
+    }
+
+    func myDropboxUploadProgress(progress:CGFloat, destPath:String, srcPath:String)
+    {
+        println("Dropbox upload status = \(progress)")
+    }
+
+    func myDropboxFileLoadRevisions(revisions:NSArray, path:String)
+    {
+        println("Dropbox File revision = \(path)")
+    }
+
+    func myDropboxFileLoadRevisionsFailed(error:NSError)
+    {
+        var alert = UIAlertController(title: "Dropbox", message:
+            "Unable to load Dropbox file revisions.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        self.presentViewController(alert, animated: false, completion: nil)
+        
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+            handler: nil))
+    }
+
+    func myDropboxCreateFolder(folder:DBMetadata)
+    {
+        println("Dropbox Create folder")
+    }
+
+    func myDropboxCreateFolderFailed(error:NSError)
+    {
+        var alert = UIAlertController(title: "Dropbox", message:
+            "Unable to load create Dropbox folder.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        self.presentViewController(alert, animated: false, completion: nil)
+        
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+            handler: nil))
+    }
+
+    func myDropboxFileDeleted(path:String)
+    {
+        println("Dropbox File Deleted = \(path)")
+    }
+
+    func myDropboxFileDeleteFailed(error:NSError)
+    {
+        var alert = UIAlertController(title: "Dropbox", message:
+            "Unable to delete Dropbox file.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        self.presentViewController(alert, animated: false, completion: nil)
+        
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+            handler: nil))
+    }
+
+    func myDropboxFileCopiedLoad(fromPath:String, toPath:DBMetadata)
+    {
+        println("Dropbox file copied = \(fromPath)")
+    }
+
+    func myDropboxFileCopyFailed(error:NSError)
+    {
+        var alert = UIAlertController(title: "Dropbox", message:
+            "Unable to copy Dropbox file.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        self.presentViewController(alert, animated: false, completion: nil)
+        
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+            handler: nil))
+    }
+
+    func myDropboxFileMoved(fromPath:String, toPath:DBMetadata)
+    {
+        println("Dropbox file moved = \(fromPath)")
+    }
+
+    func myDropboxFileMoveFailed(error:NSError)
+    {
+        var alert = UIAlertController(title: "Dropbox", message:
+            "Unable to move Dropbox file.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        self.presentViewController(alert, animated: false, completion: nil)
+        
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+            handler: nil))
+    }
+
+    func myDropboxFileDidLoadSearch(results:NSArray, path:String, keyword:String)
+    {
+        println("Dropbox search = \(path), \(keyword)")
+    }
+
+    func myDropboxFileLoadSearchFailed(error:NSError)
+    {
+        var alert = UIAlertController(title: "Dropbox", message:
+            "Unable to search Dropbox.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
+        
+        self.presentViewController(alert, animated: false, completion: nil)
+        
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+            handler: nil))
+    }
+    
+    
+    func readOmnifocusFileContents(inPath: String)
+    {
+        var myFullName: String = ""
+        var workArray: [TableData] = [TableData]()
+        var myDisplayString: String = ""
+        omniLinkArray.removeAll(keepCapacity: false)
+        
+        if let aStreamReader = StreamReader(path: inPath)
+        {
+            
+            while let line = aStreamReader.nextLine()
+            {
+                if myDisplayType == "Project"
+                {
+                    myFullName = myProjectName
+                }
+                else
+                {
+                    myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+                }
+                if line.lowercaseString.rangeOfString(myFullName.lowercaseString) != nil
+                {
+                    // need to format the string into the approriate format
+                    
+                    let splitText = line.componentsSeparatedByString(":::")
+                    
+                    omniLinkArray.append(splitText[5])
+                    
+                    myDisplayString = "\(splitText[0])\n"
+                    myDisplayString += "Project: \(splitText[1])"
+                    myDisplayString += "    Context: \(splitText[2])\n"
+              
+                    if splitText[3] != " "
+                    {
+                        myDisplayString += "Start: \(splitText[3])    "
+                    }
+                    if splitText[4] != " "
+                    {
+                        myDisplayString += "Due: \(splitText[4])"
+                    }
+                    
+                    writeRowToArray(myDisplayString, &workArray)
+                }
+            }
+            // You can close the underlying file explicitly. Otherwise it will be
+            // closed when the reader is deallocated.
+            aStreamReader.close()
+        }
+        
+        switch omniTableToRefresh
+        {
+            case "Table1":
+                table1Contents = workArray
+                dataTable1.reloadData()
+            
+            case "Table2":
+                table2Contents = workArray
+                dataTable2.reloadData()
+            
+            case "Table3":
+                table3Contents = workArray
+                dataTable3.reloadData()
+            
+            case "Table4":
+                table4Contents = workArray
+                dataTable4.reloadData()
+            
+            default:
+                println("populateArrayDetails: inTable hit default for some reason")
+            
         }
     }
 }

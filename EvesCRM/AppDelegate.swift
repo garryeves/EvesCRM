@@ -36,6 +36,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
 //        ENSession.setSharedSessionConsumerKey("garryeves", consumerSecret: "527092b280bfd300", optionalHost: "www.evernote.com")
         
+        
+        dropboxCoreService.setup()
+        
         return true
     }
 
@@ -44,6 +47,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return ENSession.sharedSession().handleOpenURL(url)
     }
     
+    func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
+
+        return dropboxCoreService.finalizeAuthentication(url)
+    }
     
     
     func applicationWillResignActive(application: UIApplication) {
