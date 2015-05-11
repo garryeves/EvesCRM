@@ -52,7 +52,8 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     @IBOutlet weak var settingsButton: UIButton!
     
     @IBOutlet weak var peoplePickerButton: UIButton!
-    var TableOptions = ["Calendar", "Details", "Evernote", "Omnifocus", "Project Membership", "Reminders"]
+    var TableOptions: [String]!
+    
     
     // Store the tag number of the button pressed so that we can make sure we update the correct button text and table
     var callingTable = 0
@@ -193,6 +194,18 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         dataTable3.rowHeight = UITableViewAutomaticDimension
         dataTable4.estimatedRowHeight = 12.0
         dataTable4.rowHeight = UITableViewAutomaticDimension
+        
+        // Go and get the list of available panes
+        
+        let myPanes = displayPanes()
+        
+        TableOptions = Array()
+        
+        for myPane in myPanes.listPanes
+        {
+            TableOptions.append(myPane.paneName)
+        }
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -645,6 +658,9 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
 
             case "Orange" :
                 inCell.textLabel!.textColor = UIColor.orangeColor()
+
+            case "Purple" :
+                inCell.textLabel!.textColor = UIColor.purpleColor()
 
             case "Header":
                 inCell.textLabel!.font = UIFont.boldSystemFontOfSize(24.0)
@@ -1520,6 +1536,7 @@ println("Nothing found")
         let myCalendar = NSCalendar.currentCalendar()
         var myEndDate: NSDate
         var myStartDate: NSDate
+        var myModDate: NSDate
         
         omniLinkArray.removeAll(keepCapacity: false)
         
@@ -1550,11 +1567,50 @@ println("Nothing found")
               
                     var myDateFormatter = NSDateFormatter()
                     
-                    if splitText[3] != ""
+                    if splitText[6] != ""  // Modification date
+                    {
+                        if splitText[6].lowercaseString.rangeOfString(" at ") == nil
+                        {
+                            // Date does not contain at
+                            var dateFormat = NSDateFormatterStyle.FullStyle
+                            var timeFormat = NSDateFormatterStyle.MediumStyle
+                            myDateFormatter.dateStyle = dateFormat
+                            myDateFormatter.timeStyle = timeFormat
+                            
+                            myModDate = myDateFormatter.dateFromString(splitText[6])!
+                        }
+                        else
+                        {
+                            // Date contains at
+                            
+                            // Only interested in the date part for this piece so lets split the string up and get the date (need to do this as date has word at in it sso not a standard format
+                            let splitDate = splitText[6].componentsSeparatedByString(" at ")
+                            
+                            myDateFormatter.dateFormat = "EEEE, MMMM d, yyyy"
+                            
+                            myModDate = myDateFormatter.dateFromString(splitDate[0])!
+                        }
+                        
+                        // Work out the comparision date we need to use, so we can flag items not updated in last 2 weeks
+                        
+                        
+                        let myComparisonDate = myCalendar.dateByAddingUnit(
+                            .CalendarUnitDay,
+                            value: -14,
+                            toDate: NSDate(),
+                            options: nil)!
+                        
+                        if myModDate.compare(myComparisonDate) == NSComparisonResult.OrderedAscending
+                        {
+                            myFormatString = "Purple"
+                        }
+                    }
+                    
+                    if splitText[3] != ""  // Start date
                     {
                         myDisplayString += "\nStart: \(splitText[3])"
     
-                        if splitText[3].lowercaseString.rangeOfString("at") == nil
+                        if splitText[3].lowercaseString.rangeOfString(" at ") == nil
                         {
                             // Date does not contain at
 
@@ -1583,9 +1639,9 @@ println("Nothing found")
                         }
                     }
                     
-                    if splitText[4] != ""
+                    if splitText[4] != ""  // End date
                     {
-                        if splitText[4].lowercaseString.rangeOfString("at") == nil
+                        if splitText[4].lowercaseString.rangeOfString(" at ") == nil
                         {
                             // Date does not contain at
                             var dateFormat = NSDateFormatterStyle.FullStyle
@@ -1636,6 +1692,7 @@ println("Nothing found")
                     }
                     else
                     {
+                        myDisplayString += "\nLast updated: \(splitText[6])"
                         writeRowToArray(myDisplayString, &workArray, inDisplayFormat: myFormatString)
                         myFormatString = ""
                     }
@@ -1670,7 +1727,8 @@ println("Nothing found")
         }
     }
     
-    @IBAction func settingsButton(sender: UIButton) {
+    @IBAction func settingsButton(sender: UIButton)
+    {
     }
     
 }
