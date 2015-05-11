@@ -348,14 +348,14 @@ func parseCalendarBySubject(inProject: String, inout tableContents: [TableData])
                         // Build up the details we want to show ing the calendar
                                     
                         var myString = "\(event.title)\n"
-                        myString += "\(dateStart) - \(dateEnd)\n"
+                        myString += "\(dateStart) - \(dateEnd)"
                         if !myRecurrence.isEmpty
                         {
-                            myString += "Occurs every \(myRecurrence)\n"
+                            myString += "\nOccurs every \(myRecurrence)"
                         }
                         if event.location != ""
                         {
-                            myString += "At \(event.location)\n"
+                            myString += "\nAt \(event.location)"
                         }
                         
                         if event.startDate.compare(NSDate()) == NSComparisonResult.OrderedAscending

@@ -49,6 +49,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     @IBOutlet weak var StartLabel: UILabel!
     
     @IBOutlet weak var setSelectionButton: UIButton!
+    @IBOutlet weak var settingsButton: UIButton!
     
     @IBOutlet weak var peoplePickerButton: UIButton!
     var TableOptions = ["Calendar", "Details", "Evernote", "Omnifocus", "Project Membership", "Reminders"]
@@ -183,6 +184,15 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         {
             buttonSelectProject.hidden = true
         }
+        
+        dataTable1.estimatedRowHeight = 12.0
+        dataTable1.rowHeight = UITableViewAutomaticDimension
+        dataTable2.estimatedRowHeight = 12.0
+        dataTable2.rowHeight = UITableViewAutomaticDimension
+        dataTable3.estimatedRowHeight = 12.0
+        dataTable3.rowHeight = UITableViewAutomaticDimension
+        dataTable4.estimatedRowHeight = 12.0
+        dataTable4.rowHeight = UITableViewAutomaticDimension
     }
 
     override func didReceiveMemoryWarning() {
@@ -400,47 +410,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         determineStatus()
     }
 
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
-    {
-
-        var retVal: CGFloat = 0.0
-    
-        if (tableView == dataTable1)
-        {
-            let cell = dataTable1.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
-            let titleText = table1Contents[indexPath.row].displayText
-            let titleRect = titleText.boundingRectWithSize(CGSizeMake(self.view.frame.size.width - 64, 128), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: nil, context: nil)
-            
-            retVal = titleRect.height
-        }
-        if (tableView == dataTable2)
-        {
-            let cell = dataTable2.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
-            let titleText = table2Contents[indexPath.row].displayText
-            let titleRect = titleText.boundingRectWithSize(CGSizeMake(self.view.frame.size.width - 64, 128), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: nil, context: nil)
-            
-            retVal = titleRect.height
-        }
-        if (tableView == dataTable3)
-        {
-            let cell = dataTable3.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
-            let titleText = table3Contents[indexPath.row].displayText
-            let titleRect = titleText.boundingRectWithSize(CGSizeMake(self.view.frame.size.width - 64, 128), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: nil, context: nil)
-            
-            retVal = titleRect.height
-        }
-        if (tableView == dataTable4)
-        {
-            let cell = dataTable4.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
-            let titleText = table4Contents[indexPath.row].displayText
-            let titleRect = titleText.boundingRectWithSize(CGSizeMake(self.view.frame.size.width - 64, 128), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: nil, context: nil)
-            
-            retVal = titleRect.height
-        }
-        
-        return retVal + 36.0
-    }
-    
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         
@@ -464,7 +433,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         }
         return retVal
     }
-    
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
@@ -1548,6 +1516,11 @@ println("Nothing found")
         var myFullName: String = ""
         var workArray: [TableData] = [TableData]()
         var myDisplayString: String = ""
+        var myFormatString: String = ""
+        let myCalendar = NSCalendar.currentCalendar()
+        var myEndDate: NSDate
+        var myStartDate: NSDate
+        
         omniLinkArray.removeAll(keepCapacity: false)
         
         if let aStreamReader = StreamReader(path: inPath)
@@ -1570,21 +1543,102 @@ println("Nothing found")
                     let splitText = line.componentsSeparatedByString(":::")
                     
                     omniLinkArray.append(splitText[5])
-                    
+
                     myDisplayString = "\(splitText[0])\n"
                     myDisplayString += "Project: \(splitText[1])"
-                    myDisplayString += "    Context: \(splitText[2])\n"
+                    myDisplayString += "    Context: \(splitText[2])"
               
-                    if splitText[3] != " "
+                    var myDateFormatter = NSDateFormatter()
+                    
+                    if splitText[3] != ""
                     {
-                        myDisplayString += "Start: \(splitText[3])    "
-                    }
-                    if splitText[4] != " "
-                    {
-                        myDisplayString += "Due: \(splitText[4])"
+                        myDisplayString += "\nStart: \(splitText[3])"
+    
+                        if splitText[3].lowercaseString.rangeOfString("at") == nil
+                        {
+                            // Date does not contain at
+
+                            var dateFormat = NSDateFormatterStyle.FullStyle
+                            var timeFormat = NSDateFormatterStyle.MediumStyle
+                            myDateFormatter.dateStyle = dateFormat
+                            myDateFormatter.timeStyle = timeFormat
+                            
+                            myStartDate = myDateFormatter.dateFromString(splitText[3])!
+                        }
+                        else
+                        {
+                            // Date contains at
+
+                            // Only interested in the date part for this piece so lets split the string up and get the date (need to do this as date has word at in it sso not a standard format
+                            let splitDate = splitText[3].componentsSeparatedByString(" at ")
+                        
+                            myDateFormatter.dateFormat = "EEEE, MMMM d, yyyy"
+                        
+                            myStartDate = myDateFormatter.dateFromString(splitDate[0])!
+                        }
+
+                        if myStartDate.compare(NSDate()) == NSComparisonResult.OrderedDescending
+                        {
+                            myFormatString = "Gray"
+                        }
                     }
                     
-                    writeRowToArray(myDisplayString, &workArray)
+                    if splitText[4] != ""
+                    {
+                        if splitText[4].lowercaseString.rangeOfString("at") == nil
+                        {
+                            // Date does not contain at
+                            var dateFormat = NSDateFormatterStyle.FullStyle
+                            var timeFormat = NSDateFormatterStyle.MediumStyle
+                            myDateFormatter.dateStyle = dateFormat
+                            myDateFormatter.timeStyle = timeFormat
+                            
+                            myEndDate = myDateFormatter.dateFromString(splitText[4])!
+                        }
+                        else
+                        {
+                            // Date contains at
+                    
+                            // Only interested in the date part for this piece so lets split the string up and get the date (need to do this as date has word at in it sso not a standard format
+                            let splitDate = splitText[4].componentsSeparatedByString(" at ")
+                            
+                            myDateFormatter.dateFormat = "EEEE, MMMM d, yyyy"
+                            
+                            myEndDate = myDateFormatter.dateFromString(splitDate[0])!
+                        }
+                        
+                        myDisplayString += "\nDue: \(splitText[4])"
+                        
+                        // Work out the comparision dat we need to use, so we can see if the due date is in the next 7 days
+                        
+                        
+                        let myComparisonDate = myCalendar.dateByAddingUnit(
+                            .CalendarUnitDay,
+                            value: 7,
+                            toDate: NSDate(),
+                            options: nil)!
+                        
+                        if myEndDate.compare(myComparisonDate) == NSComparisonResult.OrderedAscending
+                        {
+                             myFormatString = "Orange"
+                        }
+
+                        if myEndDate.compare(NSDate()) == NSComparisonResult.OrderedAscending
+                        {
+                            myFormatString = "Red"
+                        }
+
+                    }
+                    
+                    if myFormatString == ""
+                    {
+                        writeRowToArray(myDisplayString, &workArray)
+                    }
+                    else
+                    {
+                        writeRowToArray(myDisplayString, &workArray, inDisplayFormat: myFormatString)
+                        myFormatString = ""
+                    }
                 }
             }
             // You can close the underlying file explicitly. Otherwise it will be
@@ -1615,4 +1669,8 @@ println("Nothing found")
             
         }
     }
+    
+    @IBAction func settingsButton(sender: UIButton) {
+    }
+    
 }
