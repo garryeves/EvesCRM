@@ -22,7 +22,7 @@ private let dataTable1_CELL_IDENTIFER = "dataTable1Cell"
 
 var dropboxCoreService: DropboxCoreService = DropboxCoreService()
 
-class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate {
+class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate {
     
     @IBOutlet weak var TableTypeSelection1: UIPickerView!
     
@@ -115,6 +115,8 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        initialPopulationOfTables()
+        
         eventStore = EKEventStore()
         
         switch EKEventStore.authorizationStatusForEntityType(EKEntityTypeEvent) {
@@ -195,6 +197,14 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         dataTable4.estimatedRowHeight = 12.0
         dataTable4.rowHeight = UITableViewAutomaticDimension
         
+        // Default the buttons
+        
+        TableTypeButton1.setTitle("Calendar", forState: .Normal)
+        itemSelected = "Calendar"
+        TableTypeButton2.setTitle("Details", forState: .Normal)
+        TableTypeButton3.setTitle("Project Membership", forState: .Normal)
+        TableTypeButton4.setTitle("Reminders", forState: .Normal)
+        
         // Go and get the list of available panes
         
         let myPanes = displayPanes()
@@ -204,8 +214,28 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         for myPane in myPanes.listPanes
         {
             TableOptions.append(myPane.paneName)
+            
+            if myPane.paneOrder == 1
+            {
+                TableTypeButton1.setTitle(myPane.paneName, forState: .Normal)
+                itemSelected = myPane.paneName
+            }
+
+            if myPane.paneOrder == 2
+            {
+                TableTypeButton2.setTitle(myPane.paneName, forState: .Normal)
+            }
+
+            if myPane.paneOrder == 3
+            {
+                TableTypeButton3.setTitle(myPane.paneName, forState: .Normal)
+            }
+
+            if myPane.paneOrder == 5
+            {
+                TableTypeButton4.setTitle(myPane.paneName, forState: .Normal)
+            }
         }
-        
     }
 
     override func didReceiveMemoryWarning() {
@@ -1593,10 +1623,14 @@ println("Nothing found")
                         
                         // Work out the comparision date we need to use, so we can flag items not updated in last 2 weeks
                         
+                        let myLastUpdateString = getDecodeValue("OmniPurple")
+                        // This is string value, and is also positive, so need to convert to integer
                         
+                        let myLastUpdateValue = 0 - (myLastUpdateString as NSString).integerValue
+ 
                         let myComparisonDate = myCalendar.dateByAddingUnit(
                             .CalendarUnitDay,
-                            value: -14,
+                            value: myLastUpdateValue,
                             toDate: NSDate(),
                             options: nil)!
                         
@@ -1666,11 +1700,14 @@ println("Nothing found")
                         myDisplayString += "\nDue: \(splitText[4])"
                         
                         // Work out the comparision dat we need to use, so we can see if the due date is in the next 7 days
+                        let myDueDateString = getDecodeValue("OmniOrange")
+                        // This is string value so need to convert to integer
                         
-                        
+                        let myDueDateValue = (myDueDateString as NSString).integerValue
+                       
                         let myComparisonDate = myCalendar.dateByAddingUnit(
                             .CalendarUnitDay,
-                            value: 7,
+                            value: myDueDateValue,
                             toDate: NSDate(),
                             options: nil)!
                         
@@ -1678,8 +1715,20 @@ println("Nothing found")
                         {
                              myFormatString = "Orange"
                         }
-
-                        if myEndDate.compare(NSDate()) == NSComparisonResult.OrderedAscending
+                        
+                        // Work out the comparision dat we need to use, so we can see if the due date is in the next 7 days
+                        let myOverdueDateString = getDecodeValue("OmniRed")
+                        // This is string value so need to convert to integer
+                        
+                        let myOverdueDateValue = (myOverdueDateString as NSString).integerValue
+                       
+                        let myComparisonDateRed = myCalendar.dateByAddingUnit(
+                            .CalendarUnitDay,
+                            value: myOverdueDateValue,
+                            toDate: NSDate(),
+                            options: nil)!
+                        
+                        if myEndDate.compare(myComparisonDateRed) == NSComparisonResult.OrderedAscending
                         {
                             myFormatString = "Red"
                         }
@@ -1729,6 +1778,83 @@ println("Nothing found")
     
     @IBAction func settingsButton(sender: UIButton)
     {
+        let settingViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("Settings") as! settingsViewController
+        settingViewControl.delegate = self
+        self.presentViewController(settingViewControl, animated: true, completion: nil)
+
     }
     
+    func mySettingsDidFinish(controller:settingsViewController)
+    {
+        controller.dismissViewControllerAnimated(true, completion: nil)
+        
+        if myDisplayType != ""
+        { // only reload if a selection has been made
+            table1Contents = Array()
+            table2Contents = Array()
+            table3Contents = Array()
+            table4Contents = Array()
+        
+            populateArraysForTables("Table1")
+            populateArraysForTables("Table2")
+            populateArraysForTables("Table3")
+            populateArraysForTables("Table4")
+        
+            reloadDataTables()
+        }
+    }
+    
+    func initialPopulationOfTables()
+    {
+        var decodeString: String = ""
+
+        decodeString = getDecodeValue("CalBeforeWeeks")
+        
+        if decodeString == ""
+        {  // Nothing found so go and create
+            updateDecodeValue("CalBeforeWeeks", "1")
+        }
+
+        decodeString = getDecodeValue("CalAfterWeeks")
+        
+        if decodeString == ""
+        {  // Nothing found so go and create
+            updateDecodeValue("CalAfterWeeks", "4")
+        }
+        
+        decodeString = getDecodeValue("OmniRed")
+        
+        if decodeString == ""
+        {  // Nothing found so go and create
+            updateDecodeValue("OmniRed", "0")
+        }
+        
+        decodeString = getDecodeValue("OmniOrange")
+        
+        if decodeString == ""
+        {  // Nothing found so go and create
+            updateDecodeValue("OmniOrange", "7")
+        }
+        
+        decodeString = getDecodeValue("OmniPurple")
+        
+        if decodeString == ""
+        {  // Nothing found so go and create
+            updateDecodeValue("OmniPurple", "14")
+        }
+        
+        if getRoles().count == 0
+        {
+            // There are no roles defined so we need to go in and create them
+            
+            populateRoles()
+        }
+        
+        if getStages().count == 0
+        {
+            // There are no roles defined so we need to go in and create them
+            
+            populateStages()
+        }
+    }
 }

@@ -394,28 +394,6 @@ func getRoles()->[Roles]
 
 func populateRoles()
 {
-    
-/*
-    let fetchRequest = NSFetchRequest(entityName: "Roles")
-    
-    // Execute the fetch request, and cast the results to an array of  objects
-    let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Roles]
-
-    //var bas: NSManagedObject!
-    
-    for bas  in fetchResults!
-    {
-        managedObjectContext!.deleteObject(bas as NSManagedObject)
-println("delete")
-    }
-    var error : NSError?
-    
-    if(managedObjectContext!.save(&error) )
-    {
-        println(error?.localizedDescription)
-    }
-*/
-    
     var initialRoles = ["Project Manager",
                         "Project Executive",
                         "Project Sponsor",
@@ -425,25 +403,74 @@ println("delete")
                         "Tester"
                         ]
     
-    var rowCount: Int = 1
- 
+    for initialRole in initialRoles
+    {
+        createRole(initialRole)
+    }
+}
+
+func getMaxRoleID()-> Int
+{
+    var retVal: Int = 0
+
+    let fetchRequest = NSFetchRequest(entityName: "Roles")
+
+    fetchRequest.propertiesToFetch = ["roleID"]
+
+    let sortDescriptor = NSSortDescriptor(key: "roleID", ascending: true)
+    let sortDescriptors = [sortDescriptor]
+    fetchRequest.sortDescriptors = sortDescriptors
+    
+    // Execute the fetch request, and cast the results to an array of LogItem objects
+    let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Roles]
+    
+    for myItem in fetchResults!
+    {
+        retVal = myItem.roleID as Int
+    }
+    
+    return retVal + 1
+}
+
+func createRole(inRoleName: String)
+{
     var mySelectedRole: Roles
     var error : NSError?
     
-    for initialRole in initialRoles
+    mySelectedRole = NSEntityDescription.insertNewObjectForEntityForName("Roles", inManagedObjectContext: managedObjectContext!) as! Roles
+    mySelectedRole.roleID = getMaxRoleID()
+    mySelectedRole.roleDescription = inRoleName
+    
+    if(managedObjectContext!.save(&error) )
     {
-           mySelectedRole = NSEntityDescription.insertNewObjectForEntityForName("Roles", inManagedObjectContext: managedObjectContext!) as! Roles
-          mySelectedRole.roleID = rowCount
-            mySelectedRole.roleDescription = initialRole
-        
-        if(managedObjectContext!.save(&error) )
-        {
-            println(error?.localizedDescription)
-        }
-
-        rowCount = rowCount + 1
+        println(error?.localizedDescription)
     }
 }
+
+func deleteRoleEntry(inRoleName: String)
+{
+    var error : NSError?
+    
+    let fetchRequest = NSFetchRequest(entityName: "Roles")
+    
+    let predicate = NSPredicate(format: "roleDescription == \"\(inRoleName)\"")
+    
+    // Set the predicate on the fetch request
+    fetchRequest.predicate = predicate
+    
+    // Execute the fetch request, and cast the results to an array of  objects
+    let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Roles]
+    for myStage in fetchResults!
+    {
+        managedObjectContext!.deleteObject(myStage as NSManagedObject)
+    }
+    
+    if(managedObjectContext!.save(&error) )
+    {
+        println(error?.localizedDescription)
+    }    
+}
+
 
 func getTeamMembers(inProjectID: NSNumber)->[ProjectTeamMembers]
 {
@@ -668,3 +695,146 @@ class StreamReader  {
         fileHandle = nil
     }
 }
+
+func getDecodeValue(inCodeType: String) -> String
+{
+    let fetchRequest = NSFetchRequest(entityName: "Decodes")
+    let predicate = NSPredicate(format: "decode_name == \"\(inCodeType)\"")
+    
+    // Set the predicate on the fetch request
+    fetchRequest.predicate = predicate
+    
+    // Execute the fetch request, and cast the results to an array of  objects
+    let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Decodes]
+    
+    if fetchResults!.count == 0
+    {
+        return ""
+    }
+    else
+    {
+        return fetchResults![0].decode_value
+    }
+}
+
+func updateDecodeValue(inCodeType: String, inCodeValue: String)
+{
+    // first check to see if decode exists, if not we create
+    
+    var error: NSError?
+    var myDecode: Decodes!
+
+    if getDecodeValue(inCodeType) == ""
+    { // Add
+        myDecode = NSEntityDescription.insertNewObjectForEntityForName("Decodes", inManagedObjectContext: managedObjectContext!) as! Decodes
+        
+        myDecode.decode_name = inCodeType
+        myDecode.decode_value = inCodeValue
+    }
+    else
+    { // Update
+        let fetchRequest = NSFetchRequest(entityName: "Decodes")
+        let predicate = NSPredicate(format: "decode_name == \"\(inCodeType)\"")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of  objects
+        let myDecodes = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Decodes]
+        myDecode = myDecodes![0]
+        myDecode.decode_value = inCodeValue
+    }
+    
+    if(managedObjectContext!.save(&error) )
+    {
+     //   println(error?.localizedDescription)
+    }
+}
+
+func getStages()->[Stages]
+{
+    let fetchRequest = NSFetchRequest(entityName: "Stages")
+    
+    // Execute the fetch request, and cast the results to an array of  objects
+    let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Stages]
+    
+    return fetchResults!
+}
+
+func populateStages()
+{
+    var loadSet = ["Pre-Planning", "Planning", "Planned", "Scheduled", "In-progress", "Delayed", "Completed", "Archived"]
+    
+    for myItem in loadSet
+    {
+        if !stageExists(myItem)
+        {
+            createStage(myItem)
+        }
+    }
+}
+
+func stageExists(inStageDesc:String)-> Bool
+{
+    let fetchRequest = NSFetchRequest(entityName: "Stages")
+    
+    // Create a new predicate that filters out any object that
+    // doesn't have a title of "Best Language" exactly.
+    let predicate = NSPredicate(format: "stageDescription == \"\(inStageDesc)\"")
+    
+    // Set the predicate on the fetch request
+    fetchRequest.predicate = predicate
+    
+    // Create a new fetch request using the entity
+    
+    // Execute the fetch request, and cast the results to an array of LogItem objects
+    let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Stages]
+    
+    if fetchResults!.count > 0
+    {
+        return true
+    }
+    else
+    {
+        return false
+    }
+}
+
+func createStage(inStageDesc: String)
+{
+    // Save the details of this pane to the database
+    var error: NSError?
+    let myStage = NSEntityDescription.insertNewObjectForEntityForName("Stages", inManagedObjectContext: managedObjectContext!) as! Stages
+    
+    myStage.stageDescription = inStageDesc
+
+    if(managedObjectContext!.save(&error) )
+    {
+        println(error?.localizedDescription)
+    }
+}
+
+func deleteStageEntry(inStageDesc: String)
+{
+    var error : NSError?
+
+    let fetchRequest = NSFetchRequest(entityName: "Stages")
+    
+    let predicate = NSPredicate(format: "stageDescription == \"\(inStageDesc)\"")
+    
+    // Set the predicate on the fetch request
+    fetchRequest.predicate = predicate
+
+    // Execute the fetch request, and cast the results to an array of  objects
+    let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Stages]
+    for myStage in fetchResults!
+    {
+        managedObjectContext!.deleteObject(myStage as NSManagedObject)
+    }
+    
+    if(managedObjectContext!.save(&error) )
+    {
+    println(error?.localizedDescription)
+    }
+}
+

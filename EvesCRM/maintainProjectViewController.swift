@@ -45,7 +45,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     
     private let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
 
-    private var statusOptions = ["Pre-Planning", "Planning", "Planned", "Scheduled", "In-progress", "Delayed", "Completed", "Archived"]
+    private var statusOptions: [Stages]!
     
     var myActionType: String = "Add"
     private var statusSelected: String = ""
@@ -71,14 +71,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         
         myRoles = getRoles()
         
-        if myRoles.count == 0
-        {
-            // There are no roles defined so we need to go in and create them
-            
-            populateRoles()
-            
-            myRoles = getRoles()
-        }
+        statusOptions = getStages()
         
         if myProjects.count > 0
         {
@@ -116,7 +109,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
             buttonAddTeamMember.hidden = false
         }
         
-        statusSelected = statusOptions[0]
+        statusSelected = statusOptions[0].stageDescription
         teamMembersTable.hidden = false
         teamMembersLabel.hidden = false
         labelTeamMemberName.hidden = true
@@ -162,7 +155,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     {
         if inPicker == statusPicker
         {
-            return statusOptions[row]
+            return statusOptions[row].stageDescription
         }
         else if inPicker == pickerPersonRole
         {
@@ -179,7 +172,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         // actionSelection()
         if inPicker == statusPicker
         {
-            statusSelected = statusOptions[row]
+            statusSelected = statusOptions[row].stageDescription
         }
         else if inPicker == pickerPersonRole
         {
@@ -325,7 +318,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
             statusPicker.selectRow(textItemIndex, inComponent: 0, animated: true)
             for textItem in statusOptions
             {
-                if textItem == myProjects[indexPath.row].projectStatus
+                if textItem.stageDescription == myProjects[indexPath.row].projectStatus
                 {
                     statusPicker.selectRow(textItemIndex, inComponent: 0, animated: true)
                     break

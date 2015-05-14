@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3403BA451B02FFEC0043D52C /* settingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341E08C61B01B1B90036202D /* settingsViewController.swift */; };
 		3406506B1ADDF8FF00C90CBB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406506A1ADDF8FF00C90CBB /* AppDelegate.swift */; };
 		3406506E1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3406506C1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld */; };
 		340650701ADDF8FF00C90CBB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406506F1ADDF8FF00C90CBB /* ViewController.swift */; };
@@ -18,6 +19,7 @@
 		340650901ADDF93600C90CBB /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3406508E1ADDF93600C90CBB /* AddressBookUI.framework */; };
 		34111C3A1AEC898B003090EB /* reminderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34111C391AEC898B003090EB /* reminderViewController.swift */; };
 		341DD2371AECA9FF001DCF65 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 340650711ADDF8FF00C90CBB /* Main.storyboard */; };
+		341E08C71B01B1B90036202D /* settingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341E08C61B01B1B90036202D /* settingsViewController.swift */; };
 		341F22F81AFB299B00FC2883 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341F22F71AFB299B00FC2883 /* CFNetwork.framework */; };
 		341F22FA1AFB29A500FC2883 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341F22F91AFB29A500FC2883 /* Security.framework */; };
 		341F22FC1AFB29B000FC2883 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341F22FB1AFB29B000FC2883 /* SystemConfiguration.framework */; };
@@ -53,6 +55,8 @@
 		347518DC1AE3635100FF1C46 /* EvesCRMSharedFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347518D81AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift */; };
 		348E6D4B1ADF74C800697268 /* ContactDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348E6D4A1ADF74C800697268 /* ContactDetails.swift */; };
 		348E6D4C1ADF74C800697268 /* ContactDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348E6D4A1ADF74C800697268 /* ContactDetails.swift */; };
+		349C4D3F1B033B6400EC8099 /* Stages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349C4D3E1B033B6400EC8099 /* Stages.swift */; };
+		349C4D401B033B6400EC8099 /* Stages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349C4D3E1B033B6400EC8099 /* Stages.swift */; };
 		34B3BDA01AF0979E00C5B09D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406506F1ADDF8FF00C90CBB /* ViewController.swift */; };
 		34BDECAA1B008846008C9F3F /* displayPanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BDECA91B008846008C9F3F /* displayPanes.swift */; };
 		34BDECAC1B0089CC008C9F3F /* Decodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BDECAB1B0089CC008C9F3F /* Decodes.swift */; };
@@ -88,6 +92,7 @@
 		3406508D1ADDF93600C90CBB /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		3406508E1ADDF93600C90CBB /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
 		34111C391AEC898B003090EB /* reminderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = reminderViewController.swift; sourceTree = "<group>"; };
+		341E08C61B01B1B90036202D /* settingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = settingsViewController.swift; sourceTree = "<group>"; };
 		341F22F71AFB299B00FC2883 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		341F22F91AFB29A500FC2883 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		341F22FB1AFB29B000FC2883 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -115,6 +120,8 @@
 		346D5E011AE5F9C700F858E7 /* CalendarDetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarDetails.swift; sourceTree = "<group>"; };
 		347518D81AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EvesCRMSharedFiles.swift; sourceTree = "<group>"; };
 		348E6D4A1ADF74C800697268 /* ContactDetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactDetails.swift; sourceTree = "<group>"; };
+		349C4D3D1B033AF300EC8099 /* EvesCRM 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 4.xcdatamodel"; sourceTree = "<group>"; };
+		349C4D3E1B033B6400EC8099 /* Stages.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stages.swift; sourceTree = "<group>"; };
 		34BDECA81B0086D3008C9F3F /* EvesCRM 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 3.xcdatamodel"; sourceTree = "<group>"; };
 		34BDECA91B008846008C9F3F /* displayPanes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = displayPanes.swift; sourceTree = "<group>"; };
 		34BDECAB1B0089CC008C9F3F /* Decodes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Decodes.swift; sourceTree = "<group>"; };
@@ -198,6 +205,7 @@
 		340650671ADDF8FF00C90CBB /* EvesCRM */ = {
 			isa = PBXGroup;
 			children = (
+				349C4D3E1B033B6400EC8099 /* Stages.swift */,
 				34BDECBD1B009C17008C9F3F /* Panes.swift */,
 				34BDECAB1B0089CC008C9F3F /* Decodes.swift */,
 				341F230E1AFB560200FC2883 /* DropboxSDK.framework */,
@@ -223,6 +231,7 @@
 				341F230D1AFB305F00FC2883 /* EvesCRMBridging.h */,
 				341F23111AFC284400FC2883 /* DropboxCoreService.swift */,
 				34BDECA91B008846008C9F3F /* displayPanes.swift */,
+				341E08C61B01B1B90036202D /* settingsViewController.swift */,
 			);
 			path = EvesCRM;
 			sourceTree = "<group>";
@@ -362,6 +371,7 @@
 			files = (
 				346B70F91AF75FF4005E1BC2 /* ProjectTeamMembers.swift in Sources */,
 				346D5E021AE5F9C700F858E7 /* CalendarDetails.swift in Sources */,
+				349C4D3F1B033B6400EC8099 /* Stages.swift in Sources */,
 				346B70DE1AF70B8F005E1BC2 /* maintainProjectViewController.swift in Sources */,
 				34111C3A1AEC898B003090EB /* reminderViewController.swift in Sources */,
 				347518D91AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift in Sources */,
@@ -371,6 +381,7 @@
 				346B70F71AF75FF4005E1BC2 /* Roles.swift in Sources */,
 				348E6D4B1ADF74C800697268 /* ContactDetails.swift in Sources */,
 				3406506B1ADDF8FF00C90CBB /* AppDelegate.swift in Sources */,
+				341E08C71B01B1B90036202D /* settingsViewController.swift in Sources */,
 				346B70FB1AF75FF4005E1BC2 /* Projects.swift in Sources */,
 				341F23121AFC284400FC2883 /* DropboxCoreService.swift in Sources */,
 				344F22721AF1DFF3002C373E /* evernoteDetails.swift in Sources */,
@@ -389,6 +400,7 @@
 				341F230C1AFB2DD600FC2883 /* Dropbox.m in Sources */,
 				346B70DF1AF70B8F005E1BC2 /* maintainProjectViewController.swift in Sources */,
 				346B70FA1AF75FF4005E1BC2 /* ProjectTeamMembers.swift in Sources */,
+				3403BA451B02FFEC0043D52C /* settingsViewController.swift in Sources */,
 				346D5E031AE5F9C700F858E7 /* CalendarDetails.swift in Sources */,
 				34BDECAD1B0089CC008C9F3F /* Decodes.swift in Sources */,
 				341F23131AFC284400FC2883 /* DropboxCoreService.swift in Sources */,
@@ -397,6 +409,7 @@
 				347518DC1AE3635100FF1C46 /* EvesCRMSharedFiles.swift in Sources */,
 				340650841ADDF8FF00C90CBB /* EvesCRMTests.swift in Sources */,
 				346B70FC1AF75FF4005E1BC2 /* Projects.swift in Sources */,
+				349C4D401B033B6400EC8099 /* Stages.swift in Sources */,
 				348E6D4C1ADF74C800697268 /* ContactDetails.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -649,11 +662,12 @@
 		3406506C1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				349C4D3D1B033AF300EC8099 /* EvesCRM 4.xcdatamodel */,
 				34BDECA81B0086D3008C9F3F /* EvesCRM 3.xcdatamodel */,
 				346B70F21AF75EFE005E1BC2 /* EvesCRM 2.xcdatamodel */,
 				3406506D1ADDF8FF00C90CBB /* EvesCRM.xcdatamodel */,
 			);
-			currentVersion = 34BDECA81B0086D3008C9F3F /* EvesCRM 3.xcdatamodel */;
+			currentVersion = 349C4D3D1B033AF300EC8099 /* EvesCRM 4.xcdatamodel */;
 			path = EvesCRM.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

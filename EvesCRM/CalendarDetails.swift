@@ -130,15 +130,24 @@ func parseCalendarByEmail(inEmail: String, inout tableContents: [TableData])
      /* The event starts from 1 week ago, right now */
     //Calculate
     // Days * hours * mins * secs
+ 
+    let myStartDateString = getDecodeValue("CalBeforeWeeks")
+    // This is string value so need to convert to integer, and subtract from 0 to get a negative
     
-    let startDate = baseDate.dateByAddingTimeInterval(-8 * 24 * 60 * 60)
+    let myStartDateValue:NSTimeInterval = 0 - ((((myStartDateString as NSString).doubleValue * 7) + 1) * 24 * 60 * 60)
+
+    let startDate = baseDate.dateByAddingTimeInterval(myStartDateValue)
     
     /* The end date will be 1 month from today */
     //Calculate
     // Days * hours * mins * secs
+  
+    let myEndDateString = getDecodeValue("CalBeforeWeeks")
+    // This is string value so need to convert to integer
     
+    let myEndDateValue:NSTimeInterval = (myEndDateString as NSString).doubleValue * 7 * 24 * 60 * 60
     
-    let endDate = baseDate.dateByAddingTimeInterval(31 * 24 * 60 * 60)
+    let endDate = baseDate.dateByAddingTimeInterval(myEndDateValue)
     
     /* Create the predicate that we can later pass to the
     event store in order to fetch the events */
