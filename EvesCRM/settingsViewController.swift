@@ -50,6 +50,14 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate {
     private let ROLE_CELL_IDENTIFER = "roleNameCell"
     private let STAGE_CELL_IDENTIFER = "stageNameCell"
     
+    private var evernotePass1: Bool = false
+    private var EvernoteTimer = NSTimer()
+    private var EvernoteAuthenticationDone: Bool = false
+    var evernoteSession: ENSession!
+    private var EvernoteUserTimerCount: Int = 0
+    private var myEvernote: EvernoteDetails!
+    var dropboxCoreService: DropboxCoreService!
+    
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -104,6 +112,16 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate {
         myRoles = getRoles()
         
         myStages = getStages()
+        
+        if evernoteSession.isAuthenticated
+        {
+            buttonConnectEvernote.hidden = true
+        }
+        
+        if dropboxCoreService.isAlreadyInitialised()
+        {
+            ButtonConnectDropbox.hidden = true
+        }
     }
     
     override func didReceiveMemoryWarning()
@@ -331,10 +349,12 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate {
     }
     @IBAction func ButtonConnectDropboxClick(sender: UIButton)
     {
+        connectToDropbox()
     }
     
     @IBAction func buttonConnectEvernoteClick(sender: UIButton)
     {
+        connectToEvernote()
     }
     
     @IBAction func buttonMaintainPanesClick(sender: UIButton)
@@ -350,4 +370,93 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate {
     {
         controller.dismissViewControllerAnimated(true, completion: nil)
     }
+    
+    //Evernote
+    
+    func connectToEvernote()
+    {
+        // Authenticate to Evernote if needed
+        
+        if !evernotePass1
+        {
+            evernoteSession.authenticateWithViewController (self, preferRegistration:false, completion: {
+                (error: NSError?) in
+                if error != nil
+                {
+                    // authentication failed
+                    // show an alert, etc
+                    // ...
+                }
+                else
+                {
+                    // authentication succeeded
+                    // do something now that we're authenticated
+                    // ...
+                    self.myEvernote = EvernoteDetails(inSession: self.evernoteSession)
+                }
+                self.EvernoteAuthenticationDone = true
+            })
+        }
+        
+        EvernoteTimer = NSTimer.scheduledTimerWithTimeInterval(1, target:self, selector: Selector("myEvernoteAuthenticationDidFinish"), userInfo: nil, repeats: false)
+        
+        evernotePass1 = true  // This is to allow only one attempt to launch Evernote
+    }
+    
+    func myEvernoteAuthenticationDidFinish()
+    {
+        if !EvernoteAuthenticationDone
+        {  // Async not yet complete
+            if EvernoteUserTimerCount > 5
+            {
+                var alert = UIAlertController(title: "Evernote", message:
+                    "Unable to load Evernote in a timely manner", preferredStyle: UIAlertControllerStyle.Alert)
+                
+                self.presentViewController(alert, animated: false, completion: nil)
+                
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+                    handler: nil))
+            }
+            else
+            {
+                EvernoteUserTimerCount = EvernoteUserTimerCount + 1
+                EvernoteTimer = NSTimer.scheduledTimerWithTimeInterval(1, target:self, selector: Selector("myEvernoteAuthenticationDidFinish"), userInfo: nil, repeats: false)
+            }
+        }
+            /*
+        else
+        {
+            //Now we are authenticated we can get the used id and shard details
+            let myEnUserStore = evernoteSession.userStore
+            myEnUserStore.getUserWithSuccess({
+                (findNotesResults) in
+                self.myEvernoteShard = findNotesResults.shardId
+                self.myEvernoteUserID = findNotesResults.id as Int
+                self.EvernoteUserDone = true
+                }
+                , failure: {
+                    (findNotesError) in
+                    println("Failure")
+                    self.EvernoteUserDone = true
+                    self.myEvernoteShard = ""
+                    self.myEvernoteUserID = 0
+            })
+            
+            EvernoteUserTimerCount = 0
+            
+            myEvernoteUserTimer = NSTimer.scheduledTimerWithTimeInterval(1, target:self, selector: Selector("myEvernoteUserDidFinish"), userInfo: nil, repeats: false)
+        }
+*/
+    }
+    
+    func connectToDropbox()
+    {
+        if !dropboxCoreService.isAlreadyInitialised()
+        {
+            dropboxCoreService.initiateAuthentication(self)
+        //    dropboxConnected = true
+        }
+    }
+
+    
 }

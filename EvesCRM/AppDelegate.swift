@@ -31,10 +31,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
  //           NSString *CONSUMER_SECRET = @"527092b280bfd300";
         
        
-        ENSession.setSharedSessionDeveloperToken("S=s2:U=1be4f:E=15460135598:C=14d086227c0:P=1cd:A=en-devtoken:V=2:H=31d18476ae197914f35d507e3ec34251", noteStoreUrl: "https://www.evernote.com/shard/s2/notestore")
+    //    ENSession.setSharedSessionDeveloperToken("S=s2:U=1be4f:E=15460135598:C=14d086227c0:P=1cd:A=en-devtoken:V=2:H=31d18476ae197914f35d507e3ec34251", noteStoreUrl: "https://www.evernote.com/shard/s2/notestore")
       //  ENSession.setSharedSessionConsumerKey("garryeves", consumerSecret: "527092b280bfd300", optionalHost: "sandbox.evernote.com")
         
-//        ENSession.setSharedSessionConsumerKey("garryeves", consumerSecret: "527092b280bfd300", optionalHost: "www.evernote.com")
+        ENSession.setSharedSessionConsumerKey("garryeves", consumerSecret: "527092b280bfd300", optionalHost: "www.evernote.com")
         
         
         dropboxCoreService.setup()

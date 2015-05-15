@@ -142,7 +142,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         
         
         evernoteSession = ENSession.sharedSession()
-        connectToEvernote()
+//        connectToEvernote()
         
        // Initial population of contact list
         self.dataTable1.registerClass(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
@@ -208,6 +208,14 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         TableOptions = Array()
         //myPanes.deleteAllPanes()
         displayScreen()
+        
+        
+        myEvernote = EvernoteDetails(inSession: self.evernoteSession)
+        
+        if evernoteSession.isAuthenticated
+        {
+            getEvernoteUserDetails()
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -334,37 +342,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             StartLabel.hidden = true
             peoplePickerButton.hidden = false
         }
-    }
-    
-    
-    func connectToEvernote()
-    {
-        // Authenticate to Evernote if needed
-    
-        if !evernotePass1
-        {
-            evernoteSession.authenticateWithViewController (self, preferRegistration:false, completion: {
-                (error: NSError?) in
-                if error != nil
-                {
-                    // authentication failed
-                    // show an alert, etc
-                    // ...
-                }
-                else
-                {
-                    // authentication succeeded
-                    // do something now that we're authenticated
-                    // ...
-                    self.myEvernote = EvernoteDetails(inSession: self.evernoteSession)
-                }
-                self.EvernoteAuthenticationDone = true
-            })
-        }
-        
-        myEvernoteUserTimer = NSTimer.scheduledTimerWithTimeInterval(1, target:self, selector: Selector("myEvernoteAuthenticationDidFinish"), userInfo: nil, repeats: false)
-
-        evernotePass1 = true  // This is to allow only one attempt to launch Evernote
     }
 
     func createAddressBook() -> Bool {
@@ -752,7 +729,10 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 workString = inButton.currentTitle!
         }
         
-        setAddButtonState(inButton.tag)
+        if myDisplayType != ""
+        {
+            setAddButtonState(inButton.tag)
+        }
         
         return workString
     }
@@ -961,7 +941,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
 
     }
     
-    
     func setAddButtonState(inTable: Int)
     {
         // Hide all of the buttons
@@ -1049,7 +1028,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     }
     
 // Peoplepicker code
-    
 
     @IBAction func peoplePickerButtonClick(sender: UIButton)
     {
@@ -1098,19 +1076,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myFullName), forState: .Normal)
         TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myFullName), forState: .Normal)
     }
-
-/*
-    func peoplePickerNavigationController(peoplePicker: ABPeoplePickerNavigationController!, shouldContinueAfterSelectingPerson person: ABRecordRef!) -> Bool {
-    
-    //peoplePickerNavigationController(peoplePicker, didSelectPerson: person)
-    println("George")
-        
-    peoplePicker.dismissViewControllerAnimated(true, completion: nil)
-    
-    return false;
-    }
-
-*/
 
     func peoplePickerNavigationControllerDidCancel(peoplePicker: ABPeoplePickerNavigationController!)
     {
@@ -1212,50 +1177,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         }
     }
         
-    func myEvernoteAuthenticationDidFinish()
-    {
-        if !EvernoteAuthenticationDone
-        {  // Async not yet complete
-            if EvernoteUserTimerCount > 5
-            {
-                var alert = UIAlertController(title: "Evernote", message:
-                    "Unable to load Evernote in a timely manner", preferredStyle: UIAlertControllerStyle.Alert)
-                
-                self.presentViewController(alert, animated: false, completion: nil)
-                
-                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
-                    handler: nil))
-            }
-            else
-            {
-                EvernoteUserTimerCount = EvernoteUserTimerCount + 1
-                myEvernoteUserTimer = NSTimer.scheduledTimerWithTimeInterval(1, target:self, selector: Selector("myEvernoteAuthenticationDidFinish"), userInfo: nil, repeats: false)
-            }
-        }
-        else
-        {
-            //Now we are authenticated we can get the used id and shard details
-            let myEnUserStore = evernoteSession.userStore
-            myEnUserStore.getUserWithSuccess({
-            (findNotesResults) in
-            self.myEvernoteShard = findNotesResults.shardId
-            self.myEvernoteUserID = findNotesResults.id as Int
-            self.EvernoteUserDone = true
-            }
-            , failure: {
-            (findNotesError) in
-            println("Failure")
-            self.EvernoteUserDone = true
-            self.myEvernoteShard = ""
-            self.myEvernoteUserID = 0
-            })
-            
-            EvernoteUserTimerCount = 0
-            
-            myEvernoteUserTimer = NSTimer.scheduledTimerWithTimeInterval(1, target:self, selector: Selector("myEvernoteUserDidFinish"), userInfo: nil, repeats: false)
-        }
-    }
-    
     func myEvernoteUserDidFinish()
     {
         if !EvernoteUserDone
@@ -1277,20 +1198,11 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             }
         }
     }
-
-    func connectToDropbox()
-    {   
-        if !dropboxCoreService.isAlreadyInitialised()
-        {
-            dropboxCoreService.initiateAuthentication(self)
-            dropboxConnected = true
-        }
-    }
     
     func openOmnifocusDropbox()
     {
         dropboxCoreService.delegate = self
-        connectToDropbox()  // GRE move to button once we have one
+//        connectToDropbox()  // GRE move to button once we have one
         
         let fileName = "OmniOutput.txt"
         
@@ -1710,8 +1622,9 @@ println("Nothing found")
     {
         let settingViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("Settings") as! settingsViewController
         settingViewControl.delegate = self
+        settingViewControl.evernoteSession = evernoteSession
+        settingViewControl.dropboxCoreService = dropboxCoreService
         self.presentViewController(settingViewControl, animated: true, completion: nil)
-
     }
     
     func mySettingsDidFinish(controller:settingsViewController)
@@ -1814,7 +1727,6 @@ println("Nothing found")
         {
             TableOptions.append(myPane.paneName)
 
-            
             if myPane.paneOrder == 1
             {
                 TableTypeButton1.setTitle(myPane.paneName, forState: .Normal)
@@ -1840,5 +1752,28 @@ println("Nothing found")
                 TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myButtonName), forState: .Normal)
             }
         }
+    }
+    
+    func getEvernoteUserDetails()
+    {
+        //Now we are authenticated we can get the used id and shard details
+        let myEnUserStore = evernoteSession.userStore
+        myEnUserStore.getUserWithSuccess({
+            (findNotesResults) in
+            self.myEvernoteShard = findNotesResults.shardId
+            self.myEvernoteUserID = findNotesResults.id as Int
+            self.EvernoteUserDone = true
+            }
+            , failure: {
+                (findNotesError) in
+                println("Failure")
+                self.EvernoteUserDone = true
+                self.myEvernoteShard = ""
+                self.myEvernoteUserID = 0
+        })
+        
+        EvernoteUserTimerCount = 0
+        
+        myEvernoteUserTimer = NSTimer.scheduledTimerWithTimeInterval(1, target:self, selector: Selector("myEvernoteUserDidFinish"), userInfo: nil, repeats: false)
     }
 }
