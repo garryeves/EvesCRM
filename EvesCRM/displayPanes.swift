@@ -34,7 +34,30 @@ class displayPanes
                 myPanes.append(myPane)
             }
         }
-        populatePanes()
+        else
+        {
+            populatePanes()
+        }
+    }
+    
+    func deleteAllPanes()
+    {  // This is used to allow for testing of pane creation, so can delete all the panes if needed
+        var error : NSError?
+        
+        let fetchRequest = NSFetchRequest(entityName: "Panes")
+        
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Panes]
+        for myPane in fetchResults!
+        {
+            managedObjectContext!.deleteObject(myPane as NSManagedObject)
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+
     }
     
     private func populatePanes()
@@ -88,6 +111,56 @@ class displayPanes
         get
         {
             return myPanes
+        }
+    }
+    
+    var listVisiblePanes: [displayPane]
+    {
+            get
+            {
+                var myListPanes: [displayPane] = Array()
+                for myItem in myPanes
+                {
+                    if myItem.paneVisible
+                    {
+                        myListPanes.append(myItem)
+                    }
+                }
+                return myListPanes
+            }
+    }
+    
+    func toogleVisibleStatus(inPane: String)
+    {
+        // find the pane
+        
+        for myItem in myPanes
+        {
+            if myItem.paneName == inPane
+            {
+                myItem.toggleVisible()
+            }
+        }
+
+    }
+    
+    func setDisplayPane(inPane: String, inPaneOrder: Int)
+    {
+        // find the pane
+        
+        for myItem in myPanes
+        {
+            // "unset" current selection
+            if myItem.paneOrder == inPaneOrder
+            {
+                myItem.paneOrder = 0
+            }
+            
+            // set the new order
+            if myItem.paneName == inPane
+            {
+                myItem.paneOrder = inPaneOrder
+            }
         }
     }
 }
@@ -156,7 +229,11 @@ class displayPane
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
-        
+
+        let sortDescriptor = NSSortDescriptor(key: "pane_name", ascending: true)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+ 
         // Create a new fetch request using the entity
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
@@ -171,6 +248,31 @@ class displayPane
                 myPaneVisible = myPane.pane_visible as Bool
                 myPaneOrder = myPane.pane_order as Int
                 paneLoaded = true
+            }
+        }
+    }
+    
+    func toggleVisible()
+    {
+        var error : NSError?
+        
+        let fetchRequest = NSFetchRequest(entityName: "Panes")
+        
+        let predicate = NSPredicate(format: "pane_name == \"\(myPaneName)\"")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Panes]
+        for myStage in fetchResults!
+        {
+            myPaneVisible = !myPaneVisible
+            myStage.pane_visible = myPaneVisible
+            
+            if(managedObjectContext!.save(&error) )
+            {
+                println(error?.localizedDescription)
             }
         }
     }
@@ -220,6 +322,27 @@ class displayPane
         set
         {
             myPaneOrder = newValue
+            
+            var error : NSError?
+            
+            let fetchRequest = NSFetchRequest(entityName: "Panes")
+            
+            let predicate = NSPredicate(format: "pane_name == \"\(myPaneName)\"")
+            
+            // Set the predicate on the fetch request
+            fetchRequest.predicate = predicate
+            
+            // Execute the fetch request, and cast the results to an array of  objects
+            let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Panes]
+            for myPane in fetchResults!
+            {
+                myPane.pane_order = newValue
+                
+                if(managedObjectContext!.save(&error) )
+                {
+                    println(error?.localizedDescription)
+                }
+            }
         }
     }
 }

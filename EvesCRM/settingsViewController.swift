@@ -12,7 +12,7 @@ protocol MySettingsDelegate{
     func mySettingsDidFinish(controller:settingsViewController)
 }
 
-class settingsViewController: UIViewController {
+class settingsViewController: UIViewController, MyMaintainPanesDelegate {
     
     @IBOutlet weak var backButton: UIButton!
     
@@ -36,6 +36,10 @@ class settingsViewController: UIViewController {
     @IBOutlet weak var addStage: UIButton!
     @IBOutlet weak var deleteStage: UIButton!
     
+  
+    @IBOutlet weak var buttonMaintainPanes: UIButton!
+    @IBOutlet weak var buttonConnectEvernote: UIButton!
+    @IBOutlet weak var ButtonConnectDropbox: UIButton!
     var delegate: MySettingsDelegate?
     
     private var myRoles: [Roles]!
@@ -289,7 +293,6 @@ class settingsViewController: UIViewController {
         }
     }
     
-    
     @IBAction func deleteStageClick(sender: UIButton)
     {
         if myStageSelected < 0
@@ -325,5 +328,26 @@ class settingsViewController: UIViewController {
             }
             myStageSelected = -1
         }
+    }
+    @IBAction func ButtonConnectDropboxClick(sender: UIButton)
+    {
+    }
+    
+    @IBAction func buttonConnectEvernoteClick(sender: UIButton)
+    {
+    }
+    
+    @IBAction func buttonMaintainPanesClick(sender: UIButton)
+    {
+        let maintainPaneViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("MaintainPanes") as! MaintainPanesViewController
+        
+        maintainPaneViewControl.delegate = self
+        
+        self.presentViewController(maintainPaneViewControl, animated: true, completion: nil)
+    }
+    
+    func MaintainPanesDidFinish(controller:MaintainPanesViewController)
+    {
+        controller.dismissViewControllerAnimated(true, completion: nil)
     }
 }

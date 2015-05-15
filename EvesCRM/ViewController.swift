@@ -205,37 +205,9 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         TableTypeButton3.setTitle("Project Membership", forState: .Normal)
         TableTypeButton4.setTitle("Reminders", forState: .Normal)
         
-        // Go and get the list of available panes
-        
-        let myPanes = displayPanes()
-        
         TableOptions = Array()
-        
-        for myPane in myPanes.listPanes
-        {
-            TableOptions.append(myPane.paneName)
-            
-            if myPane.paneOrder == 1
-            {
-                TableTypeButton1.setTitle(myPane.paneName, forState: .Normal)
-                itemSelected = myPane.paneName
-            }
-
-            if myPane.paneOrder == 2
-            {
-                TableTypeButton2.setTitle(myPane.paneName, forState: .Normal)
-            }
-
-            if myPane.paneOrder == 3
-            {
-                TableTypeButton3.setTitle(myPane.paneName, forState: .Normal)
-            }
-
-            if myPane.paneOrder == 5
-            {
-                TableTypeButton4.setTitle(myPane.paneName, forState: .Normal)
-            }
-        }
+        //myPanes.deleteAllPanes()
+        displayScreen()
     }
 
     override func didReceiveMemoryWarning() {
@@ -483,7 +455,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         {
             let cell = dataTable1.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
             cell.textLabel!.text = table1Contents[indexPath.row].displayText
-            return setCellFormatting(cell,inDisplayFormat: table1Contents[indexPath.row].displaySpecialFormat)
+            return setCellFormatting(cell,table1Contents[indexPath.row].displaySpecialFormat)
 
         }
         else if (tableView == dataTable2)
@@ -491,20 +463,20 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             let cell = dataTable2.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
             cell.textLabel!.text = table2Contents[indexPath.row].displayText
             
-            return setCellFormatting(cell,inDisplayFormat: table2Contents[indexPath.row].displaySpecialFormat)
+            return setCellFormatting(cell, table2Contents[indexPath.row].displaySpecialFormat)
         }
         else if (tableView == dataTable3)
         {
             let cell = dataTable3.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
             cell.textLabel!.text = table3Contents[indexPath.row].displayText
-            return setCellFormatting(cell,inDisplayFormat: table3Contents[indexPath.row].displaySpecialFormat)
+            return setCellFormatting(cell,table3Contents[indexPath.row].displaySpecialFormat)
 
         }
         else if (tableView == dataTable4)
         {
             let cell = dataTable4.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
             cell.textLabel!.text = table4Contents[indexPath.row].displayText
-            return setCellFormatting(cell,inDisplayFormat: table4Contents[indexPath.row].displaySpecialFormat)
+            return setCellFormatting(cell,table4Contents[indexPath.row].displaySpecialFormat)
 
         }
         else
@@ -668,49 +640,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         dataTable4.reloadData()
     }
     
-    func setCellFormatting (inCell: UITableViewCell, inDisplayFormat: String) -> UITableViewCell
-    {
-        inCell.textLabel!.numberOfLines = 0;
-        inCell.textLabel!.lineBreakMode = NSLineBreakMode.ByWordWrapping;
-        
-        if inDisplayFormat != ""
-        {
-            switch inDisplayFormat
-            {
-            case "Gray" :
-                inCell.textLabel!.textColor = UIColor.grayColor()
-
-            case "Red" :
-                inCell.textLabel!.textColor = UIColor.redColor()
-
-            case "Yellow" :
-                inCell.textLabel!.textColor = UIColor.yellowColor()
-
-            case "Orange" :
-                inCell.textLabel!.textColor = UIColor.orangeColor()
-
-            case "Purple" :
-                inCell.textLabel!.textColor = UIColor.purpleColor()
-
-            case "Header":
-                inCell.textLabel!.font = UIFont.boldSystemFontOfSize(24.0)
-                inCell.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
-
-            default:
-                inCell.textLabel!.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
-                inCell.textLabel!.textColor = UIColor.blackColor()
-            }
-        }
-        else
-        {
-            inCell.textLabel!.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
-            inCell.textLabel!.textColor = UIColor.blackColor()
-        }
-        
-        return inCell
-        
-    }
-
+    
     func dataCellClicked(rowID: Int, inTable: String, inRecord: TableData)
     {
         var dataType: String = ""
@@ -1790,6 +1720,8 @@ println("Nothing found")
         
         if myDisplayType != ""
         { // only reload if a selection has been made
+            
+            displayScreen()
             table1Contents = Array()
             table2Contents = Array()
             table3Contents = Array()
@@ -1855,6 +1787,58 @@ println("Nothing found")
             // There are no roles defined so we need to go in and create them
             
             populateStages()
+        }
+    }
+    
+    func displayScreen()
+    {
+        // Go and get the list of available panes
+        
+        let myPanes = displayPanes()
+        
+        var myButtonName: String = ""
+        
+        if myDisplayType == "Person"
+        {
+            myButtonName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+        }
+        else
+        {
+            myButtonName = myProjectName
+        }
+        
+        
+        TableOptions.removeAll(keepCapacity: false)
+        
+        for myPane in myPanes.listVisiblePanes
+        {
+            TableOptions.append(myPane.paneName)
+
+            
+            if myPane.paneOrder == 1
+            {
+                TableTypeButton1.setTitle(myPane.paneName, forState: .Normal)
+                TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: myButtonName), forState: .Normal)
+                itemSelected = myPane.paneName
+            }
+            
+            if myPane.paneOrder == 2
+            {
+                TableTypeButton2.setTitle(myPane.paneName, forState: .Normal)
+                TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myButtonName), forState: .Normal)
+            }
+            
+            if myPane.paneOrder == 3
+            {
+                TableTypeButton3.setTitle(myPane.paneName, forState: .Normal)
+                TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myButtonName), forState: .Normal)
+            }
+            
+            if myPane.paneOrder == 4
+            {
+                TableTypeButton4.setTitle(myPane.paneName, forState: .Normal)
+                TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myButtonName), forState: .Normal)
+            }
         }
     }
 }

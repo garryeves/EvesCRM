@@ -65,6 +65,8 @@
 		34BDECBF1B009C17008C9F3F /* Panes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BDECBD1B009C17008C9F3F /* Panes.swift */; };
 		34F199BF1AF6060200963ABF /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34F199BE1AF6060200963ABF /* CoreData.framework */; };
 		34F199C11AF6ECE900963ABF /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34F199C01AF6ECE900963ABF /* CloudKit.framework */; };
+		34FED38D1B044BF1006B414C /* maintainPanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FED38C1B044BF1006B414C /* maintainPanes.swift */; };
+		34FED38E1B044BF1006B414C /* maintainPanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FED38C1B044BF1006B414C /* maintainPanes.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -129,6 +131,7 @@
 		34F199BB1AF6046A00963ABF /* EvesCRM.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = EvesCRM.entitlements; sourceTree = "<group>"; };
 		34F199BE1AF6060200963ABF /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		34F199C01AF6ECE900963ABF /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
+		34FED38C1B044BF1006B414C /* maintainPanes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = maintainPanes.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -232,6 +235,7 @@
 				341F23111AFC284400FC2883 /* DropboxCoreService.swift */,
 				34BDECA91B008846008C9F3F /* displayPanes.swift */,
 				341E08C61B01B1B90036202D /* settingsViewController.swift */,
+				34FED38C1B044BF1006B414C /* maintainPanes.swift */,
 			);
 			path = EvesCRM;
 			sourceTree = "<group>";
@@ -387,6 +391,7 @@
 				344F22721AF1DFF3002C373E /* evernoteDetails.swift in Sources */,
 				341F230B1AFB2DD600FC2883 /* Dropbox.m in Sources */,
 				3406506E1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld in Sources */,
+				34FED38D1B044BF1006B414C /* maintainPanes.swift in Sources */,
 				34BDECAC1B0089CC008C9F3F /* Decodes.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -401,6 +406,7 @@
 				346B70DF1AF70B8F005E1BC2 /* maintainProjectViewController.swift in Sources */,
 				346B70FA1AF75FF4005E1BC2 /* ProjectTeamMembers.swift in Sources */,
 				3403BA451B02FFEC0043D52C /* settingsViewController.swift in Sources */,
+				34FED38E1B044BF1006B414C /* maintainPanes.swift in Sources */,
 				346D5E031AE5F9C700F858E7 /* CalendarDetails.swift in Sources */,
 				34BDECAD1B0089CC008C9F3F /* Decodes.swift in Sources */,
 				341F23131AFC284400FC2883 /* DropboxCoreService.swift in Sources */,

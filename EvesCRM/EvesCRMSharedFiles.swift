@@ -838,3 +838,45 @@ func deleteStageEntry(inStageDesc: String)
     }
 }
 
+func setCellFormatting (inCell: UITableViewCell, inDisplayFormat: String) -> UITableViewCell
+{
+    inCell.textLabel!.numberOfLines = 0;
+    inCell.textLabel!.lineBreakMode = NSLineBreakMode.ByWordWrapping;
+    
+    if inDisplayFormat != ""
+    {
+        switch inDisplayFormat
+        {
+        case "Gray" :
+            inCell.textLabel!.textColor = UIColor.grayColor()
+            
+        case "Red" :
+            inCell.textLabel!.textColor = UIColor.redColor()
+            
+        case "Yellow" :
+            inCell.textLabel!.textColor = UIColor.yellowColor()
+            
+        case "Orange" :
+            inCell.textLabel!.textColor = UIColor.orangeColor()
+            
+        case "Purple" :
+            inCell.textLabel!.textColor = UIColor.purpleColor()
+            
+        case "Header":
+            inCell.textLabel!.font = UIFont.boldSystemFontOfSize(24.0)
+            inCell.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
+            
+        default:
+            inCell.textLabel!.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
+            inCell.textLabel!.textColor = UIColor.blackColor()
+        }
+    }
+    else
+    {
+        inCell.textLabel!.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
+        inCell.textLabel!.textColor = UIColor.blackColor()
+    }
+    
+    return inCell
+    
+}
