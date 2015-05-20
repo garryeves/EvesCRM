@@ -558,9 +558,11 @@ func parseProjectDetails(myProjectID: NSNumber)->[TableData]
     return tableContents
 }
 
-func displayTeamMembers(inProjectID: NSNumber)->[TableData]
+func displayTeamMembers(inProjectID: NSNumber, inout lookupArray: [String])->[TableData]
 {
     var tableContents:[TableData] = [TableData]()
+    
+    lookupArray.removeAll(keepCapacity: false)
     
     let myTeamMembers = getTeamMembers(inProjectID)
     var titleText: String = ""
@@ -571,16 +573,21 @@ func displayTeamMembers(inProjectID: NSNumber)->[TableData]
         titleText += " : "
         titleText += getRoleDescription(myTeamMember.roleID)
         
+        lookupArray.append(myTeamMember.teamMember)
+        
         writeRowToArray(titleText, &tableContents)
     }
     
     return tableContents
 }
 
-func displayProjectsForPerson(inPerson: String) -> [TableData]
+func displayProjectsForPerson(inPerson: String, inout lookupArray: [String]) -> [TableData]
 {
     var tableContents:[TableData] = [TableData]()
-
+    var titleText: String = ""
+    
+    lookupArray.removeAll(keepCapacity: false)
+    
     let myProjects = getProjectsForPerson(inPerson)
     
     if myProjects.count == 0
@@ -595,7 +602,14 @@ func displayProjectsForPerson(inPerson: String) -> [TableData]
         
             if myDetails[0].projectStatus != "Archived"
             {
-            writeRowToArray(myDetails[0].projectName, &tableContents)
+                titleText = myDetails[0].projectName
+                titleText += " : "
+                titleText += getRoleDescription(myProject.roleID)
+                
+                lookupArray.append(myProject.projectID.stringValue)
+                
+                writeRowToArray(titleText, &tableContents)
+                //writeRowToArray(myDetails[0].projectName, &tableContents)
             }
         }
     }

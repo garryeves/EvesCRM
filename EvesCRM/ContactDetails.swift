@@ -455,6 +455,29 @@ func addToContactDetailTable (contactRecord: ABRecord, rowDescription: String, r
 }
 
 
+func findPersonRecord(inName: String, adbk: ABAddressBook) -> ABRecord
+{
+    
+    //  there may be a better way to do this, but it works.
+    var person: ABRecord!
+
+    var contactList: NSArray = ABAddressBookCopyArrayOfAllPeople(adbk).takeRetainedValue()
+    
+    for record:ABRecordRef in contactList {
+        var contactPerson: ABRecordRef = record
+        var contactName: String = ABRecordCopyCompositeName(contactPerson).takeRetainedValue() as String
+
+        if contactName == inName
+        {
+            // we have found the record
+            person = record
+            break
+        }
+    }
+    
+    return person
+}
+
 /*
 func decodePhone(decodeType: String, decodeProperty: ABMultiValueRef, inComingType: CFString, inout tableContents: [TableData])
 {

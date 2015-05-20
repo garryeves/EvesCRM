@@ -10,6 +10,7 @@ import UIKit
 import AddressBook
 import AddressBookUI
 import EventKit
+import EventKitUI
 import CoreData
 
 
@@ -22,7 +23,7 @@ private let dataTable1_CELL_IDENTIFER = "dataTable1Cell"
 
 var dropboxCoreService: DropboxCoreService = DropboxCoreService()
 
-class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate {
+class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate {
     
     @IBOutlet weak var TableTypeSelection1: UIPickerView!
     
@@ -51,6 +52,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     @IBOutlet weak var setSelectionButton: UIButton!
     @IBOutlet weak var settingsButton: UIButton!
     
+    @IBOutlet weak var labelName: UILabel!
     @IBOutlet weak var peoplePickerButton: UIButton!
     var TableOptions: [String]!
     
@@ -109,6 +111,10 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     var dropboxConnected: Bool = false
     
     var dbRestClient: DBRestClient?
+    
+    var eventDetails: [EKEvent] = Array()
+    var reminderDetails: [EKReminder] = Array()
+    var projectMemberArray: [String] = Array()
     
     // Peoplepicker settings
     
@@ -216,6 +222,8 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         {
             getEvernoteUserDetails()
         }
+        
+        labelName.text = ""
     }
 
     override func didReceiveMemoryWarning() {
@@ -536,6 +544,15 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             
         }
         
+        if myDisplayType == "Project"
+        {
+            labelName.text = myProjectName
+        }
+        else
+        {
+            labelName.text = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+        }
+                
         var selectedType: String = getFirstPartofString(dataType)
         // This is where we have the logic to work out which type of data we are goign to populate with
         switch selectedType
@@ -552,19 +569,20 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             case "Calendar":
                 if myDisplayType == "Project"
                 {
-                   workArray = parseCalendarDetails("Calendar", myProjectName, eventStore)                   }
+                   workArray = parseCalendarDetails(myProjectName, eventStore, &eventDetails)
+                }
                 else
                 {
-                    workArray = parseCalendarDetails("Calendar",personSelected, eventStore)
+                    workArray = parseCalendarDetails(personSelected, eventStore, &eventDetails)
                 }
             case "Reminders":
                 if myDisplayType == "Project"
                 {
-                    workArray = parseCalendarDetails("Reminders", myProjectName, eventStore)
+                    workArray = parseReminderDetails(myProjectName, eventStore, &reminderDetails)
                 }
                 else
                 {
-                    workArray = parseCalendarDetails("Reminders", personSelected, eventStore)
+                    workArray = parseReminderDetails(personSelected, eventStore, &reminderDetails)
                 }
             case "Evernote":
                 writeRowToArray("Loading Evernote data.  Pane will refresh when finished", &workArray)
@@ -585,12 +603,12 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 // Project team membership details
                 if myDisplayType == "Project"
                 {
-                    workArray = displayTeamMembers(myProjectID)
+                    workArray = displayTeamMembers(myProjectID, &projectMemberArray)
                 }
                 else
                 {
                     let searchString = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
-                    workArray = displayProjectsForPerson(searchString)
+                    workArray = displayProjectsForPerson(searchString, &projectMemberArray)
                 }
 
             case "Omnifocus":
@@ -692,6 +710,98 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 {
                     UIApplication.sharedApplication().openURL(myOmniUrl)
                 }
+            
+            case "Calendar":
+                let evc = EKEventEditViewController()
+                evc.eventStore = self.eventStore
+                evc.editViewDelegate = self
+                evc.event = eventDetails[rowID]
+                self.presentViewController(evc, animated: true, completion: nil)
+
+            case "Project Membership":
+                // Project team membership details
+                if myDisplayType == "Project"
+                {
+                    TableTypeSelection1.hidden = true
+                    setSelectionButton.hidden = true
+                    TableTypeButton1.hidden = false
+                    TableTypeButton2.hidden = false
+                    TableTypeButton3.hidden = false
+                    TableTypeButton4.hidden = false
+                    dataTable1.hidden = false
+                    dataTable2.hidden = false
+                    dataTable3.hidden = false
+                    dataTable4.hidden = false
+                    StartLabel.hidden = true
+                    
+                    myDisplayType = "Person"
+                    
+                    // we need to go and find the record for the person we have selected
+                    
+                    personSelected = findPersonRecord(projectMemberArray[rowID], adbk)
+                    
+                    table1Contents = Array()
+                    table2Contents = Array()
+                    table3Contents = Array()
+                    table4Contents = Array()
+                    
+                    populateArraysForTables("Table1")
+                    populateArraysForTables("Table2")
+                    populateArraysForTables("Table3")
+                    populateArraysForTables("Table4")
+                    
+                    reloadDataTables()
+                    
+                    // Here is where we will set the titles for the buttons
+                    
+                    let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+                    
+                    TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: myFullName), forState: .Normal)
+                    TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myFullName), forState: .Normal)
+                    TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myFullName), forState: .Normal)
+                    TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myFullName), forState: .Normal)
+                }
+                else
+                {
+                    TableTypeSelection1.hidden = true
+                    setSelectionButton.hidden = true
+                    TableTypeButton1.hidden = false
+                    TableTypeButton2.hidden = false
+                    TableTypeButton3.hidden = false
+                    TableTypeButton4.hidden = false
+                    dataTable1.hidden = false
+                    dataTable2.hidden = false
+                    dataTable3.hidden = false
+                    dataTable4.hidden = false
+                    StartLabel.hidden = true
+                    
+                    myDisplayType = "Project"
+                    myProjectID = projectMemberArray[rowID].toInt()
+                    
+                    let mySelectProjects = getProjectDetails(myProjectID)
+                    
+                    myProjectName = mySelectProjects[0].projectName
+                    
+                    table1Contents = Array()
+                    table2Contents = Array()
+                    table3Contents = Array()
+                    table4Contents = Array()
+                    
+                    populateArraysForTables("Table1")
+                    populateArraysForTables("Table2")
+                    populateArraysForTables("Table3")
+                    populateArraysForTables("Table4")
+                    
+                    reloadDataTables()
+                    
+                    // Here is where we will set the titles for the buttons
+                    
+                    TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: myProjectName), forState: .Normal)
+                    TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myProjectName), forState: .Normal)
+                    TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myProjectName), forState: .Normal)
+                    TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myProjectName), forState: .Normal)
+                }
+
 
             default:
                 let a = 1
@@ -840,7 +950,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 }
 
                 openEvernoteAddView(myFullName)
-
+            
             case "Omnifocus":
                 var myOmniUrlPath: String
                 
@@ -861,8 +971,14 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 if UIApplication.sharedApplication().canOpenURL(myOmniUrl) == true
                 {
                     UIApplication.sharedApplication().openURL(myOmniUrl)
-            }
-
+                }
+            
+            case "Calendar":
+                let evc = EKEventEditViewController()
+                evc.eventStore = self.eventStore
+                evc.editViewDelegate = self
+                self.presentViewController(evc, animated: true, completion: nil)
+          
             default:
                 let a = 1
         }
@@ -965,6 +1081,9 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     case "Omnifocus":
                         buttonAdd1.hidden = false
 
+                    case "Calendar":
+                        buttonAdd1.hidden = false
+
                     default:
                         buttonAdd1.hidden = true
                 }
@@ -981,6 +1100,9 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                         buttonAdd2.hidden = false
                     
                     case "Omnifocus":
+                        buttonAdd2.hidden = false
+                    
+                    case "Calendar":
                         buttonAdd2.hidden = false
                     
                     default:
@@ -1001,6 +1123,9 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     case "Omnifocus":
                         buttonAdd3.hidden = false
                     
+                    case "Calendar":
+                        buttonAdd3.hidden = false
+                    
                     default:
                         buttonAdd3.hidden = true
                 }
@@ -1017,6 +1142,9 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                         buttonAdd4.hidden = false
                     
                     case "Omnifocus":
+                        buttonAdd4.hidden = false
+                    
+                    case "Calendar":
                         buttonAdd4.hidden = false
                 
                     default:
@@ -1202,7 +1330,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     func openOmnifocusDropbox()
     {
         dropboxCoreService.delegate = self
-//        connectToDropbox()  // GRE move to button once we have one
         
         let fileName = "OmniOutput.txt"
         
@@ -1409,12 +1536,12 @@ println("Nothing found")
         var myEndDate: NSDate
         var myStartDate: NSDate
         var myModDate: NSDate
+        var myEntryFound: Bool = false
         
         omniLinkArray.removeAll(keepCapacity: false)
         
         if let aStreamReader = StreamReader(path: inPath)
         {
-            
             while let line = aStreamReader.nextLine()
             {
                 if myDisplayType == "Project"
@@ -1428,7 +1555,7 @@ println("Nothing found")
                 if line.lowercaseString.rangeOfString(myFullName.lowercaseString) != nil
                 {
                     // need to format the string into the approriate format
-                    
+                    myEntryFound = true
                     let splitText = line.componentsSeparatedByString(":::")
                     
                     omniLinkArray.append(splitText[5])
@@ -1592,6 +1719,11 @@ println("Nothing found")
             // You can close the underlying file explicitly. Otherwise it will be
             // closed when the reader is deallocated.
             aStreamReader.close()
+        }
+        
+        if !myEntryFound
+        {
+            writeRowToArray("No Omnifocus tasks found", &workArray)
         }
         
         switch omniTableToRefresh
@@ -1775,5 +1907,83 @@ println("Nothing found")
         EvernoteUserTimerCount = 0
         
         myEvernoteUserTimer = NSTimer.scheduledTimerWithTimeInterval(1, target:self, selector: Selector("myEvernoteUserDidFinish"), userInfo: nil, repeats: false)
+    }
+    
+    func eventViewController(controller: EKEventViewController, didCompleteWithAction action: EKEventViewAction)
+    {
+        if myDisplayType != ""
+        { // only reload if a selection has been made
+            
+            displayScreen()
+            table1Contents = Array()
+            table2Contents = Array()
+            table3Contents = Array()
+            table4Contents = Array()
+            
+            populateArraysForTables("Table1")
+            populateArraysForTables("Table2")
+            populateArraysForTables("Table3")
+            populateArraysForTables("Table4")
+            
+            reloadDataTables()
+        }
+
+        controller.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func eventEditViewController(controller: EKEventEditViewController, didCompleteWithAction action: EKEventEditViewAction)
+    {
+        if myDisplayType != ""
+        { // only reload if a selection has been made
+            
+            displayScreen()
+            table1Contents = Array()
+            table2Contents = Array()
+            table3Contents = Array()
+            table4Contents = Array()
+            
+            populateArraysForTables("Table1")
+            populateArraysForTables("Table2")
+            populateArraysForTables("Table3")
+            populateArraysForTables("Table4")
+            
+            reloadDataTables()
+        }
+
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func eventEditViewControllerDefaultCalendarForNewEvents(controller: EKEventEditViewController) -> EKCalendar!
+    {
+
+        return eventStore.defaultCalendarForNewEvents
+    }
+
+    
+    func calendarChooserDidCancel(calendarChooser: EKCalendarChooser)
+    {
+        self.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func calendarChooserDidFinish(calendarChooser: EKCalendarChooser)
+    {
+        if myDisplayType != ""
+        { // only reload if a selection has been made
+            
+            displayScreen()
+            table1Contents = Array()
+            table2Contents = Array()
+            table3Contents = Array()
+            table4Contents = Array()
+            
+            populateArraysForTables("Table1")
+            populateArraysForTables("Table2")
+            populateArraysForTables("Table3")
+            populateArraysForTables("Table4")
+            
+            reloadDataTables()
+        }
+
+        self.dismissViewControllerAnimated(true, completion:nil)
     }
 }

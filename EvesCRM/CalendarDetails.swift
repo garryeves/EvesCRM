@@ -13,7 +13,7 @@ import EventKit
 var eventStore: EKEventStore!
 var targetReminderCal: EKCalendar!
 
-func parseCalendarDetails (inType: String, contactRecord: ABRecord, inEventStore: EKEventStore)-> [TableData]
+func parseCalendarDetails (contactRecord: ABRecord, inEventStore: EKEventStore, inout eventDetails: [EKEvent])-> [TableData]
 {
     
     var emailAddresses:[String] = [" "]
@@ -23,57 +23,76 @@ func parseCalendarDetails (inType: String, contactRecord: ABRecord, inEventStore
     
     emailAddresses.removeAll()
     tableContents.removeAll()
+    eventDetails.removeAll()
     
     // First we need to find out the email addresses for the person so can check through calendar entries
 
-//    addToContactDetailTable (contactRecord, "", kABPersonEmailProperty, &emailAddresses)
-
-    if inType == "Calendar"
+    let decodeProperty : ABMultiValueRef = ABRecordCopyValue(contactRecord, kABPersonEmailProperty).takeUnretainedValue() as ABMultiValueRef
+    
+    let recordCount = ABMultiValueGetCount(decodeProperty)
+    
+    if recordCount > 0
     {
-        let decodeProperty : ABMultiValueRef = ABRecordCopyValue(contactRecord, kABPersonEmailProperty).takeUnretainedValue() as ABMultiValueRef
-    
-        let recordCount = ABMultiValueGetCount(decodeProperty)
-    
-        if recordCount > 0
+        for loopCount in 0...recordCount-1
         {
-            for loopCount in 0...recordCount-1
-            {
-                parseCalendarByEmail(ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String, &tableContents)
-            
-            }
+            parseCalendarByEmail(ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String, &tableContents, &eventDetails)
         }
-    }
-    else if inType == "Reminders"
-    {
-        var workingName: String = ABRecordCopyCompositeName(contactRecord).takeUnretainedValue() as String
-        parseReminders(workingName, &tableContents)
     }
 
     return tableContents
 }
 
-func parseCalendarDetails (inType: String, projectName: String, inEventStore: EKEventStore)-> [TableData]
+func parseCalendarDetails (projectName: String, inEventStore: EKEventStore, inout eventDetails: [EKEvent])-> [TableData]
 {
     var tableContents:[TableData] = [TableData]()
     
     eventStore = inEventStore
     
     tableContents.removeAll()
+    eventDetails.removeAll()
     
-    if inType == "Calendar"
-    {
-        parseCalendarBySubject(projectName, &tableContents)
-    }
-    else if inType == "Reminders"
-    {
-        parseReminders(projectName, &tableContents)
-    }
+    parseCalendarBySubject(projectName, &tableContents, &eventDetails)
+    
+    return tableContents
+}
+
+func parseReminderDetails (contactRecord: ABRecord, inEventStore: EKEventStore, inout reminderDetails: [EKReminder])-> [TableData]
+{
+    
+    var emailAddresses:[String] = [" "]
+    var tableContents:[TableData] = [TableData]()
+    
+    eventStore = inEventStore
+    
+    emailAddresses.removeAll()
+    tableContents.removeAll()
+    reminderDetails.removeAll()
+    
+    // First we need to find out the email addresses for the person so can check through calendar entries
+    
+    var workingName: String = ABRecordCopyCompositeName(contactRecord).takeUnretainedValue() as String
+    parseReminders(workingName, &tableContents, &reminderDetails)
+    
+    return tableContents
+}
+
+func parseCalendarDetails (inType: String, projectName: String, inEventStore: EKEventStore, inout reminderDetails: [EKReminder])-> [TableData]
+{
+    var tableContents:[TableData] = [TableData]()
+    
+    eventStore = inEventStore
+    
+    tableContents.removeAll()
+    reminderDetails.removeAll()
+    
+    parseReminders(projectName, &tableContents, &reminderDetails)
     
     return tableContents
 }
 
 
-func parseCalendarByEmail(inEmail: String, inout tableContents: [TableData])
+
+func parseCalendarByEmail(inEmail: String, inout tableContents: [TableData], inout eventDetails: [EKEvent])
 {
     // Find calendar entries based on email addresses and invitees
     
@@ -142,7 +161,7 @@ func parseCalendarByEmail(inEmail: String, inout tableContents: [TableData])
     //Calculate
     // Days * hours * mins * secs
   
-    let myEndDateString = getDecodeValue("CalBeforeWeeks")
+    let myEndDateString = getDecodeValue("CalAfterWeeks")
     // This is string value so need to convert to integer
     
     let myEndDateValue:NSTimeInterval = (myEndDateString as NSString).doubleValue * 7 * 24 * 60 * 60
@@ -178,8 +197,12 @@ func parseCalendarByEmail(inEmail: String, inout tableContents: [TableData])
                                 var emailText: String = "\(attendee.URL)"
                                 var emailStartPos = find(emailText,":")
                                 var nextPlace = emailStartPos?.successor()
-                                var emailEndPos = emailText.endIndex.predecessor()
-                                let emailAddress = emailText[nextPlace!...emailEndPos]
+                                var emailAddress: String = ""
+                                if nextPlace != nil
+                                {
+                                    var emailEndPos = emailText.endIndex.predecessor()
+                                    emailAddress = emailText[nextPlace!...emailEndPos]
+                                }
                         
                                 if emailAddress == inEmail
                                 {
@@ -221,7 +244,7 @@ func parseCalendarByEmail(inEmail: String, inout tableContents: [TableData])
                                     }
                                     myString += "Status = \(attendStatus)"
                         
-                                    
+                                    eventDetails.append(event)
                                     
                                     if event.startDate.compare(NSDate()) == NSComparisonResult.OrderedAscending
                                     {
@@ -241,7 +264,7 @@ func parseCalendarByEmail(inEmail: String, inout tableContents: [TableData])
     }
 }
 
-func parseCalendarBySubject(inProject: String, inout tableContents: [TableData])
+func parseCalendarBySubject(inProject: String, inout tableContents: [TableData], inout eventDetails: [EKEvent])
 {
     // Find calendar entries based on email addresses and invitees
     
@@ -294,19 +317,37 @@ func parseCalendarBySubject(inProject: String, inout tableContents: [TableData])
     
     /* Instantiate the event store */
     let baseDate = NSDate()
+
+    let myStartDateString = getDecodeValue("CalBeforeWeeks")
+    // This is string value so need to convert to integer, and subtract from 0 to get a negative
+    
+    let myStartDateValue:NSTimeInterval = 0 - ((((myStartDateString as NSString).doubleValue * 7) + 1) * 24 * 60 * 60)
+    
+    let startDate = baseDate.dateByAddingTimeInterval(myStartDateValue)
+    
+    /* The end date will be 1 month from today */
+    //Calculate
+    // Days * hours * mins * secs
+    
+    let myEndDateString = getDecodeValue("CalAfterWeeks")
+    // This is string value so need to convert to integer
+    
+    let myEndDateValue:NSTimeInterval = (myEndDateString as NSString).doubleValue * 7 * 24 * 60 * 60
+
+    let endDate = baseDate.dateByAddingTimeInterval(myEndDateValue)
     
     /* The event starts from 1 week ago, right now */
     //Calculate
     // Days * hours * mins * secs
     
-    let startDate = baseDate.dateByAddingTimeInterval(-8 * 24 * 60 * 60)
+//    let startDate = baseDate.dateByAddingTimeInterval(-8 * 24 * 60 * 60)
     
     /* The end date will be 1 month from today */
     //Calculate
     // Days * hours * mins * secs
     
     
-    let endDate = baseDate.dateByAddingTimeInterval(31 * 24 * 60 * 60)
+ //   let endDate = baseDate.dateByAddingTimeInterval(31 * 24 * 60 * 60)
     
     /* Create the predicate that we can later pass to the
     event store in order to fetch the events */
@@ -367,6 +408,8 @@ func parseCalendarBySubject(inProject: String, inout tableContents: [TableData])
                             myString += "\nAt \(event.location)"
                         }
                         
+                        eventDetails.append(event)
+                        
                         if event.startDate.compare(NSDate()) == NSComparisonResult.OrderedAscending
                         {
                             // Event is in the past
@@ -384,7 +427,7 @@ func parseCalendarBySubject(inProject: String, inout tableContents: [TableData])
 }
 
 
-func parseReminders(workingName: String, inout tableContents: [TableData])
+func parseReminders(workingName: String, inout tableContents: [TableData], inout reminderDetails: [EKReminder])
 {
     var reminders: [EKReminder] = Array()
 
@@ -435,6 +478,7 @@ func parseReminders(workingName: String, inout tableContents: [TableData])
                 workingString.priority = reminder.priority
                 workingString.calendarItemIdentifier = reminder.calendarItemIdentifier
                 myDisplayStrings.append(workingString)
+                reminderDetails.append(reminder as! EKReminder)
             }
             asyncDone = true
             })
