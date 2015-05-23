@@ -98,6 +98,8 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     var myProjectID: NSNumber!
     var myProjectName: String = ""
     var omniTableToRefresh: String = ""
+    var oneNoteTableToRefresh: String = ""
+    var oneNoteLinkArray: [String] = Array()
     var omniLinkArray: [String] = Array()
     
     
@@ -115,6 +117,14 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     var eventDetails: [EKEvent] = Array()
     var reminderDetails: [EKReminder] = Array()
     var projectMemberArray: [String] = Array()
+    
+    
+    // OneNote
+    var liveClient: LiveConnectClient!
+    // Set the CLIENT_ID value to be the one you get from http://manage.dev.live.com/
+    let CLIENT_ID = "000000004C152111"; //@"%CLIENT_ID%";
+    let OneNoteScopeText = ["wl.signin", "wl.skydrive", "wl.skydrive_update", "wl.offline_access"]
+
     
     // Peoplepicker settings
     
@@ -617,7 +627,14 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 omniTableToRefresh = inTable
                 
                 openOmnifocusDropbox()
+
+            case "Omnifocus":
+                writeRowToArray("Loading OneNote data.  Pane will refresh when finished", &workArray)
             
+                oneNoteTableToRefresh = inTable
+            
+                getOneNoteData()
+
             case "Mail":
                 let a = 1
             
@@ -1756,11 +1773,16 @@ println("Nothing found")
         settingViewControl.delegate = self
         settingViewControl.evernoteSession = evernoteSession
         settingViewControl.dropboxCoreService = dropboxCoreService
+        settingViewControl.liveClient = liveClient
+        settingViewControl.CLIENT_ID = CLIENT_ID
+        settingViewControl.OneNoteScopeText = OneNoteScopeText
+
         self.presentViewController(settingViewControl, animated: true, completion: nil)
     }
     
     func mySettingsDidFinish(controller:settingsViewController)
     {
+        liveClient = controller.liveClient
         controller.dismissViewControllerAnimated(true, completion: nil)
         
         if myDisplayType != ""
@@ -1986,4 +2008,13 @@ println("Nothing found")
 
         self.dismissViewControllerAnimated(true, completion:nil)
     }
+    
+    func getOneNoteData()
+    {
+        //oneNoteLinkArray
+        
+        // first step is to go and get a list of notebooks
+    }
+    
+    
 }

@@ -19,7 +19,7 @@
 		340650901ADDF93600C90CBB /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3406508E1ADDF93600C90CBB /* AddressBookUI.framework */; };
 		34111C3A1AEC898B003090EB /* reminderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34111C391AEC898B003090EB /* reminderViewController.swift */; };
 		341DD2371AECA9FF001DCF65 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 340650711ADDF8FF00C90CBB /* Main.storyboard */; };
-		341E08C71B01B1B90036202D /* settingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341E08C61B01B1B90036202D /* settingsViewController.swift */; };
+		341E08C71B01B1B90036202D /* settingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341E08C61B01B1B90036202D /* settingsViewController.swift */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		341F22F81AFB299B00FC2883 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341F22F71AFB299B00FC2883 /* CFNetwork.framework */; };
 		341F22FA1AFB29A500FC2883 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341F22F91AFB29A500FC2883 /* Security.framework */; };
 		341F22FC1AFB29B000FC2883 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341F22FB1AFB29B000FC2883 /* SystemConfiguration.framework */; };
@@ -57,6 +57,54 @@
 		348E6D4C1ADF74C800697268 /* ContactDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348E6D4A1ADF74C800697268 /* ContactDetails.swift */; };
 		349C4D3F1B033B6400EC8099 /* Stages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349C4D3E1B033B6400EC8099 /* Stages.swift */; };
 		349C4D401B033B6400EC8099 /* Stages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349C4D3E1B033B6400EC8099 /* Stages.swift */; };
+		34A182D21B0EDB3D00FC369D /* LiveConnectClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182C41B0EDB3D00FC369D /* LiveConnectClient.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		34A182D31B0EDB3D00FC369D /* LiveConnectClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182C41B0EDB3D00FC369D /* LiveConnectClient.m */; };
+		34A182D41B0EDB3D00FC369D /* LiveConnectSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182C61B0EDB3D00FC369D /* LiveConnectSession.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		34A182D51B0EDB3D00FC369D /* LiveConnectSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182C61B0EDB3D00FC369D /* LiveConnectSession.m */; };
+		34A182D61B0EDB3D00FC369D /* LiveDownloadOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182C91B0EDB3D00FC369D /* LiveDownloadOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		34A182D71B0EDB3D00FC369D /* LiveDownloadOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182C91B0EDB3D00FC369D /* LiveDownloadOperation.m */; };
+		34A182D81B0EDB3D00FC369D /* LiveOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182CC1B0EDB3D00FC369D /* LiveOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		34A182D91B0EDB3D00FC369D /* LiveOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182CC1B0EDB3D00FC369D /* LiveOperation.m */; };
+		34A182DA1B0EDB3D00FC369D /* LiveOperationProgress.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182CF1B0EDB3D00FC369D /* LiveOperationProgress.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		34A182DB1B0EDB3D00FC369D /* LiveOperationProgress.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182CF1B0EDB3D00FC369D /* LiveOperationProgress.m */; };
+		34A182F61B0EDB5C00FC369D /* LiveAuthDialog_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34A182DD1B0EDB5C00FC369D /* LiveAuthDialog_iPad.xib */; };
+		34A182F71B0EDB5C00FC369D /* LiveAuthDialog_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34A182DD1B0EDB5C00FC369D /* LiveAuthDialog_iPad.xib */; };
+		34A182F81B0EDB5C00FC369D /* LiveAuthDialog_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34A182DE1B0EDB5C00FC369D /* LiveAuthDialog_iPhone.xib */; };
+		34A182F91B0EDB5C00FC369D /* LiveAuthDialog_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34A182DE1B0EDB5C00FC369D /* LiveAuthDialog_iPhone.xib */; };
+		34A182FA1B0EDB5C00FC369D /* LiveAuthDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182E01B0EDB5C00FC369D /* LiveAuthDialog.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		34A182FB1B0EDB5C00FC369D /* LiveAuthDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182E01B0EDB5C00FC369D /* LiveAuthDialog.m */; };
+		34A182FC1B0EDB5C00FC369D /* LiveAuthRefreshRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182E31B0EDB5C00FC369D /* LiveAuthRefreshRequest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		34A182FD1B0EDB5C00FC369D /* LiveAuthRefreshRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182E31B0EDB5C00FC369D /* LiveAuthRefreshRequest.m */; };
+		34A182FE1B0EDB5C00FC369D /* LiveAuthRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182E51B0EDB5C00FC369D /* LiveAuthRequest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		34A182FF1B0EDB5C00FC369D /* LiveAuthRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182E51B0EDB5C00FC369D /* LiveAuthRequest.m */; };
+		34A183001B0EDB5C00FC369D /* LiveAuthStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182E71B0EDB5C00FC369D /* LiveAuthStorage.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		34A183011B0EDB5C00FC369D /* LiveAuthStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182E71B0EDB5C00FC369D /* LiveAuthStorage.m */; };
+		34A183021B0EDB5C00FC369D /* LiveConnectClientCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182E91B0EDB5C00FC369D /* LiveConnectClientCore.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		34A183031B0EDB5C00FC369D /* LiveConnectClientCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182E91B0EDB5C00FC369D /* LiveConnectClientCore.m */; };
+		34A183041B0EDB5C00FC369D /* LiveDownloadOperationCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182EC1B0EDB5C00FC369D /* LiveDownloadOperationCore.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		34A183051B0EDB5C00FC369D /* LiveDownloadOperationCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182EC1B0EDB5C00FC369D /* LiveDownloadOperationCore.m */; };
+		34A183061B0EDB5C00FC369D /* LiveOperationCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182EF1B0EDB5C00FC369D /* LiveOperationCore.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		34A183071B0EDB5C00FC369D /* LiveOperationCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182EF1B0EDB5C00FC369D /* LiveOperationCore.m */; };
+		34A183081B0EDB5C00FC369D /* LiveUploadOperationCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182F21B0EDB5C00FC369D /* LiveUploadOperationCore.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		34A183091B0EDB5C00FC369D /* LiveUploadOperationCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182F21B0EDB5C00FC369D /* LiveUploadOperationCore.m */; };
+		34A1830A1B0EDB5C00FC369D /* Resources_OneNote in Resources */ = {isa = PBXBuildFile; fileRef = 34A182F31B0EDB5C00FC369D /* Resources_OneNote */; };
+		34A1830B1B0EDB5C00FC369D /* Resources_OneNote in Resources */ = {isa = PBXBuildFile; fileRef = 34A182F31B0EDB5C00FC369D /* Resources_OneNote */; };
+		34A1831D1B0EDBB400FC369D /* JsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A1830D1B0EDBB400FC369D /* JsonParser.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		34A1831E1B0EDBB400FC369D /* JsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A1830D1B0EDBB400FC369D /* JsonParser.m */; };
+		34A1831F1B0EDBB400FC369D /* JsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A1830F1B0EDBB400FC369D /* JsonWriter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		34A183201B0EDBB400FC369D /* JsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A1830F1B0EDBB400FC369D /* JsonWriter.m */; };
+		34A183211B0EDBB400FC369D /* LiveApiHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A183111B0EDBB400FC369D /* LiveApiHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		34A183221B0EDBB400FC369D /* LiveApiHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A183111B0EDBB400FC369D /* LiveApiHelper.m */; };
+		34A183231B0EDBB400FC369D /* LiveAuthHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A183131B0EDBB400FC369D /* LiveAuthHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		34A183241B0EDBB400FC369D /* LiveAuthHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A183131B0EDBB400FC369D /* LiveAuthHelper.m */; };
+		34A183251B0EDBB400FC369D /* LiveConnectionHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A183161B0EDBB400FC369D /* LiveConnectionHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		34A183261B0EDBB400FC369D /* LiveConnectionHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A183161B0EDBB400FC369D /* LiveConnectionHelper.m */; };
+		34A183271B0EDBB400FC369D /* StreamReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A183181B0EDBB400FC369D /* StreamReader.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		34A183281B0EDBB400FC369D /* StreamReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A183181B0EDBB400FC369D /* StreamReader.m */; };
+		34A183291B0EDBB400FC369D /* StringHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A1831A1B0EDBB400FC369D /* StringHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		34A1832A1B0EDBB400FC369D /* StringHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A1831A1B0EDBB400FC369D /* StringHelper.m */; };
+		34A1832B1B0EDBB400FC369D /* UrlHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A1831C1B0EDBB400FC369D /* UrlHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		34A1832C1B0EDBB400FC369D /* UrlHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A1831C1B0EDBB400FC369D /* UrlHelper.m */; };
 		34B3BDA01AF0979E00C5B09D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406506F1ADDF8FF00C90CBB /* ViewController.swift */; };
 		34BDECAA1B008846008C9F3F /* displayPanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BDECA91B008846008C9F3F /* displayPanes.swift */; };
 		34BDECAC1B0089CC008C9F3F /* Decodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BDECAB1B0089CC008C9F3F /* Decodes.swift */; };
@@ -124,6 +172,62 @@
 		348E6D4A1ADF74C800697268 /* ContactDetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactDetails.swift; sourceTree = "<group>"; };
 		349C4D3D1B033AF300EC8099 /* EvesCRM 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 4.xcdatamodel"; sourceTree = "<group>"; };
 		349C4D3E1B033B6400EC8099 /* Stages.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stages.swift; sourceTree = "<group>"; };
+		34A182C21B0EDB3D00FC369D /* LiveAuthDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveAuthDelegate.h; sourceTree = "<group>"; };
+		34A182C31B0EDB3D00FC369D /* LiveConnectClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveConnectClient.h; sourceTree = "<group>"; };
+		34A182C41B0EDB3D00FC369D /* LiveConnectClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveConnectClient.m; sourceTree = "<group>"; };
+		34A182C51B0EDB3D00FC369D /* LiveConnectSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveConnectSession.h; sourceTree = "<group>"; };
+		34A182C61B0EDB3D00FC369D /* LiveConnectSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveConnectSession.m; sourceTree = "<group>"; };
+		34A182C71B0EDB3D00FC369D /* LiveConnectSessionStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveConnectSessionStatus.h; sourceTree = "<group>"; };
+		34A182C81B0EDB3D00FC369D /* LiveDownloadOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveDownloadOperation.h; sourceTree = "<group>"; };
+		34A182C91B0EDB3D00FC369D /* LiveDownloadOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveDownloadOperation.m; sourceTree = "<group>"; };
+		34A182CA1B0EDB3D00FC369D /* LiveDownloadOperationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveDownloadOperationDelegate.h; sourceTree = "<group>"; };
+		34A182CB1B0EDB3D00FC369D /* LiveOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveOperation.h; sourceTree = "<group>"; };
+		34A182CC1B0EDB3D00FC369D /* LiveOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveOperation.m; sourceTree = "<group>"; };
+		34A182CD1B0EDB3D00FC369D /* LiveOperationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveOperationDelegate.h; sourceTree = "<group>"; };
+		34A182CE1B0EDB3D00FC369D /* LiveOperationProgress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveOperationProgress.h; sourceTree = "<group>"; };
+		34A182CF1B0EDB3D00FC369D /* LiveOperationProgress.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveOperationProgress.m; sourceTree = "<group>"; };
+		34A182D01B0EDB3D00FC369D /* LiveUploadOperationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveUploadOperationDelegate.h; sourceTree = "<group>"; };
+		34A182D11B0EDB3D00FC369D /* LiveUploadOverwriteOption.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveUploadOverwriteOption.h; sourceTree = "<group>"; };
+		34A182DD1B0EDB5C00FC369D /* LiveAuthDialog_iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LiveAuthDialog_iPad.xib; sourceTree = "<group>"; };
+		34A182DE1B0EDB5C00FC369D /* LiveAuthDialog_iPhone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LiveAuthDialog_iPhone.xib; sourceTree = "<group>"; };
+		34A182DF1B0EDB5C00FC369D /* LiveAuthDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveAuthDialog.h; sourceTree = "<group>"; };
+		34A182E01B0EDB5C00FC369D /* LiveAuthDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveAuthDialog.m; sourceTree = "<group>"; };
+		34A182E11B0EDB5C00FC369D /* LiveAuthDialogDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveAuthDialogDelegate.h; sourceTree = "<group>"; };
+		34A182E21B0EDB5C00FC369D /* LiveAuthRefreshRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveAuthRefreshRequest.h; sourceTree = "<group>"; };
+		34A182E31B0EDB5C00FC369D /* LiveAuthRefreshRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveAuthRefreshRequest.m; sourceTree = "<group>"; };
+		34A182E41B0EDB5C00FC369D /* LiveAuthRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveAuthRequest.h; sourceTree = "<group>"; };
+		34A182E51B0EDB5C00FC369D /* LiveAuthRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveAuthRequest.m; sourceTree = "<group>"; };
+		34A182E61B0EDB5C00FC369D /* LiveAuthStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveAuthStorage.h; sourceTree = "<group>"; };
+		34A182E71B0EDB5C00FC369D /* LiveAuthStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveAuthStorage.m; sourceTree = "<group>"; };
+		34A182E81B0EDB5C00FC369D /* LiveConnectClientCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveConnectClientCore.h; sourceTree = "<group>"; };
+		34A182E91B0EDB5C00FC369D /* LiveConnectClientCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveConnectClientCore.m; sourceTree = "<group>"; };
+		34A182EA1B0EDB5C00FC369D /* LiveConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveConstants.h; sourceTree = "<group>"; };
+		34A182EB1B0EDB5C00FC369D /* LiveDownloadOperationCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveDownloadOperationCore.h; sourceTree = "<group>"; };
+		34A182EC1B0EDB5C00FC369D /* LiveDownloadOperationCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveDownloadOperationCore.m; sourceTree = "<group>"; };
+		34A182ED1B0EDB5C00FC369D /* LiveDownloadOperationInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveDownloadOperationInternal.h; sourceTree = "<group>"; };
+		34A182EE1B0EDB5C00FC369D /* LiveOperationCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveOperationCore.h; sourceTree = "<group>"; };
+		34A182EF1B0EDB5C00FC369D /* LiveOperationCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveOperationCore.m; sourceTree = "<group>"; };
+		34A182F01B0EDB5C00FC369D /* LiveOperationInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveOperationInternal.h; sourceTree = "<group>"; };
+		34A182F11B0EDB5C00FC369D /* LiveUploadOperationCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveUploadOperationCore.h; sourceTree = "<group>"; };
+		34A182F21B0EDB5C00FC369D /* LiveUploadOperationCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveUploadOperationCore.m; sourceTree = "<group>"; };
+		34A182F31B0EDB5C00FC369D /* Resources_OneNote */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources_OneNote; sourceTree = "<group>"; };
+		34A1830C1B0EDBB400FC369D /* JsonParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonParser.h; sourceTree = "<group>"; };
+		34A1830D1B0EDBB400FC369D /* JsonParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JsonParser.m; sourceTree = "<group>"; };
+		34A1830E1B0EDBB400FC369D /* JsonWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonWriter.h; sourceTree = "<group>"; };
+		34A1830F1B0EDBB400FC369D /* JsonWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JsonWriter.m; sourceTree = "<group>"; };
+		34A183101B0EDBB400FC369D /* LiveApiHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveApiHelper.h; sourceTree = "<group>"; };
+		34A183111B0EDBB400FC369D /* LiveApiHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveApiHelper.m; sourceTree = "<group>"; };
+		34A183121B0EDBB400FC369D /* LiveAuthHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveAuthHelper.h; sourceTree = "<group>"; };
+		34A183131B0EDBB400FC369D /* LiveAuthHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveAuthHelper.m; sourceTree = "<group>"; };
+		34A183141B0EDBB400FC369D /* LiveConnectionCreatorDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveConnectionCreatorDelegate.h; sourceTree = "<group>"; };
+		34A183151B0EDBB400FC369D /* LiveConnectionHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveConnectionHelper.h; sourceTree = "<group>"; };
+		34A183161B0EDBB400FC369D /* LiveConnectionHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveConnectionHelper.m; sourceTree = "<group>"; };
+		34A183171B0EDBB400FC369D /* StreamReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamReader.h; sourceTree = "<group>"; };
+		34A183181B0EDBB400FC369D /* StreamReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StreamReader.m; sourceTree = "<group>"; };
+		34A183191B0EDBB400FC369D /* StringHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringHelper.h; sourceTree = "<group>"; };
+		34A1831A1B0EDBB400FC369D /* StringHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StringHelper.m; sourceTree = "<group>"; };
+		34A1831B1B0EDBB400FC369D /* UrlHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UrlHelper.h; sourceTree = "<group>"; };
+		34A1831C1B0EDBB400FC369D /* UrlHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UrlHelper.m; sourceTree = "<group>"; };
 		34BDECA81B0086D3008C9F3F /* EvesCRM 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 3.xcdatamodel"; sourceTree = "<group>"; };
 		34BDECA91B008846008C9F3F /* displayPanes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = displayPanes.swift; sourceTree = "<group>"; };
 		34BDECAB1B0089CC008C9F3F /* Decodes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Decodes.swift; sourceTree = "<group>"; };
@@ -208,6 +312,62 @@
 		340650671ADDF8FF00C90CBB /* EvesCRM */ = {
 			isa = PBXGroup;
 			children = (
+				34A1830C1B0EDBB400FC369D /* JsonParser.h */,
+				34A1830D1B0EDBB400FC369D /* JsonParser.m */,
+				34A1830E1B0EDBB400FC369D /* JsonWriter.h */,
+				34A1830F1B0EDBB400FC369D /* JsonWriter.m */,
+				34A183101B0EDBB400FC369D /* LiveApiHelper.h */,
+				34A183111B0EDBB400FC369D /* LiveApiHelper.m */,
+				34A183121B0EDBB400FC369D /* LiveAuthHelper.h */,
+				34A183131B0EDBB400FC369D /* LiveAuthHelper.m */,
+				34A183141B0EDBB400FC369D /* LiveConnectionCreatorDelegate.h */,
+				34A183151B0EDBB400FC369D /* LiveConnectionHelper.h */,
+				34A183161B0EDBB400FC369D /* LiveConnectionHelper.m */,
+				34A183171B0EDBB400FC369D /* StreamReader.h */,
+				34A183181B0EDBB400FC369D /* StreamReader.m */,
+				34A183191B0EDBB400FC369D /* StringHelper.h */,
+				34A1831A1B0EDBB400FC369D /* StringHelper.m */,
+				34A1831B1B0EDBB400FC369D /* UrlHelper.h */,
+				34A1831C1B0EDBB400FC369D /* UrlHelper.m */,
+				34A182DD1B0EDB5C00FC369D /* LiveAuthDialog_iPad.xib */,
+				34A182DE1B0EDB5C00FC369D /* LiveAuthDialog_iPhone.xib */,
+				34A182DF1B0EDB5C00FC369D /* LiveAuthDialog.h */,
+				34A182E01B0EDB5C00FC369D /* LiveAuthDialog.m */,
+				34A182E11B0EDB5C00FC369D /* LiveAuthDialogDelegate.h */,
+				34A182E21B0EDB5C00FC369D /* LiveAuthRefreshRequest.h */,
+				34A182E31B0EDB5C00FC369D /* LiveAuthRefreshRequest.m */,
+				34A182E41B0EDB5C00FC369D /* LiveAuthRequest.h */,
+				34A182E51B0EDB5C00FC369D /* LiveAuthRequest.m */,
+				34A182E61B0EDB5C00FC369D /* LiveAuthStorage.h */,
+				34A182E71B0EDB5C00FC369D /* LiveAuthStorage.m */,
+				34A182E81B0EDB5C00FC369D /* LiveConnectClientCore.h */,
+				34A182E91B0EDB5C00FC369D /* LiveConnectClientCore.m */,
+				34A182EA1B0EDB5C00FC369D /* LiveConstants.h */,
+				34A182EB1B0EDB5C00FC369D /* LiveDownloadOperationCore.h */,
+				34A182EC1B0EDB5C00FC369D /* LiveDownloadOperationCore.m */,
+				34A182ED1B0EDB5C00FC369D /* LiveDownloadOperationInternal.h */,
+				34A182EE1B0EDB5C00FC369D /* LiveOperationCore.h */,
+				34A182EF1B0EDB5C00FC369D /* LiveOperationCore.m */,
+				34A182F01B0EDB5C00FC369D /* LiveOperationInternal.h */,
+				34A182F11B0EDB5C00FC369D /* LiveUploadOperationCore.h */,
+				34A182F21B0EDB5C00FC369D /* LiveUploadOperationCore.m */,
+				34A182F31B0EDB5C00FC369D /* Resources_OneNote */,
+				34A182C21B0EDB3D00FC369D /* LiveAuthDelegate.h */,
+				34A182C31B0EDB3D00FC369D /* LiveConnectClient.h */,
+				34A182C41B0EDB3D00FC369D /* LiveConnectClient.m */,
+				34A182C51B0EDB3D00FC369D /* LiveConnectSession.h */,
+				34A182C61B0EDB3D00FC369D /* LiveConnectSession.m */,
+				34A182C71B0EDB3D00FC369D /* LiveConnectSessionStatus.h */,
+				34A182C81B0EDB3D00FC369D /* LiveDownloadOperation.h */,
+				34A182C91B0EDB3D00FC369D /* LiveDownloadOperation.m */,
+				34A182CA1B0EDB3D00FC369D /* LiveDownloadOperationDelegate.h */,
+				34A182CB1B0EDB3D00FC369D /* LiveOperation.h */,
+				34A182CC1B0EDB3D00FC369D /* LiveOperation.m */,
+				34A182CD1B0EDB3D00FC369D /* LiveOperationDelegate.h */,
+				34A182CE1B0EDB3D00FC369D /* LiveOperationProgress.h */,
+				34A182CF1B0EDB3D00FC369D /* LiveOperationProgress.m */,
+				34A182D01B0EDB3D00FC369D /* LiveUploadOperationDelegate.h */,
+				34A182D11B0EDB3D00FC369D /* LiveUploadOverwriteOption.h */,
 				349C4D3E1B033B6400EC8099 /* Stages.swift */,
 				34BDECBD1B009C17008C9F3F /* Panes.swift */,
 				34BDECAB1B0089CC008C9F3F /* Decodes.swift */,
@@ -352,8 +512,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				340650731ADDF8FF00C90CBB /* Main.storyboard in Resources */,
+				34A182F61B0EDB5C00FC369D /* LiveAuthDialog_iPad.xib in Resources */,
 				344F226C1AF1DC20002C373E /* ENSDKResources.bundle in Resources */,
 				340650781ADDF8FF00C90CBB /* LaunchScreen.xib in Resources */,
+				34A1830A1B0EDB5C00FC369D /* Resources_OneNote in Resources */,
+				34A182F81B0EDB5C00FC369D /* LiveAuthDialog_iPhone.xib in Resources */,
 				340650751ADDF8FF00C90CBB /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -362,7 +525,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34A182F71B0EDB5C00FC369D /* LiveAuthDialog_iPad.xib in Resources */,
+				34A182F91B0EDB5C00FC369D /* LiveAuthDialog_iPhone.xib in Resources */,
 				341DD2371AECA9FF001DCF65 /* Main.storyboard in Resources */,
+				34A1830B1B0EDB5C00FC369D /* Resources_OneNote in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -373,26 +539,47 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34A183291B0EDBB400FC369D /* StringHelper.m in Sources */,
 				346B70F91AF75FF4005E1BC2 /* ProjectTeamMembers.swift in Sources */,
+				34A183041B0EDB5C00FC369D /* LiveDownloadOperationCore.m in Sources */,
 				346D5E021AE5F9C700F858E7 /* CalendarDetails.swift in Sources */,
 				349C4D3F1B033B6400EC8099 /* Stages.swift in Sources */,
 				346B70DE1AF70B8F005E1BC2 /* maintainProjectViewController.swift in Sources */,
+				34A183251B0EDBB400FC369D /* LiveConnectionHelper.m in Sources */,
 				34111C3A1AEC898B003090EB /* reminderViewController.swift in Sources */,
+				34A182FA1B0EDB5C00FC369D /* LiveAuthDialog.m in Sources */,
+				34A183271B0EDBB400FC369D /* StreamReader.m in Sources */,
 				347518D91AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift in Sources */,
 				34BDECBE1B009C17008C9F3F /* Panes.swift in Sources */,
+				34A183021B0EDB5C00FC369D /* LiveConnectClientCore.m in Sources */,
+				34A182D41B0EDB3D00FC369D /* LiveConnectSession.m in Sources */,
+				34A182DA1B0EDB3D00FC369D /* LiveOperationProgress.m in Sources */,
+				34A1831D1B0EDBB400FC369D /* JsonParser.m in Sources */,
 				340650701ADDF8FF00C90CBB /* ViewController.swift in Sources */,
 				34BDECAA1B008846008C9F3F /* displayPanes.swift in Sources */,
 				346B70F71AF75FF4005E1BC2 /* Roles.swift in Sources */,
 				348E6D4B1ADF74C800697268 /* ContactDetails.swift in Sources */,
+				34A182FC1B0EDB5C00FC369D /* LiveAuthRefreshRequest.m in Sources */,
 				3406506B1ADDF8FF00C90CBB /* AppDelegate.swift in Sources */,
+				34A1832B1B0EDBB400FC369D /* UrlHelper.m in Sources */,
+				34A183231B0EDBB400FC369D /* LiveAuthHelper.m in Sources */,
+				34A183081B0EDB5C00FC369D /* LiveUploadOperationCore.m in Sources */,
 				341E08C71B01B1B90036202D /* settingsViewController.swift in Sources */,
+				34A182D61B0EDB3D00FC369D /* LiveDownloadOperation.m in Sources */,
 				346B70FB1AF75FF4005E1BC2 /* Projects.swift in Sources */,
+				34A183001B0EDB5C00FC369D /* LiveAuthStorage.m in Sources */,
+				34A183211B0EDBB400FC369D /* LiveApiHelper.m in Sources */,
 				341F23121AFC284400FC2883 /* DropboxCoreService.swift in Sources */,
+				34A1831F1B0EDBB400FC369D /* JsonWriter.m in Sources */,
+				34A182D21B0EDB3D00FC369D /* LiveConnectClient.m in Sources */,
+				34A183061B0EDB5C00FC369D /* LiveOperationCore.m in Sources */,
 				344F22721AF1DFF3002C373E /* evernoteDetails.swift in Sources */,
+				34A182D81B0EDB3D00FC369D /* LiveOperation.m in Sources */,
 				341F230B1AFB2DD600FC2883 /* Dropbox.m in Sources */,
 				3406506E1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld in Sources */,
 				34FED38D1B044BF1006B414C /* maintainPanes.swift in Sources */,
 				34BDECAC1B0089CC008C9F3F /* Decodes.swift in Sources */,
+				34A182FE1B0EDB5C00FC369D /* LiveAuthRequest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -402,20 +589,41 @@
 			files = (
 				34B3BDA01AF0979E00C5B09D /* ViewController.swift in Sources */,
 				346B70F81AF75FF4005E1BC2 /* Roles.swift in Sources */,
+				34A183071B0EDB5C00FC369D /* LiveOperationCore.m in Sources */,
+				34A183261B0EDBB400FC369D /* LiveConnectionHelper.m in Sources */,
 				341F230C1AFB2DD600FC2883 /* Dropbox.m in Sources */,
 				346B70DF1AF70B8F005E1BC2 /* maintainProjectViewController.swift in Sources */,
+				34A182D91B0EDB3D00FC369D /* LiveOperation.m in Sources */,
+				34A182FD1B0EDB5C00FC369D /* LiveAuthRefreshRequest.m in Sources */,
+				34A182FB1B0EDB5C00FC369D /* LiveAuthDialog.m in Sources */,
+				34A1831E1B0EDBB400FC369D /* JsonParser.m in Sources */,
+				34A183221B0EDBB400FC369D /* LiveApiHelper.m in Sources */,
 				346B70FA1AF75FF4005E1BC2 /* ProjectTeamMembers.swift in Sources */,
+				34A183091B0EDB5C00FC369D /* LiveUploadOperationCore.m in Sources */,
 				3403BA451B02FFEC0043D52C /* settingsViewController.swift in Sources */,
 				34FED38E1B044BF1006B414C /* maintainPanes.swift in Sources */,
 				346D5E031AE5F9C700F858E7 /* CalendarDetails.swift in Sources */,
+				34A1832A1B0EDBB400FC369D /* StringHelper.m in Sources */,
 				34BDECAD1B0089CC008C9F3F /* Decodes.swift in Sources */,
+				34A182D31B0EDB3D00FC369D /* LiveConnectClient.m in Sources */,
 				341F23131AFC284400FC2883 /* DropboxCoreService.swift in Sources */,
 				34BDECBF1B009C17008C9F3F /* Panes.swift in Sources */,
+				34A183281B0EDBB400FC369D /* StreamReader.m in Sources */,
 				346B70F31AF75F47005E1BC2 /* EvesCRM.xcdatamodeld in Sources */,
+				34A1832C1B0EDBB400FC369D /* UrlHelper.m in Sources */,
+				34A182FF1B0EDB5C00FC369D /* LiveAuthRequest.m in Sources */,
+				34A183031B0EDB5C00FC369D /* LiveConnectClientCore.m in Sources */,
+				34A183011B0EDB5C00FC369D /* LiveAuthStorage.m in Sources */,
+				34A183241B0EDBB400FC369D /* LiveAuthHelper.m in Sources */,
+				34A182DB1B0EDB3D00FC369D /* LiveOperationProgress.m in Sources */,
+				34A183051B0EDB5C00FC369D /* LiveDownloadOperationCore.m in Sources */,
 				347518DC1AE3635100FF1C46 /* EvesCRMSharedFiles.swift in Sources */,
 				340650841ADDF8FF00C90CBB /* EvesCRMTests.swift in Sources */,
+				34A182D71B0EDB3D00FC369D /* LiveDownloadOperation.m in Sources */,
 				346B70FC1AF75FF4005E1BC2 /* Projects.swift in Sources */,
+				34A182D51B0EDB3D00FC369D /* LiveConnectSession.m in Sources */,
 				349C4D401B033B6400EC8099 /* Stages.swift in Sources */,
+				34A183201B0EDBB400FC369D /* JsonWriter.m in Sources */,
 				348E6D4C1ADF74C800697268 /* ContactDetails.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
