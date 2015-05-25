@@ -11,7 +11,7 @@ import AddressBook
 import EventKit
 import CoreData
 
-let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
+private let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
 
 // Here I am definging my own struct to use in the Display array.  This is to allow passing of multiple different types of information
 

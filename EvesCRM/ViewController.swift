@@ -222,7 +222,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         TableTypeButton4.setTitle("Reminders", forState: .Normal)
         
         TableOptions = Array()
-        //myPanes.deleteAllPanes()
+        
         displayScreen()
         
         
@@ -1776,6 +1776,7 @@ println("Nothing found")
         settingViewControl.liveClient = liveClient
         settingViewControl.CLIENT_ID = CLIENT_ID
         settingViewControl.OneNoteScopeText = OneNoteScopeText
+        settingViewControl.myManagedContext = managedObjectContext!
 
         self.presentViewController(settingViewControl, animated: true, completion: nil)
     }
@@ -1861,7 +1862,15 @@ println("Nothing found")
     {
         // Go and get the list of available panes
         
-        let myPanes = displayPanes()
+        // this is to allow cleaning of panes if needed
+        
+  //      let myPanes2 = displayPanes(inManagedContext: managedObjectContext!)
+  //      myPanes2.deleteAllPanes()
+        
+        
+        // End delete phase
+        
+        let myPanes = displayPanes(inManagedContext: managedObjectContext!)
         
         var myButtonName: String = ""
         

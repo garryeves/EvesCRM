@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreData
 
 protocol MyMaintainPanesDelegate
 {
@@ -32,6 +33,7 @@ class MaintainPanesViewController: UIViewController {
     private var myPicker2: [String]!
     private var myPicker3: [String]!
     private var myPicker4: [String]!
+    var myManagedContext: NSManagedObjectContext!
     
     let cellReuse = "tablePane"
 
@@ -42,7 +44,7 @@ class MaintainPanesViewController: UIViewController {
         self.tablePane.registerClass(UITableViewCell.self, forCellReuseIdentifier: cellReuse)
 
         // Go and get the Pane data
-        myPanes = displayPanes().listPanes
+        myPanes = displayPanes(inManagedContext: myManagedContext).listPanes
         
         buttonChangeVisibile.hidden = true
         
@@ -183,7 +185,7 @@ class MaintainPanesViewController: UIViewController {
     
     func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int)
     {
-        var myUpdatePanes = displayPanes()
+        var myUpdatePanes = displayPanes(inManagedContext: myManagedContext)
         
         if pickerView == Table1Picker
         {
@@ -212,11 +214,11 @@ class MaintainPanesViewController: UIViewController {
     {
         // Lets update the table
         
-        var myUpdatePanes = displayPanes()
+        var myUpdatePanes = displayPanes(inManagedContext: myManagedContext)
         
         myUpdatePanes.toogleVisibleStatus(mySelectedPane)
         
-        myPanes = displayPanes().listPanes
+        myPanes = displayPanes(inManagedContext: myManagedContext).listPanes
         tablePane.reloadData()
         mySelectedPane = ""
         mySelectedCurrentState = false
@@ -242,7 +244,7 @@ class MaintainPanesViewController: UIViewController {
         myPicker4.removeAll(keepCapacity: false)
         
         var loopCount: Int = 0
-        for myPane in displayPanes().listVisiblePanes
+        for myPane in displayPanes(inManagedContext: myManagedContext).listVisiblePanes
         {
             myPicker1.append(myPane.paneName)
             myPicker2.append(myPane.paneName)

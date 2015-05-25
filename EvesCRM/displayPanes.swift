@@ -9,17 +9,24 @@
 import Foundation
 import CoreData
 
+//private let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
+
 class displayPanes
 {
     private var myPanes: [displayPane]!
+    private var managedContext: NSManagedObjectContext
     
     // This is used to control the panes that a user can see
-    private let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
+ //   private let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
 
-    init()
+    
+    init(inManagedContext: NSManagedObjectContext)
     {
         // Get the list of panes
+        
+        managedContext = inManagedContext
         myPanes = Array()
+        
         
         let tablePanes = getPanes()
         
@@ -27,7 +34,7 @@ class displayPanes
         {
             for myEntry in tablePanes
             {
-                let myPane = displayPane()
+                let myPane = displayPane(inManagedContext: managedContext)
                 
                 myPane.loadPane(myEntry.pane_name)
                 
@@ -47,28 +54,28 @@ class displayPanes
         let fetchRequest = NSFetchRequest(entityName: "Panes")
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Panes]
+        let fetchResults = managedContext.executeFetchRequest(fetchRequest, error: nil) as? [Panes]
         for myPane in fetchResults!
         {
-            managedObjectContext!.deleteObject(myPane as NSManagedObject)
+            managedContext.deleteObject(myPane as NSManagedObject)
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(managedContext.save(&error) )
         {
             println(error?.localizedDescription)
         }
-
     }
     
     private func populatePanes()
     {
         // Populate roles with initial values
         //  Do this by checking to see if it exists already, if it does then do nothing otherwise create the pane
-        var loadSet = ["Calendar", "Details", "Evernote", "Omnifocus", "Project Membership", "Reminders"]
         
+        var loadSet = ["Calendar", "Details", "Evernote", "Omnifocus", "OneNote", "Project Membership", "Reminders"]
+ 
         for myItem in loadSet
         {
-            var myPane = displayPane()
+            var myPane = displayPane(inManagedContext: managedContext)
             
             myPane.loadPane(myItem)
             
@@ -101,7 +108,7 @@ class displayPanes
         // Create a new fetch request using the entity
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Panes]
+        let fetchResults = managedContext.executeFetchRequest(fetchRequest, error: nil) as? [Panes]
         
         return fetchResults!
     }
@@ -169,28 +176,38 @@ class displayPane
 {
     // This is for an instance of a pane
     
-    private let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
+ //   private let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
     
     private var myPaneName: String = ""
     private var myPaneAvailable: Bool = true
     private var myPaneVisible: Bool = true
     private var myPaneOrder: Int = 0
     private var paneLoaded: Bool = false
+    private var managedContext: NSManagedObjectContext
+    
+    init(inManagedContext: NSManagedObjectContext)
+    {
+       
+        managedContext = inManagedContext
+    }
     
     func savePane()
     {
         // Save the details of this pane to the database
         var error: NSError?
-        let myPane = NSEntityDescription.insertNewObjectForEntityForName("Panes", inManagedObjectContext: managedObjectContext!) as! Panes
-       
+        let myPane = NSEntityDescription.insertNewObjectForEntityForName("Panes", inManagedObjectContext: managedContext) as! Panes
+println("savePane")
         myPane.pane_name = myPaneName
         myPane.pane_available = myPaneAvailable
         myPane.pane_visible = myPaneVisible
         myPane.pane_order = myPaneOrder
-        
-        if(managedObjectContext!.save(&error) )
+    
+println("savePane: go and save")
+        if !managedContext.save(&error)
         {
+println("savePane: In error")
             println(error?.localizedDescription)
+println("savePane: After error")
         }
         
         paneLoaded = true
@@ -212,8 +229,9 @@ class displayPane
                 myPaneAvailable = true
                 myPaneVisible = true
                 myPaneOrder = 0
-                
+println("createPane: \(paneName)")
                 savePane()
+println("createPane : after save call")
             }
         }
     }
@@ -237,7 +255,7 @@ class displayPane
         // Create a new fetch request using the entity
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Panes]
+        let fetchResults = managedContext.executeFetchRequest(fetchRequest, error: nil) as? [Panes]
         
         if fetchResults!.count > 0
         {
@@ -264,13 +282,13 @@ class displayPane
         fetchRequest.predicate = predicate
 
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Panes]
+        let fetchResults = managedContext.executeFetchRequest(fetchRequest, error: nil) as? [Panes]
         for myStage in fetchResults!
         {
             myPaneVisible = !myPaneVisible
             myStage.pane_visible = myPaneVisible
             
-            if(managedObjectContext!.save(&error) )
+            if(managedContext.save(&error) )
             {
                 println(error?.localizedDescription)
             }
@@ -333,12 +351,12 @@ class displayPane
             fetchRequest.predicate = predicate
             
             // Execute the fetch request, and cast the results to an array of  objects
-            let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Panes]
+            let fetchResults = managedContext.executeFetchRequest(fetchRequest, error: nil) as? [Panes]
             for myPane in fetchResults!
             {
                 myPane.pane_order = newValue
                 
-                if(managedObjectContext!.save(&error) )
+                if(managedContext.save(&error) )
                 {
                     println(error?.localizedDescription)
                 }

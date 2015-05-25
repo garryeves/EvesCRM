@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreData
 
 protocol MySettingsDelegate{
     func mySettingsDidFinish(controller:settingsViewController)
@@ -59,6 +60,7 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate, LiveAut
     private var EvernoteUserTimerCount: Int = 0
     private var myEvernote: EvernoteDetails!
     var dropboxCoreService: DropboxCoreService!
+    var myManagedContext: NSManagedObjectContext!
     
     var liveClient: LiveConnectClient!
     // Set the CLIENT_ID value to be the one you get from http://manage.dev.live.com/
@@ -383,6 +385,7 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate, LiveAut
         let maintainPaneViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("MaintainPanes") as! MaintainPanesViewController
         
         maintainPaneViewControl.delegate = self
+        maintainPaneViewControl.myManagedContext = myManagedContext
         
         self.presentViewController(maintainPaneViewControl, animated: true, completion: nil)
     }
