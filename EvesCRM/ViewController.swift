@@ -23,7 +23,7 @@ private let dataTable1_CELL_IDENTIFER = "dataTable1Cell"
 
 var dropboxCoreService: DropboxCoreService = DropboxCoreService()
 
-class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate {
+class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate, LiveAuthDelegate, NSURLConnectionDelegate, NSURLConnectionDataDelegate {
     
     @IBOutlet weak var TableTypeSelection1: UIPickerView!
     
@@ -123,9 +123,24 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     var liveClient: LiveConnectClient!
     // Set the CLIENT_ID value to be the one you get from http://manage.dev.live.com/
     let CLIENT_ID = "000000004C152111"; //@"%CLIENT_ID%";
-    let OneNoteScopeText = ["wl.signin", "wl.skydrive", "wl.skydrive_update", "wl.offline_access"]
-
+    let OneNoteScopeText = ["wl.signin", "wl.skydrive", "wl.skydrive_update", "wl.offline_access", "office.onenote_create"]
+    // The in-progress connection
+    var currentConnection = NSURLConnection()
     
+    // Response from the current in-progress request
+    var returnResponse = NSHTTPURLResponse()
+    
+    // Data being built for the current in-progress request
+    var returnData = NSMutableData()
+  //  var returnData = NSData()
+    
+// The endpoint for the OneNote service
+    let PagesEndPoint = "https://www.onenote.com/api/v1.0/pages"
+    
+    let OneNoteNotebookEndPoint = "https://www.onenote.com/api/v1.0/notebooks"
+    
+    var oneNoteDataType: String = ""
+
     // Peoplepicker settings
     
     override func viewDidLoad() {
@@ -234,6 +249,8 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         }
         
         labelName.text = ""
+    
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "methodOfReceivedNotification:", name:"NotificationOneNoteAsyncDone", object: nil)
     }
 
     override func didReceiveMemoryWarning() {
@@ -628,12 +645,39 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 
                 openOmnifocusDropbox()
 
-            case "Omnifocus":
+            case "OneNote":
                 writeRowToArray("Loading OneNote data.  Pane will refresh when finished", &workArray)
             
                 oneNoteTableToRefresh = inTable
             
-                getOneNoteData()
+         //       loadOneNoteData(myDisplayType, liveClient)
+        
+           //     liveClient.session.getWithPath(path: "Notebook", deletgate: self, userState: "test")
+            
+                if liveClient == nil
+                {
+                    liveClient = LiveConnectClient(clientId: CLIENT_ID, scopes:OneNoteScopeText, delegate:self, userState: "init")
+                }
+                else
+                {
+                    getOneNoteNotebooks()
+                }
+            
+        
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
 
             case "Mail":
                 let a = 1
@@ -2018,12 +2062,112 @@ println("Nothing found")
         self.dismissViewControllerAnimated(true, completion:nil)
     }
     
-    func getOneNoteData()
+    func getOneNoteNotebooks()
     {
-        //oneNoteLinkArray
-        
-        // first step is to go and get a list of notebooks
+        var url: NSURL = NSURL(string: OneNoteNotebookEndPoint)!
+        let request = NSMutableURLRequest(URL: url)
+        request.HTTPMethod = "GET"
+
+        if liveClient.session != nil
+        {
+            
+            oneNoteDataType = "Notebook"
+            request.setValue("Bearer \(liveClient.session.accessToken)", forHTTPHeaderField: "Authorization")
+            // Send the HTTP request
+            currentConnection = NSURLConnection(request: request, delegate: self, startImmediately: true)!
+        }
     }
+    
+    func authCompleted(status: LiveConnectSessionStatus, session: LiveConnectSession, userState: AnyObject)
+    {
+        //   OneNoteScopeText = session.scopes.componentsJoinedByString(" ")
+println("Onenote connected")
+        
+        if liveClient.session == nil
+        {
+            liveClient.login(self, delegate:nil, userState: "login")
+        }
+        getOneNoteNotebooks()
+    }
+    /*
+    func authFailed(error: NSError)
+    {
+    println("OneNote auth failed")
+    }
+    */
+
+    
+    
+    // When body data arrives, store it
+    func connection(connection: NSURLConnection, didReceiveData conData: NSData)
+    {
+  println("didReceiveData")
+        returnData.appendData(conData)
+    }
+    
+    // When a response starts to arrive, allocate a data buffer for the body
+    func connection(didReceiveResponse: NSURLConnection, didReceiveResponse response: NSURLResponse)
+    {
+  println("didReceiveResponse")
+        returnData = NSMutableData()
+        returnResponse = response as! NSHTTPURLResponse
+    }
+
+    
+    // Handle parsing the response from a finished service call
+    func connectionDidFinishLoading(connection: NSURLConnection)
+    {
+  println("connectionDidFinishLoading")
+        
+        let status = returnResponse.statusCode
+        
+        if status == 200
+        {
+            // this means data was retrieved OK
+            let newStr = NSString(data: returnData, encoding: NSUTF8StringEncoding) as! String
+            
+            if oneNoteDataType == "Notebook"
+            {
+                let myOneNoteNotebooks = oneNoteNotebooks(inString: newStr)
+                myOneNoteNotebooks.listNotebooks()
+            }
+        }
+        else if status == 201
+        {
+  println("Page created!")
+        }
+        else
+        {
+    println("connectionDidFinishLoading: There was an error creating the page. Response code: \(status)")
+        }
+
+
+    }
+    
+    
+    
+    
+    func methodOfReceivedNotification(notification: NSNotification)
+    {
+        //Action take on Notification
+        
+        println("Notification received")
+        
+        let status = returnResponse.statusCode
+        
+        println("Status = \(status)")
+        if status == 201
+        {
+            println("Page created!")
+        }
+        else
+        {
+            println("methodOfReceivedNotification: There was an error creating the page. Response code: \(status)")
+        }
+
+    }
+    
+    
     
     
 }

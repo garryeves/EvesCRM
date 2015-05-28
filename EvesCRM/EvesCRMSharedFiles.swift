@@ -894,3 +894,47 @@ func setCellFormatting (inCell: UITableViewCell, inDisplayFormat: String) -> UIT
     return inCell
     
 }
+
+func fixStringForSearch(inString: String) -> String
+{
+    let myTextReplacement = ";!@"  // using this as unlikely to occur naturally together
+    
+    let tempStr1 = inString.stringByReplacingOccurrencesOfString("https:", withString:"https\(myTextReplacement)")
+    let tempStr2 = tempStr1.stringByReplacingOccurrencesOfString("http:", withString:"http\(myTextReplacement)")
+    let tempStr3 = tempStr2.stringByReplacingOccurrencesOfString("onenote:", withString:"onenote\(myTextReplacement)")
+    let tempStr4 = tempStr3.stringByReplacingOccurrencesOfString("0:", withString:"0\(myTextReplacement)")
+    let tempStr5 = tempStr4.stringByReplacingOccurrencesOfString("1:", withString:"1\(myTextReplacement)")
+    let tempStr6 = tempStr5.stringByReplacingOccurrencesOfString("2:", withString:"2\(myTextReplacement)")
+    let tempStr7 = tempStr6.stringByReplacingOccurrencesOfString("3:", withString:"3\(myTextReplacement)")
+    let tempStr8 = tempStr7.stringByReplacingOccurrencesOfString("4:", withString:"4\(myTextReplacement)")
+    let tempStr9 = tempStr8.stringByReplacingOccurrencesOfString("5:", withString:"5\(myTextReplacement)")
+    let tempStr10 = tempStr9.stringByReplacingOccurrencesOfString("6:", withString:"6\(myTextReplacement)")
+    let tempStr11 = tempStr10.stringByReplacingOccurrencesOfString("7:", withString:"7\(myTextReplacement)")
+    let tempStr12 = tempStr11.stringByReplacingOccurrencesOfString("8:", withString:"8\(myTextReplacement)")
+    let tempStr13 = tempStr12.stringByReplacingOccurrencesOfString("9:", withString:"9\(myTextReplacement)")
+    let tempStr14 = tempStr13.stringByReplacingOccurrencesOfString("\"", withString:"")
+    
+    return tempStr14
+}
+
+func returnSearchStringToNormal(inString: String) -> String
+{
+    let myTextReplacement = ";!@"  // using this as unlikely to occur naturally together
+    
+    let tempStr1 = inString.stringByReplacingOccurrencesOfString("https\(myTextReplacement)", withString:"https:")
+    let tempStr2 = tempStr1.stringByReplacingOccurrencesOfString("http\(myTextReplacement)", withString:"http:")
+    let tempStr3 = tempStr2.stringByReplacingOccurrencesOfString("onenote\(myTextReplacement)", withString:"onenote:")
+    let tempStr4 = tempStr3.stringByReplacingOccurrencesOfString("0\(myTextReplacement)", withString:"0:")
+    let tempStr5 = tempStr4.stringByReplacingOccurrencesOfString("1\(myTextReplacement)", withString:"1:")
+    let tempStr6 = tempStr5.stringByReplacingOccurrencesOfString("2\(myTextReplacement)", withString:"2:")
+    let tempStr7 = tempStr6.stringByReplacingOccurrencesOfString("3\(myTextReplacement)", withString:"3:")
+    let tempStr8 = tempStr7.stringByReplacingOccurrencesOfString("4\(myTextReplacement)", withString:"4:")
+    let tempStr9 = tempStr8.stringByReplacingOccurrencesOfString("5\(myTextReplacement)", withString:"5:")
+    let tempStr10 = tempStr9.stringByReplacingOccurrencesOfString("6\(myTextReplacement)", withString:"6:")
+    let tempStr11 = tempStr10.stringByReplacingOccurrencesOfString("7\(myTextReplacement)", withString:"7:")
+    let tempStr12 = tempStr11.stringByReplacingOccurrencesOfString("8\(myTextReplacement)", withString:"8:")
+    let tempStr13 = tempStr12.stringByReplacingOccurrencesOfString("9\(myTextReplacement)", withString:"9:")
+    
+    return tempStr13
+}
+

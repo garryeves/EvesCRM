@@ -135,6 +135,7 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate, LiveAut
         }
         
         liveClient =  LiveConnectClient(clientId: CLIENT_ID, scopes:OneNoteScopeText, delegate:self, userState: "init")
+       
         let session = self.liveClient.session
         
         if (session == nil)
@@ -493,6 +494,12 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate, LiveAut
     {
      //   OneNoteScopeText = session.scopes.componentsJoinedByString(" ")
  println("Onenote connected")
+        
+        if liveClient.session == nil
+        {
+            liveClient.login(self, delegate:nil, userState: "login")
+        }
+
     }
  /*
     func authFailed(error: NSError)
