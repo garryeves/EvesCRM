@@ -13,7 +13,7 @@ protocol MySettingsDelegate{
     func mySettingsDidFinish(controller:settingsViewController)
 }
 
-class settingsViewController: UIViewController, MyMaintainPanesDelegate, LiveAuthDelegate {
+class settingsViewController: UIViewController, MyMaintainPanesDelegate {
     
     @IBOutlet weak var backButton: UIButton!
     
@@ -41,7 +41,6 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate, LiveAut
     @IBOutlet weak var buttonMaintainPanes: UIButton!
     @IBOutlet weak var buttonConnectEvernote: UIButton!
     @IBOutlet weak var ButtonConnectDropbox: UIButton!
-    @IBOutlet weak var buttonConnectOneNote: UIButton!
     
     var delegate: MySettingsDelegate?
     
@@ -61,14 +60,7 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate, LiveAut
     private var myEvernote: EvernoteDetails!
     var dropboxCoreService: DropboxCoreService!
     var myManagedContext: NSManagedObjectContext!
-    
-    var liveClient: LiveConnectClient!
-    // Set the CLIENT_ID value to be the one you get from http://manage.dev.live.com/
-    var CLIENT_ID: String = ""
-    var OneNoteScopeText: [String] = Array()
 
-    
-    
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -132,19 +124,6 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate, LiveAut
         if dropboxCoreService.isAlreadyInitialised()
         {
             ButtonConnectDropbox.hidden = true
-        }
-        
-        liveClient =  LiveConnectClient(clientId: CLIENT_ID, scopes:OneNoteScopeText, delegate:self, userState: "init")
-       
-        let session = self.liveClient.session
-        
-        if (session == nil)
-        {
-            buttonConnectOneNote.hidden = false
-        }
-        else
-        {
-            buttonConnectOneNote.hidden = true
         }
     }
     
@@ -457,56 +436,4 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate, LiveAut
             dropboxCoreService.initiateAuthentication(self)
         }
     }
-
-    @IBAction func buttonConnectOneNoteClick(sender: UIButton)
-    {
-    }
-    
-    
-    func configureLiveClientWithScopes()
-    {
-        //      if ([CLIENT_ID isEqualToString:@"%CLIENT_ID%"])
-        //      {
-        //          [NSException raise:NSInvalidArgumentException format:@"The CLIENT_ID value must be specified."];
-        //      }
-        
-        
- //       liveClient =  LiveConnectClient(clientId: CLIENT_ID, scopes:OneNoteScopeText, delegate:self, userState: "init")
- 
-  /*
-            - (id) initWithClientId:(NSString *)clientId
-        scopes:(NSArray *)scopes
-        delegate:(id<LiveAuthDelegate>)delegate
-        userState:(id)userState;
-        
-        
-     */
-        
-        //  self.liveClient = [[[LiveConnectClient alloc] initWithClientId:CLIENT_ID
-        //      scopes:[scopeText componentsSeparatedByCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]
-        //      delegate:self
-        //      userState:@"init"]
-        //      autorelease ];
-    }
-    
-    
-    func authCompleted(status: LiveConnectSessionStatus, session: LiveConnectSession, userState: AnyObject)
-    {
-     //   OneNoteScopeText = session.scopes.componentsJoinedByString(" ")
- println("Onenote connected")
-        
-        if liveClient.session == nil
-        {
-            liveClient.login(self, delegate:nil, userState: "login")
-        }
-
-    }
- /*
-    func authFailed(error: NSError)
-    {
-        println("OneNote auth failed")
-    }
- */
-
-    
 }

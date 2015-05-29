@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14E17e" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14E26a" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
         <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
@@ -1236,15 +1236,6 @@
                                     <action selector="buttonMaintainPanesClick:" destination="IrM-yb-4SV" eventType="touchUpInside" id="TS3-Rb-jTw"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SfD-Of-vsz">
-                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
-                                <state key="normal" title="Connect to OneNote">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="buttonConnectOneNoteClick:" destination="IrM-yb-4SV" eventType="touchUpInside" id="rba-RJ-6f7"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -1403,7 +1394,6 @@
                                 <variation key="heightClass=regular-widthClass=regular" constant="15"/>
                             </constraint>
                             <constraint firstItem="XkN-un-rHn" firstAttribute="width" secondItem="aZK-3L-V1Z" secondAttribute="width" id="X4D-nf-q8k"/>
-                            <constraint firstItem="SfD-Of-vsz" firstAttribute="top" secondItem="gNB-gj-3RS" secondAttribute="bottom" id="X7t-Ye-sqG"/>
                             <constraint firstItem="cTl-LG-Z9u" firstAttribute="top" secondItem="ojX-Dt-Br1" secondAttribute="bottom" constant="8" id="XWb-p8-2q8"/>
                             <constraint firstItem="BaS-Ec-3rE" firstAttribute="leading" secondItem="P9N-I4-sFD" secondAttribute="trailing" constant="12" id="XwL-vg-Pe6">
                                 <variation key="heightClass=regular-widthClass=regular" constant="32"/>
@@ -1449,9 +1439,6 @@
                             <constraint firstItem="wlq-c0-YX0" firstAttribute="leading" secondItem="BKO-nA-hWf" secondAttribute="trailing" constant="19" id="fma-dn-f8y">
                                 <variation key="heightClass=regular-widthClass=regular" constant="15"/>
                             </constraint>
-                            <constraint firstItem="SfD-Of-vsz" firstAttribute="leading" secondItem="mbn-fd-vJS" secondAttribute="trailing" constant="57" id="gby-yr-4DS">
-                                <variation key="heightClass=regular-widthClass=regular" constant="20"/>
-                            </constraint>
                             <constraint firstItem="XkN-un-rHn" firstAttribute="top" secondItem="BaS-Ec-3rE" secondAttribute="bottom" constant="35" id="ghr-ra-pTw">
                                 <variation key="heightClass=regular-widthClass=regular" constant="15"/>
                             </constraint>
@@ -1487,7 +1474,6 @@
                             </constraint>
                             <constraint firstItem="x3n-EW-K3s" firstAttribute="width" secondItem="8ND-1z-nyi" secondAttribute="width" id="mg3-t1-HnK"/>
                             <constraint firstItem="XRp-vg-2lv" firstAttribute="top" secondItem="6gL-yw-eIR" secondAttribute="bottom" constant="149" id="p4h-ZW-DDA"/>
-                            <constraint firstItem="So5-j5-NMK" firstAttribute="top" secondItem="SfD-Of-vsz" secondAttribute="bottom" constant="8" id="p5i-0H-4b1"/>
                             <constraint firstItem="jBh-Sw-jMW" firstAttribute="leading" secondItem="WRe-7w-Nxw" secondAttribute="trailing" constant="18" id="pbn-Xh-8mk">
                                 <variation key="heightClass=regular-widthClass=regular" constant="15"/>
                             </constraint>
@@ -1501,7 +1487,6 @@
                                 <variation key="heightClass=regular-widthClass=regular" constant="15"/>
                             </constraint>
                             <constraint firstItem="aZK-3L-V1Z" firstAttribute="width" secondItem="jBh-Sw-jMW" secondAttribute="width" id="tbb-4h-jrI"/>
-                            <constraint firstItem="cTl-LG-Z9u" firstAttribute="top" secondItem="SfD-Of-vsz" secondAttribute="bottom" constant="8" id="uIJ-uk-YWg"/>
                             <constraint firstItem="6za-lw-ZpA" firstAttribute="leading" secondItem="6gL-yw-eIR" secondAttribute="trailing" constant="8" id="uKK-Ed-xBZ">
                                 <variation key="heightClass=regular-widthClass=regular" constant="32"/>
                             </constraint>
@@ -1562,7 +1547,6 @@
                                 <exclude reference="mnK-Hk-GdZ"/>
                                 <exclude reference="mbn-fd-vJS"/>
                                 <exclude reference="5o7-4R-w5f"/>
-                                <exclude reference="SfD-Of-vsz"/>
                             </mask>
                             <mask key="constraints">
                                 <exclude reference="OTg-K0-INY"/>
@@ -1593,7 +1577,6 @@
                                 <exclude reference="QUm-sh-VXi"/>
                                 <exclude reference="VO4-aM-rZz"/>
                                 <exclude reference="eHk-xw-3PK"/>
-                                <exclude reference="p5i-0H-4b1"/>
                                 <exclude reference="rPg-Jz-WFs"/>
                                 <exclude reference="TMf-9n-DY1"/>
                                 <exclude reference="ada-hA-VkO"/>
@@ -1613,7 +1596,6 @@
                                 <exclude reference="TcW-eD-cEd"/>
                                 <exclude reference="XWb-p8-2q8"/>
                                 <exclude reference="rcJ-8J-L00"/>
-                                <exclude reference="uIJ-uk-YWg"/>
                                 <exclude reference="zzr-XI-qSa"/>
                                 <exclude reference="Ygu-E3-OHk"/>
                                 <exclude reference="z6e-Iu-GJU"/>
@@ -1650,8 +1632,6 @@
                                 <exclude reference="m71-WI-Md2"/>
                                 <exclude reference="HSs-YQ-ib3"/>
                                 <exclude reference="RoN-3Q-jOV"/>
-                                <exclude reference="X7t-Ye-sqG"/>
-                                <exclude reference="gby-yr-4DS"/>
                                 <exclude reference="KDW-TZ-Ftd"/>
                                 <exclude reference="LVb-Rn-4Df"/>
                                 <exclude reference="zFn-Z5-ySI"/>
@@ -1736,7 +1716,6 @@
                                 <include reference="mnK-Hk-GdZ"/>
                                 <include reference="mbn-fd-vJS"/>
                                 <include reference="5o7-4R-w5f"/>
-                                <include reference="SfD-Of-vsz"/>
                             </mask>
                             <mask key="constraints">
                                 <include reference="OTg-K0-INY"/>
@@ -1767,7 +1746,6 @@
                                 <exclude reference="QUm-sh-VXi"/>
                                 <include reference="VO4-aM-rZz"/>
                                 <include reference="eHk-xw-3PK"/>
-                                <include reference="p5i-0H-4b1"/>
                                 <include reference="rPg-Jz-WFs"/>
                                 <include reference="TMf-9n-DY1"/>
                                 <include reference="ada-hA-VkO"/>
@@ -1787,7 +1765,6 @@
                                 <include reference="TcW-eD-cEd"/>
                                 <exclude reference="XWb-p8-2q8"/>
                                 <include reference="rcJ-8J-L00"/>
-                                <include reference="uIJ-uk-YWg"/>
                                 <include reference="zzr-XI-qSa"/>
                                 <include reference="Ygu-E3-OHk"/>
                                 <exclude reference="z6e-Iu-GJU"/>
@@ -1824,8 +1801,6 @@
                                 <include reference="m71-WI-Md2"/>
                                 <include reference="HSs-YQ-ib3"/>
                                 <include reference="RoN-3Q-jOV"/>
-                                <include reference="X7t-Ye-sqG"/>
-                                <include reference="gby-yr-4DS"/>
                                 <exclude reference="KDW-TZ-Ftd"/>
                                 <include reference="LVb-Rn-4Df"/>
                                 <include reference="zFn-Z5-ySI"/>
@@ -1885,7 +1860,6 @@
                         <outlet property="addStage" destination="5sQ-35-e8d" id="0qY-O7-u1v"/>
                         <outlet property="backButton" destination="ojX-Dt-Br1" id="pMc-Vd-lEb"/>
                         <outlet property="buttonConnectEvernote" destination="mbn-fd-vJS" id="YIW-Ms-VHY"/>
-                        <outlet property="buttonConnectOneNote" destination="SfD-Of-vsz" id="eWs-11-eN0"/>
                         <outlet property="buttonMaintainPanes" destination="5o7-4R-w5f" id="zHa-F6-9Dq"/>
                         <outlet property="calStepperPrevious" destination="aZK-3L-V1Z" id="bwS-r0-bFP"/>
                         <outlet property="calStepperRed" destination="jBh-Sw-jMW" id="hmW-DV-nYK"/>
