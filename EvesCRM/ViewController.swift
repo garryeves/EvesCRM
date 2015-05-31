@@ -2014,8 +2014,37 @@ println("Nothing found")
     
     func OneNoteNotebookReady(notification: NSNotification)
     {
-        //Action take on Notification
-
-        myOneNoteNotebooks.listNotebooks()
+        var returnArray: [TableData]!
+        
+        if myDisplayType == "Project"
+        {
+            returnArray = myOneNoteNotebooks.getNotesForProject(labelName.text!)
+        }
+        else
+        {
+            returnArray = myOneNoteNotebooks.getNotesForPerson(labelName.text!)
+        }
+        
+        switch oneNoteTableToRefresh
+        {
+            case "Table1":
+                table1Contents = returnArray
+                dataTable1.reloadData()
+            
+            case "Table2":
+                table2Contents = returnArray
+                dataTable2.reloadData()
+            
+            case "Table3":
+                table3Contents = returnArray
+                dataTable3.reloadData()
+            
+            case "Table4":
+                table4Contents = returnArray
+                dataTable4.reloadData()
+            
+            default:
+                println("OneNoteNotebookReady: oneNoteTableToRefresh hit default for some reason")
+        }
     }
 }

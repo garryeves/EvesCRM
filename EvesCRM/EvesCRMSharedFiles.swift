@@ -912,9 +912,13 @@ func fixStringForSearch(inString: String) -> String
     let tempStr11 = tempStr10.stringByReplacingOccurrencesOfString("7:", withString:"7\(myTextReplacement)")
     let tempStr12 = tempStr11.stringByReplacingOccurrencesOfString("8:", withString:"8\(myTextReplacement)")
     let tempStr13 = tempStr12.stringByReplacingOccurrencesOfString("9:", withString:"9\(myTextReplacement)")
-    let tempStr14 = tempStr13.stringByReplacingOccurrencesOfString("\"", withString:"")
+    let tempStr14 = tempStr13.stringByReplacingOccurrencesOfString("(id,name,self)", withString:"")
+    let tempStr15 = tempStr14.stringByReplacingOccurrencesOfString("/$entity,parentNotebook", withString:"")
+    let tempStr16 = tempStr15.stringByReplacingOccurrencesOfString("\"", withString:"")
+    let tempStr17 = tempStr16.stringByReplacingOccurrencesOfString("{", withString:"")
+    let tempStr18 = tempStr17.stringByReplacingOccurrencesOfString("}", withString:"")
     
-    return tempStr14
+    return tempStr18
 }
 
 func returnSearchStringToNormal(inString: String) -> String
