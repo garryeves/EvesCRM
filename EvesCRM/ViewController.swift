@@ -232,6 +232,8 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         labelName.text = ""
     
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "OneNoteNotebookReady:", name:"NotificationOneNoteNotebooksLoaded", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "OneNotePagesReady:", name:"NotificationOneNotePagesReady", object: nil)
+
     }
 
     override func didReceiveMemoryWarning() {
@@ -2011,40 +2013,65 @@ println("Nothing found")
 
         self.dismissViewControllerAnimated(true, completion:nil)
     }
-    
+
     func OneNoteNotebookReady(notification: NSNotification)
     {
-        var returnArray: [TableData]!
         
-        if myDisplayType == "Project"
+        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
+            { // 1
+                if self.myDisplayType == "Project"
+                {
+                    self.myOneNoteNotebooks.getNotesForProject(self.labelName.text!)
+                }
+                else
+                {
+                    self.myOneNoteNotebooks.getNotesForPerson(self.labelName.text!)
+                }
+            }
+    }
+  
+    func OneNotePagesReady(notification: NSNotification)
+    {
+        var myDisplay: [TableData] = Array()
+
+        for myPage in myOneNoteNotebooks.pages
         {
-            returnArray = myOneNoteNotebooks.getNotesForProject(labelName.text!)
-        }
-        else
-        {
-            returnArray = myOneNoteNotebooks.getNotesForPerson(labelName.text!)
+            var myString: String = "\(myPage.title)\n"
+
+            var dateFormat = NSDateFormatterStyle.MediumStyle
+            var timeFormat = NSDateFormatterStyle.ShortStyle
+            var myDateFormatter = NSDateFormatter()
+            myDateFormatter.dateStyle = dateFormat
+            myDateFormatter.timeStyle = timeFormat
+            
+            let myDate = myDateFormatter.stringFromDate(myPage.lastModifiedTime)
+
+            myString += "Last modified : \(myDate)"
+            writeRowToArray(myString, &myDisplay)
         }
         
         switch oneNoteTableToRefresh
         {
             case "Table1":
-                table1Contents = returnArray
+                table1Contents = myDisplay
                 dataTable1.reloadData()
             
             case "Table2":
-                table2Contents = returnArray
+                table2Contents = myDisplay
                 dataTable2.reloadData()
             
             case "Table3":
-                table3Contents = returnArray
+                table3Contents = myDisplay
                 dataTable3.reloadData()
             
             case "Table4":
-                table4Contents = returnArray
+                table4Contents = myDisplay
                 dataTable4.reloadData()
             
             default:
                 println("OneNoteNotebookReady: oneNoteTableToRefresh hit default for some reason")
         }
     }
+
+    
 }
