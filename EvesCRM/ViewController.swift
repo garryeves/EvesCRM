@@ -233,7 +233,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "OneNoteNotebookGetSections", name:"NotificationOneNoteNotebooksLoaded", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "OneNotePagesReady:", name:"NotificationOneNotePagesReady", object: nil)
-
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "OneNoteNoNotebookFound", name:"NotificationOneNoteNoNotebookFound", object: nil)
     }
 
     override func didReceiveMemoryWarning() {
@@ -1025,6 +1025,51 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 evc.editViewDelegate = self
                 self.presentViewController(evc, animated: true, completion: nil)
           
+        case "OneNote":
+// GAZA
+                var myItemFound: Bool = false
+                var myStartPage: String = ""
+            
+                // First check, if a project does the notebook exist already, or if a person, does the Section in People notebook exist
+            
+                if myDisplayType == "Project"
+                {
+                    myItemFound = myOneNoteNotebooks.checkExistenceOfNotebook(myProjectName)
+                    if myItemFound
+                    {
+                        var alert = UIAlertController(title: "OneNote", message:
+                            "Notebook already exists for this Project", preferredStyle: UIAlertControllerStyle.Alert)
+                    
+                        self.presentViewController(alert, animated: false, completion: nil)
+                    
+                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+                    }
+                    else
+                    {
+                        // For a project create the Notebooks, and then create the initial sections, create an initial page in each section
+                        myStartPage = myOneNoteNotebooks.createNewNotebookForProject(myProjectName)
+                    }
+                
+                }
+                else
+                {
+                    let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+                    // myOmniUrlPath = "omnifocus:///add?name=Set Context to '\(myFullName)'"
+                }
+            
+                // For a person create the Section in the people notebook, creating people notebook if needed, create an initial page in the section
+            
+                // Once everything created go and open OneNote app with the new page, for a project, or the page in the person section for People
+            
+                let myOneNoteUrlPath = myStartPage
+            
+                var myOneNoteUrl: NSURL = NSURL(string: myOneNoteUrlPath)!
+            
+                if UIApplication.sharedApplication().canOpenURL(myOneNoteUrl) == true
+                {
+                    UIApplication.sharedApplication().openURL(myOneNoteUrl)
+                }
+            
             default:
                 let a = 1
         }
@@ -1129,6 +1174,9 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
 
                     case "Calendar":
                         buttonAdd1.hidden = false
+                    
+                    case "OneNote":
+                        buttonAdd1.hidden = false
 
                     default:
                         buttonAdd1.hidden = true
@@ -1149,6 +1197,9 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                         buttonAdd2.hidden = false
                     
                     case "Calendar":
+                        buttonAdd2.hidden = false
+                    
+                    case "OneNote":
                         buttonAdd2.hidden = false
                     
                     default:
@@ -1172,6 +1223,10 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     case "Calendar":
                         buttonAdd3.hidden = false
                     
+                    
+                    case "OneNote":
+                        buttonAdd3.hidden = false
+                    
                     default:
                         buttonAdd3.hidden = true
                 }
@@ -1193,6 +1248,10 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     case "Calendar":
                         buttonAdd4.hidden = false
                 
+                    
+                    case "OneNote":
+                        buttonAdd4.hidden = false
+                    
                     default:
                         buttonAdd4.hidden = true
                 }
@@ -2058,6 +2117,35 @@ println("Nothing found")
             }
     }
   
+    func OneNoteNoNotebookFound()
+    {
+        var myDisplay: [TableData] = Array()
+        
+        writeRowToArray("No matching OneNote Notebook found", &myDisplay)
+        
+        switch oneNoteTableToRefresh
+        {
+        case "Table1":
+            table1Contents = myDisplay
+            dataTable1.reloadData()
+            
+        case "Table2":
+            table2Contents = myDisplay
+            dataTable2.reloadData()
+            
+        case "Table3":
+            table3Contents = myDisplay
+            dataTable3.reloadData()
+            
+        case "Table4":
+            table4Contents = myDisplay
+            dataTable4.reloadData()
+            
+        default:
+            println("OneNoteNotebookGetSections: oneNoteTableToRefresh hit default for some reason")
+        }
+    }
+    
     func OneNotePagesReady(notification: NSNotification)
     {
         var myDisplay: [TableData] = Array()

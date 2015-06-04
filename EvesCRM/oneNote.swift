@@ -772,11 +772,13 @@ class oneNoteNotebooks: NSObject
     {
         var notebookFound: Bool = false
         var myWorkingArray: [oneNotePage] = []
+        var myNotebookFound: Bool = false
         
         for myNotebook in myNotebooks
         {
             if myNotebook.name == inProject
             {
+                myNotebookFound = true
                 // We have a matching project, so now work with this one
                 
                 // See if we have already processed for this Notebook, if we have then there is np need to reload
@@ -803,7 +805,14 @@ class oneNoteNotebooks: NSObject
             }
         }
 
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationOneNotePagesReady", object: nil)
+        if myNotebookFound
+        {
+            NSNotificationCenter.defaultCenter().postNotificationName("NotificationOneNotePagesReady", object: nil)
+        }
+        else
+        {
+            NSNotificationCenter.defaultCenter().postNotificationName("NotificationOneNoteNoNotebookFound", object: nil)
+        }
     }
 
     func getNotesForPerson(inPerson: String)
@@ -842,6 +851,53 @@ class oneNoteNotebooks: NSObject
             }
         }
         NSNotificationCenter.defaultCenter().postNotificationName("NotificationOneNotePagesReady", object: nil)
+    }
+    
+    func checkExistenceOfNotebook(inNotebookName: String) -> Bool
+    {
+        var ret_val: Bool = false
+        
+        for myNotebook in myNotebooks
+        {
+            if myNotebook.name == inNotebookName
+            {
+                ret_val = true
+                break
+            }
+        }
+        
+        return ret_val
+    }
+    
+    func createNewNotebookForProject(inNotebookName: String) -> String
+    {
+        var ret_val: String = ""
+        var targetString: String = ""
+        var ignoreString: String = ""
+        
+        // issue the command to create the notebook
+        
+        // Build up the command to create a new Notebook and get the notebook ID
+        
+        let myNotebookID = myOneNoteData.createOneNoteObject(inNotebookName, inType: "Notebook", inParent: "")
+        
+        // Issue the commands to create the Sections and get the ID for the "Background" section
+        
+        ignoreString = myOneNoteData.createOneNoteObject("Thoughts", inType: "Section", inParent: myNotebookID)
+        ignoreString = myOneNoteData.createOneNoteObject("Reference", inType: "Section", inParent: myNotebookID)
+        ignoreString = myOneNoteData.createOneNoteObject("Dependencies", inType: "Section", inParent: myNotebookID)
+        ignoreString = myOneNoteData.createOneNoteObject("Issues", inType: "Section", inParent: myNotebookID)
+        ignoreString = myOneNoteData.createOneNoteObject("Risks", inType: "Section", inParent: myNotebookID)
+        ignoreString = myOneNoteData.createOneNoteObject("Status Updates", inType: "Section", inParent: myNotebookID)
+        ignoreString = myOneNoteData.createOneNoteObject("Meetings", inType: "Section", inParent: myNotebookID)
+        targetString = myOneNoteData.createOneNoteObject("Background", inType: "Section", inParent: myNotebookID)
+        
+        //  Create empty page in the first section
+        // Get the id for the page and return to main thread to allow OneNote app to be opened
+        
+        ret_val = myOneNoteData.createOneNotePage("Untitled Page", inType: "Page", inParent: targetString)
+
+        return ret_val
     }
 }
 
@@ -909,6 +965,256 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
                 liveClient = LiveConnectClient(clientId: CLIENT_ID, scopes:OneNoteScopeText, delegate:self, userState: "init")
             }
         }
+    }
+    
+    func createOneNoteObject(inName: String, inType: String, inParent: String) -> String
+    {
+        var ret_val: String = ""
+        var response: NSURLResponse?
+        var error: NSError?
+        
+        var myCommand: String = ""
+        var myBody: String = ""
+        
+        
+        if !myOneNoteConnected
+        {
+            if liveClient == nil
+            {
+                liveClient = LiveConnectClient(clientId: CLIENT_ID, scopes:OneNoteScopeText, delegate:self, userState: "init")
+            }
+        }
+        else
+        {
+            switch inType
+            {
+                case "Notebook" :
+                    myCommand = "https://www.onenote.com/api/v1.0/notebooks"
+                    myBody = "{ name: \"\(inName)\" }"
+                
+                case "Section" :
+                    myCommand = "https://www.onenote.com/api/v1.0/notebooks/\(inParent)/sections"
+                    myBody = "{ name: \"\(inName)\" }"
+                
+                default: println("createOneNoteObject: invalid type passed in")
+            }
+
+            let presentation = myBody.dataUsingEncoding(NSUTF8StringEncoding)
+            
+            myOneNoteFinished = false
+            var url: NSURL = NSURL(string: myCommand)!
+            let request = NSMutableURLRequest(URL: url)
+            request.HTTPMethod = "POST"
+            request.HTTPBody = presentation
+            request.cachePolicy = NSURLRequestCachePolicy.ReloadIgnoringLocalCacheData
+            
+            if liveClient.session != nil
+            {
+                request.setValue("Bearer \(liveClient.session.accessToken)", forHTTPHeaderField: "Authorization")
+                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                
+                // Send the HTTP request
+                
+                let result = NSURLConnection.sendSynchronousRequest(request, returningResponse:&response, error:&error)
+                
+                let httpResponse = response as? NSHTTPURLResponse
+                
+                let status = httpResponse!.statusCode
+                
+                let myReturnString = NSString(data: result!, encoding: NSUTF8StringEncoding) as! String
+                
+                if status == 201
+                {
+                    switch inType
+                    {
+                        case "Notebook" :
+                            ret_val = processNotebookCreateReturn(myReturnString)
+                        
+                        case "Section" :
+                            ret_val = processNotebookCreateReturn(myReturnString)
+
+                        default: println("createOneNoteObject: invalid type passed in")
+                    }
+                }
+                else
+                {
+                    println("oneNoteData: createOneNoteObject: There was an error accessing the OneNote data. Response code: \(status)")
+                }
+            }
+
+        }
+    
+        return ret_val
+    }
+
+    func createOneNotePage(inName: String, inType: String, inParent: String) -> String
+    {
+        var ret_val: String = ""
+        var response: NSURLResponse?
+        var error: NSError?
+        
+        var myCommand: String = ""
+        var myBody: String = ""
+        
+        
+        if !myOneNoteConnected
+        {
+            if liveClient == nil
+            {
+                liveClient = LiveConnectClient(clientId: CLIENT_ID, scopes:OneNoteScopeText, delegate:self, userState: "init")
+            }
+        }
+        else
+        {
+            myCommand = "https://www.onenote.com/api/v1.0/sections/\(inParent)/pages"
+            
+            myBody = "<html>"
+            myBody += "<head>"
+            myBody += "<title>\(inName)</title>"
+            myBody += "</head>"
+            myBody += "<body>"
+            myBody += "</body>"
+            myBody += "</html>";
+
+            let presentation = myBody.dataUsingEncoding(NSUTF8StringEncoding)
+            
+            myOneNoteFinished = false
+            var url: NSURL = NSURL(string: myCommand)!
+            let request = NSMutableURLRequest(URL: url)
+            request.HTTPMethod = "POST"
+            request.HTTPBody = presentation
+            request.cachePolicy = NSURLRequestCachePolicy.ReloadIgnoringLocalCacheData
+            
+            if liveClient.session != nil
+            {
+                request.setValue("Bearer \(liveClient.session.accessToken)", forHTTPHeaderField: "Authorization")
+                request.setValue("text/html", forHTTPHeaderField: "Content-Type")
+                
+                // Send the HTTP request
+                
+                let result = NSURLConnection.sendSynchronousRequest(request, returningResponse:&response, error:&error)
+                
+                let httpResponse = response as? NSHTTPURLResponse
+                
+                let status = httpResponse!.statusCode
+                
+                let myReturnString = NSString(data: result!, encoding: NSUTF8StringEncoding) as! String
+                
+                if status == 201
+                {
+                    ret_val = processPageCreateReturn(myReturnString)
+                }
+                else
+                {
+                    println("oneNoteData: createOneNotePage: There was an error accessing the OneNote data. Response code: \(status)")
+                }
+            }
+            
+        }
+        
+        return ret_val
+    }
+
+    func processNotebookCreateReturn(inString: String) -> String
+    {
+        var ret_val: String = ""
+        
+        var processedFileHeader: Bool = false
+        var oneNoteDataType: String = ""
+        var firstItem2: Bool = true
+        
+        // we need to do a bit of "dodgy" working, I want to be able to split strings based on :, but : is natural in dates and URTLs. so need to change it to seomthign esle,
+        //string out the : data and then change back
+        
+        let fixedString = fixStringForSearch(inString)
+        
+        let split = fixedString.componentsSeparatedByString("isDefault")
+        
+        for myItem in split
+        {
+            if !processedFileHeader
+            {
+                // ignore first line
+                processedFileHeader = true
+            }
+            else
+            {
+                // need to further split the items into its component parts
+                let split2 = myItem.componentsSeparatedByString(",")
+                firstItem2 = true
+                for myItem2 in split2
+                {
+                    var split3: [String]
+                    
+                    if firstItem2
+                    {  // strip out characters upto and including the first comma
+                        let end = advance(myItem2.endIndex, -1)
+                        let start = find(myItem2, ",")
+                        
+                        var selectedString: String = ""
+                        
+                        if start != nil
+                        {
+                            let myStart = start?.successor()
+                            selectedString = myItem2[myStart!...end]
+                        }
+                        else
+                        { // no space found
+                            selectedString = myItem2
+                        }
+                        
+                        split3 = selectedString.componentsSeparatedByString(":")
+                        firstItem2 = false
+                    }
+                    else
+                    {
+                        split3 = myItem2.componentsSeparatedByString(":")
+                    }
+                    
+                    // now split each of these into value pairs - how to store?  Maybe in a Collection??
+                    
+                    var keyString = split3[0].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                    var valueString = split3[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+
+                    if keyString == "id"
+                    {
+                        ret_val = returnSearchStringToNormal(valueString)
+                    }
+                }
+            }
+        }
+        return ret_val
+    }
+    
+    func processPageCreateReturn(inString: String) -> String
+    {
+        var ret_val: String = ""
+        
+        var processedFileHeader: Bool = false
+        var oneNoteDataType: String = ""
+        var firstItem2: Bool = true
+        
+        // we need to do a bit of "dodgy" working, I want to be able to split strings based on :, but : is natural in dates and URTLs. so need to change it to seomthign esle,
+        //string out the : data and then change back
+        
+        let fixedString = fixStringForSearch(inString)
+        
+        let split2 = fixedString.componentsSeparatedByString(",")
+        for myItem2 in split2
+        {
+            let split3 = myItem2.componentsSeparatedByString(":")
+
+            // now split each of these into value pairs - how to store?  Maybe in a Collection??
+            
+            var keyString = split3[0].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+            var valueString = split3[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                    
+            if keyString == "oneNoteClientUrl"
+            {
+                ret_val = returnSearchStringToNormal(valueString)
+            }
+        }
+        return ret_val
     }
     
     func getData(inURLString: String) -> String
