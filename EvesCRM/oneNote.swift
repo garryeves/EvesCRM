@@ -869,6 +869,35 @@ class oneNoteNotebooks: NSObject
         return ret_val
     }
     
+    func checkExistenceOfPerson(inPersonName: String) -> Bool
+    {
+        var ret_val: Bool = false
+        
+        for myNotebook in myNotebooks
+        {
+            if myNotebook.name == "People"
+            {
+                // We have a matching project, so now work with this one
+                if myNotebook.sectionCount == 0
+                {
+                    myNotebook.OneNoteData = myOneNoteData
+                    myNotebook.getSections()
+                }
+                
+                // Need to get a single array containing all of the pages
+                
+                for mySection in myNotebook.sections
+                {
+                    if mySection.name == inPersonName
+                    {
+                        ret_val = true
+                    }
+                }
+            }
+        }
+        return ret_val
+    }
+
     func createNewNotebookForProject(inNotebookName: String) -> String
     {
         var ret_val: String = ""
@@ -897,6 +926,37 @@ class oneNoteNotebooks: NSObject
         
         ret_val = myOneNoteData.createOneNotePage("Untitled Page", inType: "Page", inParent: targetString)
 
+        return ret_val
+    }
+
+    func createNewSectionForPerson(inPersonName: String) -> String
+    {
+        var ret_val: String = ""
+        var targetString: String = ""
+        var ignoreString: String = ""
+        var myNotebookID: String = ""
+        
+        // Get the ID for the People Notebook
+
+        for myNotebook in myNotebooks
+        {
+            if myNotebook.name == "People"
+            {
+                // We have a matching project, so now work with this one
+                
+                myNotebookID = myNotebook.id
+            }
+        }
+        
+        // Issue the commands to create the Sections and get the ID for the "Background" section
+        
+        targetString = myOneNoteData.createOneNoteObject(inPersonName, inType: "Section", inParent: myNotebookID)
+        
+        //  Create empty page in the first section
+        // Get the id for the page and return to main thread to allow OneNote app to be opened
+        
+        ret_val = myOneNoteData.createOneNotePage("Untitled Page", inType: "Page", inParent: targetString)
+        
         return ret_val
     }
 }

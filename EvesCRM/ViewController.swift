@@ -1049,17 +1049,30 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                         // For a project create the Notebooks, and then create the initial sections, create an initial page in each section
                         myStartPage = myOneNoteNotebooks.createNewNotebookForProject(myProjectName)
                     }
-                
                 }
                 else
                 {
                     let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
-                    // myOmniUrlPath = "omnifocus:///add?name=Set Context to '\(myFullName)'"
+                    
+                    if myFullName != ""
+                    {
+                        myItemFound = myOneNoteNotebooks.checkExistenceOfPerson(myFullName)
+                        if myItemFound
+                        {
+                            var alert = UIAlertController(title: "OneNote", message:
+                                "Entry already exists for this Person", preferredStyle: UIAlertControllerStyle.Alert)
+                        
+                            self.presentViewController(alert, animated: false, completion: nil)
+                        
+                            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+                        }
+                        else
+                        {
+                            // Create a Section for the Person and add an initial page
+                            myStartPage = myOneNoteNotebooks.createNewSectionForPerson(myFullName)
+                        }
+                    }
                 }
-            
-                // For a person create the Section in the people notebook, creating people notebook if needed, create an initial page in the section
-            
-                // Once everything created go and open OneNote app with the new page, for a project, or the page in the person section for People
             
                 let myOneNoteUrlPath = myStartPage
             
