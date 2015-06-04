@@ -917,8 +917,10 @@ func fixStringForSearch(inString: String) -> String
     let tempStr16 = tempStr15.stringByReplacingOccurrencesOfString("\"", withString:"")
     let tempStr17 = tempStr16.stringByReplacingOccurrencesOfString("{", withString:"")
     let tempStr18 = tempStr17.stringByReplacingOccurrencesOfString("}", withString:"")
+    let tempStr19 = tempStr18.stringByReplacingOccurrencesOfString("href:", withString:"")
+    let tempStr20 = tempStr19.stringByReplacingOccurrencesOfString("links:", withString:"")
     
-    return tempStr18
+    return tempStr20
 }
 
 func returnSearchStringToNormal(inString: String) -> String

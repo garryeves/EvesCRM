@@ -231,7 +231,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         
         labelName.text = ""
     
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "OneNoteNotebookReady:", name:"NotificationOneNoteNotebooksLoaded", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "OneNoteNotebookGetSections", name:"NotificationOneNoteNotebooksLoaded", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "OneNotePagesReady:", name:"NotificationOneNotePagesReady", object: nil)
 
     }
@@ -633,7 +633,15 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             
                 oneNoteTableToRefresh = inTable
             
-                myOneNoteNotebooks = oneNoteNotebooks(inViewController: self)
+                if myOneNoteNotebooks == nil
+                {
+                    myOneNoteNotebooks = oneNoteNotebooks(inViewController: self)
+                }
+                else
+                {
+                    OneNoteNotebookGetSections()
+                }
+        
 
             case "Mail":
                 let a = 1
@@ -818,7 +826,17 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myProjectName), forState: .Normal)
                     TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myProjectName), forState: .Normal)
                 }
-
+            
+        case "OneNote":
+            let myOneNoteUrlPath = myOneNoteNotebooks.pages[rowID].urlCallback
+  
+          //  let myEnUrlPath = stringByChangingChars(myTempPath, " ", "%20")
+            var myOneNoteUrl: NSURL = NSURL(string: myOneNoteUrlPath)!
+            
+            if UIApplication.sharedApplication().canOpenURL(myOneNoteUrl) == true
+            {
+                UIApplication.sharedApplication().openURL(myOneNoteUrl)
+            }
 
             default:
                 let a = 1
@@ -851,6 +869,17 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 {
                     workString = "Omnifocus: use Context '\(inTitle)'"
                 }
+            
+        case "OneNote":
+            
+            if myDisplayType == "Project"
+            {
+                workString = "OneNote: use Notebook '\(inTitle)'"
+            }
+            else
+            {
+                workString = "OneNote: use Notebook 'People' and Section '\(inTitle)'"
+            }
             
             default:
                 workString = inButton.currentTitle!
@@ -2014,9 +2043,8 @@ println("Nothing found")
         self.dismissViewControllerAnimated(true, completion:nil)
     }
 
-    func OneNoteNotebookReady(notification: NSNotification)
+    func OneNoteNotebookGetSections()
     {
-        
         dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
             { // 1
                 if self.myDisplayType == "Project"
@@ -2036,8 +2064,6 @@ println("Nothing found")
 
         for myPage in myOneNoteNotebooks.pages
         {
-            var myString: String = "\(myPage.title)\n"
-
             var dateFormat = NSDateFormatterStyle.MediumStyle
             var timeFormat = NSDateFormatterStyle.ShortStyle
             var myDateFormatter = NSDateFormatter()
@@ -2046,8 +2072,23 @@ println("Nothing found")
             
             let myDate = myDateFormatter.stringFromDate(myPage.lastModifiedTime)
 
-            myString += "Last modified : \(myDate)"
+            var myString: String = ""
+            
+            if myDisplayType == "Person"
+            {
+                myString = "\(myPage.title)\n"
+            }
+            else
+            {
+                myString = "\(myPage.sectionName) : \(myPage.title)\n"
+            }
+                myString += "Last modified : \(myDate)"
             writeRowToArray(myString, &myDisplay)
+        }
+        
+        if myDisplay.count == 0
+        {
+            writeRowToArray("No matching OneNote pages found", &myDisplay)
         }
         
         switch oneNoteTableToRefresh
@@ -2069,7 +2110,7 @@ println("Nothing found")
                 dataTable4.reloadData()
             
             default:
-                println("OneNoteNotebookReady: oneNoteTableToRefresh hit default for some reason")
+                println("OneNoteNotebookGetSections: oneNoteTableToRefresh hit default for some reason")
         }
     }
 

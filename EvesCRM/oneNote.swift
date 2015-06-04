@@ -15,6 +15,19 @@ class oneNotePage: NSObject
     private var myLastModifiedTime: NSDate!
     private var myId: String = ""
     private var myUrlCallback: String = ""
+    private var mySectionName: String = ""
+    
+    var sectionName: String
+        {
+        get
+        {
+            return mySectionName
+        }
+        set
+        {
+            mySectionName = newValue
+        }
+    }
     
     var title: String
         {
@@ -27,7 +40,6 @@ class oneNotePage: NSObject
             myTitle = newValue
         }
     }
-    
     var pageUrl: String
         {
         get
@@ -178,7 +190,7 @@ class oneNoteSection: NSObject
     
     // Need to do logic for sections and pages.  Only load sections if user requests Sections for notebook, and only do pages if user requests pages in section - this is to minimise network
     
-    func getPages()
+    func getPages(inSectionName: String)
     {
         var myPagesEndPoint: String = "https://www.onenote.com/api/v1.0/sections/\(myId)/pages"
         gettingData = true
@@ -187,11 +199,11 @@ class oneNoteSection: NSObject
         
         let myReturnString = myOneNoteData.getData(myPagesEndPoint)
         
-        splitString(myReturnString)
+        splitString(myReturnString, inSectionName: inSectionName)
         gettingData = false
     }
     
-    private func splitString(inString: String)
+    private func splitString(inString: String, inSectionName: String)
     {
         var processedFileHeader: Bool = false
         var oneNoteDataType: String = ""
@@ -230,30 +242,35 @@ class oneNoteSection: NSObject
                 firstItem2 = true
                 inFooter = false
                 let myPage = oneNotePage()
+                myPage.sectionName = inSectionName
                 for myItem2 in split2
                 {
-                    let split3 = myItem2.componentsSeparatedByString(":")
-                    if split3[0].rangeOfString("  ") == nil
+                    if myItem2.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()) != ""
                     {
-                        switch split3[0]
+                        let split3 = myItem2.componentsSeparatedByString(":")
+                    
+                        var keyString = split3[0].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                        var valueString = split3[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+
+                        switch keyString
                         {
                             case "contentUrl" :
-                                myPage.pageUrl = returnSearchStringToNormal(split3[1])
+                                myPage.pageUrl = returnSearchStringToNormal(valueString)
                                 
                             case "title" :
-                                if returnSearchStringToNormal(split3[1]) == ""
+                                if returnSearchStringToNormal(valueString) == ""
                                 {
                                     myPage.title = "Untitled Page"
                                 }
                                 else
                                 {
-                                    myPage.title = returnSearchStringToNormal(split3[1])
+                                    myPage.title = returnSearchStringToNormal(valueString)
                                 }
                             
                             case "lastModifiedTime" :
                                 // Convert the string to a date
                                 var myTempString: String = ""
-                                let str1 = returnSearchStringToNormal(split3[1])
+                                let str1 = returnSearchStringToNormal(valueString)
                                 let start = str1.startIndex
                                 let end = find(str1, ".")
          
@@ -275,10 +292,10 @@ class oneNoteSection: NSObject
                                 myPage.lastModifiedTime = myDate!
                                 
                             case "id" :
-                                myPage.id = returnSearchStringToNormal(split3[1])
+                                myPage.id = returnSearchStringToNormal(valueString)
                                 
-                            case "self" :
-                                myPage.urlCallback = returnSearchStringToNormal(split3[1])
+                            case "oneNoteClientUrl" :
+                                myPage.urlCallback = returnSearchStringToNormal(valueString)
                                 
                             default:
                                 let a = 1
@@ -426,6 +443,24 @@ class oneNoteNotebook: NSObject
         }
     }
     
+    var sectionCount: Int
+        {
+        get
+        {
+            var ret_val = 0
+            if mySections == nil
+            {
+                ret_val = 0
+            }
+            else
+            {
+                ret_val = mySections.count
+            }
+            return ret_val
+        }
+
+    }
+    
     // Need to do logic for sections and pages.  Only load sections if user requests Sections for notebook, and only do pages if user requests pages in section - this is to minimise network
     
     func getSections()
@@ -443,7 +478,7 @@ class oneNoteNotebook: NSObject
         for mySection in mySections
         {
             mySection.OneNoteData = myOneNoteData
-            mySection.getPages()
+            mySection.getPages(mySection.name)
         }
     }
     
@@ -496,10 +531,16 @@ class oneNoteNotebook: NSObject
             let mySection = oneNoteSection()
             for myItem2 in split2
             {
+                if myItem2.lowercaseString.rangeOfString("parentnotebook") != nil
+                {
+                    inFooter = true
+                }
+                
                 if myItem2.lowercaseString.rangeOfString("parentsectiongroup") != nil
                 {
                     inFooter = true
                 }
+                
                 if !inFooter
                 {
                     
@@ -554,8 +595,8 @@ class oneNoteNotebook: NSObject
                     }
                 }
             }
-            mySection.OneNoteData = myOneNoteData
-            mySection.getPages()
+      //      mySection.OneNoteData = myOneNoteData
+     //       mySection.getPages(mySection.name)
             
             return mySection
         }
@@ -582,8 +623,6 @@ class oneNoteNotebooks: NSObject
     private var mySourceViewController: UIViewController!
     private var myOneNoteData: oneNoteData!
     private var myPages: [oneNotePage]!
-    
-//    private var myWorkingNotebook: oneNoteNotebook!
         
     var pages: [oneNotePage]
     {
@@ -598,8 +637,19 @@ class oneNoteNotebooks: NSObject
         super.init()
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "OneNoteConnected:", name:"NotificationOneNoteConnected", object: nil)
 
-        myOneNoteData = oneNoteData()
-        myOneNoteData.sourceViewController = inViewController
+        if myOneNoteData != nil
+        {
+            if !myOneNoteData.oneNoteConnected
+            {
+                myOneNoteData = oneNoteData()
+                myOneNoteData.sourceViewController = inViewController
+            }
+        }
+        else
+        {
+            myOneNoteData = oneNoteData()
+            myOneNoteData.sourceViewController = inViewController
+        }
     }
     
     func OneNoteConnected(notification: NSNotification)
@@ -728,12 +778,16 @@ class oneNoteNotebooks: NSObject
             if myNotebook.name == inProject
             {
                 // We have a matching project, so now work with this one
-            //    myWorkingNotebook = myNotebook
-                myNotebook.OneNoteData = myOneNoteData
-                myNotebook.getSections()
-                notebookFound = true
                 
-                // Need to get a single array containing all of the pages
+                // See if we have already processed for this Notebook, if we have then there is np need to reload
+                
+                if myNotebook.sectionCount == 0
+                {
+                    myNotebook.OneNoteData = myOneNoteData
+                    myNotebook.getSections()
+                    notebookFound = true
+                }
+                    // Need to get a single array containing all of the pages
                 
                 for mySection in myNotebook.sections
                 {
@@ -752,16 +806,43 @@ class oneNoteNotebooks: NSObject
         NSNotificationCenter.defaultCenter().postNotificationName("NotificationOneNotePagesReady", object: nil)
     }
 
-    func getNotesForPerson(inPerson: String) -> [TableData]
+    func getNotesForPerson(inPerson: String)
     {
         var notebookFound: Bool = false
-        var returnArray: [TableData] = []
-println("Get a person")
+        var myWorkingArray: [oneNotePage] = []
         
-        return returnArray
+        for myNotebook in myNotebooks
+        {
+            if myNotebook.name == "People"
+            {
+                // We have a matching project, so now work with this one
+                if myNotebook.sectionCount == 0
+                {
+                    myNotebook.OneNoteData = myOneNoteData
+                    myNotebook.getSections()
+                    notebookFound = true
+                }
+                
+                // Need to get a single array containing all of the pages
+                
+                for mySection in myNotebook.sections
+                {
+                    if mySection.name == inPerson
+                    {
+                        for myPage in mySection.pages
+                        {
+                            myWorkingArray.append(myPage)
+                        }
+                    }
+                }
+                
+                myWorkingArray.sort({ $0.lastModifiedTime.compare($1.lastModifiedTime) == NSComparisonResult.OrderedDescending })
+                
+                myPages = myWorkingArray
+            }
+        }
+        NSNotificationCenter.defaultCenter().postNotificationName("NotificationOneNotePagesReady", object: nil)
     }
-
-    
 }
 
 class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLConnectionDataDelegate
@@ -811,6 +892,13 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
         }
     }
 
+    var oneNoteConnected: Bool
+        {
+        get
+        {
+            return myOneNoteConnected
+        }
+    }
     override init()
     {
         super.init()
