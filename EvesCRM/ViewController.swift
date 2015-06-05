@@ -457,7 +457,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         {
             let cell = dataTable2.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
             cell.textLabel!.text = table2Contents[indexPath.row].displayText
-            
             return setCellFormatting(cell, table2Contents[indexPath.row].displaySpecialFormat)
         }
         else if (tableView == dataTable3)
@@ -526,7 +525,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             
         }
     }
-
     
     func populateArrayDetails(inTable: String) -> [TableData]
     {
@@ -1025,8 +1023,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 evc.editViewDelegate = self
                 self.presentViewController(evc, animated: true, completion: nil)
           
-        case "OneNote":
-// GAZA
+            case "OneNote":
                 var myItemFound: Bool = false
                 var myStartPage: String = ""
             
@@ -2117,8 +2114,12 @@ println("Nothing found")
 
     func OneNoteNotebookGetSections()
     {
+        var myDisplay: [TableData] = Array()
+        var myString: String = ""
+        
         dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
             { // 1
+               /* Disabling this code in order to use the OneNote search API instead
                 if self.myDisplayType == "Project"
                 {
                     self.myOneNoteNotebooks.getNotesForProject(self.labelName.text!)
@@ -2127,9 +2128,11 @@ println("Nothing found")
                 {
                     self.myOneNoteNotebooks.getNotesForPerson(self.labelName.text!)
                 }
+                */
+                self.myOneNoteNotebooks.searchOneNote(self.labelName.text!)
             }
     }
-  
+
     func OneNoteNoNotebookFound()
     {
         var myDisplay: [TableData] = Array()
@@ -2175,15 +2178,8 @@ println("Nothing found")
 
             var myString: String = ""
             
-            if myDisplayType == "Person"
-            {
-                myString = "\(myPage.title)\n"
-            }
-            else
-            {
-                myString = "\(myPage.sectionName) : \(myPage.title)\n"
-            }
-                myString += "Last modified : \(myDate)"
+            myString = "\(myPage.title)\n"
+            myString += "Last modified : \(myDate)"
             writeRowToArray(myString, &myDisplay)
         }
         
@@ -2196,24 +2192,35 @@ println("Nothing found")
         {
             case "Table1":
                 table1Contents = myDisplay
-                dataTable1.reloadData()
+                dispatch_async(dispatch_get_main_queue())
+                {
+                        self.dataTable1.reloadData() // reload table/data or whatever here. However you want.
+                }
             
             case "Table2":
                 table2Contents = myDisplay
-                dataTable2.reloadData()
+                dispatch_async(dispatch_get_main_queue())
+                {
+                        self.dataTable2.reloadData() // reload table/data or whatever here. However you want.
+                }
             
             case "Table3":
                 table3Contents = myDisplay
-                dataTable3.reloadData()
+                dispatch_async(dispatch_get_main_queue())
+                {
+                        self.dataTable3.reloadData() // reload table/data or whatever here. However you want.
+                }
             
             case "Table4":
                 table4Contents = myDisplay
-                dataTable4.reloadData()
+                
+                dispatch_async(dispatch_get_main_queue())
+                {
+                    self.dataTable4.reloadData() // reload table/data or whatever here. However you want.
+                }
             
             default:
                 println("OneNoteNotebookGetSections: oneNoteTableToRefresh hit default for some reason")
         }
     }
-
-    
 }

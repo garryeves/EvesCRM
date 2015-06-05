@@ -959,6 +959,122 @@ class oneNoteNotebooks: NSObject
         
         return ret_val
     }
+    
+    func searchOneNote(inSearchString: String)
+    {
+        var mySearchTerm: String = "https://www.onenote.com/api/v1.0/pages?search=\(inSearchString)&orderby=lastModifiedTime desc"
+        var escapedAddress = mySearchTerm.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
+
+        let myReturnString = myOneNoteData.getData(escapedAddress!)
+        splitSearchString(myReturnString)
+        
+        NSNotificationCenter.defaultCenter().postNotificationName("NotificationOneNotePagesReady", object: nil)
+    }
+    
+    private func splitSearchString(inString: String)
+    {
+        var processedFileHeader: Bool = false
+        var oneNoteDataType: String = ""
+        var firstItem2: Bool = true
+        
+        // we need to do a bit of "dodgy" working, I want to be able to split strings based on :, but : is natural in dates and URLs. so need to change it to seomthign esle,
+        //string out the : data and then change back
+        
+        let split = inString.componentsSeparatedByString("\"title\"")
+        
+        myPages = Array()
+        
+        for myItemLoop in split
+        {
+            let myItem = fixStringForSearch(myItemLoop)
+ 
+            if !processedFileHeader
+            {
+                processedFileHeader = true
+            }
+            else
+            {
+                // need to further split the items into its component parts
+                let split2 = myItem.componentsSeparatedByString(",")
+                firstItem2 = true
+                let myPage = oneNotePage()
+                for myItem2 in split2
+                {
+                    if myItem2.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()) != ""
+                    {
+                        var split3: [String]
+                    
+                        if firstItem2
+                        {  // need to add the title field back in
+                        
+                            let tempStr = "title\(myItem2)"
+                            split3 = tempStr.componentsSeparatedByString(":")
+                            firstItem2 = false
+                        }
+                        else
+                        {
+                            split3 = myItem2.componentsSeparatedByString(":")
+                        }
+                        
+                        var keyString = split3[0].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                        var valueString = split3[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                    
+                        // now split each of these into value pairs - how to store?  Maybe in a Collection??
+
+                        switch keyString
+                        {
+                            case "contentUrl" :
+                                myPage.pageUrl = returnSearchStringToNormal(valueString)
+                            
+                            case "title" :
+                                if returnSearchStringToNormal(valueString) == ""
+                                {
+                                    myPage.title = "Untitled Page"
+                                }
+                                else
+                                {
+                                    myPage.title = returnSearchStringToNormal(valueString)
+                                }
+                            
+                            case "lastModifiedTime" :
+                                // Convert the string to a date
+                                var myTempString: String = ""
+                                let str1 = returnSearchStringToNormal(valueString)
+                                let start = str1.startIndex
+                                let end = find(str1, ".")
+                            
+                                if end != nil
+                                {
+                                    let myEnd = end?.predecessor()
+                                    myTempString = str1[start...myEnd!]
+                                }
+                                else
+                                { // no period found
+                                    myTempString = str1
+                                }
+                            
+                                var myDateFormatter = NSDateFormatter()
+                                myDateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+                            
+                                let myDate = myDateFormatter.dateFromString(myTempString)
+                            
+                                myPage.lastModifiedTime = myDate!
+                            
+                            case "id" :
+                                myPage.id = returnSearchStringToNormal(valueString)
+                            
+                            case "oneNoteClientUrl" :
+                                myPage.urlCallback = returnSearchStringToNormal(valueString)
+                        
+                            default:
+                                let a = 1
+                        }
+                    }
+                }
+                myPages.append(myPage)
+            }
+        }
+    }
 }
 
 class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLConnectionDataDelegate
