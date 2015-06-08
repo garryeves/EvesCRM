@@ -215,7 +215,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         
         TableOptions = Array()
         
-        displayScreen()
+ //       displayScreen()
         
         
         myEvernote = EvernoteDetails(inSession: self.evernoteSession)
@@ -263,6 +263,17 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     @IBAction func TableTypeButton1TouchUp(sender: UIButton) {
         // Show the Picker and hide the button
    
+        let myPanes = displayPanes(inManagedContext: managedObjectContext!)
+        
+        TableOptions.removeAll(keepCapacity: false)
+ 
+        for myPane in myPanes.listVisiblePanes
+        {
+            TableOptions.append(myPane.paneName)
+        }
+        
+        TableTypeSelection1.reloadAllComponents()
+        
         callingTable = sender.tag
         
         TableTypeSelection1.hidden = false
@@ -277,8 +288,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         dataTable4.hidden = true
         StartLabel.hidden = true
         peoplePickerButton.hidden = true
-        
-        
         buttonAdd1.hidden = true
         buttonAdd2.hidden = true
         buttonAdd3.hidden = true
@@ -889,6 +898,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
 
     func returnFromSecondaryView(inTable: String, inRowID: Int)
     {
+        displayScreen()
         populateArrayDetails(inTable)
         reloadDataTables()
     }
@@ -1293,6 +1303,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     
     func peoplePickerNavigationController(peoplePicker: ABPeoplePickerNavigationController!, didSelectPerson person: ABRecordRef!)
     {
+        displayScreen()
         TableTypeSelection1.hidden = true
         setSelectionButton.hidden = true
         TableTypeButton1.hidden = false
@@ -1955,7 +1966,6 @@ println("Nothing found")
         {
             myButtonName = myProjectName
         }
-        
         
         TableOptions.removeAll(keepCapacity: false)
         

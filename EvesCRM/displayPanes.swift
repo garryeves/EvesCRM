@@ -27,7 +27,6 @@ class displayPanes
         managedContext = inManagedContext
         myPanes = Array()
         
-        
         let tablePanes = getPanes()
         
         if tablePanes.count > 0
@@ -71,14 +70,14 @@ class displayPanes
         // Populate roles with initial values
         //  Do this by checking to see if it exists already, if it does then do nothing otherwise create the pane
         
-        var loadSet = ["Calendar", "Details", "Evernote", "Omnifocus", "OneNote", "Project Membership", "Reminders"]
+        var loadSet = ["Calendar", "Details", "Evernote", "GMail", "Omnifocus", "OneNote", "Project Membership", "Reminders"]
  
         for myItem in loadSet
         {
             var myPane = displayPane(inManagedContext: managedContext)
             
             myPane.loadPane(myItem)
-            
+
             if myPane.paneName == ""
             {
                 // Nothing was returned so lets create a new one
@@ -196,18 +195,15 @@ class displayPane
         // Save the details of this pane to the database
         var error: NSError?
         let myPane = NSEntityDescription.insertNewObjectForEntityForName("Panes", inManagedObjectContext: managedContext) as! Panes
-println("savePane")
+println("SavePane : \(myPaneName)")
         myPane.pane_name = myPaneName
         myPane.pane_available = myPaneAvailable
         myPane.pane_visible = myPaneVisible
         myPane.pane_order = myPaneOrder
     
-println("savePane: go and save")
         if !managedContext.save(&error)
         {
-println("savePane: In error")
             println(error?.localizedDescription)
-println("savePane: After error")
         }
         
         paneLoaded = true
@@ -229,9 +225,8 @@ println("savePane: After error")
                 myPaneAvailable = true
                 myPaneVisible = true
                 myPaneOrder = 0
-println("createPane: \(paneName)")
+
                 savePane()
-println("createPane : after save call")
             }
         }
     }
