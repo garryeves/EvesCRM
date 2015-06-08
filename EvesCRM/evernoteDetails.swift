@@ -110,22 +110,21 @@ class EvernoteDetails
                         
                         self.retrievedData.append(myData)
                     }
-                    self.asyncDone = true
                     for displayString in myDisplayStrings
                     {
                         writeRowToArray(displayString, &self.tableContents)
                     }
-
+                    NSNotificationCenter.defaultCenter().postNotificationName("NotificationEvernoteComplete", object: nil)
                 }
                 else
                 {
                     writeRowToArray("No Notes found", &self.tableContents)
-                    self.asyncDone = true
+                    NSNotificationCenter.defaultCenter().postNotificationName("NotificationEvernoteComplete", object: nil)
                 }
                 if findNotesError != nil
                 {
                     writeRowToArray("No Notes found - error", &self.tableContents)
-                    self.asyncDone = true
+                    NSNotificationCenter.defaultCenter().postNotificationName("NotificationEvernoteComplete", object: nil)
                 }
             })
         }

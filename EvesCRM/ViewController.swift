@@ -84,15 +84,11 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     var evernoteSession: ENSession!
     var myEvernote: EvernoteDetails!
     var evernotePass1: Bool = false
-    var EvernoteTimer = NSTimer()
     var EvernoteTargetTable: String = "'"
-    var EvernoteTimerCount: Int = 0
     var myEvernoteShard: String = ""
     var myEvernoteUserID: Int = 0
-    var myEvernoteUserTimer = NSTimer()
     var EvernoteUserDone: Bool = false
     var EvernoteAuthenticationDone: Bool = false
-    var EvernoteUserTimerCount: Int = 0
     var myEvernoteGUID: String = ""
     var myDisplayType: String = ""
     var myProjectID: NSNumber!
@@ -234,6 +230,8 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "OneNoteNotebookGetSections", name:"NotificationOneNoteNotebooksLoaded", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "OneNotePagesReady:", name:"NotificationOneNotePagesReady", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "OneNoteNoNotebookFound", name:"NotificationOneNoteNoNotebookFound", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "EvernoteComplete", name:"NotificationEvernoteComplete", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "myEvernoteUserDidFinish", name:"NotificationEvernoteUserDidFinish", object: nil)
     }
 
     override func didReceiveMemoryWarning() {
@@ -604,9 +602,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     myEvernote.findEvernoteNotes(searchString)
                 }
                 EvernoteTargetTable = inTable
-                EvernoteTimerCount = 0
-                EvernoteTimer = NSTimer.scheduledTimerWithTimeInterval(1, target:self, selector: Selector("EvernoteComplete"), userInfo: nil, repeats: false)
-            
+
             case "Project Membership":
                 // Project team membership details
                 if myDisplayType == "Project"
@@ -1031,6 +1027,14 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             
                 if myDisplayType == "Project"
                 {
+                    var alert = UIAlertController(title: "OneNote", message:
+                        "Creating OneNote Notebook for this Project.  OneNote will open when complete.", preferredStyle: UIAlertControllerStyle.Alert)
+                    
+                    self.presentViewController(alert, animated: false, completion: nil)
+                    
+                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+                    
+
                     myItemFound = myOneNoteNotebooks.checkExistenceOfNotebook(myProjectName)
                     if myItemFound
                     {
@@ -1043,8 +1047,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     }
                     else
                     {
-                        // For a project create the Notebooks, and then create the initial sections, create an initial page in each section
-                        myStartPage = myOneNoteNotebooks.createNewNotebookForProject(myProjectName)
+                        myStartPage = self.myOneNoteNotebooks.createNewNotebookForProject(self.myProjectName)
                     }
                 }
                 else
@@ -1053,6 +1056,13 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     
                     if myFullName != ""
                     {
+                        var alert = UIAlertController(title: "OneNote", message:
+                            "Creating OneNote Section for this Person.  OneNote will open when complete.", preferredStyle: UIAlertControllerStyle.Alert)
+                        
+                        self.presentViewController(alert, animated: false, completion: nil)
+                        
+                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+                        
                         myItemFound = myOneNoteNotebooks.checkExistenceOfPerson(myFullName)
                         if myItemFound
                         {
@@ -1066,7 +1076,8 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                         else
                         {
                             // Create a Section for the Person and add an initial page
-                            myStartPage = myOneNoteNotebooks.createNewSectionForPerson(myFullName)
+                            
+                           myStartPage = myOneNoteNotebooks.createNewSectionForPerson(myFullName)
                         }
                     }
                 }
@@ -1329,22 +1340,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     {
         var myTable: [TableData] = Array()
 
-        if !myEvernote.isAsyncDone()
-        {  // Async not yet complete
-            if EvernoteTimerCount > 5
-            {
-                    writeRowToArray("Unable to retrieve Evernote data in timely manner", &myTable)
-            }
-            else
-            {
-                EvernoteTimerCount = EvernoteTimerCount + 1
-                EvernoteTimer = NSTimer.scheduledTimerWithTimeInterval(1, target:self, selector: Selector("EvernoteComplete"), userInfo: nil, repeats: false)
-            }
-        }
-        else
-        {
-            myTable = myEvernote.getWriteString()
-        }
+        myTable = myEvernote.getWriteString()
         
         switch EvernoteTargetTable
         {
@@ -1422,24 +1418,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         
     func myEvernoteUserDidFinish()
     {
-        if !EvernoteUserDone
-        {  // Async not yet complete
-            if EvernoteUserTimerCount > 5
-            {
-                var alert = UIAlertController(title: "Evernote", message:
-                    "Unable to load Evernote in a timely manner", preferredStyle: UIAlertControllerStyle.Alert)
-                
-                self.presentViewController(alert, animated: false, completion: nil)
-                
-                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
-                    handler: nil))
-            }
-            else
-            {
-                EvernoteUserTimerCount = EvernoteUserTimerCount + 1
-                myEvernoteUserTimer = NSTimer.scheduledTimerWithTimeInterval(1, target:self, selector: Selector("myEvernoteUserDidFinish"), userInfo: nil, repeats: false)
-            }
-        }
+        println("Evernote user authenticated")
     }
     
     func openOmnifocusDropbox()
@@ -2020,6 +1999,7 @@ println("Nothing found")
             self.myEvernoteShard = findNotesResults.shardId
             self.myEvernoteUserID = findNotesResults.id as Int
             self.EvernoteUserDone = true
+            NSNotificationCenter.defaultCenter().postNotificationName("NotificationEvernoteUserDidFinish", object: nil)
             }
             , failure: {
                 (findNotesError) in
@@ -2027,11 +2007,8 @@ println("Nothing found")
                 self.EvernoteUserDone = true
                 self.myEvernoteShard = ""
                 self.myEvernoteUserID = 0
+                NSNotificationCenter.defaultCenter().postNotificationName("NotificationEvernoteUserDidFinish", object: nil)
         })
-        
-        EvernoteUserTimerCount = 0
-        
-        myEvernoteUserTimer = NSTimer.scheduledTimerWithTimeInterval(1, target:self, selector: Selector("myEvernoteUserDidFinish"), userInfo: nil, repeats: false)
     }
     
     func eventViewController(controller: EKEventViewController, didCompleteWithAction action: EKEventViewAction)

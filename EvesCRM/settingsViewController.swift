@@ -53,10 +53,8 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate {
     private let STAGE_CELL_IDENTIFER = "stageNameCell"
     
     private var evernotePass1: Bool = false
-    private var EvernoteTimer = NSTimer()
     private var EvernoteAuthenticationDone: Bool = false
     var evernoteSession: ENSession!
-    private var EvernoteUserTimerCount: Int = 0
     private var myEvernote: EvernoteDetails!
     var dropboxCoreService: DropboxCoreService!
     var myManagedContext: NSManagedObjectContext!
@@ -125,6 +123,8 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate {
         {
             ButtonConnectDropbox.hidden = true
         }
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "myEvernoteAuthenticationDidFinish", name:"NotificationEvernoteAuthenticationDidFinish", object: nil)
     }
     
     override func didReceiveMemoryWarning()
@@ -398,36 +398,17 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate {
                     // ...
                     self.myEvernote = EvernoteDetails(inSession: self.evernoteSession)
                 }
-                self.EvernoteAuthenticationDone = true
+                NSNotificationCenter.defaultCenter().postNotificationName("NotificationEvernoteAuthenticationDidFinish", object: nil)
             })
         }
-        
-        EvernoteTimer = NSTimer.scheduledTimerWithTimeInterval(1, target:self, selector: Selector("myEvernoteAuthenticationDidFinish"), userInfo: nil, repeats: false)
         
         evernotePass1 = true  // This is to allow only one attempt to launch Evernote
     }
     
     func myEvernoteAuthenticationDidFinish()
     {
-        if !EvernoteAuthenticationDone
-        {  // Async not yet complete
-            if EvernoteUserTimerCount > 5
-            {
-                var alert = UIAlertController(title: "Evernote", message:
-                    "Unable to load Evernote in a timely manner", preferredStyle: UIAlertControllerStyle.Alert)
-                
-                self.presentViewController(alert, animated: false, completion: nil)
-                
-                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
-                    handler: nil))
-            }
-            else
-            {
-                EvernoteUserTimerCount = EvernoteUserTimerCount + 1
-                EvernoteTimer = NSTimer.scheduledTimerWithTimeInterval(1, target:self, selector: Selector("myEvernoteAuthenticationDidFinish"), userInfo: nil, repeats: false)
-            }
-        }
-                }
+        println("Evernote authenticated")
+    }
     
     func connectToDropbox()
     {
