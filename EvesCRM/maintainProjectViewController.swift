@@ -130,6 +130,11 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         // Dispose of any resources that can be recreated.
     }
  
+    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+        projectNameText.endEditing(true)
+    }
+    
+    
     func numberOfComponentsInPickerView(inPicker: UIPickerView) -> Int
     {
         return 1

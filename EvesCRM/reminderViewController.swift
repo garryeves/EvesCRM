@@ -144,6 +144,11 @@ class reminderViewController: UIViewController {
         
     }
  
+    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+        descriptionText.endEditing(true)
+        notesText.endEditing(true)
+    }
+    
     func numberOfComponentsInPickerView(priorityPicker: UIPickerView) -> Int {
         return 1
     }

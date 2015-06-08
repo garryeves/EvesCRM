@@ -36,11 +36,13 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate {
     @IBOutlet weak var deleteRole: UIButton!
     @IBOutlet weak var addStage: UIButton!
     @IBOutlet weak var deleteStage: UIButton!
-    
-  
     @IBOutlet weak var buttonMaintainPanes: UIButton!
     @IBOutlet weak var buttonConnectEvernote: UIButton!
     @IBOutlet weak var ButtonConnectDropbox: UIButton!
+    
+    
+    @IBOutlet weak var buttonResetRoles: UIButton!
+    @IBOutlet weak var buttonResetStages: UIButton!
     
     var delegate: MySettingsDelegate?
     
@@ -416,5 +418,27 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate {
         {
             dropboxCoreService.initiateAuthentication(self)
         }
+    }
+    
+    @IBAction func buttonResetRolesClick(sender: UIButton)
+    {
+        deleteAllRoles()
+        populateRoles()
+        
+        myRoles = getRoles()
+        roleTable.reloadData()
+        textRole.text = ""
+        myRoleSelected = -1
+    }
+    
+    @IBAction func buttonResetStagesClick(sender: UIButton)
+    {
+        deleteAllStages()
+        populateStages()
+        
+        myStages = getStages()
+        stagesTable.reloadData()
+        myStageSelected = -1
+        textStage.text = ""
     }
 }

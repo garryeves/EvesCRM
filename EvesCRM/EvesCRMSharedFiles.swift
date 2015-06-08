@@ -392,6 +392,25 @@ func getRoles()->[Roles]
     return fetchResults!
 }
 
+func deleteAllRoles()
+{
+    var error : NSError?
+    
+    let fetchRequest = NSFetchRequest(entityName: "Roles")
+    
+    // Execute the fetch request, and cast the results to an array of  objects
+    let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Roles]
+    for myStage in fetchResults!
+    {
+        managedObjectContext!.deleteObject(myStage as NSManagedObject)
+    }
+    
+    if(managedObjectContext!.save(&error) )
+    {
+        println(error?.localizedDescription)
+    }
+}
+
 func populateRoles()
 {
     var initialRoles = ["Project Manager",
@@ -773,6 +792,25 @@ func getStages()->[Stages]
     let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Stages]
     
     return fetchResults!
+}
+
+func deleteAllStages()
+{
+    var error : NSError?
+    
+    let fetchRequest = NSFetchRequest(entityName: "Stages")
+    
+    // Execute the fetch request, and cast the results to an array of  objects
+    let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Stages]
+    for myStage in fetchResults!
+    {
+        managedObjectContext!.deleteObject(myStage as NSManagedObject)
+    }
+    
+    if(managedObjectContext!.save(&error) )
+    {
+        println(error?.localizedDescription)
+    }
 }
 
 func populateStages()
