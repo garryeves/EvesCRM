@@ -644,7 +644,20 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 {
                     OneNoteNotebookGetSections()
                 }
-        
+            
+            case "GMail":
+                writeRowToArray("Loading GMail messages.  Pane will refresh when finished", &workArray)
+ // GAZA
+         //       oneNoteTableToRefresh = inTable
+            
+         //       if myOneNoteNotebooks == nil
+         //       {
+         //           myOneNoteNotebooks = oneNoteNotebooks(inViewController: self)
+         //       }
+         //       else
+         //       {
+         //           OneNoteNotebookGetSections()
+         //       }
 
             case "Mail":
                 let a = 1
@@ -841,6 +854,9 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 UIApplication.sharedApplication().openURL(myOneNoteUrl)
             }
 
+        case "GMail":
+ println("dataCellClicked - GMail")
+            
             default:
                 let a = 1
         }

@@ -32,6 +32,26 @@
 		341F23101AFB560200FC2883 /* DropboxSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341F230E1AFB560200FC2883 /* DropboxSDK.framework */; };
 		341F23121AFC284400FC2883 /* DropboxCoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341F23111AFC284400FC2883 /* DropboxCoreService.swift */; };
 		341F23131AFC284400FC2883 /* DropboxCoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341F23111AFC284400FC2883 /* DropboxCoreService.swift */; };
+		342CA6A01B26C79B006FEAED /* GTLCommon_Sources.m in Sources */ = {isa = PBXBuildFile; fileRef = 342CA6971B26C79B006FEAED /* GTLCommon_Sources.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		342CA6A11B26C79B006FEAED /* GTLCommon_Sources.m in Sources */ = {isa = PBXBuildFile; fileRef = 342CA6971B26C79B006FEAED /* GTLCommon_Sources.m */; };
+		342CA6A21B26C79B006FEAED /* GTLNetworking_Sources.m in Sources */ = {isa = PBXBuildFile; fileRef = 342CA6991B26C79B006FEAED /* GTLNetworking_Sources.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		342CA6A31B26C79B006FEAED /* GTLNetworking_Sources.m in Sources */ = {isa = PBXBuildFile; fileRef = 342CA6991B26C79B006FEAED /* GTLNetworking_Sources.m */; };
+		342CA6A41B26C79B006FEAED /* Objects in Resources */ = {isa = PBXBuildFile; fileRef = 342CA69A1B26C79B006FEAED /* Objects */; };
+		342CA6A51B26C79B006FEAED /* Objects in Resources */ = {isa = PBXBuildFile; fileRef = 342CA69A1B26C79B006FEAED /* Objects */; };
+		342CA6A61B26C79B006FEAED /* GoogleResources in Resources */ = {isa = PBXBuildFile; fileRef = 342CA69B1B26C79B006FEAED /* GoogleResources */; };
+		342CA6A71B26C79B006FEAED /* GoogleResources in Resources */ = {isa = PBXBuildFile; fileRef = 342CA69B1B26C79B006FEAED /* GoogleResources */; };
+		342CA6A81B26C79B006FEAED /* Services in Resources */ = {isa = PBXBuildFile; fileRef = 342CA69C1B26C79B006FEAED /* Services */; };
+		342CA6A91B26C79B006FEAED /* Services in Resources */ = {isa = PBXBuildFile; fileRef = 342CA69C1B26C79B006FEAED /* Services */; };
+		342CA6AA1B26C79B006FEAED /* Tests in Resources */ = {isa = PBXBuildFile; fileRef = 342CA69D1B26C79B006FEAED /* Tests */; };
+		342CA6AB1B26C79B006FEAED /* Tests in Resources */ = {isa = PBXBuildFile; fileRef = 342CA69D1B26C79B006FEAED /* Tests */; };
+		342CA6AC1B26C79B006FEAED /* Tools in Resources */ = {isa = PBXBuildFile; fileRef = 342CA69E1B26C79B006FEAED /* Tools */; };
+		342CA6AD1B26C79B006FEAED /* Tools in Resources */ = {isa = PBXBuildFile; fileRef = 342CA69E1B26C79B006FEAED /* Tools */; };
+		342CA6AE1B26C79B006FEAED /* Utilities in Resources */ = {isa = PBXBuildFile; fileRef = 342CA69F1B26C79B006FEAED /* Utilities */; };
+		342CA6AF1B26C79B006FEAED /* Utilities in Resources */ = {isa = PBXBuildFile; fileRef = 342CA69F1B26C79B006FEAED /* Utilities */; };
+		342CA6BD1B26CE6F006FEAED /* Source in Resources */ = {isa = PBXBuildFile; fileRef = 342CA6BC1B26CE6F006FEAED /* Source */; };
+		342CA6BE1B26CE6F006FEAED /* Source in Resources */ = {isa = PBXBuildFile; fileRef = 342CA6BC1B26CE6F006FEAED /* Source */; };
+		342CA6C01B26D0B3006FEAED /* gtm-oauth2-master in Resources */ = {isa = PBXBuildFile; fileRef = 342CA6BF1B26D0B3006FEAED /* gtm-oauth2-master */; };
+		342CA6C11B26D0B3006FEAED /* gtm-oauth2-master in Resources */ = {isa = PBXBuildFile; fileRef = 342CA6BF1B26D0B3006FEAED /* gtm-oauth2-master */; };
 		344F226B1AF1DC20002C373E /* ENSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 344F22691AF1DC20002C373E /* ENSDK.framework */; };
 		344F226C1AF1DC20002C373E /* ENSDKResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 344F226A1AF1DC20002C373E /* ENSDKResources.bundle */; };
 		344F226E1AF1DD04002C373E /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 344F226D1AF1DD04002C373E /* MobileCoreServices.framework */; };
@@ -108,6 +128,8 @@
 		34B3BDA01AF0979E00C5B09D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406506F1ADDF8FF00C90CBB /* ViewController.swift */; };
 		34B525391B130F1C00093250 /* oneNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B525381B130F1C00093250 /* oneNote.swift */; };
 		34B5253A1B130F1C00093250 /* oneNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B525381B130F1C00093250 /* oneNote.swift */; };
+		34B9C0111B26BA70005E52F9 /* gMail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B9C0101B26BA70005E52F9 /* gMail.swift */; };
+		34B9C0121B26BA70005E52F9 /* gMail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B9C0101B26BA70005E52F9 /* gMail.swift */; };
 		34BDECAA1B008846008C9F3F /* displayPanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BDECA91B008846008C9F3F /* displayPanes.swift */; };
 		34BDECAC1B0089CC008C9F3F /* Decodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BDECAB1B0089CC008C9F3F /* Decodes.swift */; };
 		34BDECAD1B0089CC008C9F3F /* Decodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BDECAB1B0089CC008C9F3F /* Decodes.swift */; };
@@ -126,6 +148,34 @@
 			proxyType = 1;
 			remoteGlobalIDString = 340650641ADDF8FF00C90CBB;
 			remoteInfo = EvesCRM;
+		};
+		342CA6B41B26C79B006FEAED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 342CA6941B26C79B006FEAED /* GTL.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4F38F6A60B66E91D00B24B81;
+			remoteInfo = GTLFramework;
+		};
+		342CA6B61B26C79B006FEAED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 342CA6941B26C79B006FEAED /* GTL.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4F12027C11A4CA2F00BEB470;
+			remoteInfo = GTLTouchStaticLib;
+		};
+		342CA6B81B26C79B006FEAED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 342CA6941B26C79B006FEAED /* GTL.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4F12027D11A4CA2F00BEB470;
+			remoteInfo = GTLUnitTests;
+		};
+		342CA6BA1B26C79B006FEAED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 342CA6941B26C79B006FEAED /* GTL.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4F1AD9020B71603F00DC0485;
+			remoteInfo = DevelopmentTestTool;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -156,6 +206,18 @@
 		341F230D1AFB305F00FC2883 /* EvesCRMBridging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EvesCRMBridging.h; sourceTree = "<group>"; };
 		341F230E1AFB560200FC2883 /* DropboxSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DropboxSDK.framework; sourceTree = "<group>"; };
 		341F23111AFC284400FC2883 /* DropboxCoreService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DropboxCoreService.swift; sourceTree = "<group>"; };
+		342CA6941B26C79B006FEAED /* GTL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = GTL.xcodeproj; sourceTree = "<group>"; };
+		342CA6971B26C79B006FEAED /* GTLCommon_Sources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTLCommon_Sources.m; sourceTree = "<group>"; };
+		342CA6981B26C79B006FEAED /* GTLDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTLDefines.h; sourceTree = "<group>"; };
+		342CA6991B26C79B006FEAED /* GTLNetworking_Sources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTLNetworking_Sources.m; sourceTree = "<group>"; };
+		342CA69A1B26C79B006FEAED /* Objects */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Objects; sourceTree = "<group>"; };
+		342CA69B1B26C79B006FEAED /* GoogleResources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = GoogleResources; sourceTree = "<group>"; };
+		342CA69C1B26C79B006FEAED /* Services */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Services; sourceTree = "<group>"; };
+		342CA69D1B26C79B006FEAED /* Tests */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Tests; sourceTree = "<group>"; };
+		342CA69E1B26C79B006FEAED /* Tools */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Tools; sourceTree = "<group>"; };
+		342CA69F1B26C79B006FEAED /* Utilities */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Utilities; sourceTree = "<group>"; };
+		342CA6BC1B26CE6F006FEAED /* Source */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Source; sourceTree = "<group>"; };
+		342CA6BF1B26D0B3006FEAED /* gtm-oauth2-master */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "gtm-oauth2-master"; sourceTree = "<group>"; };
 		344F22691AF1DC20002C373E /* ENSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ENSDK.framework; sourceTree = "<group>"; };
 		344F226A1AF1DC20002C373E /* ENSDKResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ENSDKResources.bundle; sourceTree = "<group>"; };
 		344F226D1AF1DD04002C373E /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
@@ -231,6 +293,7 @@
 		34A1831B1B0EDBB400FC369D /* UrlHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UrlHelper.h; sourceTree = "<group>"; };
 		34A1831C1B0EDBB400FC369D /* UrlHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UrlHelper.m; sourceTree = "<group>"; };
 		34B525381B130F1C00093250 /* oneNote.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = oneNote.swift; sourceTree = "<group>"; };
+		34B9C0101B26BA70005E52F9 /* gMail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = gMail.swift; sourceTree = "<group>"; };
 		34BDECA81B0086D3008C9F3F /* EvesCRM 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 3.xcdatamodel"; sourceTree = "<group>"; };
 		34BDECA91B008846008C9F3F /* displayPanes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = displayPanes.swift; sourceTree = "<group>"; };
 		34BDECAB1B0089CC008C9F3F /* Decodes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Decodes.swift; sourceTree = "<group>"; };
@@ -381,6 +444,7 @@
 				34F199BB1AF6046A00963ABF /* EvesCRM.entitlements */,
 				3406506A1ADDF8FF00C90CBB /* AppDelegate.swift */,
 				3406506F1ADDF8FF00C90CBB /* ViewController.swift */,
+				342CA6931B26C761006FEAED /* Google */,
 				340650711ADDF8FF00C90CBB /* Main.storyboard */,
 				340650741ADDF8FF00C90CBB /* Images.xcassets */,
 				340650761ADDF8FF00C90CBB /* LaunchScreen.xib */,
@@ -400,6 +464,7 @@
 				341E08C61B01B1B90036202D /* settingsViewController.swift */,
 				34FED38C1B044BF1006B414C /* maintainPanes.swift */,
 				34B525381B130F1C00093250 /* oneNote.swift */,
+				34B9C0101B26BA70005E52F9 /* gMail.swift */,
 			);
 			path = EvesCRM;
 			sourceTree = "<group>";
@@ -427,6 +492,36 @@
 				340650821ADDF8FF00C90CBB /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		342CA6931B26C761006FEAED /* Google */ = {
+			isa = PBXGroup;
+			children = (
+				342CA6BF1B26D0B3006FEAED /* gtm-oauth2-master */,
+				342CA6BC1B26CE6F006FEAED /* Source */,
+				342CA6941B26C79B006FEAED /* GTL.xcodeproj */,
+				342CA6971B26C79B006FEAED /* GTLCommon_Sources.m */,
+				342CA6981B26C79B006FEAED /* GTLDefines.h */,
+				342CA6991B26C79B006FEAED /* GTLNetworking_Sources.m */,
+				342CA69A1B26C79B006FEAED /* Objects */,
+				342CA69B1B26C79B006FEAED /* GoogleResources */,
+				342CA69C1B26C79B006FEAED /* Services */,
+				342CA69D1B26C79B006FEAED /* Tests */,
+				342CA69E1B26C79B006FEAED /* Tools */,
+				342CA69F1B26C79B006FEAED /* Utilities */,
+			);
+			name = Google;
+			sourceTree = "<group>";
+		};
+		342CA6951B26C79B006FEAED /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				342CA6B51B26C79B006FEAED /* GTL.framework */,
+				342CA6B71B26C79B006FEAED /* libGTLTouchStaticLib.a */,
+				342CA6B91B26C79B006FEAED /* GTLUnitTests.xctest */,
+				342CA6BB1B26C79B006FEAED /* DevelopmentTestTool */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -502,6 +597,12 @@
 			mainGroup = 3406505C1ADDF8FF00C90CBB;
 			productRefGroup = 340650661ADDF8FF00C90CBB /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 342CA6951B26C79B006FEAED /* Products */;
+					ProjectRef = 342CA6941B26C79B006FEAED /* GTL.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				340650641ADDF8FF00C90CBB /* EvesCRM */,
@@ -510,18 +611,57 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXReferenceProxy section */
+		342CA6B51B26C79B006FEAED /* GTL.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = GTL.framework;
+			remoteRef = 342CA6B41B26C79B006FEAED /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		342CA6B71B26C79B006FEAED /* libGTLTouchStaticLib.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libGTLTouchStaticLib.a;
+			remoteRef = 342CA6B61B26C79B006FEAED /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		342CA6B91B26C79B006FEAED /* GTLUnitTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = GTLUnitTests.xctest;
+			remoteRef = 342CA6B81B26C79B006FEAED /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		342CA6BB1B26C79B006FEAED /* DevelopmentTestTool */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = DevelopmentTestTool;
+			remoteRef = 342CA6BA1B26C79B006FEAED /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
 /* Begin PBXResourcesBuildPhase section */
 		340650631ADDF8FF00C90CBB /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				342CA6AA1B26C79B006FEAED /* Tests in Resources */,
+				342CA6AE1B26C79B006FEAED /* Utilities in Resources */,
+				342CA6A81B26C79B006FEAED /* Services in Resources */,
 				340650731ADDF8FF00C90CBB /* Main.storyboard in Resources */,
+				342CA6C01B26D0B3006FEAED /* gtm-oauth2-master in Resources */,
+				342CA6A41B26C79B006FEAED /* Objects in Resources */,
 				34A182F61B0EDB5C00FC369D /* LiveAuthDialog_iPad.xib in Resources */,
 				344F226C1AF1DC20002C373E /* ENSDKResources.bundle in Resources */,
+				342CA6BD1B26CE6F006FEAED /* Source in Resources */,
+				342CA6AC1B26C79B006FEAED /* Tools in Resources */,
 				340650781ADDF8FF00C90CBB /* LaunchScreen.xib in Resources */,
 				34A1830A1B0EDB5C00FC369D /* Resources_OneNote in Resources */,
 				34A182F81B0EDB5C00FC369D /* LiveAuthDialog_iPhone.xib in Resources */,
 				340650751ADDF8FF00C90CBB /* Images.xcassets in Resources */,
+				342CA6A61B26C79B006FEAED /* GoogleResources in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -529,10 +669,18 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				342CA6AB1B26C79B006FEAED /* Tests in Resources */,
 				34A182F71B0EDB5C00FC369D /* LiveAuthDialog_iPad.xib in Resources */,
+				342CA6BE1B26CE6F006FEAED /* Source in Resources */,
+				342CA6A51B26C79B006FEAED /* Objects in Resources */,
+				342CA6AF1B26C79B006FEAED /* Utilities in Resources */,
+				342CA6A71B26C79B006FEAED /* GoogleResources in Resources */,
 				34A182F91B0EDB5C00FC369D /* LiveAuthDialog_iPhone.xib in Resources */,
 				341DD2371AECA9FF001DCF65 /* Main.storyboard in Resources */,
+				342CA6AD1B26C79B006FEAED /* Tools in Resources */,
 				34A1830B1B0EDB5C00FC369D /* Resources_OneNote in Resources */,
+				342CA6C11B26D0B3006FEAED /* gtm-oauth2-master in Resources */,
+				342CA6A91B26C79B006FEAED /* Services in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -545,6 +693,7 @@
 			files = (
 				34A183291B0EDBB400FC369D /* StringHelper.m in Sources */,
 				346B70F91AF75FF4005E1BC2 /* ProjectTeamMembers.swift in Sources */,
+				34B9C0111B26BA70005E52F9 /* gMail.swift in Sources */,
 				34A183041B0EDB5C00FC369D /* LiveDownloadOperationCore.m in Sources */,
 				346D5E021AE5F9C700F858E7 /* CalendarDetails.swift in Sources */,
 				34B525391B130F1C00093250 /* oneNote.swift in Sources */,
@@ -563,8 +712,10 @@
 				340650701ADDF8FF00C90CBB /* ViewController.swift in Sources */,
 				34BDECAA1B008846008C9F3F /* displayPanes.swift in Sources */,
 				346B70F71AF75FF4005E1BC2 /* Roles.swift in Sources */,
+				342CA6A01B26C79B006FEAED /* GTLCommon_Sources.m in Sources */,
 				348E6D4B1ADF74C800697268 /* ContactDetails.swift in Sources */,
 				34A182FC1B0EDB5C00FC369D /* LiveAuthRefreshRequest.m in Sources */,
+				342CA6A21B26C79B006FEAED /* GTLNetworking_Sources.m in Sources */,
 				3406506B1ADDF8FF00C90CBB /* AppDelegate.swift in Sources */,
 				34A1832B1B0EDBB400FC369D /* UrlHelper.m in Sources */,
 				34A183231B0EDBB400FC369D /* LiveAuthHelper.m in Sources */,
@@ -608,7 +759,9 @@
 				3403BA451B02FFEC0043D52C /* settingsViewController.swift in Sources */,
 				34FED38E1B044BF1006B414C /* maintainPanes.swift in Sources */,
 				346D5E031AE5F9C700F858E7 /* CalendarDetails.swift in Sources */,
+				34B9C0121B26BA70005E52F9 /* gMail.swift in Sources */,
 				34A1832A1B0EDBB400FC369D /* StringHelper.m in Sources */,
+				342CA6A31B26C79B006FEAED /* GTLNetworking_Sources.m in Sources */,
 				34BDECAD1B0089CC008C9F3F /* Decodes.swift in Sources */,
 				34A182D31B0EDB3D00FC369D /* LiveConnectClient.m in Sources */,
 				341F23131AFC284400FC2883 /* DropboxCoreService.swift in Sources */,
@@ -630,6 +783,7 @@
 				34A182D51B0EDB3D00FC369D /* LiveConnectSession.m in Sources */,
 				349C4D401B033B6400EC8099 /* Stages.swift in Sources */,
 				34A183201B0EDBB400FC369D /* JsonWriter.m in Sources */,
+				342CA6A11B26C79B006FEAED /* GTLCommon_Sources.m in Sources */,
 				348E6D4C1ADF74C800697268 /* ContactDetails.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
