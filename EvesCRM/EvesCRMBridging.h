@@ -38,20 +38,12 @@
 
 #import "LiveConnectClient.h"
 
-/*
-#import "Library/Public/LiveAuthDelegate.h"
-#import "Library/Public/LiveConnectSession.h"
-#import "Library/Public/LiveDownloadOperation.h"
-#import "Library/Public/LiveDownloadOperationDelegate.h"
-#import "Library/Public/LiveOperationDelegate.h"
-#import "Library/Public/LiveUploadOperationDelegate.h"
-#import "Library/Public/LiveUploadOverwriteOption.h"
-#import "Library/Public/LiveConnectSessionStatus.h"
+// Gmail
 
-#import "Library/Internal/Helpers/LiveApiHelper.h"
-#import "Library/Internal/Helpers/LiveAuthHelper.h"
-#import "Library/Public/LiveConnectClient.h"
-#import "Library/Internal/LiveConnectClientCore.h"
-#import "Library/Internal/LiveConstants.h"
+#import "/Users/garryeves/Documents/xcode/EvesCRM/EvesCRM/Utilities/GTLUtilities.h"
+#import "/Users/garryeves/Documents/xcode/EvesCRM/EvesCRM/Source/GTMHTTPFetcherLogging.h"
+#import "/Users/garryeves/Documents/xcode/EvesCRM/EvesCRM/gtm-oauth2-master/Source/GTMOAuth2Authentication.h"
+#import "/Users/garryeves/Documents/xcode/EvesCRM/EvesCRM/gtm-oauth2-master/Source/GTMOAuth2SignIn.h"
+#import "/Users/garryeves/Documents/xcode/EvesCRM/EvesCRM/gtm-oauth2-master/Source/Touch/GTMOAuth2ViewControllerTouch.h"
 
-*/
+#import <Google/SignIn.h>

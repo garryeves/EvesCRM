@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
 
     var window: UIWindow?
 
@@ -39,6 +39,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         dropboxCoreService.setup()
         
+        // Initialize Google sign-in
+        var configureErr: NSError?
+        GGLContext.sharedInstance().configureWithError(&configureErr)
+        if configureErr != nil {
+            println("Error configuring the Google context: \(configureErr)")
+        }
+        
+        GIDSignIn.sharedInstance().delegate = self
+        
         return true
     }
 
@@ -48,10 +57,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
-
-        return dropboxCoreService.finalizeAuthentication(url)
+println("appdelegate application - source Application = \(sourceApplication)")
+        if sourceApplication == "dropboxCoreService"
+        {
+            return dropboxCoreService.finalizeAuthentication(url)
+        }
+        else
+        {
+            return GIDSignIn.sharedInstance().handleURL(url, sourceApplication: sourceApplication, annotation: annotation)
+        }
     }
-    
     
     func applicationWillResignActive(application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -184,6 +199,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         nc.addObserver(self, selector: "handleStoreChangedUbiquitousContent:",
             name: NSPersistentStoreDidImportUbiquitousContentChangesNotification,
             object: coordinator)
+    }
+    
+    // GRE Added for Google sign in
+    
+    func signIn(signIn: GIDSignIn!, didSignInForUser user: GIDGoogleUser!,
+        withError error: NSError!) {
+            if (error == nil) {
+                // Perform any operations on signed in user here.
+                // ...
+            } else {
+                println("\(error.localizedDescription)")
+            }
+    }
+    func signIn(signIn: GIDSignIn!, didDisconnectWithUser user:GIDGoogleUser!,
+        withError error: NSError!) {
+            // Perform any operations when the user disconnects from app here.
+            // ...
     }
 }
 

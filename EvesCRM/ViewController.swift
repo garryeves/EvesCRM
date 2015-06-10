@@ -95,9 +95,10 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     var myProjectName: String = ""
     var omniTableToRefresh: String = ""
     var oneNoteTableToRefresh: String = ""
+    var gmailTableToRefresh: String = ""
+
     var oneNoteLinkArray: [String] = Array()
     var omniLinkArray: [String] = Array()
-    
     
     let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
     
@@ -117,6 +118,9 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     
     // OneNote
     var myOneNoteNotebooks: oneNoteNotebooks!
+
+    // Gmail
+    var myGmailMessages: gmailMessages!
 
     // Peoplepicker settings
     
@@ -648,16 +652,9 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             case "GMail":
                 writeRowToArray("Loading GMail messages.  Pane will refresh when finished", &workArray)
  // GAZA
-         //       oneNoteTableToRefresh = inTable
+                gmailTableToRefresh = inTable
             
-         //       if myOneNoteNotebooks == nil
-         //       {
-         //           myOneNoteNotebooks = oneNoteNotebooks(inViewController: self)
-         //       }
-         //       else
-         //       {
-         //           OneNoteNotebookGetSections()
-         //       }
+                myGmailMessages = gmailMessages(inViewController: self)
 
             case "Mail":
                 let a = 1

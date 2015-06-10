@@ -8,6 +8,7 @@
 
 import Foundation
 
+
 class gmailMessage: NSObject
 {
     private var mySubject: String = ""
@@ -29,7 +30,7 @@ class gmailMessages: NSObject
 {
     private var myMessages: [gmailMessage] = []
     private var mySourceViewController: UIViewController!
-    private var mygmailData: gmailData!
+    private var myGmailData: gmailData!
     
     var messages: [gmailMessage]
         {
@@ -42,20 +43,26 @@ class gmailMessages: NSObject
     init(inViewController: UIViewController)
     {
         super.init()
+        mySourceViewController = inViewController
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "gmailConnected:", name:"NotificationGmailConnected", object: nil)
-        
-        if mygmailData != nil
+println("In gmailMessages init")
+        if myGmailData != nil
         {
-            if !mygmailData.connected
+println("In gmailMessages not nil")
+            if !myGmailData.connected
             {
-                mygmailData = gmailData()
-                mygmailData.sourceViewController = inViewController
+println("In gmailMessages not connected")
+                myGmailData = gmailData()
+                myGmailData.sourceViewController = inViewController
+                myGmailData.connectToGmail()
             }
         }
         else
         {
-            mygmailData = gmailData()
-            mygmailData.sourceViewController = inViewController
+println("In gmailMessages nil")
+            myGmailData = gmailData()
+            myGmailData.sourceViewController = inViewController
+            myGmailData.connectToGmail()
         }
     }
     
@@ -186,14 +193,17 @@ class gmailMessages: NSObject
     }
 }
 
-class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate
+class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate, GIDSignInUIDelegate
 {
 //    var liveClient: LiveConnectClient!
     // Set the CLIENT_ID value to be the one you get from http://manage.dev.live.com/
-    private let CLIENT_ID = "mygmailData";//@"%CLIENT_ID%";
+    private let CLIENT_ID = "mygmailData"
     private let gmailSecret = "USKddrDHh2aL6C2rzQGmrYku"
-    
+    private let kKeychainItemName = "OAuth Sample: Google Mail"
+    private let kShouldSaveInKeychainKey = "shouldSaveInKeychain"
     private var mySourceViewController: UIViewController!
+    
+    private var auth: GTMOAuth2Authentication!
     
     private var myGmailConnected: Bool = false
     
@@ -219,15 +229,163 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate
             return myGmailConnected
         }
     }
-    override init()
+  
+    func shouldSaveInKeychain() -> Bool
     {
-        super.init()
+        var defaults: NSUserDefaults = NSUserDefaults.standardUserDefaults()
+        let flag = defaults.boolForKey(kShouldSaveInKeychainKey)
+        return flag
+    }
+    
+    func connectToGmail()
+    {
+        println("In gmailData init")
         if !myGmailConnected
         {
-//            if liveClient == nil
-//            {
-//                liveClient = LiveConnectClient(clientId: CLIENT_ID, scopes:OneNoteScopeText, delegate:self, userState: "init")
-//            }
+            
+            println("In gmailData before Auth")
+            auth = GTMOAuth2ViewControllerTouch.authForGoogleFromKeychainForName(kKeychainItemName, clientID: CLIENT_ID, clientSecret: gmailSecret)
+            
+            
+            if auth.canAuthorize
+            {
+                println("In gmailData in canAuthorise")
+                // Select the Google service segment
+                //             self.serviceSegments.selectedSegmentIndex = 0;
+            }
+            else
+            {
+                
+                GIDSignIn.sharedInstance().uiDelegate = self
+                
+                // Uncomment to automatically sign in the user.
+                GIDSignIn.sharedInstance().signIn()
+                
+              //  GIDSignIn.sharedInstance().signInSilently()
+
+                
+                
+    /*
+                
+                var signIn = GPPSignIn.sharedInstance();
+                signIn.shouldFetchGooglePlusUser = true;
+                signIn.clientID = kClientId;
+                signIn.shouldFetchGoogleUserEmail = toggleFetchEmail.on;
+                signIn.shouldFetchGoogleUserID = toggleFetchUserID.on;
+                signIn.scopes = [kGTLAuthScopePlusLogin];
+                signIn.trySilentAuthentication();
+                signIn.delegate = self;
+
+                
+      */
+                
+                
+                
+                
+                
+                
+        /*
+                
+                
+                
+                // Not connected, so go ahead and sign in
+                var keychainItemName: String = ""
+                
+                if shouldSaveInKeychain()
+                {
+                    keychainItemName = kKeychainItemName
+                }
+                
+                // For Google APIs, the scope strings are available
+                // in the service constant header files.
+                
+                let scope = "https://www.googleapis.com/auth/gmail.readonly"
+                
+                // Note:
+                // GTMOAuth2ViewControllerTouch is not designed to be reused. Make a new
+                // one each time you are going to show it.
+                
+                // Display the autentication view.
+                
+                let finishedSel: Selector = Selector("authentication:finishedWithAuth:error:")
+                
+                
+                let oauthController: GTMOAuth2ViewControllerTouch = createAuthController();
+                
+                
+                oauthController.navigationItem.leftBarButtonItem = backButton;
+                self.navigationController.pushViewController(oauthController, animated: true)
+                
+                
+                let viewController = GTMOAuth2ViewControllerTouch(scope: scope, clientID: CLIENT_ID, clientSecret: gmailSecret,keychainItemName: keychainItemName, delegate: self, finishedSelector:finishedSel)
+                
+                // You can set the title of the navigationItem of the controller here, if you
+                // want.
+                
+                // If the keychainItemName is not nil, the user's authorization information
+                // will be saved to the keychain. By default, it saves with accessibility
+                // kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly, but that may be
+                // customized here. For example,
+                //
+                //   viewController.keychainItemAccessibility = kSecAttrAccessibleAlways;
+                
+                // During display of the sign-in window, loss and regain of network
+                // connectivity will be reported with the notifications
+                // kGTMOAuth2NetworkLost/kGTMOAuth2NetworkFound
+                //
+                // See the method signInNetworkLostOrFound: for an example of handling
+                // the notification.
+                
+                // Optional: Google servers allow specification of the sign-in display
+                // language as an additional "hl" parameter to the authorization URL,
+                // using BCP 47 language codes.
+                //
+                // For this sample, we'll force English as the display language.
+                
+                
+                var params: NSDictionary = NSDictionary(object: "en", forKey: "hl")
+                
+                viewController.signIn.additionalAuthorizationParameters = params as [NSObject : AnyObject]
+                
+                // By default, the controller will fetch the user's email, but not the rest of
+                // the user's profile.  The full profile can be requested from Google's server
+                // by setting this property before sign-in:
+                //
+                //   viewController.signIn.shouldFetchGoogleUserProfile = YES;
+                //
+                // The profile will be available after sign-in as
+                //
+                //   NSDictionary *profile = viewController.signIn.userProfile;
+                
+                // Optional: display some html briefly before the sign-in page loads
+                let html = "<html><body bgcolor=silver><div align=center>Loading sign-in page...</div></body></html>"
+                viewController.initialHTMLString = html
+                
+                
+                //      self.navigationController!.pushViewController(self.storyboard!.instantiateViewControllerWithIdentifier("view2") as UIViewController, animated: true)
+                mySourceViewController.presentViewController(viewController, animated: true, completion: nil)
+                
+                
+                //     self.pushViewController(viewController, animated:true)
+                
+                // The view controller will be popped before signing in has completed, as
+                // there are some additional fetches done by the sign-in controller.
+                // The kGTMOAuth2UserSignedIn notification will be posted to indicate
+                // that the view has been popped and those additional fetches have begun.
+                // It may be useful to display a temporary UI when kGTMOAuth2UserSignedIn is
+                // posted, just until the finished selector is invoked.
+
+*/
+            }
+            println("In gmailData Done")
+            //self.plusService.authorizer = auth;
+            
+
+            
+            //            if liveClient == nil
+            //            {
+            //                liveClient = LiveConnectClient(clientId: CLIENT_ID, scopes:OneNoteScopeText, delegate:self, userState: "init")
+            //            }
         }
     }
     
@@ -304,4 +462,23 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate
     }
 
 */
+    
+    // Stop the UIActivityIndicatorView animation that was started when the user
+    // pressed the Sign In button
+    func signInWillDispatch(signIn: GIDSignIn!, error: NSError!)
+    {
+     //   myActivityIndicator.stopAnimating()
+    }
+    
+    // Present a view that prompts the user to sign in with Google
+    func signIn(signIn: GIDSignIn!, presentViewController viewController: UIViewController!)
+    {
+            mySourceViewController.presentViewController(viewController, animated: true, completion: nil)
+    }
+    
+    // Dismiss the "Sign in with Google" view
+    func signIn(signIn: GIDSignIn!, dismissViewController viewController: UIViewController!)
+    {
+            mySourceViewController.dismissViewControllerAnimated(true, completion: nil)
+    }
 }
