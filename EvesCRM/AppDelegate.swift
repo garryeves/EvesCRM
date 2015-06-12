@@ -208,9 +208,11 @@ println("appdelegate application - source Application = \(sourceApplication)")
             if (error == nil) {
                 // Perform any operations on signed in user here.
                 // ...
+                
             } else {
                 println("\(error.localizedDescription)")
             }
+            NSNotificationCenter.defaultCenter().postNotificationName("NotificationGmailSignedIn", object: nil)
     }
     func signIn(signIn: GIDSignIn!, didDisconnectWithUser user:GIDGoogleUser!,
         withError error: NSError!) {

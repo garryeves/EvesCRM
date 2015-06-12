@@ -651,11 +651,34 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             
             case "GMail":
                 writeRowToArray("Loading GMail messages.  Pane will refresh when finished", &workArray)
- // GAZA
+
                 gmailTableToRefresh = inTable
             
-                myGmailMessages = gmailMessages(inViewController: self)
+                if myDisplayType == "Project"
+                {
+                    if myGmailMessages == nil
+                    {
+                        myGmailMessages = gmailMessages(inViewController: self, inString: myProjectName)
+                    }
+                    else
+                    {
+                        myGmailMessages.getMessages(myProjectName)
+                    }
+                }
+                else
+                {
+                    let searchString = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+                    if myGmailMessages == nil
+                    {
+                        myGmailMessages = gmailMessages(inViewController: self, inString: searchString)
+                    }
+                    else
+                    {
+                        myGmailMessages.getMessages(searchString)
+                    }
+                }
 
+            
             case "Mail":
                 let a = 1
             

@@ -12,6 +12,12 @@ import Foundation
 class gmailMessage: NSObject
 {
     private var mySubject: String = ""
+    private var myFrom: String = ""
+    private var myTo: String = ""
+    private var myDate: String = ""
+    private var myID: String = ""
+    private var myThreadId: String = ""
+    private var mySnippet: String = ""
     
     var subject: String
     {
@@ -19,65 +25,78 @@ class gmailMessage: NSObject
         {
             return mySubject
         }
-        set
-        {
-            mySubject = newValue
-        }
     }
-}
-
-class gmailMessages: NSObject
-{
-    private var myMessages: [gmailMessage] = []
-    private var mySourceViewController: UIViewController!
-    private var myGmailData: gmailData!
     
-    var messages: [gmailMessage]
+    var id: String
         {
         get
         {
-            return myMessages
+            return myID
+        }
+        set
+        {
+            myID = newValue
         }
     }
     
-    init(inViewController: UIViewController)
-    {
-        super.init()
-        mySourceViewController = inViewController
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "gmailConnected:", name:"NotificationGmailConnected", object: nil)
-println("In gmailMessages init")
-        if myGmailData != nil
+    var threadId: String
         {
-println("In gmailMessages not nil")
-            if !myGmailData.connected
-            {
-println("In gmailMessages not connected")
-                myGmailData = gmailData()
-                myGmailData.sourceViewController = inViewController
-                myGmailData.connectToGmail()
-            }
+        get
+        {
+            return myThreadId
         }
-        else
+        set
         {
-println("In gmailMessages nil")
-            myGmailData = gmailData()
-            myGmailData.sourceViewController = inViewController
-            myGmailData.connectToGmail()
+            myThreadId = newValue
         }
     }
-    
-    func gmailConnected(notification: NSNotification)
+
+    var snippet: String
+        {
+        get
+        {
+            return mySnippet
+        }
+    }
+
+    var from: String
+        {
+        get
+        {
+            return myFrom
+        }
+    }
+
+    var to: String
+        {
+        get
+        {
+            return myTo
+        }
+    }
+
+    var dateReceived: String
+        {
+        get
+        {
+            return myDate
+        }
+    }
+
+    func populateMessage(inData: gmailData)
     {
- //       myOneNoteData.QueryType = "Notebooks"
- //       let myReturnString = myOneNoteData.getData("https://www.onenote.com/api/v1.0/notebooks")
-//        splitString(myReturnString)
-//        NSNotificationCenter.defaultCenter().postNotificationName("NotificationOneNoteNotebooksLoaded", object: nil)
+        // Make call to get the full details of the message
+        
+        var workingString = "https://www.googleapis.com/gmail/v1/users/me/messages/\(myID)?format=full"
+        
+        let myString = inData.getData(workingString)
+        
+       splitString(myString)
     }
     
     private func splitString(inString: String)
     {
-
-/*
+        
         var processedFileHeader: Bool = false
         var oneNoteDataType: String = ""
         var firstItem2: Bool = true
@@ -85,23 +104,167 @@ println("In gmailMessages nil")
         // we need to do a bit of "dodgy" working, I want to be able to split strings based on :, but : is natural in dates and URTLs. so need to change it to seomthign esle,
         //string out the : data and then change back
         
-        let fixedString = fixStringForSearch(inString)
+        let tempStr1 = inString.stringByReplacingOccurrencesOfString("])", withString: ")")
+        let tempStr2 = tempStr1.stringByReplacingOccurrencesOfString("],", withString: "]")
+        let tempStr3 = tempStr2.stringByReplacingOccurrencesOfString("u003e,", withString: "u003ep")
         
-        let split = fixedString.componentsSeparatedByString("isDefault")
+        let split = tempStr3.componentsSeparatedByString("]")
+        var passNum: Int = 1
+
+        for myItem in split
+        {
+//println("check \(myItem)")
+            if passNum == 1
+            {
+                // This is a wrapper portion so we do nothing
+            }
+            
+            if passNum == 2
+            {
+//println("Header")
+                let split2 = myItem.componentsSeparatedByString("\"headers\": [")
+                
+                var pass2Num: Int = 1
+                for myItem2 in split2
+                {
+                    // lets get rid of the "
+                    let tempPassStr = myItem2.stringByReplacingOccurrencesOfString("\"\"", withString: "\".\"")
+                    
+                    if pass2Num == 1
+                    {
+                        let split3 = tempPassStr.componentsSeparatedByString("\",")
+                        for myItem3 in split3
+                        {
+                            if myItem3.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()) != ""
+                            {
+                                let split4 = myItem3.componentsSeparatedByString("\":")
+                                var keyString = split4[0].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                                let keyString2 = keyString.stringByReplacingOccurrencesOfString("\"", withString: "")
+                                var valueString = split4[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                                let valueString2 = valueString.stringByReplacingOccurrencesOfString("\"", withString: "")
+                            
+                                if keyString2 == "snippet"
+                                {
+                                    mySnippet = valueString2
+                                }
+                            }
+                        }
+                    }
+                    
+                    if pass2Num == 2
+                    {
+println("Item2 = \(tempPassStr)")
+                        
+                        let temp2Pass = tempPassStr.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                        let temp2Pass1 = temp2Pass.stringByReplacingOccurrencesOfString("},", withString: ",")
+                        let temp2Pass2 = temp2Pass1.stringByReplacingOccurrencesOfString("}", withString: "")
+                        let temp2Pass3 = temp2Pass2.stringByReplacingOccurrencesOfString("{", withString: "")
+                        
+                        // Dates have a comma so need to get rid of them
+                        
+                        let temp2Pass4 = temp2Pass3.stringByReplacingOccurrencesOfString("Mon,", withString: "Mon")
+                        let temp2Pass5 = temp2Pass4.stringByReplacingOccurrencesOfString("Tue,", withString: "Tue")
+                        let temp2Pass6 = temp2Pass5.stringByReplacingOccurrencesOfString("Wed,", withString: "Wed")
+                        let temp2Pass7 = temp2Pass6.stringByReplacingOccurrencesOfString("Thu,", withString: "Thu")
+                        let temp2Pass8 = temp2Pass7.stringByReplacingOccurrencesOfString("Fri,", withString: "Fri")
+                        let temp2Pass9 = temp2Pass8.stringByReplacingOccurrencesOfString("Sat,", withString: "Sat")
+                        let temp2Pass10 = temp2Pass9.stringByReplacingOccurrencesOfString("Sun,", withString: "Sun")
+                        let temp2Pass11 = temp2Pass10.stringByReplacingOccurrencesOfString("to:", withString: "to")
+                        let temp2Pass12 = temp2Pass11.stringByReplacingOccurrencesOfString("http:", withString: "http")
+                        let temp2Pass13 = temp2Pass12.stringByReplacingOccurrencesOfString("https:", withString: "https")
+                        let temp2Pass14 = temp2Pass13.stringByReplacingOccurrencesOfString(", ", withString: " ")
+
+                        let split3 = temp2Pass14.componentsSeparatedByString(",")
+                        var split3Pass1: Bool = true
+                        var keyString2: String = ""
+                        var valueString2: String = ""
+                        for myItem3 in split3
+                        {
+                            let stripSpaces = myItem3.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                            if stripSpaces != ""
+                            {
+println("Item3 = \(stripSpaces)")
+                                let split4 = stripSpaces.componentsSeparatedByString("\":")
+                                
+                                if split3Pass1
+                                {
+                                    // Item is the key
+                                    var keyString = split4[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                                    keyString2 = keyString.stringByReplacingOccurrencesOfString("\"", withString: "")
+                                    split3Pass1 = false
+                                }
+                                else
+                                {
+                                    var valueString = split4[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                                    valueString2 = valueString.stringByReplacingOccurrencesOfString("\"", withString: "")
+                                 
+println("Key = \(keyString2) - value = \(valueString2)")
+                                    switch keyString2
+                                    {
+                                        case "Subject":
+                                            mySubject = valueString2
+                                        
+                                        case "From":
+                                            myFrom = valueString2
+                                        
+                                        case "To":
+                                            myTo = valueString2
+                                        
+                                        case "Date":
+                                            myDate = valueString2
+                                        
+                                        default:
+                                            let a = 1
+                                        
+                                    }
+                                    
+                                    keyString2 = ""
+                                    valueString2 = ""
+                                    
+                                    split3Pass1 = true
+                                }
+                            }
+                        }
+                    }
+                    pass2Num = pass2Num + 1
+                }
+            }
+
+            if passNum == 3
+            {
+                // Body part 1 - at moment do nothing
+            }
+
+            if passNum == 4
+            {
+                // Body part 2 - at moment do nothing
+            }
+
+            if passNum == 5
+            {
+ //println("Message body")
+
+                //var escapedAddress = mySearchTerm.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
+//println("Item = dddd\(myItem)dddd")
+            }
+
+            passNum = passNum + 1
+        }
+println("All done")
+        /*
+
+        let tempStr1 = inString.stringByReplacingOccurrencesOfString("},", withString: "")
+        let tempStr2 = tempStr1.stringByReplacingOccurrencesOfString("}", withString: "")
+        let tempStr3 = tempStr2.stringByReplacingOccurrencesOfString("],", withString: "")
+        let tempStr4 = tempStr3.stringByReplacingOccurrencesOfString("\"", withString: "")
         
-        myNotebooks = Array()
+        let split = tempStr4.componentsSeparatedByString("{")
         
         for myItem in split
         {
             if !processedFileHeader
             {
-                if myItem.lowercaseString.rangeOfString("http") != nil
-                {
-                    if myItem.lowercaseString.rangeOfString("notebooks") != nil
-                    {
-                        oneNoteDataType = "notebooks"
-                    }
-                }
+                // Ignore the first line, it is a header
                 processedFileHeader = true
             }
             else
@@ -109,7 +272,7 @@ println("In gmailMessages nil")
                 // need to further split the items into its component parts
                 let split2 = myItem.componentsSeparatedByString(",")
                 firstItem2 = true
-                let myNotebook = oneNoteNotebook()
+
                 for myItem2 in split2
                 {
                     var split3: [String]
@@ -139,43 +302,193 @@ println("In gmailMessages nil")
                         split3 = myItem2.componentsSeparatedByString(":")
                     }
                     
-                    // now split each of these into value pairs - how to store?  Maybe in a Collection??
+                    var keyString = split3[0].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                    var valueString = split3[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
                     
-                    switch split3[0]
+                    // now split each of these into value pairs - how to store?  Maybe in a Collection??
+ 
+                    switch keyString
                     {
-                    case "sectionsUrl" :
-                        myNotebook.sectionsUrl = returnSearchStringToNormal(split3[1])
-                        
-                    case "sectionsGroupsUrl" :
-                        myNotebook.sectionsUrl = returnSearchStringToNormal(split3[1])
-                        
-                    case "name" :
-                        myNotebook.name = returnSearchStringToNormal(split3[1])
-                        
-                    case "lastModifiedTime" :
-                        myNotebook.lastModifiedTime = returnSearchStringToNormal(split3[1])
-                        
                     case "id" :
-                        myNotebook.id = returnSearchStringToNormal(split3[1])
+                        myMessage.id = valueString
                         
-                    case "self" :
-                        myNotebook.urlCallback = returnSearchStringToNormal(split3[1])
+                    case "threadId" :
+                        myMessage.threadId = valueString
                         
                     default:
                         let a = 1
                     }
                 }
-                myNotebooks.append(myNotebook)
+                
+            }
+     }
+*/
+    }
+}
+
+class gmailMessages: NSObject
+{
+    private var myMessages: [gmailMessage] = []
+    private var mySourceViewController: UIViewController!
+    private var myGmailData: gmailData!
+    private var myInString: String = ""
+    
+    var messages: [gmailMessage]
+        {
+        get
+        {
+            return myMessages
+        }
+    }
+    
+    init(inViewController: UIViewController, inString: String)
+    {
+        super.init()
+        mySourceViewController = inViewController
+        myInString = inString
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "gmailSignedIn:", name:"NotificationGmailConnected", object: nil)
+        if myGmailData != nil
+        {
+            if !myGmailData.connected
+            {
+                myGmailData = gmailData()
+                myGmailData.sourceViewController = inViewController
+                myGmailData.connectToGmail()
             }
         }
-*/
+        else
+        {
+            myGmailData = gmailData()
+            myGmailData.sourceViewController = inViewController
+            myGmailData.connectToGmail()
+        }
+    }
+    
+    func getMessages(inString: String)
+    {
+        // this is used to get the messages
+        
+        var workingString = "https://www.googleapis.com/gmail/v1/users/me/messages"
+        
+        let myString = myGmailData.getData(workingString)
+        
+        splitString(myString)
+    }
+    
+    func gmailSignedIn(notification: NSNotification)
+    {
+        getMessages(myInString)
+    }
+    
+    private func splitString(inString: String)
+    {
+
+        var processedFileHeader: Bool = false
+        var oneNoteDataType: String = ""
+        var firstItem2: Bool = true
+        
+        // we need to do a bit of "dodgy" working, I want to be able to split strings based on :, but : is natural in dates and URTLs. so need to change it to seomthign esle,
+        //string out the : data and then change back
+        
+        let tempStr1 = inString.stringByReplacingOccurrencesOfString("},", withString: "")
+        let tempStr2 = tempStr1.stringByReplacingOccurrencesOfString("}", withString: "")
+        let tempStr3 = tempStr2.stringByReplacingOccurrencesOfString("],", withString: "")
+        let tempStr4 = tempStr3.stringByReplacingOccurrencesOfString("\"", withString: "")
+
+        let split = tempStr4.componentsSeparatedByString("{")
+        
+        myMessages = Array()
+        
+        for myItem in split
+        {
+            if !processedFileHeader
+            {
+                // Ignore the first line, it is a header
+                processedFileHeader = true
+            }
+            else
+            {
+                // need to further split the items into its component parts
+                let split2 = myItem.componentsSeparatedByString(",")
+                firstItem2 = true
+                let myMessage = gmailMessage()
+                for myItem2 in split2
+                {
+                    var split3: [String]
+                    
+                    if firstItem2
+                    {  // strip out characters upto and including the first comma
+                        let end = advance(myItem2.endIndex, -1)
+                        let start = find(myItem2, ",")
+                        
+                        var selectedString: String = ""
+                        
+                        if start != nil
+                        {
+                            let myStart = start?.successor()
+                            selectedString = myItem2[myStart!...end]
+                        }
+                        else
+                        { // no space found
+                            selectedString = myItem2
+                        }
+                        
+                        split3 = selectedString.componentsSeparatedByString(":")
+                        firstItem2 = false
+                    }
+                    else
+                    {
+                        split3 = myItem2.componentsSeparatedByString(":")
+                    }
+
+                    var keyString = split3[0].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                    var valueString = split3[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                    
+                    // now split each of these into value pairs - how to store?  Maybe in a Collection??
+
+                    switch keyString
+                    {
+                    case "id" :
+                        myMessage.id = valueString
+                        
+                    case "threadId" :
+                        myMessage.threadId = valueString
+                        
+                    default:
+                        let a = 1
+                    }
+                }
+                
+                if myMessage.id != ""
+                {
+                    myMessages.append(myMessage)
+                }
+            }
+        }
+        
+        // Make call to populate Messages with full details
+ //var t1 = 0
+        for myMessage in myMessages
+        {
+//if t1 == 0
+//{
+            myMessage.populateMessage(myGmailData)
+//t1 = 2
+//}
+            }
+        
+        listMessages()
     }
     
     func listMessages()
     {
         for myMessage in myMessages
         {
-            println("subject - \(myMessage.subject)")
+            println("id = \(myMessage.id) - subject - \(myMessage.subject)")
+            println("from = \(myMessage.from) - to - \(myMessage.to)")
+            println("sent = \(myMessage.dateReceived)")
+            
+            
             println("\n\n")
         }
     }
@@ -197,13 +510,14 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
 {
 //    var liveClient: LiveConnectClient!
     // Set the CLIENT_ID value to be the one you get from http://manage.dev.live.com/
-    private let CLIENT_ID = "mygmailData"
+    private let CLIENT_ID = "344184320417-h2nr89gi0ji02tbcs7f7kpj0kevuhq6f.apps.googleusercontent.com"
     private let gmailSecret = "USKddrDHh2aL6C2rzQGmrYku"
     private let kKeychainItemName = "OAuth Sample: Google Mail"
     private let kShouldSaveInKeychainKey = "shouldSaveInKeychain"
     private var mySourceViewController: UIViewController!
     
     private var auth: GTMOAuth2Authentication!
+    private var currentUser: GIDGoogleUser!
     
     private var myGmailConnected: Bool = false
     
@@ -230,6 +544,12 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
         }
     }
   
+    override init()
+    {
+        super.init()
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "gmailSignedIn:", name:"NotificationGmailSignedIn", object: nil)
+    }
+    
     func shouldSaveInKeychain() -> Bool
     {
         var defaults: NSUserDefaults = NSUserDefaults.standardUserDefaults()
@@ -239,229 +559,60 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
     
     func connectToGmail()
     {
-        println("In gmailData init")
-        if !myGmailConnected
+        if currentUser == nil
         {
-            
-            println("In gmailData before Auth")
-            auth = GTMOAuth2ViewControllerTouch.authForGoogleFromKeychainForName(kKeychainItemName, clientID: CLIENT_ID, clientSecret: gmailSecret)
-            
-            
-            if auth.canAuthorize
-            {
-                println("In gmailData in canAuthorise")
-                // Select the Google service segment
-                //             self.serviceSegments.selectedSegmentIndex = 0;
-            }
-            else
-            {
+            GIDSignIn.sharedInstance().uiDelegate = self
                 
-                GIDSignIn.sharedInstance().uiDelegate = self
+            GIDSignIn.sharedInstance().clientID = CLIENT_ID
+            GIDSignIn.sharedInstance().scopes = ["https://www.googleapis.com/auth/gmail.readonly"]
                 
                 // Uncomment to automatically sign in the user.
-                GIDSignIn.sharedInstance().signIn()
-                
-              //  GIDSignIn.sharedInstance().signInSilently()
-
-                
-                
-    /*
-                
-                var signIn = GPPSignIn.sharedInstance();
-                signIn.shouldFetchGooglePlusUser = true;
-                signIn.clientID = kClientId;
-                signIn.shouldFetchGoogleUserEmail = toggleFetchEmail.on;
-                signIn.shouldFetchGoogleUserID = toggleFetchUserID.on;
-                signIn.scopes = [kGTLAuthScopePlusLogin];
-                signIn.trySilentAuthentication();
-                signIn.delegate = self;
-
-                
-      */
-                
-                
-                
-                
-                
-                
-        /*
-                
-                
-                
-                // Not connected, so go ahead and sign in
-                var keychainItemName: String = ""
-                
-                if shouldSaveInKeychain()
-                {
-                    keychainItemName = kKeychainItemName
-                }
-                
-                // For Google APIs, the scope strings are available
-                // in the service constant header files.
-                
-                let scope = "https://www.googleapis.com/auth/gmail.readonly"
-                
-                // Note:
-                // GTMOAuth2ViewControllerTouch is not designed to be reused. Make a new
-                // one each time you are going to show it.
-                
-                // Display the autentication view.
-                
-                let finishedSel: Selector = Selector("authentication:finishedWithAuth:error:")
-                
-                
-                let oauthController: GTMOAuth2ViewControllerTouch = createAuthController();
-                
-                
-                oauthController.navigationItem.leftBarButtonItem = backButton;
-                self.navigationController.pushViewController(oauthController, animated: true)
-                
-                
-                let viewController = GTMOAuth2ViewControllerTouch(scope: scope, clientID: CLIENT_ID, clientSecret: gmailSecret,keychainItemName: keychainItemName, delegate: self, finishedSelector:finishedSel)
-                
-                // You can set the title of the navigationItem of the controller here, if you
-                // want.
-                
-                // If the keychainItemName is not nil, the user's authorization information
-                // will be saved to the keychain. By default, it saves with accessibility
-                // kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly, but that may be
-                // customized here. For example,
-                //
-                //   viewController.keychainItemAccessibility = kSecAttrAccessibleAlways;
-                
-                // During display of the sign-in window, loss and regain of network
-                // connectivity will be reported with the notifications
-                // kGTMOAuth2NetworkLost/kGTMOAuth2NetworkFound
-                //
-                // See the method signInNetworkLostOrFound: for an example of handling
-                // the notification.
-                
-                // Optional: Google servers allow specification of the sign-in display
-                // language as an additional "hl" parameter to the authorization URL,
-                // using BCP 47 language codes.
-                //
-                // For this sample, we'll force English as the display language.
-                
-                
-                var params: NSDictionary = NSDictionary(object: "en", forKey: "hl")
-                
-                viewController.signIn.additionalAuthorizationParameters = params as [NSObject : AnyObject]
-                
-                // By default, the controller will fetch the user's email, but not the rest of
-                // the user's profile.  The full profile can be requested from Google's server
-                // by setting this property before sign-in:
-                //
-                //   viewController.signIn.shouldFetchGoogleUserProfile = YES;
-                //
-                // The profile will be available after sign-in as
-                //
-                //   NSDictionary *profile = viewController.signIn.userProfile;
-                
-                // Optional: display some html briefly before the sign-in page loads
-                let html = "<html><body bgcolor=silver><div align=center>Loading sign-in page...</div></body></html>"
-                viewController.initialHTMLString = html
-                
-                
-                //      self.navigationController!.pushViewController(self.storyboard!.instantiateViewControllerWithIdentifier("view2") as UIViewController, animated: true)
-                mySourceViewController.presentViewController(viewController, animated: true, completion: nil)
-                
-                
-                //     self.pushViewController(viewController, animated:true)
-                
-                // The view controller will be popped before signing in has completed, as
-                // there are some additional fetches done by the sign-in controller.
-                // The kGTMOAuth2UserSignedIn notification will be posted to indicate
-                // that the view has been popped and those additional fetches have begun.
-                // It may be useful to display a temporary UI when kGTMOAuth2UserSignedIn is
-                // posted, just until the finished selector is invoked.
-
-*/
-            }
-            println("In gmailData Done")
-            //self.plusService.authorizer = auth;
-            
-
-            
-            //            if liveClient == nil
-            //            {
-            //                liveClient = LiveConnectClient(clientId: CLIENT_ID, scopes:OneNoteScopeText, delegate:self, userState: "init")
-            //            }
+            GIDSignIn.sharedInstance().signIn()
         }
     }
     
     func getData(inURLString: String) -> String
     {
-        var myReturnString: String = ""
-        
-        myInString = inURLString
-        
-        if !myGmailConnected
-        {
- //           if liveClient == nil
- //           {
- //               liveClient = LiveConnectClient(clientId: CLIENT_ID, scopes:OneNoteScopeText, delegate:self, userState: "init")
- //           }
-        }
- //       else
-//        {
-//            myReturnString = performGetData(inURLString)
-//        }
-        return myReturnString
-    }
-    
-    private func performGetData(inURLString: String) -> String
-    {
         var response: NSURLResponse?
         var error: NSError?
         var myReturnString: String = ""
         
-  //      myOneNoteFinished = false
- //       var url: NSURL = NSURL(string: inURLString)!
-//        let request = NSMutableURLRequest(URL: url)
-//        request.HTTPMethod = "GET"
-//        request.cachePolicy = NSURLRequestCachePolicy.ReloadIgnoringLocalCacheData
+        // Swap userId for the userd ID
         
-//        if liveClient.session != nil
-//        {
-//            request.setValue("Bearer \(liveClient.session.accessToken)", forHTTPHeaderField: "Authorization")
+ //       let tempStr1 = inURLString.stringByReplacingOccurrencesOfString("userId", withString:GIDSignIn.sharedInstance().currentUser.userID)
+
+        var url: NSURL = NSURL(string: inURLString)!
+        let request = NSMutableURLRequest(URL: url)
+        request.HTTPMethod = "GET"
+        request.cachePolicy = NSURLRequestCachePolicy.ReloadIgnoringLocalCacheData
+        
+        if currentUser != nil
+        {
+            request.setValue("Bearer \(GIDSignIn.sharedInstance().currentUser.authentication.accessToken)", forHTTPHeaderField: "Authorization")
             // Send the HTTP request
             
-//            let result = NSURLConnection.sendSynchronousRequest(request, returningResponse:&response, error:&error)
+            let result = NSURLConnection.sendSynchronousRequest(request, returningResponse:&response, error:&error)
+
+            let httpResponse = response as? NSHTTPURLResponse
             
-//            let httpResponse = response as? NSHTTPURLResponse
+            let status = httpResponse!.statusCode
             
-//            let status = httpResponse!.statusCode
-            
-//            if status == 200
-//            {
+            if status == 200
+            {
                 // this means data was retrieved OK
-//                myReturnString = NSString(data: result!, encoding: NSUTF8StringEncoding) as! String
-//            }
-//            else if status == 201
-//            {
-//                println("oneNoteData: Page created!")
-//            }
-//            else
-//            {
-//                println("oneNoteData: connectionDidFinishLoading: There was an error accessing the OneNote data. Response code: \(status)")
-//            }
- //       }
+                myReturnString = NSString(data: result!, encoding: NSUTF8StringEncoding) as! String
+            }
+            else if status == 201
+            {
+                println("gmailData: Page created!")
+            }
+            else
+            {
+                println("gmailData: getData: There was an error accessing the gmailData data. Response code: \(status)")
+            }
+        }
         return myReturnString
     }
-    
-        /*
-    @objc func authCompleted(status: LiveConnectSessionStatus, session: LiveConnectSession, userState: AnyObject)
-    {
-        if liveClient.session == nil
-        {
-            liveClient.login(mySourceViewController, delegate:self, userState: "login")
-        }
-        
-        myOneNoteConnected = true
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationGmailConnected", object: nil)
-    }
-
-*/
     
     // Stop the UIActivityIndicatorView animation that was started when the user
     // pressed the Sign In button
@@ -480,5 +631,11 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
     func signIn(signIn: GIDSignIn!, dismissViewController viewController: UIViewController!)
     {
             mySourceViewController.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func gmailSignedIn(notification: NSNotification)
+    {
+        currentUser = GIDSignIn.sharedInstance().currentUser
+        NSNotificationCenter.defaultCenter().postNotificationName("NotificationGmailConnected", object: nil)
     }
 }
