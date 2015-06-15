@@ -236,6 +236,8 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "OneNoteNoNotebookFound", name:"NotificationOneNoteNoNotebookFound", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "EvernoteComplete", name:"NotificationEvernoteComplete", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "myEvernoteUserDidFinish", name:"NotificationEvernoteUserDidFinish", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "myGmailDidFinish", name:"NotificationGmailDidFinish", object: nil)
+
     }
 
     override func didReceiveMemoryWarning() {
@@ -667,7 +669,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 }
                 else
                 {
-                    let searchString = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+                    let searchString = (ABRecordCopyCompositeName(self.personSelected).takeRetainedValue() as? String) ?? ""
                     if myGmailMessages == nil
                     {
                         myGmailMessages = gmailMessages(inViewController: self, inString: searchString)
@@ -677,7 +679,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                         myGmailMessages.getMessages(searchString)
                     }
                 }
-
             
             case "Mail":
                 let a = 1
@@ -2244,6 +2245,70 @@ println("Nothing found")
             
             default:
                 println("OneNoteNotebookGetSections: oneNoteTableToRefresh hit default for some reason")
+        }
+    }
+    
+    func myGmailDidFinish()
+    {
+        var myDisplay: [TableData] = Array()
+        
+        for myMessage in myGmailMessages.messages
+        {
+ //           var dateFormat = NSDateFormatterStyle.MediumStyle
+ //           var timeFormat = NSDateFormatterStyle.ShortStyle
+ //           var myDateFormatter = NSDateFormatter()
+ //           myDateFormatter.dateStyle = dateFormat
+ //           myDateFormatter.timeStyle = timeFormat
+            
+ //           let myDate = myDateFormatter.stringFromDate(myMessage.lastModifiedTime)
+            
+            var myString: String = ""
+            
+            myString = "\(myMessage.subject)\n"
+            myString = "From: \(myMessage.from) to: \(myMessage.to)\n"
+            myString += "Sent : \(myMessage.dateReceived)\n"
+            myString += myMessage.snippet
+            writeRowToArray(myString, &myDisplay)
+        }
+        
+        if myDisplay.count == 0
+        {
+            writeRowToArray("No matching GMail Messages found", &myDisplay)
+        }
+        
+        switch gmailTableToRefresh
+        {
+        case "Table1":
+            table1Contents = myDisplay
+            dispatch_async(dispatch_get_main_queue())
+                {
+                    self.dataTable1.reloadData() // reload table/data or whatever here. However you want.
+            }
+            
+        case "Table2":
+            table2Contents = myDisplay
+            dispatch_async(dispatch_get_main_queue())
+                {
+                    self.dataTable2.reloadData() // reload table/data or whatever here. However you want.
+            }
+            
+        case "Table3":
+            table3Contents = myDisplay
+            dispatch_async(dispatch_get_main_queue())
+                {
+                    self.dataTable3.reloadData() // reload table/data or whatever here. However you want.
+            }
+            
+        case "Table4":
+            table4Contents = myDisplay
+            
+            dispatch_async(dispatch_get_main_queue())
+                {
+                    self.dataTable4.reloadData() // reload table/data or whatever here. However you want.
+            }
+            
+        default:
+            println("myGmailDidFinish: myGmailDidFinish hit default for some reason")
         }
     }
 }

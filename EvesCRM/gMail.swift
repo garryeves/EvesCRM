@@ -104,24 +104,40 @@ class gmailMessage: NSObject
         // we need to do a bit of "dodgy" working, I want to be able to split strings based on :, but : is natural in dates and URTLs. so need to change it to seomthign esle,
         //string out the : data and then change back
         
-        let tempStr1 = inString.stringByReplacingOccurrencesOfString("])", withString: ")")
-        let tempStr2 = tempStr1.stringByReplacingOccurrencesOfString("],", withString: "]")
-        let tempStr3 = tempStr2.stringByReplacingOccurrencesOfString("u003e,", withString: "u003ep")
+        let tempStr3 = inString.stringByReplacingOccurrencesOfString("\\u003e,", withString: "")
+        let tempStr4 = tempStr3.stringByReplacingOccurrencesOfString("\\u003c,", withString: "")
+        let tempStr5 = tempStr4.stringByReplacingOccurrencesOfString("\\u003e", withString: "")
+        let tempStr6 = tempStr5.stringByReplacingOccurrencesOfString("\\u003c", withString: "")
+
         
-        let split = tempStr3.componentsSeparatedByString("]")
+        let split = tempStr6.componentsSeparatedByString("],")
         var passNum: Int = 1
+        var messageType : String = "RECEIVED"
 
         for myItem in split
         {
-//println("check \(myItem)")
             if passNum == 1
             {
                 // This is a wrapper portion so we do nothing
+                
+                if myItem.rangeOfString("CHAT") != nil
+                {
+                    //This is a chat so lets ignore it.
+                    messageType = "CHAT"
+                    passNum = 10
+                    mySubject = "DELETEME"
+                }
+                
+                if myItem.rangeOfString("SENT") != nil
+                {
+                    //This is a messgae that ahs been SENT as opposed to received
+                    messageType = "SENT"
+                }
+
             }
             
-            if passNum == 2
+            if passNum == 2 // && messageType == "RECEIVED"
             {
-//println("Header")
                 let split2 = myItem.componentsSeparatedByString("\"headers\": [")
                 
                 var pass2Num: Int = 1
@@ -145,7 +161,13 @@ class gmailMessage: NSObject
                             
                                 if keyString2 == "snippet"
                                 {
-                                    mySnippet = valueString2
+                                    let sDecode1 = valueString2.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
+                                    let sDecode2 = sDecode1.stringByReplacingOccurrencesOfString("&#39;", withString: "'")
+                                    let sDecode3 = sDecode2.stringByReplacingOccurrencesOfString("&quot;", withString: "\"")
+                                    let sDecode4 = sDecode3.stringByReplacingOccurrencesOfString("&lt;", withString: "<")
+                                    let sDecode5 = sDecode4.stringByReplacingOccurrencesOfString("&gt;", withString: ">")
+                                    
+                                    mySnippet = sDecode5
                                 }
                             }
                         }
@@ -153,86 +175,16 @@ class gmailMessage: NSObject
                     
                     if pass2Num == 2
                     {
-println("Item2 = \(tempPassStr)")
                         
-                        let temp2Pass = tempPassStr.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-                        let temp2Pass1 = temp2Pass.stringByReplacingOccurrencesOfString("},", withString: ",")
-                        let temp2Pass2 = temp2Pass1.stringByReplacingOccurrencesOfString("}", withString: "")
-                        let temp2Pass3 = temp2Pass2.stringByReplacingOccurrencesOfString("{", withString: "")
-                        
-                        // Dates have a comma so need to get rid of them
-                        
-                        let temp2Pass4 = temp2Pass3.stringByReplacingOccurrencesOfString("Mon,", withString: "Mon")
-                        let temp2Pass5 = temp2Pass4.stringByReplacingOccurrencesOfString("Tue,", withString: "Tue")
-                        let temp2Pass6 = temp2Pass5.stringByReplacingOccurrencesOfString("Wed,", withString: "Wed")
-                        let temp2Pass7 = temp2Pass6.stringByReplacingOccurrencesOfString("Thu,", withString: "Thu")
-                        let temp2Pass8 = temp2Pass7.stringByReplacingOccurrencesOfString("Fri,", withString: "Fri")
-                        let temp2Pass9 = temp2Pass8.stringByReplacingOccurrencesOfString("Sat,", withString: "Sat")
-                        let temp2Pass10 = temp2Pass9.stringByReplacingOccurrencesOfString("Sun,", withString: "Sun")
-                        let temp2Pass11 = temp2Pass10.stringByReplacingOccurrencesOfString("to:", withString: "to")
-                        let temp2Pass12 = temp2Pass11.stringByReplacingOccurrencesOfString("http:", withString: "http")
-                        let temp2Pass13 = temp2Pass12.stringByReplacingOccurrencesOfString("https:", withString: "https")
-                        let temp2Pass14 = temp2Pass13.stringByReplacingOccurrencesOfString(", ", withString: " ")
-
-                        let split3 = temp2Pass14.componentsSeparatedByString(",")
-                        var split3Pass1: Bool = true
-                        var keyString2: String = ""
-                        var valueString2: String = ""
-                        for myItem3 in split3
-                        {
-                            let stripSpaces = myItem3.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-                            if stripSpaces != ""
-                            {
-println("Item3 = \(stripSpaces)")
-                                let split4 = stripSpaces.componentsSeparatedByString("\":")
-                                
-                                if split3Pass1
-                                {
-                                    // Item is the key
-                                    var keyString = split4[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-                                    keyString2 = keyString.stringByReplacingOccurrencesOfString("\"", withString: "")
-                                    split3Pass1 = false
-                                }
-                                else
-                                {
-                                    var valueString = split4[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-                                    valueString2 = valueString.stringByReplacingOccurrencesOfString("\"", withString: "")
-                                 
-println("Key = \(keyString2) - value = \(valueString2)")
-                                    switch keyString2
-                                    {
-                                        case "Subject":
-                                            mySubject = valueString2
-                                        
-                                        case "From":
-                                            myFrom = valueString2
-                                        
-                                        case "To":
-                                            myTo = valueString2
-                                        
-                                        case "Date":
-                                            myDate = valueString2
-                                        
-                                        default:
-                                            let a = 1
-                                        
-                                    }
-                                    
-                                    keyString2 = ""
-                                    valueString2 = ""
-                                    
-                                    split3Pass1 = true
-                                }
-                            }
-                        }
+                        processMessageDetails(tempPassStr)
                     }
                     pass2Num = pass2Num + 1
                 }
             }
 
-            if passNum == 3
+            if passNum == 3 && messageType == "SENT"
             {
-                // Body part 1 - at moment do nothing
+                processMessageDetails(myItem)
             }
 
             if passNum == 4
@@ -244,85 +196,89 @@ println("Key = \(keyString2) - value = \(valueString2)")
             {
  //println("Message body")
 
-                //var escapedAddress = mySearchTerm.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
-//println("Item = dddd\(myItem)dddd")
             }
 
             passNum = passNum + 1
         }
-println("All done")
-        /*
-
-        let tempStr1 = inString.stringByReplacingOccurrencesOfString("},", withString: "")
-        let tempStr2 = tempStr1.stringByReplacingOccurrencesOfString("}", withString: "")
-        let tempStr3 = tempStr2.stringByReplacingOccurrencesOfString("],", withString: "")
-        let tempStr4 = tempStr3.stringByReplacingOccurrencesOfString("\"", withString: "")
+}
+    
+    private func processMessageDetails(inString: String)
+    {
+        let temp2Pass = inString.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+        let temp2Pass0 = temp2Pass.stringByReplacingOccurrencesOfString("},", withString: "*^&,")
+        let temp2Pass1 = temp2Pass0.stringByReplacingOccurrencesOfString("\",", withString: "\"*^&,")
+        let temp2Pass2 = temp2Pass1.stringByReplacingOccurrencesOfString("}", withString: "")
+        let temp2Pass3 = temp2Pass2.stringByReplacingOccurrencesOfString("{", withString: "")
         
-        let split = tempStr4.componentsSeparatedByString("{")
+        // Dates have a comma so need to get rid of them
         
-        for myItem in split
+        let temp2Pass4 = temp2Pass3.stringByReplacingOccurrencesOfString("Mon,", withString: "Mon")
+        let temp2Pass5 = temp2Pass4.stringByReplacingOccurrencesOfString("Tue,", withString: "Tue")
+        let temp2Pass6 = temp2Pass5.stringByReplacingOccurrencesOfString("Wed,", withString: "Wed")
+        let temp2Pass7 = temp2Pass6.stringByReplacingOccurrencesOfString("Thu,", withString: "Thu")
+        let temp2Pass8 = temp2Pass7.stringByReplacingOccurrencesOfString("Fri,", withString: "Fri")
+        let temp2Pass9 = temp2Pass8.stringByReplacingOccurrencesOfString("Sat,", withString: "Sat")
+        let temp2Pass10 = temp2Pass9.stringByReplacingOccurrencesOfString("Sun,", withString: "Sun")
+        let temp2Pass11 = temp2Pass10.stringByReplacingOccurrencesOfString("to:", withString: "to")
+        let temp2Pass12 = temp2Pass11.stringByReplacingOccurrencesOfString("http:", withString: "http")
+        let temp2Pass13 = temp2Pass12.stringByReplacingOccurrencesOfString("https:", withString: "https")
+        let temp2Pass14 = temp2Pass13.stringByReplacingOccurrencesOfString(", ", withString: " ")
+        let temp2Pass15 = temp2Pass14.stringByReplacingOccurrencesOfString("\\", withString: "")
+        
+        let split3 = temp2Pass15.componentsSeparatedByString("*^&,")
+        var split3Pass1: Bool = true
+        var keyString2: String = ""
+        var valueString2: String = ""
+        for myItem3 in split3
         {
-            if !processedFileHeader
+            let stripSpaces = myItem3.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+            
+            if stripSpaces != ""
             {
-                // Ignore the first line, it is a header
-                processedFileHeader = true
-            }
-            else
-            {
-                // need to further split the items into its component parts
-                let split2 = myItem.componentsSeparatedByString(",")
-                firstItem2 = true
+                
+                let split4 = stripSpaces.componentsSeparatedByString("\":")
 
-                for myItem2 in split2
+                if split4.count > 1
                 {
-                    var split3: [String]
-                    
-                    if firstItem2
-                    {  // strip out characters upto and including the first comma
-                        let end = advance(myItem2.endIndex, -1)
-                        let start = find(myItem2, ",")
-                        
-                        var selectedString: String = ""
-                        
-                        if start != nil
-                        {
-                            let myStart = start?.successor()
-                            selectedString = myItem2[myStart!...end]
-                        }
-                        else
-                        { // no space found
-                            selectedString = myItem2
-                        }
-                        
-                        split3 = selectedString.componentsSeparatedByString(":")
-                        firstItem2 = false
+                    if split3Pass1
+                    {
+                        // Item is the key
+                        var keyString = split4[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                        keyString2 = keyString.stringByReplacingOccurrencesOfString("\"", withString: "")
+                        split3Pass1 = false
                     }
                     else
                     {
-                        split3 = myItem2.componentsSeparatedByString(":")
-                    }
-                    
-                    var keyString = split3[0].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-                    var valueString = split3[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-                    
-                    // now split each of these into value pairs - how to store?  Maybe in a Collection??
- 
-                    switch keyString
-                    {
-                    case "id" :
-                        myMessage.id = valueString
+                        var valueString = split4[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                        valueString2 = valueString.stringByReplacingOccurrencesOfString("\"", withString: "")
+
+                        switch keyString2
+                        {
+                        case "Subject":
+                            mySubject = valueString2
                         
-                    case "threadId" :
-                        myMessage.threadId = valueString
+                        case "From":
+                            myFrom = valueString2
                         
-                    default:
-                        let a = 1
+                        case "To":
+                            myTo = valueString2
+                        
+                        case "Date":
+                            myDate = valueString2
+                        
+                        default:
+                            let a = 1
+                        
+                        }
+                    
+                        keyString2 = ""
+                        valueString2 = ""
+                    
+                        split3Pass1 = true
                     }
                 }
-                
             }
-     }
-*/
+        }
     }
 }
 
@@ -373,6 +329,8 @@ class gmailMessages: NSObject
         let myString = myGmailData.getData(workingString)
         
         splitString(myString)
+        
+        NSNotificationCenter.defaultCenter().postNotificationName("NotificationGmailDidFinish", object: nil)
     }
     
     func gmailSignedIn(notification: NSNotification)
@@ -382,7 +340,6 @@ class gmailMessages: NSObject
     
     private func splitString(inString: String)
     {
-
         var processedFileHeader: Bool = false
         var oneNoteDataType: String = ""
         var firstItem2: Bool = true
@@ -467,17 +424,22 @@ class gmailMessages: NSObject
         }
         
         // Make call to populate Messages with full details
- //var t1 = 0
+        
+        var tempMessages: [gmailMessage] = Array()
+        
         for myMessage in myMessages
         {
-//if t1 == 0
-//{
             myMessage.populateMessage(myGmailData)
-//t1 = 2
-//}
+            if myMessage.mySubject != "DELETEME"
+            {
+                tempMessages.append(myMessage)
             }
+        }
+
+        myMessages = tempMessages
         
-        listMessages()
+        
+  //      listMessages()
     }
     
     func listMessages()
@@ -493,8 +455,8 @@ class gmailMessages: NSObject
         }
     }
     
-    func getMessage(inMessageId: String)
-    {
+//    func getMessage(inMessageId: String)
+//    {
 //        if myNotebookFound
 //        {
 //            NSNotificationCenter.defaultCenter().postNotificationName("NotificationOneNotePagesReady", object: nil)
@@ -503,7 +465,7 @@ class gmailMessages: NSObject
 //        {
 //            NSNotificationCenter.defaultCenter().postNotificationName("NotificationOneNoteNoNotebookFound", object: nil)
 //        }
-    }
+//    }
 }
 
 class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate, GIDSignInUIDelegate
