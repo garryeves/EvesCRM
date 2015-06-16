@@ -54,6 +54,10 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     
     @IBOutlet weak var labelName: UILabel!
     @IBOutlet weak var peoplePickerButton: UIButton!
+    
+    @IBOutlet weak var myWebView: UIWebView!
+    
+    @IBOutlet weak var btnCloseWindow: UIButton!
     var TableOptions: [String]!
     
     
@@ -178,8 +182,12 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         buttonAdd2.hidden = true
         buttonAdd3.hidden = true
         buttonAdd4.hidden = true
-        
         peoplePickerButton.hidden = false
+        
+        myWebView.hidden = true
+        btnCloseWindow.hidden = true
+        
+        
         
         dataTable1.tableFooterView = UIView(frame:CGRectZero)
         dataTable2.tableFooterView = UIView(frame:CGRectZero)
@@ -876,7 +884,19 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             }
 
         case "GMail":
- println("dataCellClicked - GMail")
+            TableTypeButton1.hidden = true
+            TableTypeButton2.hidden = true
+            TableTypeButton3.hidden = true
+            TableTypeButton4.hidden = true
+            dataTable1.hidden = true
+            dataTable2.hidden = true
+            dataTable3.hidden = true
+            dataTable4.hidden = true
+            peoplePickerButton.hidden = true
+            
+            myWebView.hidden = false
+            btnCloseWindow.hidden = false
+            myWebView.loadHTMLString(myGmailMessages.messages[rowID].body, baseURL: nil)
             
             default:
                 let a = 1
@@ -2265,7 +2285,7 @@ println("Nothing found")
             var myString: String = ""
             
             myString = "\(myMessage.subject)\n"
-            myString = "From: \(myMessage.from) to: \(myMessage.to)\n"
+            myString += "From: \(myMessage.from) to: \(myMessage.to)\n"
             myString += "Sent : \(myMessage.dateReceived)\n"
             myString += myMessage.snippet
             writeRowToArray(myString, &myDisplay)
@@ -2310,5 +2330,21 @@ println("Nothing found")
         default:
             println("myGmailDidFinish: myGmailDidFinish hit default for some reason")
         }
+    }
+    
+    @IBAction func btnCloseWindowClick(sender: UIButton)
+    {
+        TableTypeButton1.hidden = false
+        TableTypeButton2.hidden = false
+        TableTypeButton3.hidden = false
+        TableTypeButton4.hidden = false
+        dataTable1.hidden = false
+        dataTable2.hidden = false
+        dataTable3.hidden = false
+        dataTable4.hidden = false
+        peoplePickerButton.hidden = false
+        
+        myWebView.hidden = true
+        btnCloseWindow.hidden = true
     }
 }

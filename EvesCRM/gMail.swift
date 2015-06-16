@@ -14,10 +14,12 @@ class gmailMessage: NSObject
     private var mySubject: String = ""
     private var myFrom: String = ""
     private var myTo: String = ""
-    private var myDate: String = ""
+    private var myDateString: String = ""
+    private var myDate: NSDate = NSDate()
     private var myID: String = ""
     private var myThreadId: String = ""
     private var mySnippet: String = ""
+    private var myBody: String = ""
     
     var subject: String
     {
@@ -79,14 +81,22 @@ class gmailMessage: NSObject
         {
         get
         {
-            return myDate
+            return myDateString
+        }
+    }
+    
+    var body: String
+        {
+        get
+        {
+            return myBody
         }
     }
 
     func populateMessage(inData: gmailData)
     {
         // Make call to get the full details of the message
-        
+        // format as full
         var workingString = "https://www.googleapis.com/gmail/v1/users/me/messages/\(myID)?format=full"
         
         let myString = inData.getData(workingString)
@@ -96,7 +106,6 @@ class gmailMessage: NSObject
     
     private func splitString(inString: String)
     {
-        
         var processedFileHeader: Bool = false
         var oneNoteDataType: String = ""
         var firstItem2: Bool = true
@@ -136,7 +145,7 @@ class gmailMessage: NSObject
 
             }
             
-            if passNum == 2 // && messageType == "RECEIVED"
+            if passNum == 2
             {
                 let split2 = myItem.componentsSeparatedByString("\"headers\": [")
                 
@@ -186,21 +195,48 @@ class gmailMessage: NSObject
             {
                 processMessageDetails(myItem)
             }
-
-            if passNum == 4
+            else if passNum == 3
             {
-                // Body part 2 - at moment do nothing
+                processMessageBody(myItem)
             }
 
-            if passNum == 5
+            if passNum > 3
             {
- //println("Message body")
-
+                processMessageBody(myItem)
             }
-
+            
             passNum = passNum + 1
         }
-}
+    }
+    
+    private func processMessageBody(inString: String)
+    {
+        // Start to break the message body down
+        
+        // Does the incoming part contain the data clause
+        
+        if inString.rangeOfString("\"data\"") != nil
+        {
+            let split1 = inString.componentsSeparatedByString("\"data\":")
+            
+            // This gives the Header part, and also the body + trailer
+            
+            let split2 = split1[1].componentsSeparatedByString("\"")
+            
+            // This splits the body and gives us a "dummy" headers, as first char is a ", the actual body and the trailer record
+            
+            let myTmp1 = split2[1].stringByReplacingOccurrencesOfString("-", withString: "+")
+            let myTmp2 = myTmp1.stringByReplacingOccurrencesOfString("_", withString: "/")
+            
+            let decodedData = NSData(base64EncodedString: myTmp2, options: .IgnoreUnknownCharacters)
+            
+            if decodedData != nil
+            {
+                let decodedString = NSString(data: decodedData!, encoding: NSUTF8StringEncoding)
+                myBody = decodedString as! String
+            }
+        }
+    }
     
     private func processMessageDetails(inString: String)
     {
@@ -264,7 +300,23 @@ class gmailMessage: NSObject
                             myTo = valueString2
                         
                         case "Date":
-                            myDate = valueString2
+                            // here we need to do the correct formatting of the date
+                            // There are multiple formats for the date, so we need to make sure we can get the correct one
+                        
+                            if valueString2.rangeOfString("(") != nil
+                            { // This one has the Timezone included in it, format example Mon 15 June 2015 23:49:09 +0000 (UTC)
+                                
+                            }
+                            else if valueString2 == "A"
+                            { // Mon 15 June 2015 02:59:09 +0000
+                                
+                            }
+                            else
+                            { // 16 June 2015 15:55:37 + 1000
+                                
+                            }
+                            
+                            myDateString = valueString2
                         
                         default:
                             let a = 1
@@ -324,7 +376,7 @@ class gmailMessages: NSObject
     {
         // this is used to get the messages
         
-        var workingString = "https://www.googleapis.com/gmail/v1/users/me/messages"
+        var workingString = "https://www.googleapis.com/gmail/v1/users/me/messages?maxResults=20"
         
         let myString = myGmailData.getData(workingString)
         
