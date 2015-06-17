@@ -495,3 +495,28 @@ func decodePhone(decodeType: String, decodeProperty: ABMultiValueRef, inComingTy
 }
 */
 
+func getEmailAddress (contactRecord: ABRecord)-> [String]
+{
+    
+    var tableContents:[String] = [String]()
+    
+    let decodeProperty = ABRecordCopyValue(contactRecord, kABPersonEmailProperty)
+    let emailAddrs: ABMultiValueRef = Unmanaged.fromOpaque(decodeProperty.toOpaque()).takeUnretainedValue() as NSObject as ABMultiValueRef
+    
+    let recordCount = ABMultiValueGetCount(emailAddrs)
+    var myType: CFString!
+    var myString: String = ""
+    
+    if recordCount > 0
+    {
+        for loopCount in 0...recordCount-1
+        {
+            myString = ABMultiValueCopyValueAtIndex(emailAddrs, loopCount).takeRetainedValue() as! String
+            
+            tableContents.append(myString)
+        }
+    }
+
+    return tableContents
+}
+

@@ -125,7 +125,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
 
     // Gmail
     var myGmailMessages: gmailMessages!
-
+    
     // Peoplepicker settings
     
     override func viewDidLoad() {
@@ -245,6 +245,9 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "EvernoteComplete", name:"NotificationEvernoteComplete", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "myEvernoteUserDidFinish", name:"NotificationEvernoteUserDidFinish", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "myGmailDidFinish", name:"NotificationGmailDidFinish", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "displayPeopleData", name:"NotificationDisplayData", object: nil)
+        
+        
 
     }
 
@@ -339,21 +342,18 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: myFullName), forState: .Normal)
                     setAddButtonState(1)
                     populateArraysForTables("Table1")
-                    dataTable1.reloadData()
             
                 case 2:
                     TableTypeButton2.setTitle(itemSelected, forState: .Normal)
                     TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myFullName), forState: .Normal)
                     setAddButtonState(2)
                     populateArraysForTables("Table2")
-                    dataTable2.reloadData()
 
                 case 3:
                     TableTypeButton3.setTitle(itemSelected, forState: .Normal)
                     TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myFullName), forState: .Normal)
                     setAddButtonState(3)
                     populateArraysForTables("Table3")
-                    dataTable3.reloadData()
             
                 case 4:
                     TableTypeButton4.setTitle(itemSelected, forState: .Normal)
@@ -361,8 +361,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     
                     setAddButtonState(4)
                     populateArraysForTables("Table4")
-                    dataTable4.reloadData()
-
             
                 default: break
             
@@ -531,15 +529,31 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         {
         case "Table1":
             table1Contents = populateArrayDetails(inTable)
+            dispatch_async(dispatch_get_main_queue())
+            {
+                self.dataTable1.reloadData()
+            }
             
         case "Table2":
             table2Contents = populateArrayDetails(inTable)
+            dispatch_async(dispatch_get_main_queue())
+            {
+                self.dataTable2.reloadData()
+            }
             
         case "Table3":
             table3Contents = populateArrayDetails(inTable)
+            dispatch_async(dispatch_get_main_queue())
+            {
+                self.dataTable3.reloadData()
+            }
             
         case "Table4":
             table4Contents = populateArrayDetails(inTable)
+            dispatch_async(dispatch_get_main_queue())
+            {
+                self.dataTable4.reloadData()
+            }
             
         default:
             println("populateArraysForTables: hit default for some reason")
@@ -661,33 +675,39 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             
             case "GMail":
                 writeRowToArray("Loading GMail messages.  Pane will refresh when finished", &workArray)
-
+                
                 gmailTableToRefresh = inTable
-            
+                
                 if myDisplayType == "Project"
                 {
                     if myGmailMessages == nil
                     {
-                        myGmailMessages = gmailMessages(inViewController: self, inString: myProjectName)
+                        myGmailMessages = gmailMessages(inViewController: self, inString: myProjectName, inType: myDisplayType, inPerson: personSelected)
                     }
                     else
                     {
-                        myGmailMessages.getMessages(myProjectName)
+                        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
+                        {
+                            self.myGmailMessages.getMessages(self.myProjectName, inType: self.myDisplayType, inPerson: self.personSelected)
+                        }
                     }
                 }
                 else
                 {
-                    let searchString = (ABRecordCopyCompositeName(self.personSelected).takeRetainedValue() as? String) ?? ""
+                    let searchString = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
                     if myGmailMessages == nil
                     {
-                        myGmailMessages = gmailMessages(inViewController: self, inString: searchString)
+                        myGmailMessages = gmailMessages(inViewController: self, inString: searchString, inType: myDisplayType, inPerson: personSelected)
                     }
                     else
                     {
-                        myGmailMessages.getMessages(searchString)
+                        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
+                        {
+                            self.myGmailMessages.getMessages(searchString, inType: self.myDisplayType, inPerson: self.personSelected)
+                        }
                     }
                 }
-            
+ 
             case "Mail":
                 let a = 1
             
@@ -696,15 +716,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         }
         return workArray
     }
-    
-    func reloadDataTables()
-    {
-        dataTable1.reloadData()
-        dataTable2.reloadData()
-        dataTable3.reloadData()
-        dataTable4.reloadData()
-    }
-    
     
     func dataCellClicked(rowID: Int, inTable: String, inRecord: TableData)
     {
@@ -820,8 +831,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     populateArraysForTables("Table3")
                     populateArraysForTables("Table4")
                     
-                    reloadDataTables()
-                    
                     // Here is where we will set the titles for the buttons
                     
                     let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
@@ -861,8 +870,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     populateArraysForTables("Table2")
                     populateArraysForTables("Table3")
                     populateArraysForTables("Table4")
-                    
-                    reloadDataTables()
                     
                     // Here is where we will set the titles for the buttons
                     
@@ -956,8 +963,8 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     func returnFromSecondaryView(inTable: String, inRowID: Int)
     {
         displayScreen()
-        populateArrayDetails(inTable)
-        reloadDataTables()
+        populateArraysForTables(inTable)
+       // populateArrayDetails(inTable)
     }
 
     
@@ -993,7 +1000,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         if actionType == "Changed"
         {
             populateArraysForTables(reBuildTableName)
-            reloadDataTables()
         }
         controller.dismissViewControllerAnimated(true, completion: nil)
     }
@@ -1189,13 +1195,13 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         if actionType == "Changed"
         {
             populateArraysForTables(reBuildTableName)
-            reloadDataTables()
         }
         controller.dismissViewControllerAnimated(true, completion: nil)
     }
 
-    func myMaintainProjectSelect(controller:MaintainProjectViewController, projectID: NSNumber, projectName: String){
-    
+    func myMaintainProjectSelect(controller:MaintainProjectViewController, projectID: NSNumber, projectName: String)
+    {
+        controller.dismissViewControllerAnimated(true, completion: nil)
         TableTypeSelection1.hidden = true
         setSelectionButton.hidden = true
         TableTypeButton1.hidden = false
@@ -1211,8 +1217,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         myDisplayType = "Project"
         myProjectID = projectID
         myProjectName = projectName
-        
-        controller.dismissViewControllerAnimated(true, completion: nil)
+        displayScreen()
         
         table1Contents = Array()
         table2Contents = Array()
@@ -1222,18 +1227,20 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         populateArraysForTables("Table1")
         populateArraysForTables("Table2")
         populateArraysForTables("Table3")
-        populateArraysForTables("Table4")
         
-        reloadDataTables()
-        
+        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
+        {
+            self.populateArraysForTables("Table4")
+        }
+    
+        //populateArraysForTables("Table4")
+    
         // Here is where we will set the titles for the buttons
         
         TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: projectName), forState: .Normal)
         TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: projectName), forState: .Normal)
         TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: projectName), forState: .Normal)
         TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: projectName), forState: .Normal)
-       
-
     }
     
     func setAddButtonState(inTable: Int)
@@ -1360,6 +1367,23 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     
     func peoplePickerNavigationController(peoplePicker: ABPeoplePickerNavigationController!, didSelectPerson person: ABRecordRef!)
     {
+        peoplePicker.dismissViewControllerAnimated(true, completion: nil)
+        myDisplayType = "Person"
+        personSelected = person
+       // displayPeopleData()
+        
+        NSNotificationCenter.defaultCenter().postNotificationName("NotificationDisplayData", object: nil)
+println("Done")
+    }
+
+    func peoplePickerNavigationControllerDidCancel(peoplePicker: ABPeoplePickerNavigationController!)
+    {
+        peoplePicker.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    
+    func displayPeopleData()
+    {
         displayScreen()
         TableTypeSelection1.hidden = true
         setSelectionButton.hidden = true
@@ -1373,10 +1397,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         dataTable4.hidden = false
         StartLabel.hidden = true
         
-        myDisplayType = "Person"
-        
-        personSelected = person as ABRecord
-        
         table1Contents = Array()
         table2Contents = Array()
         table3Contents = Array()
@@ -1387,8 +1407,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         populateArraysForTables("Table3")
         populateArraysForTables("Table4")
         
-        reloadDataTables()
-        
         // Here is where we will set the titles for the buttons
         
         let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
@@ -1397,12 +1415,9 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myFullName), forState: .Normal)
         TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myFullName), forState: .Normal)
         TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myFullName), forState: .Normal)
+       
     }
-
-    func peoplePickerNavigationControllerDidCancel(peoplePicker: ABPeoplePickerNavigationController!)
-    {
-        peoplePicker.dismissViewControllerAnimated(true, completion: nil)
-    }
+    
 
     func EvernoteComplete()
     {
@@ -1940,8 +1955,6 @@ println("Nothing found")
             populateArraysForTables("Table2")
             populateArraysForTables("Table3")
             populateArraysForTables("Table4")
-        
-            reloadDataTables()
         }
     }
     
@@ -2093,8 +2106,6 @@ println("Nothing found")
             populateArraysForTables("Table2")
             populateArraysForTables("Table3")
             populateArraysForTables("Table4")
-            
-            reloadDataTables()
         }
 
         controller.dismissViewControllerAnimated(true, completion: nil)
@@ -2115,8 +2126,6 @@ println("Nothing found")
             populateArraysForTables("Table2")
             populateArraysForTables("Table3")
             populateArraysForTables("Table4")
-            
-            reloadDataTables()
         }
 
         self.dismissViewControllerAnimated(true, completion: nil)
@@ -2149,8 +2158,6 @@ println("Nothing found")
             populateArraysForTables("Table2")
             populateArraysForTables("Table3")
             populateArraysForTables("Table4")
-            
-            reloadDataTables()
         }
 
         self.dismissViewControllerAnimated(true, completion:nil)
@@ -2272,16 +2279,13 @@ println("Nothing found")
     {
         var myDisplay: [TableData] = Array()
         
+        if myGmailMessages.messages.count == 0
+        {
+            writeRowToArray("No matching GMail Messages found", &myDisplay)
+        }
+        
         for myMessage in myGmailMessages.messages
         {
- //           var dateFormat = NSDateFormatterStyle.MediumStyle
- //           var timeFormat = NSDateFormatterStyle.ShortStyle
- //           var myDateFormatter = NSDateFormatter()
- //           myDateFormatter.dateStyle = dateFormat
- //           myDateFormatter.timeStyle = timeFormat
-            
- //           let myDate = myDateFormatter.stringFromDate(myMessage.lastModifiedTime)
-            
             var myString: String = ""
             
             myString = "\(myMessage.subject)\n"
@@ -2295,7 +2299,7 @@ println("Nothing found")
         {
             writeRowToArray("No matching GMail Messages found", &myDisplay)
         }
-        
+
         switch gmailTableToRefresh
         {
         case "Table1":

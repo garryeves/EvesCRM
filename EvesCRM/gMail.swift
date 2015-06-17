@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import AddressBook
 
 
 class gmailMessage: NSObject
@@ -81,7 +82,18 @@ class gmailMessage: NSObject
         {
         get
         {
-            return myDateString
+            var myDateFormatter = NSDateFormatter()
+                
+            var dateFormat = NSDateFormatterStyle.MediumStyle
+            var timeFormat = NSDateFormatterStyle.ShortStyle
+            myDateFormatter.timeZone = NSTimeZone()
+            myDateFormatter.dateStyle = dateFormat
+            myDateFormatter.timeStyle = timeFormat
+                
+            /* Instantiate the event store */
+            let returnDate = myDateFormatter.stringFromDate(myDate)
+                
+            return returnDate
         }
     }
     
@@ -237,7 +249,7 @@ class gmailMessage: NSObject
             }
         }
     }
-    
+
     private func processMessageDetails(inString: String)
     {
         let temp2Pass = inString.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
@@ -300,22 +312,126 @@ class gmailMessage: NSObject
                             myTo = valueString2
                         
                         case "Date":
+                            myDateString = valueString2  // fallback date, if required
                             // here we need to do the correct formatting of the date
                             // There are multiple formats for the date, so we need to make sure we can get the correct one
                         
-                            if valueString2.rangeOfString("(") != nil
-                            { // This one has the Timezone included in it, format example Mon 15 June 2015 23:49:09 +0000 (UTC)
-                                
-                            }
-                            else if valueString2 == "A"
-                            { // Mon 15 June 2015 02:59:09 +0000
-                                
+                            // first split off the bits after the +, as they all have that in common
+                            
+                            var timeAdjuststring: String = ""
+                            var timeAdjustmentType: String = "+"
+                            var hoursAdjustment: Int = 0
+                            var minutesAdjustment: Int = 0
+                            var splitDate: [String]!
+                            let digits = NSCharacterSet.decimalDigitCharacterSet()
+                            
+                            splitDate = valueString2.componentsSeparatedByString("+")
+
+                            let numberCheck = characterAtIndex(valueString2, 0)
+                            
+                            var myDateFormatter = NSDateFormatter()
+                            
+                            if splitDate.count > 1
+                            {// do for + hours
+                                if valueString2.rangeOfString("(") != nil
+                                { // This one has the Timezone included in it, format example Mon 15 June 2015 23:49:09 +0000 (UTC)
+                                    myDateFormatter.dateFormat = "EEE dd MMM yyyy HH:mm:ss"
+                                    
+                                    // Lets get rid of the timezone bit
+                    
+                                    let splitZone = splitDate[1].componentsSeparatedByString(" ")
+                                    timeAdjuststring = splitZone[0]
+                                }
+                                else if  numberCheck >= "0" && numberCheck <= "9"
+                                { // format = 16 June 2015 15:55:37 +1000
+                                    myDateFormatter.dateFormat = "dd MMM yyyy HH:mm:ss"
+                                    timeAdjuststring = splitDate[1]
+                                }
+                                else
+                                {// format = Mon 15 June 2015 02:59:09 +0000
+                                    myDateFormatter.dateFormat = "EEE dd MMM yyyy HH:mm:ss"
+                                    timeAdjuststring = splitDate[1]
+                                }
+
                             }
                             else
-                            { // 16 June 2015 15:55:37 + 1000
+                            {
+                            // Belt and braces, so for - hours
+                                timeAdjustmentType = "-"
+                                splitDate = valueString2.componentsSeparatedByString("-")
                                 
+                                if valueString2.rangeOfString("(") != nil
+                                { // This one has the Timezone included in it, format example Mon 15 June 2015 23:49:09 +0000 (UTC)
+                                    myDateFormatter.dateFormat = "EEE dd MMM yyyy HH:mm:ss"
+                                    
+                                    // Lets get rid of the timezone bit
+                                    
+                                    let splitZone = splitDate[1].componentsSeparatedByString(" ")
+                                    timeAdjuststring = splitZone[0]
+                                }
+                                else if  numberCheck >= "0" && numberCheck <= "9"
+                                { // format = 16 June 2015 15:55:37 +1000
+                                    myDateFormatter.dateFormat = "dd MMM yyyy HH:mm:ss"
+                                    timeAdjuststring = splitDate[1]
+                                }
+                                else
+                                {// format = Mon 15 June 2015 02:59:09 +0000
+                                    myDateFormatter.dateFormat = "EEE dd MMM yyyy HH:mm:ss"
+                                    timeAdjuststring = splitDate[1]
+                                }
                             }
                             
+                            // Work out the timezone change
+
+                            // first 2 give us the hours
+                            let hoursTemp = timeAdjuststring.substringWithRange(Range<String.Index>(start: timeAdjuststring.startIndex, end: advance(timeAdjuststring.startIndex, 2))).toInt()!
+                            
+                            if timeAdjustmentType == "+"
+                            {
+                                hoursAdjustment = 0 - hoursTemp
+                            }
+                            else
+                            {
+                                hoursAdjustment = hoursTemp
+                            }
+                            
+                            // last 2 give us the minutes
+                            let minutesTemp = timeAdjuststring.substringWithRange(Range<String.Index>(start: advance(timeAdjuststring.startIndex, 2), end: advance(timeAdjuststring.endIndex, -1))).toInt()!
+                            
+                            if timeAdjustmentType == "+"
+                            {
+                                minutesAdjustment = 0 - minutesTemp
+                            }
+                            else
+                            {
+                                minutesAdjustment = minutesTemp
+                            }
+
+                            myDateFormatter.timeZone = NSTimeZone()
+                            var tempDate: NSDate = myDateFormatter.dateFromString(splitDate[0])!
+                            let tempDate1 = NSCalendar.currentCalendar().dateByAddingUnit(
+                                NSCalendarUnit.CalendarUnitHour,
+                                value: hoursAdjustment,
+                                toDate: tempDate,
+                                options: NSCalendarOptions.WrapComponents)
+
+                            let tempDate2 = NSCalendar.currentCalendar().dateByAddingUnit(
+                                NSCalendarUnit.CalendarUnitMinute,
+                                value: minutesAdjustment,
+                                toDate: tempDate1!,
+                                options: NSCalendarOptions.WrapComponents)
+
+                            let timezoneAdjust = NSTimeZone.localTimeZone().secondsFromGMT
+                            
+                            let timezoneAdjust2 = (timezoneAdjust / 60) / 60
+                            
+                            let tempDate3 = NSCalendar.currentCalendar().dateByAddingUnit(
+                                NSCalendarUnit.CalendarUnitHour,
+                                value: timezoneAdjust2,
+                                toDate: tempDate2!,
+                                options: NSCalendarOptions.WrapComponents)
+
+                            myDate = tempDate3!
                             myDateString = valueString2
                         
                         default:
@@ -340,6 +456,8 @@ class gmailMessages: NSObject
     private var mySourceViewController: UIViewController!
     private var myGmailData: gmailData!
     private var myInString: String = ""
+    private var myInType: String = ""
+    private var myInPerson: ABRecord!
     
     var messages: [gmailMessage]
         {
@@ -349,11 +467,14 @@ class gmailMessages: NSObject
         }
     }
     
-    init(inViewController: UIViewController, inString: String)
+    init(inViewController: UIViewController, inString: String, inType: String, inPerson: ABRecord)
     {
         super.init()
         mySourceViewController = inViewController
         myInString = inString
+        myInType = inType
+        myInPerson = inPerson
+        
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "gmailSignedIn:", name:"NotificationGmailConnected", object: nil)
         if myGmailData != nil
         {
@@ -372,22 +493,45 @@ class gmailMessages: NSObject
         }
     }
     
-    func getMessages(inString: String)
+    func getMessages(inString: String, inType: String, inPerson: ABRecord)
     {
         // this is used to get the messages
         
-        var workingString = "https://www.googleapis.com/gmail/v1/users/me/messages?maxResults=20"
+        var workingString: String = "https://www.googleapis.com/gmail/v1/users/me/messages?maxResults=20"
         
+        if inType == "Project"
+        {
+            workingString += "&q=\"\(inString)\""
+        }
+        else
+        { // Searching for a person
+            // Add in a search by name
+            workingString += "&q=\"\(inString)\""
+            
+            // Go and get email addresses for the person
+            
+            let emailArray = getEmailAddress(inPerson)
+            
+            for emailAddress in emailArray
+            {
+                workingString += " OR from:\(emailAddress)"
+                workingString += " OR to:\(emailAddress)"
+                workingString += " OR cc:\(emailAddress)"
+                workingString += " OR bcc:\(emailAddress)"
+            }
+            
+        }
+
         let myString = myGmailData.getData(workingString)
         
         splitString(myString)
-        
+ 
         NSNotificationCenter.defaultCenter().postNotificationName("NotificationGmailDidFinish", object: nil)
     }
     
     func gmailSignedIn(notification: NSNotification)
     {
-        getMessages(myInString)
+        getMessages(myInString, inType: myInType, inPerson: myInPerson)
     }
     
     private func splitString(inString: String)
@@ -594,8 +738,10 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
         // Swap userId for the userd ID
         
  //       let tempStr1 = inURLString.stringByReplacingOccurrencesOfString("userId", withString:GIDSignIn.sharedInstance().currentUser.userID)
+        
+        var escapedURL: String = inURLString.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
 
-        var url: NSURL = NSURL(string: inURLString)!
+        var url: NSURL = NSURL(string: escapedURL)!
         let request = NSMutableURLRequest(URL: url)
         request.HTTPMethod = "GET"
         request.cachePolicy = NSURLRequestCachePolicy.ReloadIgnoringLocalCacheData

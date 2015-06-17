@@ -982,3 +982,16 @@ func returnSearchStringToNormal(inString: String) -> String
     return tempStr13
 }
 
+func characterAtIndex(inString: String, index: Int) -> Character {
+    var cur = 0
+    var retVal: Character!
+    for char in inString {
+        if cur == index {
+            retVal = char
+        }
+        cur++
+    }
+    return retVal
+}
+
+
