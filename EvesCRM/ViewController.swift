@@ -245,10 +245,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "EvernoteComplete", name:"NotificationEvernoteComplete", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "myEvernoteUserDidFinish", name:"NotificationEvernoteUserDidFinish", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "myGmailDidFinish", name:"NotificationGmailDidFinish", object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "displayPeopleData", name:"NotificationDisplayData", object: nil)
-        
-        
-
     }
 
     override func didReceiveMemoryWarning() {
@@ -1370,20 +1366,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         peoplePicker.dismissViewControllerAnimated(true, completion: nil)
         myDisplayType = "Person"
         personSelected = person
-       // displayPeopleData()
         
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationDisplayData", object: nil)
-println("Done")
-    }
-
-    func peoplePickerNavigationControllerDidCancel(peoplePicker: ABPeoplePickerNavigationController!)
-    {
-        peoplePicker.dismissViewControllerAnimated(true, completion: nil)
-    }
-    
-    
-    func displayPeopleData()
-    {
         displayScreen()
         TableTypeSelection1.hidden = true
         setSelectionButton.hidden = true
@@ -1415,9 +1398,12 @@ println("Done")
         TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myFullName), forState: .Normal)
         TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myFullName), forState: .Normal)
         TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myFullName), forState: .Normal)
-       
     }
-    
+
+    func peoplePickerNavigationControllerDidCancel(peoplePicker: ABPeoplePickerNavigationController!)
+    {
+        peoplePicker.dismissViewControllerAnimated(true, completion: nil)
+    }
 
     func EvernoteComplete()
     {
@@ -2292,6 +2278,8 @@ println("Nothing found")
             myString += "From: \(myMessage.from) to: \(myMessage.to)\n"
             myString += "Sent : \(myMessage.dateReceived)\n"
             myString += myMessage.snippet
+//println("ID = \(myMessage.id)")
+//println(myString)
             writeRowToArray(myString, &myDisplay)
         }
         

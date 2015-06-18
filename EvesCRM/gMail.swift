@@ -129,14 +129,35 @@ class gmailMessage: NSObject
         let tempStr4 = tempStr3.stringByReplacingOccurrencesOfString("\\u003c,", withString: "")
         let tempStr5 = tempStr4.stringByReplacingOccurrencesOfString("\\u003e", withString: "")
         let tempStr6 = tempStr5.stringByReplacingOccurrencesOfString("\\u003c", withString: "")
-
-        
-        let split = tempStr6.componentsSeparatedByString("],")
+//if myID == "12613a7c784c8656"
+//{
+//println("inString = \(inString)")
+//}
+        var split: [String]!
         var passNum: Int = 1
+        
+        if tempStr6.rangeOfString("\"labelIds\": [") != nil
+        {
+            // We can split based on label ID
+            split = tempStr6.componentsSeparatedByString("],")
+            passNum = 1
+        }
+        else
+        {
+            split = Array()
+            split.append(tempStr6)
+            passNum = 2
+        }
+  
+        
         var messageType : String = "RECEIVED"
 
         for myItem in split
         {
+//if myID == "12613a7c784c8656"
+//{
+//println("myItem = \(myItem)")
+//}
             if passNum == 1
             {
                 // This is a wrapper portion so we do nothing
@@ -160,10 +181,14 @@ class gmailMessage: NSObject
             if passNum == 2
             {
                 let split2 = myItem.componentsSeparatedByString("\"headers\": [")
-                
+
                 var pass2Num: Int = 1
                 for myItem2 in split2
                 {
+//if myID == "12613a7c784c8656"
+//{
+//println("myItem2 = \(myItem2)")
+//}
                     // lets get rid of the "
                     let tempPassStr = myItem2.stringByReplacingOccurrencesOfString("\"\"", withString: "\".\"")
                     
@@ -182,13 +207,20 @@ class gmailMessage: NSObject
                             
                                 if keyString2 == "snippet"
                                 {
-                                    let sDecode1 = valueString2.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
-                                    let sDecode2 = sDecode1.stringByReplacingOccurrencesOfString("&#39;", withString: "'")
-                                    let sDecode3 = sDecode2.stringByReplacingOccurrencesOfString("&quot;", withString: "\"")
-                                    let sDecode4 = sDecode3.stringByReplacingOccurrencesOfString("&lt;", withString: "<")
-                                    let sDecode5 = sDecode4.stringByReplacingOccurrencesOfString("&gt;", withString: ">")
+                                    if valueString2.rangeOfString("http") == nil
+                                    {
+                                        let sDecode1 = valueString2.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
+                                        let sDecode2 = sDecode1.stringByReplacingOccurrencesOfString("&#39;", withString: "'")
+                                        let sDecode3 = sDecode2.stringByReplacingOccurrencesOfString("&quot;", withString: "\"")
+                                        let sDecode4 = sDecode3.stringByReplacingOccurrencesOfString("&lt;", withString: "<")
+                                        let sDecode5 = sDecode4.stringByReplacingOccurrencesOfString("&gt;", withString: ">")
                                     
-                                    mySnippet = sDecode5
+                                        mySnippet = sDecode5
+                                    }
+                                    else
+                                    {
+                                        mySnippet = valueString2
+                                    }
                                 }
                             }
                         }
@@ -226,15 +258,25 @@ class gmailMessage: NSObject
         // Start to break the message body down
         
         // Does the incoming part contain the data clause
+//if myID == "12613a7c784c8656"
+//{
+//println("processMessageBody inString = \(inString)")
+//}
         
         if inString.rangeOfString("\"data\"") != nil
         {
             let split1 = inString.componentsSeparatedByString("\"data\":")
-            
+//if myID == "12613a7c784c8656"
+//{
+//println("processMessageBody split1 = \(split1)")
+//}
             // This gives the Header part, and also the body + trailer
             
             let split2 = split1[1].componentsSeparatedByString("\"")
-            
+//if myID == "12613a7c784c8656"
+//{
+//println("processMessageBody split2 = \(split2)")
+//}
             // This splits the body and gives us a "dummy" headers, as first char is a ", the actual body and the trailer record
             
             let myTmp1 = split2[1].stringByReplacingOccurrencesOfString("-", withString: "+")
@@ -245,7 +287,11 @@ class gmailMessage: NSObject
             if decodedData != nil
             {
                 let decodedString = NSString(data: decodedData!, encoding: NSUTF8StringEncoding)
-                myBody = decodedString as! String
+//println("Body = \(myID) - \(decodedString)")
+                if decodedString != nil
+                {
+                    myBody = decodedString as! String
+                }
             }
         }
     }
@@ -279,6 +325,10 @@ class gmailMessage: NSObject
         var valueString2: String = ""
         for myItem3 in split3
         {
+//if myID == "12613a7c784c8656"
+//{
+//println("processMessageDetails myItem3 = \(myItem3)")
+//}
             let stripSpaces = myItem3.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
             
             if stripSpaces != ""
@@ -300,6 +350,10 @@ class gmailMessage: NSObject
                         var valueString = split4[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
                         valueString2 = valueString.stringByReplacingOccurrencesOfString("\"", withString: "")
 
+//if myID == "12613a7c784c8656"
+//{
+//println("processMessageDetails keyString2 = \(keyString2)  valueString2 = \(valueString2)")
+//}
                         switch keyString2
                         {
                         case "Subject":
@@ -352,7 +406,6 @@ class gmailMessage: NSObject
                                     myDateFormatter.dateFormat = "EEE dd MMM yyyy HH:mm:ss"
                                     timeAdjuststring = splitDate[1]
                                 }
-
                             }
                             else
                             {
@@ -376,37 +429,49 @@ class gmailMessage: NSObject
                                 }
                                 else
                                 {// format = Mon 15 June 2015 02:59:09 +0000
-                                    myDateFormatter.dateFormat = "EEE dd MMM yyyy HH:mm:ss"
-                                    timeAdjuststring = splitDate[1]
+                                    if splitDate.count > 1
+                                    {
+                                        myDateFormatter.dateFormat = "EEE dd MMM yyyy HH:mm:ss"
+                                        timeAdjuststring = splitDate[1]
+                                    }
+                                    else
+                                    {
+                                        myDateFormatter.dateFormat = "EEE dd MMM yyyy HH:mm:ss v"
+                                        timeAdjuststring = ""
+                                    }
                                 }
                             }
                             
                             // Work out the timezone change
 
                             // first 2 give us the hours
-                            let hoursTemp = timeAdjuststring.substringWithRange(Range<String.Index>(start: timeAdjuststring.startIndex, end: advance(timeAdjuststring.startIndex, 2))).toInt()!
                             
-                            if timeAdjustmentType == "+"
+                            if timeAdjuststring != ""
                             {
-                                hoursAdjustment = 0 - hoursTemp
-                            }
-                            else
-                            {
-                                hoursAdjustment = hoursTemp
+                                let hoursTemp = timeAdjuststring.substringWithRange(Range<String.Index>(start: timeAdjuststring.startIndex, end: advance(timeAdjuststring.startIndex, 2))).toInt()!
+                            
+                                if timeAdjustmentType == "+"
+                                {
+                                    hoursAdjustment = 0 - hoursTemp
+                                }
+                                else
+                                {
+                                    hoursAdjustment = hoursTemp
+                                }
+                            
+                                // last 2 give us the minutes
+                                let minutesTemp = timeAdjuststring.substringWithRange(Range<String.Index>(start: advance(timeAdjuststring.startIndex, 2), end: advance(timeAdjuststring.endIndex, -1))).toInt()!
+                            
+                                if timeAdjustmentType == "+"
+                                {
+                                    minutesAdjustment = 0 - minutesTemp
+                                }
+                                else
+                                {
+                                    minutesAdjustment = minutesTemp
+                                }
                             }
                             
-                            // last 2 give us the minutes
-                            let minutesTemp = timeAdjuststring.substringWithRange(Range<String.Index>(start: advance(timeAdjuststring.startIndex, 2), end: advance(timeAdjuststring.endIndex, -1))).toInt()!
-                            
-                            if timeAdjustmentType == "+"
-                            {
-                                minutesAdjustment = 0 - minutesTemp
-                            }
-                            else
-                            {
-                                minutesAdjustment = minutesTemp
-                            }
-
                             myDateFormatter.timeZone = NSTimeZone()
                             var tempDate: NSDate = myDateFormatter.dateFromString(splitDate[0])!
                             let tempDate1 = NSCalendar.currentCalendar().dateByAddingUnit(
@@ -519,9 +584,10 @@ class gmailMessages: NSObject
                 workingString += " OR cc:\(emailAddress)"
                 workingString += " OR bcc:\(emailAddress)"
             }
-            
         }
 
+        workingString += " -is:chat"
+        
         let myString = myGmailData.getData(workingString)
         
         splitString(myString)
