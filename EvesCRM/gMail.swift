@@ -161,23 +161,14 @@ class gmailMessage: NSObject
             if passNum == 1
             {
                 // This is a wrapper portion so we do nothing
-                
-                if myItem.rangeOfString("CHAT") != nil
-                {
-                    //This is a chat so lets ignore it.
-                    messageType = "CHAT"
-                    passNum = 10
-                    mySubject = "DELETEME"
-                }
-                
+
                 if myItem.rangeOfString("SENT") != nil
                 {
                     //This is a messgae that ahs been SENT as opposed to received
                     messageType = "SENT"
                 }
-
             }
-            
+    
             if passNum == 2
             {
                 let split2 = myItem.componentsSeparatedByString("\"headers\": [")
@@ -518,60 +509,45 @@ class gmailMessage: NSObject
 class gmailMessages: NSObject
 {
     private var myMessages: [gmailMessage] = []
-    private var mySourceViewController: UIViewController!
     private var myGmailData: gmailData!
-    private var myInString: String = ""
-    private var myInType: String = ""
-    private var myInPerson: ABRecord!
     
     var messages: [gmailMessage]
-        {
+    {
         get
         {
             return myMessages
         }
     }
     
-    init(inViewController: UIViewController, inString: String, inType: String, inPerson: ABRecord)
+    init(inGmailData: gmailData)
     {
         super.init()
-        mySourceViewController = inViewController
-        myInString = inString
-        myInType = inType
-        myInPerson = inPerson
-        
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "gmailSignedIn:", name:"NotificationGmailConnected", object: nil)
-        if myGmailData != nil
-        {
-            if !myGmailData.connected
-            {
-                myGmailData = gmailData()
-                myGmailData.sourceViewController = inViewController
-                myGmailData.connectToGmail()
-            }
-        }
-        else
-        {
-            myGmailData = gmailData()
-            myGmailData.sourceViewController = inViewController
-            myGmailData.connectToGmail()
-        }
+        myGmailData = inGmailData
     }
     
-    func getMessages(inString: String, inType: String, inPerson: ABRecord)
+    func getMessages(inString: String, inType: String, inPerson: ABRecord, inMessageType: String)
     {
         // this is used to get the messages
         
         var workingString: String = "https://www.googleapis.com/gmail/v1/users/me/messages?maxResults=20"
+
+        if inMessageType == "Hangouts"
+        {
+            workingString += "&q=is:chat"
+        }
+        else
+        {
+            workingString += "&q=-is:chat"
+        }
         
         if inType == "Project"
         {
-            workingString += "&q=\"\(inString)\""
+            workingString += " \"\(inString)\""
         }
         else
         { // Searching for a person
             // Add in a search by name
-            workingString += "&q=\"\(inString)\""
+            workingString += " \"\(inString)\""
             
             // Go and get email addresses for the person
             
@@ -586,18 +562,20 @@ class gmailMessages: NSObject
             }
         }
 
-        workingString += " -is:chat"
-        
         let myString = myGmailData.getData(workingString)
-        
+
         splitString(myString)
- 
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationGmailDidFinish", object: nil)
-    }
-    
-    func gmailSignedIn(notification: NSNotification)
-    {
-        getMessages(myInString, inType: myInType, inPerson: myInPerson)
+        
+        if inMessageType == "Hangouts"
+        {
+           // listMessages()
+            NSNotificationCenter.defaultCenter().postNotificationName("NotificationHangoutsDidFinish", object: nil)
+        }
+        else
+        {
+            NSNotificationCenter.defaultCenter().postNotificationName("NotificationGmailDidFinish", object: nil)
+        }
+        
     }
     
     private func splitString(inString: String)
@@ -699,9 +677,6 @@ class gmailMessages: NSObject
         }
 
         myMessages = tempMessages
-        
-        
-  //      listMessages()
     }
     
     func listMessages()
@@ -716,18 +691,6 @@ class gmailMessages: NSObject
             println("\n\n")
         }
     }
-    
-//    func getMessage(inMessageId: String)
-//    {
-//        if myNotebookFound
-//        {
-//            NSNotificationCenter.defaultCenter().postNotificationName("NotificationOneNotePagesReady", object: nil)
-//        }
-//        else
-//        {
-//            NSNotificationCenter.defaultCenter().postNotificationName("NotificationOneNoteNoNotebookFound", object: nil)
-//        }
-//    }
 }
 
 class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate, GIDSignInUIDelegate
@@ -743,8 +706,6 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
     private var auth: GTMOAuth2Authentication!
     private var currentUser: GIDGoogleUser!
     
-    private var myGmailConnected: Bool = false
-    
     private var myInString: String = ""
     private var myQueryType: String = ""
     
@@ -757,14 +718,6 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
         set
         {
             mySourceViewController = newValue
-        }
-    }
-    
-    var connected: Bool
-        {
-        get
-        {
-            return myGmailConnected
         }
     }
   

@@ -25,6 +25,8 @@ class MaintainPanesViewController: UIViewController {
     @IBOutlet weak var Table3Picker: UIPickerView!
     @IBOutlet weak var Table4Picker: UIPickerView!
     
+    @IBOutlet weak var btnResetPanes: UIButton!
+    
     var delegate: MyMaintainPanesDelegate?
     private var myPanes: [displayPane]!
     private var mySelectedPane: String = ""
@@ -322,6 +324,28 @@ class MaintainPanesViewController: UIViewController {
         {
             Table4Picker.selectRow(myIndex4, inComponent: 0, animated: true)
         }
+    }
+    @IBAction func btnResetPanes(sender: UIButton)
+    {
+        
+        
+        // this is to allow cleaning of panes if needed
+        
+        let myPanes2 = displayPanes(inManagedContext: myManagedContext!)
+        myPanes2.deleteAllPanes()
+        
+        // End delete phase
+        
+        myPanes = displayPanes(inManagedContext: myManagedContext).listPanes
+        
+        tablePane.reloadData()
+        buttonChangeVisibile.hidden = true
+        myPicker1 = Array()
+        myPicker2 = Array()
+        myPicker3 = Array()
+        myPicker4 = Array()
+        
+        populatePicker()
     }
 }
 

@@ -100,6 +100,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     var omniTableToRefresh: String = ""
     var oneNoteTableToRefresh: String = ""
     var gmailTableToRefresh: String = ""
+    var hangoutsTableToRefresh: String = ""
 
     var oneNoteLinkArray: [String] = Array()
     var omniLinkArray: [String] = Array()
@@ -125,6 +126,8 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
 
     // Gmail
     var myGmailMessages: gmailMessages!
+    var myHangoutsMessages: gmailMessages!
+    var myGmailData: gmailData!
     
     // Peoplepicker settings
     
@@ -245,6 +248,8 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "EvernoteComplete", name:"NotificationEvernoteComplete", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "myEvernoteUserDidFinish", name:"NotificationEvernoteUserDidFinish", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "myGmailDidFinish", name:"NotificationGmailDidFinish", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "myHangoutsDidFinish", name:"NotificationHangoutsDidFinish", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "gmailSignedIn:", name:"NotificationGmailConnected", object: nil)
     }
 
     override func didReceiveMemoryWarning() {
@@ -517,6 +522,19 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         
     }
   
+    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath)
+    {
+        let swiftColor = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
+        if (indexPath.row % 2 == 0)
+        {
+            cell.backgroundColor = swiftColor
+        }
+        else
+        {
+            cell.backgroundColor = UIColor.whiteColor()
+        }
+    }
+    
     func populateArraysForTables(inTable : String)
     {
         
@@ -593,6 +611,10 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         }
                 
         var selectedType: String = getFirstPartofString(dataType)
+        
+        hangoutsTableToRefresh = ""
+        gmailTableToRefresh = ""
+        
         // This is where we have the logic to work out which type of data we are goign to populate with
         switch selectedType
         {
@@ -674,36 +696,35 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 
                 gmailTableToRefresh = inTable
                 
-                if myDisplayType == "Project"
+                // Does connection to GmailData exist
+                
+                if myGmailData == nil
                 {
-                    if myGmailMessages == nil
-                    {
-                        myGmailMessages = gmailMessages(inViewController: self, inString: myProjectName, inType: myDisplayType, inPerson: personSelected)
-                    }
-                    else
-                    {
-                        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
-                        {
-                            self.myGmailMessages.getMessages(self.myProjectName, inType: self.myDisplayType, inPerson: self.personSelected)
-                        }
-                    }
+                    myGmailData = gmailData()
+                    myGmailData.sourceViewController = self
+                    myGmailData.connectToGmail()
                 }
                 else
                 {
-                    let searchString = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
-                    if myGmailMessages == nil
-                    {
-                        myGmailMessages = gmailMessages(inViewController: self, inString: searchString, inType: myDisplayType, inPerson: personSelected)
-                    }
-                    else
-                    {
-                        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
-                        {
-                            self.myGmailMessages.getMessages(searchString, inType: self.myDisplayType, inPerson: self.personSelected)
-                        }
-                    }
+                    loadGmail()
                 }
- 
+            
+        case "Hangouts":
+            writeRowToArray("Loading Hangout messages.  Pane will refresh when finished", &workArray)
+            
+            hangoutsTableToRefresh = inTable
+            
+            if myGmailData == nil
+            {
+                myGmailData = gmailData()
+                myGmailData.sourceViewController = self
+                myGmailData.connectToGmail()
+            }
+            else
+            {
+                loadHangouts()
+            }
+        
             case "Mail":
                 let a = 1
             
@@ -900,6 +921,21 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             myWebView.hidden = false
             btnCloseWindow.hidden = false
             myWebView.loadHTMLString(myGmailMessages.messages[rowID].body, baseURL: nil)
+  
+        case "Hangouts":
+            TableTypeButton1.hidden = true
+            TableTypeButton2.hidden = true
+            TableTypeButton3.hidden = true
+            TableTypeButton4.hidden = true
+            dataTable1.hidden = true
+            dataTable2.hidden = true
+            dataTable3.hidden = true
+            dataTable4.hidden = true
+            peoplePickerButton.hidden = true
+            
+            myWebView.hidden = false
+            btnCloseWindow.hidden = false
+            myWebView.loadHTMLString(myHangoutsMessages.messages[rowID].body, baseURL: nil)
             
             default:
                 let a = 1
@@ -2002,14 +2038,6 @@ println("Nothing found")
     {
         // Go and get the list of available panes
         
-        // this is to allow cleaning of panes if needed
-        
-  //      let myPanes2 = displayPanes(inManagedContext: managedObjectContext!)
-  //      myPanes2.deleteAllPanes()
-        
-        
-        // End delete phase
-        
         let myPanes = displayPanes(inManagedContext: managedObjectContext!)
         
         var myButtonName: String = ""
@@ -2285,7 +2313,7 @@ println("Nothing found")
         
         if myDisplay.count == 0
         {
-            writeRowToArray("No matching GMail Messages found", &myDisplay)
+            writeRowToArray("No matching Gmail Messages found", &myDisplay)
         }
 
         switch gmailTableToRefresh
@@ -2322,7 +2350,70 @@ println("Nothing found")
         default:
             println("myGmailDidFinish: myGmailDidFinish hit default for some reason")
         }
+        
+        gmailTableToRefresh = ""
     }
+    
+    func myHangoutsDidFinish()
+    {
+        var myDisplay: [TableData] = Array()
+        
+        if myHangoutsMessages.messages.count == 0
+        {
+            writeRowToArray("No matching Hangout Messages found", &myDisplay)
+        }
+        
+        for myMessage in myHangoutsMessages.messages
+        {
+            var myString: String = ""
+            
+            myString += "From: \(myMessage.from)\n"
+            myString += myMessage.snippet
+            writeRowToArray(myString, &myDisplay)
+        }
+        
+        if myDisplay.count == 0
+        {
+            writeRowToArray("No matching Hangout Messages found", &myDisplay)
+        }
+        
+        switch hangoutsTableToRefresh
+        {
+        case "Table1":
+            table1Contents = myDisplay
+            dispatch_async(dispatch_get_main_queue())
+            {
+                self.dataTable1.reloadData() // reload table/data or whatever here. However you want.
+            }
+            
+        case "Table2":
+            table2Contents = myDisplay
+            dispatch_async(dispatch_get_main_queue())
+            {
+                self.dataTable2.reloadData() // reload table/data or whatever here. However you want.
+            }
+            
+        case "Table3":
+            table3Contents = myDisplay
+            dispatch_async(dispatch_get_main_queue())
+        {
+                    self.dataTable3.reloadData() // reload table/data or whatever here. However you want.
+            }
+            
+        case "Table4":
+            table4Contents = myDisplay
+            
+            dispatch_async(dispatch_get_main_queue())
+            {
+                self.dataTable4.reloadData() // reload table/data or whatever here. However you want.
+            }
+            
+        default:
+            println("myHangoutsDidFinish: myHangoutsDidFinish hit default for some reason")
+        }
+        hangoutsTableToRefresh = ""
+    }
+
     
     @IBAction func btnCloseWindowClick(sender: UIButton)
     {
@@ -2338,5 +2429,67 @@ println("Nothing found")
         
         myWebView.hidden = true
         btnCloseWindow.hidden = true
+    }
+    
+    func gmailSignedIn(notification: NSNotification)
+    {
+        if hangoutsTableToRefresh != ""
+        {
+            loadHangouts()
+        }
+        
+        if gmailTableToRefresh != ""
+        {
+            loadGmail()
+        }
+        
+    }
+    
+    func loadGmail()
+    {
+        if myGmailMessages == nil
+        {
+            myGmailMessages = gmailMessages(inGmailData: myGmailData)
+        }
+        
+        if myDisplayType == "Project"
+        {
+            dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
+            {
+                self.myGmailMessages.getMessages(self.myProjectName, inType: self.myDisplayType, inPerson: self.personSelected, inMessageType: "Mail")
+            }
+        }
+        else
+        {
+            let searchString = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+            dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
+            {
+                self.myGmailMessages.getMessages(searchString, inType: self.myDisplayType, inPerson: self.personSelected, inMessageType: "Mail")
+            }
+        }
+     }
+    
+    func loadHangouts()
+    {
+        if myHangoutsMessages == nil
+        {
+            myHangoutsMessages = gmailMessages(inGmailData: myGmailData)
+        }
+        
+        if myDisplayType == "Project"
+        {
+            dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
+            {
+                    self.myHangoutsMessages.getMessages(self.myProjectName, inType: self.myDisplayType, inPerson: self.personSelected, inMessageType: "Hangouts")
+            }
+        }
+        else
+        {
+            let searchString = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+            dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
+            {
+                    self.myHangoutsMessages.getMessages(searchString, inType: self.myDisplayType, inPerson: self.personSelected, inMessageType: "Hangouts")
+            }
+        }
     }
 }
