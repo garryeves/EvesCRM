@@ -56,22 +56,15 @@ func parseCalendarDetails (projectName: String, inEventStore: EKEventStore, inou
     return tableContents
 }
 
-func parseReminderDetails (contactRecord: ABRecord, inEventStore: EKEventStore, inout reminderDetails: [EKReminder])-> [TableData]
+func parseReminderDetails (inSearch: String, inEventStore: EKEventStore, inout reminderDetails: [EKReminder])-> [TableData]
 {
-    
-    var emailAddresses:[String] = [" "]
     var tableContents:[TableData] = [TableData]()
     
     eventStore = inEventStore
-    
-    emailAddresses.removeAll()
-    tableContents.removeAll()
+
     reminderDetails.removeAll()
-    
-    // First we need to find out the email addresses for the person so can check through calendar entries
-    
-    var workingName: String = ABRecordCopyCompositeName(contactRecord).takeUnretainedValue() as String
-    parseReminders(workingName, &tableContents, &reminderDetails)
+
+    parseReminders(inSearch, &tableContents, &reminderDetails)
     
     return tableContents
 }

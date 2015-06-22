@@ -637,7 +637,8 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 }
                 else
                 {
-                    workArray = parseReminderDetails(personSelected, eventStore, &reminderDetails)
+                    var workingName: String = ABRecordCopyCompositeName(personSelected).takeUnretainedValue() as String
+                    workArray = parseReminderDetails(workingName, eventStore, &reminderDetails)
                 }
             case "Evernote":
                 writeRowToArray("Loading Evernote data.  Pane will refresh when finished", &workArray)
