@@ -51,12 +51,10 @@ func addToContactDetailTable (contactRecord: ABRecord, rowDescription: String, r
         
         if ABMultiValueGetCount(decodeProperty) > 0
         {
-
             let decode: NSDictionary = ABMultiValueCopyValueAtIndex(decodeProperty,0).takeRetainedValue() as! NSDictionary
 
             if decode.count > 0
             {
-
                 if decode[kABPersonAddressStreetKey as String]?.length > 0
                 {
                     line1 = decode[kABPersonAddressStreetKey as String] as! String
@@ -75,7 +73,6 @@ func addToContactDetailTable (contactRecord: ABRecord, rowDescription: String, r
                 }
                 
                 writeRowToArray("Address : \(line1)\n\(line2)\n\(line3)\n\(line4)", &tableContents)
-                
             }
         }
  

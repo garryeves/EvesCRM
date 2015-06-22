@@ -190,8 +190,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         myWebView.hidden = true
         btnCloseWindow.hidden = true
         
-        
-        
         dataTable1.tableFooterView = UIView(frame:CGRectZero)
         dataTable2.tableFooterView = UIView(frame:CGRectZero)
         dataTable3.tableFooterView = UIView(frame:CGRectZero)
@@ -229,9 +227,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         TableTypeButton4.setTitle("Reminders", forState: .Normal)
         
         TableOptions = Array()
-        
- //       displayScreen()
-        
         
         myEvernote = EvernoteDetails(inSession: self.evernoteSession)
         
@@ -335,7 +330,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             {
                 myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
             }
-            
+
             switch callingTable
             {
                 case 1:
@@ -359,7 +354,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 case 4:
                     TableTypeButton4.setTitle(itemSelected, forState: .Normal)
                     TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myFullName), forState: .Normal)
-                    
                     setAddButtonState(4)
                     populateArraysForTables("Table4")
             
@@ -1402,6 +1396,10 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         peoplePicker.dismissViewControllerAnimated(true, completion: nil)
         myDisplayType = "Person"
         personSelected = person
+
+        // Dirty fix as have an issue with populating contact details if called later
+        
+        let dummyArray = parseContactDetails(personSelected)
         
         displayScreen()
         TableTypeSelection1.hidden = true
