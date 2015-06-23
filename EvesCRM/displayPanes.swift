@@ -70,7 +70,7 @@ class displayPanes
         // Populate roles with initial values
         //  Do this by checking to see if it exists already, if it does then do nothing otherwise create the pane
         
-        var loadSet = ["Calendar", "Details", "Evernote", "GMail", "Hangouts", "Omnifocus", "OneNote", "Project Membership", "Reminders"]
+        var loadSet = ["Calendar", "Details", "Evernote", "Facebook", "GMail", "Hangouts", "Omnifocus", "OneNote", "Project Membership", "Reminders"]
  
         for myItem in loadSet
         {
@@ -195,7 +195,7 @@ class displayPane
         // Save the details of this pane to the database
         var error: NSError?
         let myPane = NSEntityDescription.insertNewObjectForEntityForName("Panes", inManagedObjectContext: managedContext) as! Panes
-println("SavePane : \(myPaneName)")
+
         myPane.pane_name = myPaneName
         myPane.pane_available = myPaneAvailable
         myPane.pane_visible = myPaneVisible

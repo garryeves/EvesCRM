@@ -11,6 +11,9 @@
 import Foundation
 import AddressBook
 
+private var FacebookID: String = ""
+private var LinkedInID: String = ""
+private var TwitterID: String = ""
 
 func parseContactDetails (contactRecord: ABRecord)-> [TableData]
 {
@@ -223,7 +226,6 @@ func addToContactDetailTable (contactRecord: ABRecord, rowDescription: String, r
         }
         
     case kABPersonInstantMessageProperty:
-        
         var strHolder :String = ""
         
         let decodeProperty : ABMultiValueRef = ABRecordCopyValue(contactRecord, kABPersonInstantMessageProperty).takeUnretainedValue() as ABMultiValueRef
@@ -290,57 +292,71 @@ func addToContactDetailTable (contactRecord: ABRecord, rowDescription: String, r
         }
         
     case kABPersonSocialProfileProperty:
-        
         var strHolder :String = ""
+ 
+        FacebookID = ""
+        LinkedInID = ""
+        TwitterID = ""
         
         let decodeProperty : ABMultiValueRef = ABRecordCopyValue(contactRecord, kABPersonSocialProfileProperty).takeUnretainedValue() as ABMultiValueRef
-        
-        if ABMultiValueGetCount(decodeProperty) > 0
-        {
-            
-            let decode: NSDictionary = ABMultiValueCopyValueAtIndex(decodeProperty,0).takeRetainedValue() as! NSDictionary
-            
-            if decode.count > 0
-            {
-                
-                if decode[kABPersonSocialProfileServiceTwitter as String]?.length > 0
-                {
-                    strHolder = decode[kABPersonSocialProfileUsernameKey as String]! as! String
-                    writeRowToArray("Twitter : " + strHolder, &tableContents)
-                }
-                if decode[kABPersonSocialProfileServiceGameCenter as String]?.length > 0
-                {
-                    strHolder = decode[kABPersonSocialProfileUsernameKey as String]! as! String
-                    writeRowToArray("Game Center : " + strHolder, &tableContents)
-                }
-                if decode[kABPersonSocialProfileServiceSinaWeibo as String]?.length > 0
-                {
-                    strHolder = decode[kABPersonSocialProfileUsernameKey as String]! as! String
-                    writeRowToArray("Sina Weibo : " + strHolder, &tableContents)
-                }
-                if decode[kABPersonSocialProfileServiceFacebook as String]?.length > 0
-                {
-                    strHolder = decode[kABPersonSocialProfileUsernameKey as String]! as! String
-                    writeRowToArray("Facebook : " + strHolder, &tableContents)
-                }
-                if decode[kABPersonSocialProfileServiceMyspace as String]?.length > 0
-                {
-                    strHolder = decode[kABPersonSocialProfileUsernameKey as String]! as! String
-                    writeRowToArray("Myspace : " + strHolder, &tableContents)
-                }
-                if decode[kABPersonSocialProfileServiceLinkedIn as String]?.length > 0
-                {
-                    strHolder = decode[kABPersonSocialProfileUsernameKey as String]! as! String
-                    writeRowToArray("LinkedIn : " + strHolder, &tableContents)
-                }
-                if decode[kABPersonSocialProfileServiceFlickr as String]?.length > 0
-                {
-                    strHolder = decode[kABPersonSocialProfileUsernameKey as String]! as! String
-                    writeRowToArray("Flickr : " + strHolder, &tableContents)
-                }
-            }
-        }
 
+        var loopcount: Int = 0
+        var tempStr: String = ""
+
+        while ABMultiValueGetCount(decodeProperty) > loopcount
+        {
+            tempStr = ""
+            let myDecode: NSDictionary = ABMultiValueCopyValueAtIndex(decodeProperty,loopcount).takeRetainedValue() as! NSDictionary
+
+            let myServiceName: String = myDecode[kABPersonSocialProfileServiceKey as String]! as! String
+            
+            if myServiceName == (kABPersonSocialProfileServiceTwitter as String)
+            {
+                tempStr = "Twitter : "
+                TwitterID = myDecode[kABPersonSocialProfileUsernameKey as String]! as! String
+            }
+            
+            if myServiceName == (kABPersonSocialProfileServiceGameCenter as String)
+            {
+                tempStr = "GameCenter : "
+            }
+
+            if myServiceName == (kABPersonSocialProfileServiceSinaWeibo as String)
+            {
+                tempStr = "Sina Weibo : "
+            }
+
+            if myServiceName == (kABPersonSocialProfileServiceFacebook as String)
+            {
+                tempStr = "Facebook : "
+                FacebookID = myDecode[kABPersonSocialProfileUsernameKey as String]! as! String
+            }
+
+            if myServiceName == (kABPersonSocialProfileServiceMyspace as String)
+            {
+                tempStr = "Myspace : "
+            }
+
+            if myServiceName == (kABPersonSocialProfileServiceLinkedIn as String)
+            {
+                tempStr = "LinkedIn : "
+                LinkedInID = myDecode[kABPersonSocialProfileUsernameKey as String]! as! String
+            }
+
+            if myServiceName == (kABPersonSocialProfileServiceFlickr as String)
+            {
+                tempStr = "Flickr : "
+            }
+            
+            if tempStr != ""
+            {
+                strHolder = myDecode[kABPersonSocialProfileUsernameKey as String]! as! String
+                writeRowToArray(tempStr + strHolder, &tableContents)
+            }
+
+            loopcount++
+        }
+            
     case kABPersonURLProperty:
         let decodeProperty : ABMultiValueRef = ABRecordCopyValue(contactRecord, kABPersonURLProperty).takeUnretainedValue() as ABMultiValueRef
         
@@ -515,5 +531,20 @@ func getEmailAddress (contactRecord: ABRecord)-> [String]
     }
 
     return tableContents
+}
+
+func getFacebookID() -> String
+{
+    return FacebookID
+}
+
+func getLinkedInID() -> String
+{
+    return LinkedInID
+}
+
+func getTwitterID() -> String
+{
+    return TwitterID
 }
 

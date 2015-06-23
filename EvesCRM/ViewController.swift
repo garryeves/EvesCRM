@@ -129,6 +129,10 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     var myHangoutsMessages: gmailMessages!
     var myGmailData: gmailData!
     
+    // Social Media
+    
+    var myFacebookID: String = ""
+    
     // Peoplepicker settings
     
     override func viewDidLoad() {
@@ -720,8 +724,73 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 loadHangouts()
             }
         
-            case "Mail":
-                let a = 1
+            case "Facebook":
+                writeRowToArray("Loading Facebook posts.  Pane will refresh when finished", &workArray)
+            
+            /* Example to pos
+            var accountStore = ACAccountStore()
+            var accountType = accountStore.accountTypeWithAccountTypeIdentifier(
+            ACAccountTypeIdentifierFacebook)
+            
+            var postingOptions = [ACFacebookAppIdKey:
+            "<YOUR FACEBOOK APP ID KEY HERE>",
+            ACFacebookPermissionsKey: ["email"],
+            ACFacebookAudienceKey: ACFacebookAudienceFriends]
+            
+            accountStore.requestAccessToAccountsWithType(accountType,
+            options: postingOptions) {
+            success, error in
+            if success {
+            
+            var options = [ACFacebookAppIdKey:
+            "<YOUR FACEBOOK APP ID KEY HERE>",
+            ACFacebookPermissionsKey: ["publish_actions"],
+            ACFacebookAudienceKey: ACFacebookAudienceFriends]
+            
+            accountStore.requestAccessToAccountsWithType(accountType,
+            options: options) {
+            success, error in
+            if success {
+            var accountsArray =
+            accountStore.accountsWithAccountType(accountType)
+            
+            if accountsArray.count > 0 {
+            var facebookAccount = accountsArray[0] as! ACAccount
+            
+            var parameters = Dictionary<String, AnyObject>()
+            parameters["access_token"] =
+            facebookAccount.credential.oauthToken
+            parameters["message"] = "My first Facebook post from iOS 8"
+            
+            var feedURL = NSURL(string:
+            "https://graph.facebook.com/me/feed")
+            
+            let postRequest = SLRequest(forServiceType:
+            SLServiceTypeFacebook,
+            requestMethod: SLRequestMethod.POST,
+            URL: feedURL,
+            parameters: parameters)
+            postRequest.performRequestWithHandler(
+            {(responseData: NSData!,
+            urlResponse: NSHTTPURLResponse!,
+            error: NSError!) -> Void in
+            println("Twitter HTTP response \(urlResponse.statusCode)")
+            })
+            }
+            } else {
+            println("Access denied")
+            println(error.localizedDescription)
+            }
+            }
+            } else {
+            println("Access denied")
+            println(error.localizedDescription)
+            }
+            }
+*/
+            
+            
+            
             
             default:
                 println("populateArrayDetails: dataType hit default for some reason : \(selectedType)")
@@ -1401,6 +1470,10 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         // Dirty fix as have an issue with populating contact details if called later
         
         let dummyArray = parseContactDetails(personSelected)
+        
+        // Get the Facebook id, if one is set
+        myFacebookID = getFacebookID()
+println("Facebook ID = \(myFacebookID)")
         
         displayScreen()
         TableTypeSelection1.hidden = true

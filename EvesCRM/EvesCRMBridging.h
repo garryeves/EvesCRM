@@ -47,3 +47,7 @@
 #import "/Users/garryeves/Documents/xcode/EvesCRM/EvesCRM/gtm-oauth2-master/Source/Touch/GTMOAuth2ViewControllerTouch.h"
 
 #import <Google/SignIn.h>
+
+
+// Facebook
+#import <FBSDKCoreKit/FBSDKCoreKit.h>

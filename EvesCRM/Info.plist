@@ -26,6 +26,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>db-1qayzo6cmw8v6nr</string>
+				<string>fb456682554489016</string>
 			</array>
 		</dict>
 		<dict>
@@ -47,6 +48,10 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>3</string>
+	<key>FacebookAppID</key>
+	<string>456682554489016</string>
+	<key>FacebookDisplayName</key>
+	<string>Contacts Dashboard</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
