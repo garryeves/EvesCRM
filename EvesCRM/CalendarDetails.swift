@@ -13,32 +13,38 @@ import EventKit
 var eventStore: EKEventStore!
 var targetReminderCal: EKCalendar!
 
-func parseCalendarDetails (contactRecord: ABRecord, inEventStore: EKEventStore, inout eventDetails: [EKEvent])-> [TableData]
+func parseCalendarDetails (emailAddresses: [String], inEventStore: EKEventStore, inout eventDetails: [EKEvent])-> [TableData]
 {
     
-    var emailAddresses:[String] = [" "]
+   // var emailAddresses:[String] = [" "]
     var tableContents:[TableData] = [TableData]()
     
     eventStore = inEventStore
     
-    emailAddresses.removeAll()
+    //emailAddresses.removeAll()
     tableContents.removeAll()
     eventDetails.removeAll()
     
     // First we need to find out the email addresses for the person so can check through calendar entries
 
-    let decodeProperty : ABMultiValueRef = ABRecordCopyValue(contactRecord, kABPersonEmailProperty).takeUnretainedValue() as ABMultiValueRef
+   // let decodeProperty : ABMultiValueRef = ABRecordCopyValue(contactRecord, kABPersonEmailProperty).takeUnretainedValue() as ABMultiValueRef
     
-    let recordCount = ABMultiValueGetCount(decodeProperty)
+   // let recordCount = ABMultiValueGetCount(decodeProperty)
     
-    if recordCount > 0
+//    if recordCount > 0
+//    {
+//        for loopCount in 0...recordCount-1
+//        {
+//            parseCalendarByEmail(ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String, &tableContents, &eventDetails)
+//        }
+//    }
+//removed for class
+    
+    for myEmail in emailAddresses
     {
-        for loopCount in 0...recordCount-1
-        {
-            parseCalendarByEmail(ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String, &tableContents, &eventDetails)
-        }
+        parseCalendarByEmail(myEmail, &tableContents, &eventDetails)
     }
-
+    
     return tableContents
 }
 

@@ -12,7 +12,8 @@ import AddressBookUI
 import EventKit
 import EventKitUI
 import CoreData
-
+import Social
+import Accounts
 
 //import "ENSDK/Headers/ENSDK.h"
 
@@ -74,8 +75,8 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     var table3Contents:[TableData] = [TableData]()
     var table4Contents:[TableData] = [TableData]()
     
-    // store the name of the person selected in the People table
-    var personSelected: ABRecord!
+    // store the details of the person selected in the People table
+    var personContact: iOSContact!
     
     var adbk : ABAddressBook!
     
@@ -101,6 +102,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     var oneNoteTableToRefresh: String = ""
     var gmailTableToRefresh: String = ""
     var hangoutsTableToRefresh: String = ""
+    var facebookTableToRefresh: String = ""
 
     var oneNoteLinkArray: [String] = Array()
     var omniLinkArray: [String] = Array()
@@ -128,10 +130,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     var myGmailMessages: gmailMessages!
     var myHangoutsMessages: gmailMessages!
     var myGmailData: gmailData!
-    
-    // Social Media
-    
-    var myFacebookID: String = ""
     
     // Peoplepicker settings
     
@@ -332,7 +330,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             }
             else
             {
-                myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+                myFullName = personContact.fullName
             }
 
             switch callingTable
@@ -605,13 +603,10 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         }
         else
         {
-            labelName.text = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+            labelName.text = personContact.fullName
         }
                 
         var selectedType: String = getFirstPartofString(dataType)
-        
-        hangoutsTableToRefresh = ""
-        gmailTableToRefresh = ""
         
         // This is where we have the logic to work out which type of data we are goign to populate with
         switch selectedType
@@ -623,7 +618,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 }
                 else
                 {
-                    workArray = parseContactDetails(personSelected)
+                    workArray = personContact.tableData
                 }
             case "Calendar":
                 if myDisplayType == "Project"
@@ -632,7 +627,11 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 }
                 else
                 {
-                    workArray = parseCalendarDetails(personSelected, eventStore, &eventDetails)
+                    workArray = parseCalendarDetails(personContact.emailAddresses, eventStore, &eventDetails)
+                }
+                if workArray.count == 0
+                {
+                    writeRowToArray("No calendar entries found", &workArray)
                 }
             case "Reminders":
                 if myDisplayType == "Project"
@@ -641,8 +640,12 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 }
                 else
                 {
-                    var workingName: String = ABRecordCopyCompositeName(personSelected).takeUnretainedValue() as String
+                    var workingName: String = personContact.fullName
                     workArray = parseReminderDetails(workingName, eventStore, &reminderDetails)
+                }
+                if workArray.count == 0
+                {
+                    writeRowToArray("No Reminder entries found", &workArray)
                 }
             case "Evernote":
                 writeRowToArray("Loading Evernote data.  Pane will refresh when finished", &workArray)
@@ -652,7 +655,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 }
                 else
                 {
-                    let searchString = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+                    let searchString = personContact.fullName
                     myEvernote.findEvernoteNotes(searchString)
                 }
                 EvernoteTargetTable = inTable
@@ -665,7 +668,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 }
                 else
                 {
-                    let searchString = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+                    let searchString = personContact.fullName
                     workArray = displayProjectsForPerson(searchString, &projectMemberArray)
                 }
 
@@ -724,69 +727,116 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 loadHangouts()
             }
         
-            case "Facebook":
-                writeRowToArray("Loading Facebook posts.  Pane will refresh when finished", &workArray)
-            
-            /* Example to pos
-            var accountStore = ACAccountStore()
-            var accountType = accountStore.accountTypeWithAccountTypeIdentifier(
-            ACAccountTypeIdentifierFacebook)
-            
-            var postingOptions = [ACFacebookAppIdKey:
-            "<YOUR FACEBOOK APP ID KEY HERE>",
-            ACFacebookPermissionsKey: ["email"],
-            ACFacebookAudienceKey: ACFacebookAudienceFriends]
-            
-            accountStore.requestAccessToAccountsWithType(accountType,
-            options: postingOptions) {
-            success, error in
-            if success {
-            
-            var options = [ACFacebookAppIdKey:
-            "<YOUR FACEBOOK APP ID KEY HERE>",
-            ACFacebookPermissionsKey: ["publish_actions"],
-            ACFacebookAudienceKey: ACFacebookAudienceFriends]
-            
-            accountStore.requestAccessToAccountsWithType(accountType,
-            options: options) {
-            success, error in
-            if success {
-            var accountsArray =
-            accountStore.accountsWithAccountType(accountType)
-            
-            if accountsArray.count > 0 {
-            var facebookAccount = accountsArray[0] as! ACAccount
-            
-            var parameters = Dictionary<String, AnyObject>()
-            parameters["access_token"] =
-            facebookAccount.credential.oauthToken
-            parameters["message"] = "My first Facebook post from iOS 8"
-            
-            var feedURL = NSURL(string:
-            "https://graph.facebook.com/me/feed")
-            
-            let postRequest = SLRequest(forServiceType:
-            SLServiceTypeFacebook,
-            requestMethod: SLRequestMethod.POST,
-            URL: feedURL,
-            parameters: parameters)
-            postRequest.performRequestWithHandler(
-            {(responseData: NSData!,
-            urlResponse: NSHTTPURLResponse!,
-            error: NSError!) -> Void in
-            println("Twitter HTTP response \(urlResponse.statusCode)")
-            })
-            }
-            } else {
-            println("Access denied")
-            println(error.localizedDescription)
-            }
-            }
-            } else {
-            println("Access denied")
-            println(error.localizedDescription)
-            }
-            }
+            /*case "Facebook":
+                if myDisplayType == "Project"
+                {
+                    writeRowToArray("Projects do not have Facebook accounts", &workArray)
+                }
+                else
+                {
+                    if myFacebookID == ""
+                    {
+                        writeRowToArray("No Facebook account for this person", &workArray)
+                    }
+                    else
+                    {
+                        writeRowToArray("Loading Facebook posts.  Pane will refresh when finished", &workArray)
+                        
+                        facebookTableToRefresh = inTable
+println("facebook ID = \(myFacebookID)")
+                        
+                        var accountStore = ACAccountStore()
+                        var accountType = accountStore.accountTypeWithAccountTypeIdentifier(ACAccountTypeIdentifierFacebook)
+                        
+                        var postingOptions = [ACFacebookAppIdKey: "456682554489016",
+                                              ACFacebookPermissionsKey: ["email"],
+                                              ACFacebookAudienceKey: ACFacebookAudienceEveryone]
+                        
+                        accountStore.requestAccessToAccountsWithType(accountType, options: postingOptions as [NSObject : AnyObject])
+                            {
+                                success, error in
+                                if success
+                                {
+                println("Facebook success")
+                                    var options = [ACFacebookAppIdKey: "456682554489016",
+                                                   ACFacebookPermissionsKey: ["publish_actions"],
+                                                   ACFacebookAudienceKey: ACFacebookAudienceEveryone]
+                                   
+                                    
+                                    NSString *acessToken = [NSString stringWithFormat:@"%@",facebookAccount.credential.oauthToken];
+                                    NSDictionary *parameters = @{@"access_token": acessToken};
+                                    NSURL *feedURL = [NSURL URLWithString:@"https://graph.facebook.com/me/friends"];
+                                    
+                                    SLRequest *feedRequest = [SLRequest
+                                    requestForServiceType:SLServiceTypeFacebook
+                                    requestMethod:SLRequestMethodGET
+                                    URL:feedURL
+                                    parameters:parameters];
+                                    feedRequest.account = facebookAccount;
+                                    [feedRequest performRequestWithHandler:^(NSData *responseData,
+                                    NSHTTPURLResponse *urlResponse, NSError *error)
+                                    {
+                                    NSLog(@"%@",[[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding]);
+                                    }];
+                                }
+                                else
+                                {
+                                    // Handle Failure
+                                }
+                                    
+                                    
+                                    
+                                  //  var options = [ACFacebookAppIdKey: "456682554489016",
+                                  //      ACFacebookPermissionsKey: ["publish_actions"],
+                                  //      ACFacebookAudienceKey: ACFacebookAudienceFriends]
+                                    
+                                  //  accountStore.requestAccessToAccountsWithType(accountType,
+                                  //      options: options) {
+                                  //          success, error in
+                                  //          if success {
+                                  //              var accountsArray =
+                                  //              accountStore.accountsWithAccountType(accountType)
+                                                
+                                   //             if accountsArray.count > 0 {
+                                   //                 var facebookAccount = accountsArray[0] as! ACAccount
+                                                    
+                                   //                 var parameters = Dictionary<String, AnyObject>()
+                                   //                 parameters["access_token"] =
+                                   //                     facebookAccount.credential.oauthToken
+                                   //                 parameters["message"] = "My first Facebook post from iOS 8"
+                                                    
+                                   //                 var feedURL = NSURL(string:
+                                   //                     "https://graph.facebook.com/me/feed")
+                                                    
+                                   //                 let postRequest = SLRequest(forServiceType:
+                                   //                     SLServiceTypeFacebook,
+                                   //                     requestMethod: SLRequestMethod.POST,
+                                   //                     URL: feedURL,
+                                   //                     parameters: parameters)
+                                   //                 postRequest.performRequestWithHandler(
+                                   //                     {(responseData: NSData!,
+                                   //                         urlResponse: NSHTTPURLResponse!,
+                                  //                          error: NSError!) -> Void in
+                                  //                          println("Twitter HTTP response \(urlResponse.statusCode)")
+                                    //                })
+                                     //           }
+                                    //        } else {
+                                    //            println("Access denied")
+                                    //            println(error.localizedDescription)
+                                    //        }
+                                   // }
+                                }
+                                else
+                                {
+                                    println("Facebook Access denied")
+                                    println(error.localizedDescription)
+                                }
+                        }
+                        
+                        
+                    }
+                }
+
 */
             
             
@@ -846,7 +896,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     }
                     else
                     {
-                        myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+                        myFullName = personContact.fullName
                     }
                     openReminderEditView(inRecord.calendarItemIdentifier, inCalendarName: myFullName)
                 }
@@ -900,7 +950,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     
                     // we need to go and find the record for the person we have selected
                     
-                    personSelected = findPersonRecord(projectMemberArray[rowID], adbk)
+                    personContact = iOSContact(contactRecord: findPersonRecord(projectMemberArray[rowID], adbk))
                     
                     table1Contents = Array()
                     table2Contents = Array()
@@ -914,7 +964,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     
                     // Here is where we will set the titles for the buttons
                     
-                    let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+                    let myFullName = personContact.fullName
                     
                     TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: myFullName), forState: .Normal)
                     TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myFullName), forState: .Normal)
@@ -1142,7 +1192,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 }
                 else
                 {
-                    myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+                    myFullName = personContact.fullName
                 }
 
                 openReminderAddView(myFullName)
@@ -1155,7 +1205,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 }
                 else
                 {
-                    myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+                    myFullName = personContact.fullName
                 }
 
                 openEvernoteAddView(myFullName)
@@ -1169,7 +1219,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 }
                 else
                 {
-                    let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+                    let myFullName = personContact.fullName
                     myOmniUrlPath = "omnifocus:///add?name=Set Context to '\(myFullName)'"
                 }
 
@@ -1221,7 +1271,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 }
                 else
                 {
-                    let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+                    let myFullName = personContact.fullName
                     
                     if myFullName != ""
                     {
@@ -1465,15 +1515,8 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     {
         peoplePicker.dismissViewControllerAnimated(true, completion: nil)
         myDisplayType = "Person"
-        personSelected = person
-
-        // Dirty fix as have an issue with populating contact details if called later
         
-        let dummyArray = parseContactDetails(personSelected)
-        
-        // Get the Facebook id, if one is set
-        myFacebookID = getFacebookID()
-println("Facebook ID = \(myFacebookID)")
+        personContact = iOSContact(contactRecord: person)
         
         displayScreen()
         TableTypeSelection1.hidden = true
@@ -1500,7 +1543,7 @@ println("Facebook ID = \(myFacebookID)")
         
         // Here is where we will set the titles for the buttons
         
-        let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+        let myFullName = personContact.fullName
         
         TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: myFullName), forState: .Normal)
         TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myFullName), forState: .Normal)
@@ -1821,7 +1864,7 @@ println("Nothing found")
                 }
                 else
                 {
-                    myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+                    myFullName = personContact.fullName
                 }
                 if line.lowercaseString.rangeOfString(myFullName.lowercaseString) != nil
                 {
@@ -2116,7 +2159,7 @@ println("Nothing found")
         
         if myDisplayType == "Person"
         {
-            myButtonName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+            myButtonName = personContact.fullName
         }
         else
         {
@@ -2528,15 +2571,15 @@ println("Nothing found")
         {
             dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
             {
-                self.myGmailMessages.getMessages(self.myProjectName, inType: self.myDisplayType, inPerson: self.personSelected, inMessageType: "Mail")
+                self.myGmailMessages.getMessages(self.myProjectName, inType: self.myDisplayType, emailAddresses: self.personContact.emailAddresses, inMessageType: "Mail")
             }
         }
         else
         {
-            let searchString = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+            let searchString = personContact.fullName
             dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
             {
-                self.myGmailMessages.getMessages(searchString, inType: self.myDisplayType, inPerson: self.personSelected, inMessageType: "Mail")
+                self.myGmailMessages.getMessages(searchString, inType: self.myDisplayType, emailAddresses: self.personContact.emailAddresses, inMessageType: "Mail")
             }
         }
      }
@@ -2552,15 +2595,15 @@ println("Nothing found")
         {
             dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
             {
-                    self.myHangoutsMessages.getMessages(self.myProjectName, inType: self.myDisplayType, inPerson: self.personSelected, inMessageType: "Hangouts")
+                    self.myHangoutsMessages.getMessages(self.myProjectName, inType: self.myDisplayType, emailAddresses: self.personContact.emailAddresses, inMessageType: "Hangouts")
             }
         }
         else
         {
-            let searchString = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+            let searchString = personContact.fullName
             dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
             {
-                    self.myHangoutsMessages.getMessages(searchString, inType: self.myDisplayType, inPerson: self.personSelected, inMessageType: "Hangouts")
+                    self.myHangoutsMessages.getMessages(searchString, inType: self.myDisplayType, emailAddresses: self.personContact.emailAddresses, inMessageType: "Hangouts")
             }
         }
     }

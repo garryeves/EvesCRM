@@ -323,6 +323,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				345E027F1AEF714800BE8D0A /* Social.framework in Frameworks */,
 				341F23021AFB29E600FC2883 /* libz.dylib in Frameworks */,
 				341F23001AFB29D700FC2883 /* libc++.dylib in Frameworks */,
 				341F22FE1AFB29C100FC2883 /* QuartzCore.framework in Frameworks */,
@@ -337,7 +338,6 @@
 				34F199C11AF6ECE900963ABF /* CloudKit.framework in Frameworks */,
 				345E02811AEF715700BE8D0A /* MessageUI.framework in Frameworks */,
 				341F230F1AFB560200FC2883 /* DropboxSDK.framework in Frameworks */,
-				345E027F1AEF714800BE8D0A /* Social.framework in Frameworks */,
 				3406508F1ADDF93600C90CBB /* AddressBook.framework in Frameworks */,
 				340650901ADDF93600C90CBB /* AddressBookUI.framework in Frameworks */,
 				FDE950E4861F3B24D3DD1839 /* libPods-EvesCRM.a in Frameworks */,

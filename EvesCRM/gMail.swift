@@ -525,7 +525,7 @@ class gmailMessages: NSObject
         myGmailData = inGmailData
     }
     
-    func getMessages(inString: String, inType: String, inPerson: ABRecord, inMessageType: String)
+    func getMessages(inString: String, inType: String, emailAddresses: [String], inMessageType: String)
     {
         // this is used to get the messages
         
@@ -551,9 +551,9 @@ class gmailMessages: NSObject
             
             // Go and get email addresses for the person
             
-            let emailArray = getEmailAddress(inPerson)
-            
-            for emailAddress in emailArray
+        //    let emailArray = getEmailAddress(inPerson)
+     //remove
+            for emailAddress in emailAddresses
             {
                 workingString += " OR from:\(emailAddress)"
                 workingString += " OR to:\(emailAddress)"
