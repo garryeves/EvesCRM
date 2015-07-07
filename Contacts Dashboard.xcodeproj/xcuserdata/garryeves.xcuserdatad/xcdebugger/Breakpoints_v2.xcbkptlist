@@ -218,12 +218,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "EvesCRM/ViewController.swift"
-            timestampString = "456820492.970753"
+            timestampString = "457946822.876634"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2211"
-            endingLineNumber = "2211"
-            landmarkName = "getEvernoteUserDetails()"
+            startingLineNumber = "2272"
+            endingLineNumber = "2272"
+            landmarkName = "eventViewController(_:didCompleteWithAction:)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -520,12 +520,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "EvesCRM/ViewController.swift"
-            timestampString = "456820492.970753"
+            timestampString = "457946822.876634"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2090"
-            endingLineNumber = "2090"
-            landmarkName = "mySettingsDidFinish(_:)"
+            startingLineNumber = "2151"
+            endingLineNumber = "2151"
+            landmarkName = "initialPopulationOfTables()"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -616,13 +616,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "EvesCRM/ViewController.swift"
-            timestampString = "456820492.970753"
+            timestampString = "457946822.876634"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2250"
-            endingLineNumber = "2250"
-            landmarkName = "eventEditViewController(_:didCompleteWithAction:)"
-            landmarkType = "5">
+            startingLineNumber = "2311"
+            endingLineNumber = "2311"
+            landmarkName = "ViewController"
+            landmarkType = "3">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

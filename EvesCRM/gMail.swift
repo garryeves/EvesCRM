@@ -525,7 +525,7 @@ class gmailMessages: NSObject
         myGmailData = inGmailData
     }
     
-    func getMessages(inString: String, inType: String, emailAddresses: [String], inMessageType: String)
+    func getPersonMessages(inString: String, emailAddresses: [String], inMessageType: String)
     {
         // this is used to get the messages
         
@@ -540,26 +540,18 @@ class gmailMessages: NSObject
             workingString += "&q=-is:chat"
         }
         
-        if inType == "Project"
+        // Searching for a person
+        // Add in a search by name
+        workingString += " \"\(inString)\""
+            
+        // Go and get email addresses for the person
+            
+        for emailAddress in emailAddresses
         {
-            workingString += " \"\(inString)\""
-        }
-        else
-        { // Searching for a person
-            // Add in a search by name
-            workingString += " \"\(inString)\""
-            
-            // Go and get email addresses for the person
-            
-        //    let emailArray = getEmailAddress(inPerson)
-     //remove
-            for emailAddress in emailAddresses
-            {
-                workingString += " OR from:\(emailAddress)"
-                workingString += " OR to:\(emailAddress)"
-                workingString += " OR cc:\(emailAddress)"
-                workingString += " OR bcc:\(emailAddress)"
-            }
+            workingString += " OR from:\(emailAddress)"
+            workingString += " OR to:\(emailAddress)"
+            workingString += " OR cc:\(emailAddress)"
+            workingString += " OR bcc:\(emailAddress)"
         }
 
         let myString = myGmailData.getData(workingString)
@@ -575,8 +567,41 @@ class gmailMessages: NSObject
         {
             NSNotificationCenter.defaultCenter().postNotificationName("NotificationGmailDidFinish", object: nil)
         }
+    }
+    
+    func getProjectMessages(inString: String, inMessageType: String)
+    {
+        // this is used to get the messages
+        
+        var workingString: String = "https://www.googleapis.com/gmail/v1/users/me/messages?maxResults=20"
+        
+        if inMessageType == "Hangouts"
+        {
+            workingString += "&q=is:chat"
+        }
+        else
+        {
+            workingString += "&q=-is:chat"
+        }
+        
+        workingString += " \"\(inString)\""
+        
+        let myString = myGmailData.getData(workingString)
+        
+        splitString(myString)
+        
+        if inMessageType == "Hangouts"
+        {
+            // listMessages()
+            NSNotificationCenter.defaultCenter().postNotificationName("NotificationHangoutsDidFinish", object: nil)
+        }
+        else
+        {
+            NSNotificationCenter.defaultCenter().postNotificationName("NotificationGmailDidFinish", object: nil)
+        }
         
     }
+
     
     private func splitString(inString: String)
     {

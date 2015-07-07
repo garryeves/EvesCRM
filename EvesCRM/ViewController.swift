@@ -24,7 +24,7 @@ private let dataTable1_CELL_IDENTIFER = "dataTable1Cell"
 
 var dropboxCoreService: DropboxCoreService = DropboxCoreService()
 
-class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate {
+class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate, MyMeetingsDelegate {
     
     @IBOutlet weak var TableTypeSelection1: UIPickerView!
     
@@ -924,11 +924,45 @@ println("facebook ID = \(myFacebookID)")
                 }
             
             case "Calendar":
-                let evc = EKEventEditViewController()
-                evc.eventStore = self.eventStore
-                evc.editViewDelegate = self
-                evc.event = eventDetails[rowID]
-                self.presentViewController(evc, animated: true, completion: nil)
+                
+                let calendarOption: UIAlertController = UIAlertController(title: "Calendar Options", message: "Select action to take", preferredStyle: .ActionSheet)
+
+                let edit = UIAlertAction(title: "Edit Meeting", style: .Default, handler: { (action: UIAlertAction!) -> () in
+                    // doing something for "product page
+                    let evc = EKEventEditViewController()
+                    evc.eventStore = self.eventStore
+                    evc.editViewDelegate = self
+                    evc.event = self.eventDetails[rowID]
+                    self.presentViewController(evc, animated: true, completion: nil)
+                })
+                
+                let agenda = UIAlertAction(title: "Agenda", style: .Default, handler: { (action: UIAlertAction!) -> () in
+                    // doing something for "product page"
+                    println("Agenda")
+                    self.openMeetings()
+                })
+                
+                let minutes = UIAlertAction(title: "Minutes", style: .Default, handler: { (action: UIAlertAction!) -> () in
+                    // doing something for "product page"
+                    println("minutes")
+
+                })
+                
+                let personNotes = UIAlertAction(title: "Notes", style: .Default, handler: { (action: UIAlertAction!) -> () in
+                    // doing something for "product page"
+                    println("notes")
+
+                })
+
+                calendarOption.addAction(edit)
+                calendarOption.addAction(agenda)
+                calendarOption.addAction(minutes)
+                calendarOption.addAction(personNotes)
+                
+                calendarOption.popoverPresentationController?.sourceView = self.view
+                calendarOption.popoverPresentationController?.sourceRect = CGRectMake(self.view.bounds.width / 2.0, self.view.bounds.height / 2.0, 1.0, 1.0)
+
+                self.presentViewController(calendarOption, animated: true, completion: nil)
 
             case "Project Membership":
                 // Project team membership details
@@ -2095,6 +2129,21 @@ println("Nothing found")
         }
     }
     
+    func openMeetings()
+    {
+        let meetingViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("Meetings") as! meetingsViewController
+        meetingViewControl.delegate = self
+        
+        self.presentViewController(meetingViewControl, animated: true, completion: nil)
+    }
+    
+    
+    func myMeetingsDidFinish(controller:meetingsViewController)
+    {
+        controller.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    
     func initialPopulationOfTables()
     {
         var decodeString: String = ""
@@ -2571,7 +2620,7 @@ println("Nothing found")
         {
             dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
             {
-                self.myGmailMessages.getMessages(self.myProjectName, inType: self.myDisplayType, emailAddresses: self.personContact.emailAddresses, inMessageType: "Mail")
+                self.myGmailMessages.getProjectMessages(self.myProjectName, inMessageType: "Mail")
             }
         }
         else
@@ -2579,7 +2628,7 @@ println("Nothing found")
             let searchString = personContact.fullName
             dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
             {
-                self.myGmailMessages.getMessages(searchString, inType: self.myDisplayType, emailAddresses: self.personContact.emailAddresses, inMessageType: "Mail")
+                self.myGmailMessages.getPersonMessages(searchString, emailAddresses: self.personContact.emailAddresses, inMessageType: "Mail")
             }
         }
      }
@@ -2595,7 +2644,7 @@ println("Nothing found")
         {
             dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
             {
-                    self.myHangoutsMessages.getMessages(self.myProjectName, inType: self.myDisplayType, emailAddresses: self.personContact.emailAddresses, inMessageType: "Hangouts")
+                    self.myHangoutsMessages.getProjectMessages(self.myProjectName, inMessageType: "Hangouts")
             }
         }
         else
@@ -2603,7 +2652,7 @@ println("Nothing found")
             let searchString = personContact.fullName
             dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
             {
-                    self.myHangoutsMessages.getMessages(searchString, inType: self.myDisplayType, emailAddresses: self.personContact.emailAddresses, inMessageType: "Hangouts")
+                    self.myHangoutsMessages.getPersonMessages(searchString, emailAddresses: self.personContact.emailAddresses, inMessageType: "Hangouts")
             }
         }
     }
