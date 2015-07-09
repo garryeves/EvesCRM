@@ -118,8 +118,12 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     
     var dbRestClient: DBRestClient?
     
-    var eventDetails: [EKEvent] = Array()
-    var reminderDetails: [EKReminder] = Array()
+  //  var eventDetails: [EKEvent] = Array()
+    var eventDetails: iOSCalendar!
+
+//    var reminderDetails: [EKReminder] = Array()
+    var reminderDetails: iOSReminder!
+
     var projectMemberArray: [String] = Array()
     
     
@@ -621,32 +625,36 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     workArray = personContact.tableData
                 }
             case "Calendar":
+                eventDetails = iOSCalendar(inEventStore: eventStore)
+
                 if myDisplayType == "Project"
                 {
-                   workArray = parseCalendarDetails(myProjectName, eventStore, &eventDetails)
+                    eventDetails.loadCalendarDetails(myProjectName)
                 }
                 else
                 {
-                    workArray = parseCalendarDetails(personContact.emailAddresses, eventStore, &eventDetails)
+                    eventDetails.loadCalendarDetails(personContact.emailAddresses)
                 }
+                workArray = eventDetails.displayEvent()
+                
                 if workArray.count == 0
                 {
                     writeRowToArray("No calendar entries found", &workArray)
                 }
             case "Reminders":
+                reminderDetails = iOSReminder()
+
                 if myDisplayType == "Project"
                 {
-                    workArray = parseReminderDetails(myProjectName, eventStore, &reminderDetails)
+                    reminderDetails.parseReminderDetails(myProjectName)
                 }
                 else
                 {
                     var workingName: String = personContact.fullName
-                    workArray = parseReminderDetails(workingName, eventStore, &reminderDetails)
+                    reminderDetails.parseReminderDetails(workingName)
                 }
-                if workArray.count == 0
-                {
-                    writeRowToArray("No Reminder entries found", &workArray)
-                }
+                workArray = reminderDetails.displayReminder()
+            
             case "Evernote":
                 writeRowToArray("Loading Evernote data.  Pane will refresh when finished", &workArray)
                 if myDisplayType == "Project"
@@ -898,7 +906,7 @@ println("facebook ID = \(myFacebookID)")
                     {
                         myFullName = personContact.fullName
                     }
-                    openReminderEditView(inRecord.calendarItemIdentifier, inCalendarName: myFullName)
+                    openReminderEditView(reminderDetails.reminders[rowID].calendarItemIdentifier, inCalendarName: myFullName)
                 }
             case "Evernote":
                 if myRowContents != "No Notes found"
@@ -932,7 +940,7 @@ println("facebook ID = \(myFacebookID)")
                     let evc = EKEventEditViewController()
                     evc.eventStore = self.eventStore
                     evc.editViewDelegate = self
-                    evc.event = self.eventDetails[rowID]
+                    evc.event = self.eventDetails.events[rowID]
                     self.presentViewController(evc, animated: true, completion: nil)
                 })
                 
