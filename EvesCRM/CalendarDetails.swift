@@ -10,6 +10,64 @@ import Foundation
 import AddressBook
 import EventKit
 
+class meetingAttendee
+{
+    private var myName: String = ""
+    private var myEmailAddress: String = ""
+    private var myType: String = ""
+    private var myStatus: String = ""
+ 
+    var name: String
+    {
+        get
+        {
+            return myName
+        }
+        set
+        {
+            myName = newValue
+        }
+    }
+
+    var emailAddress: String
+    {
+        get
+        {
+            return myEmailAddress
+        }
+        set
+        {
+            myEmailAddress = newValue
+        }
+    }
+
+    var type: String
+    {
+        get
+        {
+            return myType
+        }
+        set
+        {
+            myType = newValue
+        }
+    }
+
+    var status: String
+    {
+        get
+        {
+            return myStatus
+        }
+        set
+        {
+            myStatus = newValue
+        }
+    }
+
+    
+}
+
 class myCalendarItem
 {
     private var myTitle: String = ""
@@ -22,6 +80,8 @@ class myCalendarItem
     private var myType: Int = -1
     private var myRole: Int = -1
     private var myEventID: String = ""
+    private var myEvent: EKEvent!
+    private var myAttendees: [meetingAttendee] = Array()
 
     // Seup Date format for display
     var startDateFormatter = NSDateFormatter()
@@ -36,15 +96,15 @@ class myCalendarItem
         endDateFormatter.timeStyle = timeFormat
     }
     
-    var eventID: String
+    var event: EKEvent
     {
         get
         {
-            return myEventID
+            return myEvent
         }
         set
         {
-            myEventID = newValue
+            myEvent = newValue
         }
     }
     
@@ -208,6 +268,60 @@ class myCalendarItem
             return attendeeType[myType]
         }
     }
+    
+    var attendees: [meetingAttendee]
+    {
+        get
+        {
+            return myAttendees
+        }
+    }
+
+    func addAttendee(inName: String, inEmailAddress: String, inType: String, inStatus: String)
+    {
+        let attendee: meetingAttendee = meetingAttendee()
+        attendee.name = inName
+        attendee.emailAddress = inEmailAddress
+        attendee.type = inType
+        attendee.status = inStatus
+ 
+ println("Adding for \(inName), \(inEmailAddress), \(inType), \(inStatus)")
+        myAttendees.append(attendee)
+        
+        // GAZA need to add in here logic to write to the database
+    }
+    
+    func removeAttendee(inIndex: Int)
+    {
+        // we should know the index of the item we want to delete from the control, so only need its index in order to perform the required action
+        myAttendees.removeAtIndex(inIndex)
+        
+        // GAZA need to add in here logic to write to the database
+    }
+    
+    func populateAttendeesFromInvite()
+    {
+        // Use this for the initial population of the attendees
+        
+        for attendee in event.attendees as! [EKParticipant]
+        {
+            var emailText: String = "\(attendee.URL)"
+            var emailStartPos = find(emailText,":")
+            var nextPlace = emailStartPos?.successor()
+            var emailAddress: String = ""
+            if nextPlace != nil
+            {
+                var emailEndPos = emailText.endIndex.predecessor()
+                emailAddress = emailText[nextPlace!...emailEndPos]
+            }
+            
+            addAttendee(attendee.name, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
+        }
+    }
+    
+    // GAZA need code in here to save out item to the Agenda tables
+    
+    // GAZA need code in here to read in item from the Agenda tables
 }
 
 class iOSCalendar
@@ -229,6 +343,13 @@ class iOSCalendar
         }
     }
     
+    var calendarItems: [myCalendarItem]
+    {
+        get
+        {
+            return eventDetails
+        }
+    }
     func loadCalendarDetails(emailAddresses: [String])
     {
         for myEmail in emailAddresses
@@ -345,7 +466,7 @@ class iOSCalendar
     {
         let calendarEntry = myCalendarItem()
         
-        calendarEntry.eventID = inEvent.eventIdentifier
+        calendarEntry.event = inEvent
         calendarEntry.title = inEvent.title
         calendarEntry.startDate = inEvent.startDate
         calendarEntry.endDate = inEvent.endDate

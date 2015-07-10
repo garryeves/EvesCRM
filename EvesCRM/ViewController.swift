@@ -135,6 +135,9 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     var myHangoutsMessages: gmailMessages!
     var myGmailData: gmailData!
     
+    
+    var myRowClicked: Int = 0
+    
     // Peoplepicker settings
     
     override func viewDidLoad() {
@@ -864,6 +867,7 @@ println("facebook ID = \(myFacebookID)")
         // Also depending on which table is clicked, we now need to do a check to make sure the row clicked is a valid task row.  If not then no need to try and edit it
 
         var myRowContents: String = "'"
+        myRowClicked = rowID
         
         switch inTable
         {
@@ -2141,6 +2145,7 @@ println("Nothing found")
     {
         let meetingViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("Meetings") as! meetingsViewController
         meetingViewControl.delegate = self
+        meetingViewControl.event = eventDetails.calendarItems[myRowClicked]
         
         self.presentViewController(meetingViewControl, animated: true, completion: nil)
     }

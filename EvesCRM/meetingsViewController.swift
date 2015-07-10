@@ -31,10 +31,21 @@ class meetingsViewController: UIViewController {
     @IBOutlet weak var btnChair: UIButton!
     @IBOutlet weak var btnMinutes: UIButton!
     @IBOutlet weak var btnBack: UIButton!
+    @IBOutlet weak var lblAddAttendee: UILabel!
+    @IBOutlet weak var txtAttendeeName: UITextField!
+    @IBOutlet weak var txtAttendeeEmail: UITextField!
+    @IBOutlet weak var btnAddAttendee: UIButton!
+    @IBOutlet weak var txtAttendeeStatus: UITextField!
+    @IBOutlet weak var lblName: UILabel!
+    @IBOutlet weak var lblEmail: UILabel!
+    @IBOutlet weak var lblStatus: UILabel!
     
+    var event: myCalendarItem!
     
     private let reuseAttendeeIdentifier = "AttendeeCell"
     private let reuseAttendeeStatusIdentifier = "AttendeeStatusCell"
+    private let reuseAttendeeAction = "AttendeeActionCell"
+    
     
     private var searches = Array<Array<String>>()
     
@@ -42,22 +53,13 @@ class meetingsViewController: UIViewController {
     {
         super.viewDidLoad()
         
-        
-
-         searches = [["Reg", "Invite"],["Mabel", "Decline"],["Rudolf the Red Nosed Reindeer had a very shiny nose", "Apology"]]
-        
-        for var i = 0; i < searches.count; i++
+        if event.attendees.count == 0
         {
-            for var j = 0; j < searches[i].count; j++
-            {
-                println("m[\(i), \(j)] = \(searches[i][j])")
-            }
+            event.populateAttendeesFromInvite()
         }
         
+  println ("incoming id = \(event.title)")
 
-//        if let cvl = colAttendees.collectionViewLayout as? UICollectionViewFlowLayout {
-//            cvl.estimatedItemSize = CGSize(width: 300, height: 75)
-//        }
 
     }
     
@@ -69,12 +71,12 @@ class meetingsViewController: UIViewController {
     
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
     {
-        return searches.count
+        return event.attendees.count
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
-        return searches[section].count
+        return 3
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
@@ -84,19 +86,22 @@ class meetingsViewController: UIViewController {
         if indexPath.indexAtPosition(1) == 0
         {
             cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseAttendeeIdentifier, forIndexPath: indexPath) as! MyDisplayCollectionViewCell
-            cell.Label.text = searches[indexPath.indexAtPosition(0)][0]
+            cell.Label.text = event.attendees[indexPath.indexAtPosition(0)].name
         }
+        
         if indexPath.indexAtPosition(1) == 1
         {
             cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseAttendeeStatusIdentifier, forIndexPath: indexPath) as! MyDisplayCollectionViewCell
-            cell.Label.text = searches[indexPath.indexAtPosition(0)][1]
+            cell.Label.text = event.attendees[indexPath.indexAtPosition(0)].status
         }
         
+        if indexPath.indexAtPosition(1) == 2
+        {
+            cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseAttendeeAction, forIndexPath: indexPath) as! MyDisplayCollectionViewCell
+            cell.Label.text = "Remove"
+        }
+    
         cell.Label.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
- 
-        
-println("row = \(indexPath.row)")
-println("position = \(indexPath.indexAtPosition(0))")
     
         let swiftColor = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
         if (indexPath.indexAtPosition(0) % 2 == 0)  // was .row
@@ -117,12 +122,20 @@ println("position = \(indexPath.indexAtPosition(0))")
         let cell = collectionView.cellForItemAtIndexPath(indexPath) as! MyDisplayCollectionViewCell
         if indexPath.indexAtPosition(1) == 0
         {
-            println("Clicked Attendee \(cell.Label.text)")
+            println("Clicked Attendee \(cell.Label.text!)")
         }
+        
         if indexPath.indexAtPosition(1) == 1
         {
-            println("Clicked Status \(cell.Label.text)")
+            println("Clicked Status \(cell.Label.text!)")
         }
+
+        if indexPath.indexAtPosition(1) == 2
+        {
+            event.removeAttendee(indexPath.indexAtPosition(0))
+            colAttendees.reloadData()
+        }
+
     }
 
     func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
@@ -131,16 +144,19 @@ println("position = \(indexPath.indexAtPosition(0))")
         
         if indexPath.indexAtPosition(1) == 0
         {
-            retVal = CGSize(width: 300, height: 40)
+            retVal = CGSize(width: 200, height: 40)
         }
         if indexPath.indexAtPosition(1) == 1
         {
-            retVal = CGSize(width: 150, height: 40)
+            retVal = CGSize(width: 100, height: 40)
+        }
+        if indexPath.indexAtPosition(1) == 2
+        {
+            retVal = CGSize(width: 80, height: 40)
         }
         
         return retVal
     }
-    
     
     @IBAction func btnChairClick(sender: UIButton)
     {
@@ -154,6 +170,34 @@ println("position = \(indexPath.indexAtPosition(0))")
     @IBAction func btnBackClick(sender: UIButton)
     {
         delegate?.myMeetingsDidFinish(self)
+    }
+    
+    @IBAction func btnAddAttendee(sender: UIButton)
+    {
+        if txtAttendeeName.text == ""
+        {
+            var alert = UIAlertController(title: "Agenda", message:
+                "You need to enter the name of the attendee", preferredStyle: UIAlertControllerStyle.Alert)
+            
+            self.presentViewController(alert, animated: false, completion: nil)
+            
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+        }
+        else
+        {
+            event.addAttendee(txtAttendeeName.text, inEmailAddress: txtAttendeeEmail.text, inType: "Participant" , inStatus: txtAttendeeStatus.text)
+            colAttendees.reloadData()
+            
+            txtAttendeeName.text = ""
+            txtAttendeeEmail.text = ""
+        }
+    }
+    
+    
+    @IBAction func txtAttendeeStatus(sender: UITextField)
+    {
+        
+        // need to display a picker here
     }
 }
 
