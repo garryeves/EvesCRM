@@ -32,6 +32,7 @@
         <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="meetingID" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="MeetingItemsBroughtForward" representedClassName="EvesCRM.MeetingItemsBroughtForward" syncable="YES">
         <attribute name="agendaID" optional="YES" attributeType="String" syncable="YES"/>
@@ -92,7 +93,7 @@
         <element name="Decodes" positionX="-279" positionY="18" width="128" height="75"/>
         <element name="MeetingAgenda" positionX="-279" positionY="36" width="128" height="180"/>
         <element name="MeetingAgendaItem" positionX="-261" positionY="54" width="128" height="195"/>
-        <element name="MeetingAttendees" positionX="-270" positionY="45" width="128" height="105"/>
+        <element name="MeetingAttendees" positionX="-270" positionY="45" width="128" height="120"/>
         <element name="MeetingItemsBroughtForward" positionX="-252" positionY="63" width="128" height="195"/>
         <element name="MeetingSupportingDocs" positionX="-243" positionY="72" width="128" height="105"/>
         <element name="MeetingTasks" positionX="-234" positionY="81" width="128" height="180"/>

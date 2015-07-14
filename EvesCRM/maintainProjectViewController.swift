@@ -67,11 +67,11 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         self.projectList.registerClass(UITableViewCell.self, forCellReuseIdentifier: reuseIdentifierProject)
         self.teamMembersTable.registerClass(UITableViewCell.self, forCellReuseIdentifier: reuseIdentifierTeam)
         
-        myProjects = getProjects()
+        myProjects = myDatabaseConnection.getProjects()
         
-        myRoles = getRoles()
+        myRoles = myDatabaseConnection.getRoles()
         
-        statusOptions = getStages()
+        statusOptions = myDatabaseConnection.getStages()
         
         if myProjects.count > 0
         {
@@ -212,7 +212,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
             {
                 titleText = mySelectedRoles[indexPath.row].teamMember
                 titleText += " : "
-                titleText += getRoleDescription(mySelectedRoles[indexPath.row].roleID)
+                titleText += myDatabaseConnection.getRoleDescription(mySelectedRoles[indexPath.row].roleID)
             }
             let titleRect = titleText.boundingRectWithSize(CGSizeMake(self.view.frame.size.width - 64, 128), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: nil, context: nil)
             
@@ -268,7 +268,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
             {
                 titleText = mySelectedRoles[indexPath.row].teamMember
                 titleText += " : "
-                titleText += getRoleDescription(mySelectedRoles[indexPath.row].roleID)
+                titleText += myDatabaseConnection.getRoleDescription(mySelectedRoles[indexPath.row].roleID)
             }
            
             cell.textLabel!.text = titleText
@@ -309,7 +309,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
             teamMembersTable.hidden = false
             teamMembersLabel.hidden = false
             
-            mySelectedRoles = getTeamMembers(mySelectedProject.projectID)
+            mySelectedRoles = myDatabaseConnection.getTeamMembers(mySelectedProject.projectID)
             teamMembersTable.reloadData()
             labelTeamMemberName.hidden = true
             pickerPersonRole.hidden = true
@@ -403,11 +403,11 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         myActionType = "Edit"
         if switchArchive.on
         {
-            myProjects = getAllProjects()
+            myProjects = myDatabaseConnection.getAllProjects()
         }
         else
         {
-            myProjects = getProjects()
+            myProjects = myDatabaseConnection.getProjects()
         }
         projectList.reloadData()
         teamMemberAction = "Add"
@@ -451,7 +451,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
             println(error?.localizedDescription)
         }
         
-        mySelectedRoles = getTeamMembers(mySelectedProject.projectID)
+        mySelectedRoles = myDatabaseConnection.getTeamMembers(mySelectedProject.projectID)
         teamMembersTable.reloadData()
 
         labelTeamMemberName.hidden = true
@@ -491,7 +491,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         if myActionType == "Add"
         {
             mySelectedProject = NSEntityDescription.insertNewObjectForEntityForName("Projects", inManagedObjectContext: self.managedObjectContext!) as! Projects
-            mySelectedProject.projectID = getAllProjects().count + 1
+            mySelectedProject.projectID = myDatabaseConnection.getAllProjects().count + 1
         }
         
         mySelectedProject.projectName = projectNameText.text
@@ -517,7 +517,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         {
             println(error?.localizedDescription)
         }
-        mySelectedRoles = getTeamMembers(mySelectedProject.projectID)
+        mySelectedRoles = myDatabaseConnection.getTeamMembers(mySelectedProject.projectID)
         teamMembersTable.reloadData()
         
         labelTeamMemberName.hidden = true
@@ -533,11 +533,11 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     {
         if switchArchive.on
         {
-            myProjects = getAllProjects()
+            myProjects = myDatabaseConnection.getAllProjects()
         }
         else
         {
-            myProjects = getProjects()
+            myProjects = myDatabaseConnection.getProjects()
         }
 
         projectList.reloadData()

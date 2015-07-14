@@ -11,7 +11,6 @@ import AddressBook
 import AddressBookUI
 import EventKit
 import EventKitUI
-import CoreData
 import Social
 import Accounts
 
@@ -23,6 +22,7 @@ private let CONTACT_CELL_IDENTIFER = "contactNameCell"
 private let dataTable1_CELL_IDENTIFER = "dataTable1Cell"
 
 var dropboxCoreService: DropboxCoreService = DropboxCoreService()
+var myDatabaseConnection: coreDatabase!
 
 class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate, MyMeetingsDelegate {
     
@@ -33,10 +33,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     @IBOutlet weak var TableTypeButton2: UIButton!
     @IBOutlet weak var TableTypeButton3: UIButton!
     @IBOutlet weak var TableTypeButton4: UIButton!
-    
-
     @IBOutlet weak var buttonAdd3: UIButton!
-    
     @IBOutlet weak var buttonAdd4: UIButton!
     @IBOutlet weak var buttonAdd2: UIButton!
     @IBOutlet weak var buttonAdd1: UIButton!
@@ -46,21 +43,16 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     @IBOutlet weak var dataTable3: UITableView!
     @IBOutlet weak var dataTable4: UITableView!
     @IBOutlet weak var buttonMaintainProjects: UIButton!
-    
     @IBOutlet weak var buttonSelectProject: UIButton!
     @IBOutlet weak var StartLabel: UILabel!
-    
     @IBOutlet weak var setSelectionButton: UIButton!
     @IBOutlet weak var settingsButton: UIButton!
-    
     @IBOutlet weak var labelName: UILabel!
     @IBOutlet weak var peoplePickerButton: UIButton!
-    
     @IBOutlet weak var myWebView: UIWebView!
-    
     @IBOutlet weak var btnCloseWindow: UIButton!
-    var TableOptions: [String]!
     
+    var TableOptions: [String]!
     
     // Store the tag number of the button pressed so that we can make sure we update the correct button text and table
     var callingTable = 0
@@ -134,8 +126,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     var myGmailMessages: gmailMessages!
     var myHangoutsMessages: gmailMessages!
     var myGmailData: gmailData!
-    
-    
+
     var myRowClicked: Int = 0
     
     // Peoplepicker settings
@@ -143,6 +134,8 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        myDatabaseConnection = coreDatabase()
+        
         initialPopulationOfTables()
         
         eventStore = EKEventStore()
@@ -207,7 +200,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         populateContactList()
         
         // Work out if a project has been added to the data store, so we can then select it
-        let myProjects = getProjects()
+        let myProjects = myDatabaseConnection.getProjects()
         
         if myProjects.count > 0
         {
@@ -950,7 +943,6 @@ println("facebook ID = \(myFacebookID)")
                 
                 let agenda = UIAlertAction(title: "Agenda", style: .Default, handler: { (action: UIAlertAction!) -> () in
                     // doing something for "product page"
-                    println("Agenda")
                     self.openMeetings()
                 })
                 
@@ -1034,7 +1026,7 @@ println("facebook ID = \(myFacebookID)")
                     myDisplayType = "Project"
                     myProjectID = projectMemberArray[rowID].toInt()
                     
-                    let mySelectProjects = getProjectDetails(myProjectID)
+                    let mySelectProjects = myDatabaseConnection.getProjectDetails(myProjectID)
                     
                     myProjectName = mySelectProjects[0].projectName
                     
@@ -1952,7 +1944,7 @@ println("Nothing found")
                         
                         // Work out the comparision date we need to use, so we can flag items not updated in last 2 weeks
                         
-                        let myLastUpdateString = getDecodeValue("OmniPurple")
+                        let myLastUpdateString = myDatabaseConnection.getDecodeValue("OmniPurple")
                         // This is string value, and is also positive, so need to convert to integer
                         
                         let myLastUpdateValue = 0 - (myLastUpdateString as NSString).integerValue
@@ -2029,7 +2021,7 @@ println("Nothing found")
                         myDisplayString += "\nDue: \(splitText[4])"
                         
                         // Work out the comparision dat we need to use, so we can see if the due date is in the next 7 days
-                        let myDueDateString = getDecodeValue("OmniOrange")
+                        let myDueDateString = myDatabaseConnection.getDecodeValue("OmniOrange")
                         // This is string value so need to convert to integer
                         
                         let myDueDateValue = (myDueDateString as NSString).integerValue
@@ -2046,7 +2038,7 @@ println("Nothing found")
                         }
                         
                         // Work out the comparision dat we need to use, so we can see if the due date is in the next 7 days
-                        let myOverdueDateString = getDecodeValue("OmniRed")
+                        let myOverdueDateString = myDatabaseConnection.getDecodeValue("OmniRed")
                         // This is string value so need to convert to integer
                         
                         let myOverdueDateValue = (myOverdueDateString as NSString).integerValue
@@ -2161,49 +2153,49 @@ println("Nothing found")
     {
         var decodeString: String = ""
 
-        decodeString = getDecodeValue("CalBeforeWeeks")
+        decodeString = myDatabaseConnection.getDecodeValue("CalBeforeWeeks")
         
         if decodeString == ""
         {  // Nothing found so go and create
-            updateDecodeValue("CalBeforeWeeks", "1")
+            myDatabaseConnection.updateDecodeValue("CalBeforeWeeks", inCodeValue: "1")
         }
 
-        decodeString = getDecodeValue("CalAfterWeeks")
+        decodeString = myDatabaseConnection.getDecodeValue("CalAfterWeeks")
         
         if decodeString == ""
         {  // Nothing found so go and create
-            updateDecodeValue("CalAfterWeeks", "4")
+            myDatabaseConnection.updateDecodeValue("CalAfterWeeks", inCodeValue: "4")
         }
         
-        decodeString = getDecodeValue("OmniRed")
+        decodeString = myDatabaseConnection.getDecodeValue("OmniRed")
         
         if decodeString == ""
         {  // Nothing found so go and create
-            updateDecodeValue("OmniRed", "0")
+            myDatabaseConnection.updateDecodeValue("OmniRed", inCodeValue: "0")
         }
         
-        decodeString = getDecodeValue("OmniOrange")
+        decodeString = myDatabaseConnection.getDecodeValue("OmniOrange")
         
         if decodeString == ""
         {  // Nothing found so go and create
-            updateDecodeValue("OmniOrange", "7")
+            myDatabaseConnection.updateDecodeValue("OmniOrange", inCodeValue: "7")
         }
         
-        decodeString = getDecodeValue("OmniPurple")
+        decodeString = myDatabaseConnection.getDecodeValue("OmniPurple")
         
         if decodeString == ""
         {  // Nothing found so go and create
-            updateDecodeValue("OmniPurple", "14")
+            myDatabaseConnection.updateDecodeValue("OmniPurple", inCodeValue: "14")
         }
         
-        if getRoles().count == 0
+        if myDatabaseConnection.getRoles().count == 0
         {
             // There are no roles defined so we need to go in and create them
             
             populateRoles()
         }
         
-        if getStages().count == 0
+        if myDatabaseConnection.getStages().count == 0
         {
             // There are no roles defined so we need to go in and create them
             

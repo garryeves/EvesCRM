@@ -82,12 +82,21 @@ class myCalendarItem
     private var myEventID: String = ""
     private var myEvent: EKEvent!
     private var myAttendees: [meetingAttendee] = Array()
+    private var myChair: String = ""
+    private var myMinutes: String = ""
+    private var myPreviousMinutes: String = ""
+    private var myNextMeeting: String = ""
+    private var myMinutesType: String = ""
 
     // Seup Date format for display
-    var startDateFormatter = NSDateFormatter()
-    var endDateFormatter = NSDateFormatter()
-    var dateFormat = NSDateFormatterStyle.MediumStyle
-    var timeFormat = NSDateFormatterStyle.ShortStyle
+    private var startDateFormatter = NSDateFormatter()
+    private var endDateFormatter = NSDateFormatter()
+    private var dateFormat = NSDateFormatterStyle.MediumStyle
+    private var timeFormat = NSDateFormatterStyle.ShortStyle
+    
+    // Flag to indicate if we have data saved in database as well
+    
+    private var mySavedData: Bool = false
 
     init()
     {
@@ -105,6 +114,7 @@ class myCalendarItem
         set
         {
             myEvent = newValue
+            myEventID = myEvent.eventIdentifier
         }
     }
     
@@ -136,7 +146,23 @@ class myCalendarItem
     {
         get
         {
+            startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
             return startDateFormatter.stringFromDate(myStartDate)
+        }
+    }
+    
+    var displayScheduledDate: String
+        {
+        get
+        {
+            var myString : String = ""
+            startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
+            
+            myString = startDateFormatter.stringFromDate(myStartDate)
+            myString += " - "
+            myString += endDateFormatter.stringFromDate(myEndDate)
+            
+            return myString
         }
     }
     
@@ -276,7 +302,83 @@ class myCalendarItem
             return myAttendees
         }
     }
+    
+    var chair: String
+    {
+        get
+        {
+            return myChair
+        }
+        set
+        {
+            myChair = newValue
+        }
+    }
 
+    var minutes: String
+    {
+        get
+        {
+            return myMinutes
+        }
+        set
+        {
+            myMinutes = newValue
+        }
+    }
+    
+    var previousMinutes: String
+    {
+        get
+        {
+            return myPreviousMinutes
+        }
+        set
+        {
+            myPreviousMinutes = newValue
+        }
+    }
+    
+    var nextMeeting: String
+    {
+        get
+        {
+            return myNextMeeting
+        }
+        set
+        {
+            myNextMeeting = newValue
+        }
+    }
+    
+    var eventID: String
+    {
+        get
+        {
+            if myEventID != ""
+            {
+                return myEventID
+            }
+            else
+            {
+                myEventID = myEvent.eventIdentifier
+                return myEvent.eventIdentifier
+            }
+        }
+    }
+    
+    var minutesType: String
+    {
+        get
+        {
+            return myMinutesType
+        }
+        set
+        {
+            myMinutesType = newValue
+        }
+    }
+    
     func addAttendee(inName: String, inEmailAddress: String, inType: String, inStatus: String)
     {
         let attendee: meetingAttendee = meetingAttendee()
@@ -285,7 +387,6 @@ class myCalendarItem
         attendee.type = inType
         attendee.status = inStatus
  
- println("Adding for \(inName), \(inEmailAddress), \(inType), \(inStatus)")
         myAttendees.append(attendee)
         
         // GAZA need to add in here logic to write to the database
@@ -319,9 +420,97 @@ class myCalendarItem
         }
     }
     
-    // GAZA need code in here to save out item to the Agenda tables
+    func saveAgenda()
+    {
+        //  Here we save the Agenda details
+        
+        // Save Agenda details
+        if mySavedData
+        {
+            myDatabaseConnection.updateAgenda(self)
+        }
+        else
+        {
+            myDatabaseConnection.createAgenda(self)
+        }
+        // Save Attendees
+        
+        myDatabaseConnection.saveAttendee(eventID, inAttendees: myAttendees)
+        
+        // Save Agenda Items
+        
+        
+        mySavedData = true
+    }
     
-    // GAZA need code in here to read in item from the Agenda tables
+    func loadAgenda()
+    {
+        // Used where the invite is no longer in the calendar, and also to load up historical items for the "minutes" views
+        
+        var mySavedValues: [MeetingAgenda]!
+        if myEventID == ""
+        {
+            mySavedValues = myDatabaseConnection.loadAgenda(myEvent.eventIdentifier)
+        }
+        else
+        {
+            mySavedValues = myDatabaseConnection.loadAgenda(myEventID)
+        }
+        
+        if mySavedValues.count > 0
+        {
+            myPreviousMinutes = mySavedValues[0].previousMeetingID
+            myChair = mySavedValues[0].chair
+            myMinutes = mySavedValues[0].minutes
+            myMinutesType = mySavedValues[0].minutesType
+            mySavedData = true
+        }
+        
+        loadAttendees()
+    }
+    
+    func loadAttendees()
+    {
+        var mySavedValues: [MeetingAttendees]!
+        
+        if myEventID == ""
+        {
+            mySavedValues = myDatabaseConnection.loadAttendees(myEvent.eventIdentifier)
+        }
+        else
+        {
+            mySavedValues = myDatabaseConnection.loadAttendees(myEventID)
+        }
+        
+        myAttendees.removeAll(keepCapacity: false)
+        for savedAttendee in mySavedValues
+        {
+            // Check to see if any "Invited" people are no longer on calendar invite, and if so remove from Agenda.
+            
+            // Check to see if any people Manually "Added" are now on the calendar invite, and if so change them to be "Invited"
+            
+            // Add any people on the calendar invite that are not in the current Agenda list
+            
+            // Check to see if the person Chairing or taking Minutes is still on calendar invite.  If not then set to be empty string
+            
+            // Save the "updated" attendee list
+            
+            
+            
+            
+            
+            
+            
+   println("Saved person = \(savedAttendee.name)")
+           
+            addAttendee(savedAttendee.name, inEmailAddress: savedAttendee.email, inType: savedAttendee.type, inStatus: savedAttendee.attendenceStatus)
+        }
+    }
+    
+    func loadAgendaItems()
+    {
+        
+    }
 }
 
 class iOSCalendar
@@ -427,7 +616,7 @@ class iOSCalendar
         /* The event starts date */
         //Calculate - Days * hours * mins * secs
         
-        let myStartDateString = getDecodeValue("CalBeforeWeeks")
+        let myStartDateString = myDatabaseConnection.getDecodeValue("CalBeforeWeeks")
         // This is string value so need to convert to integer, and subtract from 0 to get a negative
         
         let myStartDateValue:NSTimeInterval = 0 - ((((myStartDateString as NSString).doubleValue * 7) + 1) * 24 * 60 * 60)
@@ -437,7 +626,7 @@ class iOSCalendar
         /* The end date */
         //Calculate - Days * hours * mins * secs
         
-        let myEndDateString = getDecodeValue("CalAfterWeeks")
+        let myEndDateString = myDatabaseConnection.getDecodeValue("CalAfterWeeks")
         // This is string value so need to convert to integer
         
         let myEndDateValue:NSTimeInterval = (myEndDateString as NSString).doubleValue * 7 * 24 * 60 * 60
@@ -505,7 +694,7 @@ class iOSCalendar
         for event in eventDetails
         {
             var myString = "\(event.title)\n"
-            myString += "\(event.displayStartDate) - \(event.displayEndDate)\n"
+            myString += "\(event.displayScheduledDate)\n"
 
             if event.recurrence != -1
             {

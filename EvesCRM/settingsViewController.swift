@@ -84,37 +84,37 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate {
         
         var decodeString: String = ""
         
-        decodeString = getDecodeValue("CalBeforeWeeks")
+        decodeString = myDatabaseConnection.getDecodeValue("CalBeforeWeeks")
         
         textBeforeCal.text = decodeString
         
         calStepperPrevious.value = (decodeString as NSString).doubleValue
         
-        decodeString = getDecodeValue("CalAfterWeeks")
+        decodeString = myDatabaseConnection.getDecodeValue("CalAfterWeeks")
         
         textAfterCal.text = decodeString
         CalStepperAfter.value = (decodeString as NSString).doubleValue
         
-        decodeString = getDecodeValue("OmniRed")
+        decodeString = myDatabaseConnection.getDecodeValue("OmniRed")
         
         textAfterDueDate.text = decodeString
         calStepperRed.value = (decodeString as NSString).doubleValue
         
-        decodeString = getDecodeValue("OmniOrange")
+        decodeString = myDatabaseConnection.getDecodeValue("OmniOrange")
         
         textBeforeDueDate.text = decodeString
         CalStepperOrange.value = (decodeString as NSString).doubleValue
 
-        decodeString = getDecodeValue("OmniPurple")
+        decodeString = myDatabaseConnection.getDecodeValue("OmniPurple")
         
         textSinceLastUpdate.text = decodeString
         CalStepperPurple.value = (decodeString as NSString).doubleValue
         
         // Load the roles table
         
-        myRoles = getRoles()
+        myRoles = myDatabaseConnection.getRoles()
         
-        myStages = getStages()
+        myStages = myDatabaseConnection.getStages()
         
         if evernoteSession.isAuthenticated
         {
@@ -199,7 +199,7 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate {
     {
         var decodeString: String = "\(Int(calStepperPrevious.value))"
         
-        updateDecodeValue("CalBeforeWeeks", decodeString)
+        myDatabaseConnection.updateDecodeValue("CalBeforeWeeks", inCodeValue: decodeString)
        
         textBeforeCal.text = decodeString
     }
@@ -208,7 +208,7 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate {
     {
         var decodeString: String = "\(Int(CalStepperAfter.value))"
         
-        updateDecodeValue("CalAfterWeeks", decodeString)
+        myDatabaseConnection.updateDecodeValue("CalAfterWeeks", inCodeValue: decodeString)
         
         textAfterCal.text = decodeString
     }
@@ -217,7 +217,7 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate {
     {
         var decodeString: String = "\(Int(calStepperRed.value))"
         
-        updateDecodeValue("OmniRed", decodeString)
+        myDatabaseConnection.updateDecodeValue("OmniRed", inCodeValue: decodeString)
         
         textAfterDueDate.text = decodeString
     }
@@ -226,7 +226,7 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate {
     {
         var decodeString: String = "\(Int(CalStepperOrange.value))"
         
-        updateDecodeValue("OmniOrange", decodeString)
+        myDatabaseConnection.updateDecodeValue("OmniOrange", inCodeValue: decodeString)
         
         textBeforeDueDate.text = decodeString
     }
@@ -235,7 +235,7 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate {
     {
         var decodeString: String = "\(Int(CalStepperPurple.value))"
         
-        updateDecodeValue("OmniPurple", decodeString)
+        myDatabaseConnection.updateDecodeValue("OmniPurple", inCodeValue: decodeString)
         
         textSinceLastUpdate.text = decodeString
     }
@@ -259,8 +259,8 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate {
         {
             // Add the new role
             
-            createRole(textRole.text)
-            myRoles = getRoles()
+            myDatabaseConnection.createRole(textRole.text)
+            myRoles = myDatabaseConnection.getRoles()
             roleTable.reloadData()
             textRole.text = ""
         }
@@ -282,9 +282,9 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate {
         {
             // Delete the new role
             
-            deleteRoleEntry(myRoles[myRoleSelected].roleDescription)
+            myDatabaseConnection.deleteRoleEntry(myRoles[myRoleSelected].roleDescription)
             
-            myRoles = getRoles()
+            myRoles = myDatabaseConnection.getRoles()
             roleTable.reloadData()
             
             myRoleSelected = -1
@@ -309,8 +309,8 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate {
         {
             // Add the new role
             
-            createStage(textStage.text)
-            myStages = getStages()
+            myDatabaseConnection.createStage(textStage.text)
+            myStages = myDatabaseConnection.getStages()
             stagesTable.reloadData()
             textStage.text = ""
         }
@@ -344,9 +344,9 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate {
             {
                 // Delete the new role
             
-                deleteStageEntry(myStages[myStageSelected].stageDescription)
+                myDatabaseConnection.deleteStageEntry(myStages[myStageSelected].stageDescription)
                 
-                myStages = getStages()
+                myStages = myDatabaseConnection.getStages()
                 stagesTable.reloadData()
             }
             myStageSelected = -1
@@ -422,10 +422,10 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate {
     
     @IBAction func buttonResetRolesClick(sender: UIButton)
     {
-        deleteAllRoles()
+        myDatabaseConnection.deleteAllRoles()
         populateRoles()
         
-        myRoles = getRoles()
+        myRoles = myDatabaseConnection.getRoles()
         roleTable.reloadData()
         textRole.text = ""
         myRoleSelected = -1
@@ -433,10 +433,10 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate {
     
     @IBAction func buttonResetStagesClick(sender: UIButton)
     {
-        deleteAllStages()
+        myDatabaseConnection.deleteAllStages()
         populateStages()
         
-        myStages = getStages()
+        myStages = myDatabaseConnection.getStages()
         stagesTable.reloadData()
         myStageSelected = -1
         textStage.text = ""
