@@ -33,10 +33,8 @@ class meetingsViewController: UIViewController {
     @IBOutlet weak var txtAttendeeName: UITextField!
     @IBOutlet weak var txtAttendeeEmail: UITextField!
     @IBOutlet weak var btnAddAttendee: UIButton!
-    @IBOutlet weak var txtAttendeeStatus: UITextField!
     @IBOutlet weak var lblName: UILabel!
     @IBOutlet weak var lblEmail: UILabel!
-    @IBOutlet weak var lblStatus: UILabel!
     @IBOutlet weak var btnPreviousMinutes: UIButton!
     @IBOutlet weak var lblPreviousMeeting: UILabel!
     @IBOutlet weak var lblAgendaItems: UILabel!
@@ -85,8 +83,6 @@ class meetingsViewController: UIViewController {
         {
             btnMinutes.setTitle(event.minutes, forState: .Normal)
         }
-
-        txtAttendeeStatus.text = "Added"
     }
     
     override func didReceiveMemoryWarning()
@@ -345,7 +341,7 @@ class meetingsViewController: UIViewController {
         }
         else
         {
-            event.addAttendee(txtAttendeeName.text, inEmailAddress: txtAttendeeEmail.text, inType: "Participant" , inStatus: txtAttendeeStatus.text)
+            event.addAttendee(txtAttendeeName.text, inEmailAddress: txtAttendeeEmail.text, inType: "Participant" , inStatus: "Added")
             colAttendees.reloadData()
             
             event.saveAgenda()
@@ -353,13 +349,6 @@ class meetingsViewController: UIViewController {
             txtAttendeeName.text = ""
             txtAttendeeEmail.text = ""
         }
-    }
-    
-    
-    @IBAction func txtAttendeeStatus(sender: UITextField)
-    {
-        
-        // need to display a picker here
     }
     
     @IBAction func btnAddAgendaItem(sender: UIButton)
@@ -391,10 +380,8 @@ class meetingsViewController: UIViewController {
         txtAttendeeName.hidden = true
         txtAttendeeEmail.hidden = true
         btnAddAttendee.hidden = true
-        txtAttendeeStatus.hidden = true
         lblName.hidden = true
         lblEmail.hidden = true
-        lblStatus.hidden = true
         btnPreviousMinutes.hidden = true
         lblPreviousMeeting.hidden = true
         lblAgendaItems.hidden = true
@@ -424,10 +411,8 @@ class meetingsViewController: UIViewController {
         txtAttendeeName.hidden = false
         txtAttendeeEmail.hidden = false
         btnAddAttendee.hidden = false
-        txtAttendeeStatus.hidden = false
         lblName.hidden = false
         lblEmail.hidden = false
-        lblStatus.hidden = false
         btnPreviousMinutes.hidden = false
         lblPreviousMeeting.hidden = false
         lblAgendaItems.hidden = false

@@ -490,4 +490,80 @@ class coreDatabase: NSObject
             println(error?.localizedDescription)
         }
     }
+    
+    func loadAgendaItem(inMeetingID: String)->[MeetingAgendaItem]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "MeetingAgendaItem")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "meetingID == \"\(inMeetingID)\"")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [MeetingAgendaItem]
+        
+        return fetchResults!
+    }
+    
+    func saveAgendaItem(inMeetingID: String, inItems: [meetingAgendaItem])
+    {
+        var mySavedItem: MeetingAgendaItem
+        var error : NSError?
+        
+        // Before we can add items, we first need to clear out the existing entries
+        deleteAllAgendaItems(inMeetingID)
+        
+        for inItem in inItems
+        {
+            mySavedItem = NSEntityDescription.insertNewObjectForEntityForName("MeetingAgendaItem", inManagedObjectContext: managedObjectContext!) as! MeetingAgendaItem
+            mySavedItem.meetingID = inMeetingID
+            mySavedItem.actualEndTime = inItem.actualEndTime
+            mySavedItem.actualStartTime = inItem.actualStartTime
+            mySavedItem.status = inItem.status
+            mySavedItem.decisionMade = inItem.decisionMade
+            mySavedItem.discussionNotes = inItem.discussionNotes
+            mySavedItem.timeAllocation = inItem.timeAllocation
+            mySavedItem.owner = inItem.owner
+            mySavedItem.title = inItem.title
+            mySavedItem.agendaID = inItem.agendaID
+
+            if(managedObjectContext!.save(&error) )
+            {
+                println(error?.localizedDescription)
+            }
+        }
+    }
+    
+    func deleteAllAgendaItems(inMeetingID: String)
+    {
+        var error : NSError?
+        
+        var predicate: NSPredicate
+        
+        let fetchRequest = NSFetchRequest(entityName: "MeetingAgendaItem")
+        predicate = NSPredicate(format: "meetingID == \"\(inMeetingID)\"")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [MeetingAgendaItem]
+        
+        for myMeeting in fetchResults!
+        {
+            managedObjectContext!.deleteObject(myMeeting as NSManagedObject)
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+    }
+
 }
