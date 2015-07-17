@@ -18,6 +18,8 @@
 		340650841ADDF8FF00C90CBB /* EvesCRMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340650831ADDF8FF00C90CBB /* EvesCRMTests.swift */; };
 		3406508F1ADDF93600C90CBB /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3406508D1ADDF93600C90CBB /* AddressBook.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		340650901ADDF93600C90CBB /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3406508E1ADDF93600C90CBB /* AddressBookUI.framework */; };
+		3410561E1B589D92002B0ED9 /* AgendaItemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3410561D1B589D92002B0ED9 /* AgendaItemViewController.swift */; };
+		3410561F1B589D92002B0ED9 /* AgendaItemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3410561D1B589D92002B0ED9 /* AgendaItemViewController.swift */; };
 		34111C3A1AEC898B003090EB /* reminderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34111C391AEC898B003090EB /* reminderViewController.swift */; };
 		341DD2371AECA9FF001DCF65 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 340650711ADDF8FF00C90CBB /* Main.storyboard */; };
 		341E08C71B01B1B90036202D /* settingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341E08C61B01B1B90036202D /* settingsViewController.swift */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -217,6 +219,7 @@
 		340650831ADDF8FF00C90CBB /* EvesCRMTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvesCRMTests.swift; sourceTree = "<group>"; };
 		3406508D1ADDF93600C90CBB /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		3406508E1ADDF93600C90CBB /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
+		3410561D1B589D92002B0ED9 /* AgendaItemViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AgendaItemViewController.swift; sourceTree = "<group>"; };
 		34111C391AEC898B003090EB /* reminderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = reminderViewController.swift; sourceTree = "<group>"; };
 		341E08C61B01B1B90036202D /* settingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = settingsViewController.swift; sourceTree = "<group>"; };
 		341F22F71AFB299B00FC2883 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
@@ -519,6 +522,7 @@
 				3436F9431B28113E0085C58A /* GTMOAuth2ViewTouch.xib */,
 				342C0A211B4B844D00A73CA5 /* meetingsViewController.swift */,
 				344726601B54D6A800BEFF0B /* coreDatabase.swift */,
+				3410561D1B589D92002B0ED9 /* AgendaItemViewController.swift */,
 			);
 			path = EvesCRM;
 			sourceTree = "<group>";
@@ -837,6 +841,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				34A183291B0EDBB400FC369D /* StringHelper.m in Sources */,
+				3410561E1B589D92002B0ED9 /* AgendaItemViewController.swift in Sources */,
 				346B70F91AF75FF4005E1BC2 /* ProjectTeamMembers.swift in Sources */,
 				344726611B54D6A800BEFF0B /* coreDatabase.swift in Sources */,
 				34B9C0111B26BA70005E52F9 /* gMail.swift in Sources */,
@@ -933,6 +938,7 @@
 				34A182FF1B0EDB5C00FC369D /* LiveAuthRequest.m in Sources */,
 				34A183031B0EDB5C00FC369D /* LiveConnectClientCore.m in Sources */,
 				34A183011B0EDB5C00FC369D /* LiveAuthStorage.m in Sources */,
+				3410561F1B589D92002B0ED9 /* AgendaItemViewController.swift in Sources */,
 				34A183241B0EDBB400FC369D /* LiveAuthHelper.m in Sources */,
 				34A182DB1B0EDB3D00FC369D /* LiveOperationProgress.m in Sources */,
 				34A183051B0EDB5C00FC369D /* LiveDownloadOperationCore.m in Sources */,

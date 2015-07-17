@@ -129,6 +129,32 @@ class meetingAgendaItem
             myAgendaID = newValue
         }
     }
+    
+    func save(inMeetingID: String)
+    {
+        // call code to perform the save
+        
+        // Before we can save this we need to get the Agenda ID.
+        // To allow for previous meeting actions this will mean that the first AgendaID will alway be 2
+        
+        let tempAgendaItems = myDatabaseConnection.loadAgendaItem(inMeetingID)
+        
+        myAgendaID = "\(tempAgendaItems.count + 2)"
+        
+        myDatabaseConnection.saveAgendaItem(inMeetingID, inItem: self)
+    }
+    
+    func update(inMeetingID: String)
+    {
+        // call code to perform the save
+        myDatabaseConnection.updateAgendaItem(inMeetingID, inItem: self)
+    }
+    
+    func delete(inMeetingID: String)
+    {
+        // call code to perform the delete
+        myDatabaseConnection.deleteAgendaItem(inMeetingID, inItem: self)
+    }
 }
 
 class meetingAttendee
@@ -185,8 +211,6 @@ class meetingAttendee
             myStatus = newValue
         }
     }
-
-    
 }
 
 class myCalendarItem
@@ -565,7 +589,7 @@ class myCalendarItem
         
         // Save Agenda Items
         
-        myDatabaseConnection.saveAgendaItem(eventID, inItems: myAgendaItems)
+     //   myDatabaseConnection.saveAgendaItem(eventID, inItems: myAgendaItems)
         
         mySavedData = true
     }
@@ -621,7 +645,7 @@ class myCalendarItem
             for savedAttendee in mySavedValues
             {
                 inviteeFound = false
-                for invitee in event.attendees as! [EKParticipant]
+                for invitee in myEvent.attendees as! [EKParticipant]
                 {
                     // Check to see if any "Invited" people are no longer on calendar invite, and if so remove from Agenda.
                 
@@ -692,7 +716,7 @@ class myCalendarItem
                 mySavedValues = myDatabaseConnection.loadAttendees(myEventID)
             }
             
-            for invitee in event.attendees as! [EKParticipant]
+            for invitee in myEvent.attendees as! [EKParticipant]
             {
                 // Check to see if any "Invited" people are no longer on calendar invite, and if so remove from Agenda.
                 
@@ -727,7 +751,7 @@ class myCalendarItem
         }
         else
         {
-            for invitee in event.attendees as! [EKParticipant]
+            for invitee in myEvent.attendees as! [EKParticipant]
             {
                 var emailText: String = "\(invitee.URL)"
                 var emailStartPos = find(emailText,":")
@@ -757,7 +781,7 @@ class myCalendarItem
             mySavedValues = myDatabaseConnection.loadAgendaItem(myEventID)
         }
         
-        myAttendees.removeAll(keepCapacity: false)
+        myAgendaItems.removeAll(keepCapacity: false)
         
         if mySavedValues.count > 0
         {

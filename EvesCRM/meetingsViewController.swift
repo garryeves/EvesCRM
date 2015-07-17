@@ -12,7 +12,8 @@ protocol MyMeetingsDelegate{
     func myMeetingsDidFinish(controller:meetingsViewController)
 }
 
-class meetingsViewController: UIViewController {
+class meetingsViewController: UIViewController, MyAgendaItemDelegate
+{
 
     var delegate: MyMeetingsDelegate?
     
@@ -62,10 +63,10 @@ class meetingsViewController: UIViewController {
     {
         super.viewDidLoad()
         
-        if event.attendees.count == 0
-        {
-            event.populateAttendeesFromInvite()
-        }
+ //       if event.attendees.count == 0
+ //       {
+ //           event.populateAttendeesFromInvite()
+ //       }
 
         lblLocation.text = event.location
         lblStartTime.text = event.displayScheduledDate
@@ -183,8 +184,6 @@ class meetingsViewController: UIViewController {
                 cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseAttendeeAction, forIndexPath: indexPath) as! MyDisplayCollectionViewCell
                 cell.Label.text = "Remove"
             }
-    
-            cell.Label.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
         }
         
         if collectionView == colAgenda
@@ -192,13 +191,15 @@ class meetingsViewController: UIViewController {
             if indexPath.indexAtPosition(1) == 0
             {
                 cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseAgendaTime, forIndexPath: indexPath) as! MyDisplayCollectionViewCell
-                cell.Label.text = event.attendees[indexPath.indexAtPosition(0)].name
+       //         cell.Label.text = event.attendees[indexPath.indexAtPosition(0)].name
+                cell.Label.text = "Remove"
             }
             
             if indexPath.indexAtPosition(1) == 1
             {
                 cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseAgendaTitle, forIndexPath: indexPath) as! MyDisplayCollectionViewCell
-                cell.Label.text = event.attendees[indexPath.indexAtPosition(0)].status
+         //       cell.Label.text = event.attendees[indexPath.indexAtPosition(0)].status
+                cell.Label.text = "Remove"
             }
             
             if indexPath.indexAtPosition(1) == 2
@@ -212,10 +213,10 @@ class meetingsViewController: UIViewController {
                 cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseAgendaAction, forIndexPath: indexPath) as! MyDisplayCollectionViewCell
                 cell.Label.text = "Remove"
             }
-
-            cell.Label.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
         }
-        
+ 
+        cell.Label.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
+
         let swiftColor = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
         if (indexPath.indexAtPosition(0) % 2 == 0)  // was .row
         {
@@ -353,7 +354,14 @@ class meetingsViewController: UIViewController {
     
     @IBAction func btnAddAgendaItem(sender: UIButton)
     {
-    
+        let agendaViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("AgendaItems") as! agendaItemViewController
+        agendaViewControl.delegate = self
+        agendaViewControl.event = event
+        
+        let newAgendaItem = meetingAgendaItem()
+        agendaViewControl.agendaItem = newAgendaItem
+        
+        self.presentViewController(agendaViewControl, animated: true, completion: nil)
     }
     
     @IBAction func btnSaveClick(sender: UIButton)
@@ -422,6 +430,24 @@ class meetingsViewController: UIViewController {
         lnlNextMeetingDetails.hidden = false
         btnSave.hidden = false
     }
+    
+    func myAgendaItemDidFinish(controller:agendaItemViewController, actionType: String)
+    {
+        if actionType == "Cancel"
+        {
+            // Do nothing.  Including for calrity
+        }
+        else
+        {
+            // reload the Agenda Items collection view
+            colAgenda.reloadData()
+        }
+        
+        
+        
+        controller.dismissViewControllerAnimated(true, completion: nil)
+    }
+
 }
 
 
