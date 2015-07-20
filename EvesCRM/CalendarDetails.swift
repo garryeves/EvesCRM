@@ -22,7 +22,7 @@ class meetingAgendaItem
     private var myTitle: String = ""
     private var myAgendaID: String = ""
 
-    var actualEndTime: NSDate
+    var actualEndTime: NSDate?
     {
         get
         {
@@ -34,7 +34,7 @@ class meetingAgendaItem
         }
     }
     
-    var actualStartTime: NSDate
+    var actualStartTime: NSDate?
     {
         get
         {
@@ -787,7 +787,7 @@ class myCalendarItem
         {
             for savedAttendee in mySavedValues
             {
-              //  addAttendee(invitee.name, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
+                addAgendaItem(savedAttendee.agendaID, inTitle: savedAttendee.title, inOwner: savedAttendee.owner, inStatus: savedAttendee.status, inDecisionMade: savedAttendee.decisionMade, inDiscussionNotes: savedAttendee.discussionNotes, inTimeAllocation: savedAttendee.timeAllocation as Int)
             }
         }
     }

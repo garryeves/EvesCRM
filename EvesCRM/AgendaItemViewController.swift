@@ -43,6 +43,7 @@ class agendaItemViewController: UIViewController
     
     var event: myCalendarItem!
     var agendaItem: meetingAgendaItem!
+    var actionType: String = ""
     
     private var pickerOptions: [String] = Array()
     private var pickerTarget: String = ""
@@ -50,6 +51,13 @@ class agendaItemViewController: UIViewController
     override func viewDidLoad()
     {
         super.viewDidLoad()
+        
+        if actionType == "Agenda"
+        {
+            txtDiscussionNotes.editable = false
+            txtDecisionMade.editable = false
+            btnAddAction.enabled = false
+        }
         
         if agendaItem.agendaID == ""
         {

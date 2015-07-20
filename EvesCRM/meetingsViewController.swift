@@ -47,6 +47,7 @@ class meetingsViewController: UIViewController, MyAgendaItemDelegate
     @IBOutlet weak var btnSave: UIButton!
     
     var event: myCalendarItem!
+    var actionType: String = ""
     
     private let reuseAttendeeIdentifier = "AttendeeCell"
     private let reuseAttendeeStatusIdentifier = "AttendeeStatusCell"
@@ -63,11 +64,12 @@ class meetingsViewController: UIViewController, MyAgendaItemDelegate
     {
         super.viewDidLoad()
         
- //       if event.attendees.count == 0
- //       {
- //           event.populateAttendeesFromInvite()
- //       }
-
+        lblMeetingHead.text = actionType
+        if actionType != "Agenda"
+        {
+            btnAddAgendaItem.hidden = true
+        }
+        
         lblLocation.text = event.location
         lblStartTime.text = event.displayScheduledDate
         lblMeetingName.text = event.title
@@ -133,12 +135,14 @@ class meetingsViewController: UIViewController, MyAgendaItemDelegate
         
         if collectionView == colAttendees
         {
-            retVal = event.attendees.count
+           // retVal = event.attendees.count
+            retVal = 1
         }
         
         if collectionView == colAgenda
         {
-            retVal = 2
+         //   retVal = event.agendaItems.count
+            retVal = 1
         }
         
         return retVal
@@ -150,12 +154,15 @@ class meetingsViewController: UIViewController, MyAgendaItemDelegate
         
         if collectionView == colAttendees
         {
-            retVal = 3
+           // retVal = 3
+            retVal = event.attendees.count
         }
         
         if collectionView == colAgenda
         {
-            retVal = 4
+          //  retVal = 4
+            retVal = event.agendaItems.count
+            
         }
         
         return retVal
@@ -163,71 +170,47 @@ class meetingsViewController: UIViewController, MyAgendaItemDelegate
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
     {
-        var cell : MyDisplayCollectionViewCell!
-    
         if collectionView == colAttendees
         {
-            if indexPath.indexAtPosition(1) == 0
-            {
-                cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseAttendeeIdentifier, forIndexPath: indexPath) as! MyDisplayCollectionViewCell
-                cell.Label.text = event.attendees[indexPath.indexAtPosition(0)].name
-            }
-        
-            if indexPath.indexAtPosition(1) == 1
-            {
-                cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseAttendeeStatusIdentifier, forIndexPath: indexPath) as! MyDisplayCollectionViewCell
-                cell.Label.text = event.attendees[indexPath.indexAtPosition(0)].status
-            }
-        
-            if indexPath.indexAtPosition(1) == 2
-            {
-                cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseAttendeeAction, forIndexPath: indexPath) as! MyDisplayCollectionViewCell
-                cell.Label.text = "Remove"
-            }
-        }
-        
-        if collectionView == colAgenda
-        {
-            if indexPath.indexAtPosition(1) == 0
-            {
-                cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseAgendaTime, forIndexPath: indexPath) as! MyDisplayCollectionViewCell
-       //         cell.Label.text = event.attendees[indexPath.indexAtPosition(0)].name
-                cell.Label.text = "Remove"
-            }
+            var cell : myAttendeeDisplayItem!
             
-            if indexPath.indexAtPosition(1) == 1
-            {
-                cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseAgendaTitle, forIndexPath: indexPath) as! MyDisplayCollectionViewCell
-         //       cell.Label.text = event.attendees[indexPath.indexAtPosition(0)].status
-                cell.Label.text = "Remove"
-            }
+            cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseAttendeeIdentifier, forIndexPath: indexPath) as! myAttendeeDisplayItem
+            cell.lblName.text = event.attendees[indexPath.row].name
+            cell.lblStatus.text = event.attendees[indexPath.row].status
+            cell.btnAction.setTitle("Remove", forState: .Normal)
             
-            if indexPath.indexAtPosition(1) == 2
+            let swiftColor = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
+            if (indexPath.row % 2 == 0)  // was .row
             {
-                cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseAgendaOwner, forIndexPath: indexPath) as! MyDisplayCollectionViewCell
-                cell.Label.text = "Remove"
+                cell.backgroundColor = swiftColor
             }
-
-            if indexPath.indexAtPosition(1) == 3
+            else
             {
-                cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseAgendaAction, forIndexPath: indexPath) as! MyDisplayCollectionViewCell
-                cell.Label.text = "Remove"
+                cell.backgroundColor = UIColor.clearColor()
             }
+            return cell
         }
- 
-        cell.Label.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
+        else // collectionView == colAgenda
+        {
+            var cell: myAgendaItem!
 
-        let swiftColor = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
-        if (indexPath.indexAtPosition(0) % 2 == 0)  // was .row
-        {
-            cell.backgroundColor = swiftColor
+            cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseAgendaTime, forIndexPath: indexPath) as! myAgendaItem
+            cell.lblTime.text = "\(event.agendaItems[indexPath.row].timeAllocation)"
+            cell.lblItem.text = event.agendaItems[indexPath.row].title
+            cell.lblOwner.text = event.agendaItems[indexPath.row].owner
+            cell.btnAction.setTitle("Update", forState: .Normal)
+
+            let swiftColor = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
+            if (indexPath.row % 2 == 0)  // was .row
+            {
+                cell.backgroundColor = swiftColor
+            }
+            else
+            {
+                cell.backgroundColor = UIColor.clearColor()
+            }
+            return cell
         }
-        else
-        {
-            cell.backgroundColor = UIColor.clearColor()
-        }
-        
-        return cell
     }
     
     
@@ -245,58 +228,32 @@ class meetingsViewController: UIViewController, MyAgendaItemDelegate
             }
         }
 
-        
         if collectionView == colAgenda
         {
             
         }
     }
 
-    func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
+    func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView
     {
-        var retVal: CGSize!
-        
+        var headerView:UICollectionReusableView!
         if collectionView == colAttendees
         {
-            if indexPath.indexAtPosition(1) == 0
+            if kind == UICollectionElementKindSectionHeader
             {
-                retVal = CGSize(width: 200, height: 40)
-            }
-            if indexPath.indexAtPosition(1) == 1
-            {
-                retVal = CGSize(width: 100, height: 40)
-            }
-            if indexPath.indexAtPosition(1) == 2
-            {
-                retVal = CGSize(width: 80, height: 40)
+                headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: "attendeeHeader", forIndexPath: indexPath) as! UICollectionReusableView
             }
         }
-        
         
         if collectionView == colAgenda
         {
-            if indexPath.indexAtPosition(1) == 0
+            if kind == UICollectionElementKindSectionHeader
             {
-                retVal = CGSize(width: 100, height: 40)
-            }
-            if indexPath.indexAtPosition(1) == 1
-            {
-                retVal = CGSize(width: 200, height: 40)
-            }
-            if indexPath.indexAtPosition(1) == 2
-            {
-                let myWidth = colAgenda.bounds.size.width - 50 - 100 - 200 - 100
-                
-                retVal = CGSize(width: myWidth, height: 40)
-            }
-            if indexPath.indexAtPosition(1) == 3
-            {
-                retVal = CGSize(width: 100, height: 40)
+                headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: "agendaItemHeader", forIndexPath: indexPath) as! UICollectionReusableView
             }
         }
-        
-        return retVal
-    }
+        return headerView
+     }
     
     @IBAction func btnChairClick(sender: UIButton)
     {
@@ -357,6 +314,7 @@ class meetingsViewController: UIViewController, MyAgendaItemDelegate
         let agendaViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("AgendaItems") as! agendaItemViewController
         agendaViewControl.delegate = self
         agendaViewControl.event = event
+        agendaViewControl.actionType = actionType
         
         let newAgendaItem = meetingAgendaItem()
         agendaViewControl.agendaItem = newAgendaItem
@@ -440,6 +398,7 @@ class meetingsViewController: UIViewController, MyAgendaItemDelegate
         else
         {
             // reload the Agenda Items collection view
+            event.loadAgendaItems()
             colAgenda.reloadData()
         }
         
@@ -450,4 +409,44 @@ class meetingsViewController: UIViewController, MyAgendaItemDelegate
 
 }
 
+class myAttendeeHeader: UICollectionReusableView
+{
+    
+    @IBOutlet weak var lblName: UILabel!
+    @IBOutlet weak var lblStatus: UILabel!
+    @IBOutlet weak var lblAction: UILabel!
+    
+}
+
+class myAgendaItemHeader: UICollectionReusableView
+{
+    @IBOutlet weak var lblTime: UILabel!
+    @IBOutlet weak var lblItem: UILabel!
+    @IBOutlet weak var lblOwner: UILabel!
+    @IBOutlet weak var lblAction: UILabel!
+}
+
+class myAgendaItem: UICollectionViewCell
+{
+    @IBOutlet weak var lblTime: UILabel!
+    @IBOutlet weak var lblItem: UILabel!
+    @IBOutlet weak var lblOwner: UILabel!
+    @IBOutlet weak var btnAction: UIButton!
+    
+    @IBAction func btnAction(sender: UIButton)
+    {
+        
+    }
+}
+
+class myAttendeeDisplayItem: UICollectionViewCell
+{
+    @IBOutlet weak var lblName: UILabel!
+    @IBOutlet weak var lblStatus: UILabel!
+    @IBOutlet weak var btnAction: UIButton!
+    
+    @IBAction func btnAction(sender: UIButton)
+    {
+    }
+}
 

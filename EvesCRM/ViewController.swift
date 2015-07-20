@@ -943,18 +943,18 @@ println("facebook ID = \(myFacebookID)")
                 
                 let agenda = UIAlertAction(title: "Agenda", style: .Default, handler: { (action: UIAlertAction!) -> () in
                     // doing something for "product page"
-                    self.openMeetings()
+                    self.openMeetings("Agenda")
                 })
                 
                 let minutes = UIAlertAction(title: "Minutes", style: .Default, handler: { (action: UIAlertAction!) -> () in
                     // doing something for "product page"
-                    println("minutes")
+                    self.openMeetings("Minutes")
 
                 })
                 
-                let personNotes = UIAlertAction(title: "Notes", style: .Default, handler: { (action: UIAlertAction!) -> () in
+                let personNotes = UIAlertAction(title: "Personal Notes", style: .Default, handler: { (action: UIAlertAction!) -> () in
                     // doing something for "product page"
-                    println("notes")
+                    self.openMeetings("Personal Notes")
 
                 })
 
@@ -2133,11 +2133,12 @@ println("Nothing found")
         }
     }
     
-    func openMeetings()
+    func openMeetings(inType: String)
     {
         let meetingViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("Meetings") as! meetingsViewController
         meetingViewControl.delegate = self
         meetingViewControl.event = eventDetails.calendarItems[myRowClicked]
+        meetingViewControl.actionType = inType
         
         self.presentViewController(meetingViewControl, animated: true, completion: nil)
     }

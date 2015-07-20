@@ -516,28 +516,29 @@ class coreDatabase: NSObject
         var mySavedItem: MeetingAgendaItem
         var error : NSError?
         
-        // Before we can add items, we first need to clear out the existing entries
-      //  deleteAllAgendaItems(inMeetingID)
-        
-      //  for inItem in inItems
-      //  {
-            mySavedItem = NSEntityDescription.insertNewObjectForEntityForName("MeetingAgendaItem", inManagedObjectContext: managedObjectContext!) as! MeetingAgendaItem
-            mySavedItem.meetingID = inMeetingID
-            mySavedItem.actualEndTime = inItem.actualEndTime
-            mySavedItem.actualStartTime = inItem.actualStartTime
-            mySavedItem.status = inItem.status
-            mySavedItem.decisionMade = inItem.decisionMade
-            mySavedItem.discussionNotes = inItem.discussionNotes
-            mySavedItem.timeAllocation = inItem.timeAllocation
-            mySavedItem.owner = inItem.owner
-            mySavedItem.title = inItem.title
-            mySavedItem.agendaID = inItem.agendaID
+        mySavedItem = NSEntityDescription.insertNewObjectForEntityForName("MeetingAgendaItem", inManagedObjectContext: managedObjectContext!) as! MeetingAgendaItem
+        mySavedItem.meetingID = inMeetingID
+        if inItem.actualEndTime != nil
+        {
+            mySavedItem.actualEndTime = inItem.actualEndTime!
+        }
+        if inItem.actualStartTime != nil
+        {
+            mySavedItem.actualStartTime = inItem.actualStartTime!
+        }
+        mySavedItem.status = inItem.status
+        mySavedItem.decisionMade = inItem.decisionMade
+        mySavedItem.discussionNotes = inItem.discussionNotes
+        mySavedItem.timeAllocation = inItem.timeAllocation
+        mySavedItem.owner = inItem.owner
+        mySavedItem.title = inItem.title
+        mySavedItem.agendaID = inItem.agendaID
 
-            if(managedObjectContext!.save(&error) )
-            {
-                println(error?.localizedDescription)
-            }
-      //  }
+        if(managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+
     }
     
     func loadSpecificAgendaItem(inMeetingID: String, inAgendaID: String)->[MeetingAgendaItem]
@@ -565,8 +566,14 @@ class coreDatabase: NSObject
         var error : NSError?
         
         let myAgendaItem = loadSpecificAgendaItem(inMeetingID,inAgendaID: inItem.agendaID)[0]
-        myAgendaItem.actualEndTime = inItem.actualEndTime
-        myAgendaItem.actualStartTime = inItem.actualStartTime
+        if inItem.actualEndTime != nil
+        {
+            myAgendaItem.actualEndTime = inItem.actualEndTime!
+        }
+        if inItem.actualStartTime != nil
+        {
+            myAgendaItem.actualStartTime = inItem.actualStartTime!
+        }
         myAgendaItem.status = inItem.status
         myAgendaItem.decisionMade = inItem.decisionMade
         myAgendaItem.discussionNotes = inItem.discussionNotes
