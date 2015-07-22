@@ -1,5 +1,5 @@
 //
-//  MeetingTasks.swift
+//  TaskContext.swift
 //  Contacts Dashboard
 //
 //  Created by Garry Eves on 22/07/2015.
@@ -9,10 +9,9 @@
 import Foundation
 import CoreData
 
-class MeetingTasks: NSManagedObject {
+class TaskContext: NSManagedObject {
 
-    @NSManaged var agendaID: String
-    @NSManaged var meetingID: String
     @NSManaged var taskID: String
+    @NSManaged var contextID: String
 
 }

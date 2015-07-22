@@ -13,7 +13,7 @@ protocol MyAgendaItemDelegate
     func myAgendaItemDidFinish(controller:agendaItemViewController, actionType: String)
 }
 
-class agendaItemViewController: UIViewController
+class agendaItemViewController: UIViewController, MyMeetingTaskDelegate
 {
     var delegate: MyAgendaItemDelegate?
 
@@ -36,9 +36,6 @@ class agendaItemViewController: UIViewController
     @IBOutlet weak var colActions: UICollectionView!
     @IBOutlet weak var myPicker: UIPickerView!
     
-    private let cellTaskStatus = "cellTaskStatus"
-    private let cellTaskTargetDate = "cellTaskTargetDate"
-    private let cellTaskOwner = "cellTaskOwner"
     private let cellTaskName = "cellTaskName"
     
     var event: myCalendarItem!
@@ -131,39 +128,16 @@ class agendaItemViewController: UIViewController
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
     {
-        
-        var cell : MyDisplayCollectionViewCell!
+        var cell : myTaskItem!
  
-        if indexPath.indexAtPosition(1) == 0
-        {
-            cell = collectionView.dequeueReusableCellWithReuseIdentifier(cellTaskName, forIndexPath: indexPath) as! MyDisplayCollectionViewCell
- //           cell.Label.text = event.attendees[indexPath.indexAtPosition(0)].name
-            cell.Label.text = "Name"
-        }
-            
-        if indexPath.indexAtPosition(1) == 1
-        {
-            cell = collectionView.dequeueReusableCellWithReuseIdentifier(cellTaskOwner, forIndexPath: indexPath) as! MyDisplayCollectionViewCell
-           // cell.Label.text = event.attendees[indexPath.indexAtPosition(0)].status
-            cell.Label.text = "Owner"
-        }
-            
-        if indexPath.indexAtPosition(1) == 2
-        {
-            cell = collectionView.dequeueReusableCellWithReuseIdentifier(cellTaskTargetDate, forIndexPath: indexPath) as! MyDisplayCollectionViewCell
-            cell.Label.text = "TargetDate"
-        }
-
-        if indexPath.indexAtPosition(1) == 3
-        {
-            cell = collectionView.dequeueReusableCellWithReuseIdentifier(cellTaskStatus, forIndexPath: indexPath) as! MyDisplayCollectionViewCell
-            cell.Label.text = "Status"
-        }
-
-        cell.Label.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
+        cell = collectionView.dequeueReusableCellWithReuseIdentifier(cellTaskName, forIndexPath: indexPath) as! myTaskItem
+        cell.lblTaskName.text = "Name"
+        cell.lblTaskStatus.text = "Status"
+        cell.lblTaskOwner.text = "Owner"
+        cell.lblTaskTargetDate.text = "Target date"
         
         let swiftColor = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
-        if (indexPath.indexAtPosition(0) % 2 == 0)  // was .row
+        if (indexPath.row % 2 == 0)  // was .row
         {
             cell.backgroundColor = swiftColor
         }
@@ -175,6 +149,16 @@ class agendaItemViewController: UIViewController
         return cell
     }
 
+    func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView
+    {
+        var headerView:UICollectionReusableView!
+        if kind == UICollectionElementKindSectionHeader
+        {
+            headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: "taskItemHeader", forIndexPath: indexPath) as! UICollectionReusableView
+        }
+
+        return headerView
+    }
     
     /*
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
@@ -203,24 +187,7 @@ class agendaItemViewController: UIViewController
     {
         var retVal: CGSize!
         
-       
-        if indexPath.indexAtPosition(1) == 0
-        {
-            let myWidth = colActions.bounds.size.width - 50 - 100 - 100 - 100
-            retVal = CGSize(width: myWidth, height: 40)
-        }
-        if indexPath.indexAtPosition(1) == 1
-        {
-            retVal = CGSize(width: 100, height: 40)
-        }
-        if indexPath.indexAtPosition(1) == 2
-        {
-            retVal = CGSize(width: 100, height: 40)
-        }
-        if indexPath.indexAtPosition(1) == 3
-        {
-            retVal = CGSize(width: 100, height: 40)
-        }
+        retVal = CGSize(width: colActions.bounds.size.width, height: 39)
         
         return retVal
     }
@@ -282,6 +249,15 @@ class agendaItemViewController: UIViewController
     
     @IBAction func btnAddAction(sender: UIButton)
     {
+        let taskViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("meetingTasks") as! meetingTaskViewController
+        taskViewControl.delegate = self
+ //       taskViewControl.event = event
+ //       taskViewControl.actionType = actionType
+        
+ //       let newAgendaItem = meetingAgendaItem()
+ //       taskViewControl.agendaItem = newAgendaItem
+        
+        self.presentViewController(taskViewControl, animated: true, completion: nil)
     }
     
     @IBAction func btnOwner(sender: UIButton)
@@ -351,5 +327,45 @@ class agendaItemViewController: UIViewController
         colActions.hidden = false
     }
 
+    func myMeetingTaskDidFinish(controller:meetingTaskViewController, actionType: String)
+    {
+        if actionType == "Cancel"
+        {
+            // Do nothing.  Including for calrity
+        }
+        else
+        {
+            // reload the task Items collection view
+        }
+        
+        controller.dismissViewControllerAnimated(true, completion: nil)
+    }
+
     
+}
+
+class myTaskItemHeader: UICollectionReusableView
+{
+    @IBOutlet weak var lblTaskStatus: UILabel!
+    @IBOutlet weak var lblTaskTargetDate: UILabel!
+    @IBOutlet weak var lblTaskOwner: UILabel!
+    @IBOutlet weak var lblTaskName: UILabel!
+    @IBOutlet weak var lblAction: UILabel!
+}
+
+class myTaskItem: UICollectionViewCell
+{
+    @IBOutlet weak var lblTaskStatus: UILabel!
+    @IBOutlet weak var lblTaskTargetDate: UILabel!
+    @IBOutlet weak var lblTaskOwner: UILabel!
+    @IBOutlet weak var lblTaskName: UILabel!
+    @IBOutlet weak var btnAction: UIButton!
+    
+    @IBAction func btnAction(sender: UIButton)
+    {
+      //  if btnAction.currentTitle == "Update"
+      //  {
+      //      NSNotificationCenter.defaultCenter().postNotificationName("NotificationUpdateAgendaItem", object: nil, userInfo:["itemNo":btnAction.tag])
+      //  }
+    }
 }

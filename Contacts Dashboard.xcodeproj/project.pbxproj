@@ -35,9 +35,9 @@
 		341F23101AFB560200FC2883 /* DropboxSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341F230E1AFB560200FC2883 /* DropboxSDK.framework */; };
 		341F23121AFC284400FC2883 /* DropboxCoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341F23111AFC284400FC2883 /* DropboxCoreService.swift */; };
 		341F23131AFC284400FC2883 /* DropboxCoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341F23111AFC284400FC2883 /* DropboxCoreService.swift */; };
+		342A357C1B5F727200D6DB29 /* meetingTaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342A357B1B5F727200D6DB29 /* meetingTaskViewController.swift */; };
 		342C0A151B4B7CED00A73CA5 /* MeetingSupportingDocs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342C0A0F1B4B7CED00A73CA5 /* MeetingSupportingDocs.swift */; };
 		342C0A161B4B7CED00A73CA5 /* MeetingSupportingDocs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342C0A0F1B4B7CED00A73CA5 /* MeetingSupportingDocs.swift */; };
-		342C0A171B4B7CED00A73CA5 /* MeetingTasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342C0A101B4B7CED00A73CA5 /* MeetingTasks.swift */; };
 		342C0A181B4B7CED00A73CA5 /* MeetingTasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342C0A101B4B7CED00A73CA5 /* MeetingTasks.swift */; };
 		342C0A191B4B7CED00A73CA5 /* MeetingItemsBroughtForward.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342C0A111B4B7CED00A73CA5 /* MeetingItemsBroughtForward.swift */; };
 		342C0A1A1B4B7CED00A73CA5 /* MeetingItemsBroughtForward.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342C0A111B4B7CED00A73CA5 /* MeetingItemsBroughtForward.swift */; };
@@ -146,6 +146,14 @@
 		34A1832A1B0EDBB400FC369D /* StringHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A1831A1B0EDBB400FC369D /* StringHelper.m */; };
 		34A1832B1B0EDBB400FC369D /* UrlHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A1831C1B0EDBB400FC369D /* UrlHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		34A1832C1B0EDBB400FC369D /* UrlHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A1831C1B0EDBB400FC369D /* UrlHelper.m */; };
+		34A578BA1B5F6110008D3D8E /* TaskContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A578B91B5F6110008D3D8E /* TaskContext.swift */; };
+		34A578BB1B5F6110008D3D8E /* TaskContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A578B91B5F6110008D3D8E /* TaskContext.swift */; };
+		34A578BD1B5F6110008D3D8E /* Context.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A578BC1B5F6110008D3D8E /* Context.swift */; };
+		34A578BE1B5F6110008D3D8E /* Context.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A578BC1B5F6110008D3D8E /* Context.swift */; };
+		34A578C01B5F6110008D3D8E /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A578BF1B5F6110008D3D8E /* Task.swift */; };
+		34A578C11B5F6110008D3D8E /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A578BF1B5F6110008D3D8E /* Task.swift */; };
+		34A578C31B5F6170008D3D8E /* MeetingTasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A578C21B5F6170008D3D8E /* MeetingTasks.swift */; };
+		34A578C41B5F6170008D3D8E /* MeetingTasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A578C21B5F6170008D3D8E /* MeetingTasks.swift */; };
 		34B3BDA01AF0979E00C5B09D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406506F1ADDF8FF00C90CBB /* ViewController.swift */; };
 		34B525391B130F1C00093250 /* oneNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B525381B130F1C00093250 /* oneNote.swift */; };
 		34B5253A1B130F1C00093250 /* oneNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B525381B130F1C00093250 /* oneNote.swift */; };
@@ -156,6 +164,8 @@
 		34BDECAD1B0089CC008C9F3F /* Decodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BDECAB1B0089CC008C9F3F /* Decodes.swift */; };
 		34BDECBE1B009C17008C9F3F /* Panes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BDECBD1B009C17008C9F3F /* Panes.swift */; };
 		34BDECBF1B009C17008C9F3F /* Panes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BDECBD1B009C17008C9F3F /* Panes.swift */; };
+		34C7E8071B5F625C005555B3 /* TaskUpdates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7E8061B5F625C005555B3 /* TaskUpdates.swift */; };
+		34C7E8081B5F625C005555B3 /* TaskUpdates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7E8061B5F625C005555B3 /* TaskUpdates.swift */; };
 		34CC8C0D1B281E5200D6EB0D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 34CC8C0C1B281E5200D6EB0D /* GoogleService-Info.plist */; };
 		34CC8C0E1B281E5200D6EB0D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 34CC8C0C1B281E5200D6EB0D /* GoogleService-Info.plist */; };
 		34F199BF1AF6060200963ABF /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34F199BE1AF6060200963ABF /* CoreData.framework */; };
@@ -233,6 +243,7 @@
 		341F230D1AFB305F00FC2883 /* EvesCRMBridging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EvesCRMBridging.h; sourceTree = "<group>"; };
 		341F230E1AFB560200FC2883 /* DropboxSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DropboxSDK.framework; sourceTree = "<group>"; };
 		341F23111AFC284400FC2883 /* DropboxCoreService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DropboxCoreService.swift; sourceTree = "<group>"; };
+		342A357B1B5F727200D6DB29 /* meetingTaskViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = meetingTaskViewController.swift; sourceTree = "<group>"; };
 		342C0A0A1B4B6BE600A73CA5 /* EvesCRM 5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 5.xcdatamodel"; sourceTree = "<group>"; };
 		342C0A0F1B4B7CED00A73CA5 /* MeetingSupportingDocs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeetingSupportingDocs.swift; sourceTree = "<group>"; };
 		342C0A101B4B7CED00A73CA5 /* MeetingTasks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeetingTasks.swift; sourceTree = "<group>"; };
@@ -330,12 +341,18 @@
 		34A1831A1B0EDBB400FC369D /* StringHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StringHelper.m; sourceTree = "<group>"; };
 		34A1831B1B0EDBB400FC369D /* UrlHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UrlHelper.h; sourceTree = "<group>"; };
 		34A1831C1B0EDBB400FC369D /* UrlHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UrlHelper.m; sourceTree = "<group>"; };
+		34A578B11B5F5F93008D3D8E /* EvesCRM 7.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 7.xcdatamodel"; sourceTree = "<group>"; };
+		34A578B91B5F6110008D3D8E /* TaskContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskContext.swift; sourceTree = "<group>"; };
+		34A578BC1B5F6110008D3D8E /* Context.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Context.swift; sourceTree = "<group>"; };
+		34A578BF1B5F6110008D3D8E /* Task.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
+		34A578C21B5F6170008D3D8E /* MeetingTasks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeetingTasks.swift; sourceTree = "<group>"; };
 		34B525381B130F1C00093250 /* oneNote.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = oneNote.swift; sourceTree = "<group>"; };
 		34B9C0101B26BA70005E52F9 /* gMail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = gMail.swift; sourceTree = "<group>"; };
 		34BDECA81B0086D3008C9F3F /* EvesCRM 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 3.xcdatamodel"; sourceTree = "<group>"; };
 		34BDECA91B008846008C9F3F /* displayPanes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = displayPanes.swift; sourceTree = "<group>"; };
 		34BDECAB1B0089CC008C9F3F /* Decodes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Decodes.swift; sourceTree = "<group>"; };
 		34BDECBD1B009C17008C9F3F /* Panes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Panes.swift; sourceTree = "<group>"; };
+		34C7E8061B5F625C005555B3 /* TaskUpdates.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskUpdates.swift; sourceTree = "<group>"; };
 		34CC8C0C1B281E5200D6EB0D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		34F199BB1AF6046A00963ABF /* EvesCRM.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = EvesCRM.entitlements; sourceTree = "<group>"; };
 		34F199BE1AF6060200963ABF /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -490,11 +507,15 @@
 				346B70F51AF75FF4005E1BC2 /* ProjectTeamMembers.swift */,
 				346B70F61AF75FF4005E1BC2 /* Projects.swift */,
 				342C0A0F1B4B7CED00A73CA5 /* MeetingSupportingDocs.swift */,
-				342C0A101B4B7CED00A73CA5 /* MeetingTasks.swift */,
 				342C0A111B4B7CED00A73CA5 /* MeetingItemsBroughtForward.swift */,
 				342C0A121B4B7CED00A73CA5 /* MeetingAgendaItem.swift */,
 				342C0A131B4B7CED00A73CA5 /* MeetingAttendees.swift */,
 				342C0A141B4B7CED00A73CA5 /* MeetingAgenda.swift */,
+				34A578C21B5F6170008D3D8E /* MeetingTasks.swift */,
+				34A578BF1B5F6110008D3D8E /* Task.swift */,
+				34A578BC1B5F6110008D3D8E /* Context.swift */,
+				34A578B91B5F6110008D3D8E /* TaskContext.swift */,
+				34C7E8061B5F625C005555B3 /* TaskUpdates.swift */,
 				34F199BB1AF6046A00963ABF /* EvesCRM.entitlements */,
 				3406506A1ADDF8FF00C90CBB /* AppDelegate.swift */,
 				342CA6931B26C761006FEAED /* Google */,
@@ -523,6 +544,7 @@
 				342C0A211B4B844D00A73CA5 /* meetingsViewController.swift */,
 				344726601B54D6A800BEFF0B /* coreDatabase.swift */,
 				3410561D1B589D92002B0ED9 /* AgendaItemViewController.swift */,
+				342A357B1B5F727200D6DB29 /* meetingTaskViewController.swift */,
 			);
 			path = EvesCRM;
 			sourceTree = "<group>";
@@ -840,10 +862,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34A578C01B5F6110008D3D8E /* Task.swift in Sources */,
+				342A357C1B5F727200D6DB29 /* meetingTaskViewController.swift in Sources */,
 				34A183291B0EDBB400FC369D /* StringHelper.m in Sources */,
 				3410561E1B589D92002B0ED9 /* AgendaItemViewController.swift in Sources */,
 				346B70F91AF75FF4005E1BC2 /* ProjectTeamMembers.swift in Sources */,
 				344726611B54D6A800BEFF0B /* coreDatabase.swift in Sources */,
+				34A578BA1B5F6110008D3D8E /* TaskContext.swift in Sources */,
 				34B9C0111B26BA70005E52F9 /* gMail.swift in Sources */,
 				34A183041B0EDB5C00FC369D /* LiveDownloadOperationCore.m in Sources */,
 				346D5E021AE5F9C700F858E7 /* CalendarDetails.swift in Sources */,
@@ -854,14 +879,16 @@
 				34A183251B0EDBB400FC369D /* LiveConnectionHelper.m in Sources */,
 				34111C3A1AEC898B003090EB /* reminderViewController.swift in Sources */,
 				34A182FA1B0EDB5C00FC369D /* LiveAuthDialog.m in Sources */,
+				34C7E8071B5F625C005555B3 /* TaskUpdates.swift in Sources */,
 				34A183271B0EDBB400FC369D /* StreamReader.m in Sources */,
-				342C0A171B4B7CED00A73CA5 /* MeetingTasks.swift in Sources */,
 				347518D91AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift in Sources */,
 				34BDECBE1B009C17008C9F3F /* Panes.swift in Sources */,
 				34A183021B0EDB5C00FC369D /* LiveConnectClientCore.m in Sources */,
 				34A182D41B0EDB3D00FC369D /* LiveConnectSession.m in Sources */,
 				34A182DA1B0EDB3D00FC369D /* LiveOperationProgress.m in Sources */,
 				34A1831D1B0EDBB400FC369D /* JsonParser.m in Sources */,
+				34A578C31B5F6170008D3D8E /* MeetingTasks.swift in Sources */,
+				34A578BD1B5F6110008D3D8E /* Context.swift in Sources */,
 				340650701ADDF8FF00C90CBB /* ViewController.swift in Sources */,
 				34BDECAA1B008846008C9F3F /* displayPanes.swift in Sources */,
 				346B70F71AF75FF4005E1BC2 /* Roles.swift in Sources */,
@@ -914,13 +941,17 @@
 				34A182D91B0EDB3D00FC369D /* LiveOperation.m in Sources */,
 				34A182FD1B0EDB5C00FC369D /* LiveAuthRefreshRequest.m in Sources */,
 				34A182FB1B0EDB5C00FC369D /* LiveAuthDialog.m in Sources */,
+				34C7E8081B5F625C005555B3 /* TaskUpdates.swift in Sources */,
 				34A1831E1B0EDBB400FC369D /* JsonParser.m in Sources */,
+				34A578BE1B5F6110008D3D8E /* Context.swift in Sources */,
+				34A578BB1B5F6110008D3D8E /* TaskContext.swift in Sources */,
 				34A183221B0EDBB400FC369D /* LiveApiHelper.m in Sources */,
 				346B70FA1AF75FF4005E1BC2 /* ProjectTeamMembers.swift in Sources */,
 				34A183091B0EDB5C00FC369D /* LiveUploadOperationCore.m in Sources */,
 				342C0A1E1B4B7CED00A73CA5 /* MeetingAttendees.swift in Sources */,
 				3403BA451B02FFEC0043D52C /* settingsViewController.swift in Sources */,
 				34FED38E1B044BF1006B414C /* maintainPanes.swift in Sources */,
+				34A578C41B5F6170008D3D8E /* MeetingTasks.swift in Sources */,
 				346D5E031AE5F9C700F858E7 /* CalendarDetails.swift in Sources */,
 				34B9C0121B26BA70005E52F9 /* gMail.swift in Sources */,
 				34A1832A1B0EDBB400FC369D /* StringHelper.m in Sources */,
@@ -935,6 +966,7 @@
 				34B5253A1B130F1C00093250 /* oneNote.swift in Sources */,
 				346B70F31AF75F47005E1BC2 /* EvesCRM.xcdatamodeld in Sources */,
 				34A1832C1B0EDBB400FC369D /* UrlHelper.m in Sources */,
+				34A578C11B5F6110008D3D8E /* Task.swift in Sources */,
 				34A182FF1B0EDB5C00FC369D /* LiveAuthRequest.m in Sources */,
 				34A183031B0EDB5C00FC369D /* LiveConnectClientCore.m in Sources */,
 				34A183011B0EDB5C00FC369D /* LiveAuthStorage.m in Sources */,
@@ -1207,6 +1239,7 @@
 		3406506C1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				34A578B11B5F5F93008D3D8E /* EvesCRM 7.xcdatamodel */,
 				346E23451B54EBB4004F0931 /* EvesCRM 6.xcdatamodel */,
 				342C0A0A1B4B6BE600A73CA5 /* EvesCRM 5.xcdatamodel */,
 				349C4D3D1B033AF300EC8099 /* EvesCRM 4.xcdatamodel */,
@@ -1214,7 +1247,7 @@
 				346B70F21AF75EFE005E1BC2 /* EvesCRM 2.xcdatamodel */,
 				3406506D1ADDF8FF00C90CBB /* EvesCRM.xcdatamodel */,
 			);
-			currentVersion = 346E23451B54EBB4004F0931 /* EvesCRM 6.xcdatamodel */;
+			currentVersion = 34A578B11B5F5F93008D3D8E /* EvesCRM 7.xcdatamodel */;
 			path = EvesCRM.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

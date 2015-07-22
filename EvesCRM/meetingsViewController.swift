@@ -86,6 +86,9 @@ class meetingsViewController: UIViewController, MyAgendaItemDelegate
         {
             btnMinutes.setTitle(event.minutes, forState: .Normal)
         }
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "attendeeRemoved:", name:"NotificationAttendeeRemoved", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateAgendaItem:", name:"NotificationUpdateAgendaItem", object: nil)
     }
     
     override func didReceiveMemoryWarning()
@@ -135,13 +138,11 @@ class meetingsViewController: UIViewController, MyAgendaItemDelegate
         
         if collectionView == colAttendees
         {
-           // retVal = event.attendees.count
             retVal = 1
         }
         
         if collectionView == colAgenda
         {
-         //   retVal = event.agendaItems.count
             retVal = 1
         }
         
@@ -154,15 +155,12 @@ class meetingsViewController: UIViewController, MyAgendaItemDelegate
         
         if collectionView == colAttendees
         {
-           // retVal = 3
             retVal = event.attendees.count
         }
         
         if collectionView == colAgenda
         {
-          //  retVal = 4
             retVal = event.agendaItems.count
-            
         }
         
         return retVal
@@ -178,6 +176,7 @@ class meetingsViewController: UIViewController, MyAgendaItemDelegate
             cell.lblName.text = event.attendees[indexPath.row].name
             cell.lblStatus.text = event.attendees[indexPath.row].status
             cell.btnAction.setTitle("Remove", forState: .Normal)
+            cell.btnAction.tag = indexPath.row
             
             let swiftColor = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
             if (indexPath.row % 2 == 0)  // was .row
@@ -199,6 +198,7 @@ class meetingsViewController: UIViewController, MyAgendaItemDelegate
             cell.lblItem.text = event.agendaItems[indexPath.row].title
             cell.lblOwner.text = event.agendaItems[indexPath.row].owner
             cell.btnAction.setTitle("Update", forState: .Normal)
+            cell.btnAction.tag = indexPath.row
 
             let swiftColor = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
             if (indexPath.row % 2 == 0)  // was .row
@@ -213,25 +213,9 @@ class meetingsViewController: UIViewController, MyAgendaItemDelegate
         }
     }
     
-    
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
-    {
-        if collectionView == colAttendees
-        {
-            let cell = collectionView.cellForItemAtIndexPath(indexPath) as! MyDisplayCollectionViewCell
+    {  // Leaving stub in here for use in other collections
 
-            if indexPath.indexAtPosition(1) == 2
-            {
-                event.removeAttendee(indexPath.indexAtPosition(0))
-                colAttendees.reloadData()
-                event.saveAgenda()
-            }
-        }
-
-        if collectionView == colAgenda
-        {
-            
-        }
     }
 
     func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView
@@ -254,6 +238,24 @@ class meetingsViewController: UIViewController, MyAgendaItemDelegate
         }
         return headerView
      }
+    
+    
+    func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
+    {
+        var retVal: CGSize!
+    
+        if collectionView == colAttendees
+        {
+            retVal = CGSize(width: 400, height: 39)
+        }
+    
+        if collectionView == colAgenda
+        {
+            retVal = CGSize(width: colAgenda.bounds.size.width, height: 39)
+        }
+        
+        return retVal
+    }
     
     @IBAction func btnChairClick(sender: UIButton)
     {
@@ -402,11 +404,32 @@ class meetingsViewController: UIViewController, MyAgendaItemDelegate
             colAgenda.reloadData()
         }
         
-        
-        
         controller.dismissViewControllerAnimated(true, completion: nil)
     }
-
+    
+    func attendeeRemoved(notification: NSNotification)
+    {
+        let itemToRemove = notification.userInfo!["itemNo"] as! Int
+        
+        event.removeAttendee(itemToRemove)
+        event.saveAgenda()
+        colAttendees.reloadData()
+    }
+    
+    func updateAgendaItem(notification: NSNotification)
+    {
+        let itemToUpdate = notification.userInfo!["itemNo"] as! Int
+        
+        let agendaViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("AgendaItems") as! agendaItemViewController
+        agendaViewControl.delegate = self
+        agendaViewControl.event = event
+        agendaViewControl.actionType = actionType
+        
+        let agendaItem = event.agendaItems[itemToUpdate]
+        agendaViewControl.agendaItem = agendaItem
+        
+        self.presentViewController(agendaViewControl, animated: true, completion: nil)
+    }
 }
 
 class myAttendeeHeader: UICollectionReusableView
@@ -435,7 +458,10 @@ class myAgendaItem: UICollectionViewCell
     
     @IBAction func btnAction(sender: UIButton)
     {
-        
+        if btnAction.currentTitle == "Update"
+        {
+            NSNotificationCenter.defaultCenter().postNotificationName("NotificationUpdateAgendaItem", object: nil, userInfo:["itemNo":btnAction.tag])
+        }
     }
 }
 
@@ -447,6 +473,10 @@ class myAttendeeDisplayItem: UICollectionViewCell
     
     @IBAction func btnAction(sender: UIButton)
     {
+        if btnAction.currentTitle == "Remove"
+        {
+            NSNotificationCenter.defaultCenter().postNotificationName("NotificationAttendeeRemoved", object: nil, userInfo:["itemNo":btnAction.tag])
+        }
     }
 }
 
