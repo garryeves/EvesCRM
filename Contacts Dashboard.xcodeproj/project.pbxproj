@@ -81,6 +81,8 @@
 		345E027F1AEF714800BE8D0A /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 345E027E1AEF714800BE8D0A /* Social.framework */; };
 		345E02811AEF715700BE8D0A /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 345E02801AEF715700BE8D0A /* MessageUI.framework */; };
 		345E02831AEF71CF00BE8D0A /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 345E02821AEF71CF00BE8D0A /* Accounts.framework */; };
+		34627D231B60B1C80096DAC4 /* taskManagementClasses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34627D221B60B1C80096DAC4 /* taskManagementClasses.swift */; };
+		34627D241B60B1C80096DAC4 /* taskManagementClasses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34627D221B60B1C80096DAC4 /* taskManagementClasses.swift */; };
 		346B70DE1AF70B8F005E1BC2 /* maintainProjectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346B70DD1AF70B8F005E1BC2 /* maintainProjectViewController.swift */; };
 		346B70DF1AF70B8F005E1BC2 /* maintainProjectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346B70DD1AF70B8F005E1BC2 /* maintainProjectViewController.swift */; };
 		346B70F31AF75F47005E1BC2 /* EvesCRM.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3406506C1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld */; };
@@ -274,6 +276,7 @@
 		345E027E1AEF714800BE8D0A /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		345E02801AEF715700BE8D0A /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		345E02821AEF71CF00BE8D0A /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
+		34627D221B60B1C80096DAC4 /* taskManagementClasses.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = taskManagementClasses.swift; sourceTree = "<group>"; };
 		346B70DD1AF70B8F005E1BC2 /* maintainProjectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = maintainProjectViewController.swift; sourceTree = "<group>"; };
 		346B70F21AF75EFE005E1BC2 /* EvesCRM 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 2.xcdatamodel"; sourceTree = "<group>"; };
 		346B70F41AF75FF4005E1BC2 /* Roles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Roles.swift; sourceTree = "<group>"; };
@@ -545,6 +548,7 @@
 				344726601B54D6A800BEFF0B /* coreDatabase.swift */,
 				3410561D1B589D92002B0ED9 /* AgendaItemViewController.swift */,
 				342A357B1B5F727200D6DB29 /* meetingTaskViewController.swift */,
+				34627D221B60B1C80096DAC4 /* taskManagementClasses.swift */,
 			);
 			path = EvesCRM;
 			sourceTree = "<group>";
@@ -906,6 +910,7 @@
 				346B70FB1AF75FF4005E1BC2 /* Projects.swift in Sources */,
 				34A183001B0EDB5C00FC369D /* LiveAuthStorage.m in Sources */,
 				34A183211B0EDBB400FC369D /* LiveApiHelper.m in Sources */,
+				34627D231B60B1C80096DAC4 /* taskManagementClasses.swift in Sources */,
 				342C0A1B1B4B7CED00A73CA5 /* MeetingAgendaItem.swift in Sources */,
 				342C0A1F1B4B7CED00A73CA5 /* MeetingAgenda.swift in Sources */,
 				342C0A1D1B4B7CED00A73CA5 /* MeetingAttendees.swift in Sources */,
@@ -942,6 +947,7 @@
 				34A182FD1B0EDB5C00FC369D /* LiveAuthRefreshRequest.m in Sources */,
 				34A182FB1B0EDB5C00FC369D /* LiveAuthDialog.m in Sources */,
 				34C7E8081B5F625C005555B3 /* TaskUpdates.swift in Sources */,
+				34627D241B60B1C80096DAC4 /* taskManagementClasses.swift in Sources */,
 				34A1831E1B0EDBB400FC369D /* JsonParser.m in Sources */,
 				34A578BE1B5F6110008D3D8E /* Context.swift in Sources */,
 				34A578BB1B5F6110008D3D8E /* TaskContext.swift in Sources */,
