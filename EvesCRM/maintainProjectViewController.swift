@@ -432,6 +432,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         
         if teamMemberAction == "Add"
         {
+            // GRE need to replace this with call to the appropriate save function, not do it from here
             myProjectTeam = NSEntityDescription.insertNewObjectForEntityForName("ProjectTeamMembers", inManagedObjectContext: self.managedObjectContext!) as! ProjectTeamMembers
             myProjectTeam.projectID = mySelectedProject.projectID
             myProjectTeam.teamMember = labelTeamMemberName.text!

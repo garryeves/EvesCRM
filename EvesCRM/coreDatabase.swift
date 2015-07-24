@@ -152,6 +152,76 @@ class coreDatabase: NSObject
         }
     }
     
+    func saveTeamMember(inProjectID: Int, inRoleID: Int, inPersonName: String, inNotes: String)
+    {
+        // first check to see if decode exists, if not we create
+        
+        var error: NSError?
+        var myProjectTeam: ProjectTeamMembers!
+        
+        let myProjectTeamRecords = getTeamMemberRecord(inProjectID, inPersonName: inPersonName)
+        if myProjectTeamRecords.count == 0
+        { // Add
+            myProjectTeam = NSEntityDescription.insertNewObjectForEntityForName("ProjectTeamMembers", inManagedObjectContext: self.managedObjectContext!) as! ProjectTeamMembers
+            myProjectTeam.projectID = inProjectID
+            myProjectTeam.teamMember = inPersonName
+            myProjectTeam.roleID = inRoleID
+            myProjectTeam.projectMemberNotes = inNotes
+        }
+        else
+        { // Update
+            myProjectTeam = myProjectTeamRecords[0]
+            myProjectTeam.roleID = inRoleID
+            myProjectTeam.projectMemberNotes = inNotes
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+
+    func deleteTeamMember(inProjectID: Int, inPersonName: String)
+    {
+        var error : NSError?
+        
+        let fetchRequest = NSFetchRequest(entityName: "ProjectTeamMembers")
+        
+        let predicate = NSPredicate(format: "(projectID == \(inProjectID)) AND (teamMember == \(inPersonName))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [ProjectTeamMembers]
+        for myStage in fetchResults!
+        {
+            managedObjectContext!.deleteObject(myStage as NSManagedObject)
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+    }
+
+    func getTeamMemberRecord(inProjectID: Int, inPersonName: String)->[ProjectTeamMembers]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "ProjectTeamMembers")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(projectID == \(inProjectID)) AND (teamMember == \(inPersonName))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [ProjectTeamMembers]
+        
+        return fetchResults!
+    }
+    
     func getTeamMembers(inProjectID: NSNumber)->[ProjectTeamMembers]
     {
         let fetchRequest = NSFetchRequest(entityName: "ProjectTeamMembers")
@@ -641,4 +711,497 @@ class coreDatabase: NSObject
         }
     }
 
+    func saveTask(inTaskID: String, inTitle: String, inDetails: String, inDueDate: NSDate, inStartDate: NSDate, inStatus: String)
+    {
+        // first check to see if decode exists, if not we create
+
+        var error: NSError?
+        var myTask: Task!
+        
+        let myTasks = getTask(inTaskID)
+        
+        if myTasks.count == 0
+        { // Add
+            myTask = NSEntityDescription.insertNewObjectForEntityForName("Task", inManagedObjectContext: self.managedObjectContext!) as! Task
+            myTask.taskID = inTaskID
+            myTask.title = inTitle
+            myTask.details = inDetails
+            myTask.dueDate = inDueDate
+            myTask.startDate = inStartDate
+            myTask.status = inStatus
+        }
+        else
+        { // Update
+            myTask = myTasks[0]
+            myTask.title = inTitle
+            myTask.details = inDetails
+            myTask.dueDate = inDueDate
+            myTask.startDate = inStartDate
+            myTask.status = inStatus
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+    
+    func deleteTask(inTaskID: String)
+    {
+        var error : NSError?
+        
+        let fetchRequest = NSFetchRequest(entityName: "Task")
+        
+        let predicate = NSPredicate(format: "taskID == \"\(inTaskID)\"")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Task]
+        for myStage in fetchResults!
+        {
+            managedObjectContext!.deleteObject(myStage as NSManagedObject)
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+    }
+    
+    func saveProjectTask(inProjectID: Int, inTaskID: String)
+    {
+        // first check to see if decode exists, if not we create
+        
+        var error: NSError?
+        var myProjectTask: ProjectTasks!
+        
+        let myProjectTasks = checkProjectTasks(inProjectID, inTaskID: inTaskID)
+        
+        if myProjectTasks.count == 0
+        { // Add
+            myProjectTask = NSEntityDescription.insertNewObjectForEntityForName("ProjectTasks", inManagedObjectContext: self.managedObjectContext!) as! ProjectTasks
+            myProjectTask.taskID = inTaskID
+            myProjectTask.projectID = inProjectID
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+    
+    func deleteProjectTask(inProjectID: Int, inTaskID: String)
+    {
+        var error : NSError?
+        
+        let fetchRequest = NSFetchRequest(entityName: "ProjectTasks")
+        
+        let predicate = NSPredicate(format: "(projectID == \(inProjectID)) AND (taskID = \"\(inTaskID)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [ProjectTasks]
+        for myStage in fetchResults!
+        {
+            managedObjectContext!.deleteObject(myStage as NSManagedObject)
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+    }
+   
+    func getProjectTasks(inProjectID: Int)->[ProjectTasks]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "ProjectTasks")
+
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(projectID == \(inProjectID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [ProjectTasks]
+        
+        return fetchResults!
+    }
+    
+    private func checkProjectTasks(inProjectID: Int, inTaskID: String)->[ProjectTasks]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "ProjectTasks")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(projectID == \(inProjectID)) AND (taskID = \"\(inTaskID)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [ProjectTasks]
+        
+        return fetchResults!
+    }
+
+    func getProjectForTask(inTaskID: String)->[ProjectTasks]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "ProjectTasks")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(taskID == \"\(inTaskID)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [ProjectTasks]
+        
+        return fetchResults!
+    }
+    
+    func getTaskWithoutProject()->[Task]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Task")
+
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "projectID == 0")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Task]
+        
+        return fetchResults!
+    }
+    
+    func getTaskWithoutContext()->[Task]
+    {
+        // Get distinct taskID from context table
+        var myContextTasks: [String] = Array()
+        var error: NSError?
+        
+        let contextRequest = NSFetchRequest(entityName: "TaskContext")
+        contextRequest.propertiesToFetch = ["contextID"]
+        contextRequest.resultType = NSFetchRequestResultType.DictionaryResultType
+        contextRequest.returnsDistinctResults = true
+        
+        let contextResults = managedObjectContext!.executeFetchRequest(contextRequest, error: &error)
+
+        for var i = 0; i < contextResults!.count; i++
+        {
+            if let dic = (contextResults[i] as! [String : String])
+            {
+                if let myContext = dic["contextID"]?
+                {
+                    myContextTasks.append(myContext)
+                }
+            }
+        }
+        
+        
+        
+        
+        let fetchRequest = NSFetchRequest(entityName: "Task")
+GRE needs to code
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "projectID == \"\(inTaskID)\"")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Task]
+        
+        return fetchResults!
+    }
+    
+    func getTask(inTaskID: String)->[Task]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Task")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "taskID == \"\(inTaskID)\"")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Task]
+        
+        return fetchResults!
+    }
+    
+    func getTaskCount()->Int
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Task")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Task]
+        
+        return fetchResults!.count
+    }
+    
+    func saveProject(inProjectID: Int, inProjectEndDate: NSDate, inProjectName: String, inProjectStartDate: NSDate, inProjectStatus: String, inReviewFrequency: Int, inLastReviewDate: NSDate)
+    {
+        // first check to see if decode exists, if not we create
+        
+        var error: NSError?
+        var myProject: Projects!
+        
+        let myProjects = getProjectDetails(inProjectID)
+        
+        if myProjects.count == 0
+        { // Add
+            myProject = NSEntityDescription.insertNewObjectForEntityForName("Projects", inManagedObjectContext: self.managedObjectContext!) as! Projects
+            myProject.projectID = inProjectID
+            myProject.projectEndDate = inProjectEndDate
+            myProject.projectName = inProjectName
+            myProject.projectStartDate = inProjectStartDate
+            myProject.projectStatus = inProjectStatus
+            myProject.reviewFrequency = inReviewFrequency
+            myProject.lastReviewDate = inLastReviewDate
+        }
+        else
+        { // Update
+            myProject = myProjects[0]
+            myProject.projectEndDate = inProjectEndDate
+            myProject.projectName = inProjectName
+            myProject.projectStartDate = inProjectStartDate
+            myProject.projectStatus = inProjectStatus
+            myProject.reviewFrequency = inReviewFrequency
+            myProject.lastReviewDate = inLastReviewDate
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+ 
+    func saveTaskUpdate(inTaskID: String, inDetails: String, inSource: String)
+    {
+        // first check to see if decode exists, if not we create
+        
+        var error: NSError?
+        var myTaskUpdate: TaskUpdates!
+
+        myTaskUpdate = NSEntityDescription.insertNewObjectForEntityForName("TaskUpdates", inManagedObjectContext: self.managedObjectContext!) as! TaskUpdates
+        myTaskUpdate.taskID = inTaskID
+        myTaskUpdate.updateDate = NSDate()
+        myTaskUpdate.details = inDetails
+        myTaskUpdate.source = inSource
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+    
+    func getTaskUpdates(inTaskID: String)->[TaskUpdates]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "TaskUpdates")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(taskID == \"\(inTaskID)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [TaskUpdates]
+        
+        return fetchResults!
+    }
+
+    func saveContext(inContextID: String, inName: String, inEmail: String, inAutoEmail: String, inParentContext: String, inStatus: String)
+    {
+        // first check to see if decode exists, if not we create
+
+        var error: NSError?
+        var myContext: Context!
+        
+        let myContexts = getContexts()
+        
+        if myContexts.count == 0
+        { // Add
+            myContext = NSEntityDescription.insertNewObjectForEntityForName("Context", inManagedObjectContext: self.managedObjectContext!) as! Context
+            myContext.contextID = inContextID
+            myContext.name = inName
+            myContext.email = inEmail
+            myContext.autoEmail = inAutoEmail
+            myContext.parentContext = inParentContext
+            myContext.status = inStatus
+        }
+        else
+        {
+            myContext = myContexts[0]
+            myContext.name = inName
+            myContext.email = inEmail
+            myContext.autoEmail = inAutoEmail
+            myContext.parentContext = inParentContext
+            myContext.status = inStatus
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+    
+    func getContexts()->[Context]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Context")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(status != \"Archived\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Context]
+        
+        return fetchResults!
+    }
+
+    func getContextDetails(inContextID: String)->[Context]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Context")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(contextID == \"inContextID\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Context]
+        
+        return fetchResults!
+    }
+
+    func getAllContexts()->[Context]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Context")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Context]
+        
+        return fetchResults!
+    }
+    
+    func saveTaskContext(inContextID: String, inTaskID: String)
+    {
+        // first check to see if decode exists, if not we create
+        
+        var error: NSError?
+        var myContext: TaskContext!
+        
+        let myContexts = getTaskContext(inContextID, inTaskID: inTaskID)
+        
+        if myContexts.count == 0
+        { // Add
+            myContext = NSEntityDescription.insertNewObjectForEntityForName("TaskContext", inManagedObjectContext: self.managedObjectContext!) as! TaskContext
+            myContext.contextID = inContextID
+            myContext.taskID = inTaskID
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+    
+    func deleteTaskContext(inContextID: String, inTaskID: String)
+    {
+        var error : NSError?
+        
+        let fetchRequest = NSFetchRequest(entityName: "TaskContext")
+        
+        let predicate = NSPredicate(format: "(contextID == \"\(inContextID)\") AND (taskID = \"\(inTaskID)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [TaskContext]
+        for myStage in fetchResults!
+        {
+            managedObjectContext!.deleteObject(myStage as NSManagedObject)
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+    }
+
+    private func getTaskContext(inContextID: String, inTaskID: String)->[TaskContext]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "TaskContext")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(taskID = \"\(inTaskID)\") AND (contextID = \"\(inContextID)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [TaskContext]
+        
+        return fetchResults!
+    }
+
+    func getContextsForTask(inTaskID: String)->[TaskContext]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "TaskContext")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(taskID = \"\(inTaskID)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [TaskContext]
+        
+        return fetchResults!
+    }
+
+    func getTasksForContext(inContextID: String)->[TaskContext]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "TaskContext")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(contextID = \"\(inContextID)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [TaskContext]
+        
+        return fetchResults!
+    }
 }
