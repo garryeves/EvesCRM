@@ -13,7 +13,7 @@ class coreDatabase: NSObject
 {
     private let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
 
-    func getProjects()->[Projects]
+    func getAllOpenProjects()->[Projects]
     {
         let fetchRequest = NSFetchRequest(entityName: "Projects")
         
@@ -29,6 +29,24 @@ class coreDatabase: NSObject
         
         return fetchResults!
     }
+    
+    func getOpenProjectsForArea(inAreaID: String)->[Projects]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Projects")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") AND (areaID != \"\(inAreaID)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Projects]
+        
+        return fetchResults!
+    }
+
     
     func getProjectDetails(myProjectID: NSNumber)->[Projects]
     {
@@ -711,7 +729,7 @@ class coreDatabase: NSObject
         }
     }
 
-    func saveTask(inTaskID: String, inTitle: String, inDetails: String, inDueDate: NSDate, inStartDate: NSDate, inStatus: String)
+    func saveTask(inTaskID: String, inTitle: String, inDetails: String, inDueDate: NSDate, inStartDate: NSDate, inStatus: String, inParentTask: String)
     {
         // first check to see if decode exists, if not we create
 
@@ -729,6 +747,7 @@ class coreDatabase: NSObject
             myTask.dueDate = inDueDate
             myTask.startDate = inStartDate
             myTask.status = inStatus
+            myTask.parentTaskID = inParentTask
         }
         else
         { // Update
@@ -738,6 +757,7 @@ class coreDatabase: NSObject
             myTask.dueDate = inDueDate
             myTask.startDate = inStartDate
             myTask.status = inStatus
+            myTask.parentTaskID = inParentTask
         }
         
         if(managedObjectContext!.save(&error) )
@@ -770,7 +790,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func saveProjectTask(inProjectID: Int, inTaskID: String)
+    func saveProjectTask(inProjectID: Int, inTaskID: String, inTaskOrder: Int)
     {
         // first check to see if decode exists, if not we create
         
@@ -784,6 +804,7 @@ class coreDatabase: NSObject
             myProjectTask = NSEntityDescription.insertNewObjectForEntityForName("ProjectTasks", inManagedObjectContext: self.managedObjectContext!) as! ProjectTasks
             myProjectTask.taskID = inTaskID
             myProjectTask.projectID = inProjectID
+            myProjectTask.taskOrder = inTaskOrder
         }
         
         if(managedObjectContext!.save(&error) )
@@ -832,6 +853,24 @@ class coreDatabase: NSObject
         
         return fetchResults!
     }
+    
+    func getMaxProjectTaskOrder(inProjectID: Int)->Int
+    {
+        let fetchRequest = NSFetchRequest(entityName: "ProjectTasks")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(projectID == \(inProjectID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [ProjectTasks]
+        
+        return fetchResults!.count
+    }
+
     
     private func checkProjectTasks(inProjectID: Int, inTaskID: String)->[ProjectTasks]
     {
@@ -953,7 +992,7 @@ GRE needs to code
         return fetchResults!.count
     }
     
-    func saveProject(inProjectID: Int, inProjectEndDate: NSDate, inProjectName: String, inProjectStartDate: NSDate, inProjectStatus: String, inReviewFrequency: Int, inLastReviewDate: NSDate)
+    func saveProject(inProjectID: Int, inProjectEndDate: NSDate, inProjectName: String, inProjectStartDate: NSDate, inProjectStatus: String, inReviewFrequency: Int, inLastReviewDate: NSDate, inAreaID: String)
     {
         // first check to see if decode exists, if not we create
         
@@ -972,6 +1011,7 @@ GRE needs to code
             myProject.projectStatus = inProjectStatus
             myProject.reviewFrequency = inReviewFrequency
             myProject.lastReviewDate = inLastReviewDate
+            myProject.areaID = inAreaID
         }
         else
         { // Update
@@ -982,6 +1022,7 @@ GRE needs to code
             myProject.projectStatus = inProjectStatus
             myProject.reviewFrequency = inReviewFrequency
             myProject.lastReviewDate = inLastReviewDate
+            myProject.areaID = inAreaID
         }
         
         if(managedObjectContext!.save(&error) )
@@ -1204,4 +1245,464 @@ GRE needs to code
         
         return fetchResults!
     }
+
+    func saveAreaOfResponsibility(inAreaID: String, inGoalID: String, inTitle: String, inStatus: String)
+    {
+        // first check to see if decode exists, if not we create
+
+        var error: NSError?
+        var myArea: AreaOfResponsibility!
+        
+        let myAreas = checkAreaOfResponsibility(inAreaID)
+        
+        if myAreas.count == 0
+        { // Add
+            myArea = NSEntityDescription.insertNewObjectForEntityForName("AreaOfResponsibility", inManagedObjectContext: self.managedObjectContext!) as! AreaOfResponsibility
+            myArea.areaID = inAreaID
+            myArea.goalID = inGoalID
+            myArea.title = inTitle
+            myArea.status = inStatus
+        }
+        else
+        { // Update
+            myArea = myAreas[0]
+            myArea.goalID = inGoalID
+            myArea.title = inTitle
+            myArea.status = inStatus
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+    
+    func getAreaOfResponsibility(inAreaID: String)->[AreaOfResponsibility]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "AreaOfResponsibility")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(areaID == \"\(inAreaID)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [AreaOfResponsibility]
+        
+        return fetchResults!
+    }
+    
+    func getOpenAreasForGoal(inGoalID: String)->[AreaOfResponsibility]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "AreaOfResponsibility")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(goalID == \"\(inGoalID)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [AreaOfResponsibility]
+        
+        return fetchResults!
+    }
+
+    private func checkAreaOfResponsibility(inAreaID: String)->[AreaOfResponsibility]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "AreaOfResponsibility")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(areaID == \"\(inAreaID)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [AreaOfResponsibility]
+        
+        return fetchResults!
+    }
+
+    func saveAreaProject(inProjectID: Int, inAreaID: String)
+    {
+        // first check to see if decode exists, if not we create
+        
+        var error: NSError?
+        var myProject: Projects!
+        
+        let myProjects = getProjectDetails(inProjectID)
+        
+        if myProjects.count == 0
+        { // Add
+            // do nothing
+        }
+        else
+        { // Update
+            myProject = myProjects[0]
+            myProject.areaID = inAreaID
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+
+    func deleteAreaProject(inProjectID: Int)
+    {
+        // first check to see if decode exists, if not we create
+        
+        var error: NSError?
+        var myProject: Projects!
+        
+        let myProjects = getProjectDetails(inProjectID)
+        
+        if myProjects.count == 0
+        { // Add
+            // do nothing
+        }
+        else
+        { // Update
+            myProject = myProjects[0]
+            myProject.areaID = ""
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+    
+    func saveGoal(inGoalID: String, inVisionID: String, inTitle: String, inStatus: String)
+    {
+        // first check to see if decode exists, if not we create
+
+        var error: NSError?
+        var myGoal: GoalAndObjective!
+        
+        let myGoals = getGoals(inGoalID)
+        
+        if myGoals.count == 0
+        { // Add
+            myGoal = NSEntityDescription.insertNewObjectForEntityForName("GoalAndObjective", inManagedObjectContext: self.managedObjectContext!) as! GoalAndObjective
+            myGoal.goalID = inGoalID
+            myGoal.visionID = inVisionID
+            myGoal.title = inTitle
+            myGoal.status = inStatus
+        }
+        else
+        { // Update
+            myGoal = myGoals[0]
+            myGoal.visionID = inVisionID
+            myGoal.title = inTitle
+            myGoal.status = inStatus
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+    
+    func getGoals(inGoalID: String)->[GoalAndObjective]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "GoalAndObjective")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(goalID == \"\(inGoalID)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [GoalAndObjective]
+        
+        return fetchResults!
+    }
+    
+    func getOpenGoalsForVision(inVisionID: String)->[GoalAndObjective]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "GoalAndObjective")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(visionID == \"\(inVisionID)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [GoalAndObjective]
+        
+        return fetchResults!
+    }
+    
+    func saveGoalArea(inGoalID: String, inAreaID: String)
+    {
+        // first check to see if decode exists, if not we create
+        
+        var error: NSError?
+        var myArea: AreaOfResponsibility!
+        
+        let myAreas = getAreaOfResponsibility(inAreaID)
+        
+        if myAreas.count == 0
+        { // Add
+            // do nothing
+        }
+        else
+        { // Update
+            myArea = myAreas[0]
+            myArea.goalID = inGoalID
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+    
+    func deleteGoalArea(inAreaID: String)
+    {
+        // first check to see if decode exists, if not we create
+        
+        var error: NSError?
+        var myArea: AreaOfResponsibility!
+        
+        let myAreas = getAreaOfResponsibility(inAreaID)
+        
+        if myAreas.count == 0
+        { // Add
+            // do nothing
+        }
+        else
+        { // Update
+            myArea = myAreas[0]
+            myArea.goalID = ""
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+
+    func saveVision(inVisionID: String, inPurposeID: String, inTitle: String, inStatus: String)
+    {
+        // first check to see if decode exists, if not we create
+
+        var error: NSError?
+        var myVision: Vision!
+        
+        let myVisions = getVisions(inVisionID)
+        
+        if myVisions.count == 0
+        { // Add
+            myVision = NSEntityDescription.insertNewObjectForEntityForName("Vision", inManagedObjectContext: self.managedObjectContext!) as! Vision
+            myVision.visionID = inVisionID
+            myVision.purposeID = inPurposeID
+            myVision.title = inTitle
+            myVision.status = inStatus
+        }
+        else
+        { // Update
+            myVision = myVisions[0]
+            myVision.purposeID = inPurposeID
+            myVision.title = inTitle
+            myVision.status = inStatus
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+    
+    func getVisions(inVisionID: String)->[Vision]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Vision")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(visionID == \"\(inVisionID)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Vision]
+        
+        return fetchResults!
+    }
+    
+    func getOpenVisionsForPurpose(inPurposeID: String)->[Vision]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Vision")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(purposeID == \"\(inPurposeID)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Vision]
+        
+        return fetchResults!
+    }
+
+    
+    func saveVisionGoal(inVisionID: String, inGoalID: String)
+    {
+        // first check to see if decode exists, if not we create
+        
+        var error: NSError?
+        var myGoal: GoalAndObjective!
+        
+        let myGoals = getGoals(inGoalID)
+        
+        if myGoals.count == 0
+        { // Add
+            // do nothing
+        }
+        else
+        { // Update
+            myGoal = myGoals[0]
+            myGoal.visionID = inVisionID
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+    
+    func deleteVisionGoal(inGoalID: String)
+    {
+        // first check to see if decode exists, if not we create
+        
+        var error: NSError?
+        var myGoal: GoalAndObjective!
+        
+        let myGoals = getGoals(inGoalID)
+        
+        if myGoals.count == 0
+        { // Add
+            // do nothing
+        }
+        else
+        { // Update
+            myGoal = myGoals[0]
+            myGoal.visionID = ""
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+    
+    func savePurpose(inPurposeID: String, inTitle: String, inStatus: String)
+    {
+        // first check to see if decode exists, if not we create
+
+        var error: NSError?
+        var myPurpose: PurposeAndCoreValue!
+        
+        let myPurposes = getPurpose(inPurposeID)
+        
+        if myPurposes.count == 0
+        { // Add
+            myPurpose = NSEntityDescription.insertNewObjectForEntityForName("PurposeAndCoreValue", inManagedObjectContext: self.managedObjectContext!) as! PurposeAndCoreValue
+            myPurpose.purposeID = inPurposeID
+            myPurpose.title = inTitle
+            myPurpose.status = inStatus
+        }
+        else
+        { // Update
+            myPurpose = myPurposes[0]
+            myPurpose.title = inTitle
+            myPurpose.status = inStatus
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+    
+    func getPurpose(inPurposeID: String)->[PurposeAndCoreValue]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "PurposeAndCoreValue")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(purposeID == \"\(inPurposeID)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [PurposeAndCoreValue]
+        
+        return fetchResults!
+    }
+    
+    func savePurposeVision(inPurposeID: String, inVisionID: String)
+    {
+        // first check to see if decode exists, if not we create
+        
+        var error: NSError?
+        var myVision: Vision!
+        
+        let myVisions = getVisions(inVisionID)
+        
+        if myVisions.count == 0
+        { // Add
+            // do nothing
+        }
+        else
+        { // Update
+            myVision = myVisions[0]
+            myVision.purposeID = inPurposeID
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+    
+    func deletePurposeVision(inVisionID: String)
+    {
+        // first check to see if decode exists, if not we create
+        
+        var error: NSError?
+        var myVision: Vision!
+        
+        let myVisions = getVisions(inVisionID)
+        
+        if myVisions.count == 0
+        { // Add
+            // do nothing
+        }
+        else
+        { // Update
+            myVision = myVisions[0]
+            myVision.purposeID = ""
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+
 }
