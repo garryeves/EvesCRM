@@ -1,9 +1,9 @@
 //
 //  MeetingTasks.swift
-//  Contacts Dashboard
+//  
 //
-//  Created by Garry Eves on 22/07/2015.
-//  Copyright (c) 2015 Garry Eves. All rights reserved.
+//  Created by Garry Eves on 28/07/2015.
+//
 //
 
 import Foundation
@@ -13,6 +13,6 @@ class MeetingTasks: NSManagedObject {
 
     @NSManaged var agendaID: String
     @NSManaged var meetingID: String
-    @NSManaged var taskID: String
+    @NSManaged var taskID: NSNumber
 
 }

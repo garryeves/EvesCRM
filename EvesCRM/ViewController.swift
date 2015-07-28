@@ -88,8 +88,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     var EvernoteAuthenticationDone: Bool = false
     var myEvernoteGUID: String = ""
     var myDisplayType: String = ""
-    var myProjectID: NSNumber!
-    var myProjectName: String = ""
     var omniTableToRefresh: String = ""
     var oneNoteTableToRefresh: String = ""
     var gmailTableToRefresh: String = ""
@@ -117,7 +115,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     var reminderDetails: iOSReminder!
 
     var projectMemberArray: [String] = Array()
-    
+    var mySelectedProject: project!
     
     // OneNote
     var myOneNoteNotebooks: oneNoteNotebooks!
@@ -326,7 +324,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             var myFullName: String
             if myDisplayType == "Project"
             {
-                myFullName = myProjectName
+                myFullName = mySelectedProject.projectName
             }
             else
             {
@@ -599,7 +597,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         
         if myDisplayType == "Project"
         {
-            labelName.text = myProjectName
+            labelName.text = mySelectedProject.projectName
         }
         else
         {
@@ -614,7 +612,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             case "Details":
                 if myDisplayType == "Project"
                 {
-                    workArray = parseProjectDetails(myProjectID)
+                    workArray = parseProjectDetails(mySelectedProject)
                 }
                 else
                 {
@@ -625,7 +623,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
 
                 if myDisplayType == "Project"
                 {
-                    eventDetails.loadCalendarDetails(myProjectName)
+                    eventDetails.loadCalendarDetails(mySelectedProject.projectName)
                 }
                 else
                 {
@@ -642,7 +640,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
 
                 if myDisplayType == "Project"
                 {
-                    reminderDetails.parseReminderDetails(myProjectName)
+                    reminderDetails.parseReminderDetails(mySelectedProject.projectName)
                 }
                 else
                 {
@@ -655,7 +653,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 writeRowToArray("Loading Evernote data.  Pane will refresh when finished", &workArray)
                 if myDisplayType == "Project"
                 {
-                    myEvernote.findEvernoteNotes(myProjectName)
+                    myEvernote.findEvernoteNotes(mySelectedProject.projectName)
                 }
                 else
                 {
@@ -668,7 +666,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 // Project team membership details
                 if myDisplayType == "Project"
                 {
-                    workArray = displayTeamMembers(myProjectID, &projectMemberArray)
+                    workArray = displayTeamMembers(mySelectedProject, &projectMemberArray)
                 }
                 else
                 {
@@ -897,7 +895,7 @@ println("facebook ID = \(myFacebookID)")
                     var myFullName: String
                     if myDisplayType == "Project"
                     {
-                        myFullName = myProjectName
+                        myFullName = mySelectedProject.projectName
                     }
                     else
                     {
@@ -1024,11 +1022,11 @@ println("facebook ID = \(myFacebookID)")
                     StartLabel.hidden = true
                     
                     myDisplayType = "Project"
-                    myProjectID = projectMemberArray[rowID].toInt()
                     
-                    let mySelectProjects = myDatabaseConnection.getProjectDetails(myProjectID)
+                    mySelectedProject = project()
+                    mySelectedProject.load(projectMemberArray[rowID].toInt()!)
                     
-                    myProjectName = mySelectProjects[0].projectName
+                    let mySelectProjects = myDatabaseConnection.getProjectDetails(mySelectedProject.projectID)
                     
                     table1Contents = Array()
                     table2Contents = Array()
@@ -1042,10 +1040,10 @@ println("facebook ID = \(myFacebookID)")
                     
                     // Here is where we will set the titles for the buttons
                     
-                    TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: myProjectName), forState: .Normal)
-                    TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myProjectName), forState: .Normal)
-                    TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myProjectName), forState: .Normal)
-                    TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myProjectName), forState: .Normal)
+                    TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: mySelectedProject.projectName), forState: .Normal)
+                    TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: mySelectedProject.projectName), forState: .Normal)
+                    TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: mySelectedProject.projectName), forState: .Normal)
+                    TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: mySelectedProject.projectName), forState: .Normal)
                 }
             
         case "OneNote":
@@ -1226,7 +1224,7 @@ println("facebook ID = \(myFacebookID)")
                 var myFullName: String
                 if myDisplayType == "Project"
                 {
-                    myFullName = myProjectName
+                    myFullName = mySelectedProject.projectName
                 }
                 else
                 {
@@ -1239,7 +1237,7 @@ println("facebook ID = \(myFacebookID)")
                 var myFullName: String
                 if myDisplayType == "Project"
                 {
-                    myFullName = myProjectName
+                    myFullName = mySelectedProject.projectName
                 }
                 else
                 {
@@ -1253,7 +1251,7 @@ println("facebook ID = \(myFacebookID)")
                 
                 if myDisplayType == "Project"
                 {
-                    myOmniUrlPath = "omnifocus:///add?name=Set Project to '\(myProjectName)'"
+                    myOmniUrlPath = "omnifocus:///add?name=Set Project to '\(mySelectedProject.projectName)'"
                 }
                 else
                 {
@@ -1292,7 +1290,7 @@ println("facebook ID = \(myFacebookID)")
                     alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
                     
 
-                    myItemFound = myOneNoteNotebooks.checkExistenceOfNotebook(myProjectName)
+                    myItemFound = myOneNoteNotebooks.checkExistenceOfNotebook(mySelectedProject.projectName)
                     if myItemFound
                     {
                         var alert = UIAlertController(title: "OneNote", message:
@@ -1304,7 +1302,7 @@ println("facebook ID = \(myFacebookID)")
                     }
                     else
                     {
-                        myStartPage = self.myOneNoteNotebooks.createNewNotebookForProject(self.myProjectName)
+                        myStartPage = self.myOneNoteNotebooks.createNewNotebookForProject(self.mySelectedProject.projectName)
                     }
                 }
                 else
@@ -1383,7 +1381,7 @@ println("facebook ID = \(myFacebookID)")
         controller.dismissViewControllerAnimated(true, completion: nil)
     }
 
-    func myMaintainProjectSelect(controller:MaintainProjectViewController, projectID: NSNumber, projectName: String)
+    func myMaintainProjectSelect(controller:MaintainProjectViewController, projectID: Int, projectName: String)
     {
         controller.dismissViewControllerAnimated(true, completion: nil)
         TableTypeSelection1.hidden = true
@@ -1399,8 +1397,9 @@ println("facebook ID = \(myFacebookID)")
         StartLabel.hidden = true
         
         myDisplayType = "Project"
-        myProjectID = projectID
-        myProjectName = projectName
+        mySelectedProject = project()
+        mySelectedProject.load(projectID)
+
         displayScreen()
         
         table1Contents = Array()
@@ -1898,7 +1897,7 @@ println("Nothing found")
             {
                 if myDisplayType == "Project"
                 {
-                    myFullName = myProjectName
+                    myFullName = mySelectedProject.projectName
                 }
                 else
                 {
@@ -2218,7 +2217,7 @@ println("Nothing found")
         }
         else
         {
-            myButtonName = myProjectName
+            myButtonName = mySelectedProject.projectName
         }
         
         TableOptions.removeAll(keepCapacity: false)
@@ -2626,7 +2625,7 @@ println("Nothing found")
         {
             dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
             {
-                self.myGmailMessages.getProjectMessages(self.myProjectName, inMessageType: "Mail")
+                self.myGmailMessages.getProjectMessages(self.mySelectedProject.projectName, inMessageType: "Mail")
             }
         }
         else
@@ -2650,7 +2649,7 @@ println("Nothing found")
         {
             dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
             {
-                    self.myHangoutsMessages.getProjectMessages(self.myProjectName, inMessageType: "Hangouts")
+                    self.myHangoutsMessages.getProjectMessages(self.mySelectedProject.projectName, inMessageType: "Hangouts")
             }
         }
         else

@@ -2,7 +2,7 @@
 //  GoalAndObjective.swift
 //  
 //
-//  Created by Garry Eves on 27/07/2015.
+//  Created by Garry Eves on 28/07/2015.
 //
 //
 
@@ -11,9 +11,9 @@ import CoreData
 
 class GoalAndObjective: NSManagedObject {
 
-    @NSManaged var goalID: String
-    @NSManaged var visionID: String
-    @NSManaged var title: String
+    @NSManaged var goalID: NSNumber
     @NSManaged var status: String
+    @NSManaged var title: String
+    @NSManaged var visionID: NSNumber
 
 }

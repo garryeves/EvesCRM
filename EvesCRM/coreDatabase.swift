@@ -30,13 +30,13 @@ class coreDatabase: NSObject
         return fetchResults!
     }
     
-    func getOpenProjectsForArea(inAreaID: String)->[Projects]
+    func getOpenProjectsForArea(inAreaID: Int)->[Projects]
     {
         let fetchRequest = NSFetchRequest(entityName: "Projects")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") AND (areaID != \"\(inAreaID)\")")
+        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") AND (areaID != \(inAreaID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -48,7 +48,7 @@ class coreDatabase: NSObject
     }
 
     
-    func getProjectDetails(myProjectID: NSNumber)->[Projects]
+    func getProjectDetails(myProjectID: Int)->[Projects]
     {
         
         let fetchRequest = NSFetchRequest(entityName: "Projects")
@@ -255,6 +255,29 @@ class coreDatabase: NSObject
         let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [ProjectTeamMembers]
         
         return fetchResults!
+    }
+    
+    func getProjects(inArchiveFlag: Bool = false) -> [Projects]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Projects")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        if !inArchiveFlag
+        {
+            var predicate: NSPredicate
+        
+            predicate = NSPredicate(format: "projectStatus != \"Archived\"")
+        
+            // Set the predicate on the fetch request
+            fetchRequest.predicate = predicate
+        }
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Projects]
+        
+        return fetchResults!
+
     }
     
     func getProjectsForPerson(inPersonName: String)->[ProjectTeamMembers]
@@ -729,10 +752,9 @@ class coreDatabase: NSObject
         }
     }
 
-    func saveTask(inTaskID: String, inTitle: String, inDetails: String, inDueDate: NSDate, inStartDate: NSDate, inStatus: String, inParentTask: String)
+    func saveTask(inTaskID: Int, inTitle: String, inDetails: String, inDueDate: NSDate, inStartDate: NSDate, inStatus: String, inParentID: Int, inParentType: String,inTaskMode: String, inTaskOrder: Int, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int, inEstimatedTimeType: String)
     {
         // first check to see if decode exists, if not we create
-
         var error: NSError?
         var myTask: Task!
         
@@ -747,7 +769,14 @@ class coreDatabase: NSObject
             myTask.dueDate = inDueDate
             myTask.startDate = inStartDate
             myTask.status = inStatus
-            myTask.parentTaskID = inParentTask
+            myTask.parentID = inParentID
+            myTask.parentType = inParentType
+            myTask.taskMode = inTaskMode
+            myTask.taskOrder = inTaskOrder
+            myTask.priority = inPriority
+            myTask.energyLevel = inEnergyLevel
+            myTask.estimatedTime = inEstimatedTime
+            myTask.estimatedTimeType = inEstimatedTimeType
         }
         else
         { // Update
@@ -757,7 +786,14 @@ class coreDatabase: NSObject
             myTask.dueDate = inDueDate
             myTask.startDate = inStartDate
             myTask.status = inStatus
-            myTask.parentTaskID = inParentTask
+            myTask.parentID = inParentID
+            myTask.parentType = inParentType
+            myTask.taskMode = inTaskMode
+            myTask.taskOrder = inTaskOrder
+            myTask.priority = inPriority
+            myTask.energyLevel = inEnergyLevel
+            myTask.estimatedTime = inEstimatedTime
+            myTask.estimatedTimeType = inEstimatedTimeType
         }
         
         if(managedObjectContext!.save(&error) )
@@ -766,13 +802,13 @@ class coreDatabase: NSObject
         }
     }
     
-    func deleteTask(inTaskID: String)
+    func deleteTask(inTaskID: Int)
     {
         var error : NSError?
         
         let fetchRequest = NSFetchRequest(entityName: "Task")
         
-        let predicate = NSPredicate(format: "taskID == \"\(inTaskID)\"")
+        let predicate = NSPredicate(format: "taskID == \(inTaskID)")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -790,129 +826,69 @@ class coreDatabase: NSObject
         }
     }
     
-    func saveProjectTask(inProjectID: Int, inTaskID: String, inTaskOrder: Int)
+    func getTasks(inParentID: Int, inParentType: String)->[Task]
     {
-        // first check to see if decode exists, if not we create
+        let fetchRequest = NSFetchRequest(entityName: "Task")
         
-        var error: NSError?
-        var myProjectTask: ProjectTasks!
-        
-        let myProjectTasks = checkProjectTasks(inProjectID, inTaskID: inTaskID)
-        
-        if myProjectTasks.count == 0
-        { // Add
-            myProjectTask = NSEntityDescription.insertNewObjectForEntityForName("ProjectTasks", inManagedObjectContext: self.managedObjectContext!) as! ProjectTasks
-            myProjectTask.taskID = inTaskID
-            myProjectTask.projectID = inProjectID
-            myProjectTask.taskOrder = inTaskOrder
-        }
-        
-        if(managedObjectContext!.save(&error) )
-        {
-            //   println(error?.localizedDescription)
-        }
-    }
-    
-    func deleteProjectTask(inProjectID: Int, inTaskID: String)
-    {
-        var error : NSError?
-        
-        let fetchRequest = NSFetchRequest(entityName: "ProjectTasks")
-        
-        let predicate = NSPredicate(format: "(projectID == \(inProjectID)) AND (taskID = \"\(inTaskID)\")")
-        
-        // Set the predicate on the fetch request
-        fetchRequest.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [ProjectTasks]
-        for myStage in fetchResults!
-        {
-            managedObjectContext!.deleteObject(myStage as NSManagedObject)
-        }
-        
-        if(managedObjectContext!.save(&error) )
-        {
-            println(error?.localizedDescription)
-        }
-    }
-   
-    func getProjectTasks(inProjectID: Int)->[ProjectTasks]
-    {
-        let fetchRequest = NSFetchRequest(entityName: "ProjectTasks")
-
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectID == \(inProjectID))")
+        let predicate = NSPredicate(format: "parentID == \(inParentID) AND (parentType = \"\(inParentType)\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         
+        let sortDescriptor = NSSortDescriptor(key: "parentID", ascending: true)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [ProjectTasks]
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Task]
         
         return fetchResults!
     }
+
     
     func getMaxProjectTaskOrder(inProjectID: Int)->Int
     {
-        let fetchRequest = NSFetchRequest(entityName: "ProjectTasks")
+        let fetchRequest = NSFetchRequest(entityName: "Task")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectID == \(inProjectID))")
+        let predicate = NSPredicate(format: "(parentID == \(inProjectID)) AND (parentType == \"Project\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [ProjectTasks]
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Task]
         
         return fetchResults!.count
     }
 
-    
-    private func checkProjectTasks(inProjectID: Int, inTaskID: String)->[ProjectTasks]
+    func getMaxTaskTaskOrder(inTaskID: Int)->Int
     {
-        let fetchRequest = NSFetchRequest(entityName: "ProjectTasks")
+        let fetchRequest = NSFetchRequest(entityName: "Task")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectID == \(inProjectID)) AND (taskID = \"\(inTaskID)\")")
+        let predicate = NSPredicate(format: "(parentID == \(inTaskID)) AND (parentType == \"Task\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [ProjectTasks]
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Task]
         
-        return fetchResults!
-    }
-
-    func getProjectForTask(inTaskID: String)->[ProjectTasks]
-    {
-        let fetchRequest = NSFetchRequest(entityName: "ProjectTasks")
-        
-        // Create a new predicate that filters out any object that
-        // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(taskID == \"\(inTaskID)\")")
-        
-        // Set the predicate on the fetch request
-        fetchRequest.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [ProjectTasks]
-        
-        return fetchResults!
+        return fetchResults!.count
     }
     
-    func getTaskWithoutProject()->[Task]
+    func getTasksWithoutProject()->[Task]
     {
         let fetchRequest = NSFetchRequest(entityName: "Task")
 
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "projectID == 0")
+        let predicate = NSPredicate(format: "(parentID == 0) AND (parentType == \"Project\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -929,49 +905,51 @@ class coreDatabase: NSObject
         var myContextTasks: [String] = Array()
         var error: NSError?
         
-        let contextRequest = NSFetchRequest(entityName: "TaskContext")
-        contextRequest.propertiesToFetch = ["contextID"]
-        contextRequest.resultType = NSFetchRequestResultType.DictionaryResultType
-        contextRequest.returnsDistinctResults = true
+        // first get a list of all tasks that have a context
         
-        let contextResults = managedObjectContext!.executeFetchRequest(contextRequest, error: &error)
+        let fetchContext = NSFetchRequest(entityName: "TaskContext")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchContextResults = managedObjectContext!.executeFetchRequest(fetchContext, error: nil) as? [TaskContext]
+        
+        // Get the list of all current tasks
+        let fetchTask = NSFetchRequest(entityName: "Task")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchTaskResults = managedObjectContext!.executeFetchRequest(fetchTask, error: nil) as? [Task]
 
-        for var i = 0; i < contextResults!.count; i++
+        var myTaskArray: [Task] = Array()
+        var taskFound: Bool = false
+        
+        for myTask in fetchTaskResults!
         {
-            if let dic = (contextResults[i] as! [String : String])
+            // loop though the context tasks
+            taskFound = false
+            for myContext in fetchContextResults!
             {
-                if let myContext = dic["contextID"]?
+                if myTask.taskID == myContext.taskID
                 {
-                    myContextTasks.append(myContext)
+                    taskFound = true
+                    break
                 }
+            }
+            
+            if !taskFound
+            {
+                myTaskArray.append(myTask)
             }
         }
         
-        
-        
-        
-        let fetchRequest = NSFetchRequest(entityName: "Task")
-GRE needs to code
-        // Create a new predicate that filters out any object that
-        // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "projectID == \"\(inTaskID)\"")
-        
-        // Set the predicate on the fetch request
-        fetchRequest.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Task]
-        
-        return fetchResults!
+        return myTaskArray
     }
     
-    func getTask(inTaskID: String)->[Task]
+    func getTask(inTaskID: Int)->[Task]
     {
         let fetchRequest = NSFetchRequest(entityName: "Task")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "taskID == \"\(inTaskID)\"")
+        let predicate = NSPredicate(format: "taskID == \(inTaskID)")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -992,7 +970,7 @@ GRE needs to code
         return fetchResults!.count
     }
     
-    func saveProject(inProjectID: Int, inProjectEndDate: NSDate, inProjectName: String, inProjectStartDate: NSDate, inProjectStatus: String, inReviewFrequency: Int, inLastReviewDate: NSDate, inAreaID: String)
+    func saveProject(inProjectID: Int, inProjectEndDate: NSDate, inProjectName: String, inProjectStartDate: NSDate, inProjectStatus: String, inReviewFrequency: Int, inLastReviewDate: NSDate, inAreaID: Int)
     {
         // first check to see if decode exists, if not we create
         
@@ -1031,7 +1009,7 @@ GRE needs to code
         }
     }
  
-    func saveTaskUpdate(inTaskID: String, inDetails: String, inSource: String)
+    func saveTaskUpdate(inTaskID: Int, inDetails: String, inSource: String)
     {
         // first check to see if decode exists, if not we create
         
@@ -1050,13 +1028,13 @@ GRE needs to code
         }
     }
     
-    func getTaskUpdates(inTaskID: String)->[TaskUpdates]
+    func getTaskUpdates(inTaskID: Int)->[TaskUpdates]
     {
         let fetchRequest = NSFetchRequest(entityName: "TaskUpdates")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(taskID == \"\(inTaskID)\")")
+        let predicate = NSPredicate(format: "(taskID == \(inTaskID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1067,7 +1045,7 @@ GRE needs to code
         return fetchResults!
     }
 
-    func saveContext(inContextID: String, inName: String, inEmail: String, inAutoEmail: String, inParentContext: String, inStatus: String)
+    func saveContext(inContextID: Int, inName: String, inEmail: String, inAutoEmail: String, inParentContext: Int, inStatus: String)
     {
         // first check to see if decode exists, if not we create
 
@@ -1119,13 +1097,13 @@ GRE needs to code
         return fetchResults!
     }
 
-    func getContextDetails(inContextID: String)->[Context]
+    func getContextDetails(inContextID: Int)->[Context]
     {
         let fetchRequest = NSFetchRequest(entityName: "Context")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(contextID == \"inContextID\")")
+        let predicate = NSPredicate(format: "(contextID == \(inContextID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1149,7 +1127,7 @@ GRE needs to code
         return fetchResults!
     }
     
-    func saveTaskContext(inContextID: String, inTaskID: String)
+    func saveTaskContext(inContextID: Int, inTaskID: Int)
     {
         // first check to see if decode exists, if not we create
         
@@ -1171,13 +1149,13 @@ GRE needs to code
         }
     }
     
-    func deleteTaskContext(inContextID: String, inTaskID: String)
+    func deleteTaskContext(inContextID: Int, inTaskID: Int)
     {
         var error : NSError?
         
         let fetchRequest = NSFetchRequest(entityName: "TaskContext")
         
-        let predicate = NSPredicate(format: "(contextID == \"\(inContextID)\") AND (taskID = \"\(inTaskID)\")")
+        let predicate = NSPredicate(format: "(contextID == \(inContextID)) AND (taskID = \(inTaskID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1195,13 +1173,13 @@ GRE needs to code
         }
     }
 
-    private func getTaskContext(inContextID: String, inTaskID: String)->[TaskContext]
+    private func getTaskContext(inContextID: Int, inTaskID: Int)->[TaskContext]
     {
         let fetchRequest = NSFetchRequest(entityName: "TaskContext")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(taskID = \"\(inTaskID)\") AND (contextID = \"\(inContextID)\")")
+        let predicate = NSPredicate(format: "(taskID = \(inTaskID)) AND (contextID = \(inContextID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1212,13 +1190,13 @@ GRE needs to code
         return fetchResults!
     }
 
-    func getContextsForTask(inTaskID: String)->[TaskContext]
+    func getContextsForTask(inTaskID: Int)->[TaskContext]
     {
         let fetchRequest = NSFetchRequest(entityName: "TaskContext")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(taskID = \"\(inTaskID)\")")
+        let predicate = NSPredicate(format: "(taskID = \(inTaskID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1229,13 +1207,13 @@ GRE needs to code
         return fetchResults!
     }
 
-    func getTasksForContext(inContextID: String)->[TaskContext]
+    func getTasksForContext(inContextID: Int)->[TaskContext]
     {
         let fetchRequest = NSFetchRequest(entityName: "TaskContext")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(contextID = \"\(inContextID)\")")
+        let predicate = NSPredicate(format: "(contextID = \(inContextID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1246,7 +1224,7 @@ GRE needs to code
         return fetchResults!
     }
 
-    func saveAreaOfResponsibility(inAreaID: String, inGoalID: String, inTitle: String, inStatus: String)
+    func saveAreaOfResponsibility(inAreaID: Int, inGoalID: Int, inTitle: String, inStatus: String)
     {
         // first check to see if decode exists, if not we create
 
@@ -1277,13 +1255,13 @@ GRE needs to code
         }
     }
     
-    func getAreaOfResponsibility(inAreaID: String)->[AreaOfResponsibility]
+    func getAreaOfResponsibility(inAreaID: Int)->[AreaOfResponsibility]
     {
         let fetchRequest = NSFetchRequest(entityName: "AreaOfResponsibility")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(areaID == \"\(inAreaID)\")")
+        let predicate = NSPredicate(format: "(areaID == \(inAreaID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1294,13 +1272,13 @@ GRE needs to code
         return fetchResults!
     }
     
-    func getOpenAreasForGoal(inGoalID: String)->[AreaOfResponsibility]
+    func getOpenAreasForGoal(inGoalID: Int)->[AreaOfResponsibility]
     {
         let fetchRequest = NSFetchRequest(entityName: "AreaOfResponsibility")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(goalID == \"\(inGoalID)\")")
+        let predicate = NSPredicate(format: "(goalID == \(inGoalID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1311,13 +1289,13 @@ GRE needs to code
         return fetchResults!
     }
 
-    private func checkAreaOfResponsibility(inAreaID: String)->[AreaOfResponsibility]
+    private func checkAreaOfResponsibility(inAreaID: Int)->[AreaOfResponsibility]
     {
         let fetchRequest = NSFetchRequest(entityName: "AreaOfResponsibility")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(areaID == \"\(inAreaID)\")")
+        let predicate = NSPredicate(format: "(areaID == \(inAreaID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1328,7 +1306,7 @@ GRE needs to code
         return fetchResults!
     }
 
-    func saveAreaProject(inProjectID: Int, inAreaID: String)
+    func saveAreaProject(inProjectID: Int, inAreaID: Int)
     {
         // first check to see if decode exists, if not we create
         
@@ -1369,7 +1347,7 @@ GRE needs to code
         else
         { // Update
             myProject = myProjects[0]
-            myProject.areaID = ""
+            myProject.areaID = 0
         }
         
         if(managedObjectContext!.save(&error) )
@@ -1378,7 +1356,7 @@ GRE needs to code
         }
     }
     
-    func saveGoal(inGoalID: String, inVisionID: String, inTitle: String, inStatus: String)
+    func saveGoal(inGoalID: Int, inVisionID: Int, inTitle: String, inStatus: String)
     {
         // first check to see if decode exists, if not we create
 
@@ -1409,13 +1387,13 @@ GRE needs to code
         }
     }
     
-    func getGoals(inGoalID: String)->[GoalAndObjective]
+    func getGoals(inGoalID: Int)->[GoalAndObjective]
     {
         let fetchRequest = NSFetchRequest(entityName: "GoalAndObjective")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(goalID == \"\(inGoalID)\")")
+        let predicate = NSPredicate(format: "(goalID == \(inGoalID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1426,13 +1404,13 @@ GRE needs to code
         return fetchResults!
     }
     
-    func getOpenGoalsForVision(inVisionID: String)->[GoalAndObjective]
+    func getOpenGoalsForVision(inVisionID: Int)->[GoalAndObjective]
     {
         let fetchRequest = NSFetchRequest(entityName: "GoalAndObjective")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(visionID == \"\(inVisionID)\")")
+        let predicate = NSPredicate(format: "(visionID == \(inVisionID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1443,7 +1421,7 @@ GRE needs to code
         return fetchResults!
     }
     
-    func saveGoalArea(inGoalID: String, inAreaID: String)
+    func saveGoalArea(inGoalID: Int, inAreaID: Int)
     {
         // first check to see if decode exists, if not we create
         
@@ -1468,7 +1446,7 @@ GRE needs to code
         }
     }
     
-    func deleteGoalArea(inAreaID: String)
+    func deleteGoalArea(inAreaID: Int)
     {
         // first check to see if decode exists, if not we create
         
@@ -1484,7 +1462,7 @@ GRE needs to code
         else
         { // Update
             myArea = myAreas[0]
-            myArea.goalID = ""
+            myArea.goalID = 0
         }
         
         if(managedObjectContext!.save(&error) )
@@ -1493,7 +1471,7 @@ GRE needs to code
         }
     }
 
-    func saveVision(inVisionID: String, inPurposeID: String, inTitle: String, inStatus: String)
+    func saveVision(inVisionID: Int, inPurposeID: Int, inTitle: String, inStatus: String)
     {
         // first check to see if decode exists, if not we create
 
@@ -1524,13 +1502,13 @@ GRE needs to code
         }
     }
     
-    func getVisions(inVisionID: String)->[Vision]
+    func getVisions(inVisionID: Int)->[Vision]
     {
         let fetchRequest = NSFetchRequest(entityName: "Vision")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(visionID == \"\(inVisionID)\")")
+        let predicate = NSPredicate(format: "(visionID == \(inVisionID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1541,13 +1519,13 @@ GRE needs to code
         return fetchResults!
     }
     
-    func getOpenVisionsForPurpose(inPurposeID: String)->[Vision]
+    func getOpenVisionsForPurpose(inPurposeID: Int)->[Vision]
     {
         let fetchRequest = NSFetchRequest(entityName: "Vision")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(purposeID == \"\(inPurposeID)\")")
+        let predicate = NSPredicate(format: "(purposeID == \(inPurposeID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1559,7 +1537,7 @@ GRE needs to code
     }
 
     
-    func saveVisionGoal(inVisionID: String, inGoalID: String)
+    func saveVisionGoal(inVisionID: Int, inGoalID: Int)
     {
         // first check to see if decode exists, if not we create
         
@@ -1584,7 +1562,7 @@ GRE needs to code
         }
     }
     
-    func deleteVisionGoal(inGoalID: String)
+    func deleteVisionGoal(inGoalID: Int)
     {
         // first check to see if decode exists, if not we create
         
@@ -1600,7 +1578,7 @@ GRE needs to code
         else
         { // Update
             myGoal = myGoals[0]
-            myGoal.visionID = ""
+            myGoal.visionID = 0
         }
         
         if(managedObjectContext!.save(&error) )
@@ -1609,7 +1587,7 @@ GRE needs to code
         }
     }
     
-    func savePurpose(inPurposeID: String, inTitle: String, inStatus: String)
+    func savePurpose(inPurposeID: Int, inTitle: String, inStatus: String)
     {
         // first check to see if decode exists, if not we create
 
@@ -1638,13 +1616,13 @@ GRE needs to code
         }
     }
     
-    func getPurpose(inPurposeID: String)->[PurposeAndCoreValue]
+    func getPurpose(inPurposeID: Int)->[PurposeAndCoreValue]
     {
         let fetchRequest = NSFetchRequest(entityName: "PurposeAndCoreValue")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(purposeID == \"\(inPurposeID)\")")
+        let predicate = NSPredicate(format: "(purposeID == \(inPurposeID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1655,7 +1633,7 @@ GRE needs to code
         return fetchResults!
     }
     
-    func savePurposeVision(inPurposeID: String, inVisionID: String)
+    func savePurposeVision(inPurposeID: Int, inVisionID: Int)
     {
         // first check to see if decode exists, if not we create
         
@@ -1680,7 +1658,7 @@ GRE needs to code
         }
     }
     
-    func deletePurposeVision(inVisionID: String)
+    func deletePurposeVision(inVisionID: Int)
     {
         // first check to see if decode exists, if not we create
         
@@ -1696,7 +1674,7 @@ GRE needs to code
         else
         { // Update
             myVision = myVisions[0]
-            myVision.purposeID = ""
+            myVision.purposeID = 0
         }
         
         if(managedObjectContext!.save(&error) )

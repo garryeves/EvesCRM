@@ -238,41 +238,25 @@ func populateRoles()
     }
 }
 
-func parseProjectDetails(myProjectID: NSNumber)->[TableData]
+func parseProjectDetails(myProject: project)->[TableData]
 {
     var tableContents:[TableData] = [TableData]()
-    var myDateFormatter = NSDateFormatter()
-    
-    var dateFormat = NSDateFormatterStyle.FullStyle
-    myDateFormatter.dateStyle = dateFormat
-    
-    let myProjects = myDatabaseConnection.getProjectDetails(myProjectID)
-    
-    if myProjects.count == 0
-    {
-        writeRowToArray("No Project data is available", &tableContents)
-    }
-    else
-    {
-        let dateStart = myDateFormatter.stringFromDate(myProjects[0].projectStartDate)
-        let dateEnd = myDateFormatter.stringFromDate(myProjects[0].projectEndDate)
         
-        writeRowToArray("Start Date = \(dateStart)", &tableContents)
-        writeRowToArray("End Date = \(dateEnd)", &tableContents)
-        writeRowToArray("Status = \(myProjects[0].projectStatus)", &tableContents)
-    }
+    writeRowToArray("Start Date = \(myProject.displayProjectStartDate)", &tableContents)
+    writeRowToArray("End Date = \(myProject.displayProjectEndDate)", &tableContents)
+    writeRowToArray("Status = \(myProject.projectStatus)", &tableContents)
     
     return tableContents
 }
 
 
-func displayTeamMembers(inProjectID: NSNumber, inout lookupArray: [String])->[TableData]
+func displayTeamMembers(inProject: project, inout lookupArray: [String])->[TableData]
 {
     var tableContents:[TableData] = [TableData]()
     
     lookupArray.removeAll(keepCapacity: false)
     
-    let myTeamMembers = myDatabaseConnection.getTeamMembers(inProjectID)
+    let myTeamMembers = inProject.teamMembers
     var titleText: String = ""
     
     for myTeamMember in myTeamMembers
@@ -306,7 +290,7 @@ func displayProjectsForPerson(inPerson: String, inout lookupArray: [String]) -> 
     {
         for myProject in myProjects
         {
-            let myDetails = myDatabaseConnection.getProjectDetails(myProject.projectID)
+            let myDetails = myDatabaseConnection.getProjectDetails(myProject.projectID as Int)
         
             if myDetails[0].projectStatus != "Archived"
             {

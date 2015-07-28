@@ -89,8 +89,6 @@
 		346A2E541B66027100C6C63E /* AreaOfResponsibility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346A2E4B1B66027100C6C63E /* AreaOfResponsibility.swift */; };
 		346A2E551B66027100C6C63E /* PurposeAndCoreValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346A2E4C1B66027100C6C63E /* PurposeAndCoreValue.swift */; };
 		346A2E561B66027100C6C63E /* PurposeAndCoreValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346A2E4C1B66027100C6C63E /* PurposeAndCoreValue.swift */; };
-		346A2E571B66027100C6C63E /* ProjectTasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346A2E4D1B66027100C6C63E /* ProjectTasks.swift */; };
-		346A2E581B66027100C6C63E /* ProjectTasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346A2E4D1B66027100C6C63E /* ProjectTasks.swift */; };
 		346A2E591B66027100C6C63E /* Vision.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346A2E4E1B66027100C6C63E /* Vision.swift */; };
 		346A2E5A1B66027100C6C63E /* Vision.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346A2E4E1B66027100C6C63E /* Vision.swift */; };
 		346A2E5B1B66027100C6C63E /* GoalAndObjective.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346A2E4F1B66027100C6C63E /* GoalAndObjective.swift */; };
@@ -290,7 +288,6 @@
 		346A2E4A1B66027100C6C63E /* Projects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Projects.swift; sourceTree = "<group>"; };
 		346A2E4B1B66027100C6C63E /* AreaOfResponsibility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AreaOfResponsibility.swift; sourceTree = "<group>"; };
 		346A2E4C1B66027100C6C63E /* PurposeAndCoreValue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PurposeAndCoreValue.swift; sourceTree = "<group>"; };
-		346A2E4D1B66027100C6C63E /* ProjectTasks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectTasks.swift; sourceTree = "<group>"; };
 		346A2E4E1B66027100C6C63E /* Vision.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Vision.swift; sourceTree = "<group>"; };
 		346A2E4F1B66027100C6C63E /* GoalAndObjective.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoalAndObjective.swift; sourceTree = "<group>"; };
 		346B70DD1AF70B8F005E1BC2 /* maintainProjectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = maintainProjectViewController.swift; sourceTree = "<group>"; };
@@ -537,7 +534,6 @@
 				346A2E4A1B66027100C6C63E /* Projects.swift */,
 				346A2E4B1B66027100C6C63E /* AreaOfResponsibility.swift */,
 				346A2E4C1B66027100C6C63E /* PurposeAndCoreValue.swift */,
-				346A2E4D1B66027100C6C63E /* ProjectTasks.swift */,
 				346A2E4E1B66027100C6C63E /* Vision.swift */,
 				346A2E4F1B66027100C6C63E /* GoalAndObjective.swift */,
 				34F199BB1AF6046A00963ABF /* EvesCRM.entitlements */,
@@ -917,7 +913,6 @@
 				34A578C31B5F6170008D3D8E /* MeetingTasks.swift in Sources */,
 				34A578BD1B5F6110008D3D8E /* Context.swift in Sources */,
 				340650701ADDF8FF00C90CBB /* ViewController.swift in Sources */,
-				346A2E571B66027100C6C63E /* ProjectTasks.swift in Sources */,
 				34BDECAA1B008846008C9F3F /* displayPanes.swift in Sources */,
 				346B70F71AF75FF4005E1BC2 /* Roles.swift in Sources */,
 				342CA6A01B26C79B006FEAED /* GTLCommon_Sources.m in Sources */,
@@ -1008,7 +1003,6 @@
 				3410561F1B589D92002B0ED9 /* AgendaItemViewController.swift in Sources */,
 				34A183241B0EDBB400FC369D /* LiveAuthHelper.m in Sources */,
 				34A182DB1B0EDB3D00FC369D /* LiveOperationProgress.m in Sources */,
-				346A2E581B66027100C6C63E /* ProjectTasks.swift in Sources */,
 				34A183051B0EDB5C00FC369D /* LiveDownloadOperationCore.m in Sources */,
 				342C0A1A1B4B7CED00A73CA5 /* MeetingItemsBroughtForward.swift in Sources */,
 				347518DC1AE3635100FF1C46 /* EvesCRMSharedFiles.swift in Sources */,

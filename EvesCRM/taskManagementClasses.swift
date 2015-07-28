@@ -10,12 +10,12 @@ import Foundation
 
 class purposeAndCoreValue: NSObject // 50k Level
 {
-    private var myPurposeID: String = ""
+    private var myPurposeID: Int = 0
     private var myTitle: String = ""
     private var myStatus: String = ""
     private var myVision: [gvision] = Array()
    
-    var purposeID: String
+    var purposeID: Int
     {
         get
         {
@@ -59,7 +59,7 @@ class purposeAndCoreValue: NSObject // 50k Level
         }
     }
 
-    func load(inPurposeID: String)
+    func load(inPurposeID: Int)
     {
         // Load the details
         
@@ -67,7 +67,7 @@ class purposeAndCoreValue: NSObject // 50k Level
         
         for myPurpose in myVisions
         {
-            myPurposeID = myPurpose.purposeID
+            myPurposeID = myPurpose.purposeID as Int
             myTitle = myPurpose.title
             myStatus = myPurpose.status
         }
@@ -79,7 +79,7 @@ class purposeAndCoreValue: NSObject // 50k Level
         for myVis in myVisionList
         {
             let myNewVision = gvision()
-            myNewVision.load(myVis.visionID)
+            myNewVision.load(myVis.visionID as Int)
             myVision.append(myNewVision)
         }
     }
@@ -89,7 +89,7 @@ class purposeAndCoreValue: NSObject // 50k Level
         myDatabaseConnection.savePurpose(myPurposeID, inTitle: myTitle, inStatus: myStatus)
     }
     
-    func addVision(inVisionID: String)
+    func addVision(inVisionID: Int)
     {
         myDatabaseConnection.savePurposeVision(myPurposeID, inVisionID: inVisionID)
         
@@ -99,12 +99,12 @@ class purposeAndCoreValue: NSObject // 50k Level
         for myVis in myVisionList
         {
             let myNewVision = gvision()
-            myNewVision.load(myVis.visionID)
+            myNewVision.load(myVis.visionID as Int)
             myVision.append(myNewVision)
         }
     }
     
-    func removeVision(inVisionID: String)
+    func removeVision(inVisionID: Int)
     {
         myDatabaseConnection.deletePurposeVision(inVisionID)
         
@@ -114,7 +114,7 @@ class purposeAndCoreValue: NSObject // 50k Level
         for myVis in myVisionList
         {
             let myNewVision = gvision()
-            myNewVision.load(myVis.visionID)
+            myNewVision.load(myVis.visionID as Int)
             myVision.append(myNewVision)
         }
     }
@@ -122,13 +122,13 @@ class purposeAndCoreValue: NSObject // 50k Level
 
 class gvision: NSObject // (3-5 year goals) 40k Level
 {
-    private var myVisionID: String = ""
-    private var myPurposeID: String = ""
+    private var myVisionID: Int = 0
+    private var myPurposeID: Int = 0
     private var myTitle: String = ""
     private var myStatus: String = ""
     private var myGoals: [goalAndObjective] = Array()
     
-    var visionID: String
+    var visionID: Int
     {
         get
         {
@@ -172,7 +172,7 @@ class gvision: NSObject // (3-5 year goals) 40k Level
         }
     }
     
-    func load(inVisionID: String)
+    func load(inVisionID: Int)
     {
         // Load the details
         
@@ -180,8 +180,8 @@ class gvision: NSObject // (3-5 year goals) 40k Level
         
         for myVision in myVisions
         {
-            myPurposeID = myVision.purposeID
-            myVisionID = myVision.visionID
+            myPurposeID = myVision.purposeID as Int
+            myVisionID = myVision.visionID as Int
             myTitle = myVision.title
             myStatus = myVision.status
         }
@@ -193,7 +193,7 @@ class gvision: NSObject // (3-5 year goals) 40k Level
         for myGoal in myGoalList
         {
             let myNewGoal = goalAndObjective()
-            myNewGoal.load(myGoal.goalID)
+            myNewGoal.load(myGoal.goalID as Int)
             myGoals.append(myNewGoal)
         }
     }
@@ -203,7 +203,7 @@ class gvision: NSObject // (3-5 year goals) 40k Level
         myDatabaseConnection.saveVision(myVisionID, inPurposeID: myPurposeID, inTitle: myTitle, inStatus: myStatus)
     }
     
-    func addGoal(inGoalID: String)
+    func addGoal(inGoalID: Int)
     {
         myDatabaseConnection.saveVisionGoal(myVisionID, inGoalID: inGoalID)
         
@@ -213,12 +213,12 @@ class gvision: NSObject // (3-5 year goals) 40k Level
         for myGoal in myGoalList
         {
             let myNewGoal = goalAndObjective()
-            myNewGoal.load(myGoal.goalID)
+            myNewGoal.load(myGoal.goalID as Int)
             myGoals.append(myNewGoal)
         }
     }
     
-    func removeGoal(inGoalID: String)
+    func removeGoal(inGoalID: Int)
     {
         myDatabaseConnection.deleteVisionGoal(inGoalID)
         
@@ -228,7 +228,7 @@ class gvision: NSObject // (3-5 year goals) 40k Level
         for myGoal in myGoalList
         {
             let myNewGoal = goalAndObjective()
-            myNewGoal.load(myGoal.goalID)
+            myNewGoal.load(myGoal.goalID as Int)
             myGoals.append(myNewGoal)
         }
     }
@@ -236,13 +236,13 @@ class gvision: NSObject // (3-5 year goals) 40k Level
 
 class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
 {
-    private var myGoalID: String = ""
-    private var myVisionID: String = ""
+    private var myGoalID: Int = 0
+    private var myVisionID: Int = 0
     private var myTitle: String = ""
     private var myStatus: String = ""
     private var myAreas: [areaOfResponsibility] = Array()
     
-    var goalID: String
+    var goalID: Int
     {
         get
         {
@@ -286,7 +286,7 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
         }
     }
     
-    func load(inGoalID: String)
+    func load(inGoalID: Int)
     {
         // Load the details
         
@@ -294,8 +294,8 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
         
         for myGoal in myGoals
         {
-            myGoalID = myGoal.goalID
-            myVisionID = myGoal.visionID
+            myGoalID = myGoal.goalID as Int
+            myVisionID = myGoal.visionID as Int
             myTitle = myGoal.title
             myStatus = myGoal.status
         }
@@ -307,7 +307,7 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
         for myArea in myAreaList
         {
             let myNewArea = areaOfResponsibility()
-            myNewArea.load(myArea.areaID)
+            myNewArea.load(myArea.areaID as Int)
             myAreas.append(myNewArea)
         }
     }
@@ -317,7 +317,7 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
         myDatabaseConnection.saveGoal(myGoalID, inVisionID: myVisionID, inTitle: myTitle, inStatus: myStatus)
     }
     
-    func addArea(inAreaID: String)
+    func addArea(inAreaID: Int)
     {
         myDatabaseConnection.saveGoalArea(myGoalID, inAreaID: inAreaID)
         
@@ -327,12 +327,12 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
         for myArea in myAreaList
         {
             let myNewArea = areaOfResponsibility()
-            myNewArea.load(myArea.areaID)
+            myNewArea.load(myArea.areaID as Int)
             myAreas.append(myNewArea)
         }
     }
 
-    func removeArea(inAreaID: String)
+    func removeArea(inAreaID: Int)
     {
         myDatabaseConnection.deleteGoalArea(inAreaID)
         
@@ -342,7 +342,7 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
         for myArea in myAreaList
         {
             let myNewArea = areaOfResponsibility()
-            myNewArea.load(myArea.areaID)
+            myNewArea.load(myArea.areaID as Int)
             myAreas.append(myNewArea)
         }
     }
@@ -350,13 +350,13 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
 
 class areaOfResponsibility // 20k Level
 {
-    private var myAreaID: String = ""
-    private var myGoalID: String = ""
+    private var myAreaID: Int = 0
+    private var myGoalID: Int = 0
     private var myTitle: String = ""
     private var myStatus: String = ""
     private var myProjects: [project] = Array()
     
-    var areaID: String
+    var areaID: Int
     {
         get
         {
@@ -400,7 +400,7 @@ class areaOfResponsibility // 20k Level
         }
     }
     
-    func load(inAreaID: String)
+    func load(inAreaID: Int)
     {
         // Load the details
         
@@ -408,8 +408,8 @@ class areaOfResponsibility // 20k Level
         
         for myArea in myAreas
         {
-            myAreaID = myArea.areaID
-            myGoalID = myArea.goalID
+            myAreaID = myArea.areaID as Int
+            myGoalID = myArea.goalID as Int
             myTitle = myArea.title
             myStatus = myArea.status
         }
@@ -539,12 +539,13 @@ class project: NSObject // 10k level
     private var myLastReviewDate: NSDate!
     private var myTeamMembers: [projectTeamMember] = Array()
     private var myTasks: [task] = Array()
-    private var myAreaID: String
-    
+    private var myAreaID: Int = 0
+
     var projectEndDate: NSDate
     {
         get
         {
+
             return myProjectEndDate
         }
         set
@@ -557,9 +558,16 @@ class project: NSObject // 10k level
     {
         get
         {
-            var myDateFormatter = NSDateFormatter()
-            myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
-            return myDateFormatter.stringFromDate(myProjectEndDate)
+            if myProjectEndDate == getDefaultDate()
+            {
+                return ""
+            }
+            else
+            {
+                var myDateFormatter = NSDateFormatter()
+                myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
+                return myDateFormatter.stringFromDate(myProjectEndDate)
+            }
         }
     }
 
@@ -615,9 +623,16 @@ class project: NSObject // 10k level
     {
         get
         {
-            var myDateFormatter = NSDateFormatter()
-            myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
-            return myDateFormatter.stringFromDate(myProjectStartDate)
+            if myProjectStartDate == getDefaultDate()
+            {
+                return ""
+            }
+            else
+            {
+                var myDateFormatter = NSDateFormatter()
+                myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
+                return myDateFormatter.stringFromDate(myProjectStartDate)
+            }
         }
     }
 
@@ -661,13 +676,20 @@ class project: NSObject // 10k level
     {
         get
         {
-            var myDateFormatter = NSDateFormatter()
-            myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
-            return myDateFormatter.stringFromDate(myLastReviewDate)
+            if myProjectStartDate == getDefaultDate()
+            {
+                return ""
+            }
+            else
+            {
+                var myDateFormatter = NSDateFormatter()
+                myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
+                return myDateFormatter.stringFromDate(myLastReviewDate)
+            }
         }
     }
     
-    var areaID: String
+    var areaID: Int
     {
         get
         {
@@ -681,10 +703,18 @@ class project: NSObject // 10k level
     
     override init()
     {
+        super.init()
+        
         let currentNumberofEntries = myDatabaseConnection.getAllProjects().count
         let nextProjectID = currentNumberofEntries + 1
         
         myProjectID = nextProjectID
+        
+        // Set dates to a really daft value so that it stores into the database
+        
+        myProjectEndDate = getDefaultDate()
+        myProjectStartDate = getDefaultDate()
+        myLastReviewDate = getDefaultDate()
     }
     
     func load(inProjectID: Int)
@@ -701,7 +731,7 @@ class project: NSObject // 10k level
             myProjectStatus = myProject.projectStatus
             myReviewFrequency = myProject.reviewFrequency as Int
             myLastReviewDate = myProject.lastReviewDate
-            myAreaID = myProject.areaID
+            myAreaID = myProject.areaID as Int
                 
             // load team members
         
@@ -715,6 +745,15 @@ class project: NSObject // 10k level
                 myMember.projectID = myTeamMember.projectID as Int
                 myMember.roleID = myTeamMember.roleID as Int
                 myMember.teamMember = myTeamMember.teamMember
+println("name \(myTeamMember.teamMember)")
+                
+                if myTeamMember.projectMemberNotes == ""
+                {
+                    println("its nil")
+                }
+println("incoming \(myTeamMember.projectMemberNotes)")
+println("new \(myMember.projectMemberNotes)")
+                
                 myMember.projectMemberNotes = myTeamMember.projectMemberNotes
                 myTeamMembers.append(myMember)
             }
@@ -723,49 +762,52 @@ class project: NSObject // 10k level
             
             myTasks.removeAll()
             
-            let myProjectTasks = myDatabaseConnection.getProjectTasks(myProjectID)
+            let myProjectTasks = myDatabaseConnection.getTasks(myProjectID, inParentType: "Project")
             
             for myProjectTask in myProjectTasks
             {
-                let myNewTask = task(inTaskID: myProjectTask.taskID)
-                myNewTask.projectID = myProjectID
-                myNewTask.taskOrder = myProjectTask.taskOrder as Int
+                let myNewTask = task(inTaskID: myProjectTask.taskID as Int)
                 myTasks.append(myNewTask)
             }
         }
         
-        func addTaskToProject(inTaskID: String)
+        func addTaskToProject(inTaskID: Int)
         {
             let nextOrder = myDatabaseConnection.getMaxProjectTaskOrder(myProjectID) + 1
-            myDatabaseConnection.saveProjectTask(myProjectID, inTaskID: inTaskID, inTaskOrder: nextOrder)
+            
+            let myTempTask = task(inTaskID: inTaskID)
+            myTempTask.parentID = myProjectID
+            myTempTask.parentType = "Project"
+            myTempTask.setTaskOrder(nextOrder)
+            myTempTask.save()
             
             myTasks.removeAll()
             
-            let myProjectTasks = myDatabaseConnection.getProjectTasks(myProjectID)
+            let myProjectTasks = myDatabaseConnection.getTasks(myProjectID, inParentType: "Project")
             
             for myProjectTask in myProjectTasks
             {
-                let myNewTask = task(inTaskID: myProjectTask.taskID)
-                myNewTask.projectID = myProjectID
-                myNewTask.taskOrder = myProjectTask.taskOrder as Int
+                let myNewTask = task(inTaskID: myProjectTask.taskID as Int)
                 myTasks.append(myNewTask)
             }
 
         }
         
-        func removeTaskFromProject(inTaskID: String)
+        func removeTaskFromProject(inTaskID: Int)
         {
-            myDatabaseConnection.deleteProjectTask(myProjectID, inTaskID: inTaskID)
+            let myTempTask = task(inTaskID: inTaskID)
+            myTempTask.parentID = 0
+            myTempTask.parentType = ""
+            myTempTask.setTaskOrder(0)
+            myTempTask.save()
             
             myTasks.removeAll()
             
-            let myProjectTasks = myDatabaseConnection.getProjectTasks(myProjectID)
+            let myProjectTasks = myDatabaseConnection.getTasks(myProjectID, inParentType: "Project")
             
             for myProjectTask in myProjectTasks
             {
-                let myNewTask = task(inTaskID: myProjectTask.taskID)
-                myNewTask.projectID = myProjectID
-                myNewTask.taskOrder = myProjectTask.taskOrder as Int
+                let myNewTask = task(inTaskID: myProjectTask.taskID as Int)
                 myTasks.append(myNewTask)
             }
         }
@@ -789,30 +831,38 @@ class project: NSObject // 10k level
         for myProjectTask in myTasks
         {
             myProjectTask.save()
-            
-            // Also need to save a project/task record
-            
-            myDatabaseConnection.saveProjectTask(myProjectID, inTaskID: myProjectTask.taskID, inTaskOrder: myProjectTask.myTaskOrder)
         }
     }
     
+    func getDefaultDate() -> NSDate
+    {
+        let dateStringFormatter = NSDateFormatter()
+        dateStringFormatter.dateFormat = "yyyy-MM-dd"
+        return dateStringFormatter.dateFromString("9999-12-31")!
+    }
+
    //  There is no delete in this class, as I do not want to delete projects, instead they will be marked as archived and not displayed
 }
 
 class task: NSObject
 {
-    private var myTaskID: String = ""
+    private var myTaskID: Int = 0
     private var myTitle: String = ""
     private var myDetails: String = ""
     private var myDueDate: NSDate!
     private var myStartDate: NSDate!
     private var myStatus: String = ""
-    private var myProjectID: Int
     private var myContexts: [context] = Array()
     private var myTaskOrder: Int = 0
-    private var myParentTaskID: String = ""
+    private var myParentID: Int = 0
+    private var myParentType: String = ""
+    private var myTaskMode: String = ""
+    private var myPriority: String = ""
+    private var myEnergyLevel: String = ""
+    private var myEstimatedTime: Int = 0
+    private var myEstimatedTimeType: String = ""
 
-    var taskID: String
+    var taskID: Int
     {
         get
         {
@@ -900,19 +950,6 @@ class task: NSObject
         }
     }
     
-    var projectID: Int
-    {
-        get
-        {
-            return myProjectID
-        }
-        set
-        {
-            myProjectID = newValue
-            myDatabaseConnection.saveProjectTask(myProjectID, inTaskID: myTaskID, inTaskOrder: myTaskOrder)
-        }
-    }
-    
     var contexts: [context]
         {
         get
@@ -931,47 +968,120 @@ class task: NSObject
         {
             return myTaskOrder
         }
-        set
-        {
-            myTaskOrder = newValue
-        }
     }
 
-    var parentTaskID: String
+    var parentID: Int
     {
         get
         {
-            return myParentTaskID
+            return myParentID
         }
         set
         {
-            myParentTaskID = newValue
+            myTaskID = newValue
+        }
+    }
+
+    var parentType: String
+    {
+        get
+        {
+            return myParentType
+        }
+        set
+        {
+            myParentType = newValue
+        }
+    }
+    
+    var taskMode: String
+    {
+        get
+        {
+            return myTaskMode
+        }
+        set
+        {
+            myTaskMode = newValue
+        }
+    }
+    
+    var priority: String
+    {
+        get
+        {
+            return myPriority
+        }
+        set
+        {
+            myPriority = newValue
+        }
+    }
+    
+    var energyLevel: String
+    {
+        get
+        {
+            return myEnergyLevel
+        }
+        set
+        {
+            myEnergyLevel = newValue
+        }
+    }
+    
+    var estimatedTime: Int
+    {
+        get
+        {
+            return myEstimatedTime
+        }
+        set
+        {
+            myEstimatedTime = newValue
+        }
+    }
+    
+    var estimatedTimeType: String
+    {
+        get
+        {
+            return myEstimatedTimeType
+        }
+        set
+        {
+            myEstimatedTimeType = newValue
         }
     }
     
     override init()
     {
         let currentNumberofEntries = myDatabaseConnection.getTaskCount()
-        let nextTaskID = currentNumberofEntries + 1
+        myTaskID = currentNumberofEntries + 1
         
         myTaskOrder = 1
-        
-        myTaskID = String(nextTaskID)
     }
     
-    init(inTaskID: String)
+    init(inTaskID: Int)
     {
         let myTaskData = myDatabaseConnection.getTask(inTaskID)
         
         for myTask in myTaskData
         {
-            myTaskID = myTask.taskID
+            myTaskID = myTask.taskID as Int
             myTitle = myTask.title
             myDetails = myTask.details
             myDueDate = myTask.dueDate
             myStartDate = myTask.startDate
             myStatus = myTask.status
-            myParentTaskID = myTask.parentTaskID
+            myParentID = myTask.parentID as Int
+            myParentType = myTask.parentType
+            myTaskMode = myTask.taskMode
+            myPriority = myTask.priority
+            myEnergyLevel = myTask.energyLevel
+            myEstimatedTime = myTask.estimatedTime as Int
+            myEstimatedTimeType = myTask.estimatedTimeType
+            myTaskOrder = myTask.taskOrder as Int
             
             // get contexts
             
@@ -980,44 +1090,25 @@ class task: NSObject
             
             for myContextItem in myContextList
             {
-                let myNewContext = context(inContextID: myContextItem.contextID)
+                let myNewContext = context(inContextID: myContextItem.contextID as Int)
                 myContexts.append(myNewContext)
-            }
-            
-            // get Project ID link
-            
-            let myProjectList = myDatabaseConnection.getProjectForTask(inTaskID)
-            
-            if myProjectList.count == 0
-            {
-                myProjectID = 0
-                myTaskOrder = 1
-            }
-            else
-            {
-                myProjectID = myProjectList[0].projectID as Int
-                myTaskOrder = myProjectList[0].taskOrder as Int
             }
         }
     }
     
     func save()
     {
-        myDatabaseConnection.saveTask(myTaskID, inTitle: myTitle, inDetails: myDetails, inDueDate: myDueDate, inStartDate: myStartDate, inStatus: myStatus, inParentTask: myParentTaskID)
-        
-        // Save project link
-        
-        myDatabaseConnection.saveProjectTask(myProjectID, inTaskID: myTaskID, inTaskOrder: myTaskOrder)
+        myDatabaseConnection.saveTask(myTaskID, inTitle: myTitle, inDetails: myDetails, inDueDate: myDueDate, inStartDate: myStartDate, inStatus: myStatus, inParentID: myParentID, inParentType: myParentType, inTaskMode: myTaskMode, inTaskOrder: myTaskOrder, inPriority: myPriority, inEnergyLevel: myEnergyLevel, inEstimatedTime: myEstimatedTime, inEstimatedTimeType: myEstimatedTimeType)
         
         // Save context link
         
         for myContext in myContexts
         {
-            myDatabaseConnection.saveTaskContext(myContext.contextID, inTaskID: myTaskID)
+            myDatabaseConnection.saveTaskContext(myContext.contextID as Int, inTaskID: myTaskID)
         }
     }
     
-    func addContextToTask(inContextID: String)
+    func addContextToTask(inContextID: Int)
     {
         myDatabaseConnection.saveTaskContext(inContextID, inTaskID: myTaskID)
         
@@ -1026,12 +1117,12 @@ class task: NSObject
         
         for myContextItem in myContextList
         {
-            let myNewContext = context(inContextID: myContextItem.contextID)
+            let myNewContext = context(inContextID: myContextItem.contextID as Int)
             myContexts.append(myNewContext)
         }
     }
     
-    func removeContextFromTask(inContextID: String)
+    func removeContextFromTask(inContextID: Int)
     {
         myDatabaseConnection.deleteTaskContext(inContextID, inTaskID: myTaskID)
         
@@ -1040,7 +1131,7 @@ class task: NSObject
         
         for myContextItem in myContextList
         {
-            let myNewContext = context(inContextID: myContextItem.contextID)
+            let myNewContext = context(inContextID: myContextItem.contextID as Int)
             myContexts.append(myNewContext)
         }
     }
@@ -1061,6 +1152,8 @@ class task: NSObject
             let myItem = taskUpdates(inUpdate: myHistoryRow)
             myHistory.append(myItem)
         }
+        
+        return myHistory
     }
     
     func addHistoryRecord(inHistoryDetails: String, inHistorySource: String)
@@ -1071,18 +1164,76 @@ class task: NSObject
         
         myItem.save()
     }
+    
+    func setTaskOrder(inNewOrderValue: Int)
+    {
+        let myOtherTasks = myDatabaseConnection.getTasks(myParentID, inParentType: myParentType)
+                
+        if inNewOrderValue == 0
+        {
+            // This means we are removing the current value, so subsequent tasks should be decremented by 1
+            for myOtherTask in myOtherTasks
+            {
+                if myOtherTask.taskOrder as Int > myTaskOrder
+                {
+                    let myNewTask = task(inTaskID: myOtherTask.taskID as Int)
+                    myNewTask.storeTaskOrder(myNewTask.taskOrder - 1)
+                    myNewTask.save()
+                }
+            }
+        }
+        else
+        {
+            // This means we are moving existing tasks around
+            
+            if inNewOrderValue < myTaskOrder
+            {  //new position is less than current position
+                
+                for myOtherTask in myOtherTasks
+                {
+                    let currentValue = myOtherTask.taskOrder as Int
+                    if currentValue >= inNewOrderValue && currentValue < myTaskOrder
+                    {
+                        let myNewTask = task(inTaskID: myOtherTask.taskID as Int)
+                        myNewTask.storeTaskOrder(myNewTask.taskOrder + 1)
+                        myNewTask.save()
+                    }
+                }
+            }
+            else
+            {  // new position is higher than current position
+                for myOtherTask in myOtherTasks
+                {
+                    let currentValue = myOtherTask.taskOrder as Int
+                    if currentValue > myTaskOrder && currentValue <= inNewOrderValue
+                    {
+                        let myNewTask = task(inTaskID: myOtherTask.taskID as Int)
+                        myNewTask.storeTaskOrder(myNewTask.taskOrder - 1)
+                        myNewTask.save()
+                    }
+                }
+            }
+        }
+                
+        myTaskOrder = inNewOrderValue
+    }
+
+    func storeTaskOrder(inNewOrderValue: Int)
+    {  // This is used by the "setTaskOrder in order to not trigger a cascade update of taskOrder
+        myTaskOrder = inNewOrderValue
+    }
 }
 
 class context: NSObject
 {
-    private var myContextID: String = ""
+    private var myContextID: Int = 0
     private var myName: String = ""
     private var myEmail: String = ""
     private var myAutoEmail: String = ""
-    private var myParentContext: String = ""
+    private var myParentContext: Int = 0
     private var myStatus: String = ""
     
-    var contextID: String
+    var contextID: Int
     {
         get
         {
@@ -1126,7 +1277,7 @@ class context: NSObject
         }
     }
     
-    var parentContext: String
+    var parentContext: Int
     {
         get
         {
@@ -1163,22 +1314,20 @@ class context: NSObject
         let myContexts = myDatabaseConnection.getAllContexts()
         
         let currentNumberofEntries = myContexts.count
-        let nextContextID = currentNumberofEntries + 1
-        
-        myContextID = String(nextContextID)
+        myContextID = currentNumberofEntries + 1
     }
     
-    init(inContextID: String)
+    init(inContextID: Int)
     {
         let myContexts = myDatabaseConnection.getContextDetails(inContextID)
         
         for myContext in myContexts
         {
-            myContextID = myContext.contextID
+            myContextID = myContext.contextID as Int
             myName = myContext.name
             myEmail = myContext.email
             myAutoEmail = myContext.autoEmail
-            myParentContext = myContext.parentContext
+            myParentContext = myContext.parentContext as Int
             myStatus = myContext.status
         }
     }
@@ -1191,7 +1340,7 @@ class context: NSObject
 
 class taskUpdates: NSObject
 {
-    private var myTaskID: String = ""
+    private var myTaskID: Int = 0
     private var myUpdateDate: NSDate!
     private var myDetails: String = ""
     private var mySource: String = ""
@@ -1238,7 +1387,7 @@ class taskUpdates: NSObject
         }
     }
     
-    init(inTaskID: String)
+    init(inTaskID: Int)
     {
         myTaskID = inTaskID
         
@@ -1246,7 +1395,7 @@ class taskUpdates: NSObject
     
     init(inUpdate: TaskUpdates)
     {
-        myTaskID = inUpdate.taskID
+        myTaskID = inUpdate.taskID as Int
         myUpdateDate = inUpdate.updateDate
         myDetails = inUpdate.details
         mySource = inUpdate.source

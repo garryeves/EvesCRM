@@ -13,7 +13,7 @@ import AddressBookUI
 
 protocol MyMaintainProjectDelegate{
     func myMaintainProjectDidFinish(controller:MaintainProjectViewController, actionType: String)
-    func myMaintainProjectSelect(controller:MaintainProjectViewController, projectID: NSNumber, projectName: String)
+    func myMaintainProjectSelect(controller:MaintainProjectViewController, projectID: Int, projectName: String)
 }
 
 class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationControllerDelegate
@@ -50,10 +50,10 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     var myActionType: String = "Add"
     private var statusSelected: String = ""
     private var roleSelected: Int = 0
-    private var myProjects: [Projects]!
+    private var myProjects: [project] = Array()
     private let reuseIdentifierProject = "ProjectCell"
     private let reuseIdentifierTeam = "TeamMemberCell"
-    private var mySelectedProject: Projects!
+    private var mySelectedProject: project!
     private var myRoles: [Roles]!
     private var mySelectedRoles: [ProjectTeamMembers]!
     private var personSelected: ABRecord!
@@ -66,8 +66,8 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
        
         self.projectList.registerClass(UITableViewCell.self, forCellReuseIdentifier: reuseIdentifierProject)
         self.teamMembersTable.registerClass(UITableViewCell.self, forCellReuseIdentifier: reuseIdentifierTeam)
-        
-        myProjects = myDatabaseConnection.getProjects()
+
+        getProjects()
         
         myRoles = myDatabaseConnection.getRoles()
         
@@ -194,7 +194,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         {
             let cell = projectList.dequeueReusableCellWithIdentifier(reuseIdentifierProject) as! UITableViewCell
             var titleText: String = ""
-            if myProjects != nil
+            if myProjects.count != 0
             {
                 titleText = myProjects[indexPath.row].projectName
                 titleText += " : "
@@ -228,7 +228,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         
         if (tableView == projectList)
         {
-            if myProjects != nil
+            if myProjects.count != 0
             {
                 retVal = self.myProjects.count ?? 0
             }
@@ -250,7 +250,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         {
             let cell = projectList.dequeueReusableCellWithIdentifier(reuseIdentifierProject) as! UITableViewCell
             var titleText: String = ""
-            if myProjects != nil
+            if myProjects.count != 0
             {
                 titleText = myProjects[indexPath.row].projectName
                 titleText += " : "
@@ -403,11 +403,11 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         myActionType = "Edit"
         if switchArchive.on
         {
-            myProjects = myDatabaseConnection.getAllProjects()
+            getProjects(inArchiveFlag: true)
         }
         else
         {
-            myProjects = myDatabaseConnection.getProjects()
+            getProjects()
         }
         projectList.reloadData()
         teamMemberAction = "Add"
@@ -491,8 +491,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     {
         if myActionType == "Add"
         {
-            mySelectedProject = NSEntityDescription.insertNewObjectForEntityForName("Projects", inManagedObjectContext: self.managedObjectContext!) as! Projects
-            mySelectedProject.projectID = myDatabaseConnection.getAllProjects().count + 1
+            mySelectedProject = project()
         }
         
         mySelectedProject.projectName = projectNameText.text
@@ -500,12 +499,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         mySelectedProject.projectEndDate = endDatePicker.date
         mySelectedProject.projectStatus = statusSelected
         
-        var error : NSError?
-        if !managedObjectContext!.save(&error)
-        {
-            print("saveProject")
-            println(error?.localizedDescription)
-        }
+        mySelectedProject.save()
     }
     
     @IBAction func buttonDeleteTeamMember(sender: UIButton)
@@ -534,14 +528,33 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     {
         if switchArchive.on
         {
-            myProjects = myDatabaseConnection.getAllProjects()
+            getProjects(inArchiveFlag: true)
         }
         else
         {
-            myProjects = myDatabaseConnection.getProjects()
+            getProjects()
         }
 
         projectList.reloadData()
-
+    }
+    
+    func getProjects(inArchiveFlag: Bool = false)
+    {
+        var myProjectList: [Projects]
+        if inArchiveFlag
+        {
+            myProjectList = myDatabaseConnection.getProjects(inArchiveFlag: true)
+        }
+        else
+        {
+            myProjectList = myDatabaseConnection.getProjects()
+        }
+        
+        for myProjectRecord in myProjectList
+        {
+            let myNewProject = project()
+            myNewProject.load(myProjectRecord.projectID as Int)
+            myProjects.append(myNewProject)
+        }
     }
 }
