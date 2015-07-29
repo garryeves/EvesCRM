@@ -8,14 +8,15 @@
 
 import Foundation
 
-protocol MyMeetingTaskDelegate
+protocol MyTaskDelegate
 {
-    func myMeetingTaskDidFinish(controller:meetingTaskViewController, actionType: String)
+    func myTaskDidFinish(controller:taskViewController, actionType: String)
 }
 
-class meetingTaskViewController: UIViewController
+class taskViewController: UIViewController
 {
-    var delegate: MyMeetingTaskDelegate?
+    var delegate: MyTaskDelegate?
+    var taskType: String = ""
     
     @IBOutlet weak var btnCancel: UIButton!
     @IBOutlet weak var btnSave: UIButton!
@@ -158,12 +159,12 @@ class meetingTaskViewController: UIViewController
     
     @IBAction func btnCancel(sender: UIButton)
     {
-        delegate?.myMeetingTaskDidFinish(self, actionType: "Cancel")
+        delegate?.myTaskDidFinish(self, actionType: "Cancel")
     }
     
     @IBAction func btnSave(sender: UIButton)
     {
-        delegate?.myMeetingTaskDidFinish(self, actionType: "Changed")
+        delegate?.myTaskDidFinish(self, actionType: "Changed")
     }
     
     @IBAction func btnAddUpdate(sender: UIButton)

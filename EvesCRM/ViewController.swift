@@ -97,8 +97,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     var oneNoteLinkArray: [String] = Array()
     var omniLinkArray: [String] = Array()
     
-    let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
-    
     var document: MyDocument?
     var documentURL: NSURL?
     var ubiquityURL: NSURL?
@@ -197,6 +195,11 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
 
         populateContactList()
         
+        
+   //   code to reset projects if needed for testing
+   //     myDatabaseConnection.resetprojects()
+        
+        
         // Work out if a project has been added to the data store, so we can then select it
         let myProjects = myDatabaseConnection.getProjects()
         
@@ -206,7 +209,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         }
         else
         {
-            buttonSelectProject.hidden = true
+            buttonSelectProject.hidden = true 
         }
         
         dataTable1.estimatedRowHeight = 12.0
@@ -276,7 +279,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     @IBAction func TableTypeButton1TouchUp(sender: UIButton) {
         // Show the Picker and hide the button
    
-        let myPanes = displayPanes(inManagedContext: managedObjectContext!)
+        let myPanes = displayPanes()
         
         TableOptions.removeAll(keepCapacity: false)
  
@@ -2107,7 +2110,6 @@ println("Nothing found")
         settingViewControl.delegate = self
         settingViewControl.evernoteSession = evernoteSession
         settingViewControl.dropboxCoreService = dropboxCoreService
-        settingViewControl.myManagedContext = managedObjectContext!
 
         self.presentViewController(settingViewControl, animated: true, completion: nil)
     }
@@ -2207,7 +2209,7 @@ println("Nothing found")
     {
         // Go and get the list of available panes
         
-        let myPanes = displayPanes(inManagedContext: managedObjectContext!)
+        let myPanes = displayPanes()
         
         var myButtonName: String = ""
         

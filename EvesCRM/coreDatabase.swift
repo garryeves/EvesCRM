@@ -205,7 +205,7 @@ class coreDatabase: NSObject
         
         let fetchRequest = NSFetchRequest(entityName: "ProjectTeamMembers")
         
-        let predicate = NSPredicate(format: "(projectID == \(inProjectID)) AND (teamMember == \(inPersonName))")
+        let predicate = NSPredicate(format: "(projectID == \(inProjectID)) AND (teamMember == \"\(inPersonName)\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -229,7 +229,7 @@ class coreDatabase: NSObject
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectID == \(inProjectID)) AND (teamMember == \(inPersonName))")
+        let predicate = NSPredicate(format: "(projectID == \(inProjectID)) AND (teamMember == \"\(inPersonName)\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1683,4 +1683,176 @@ class coreDatabase: NSObject
         }
     }
 
+    func resetprojects()
+    {
+        var error : NSError?
+    
+        let fetchRequest = NSFetchRequest(entityName: "ProjectTeamMembers")
+    
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [ProjectTeamMembers]
+        for myStage in fetchResults!
+        {
+            managedObjectContext!.deleteObject(myStage as NSManagedObject)
+        }
+    
+        if(managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+        
+
+        let fetchRequest2 = NSFetchRequest(entityName: "Projects")
+            
+        // Execute the fetch request, and cast the results to an array of objects
+        let fetchResults2 = managedObjectContext!.executeFetchRequest(fetchRequest2, error: nil) as? [Projects]
+        for myStage in fetchResults2!
+        {
+            managedObjectContext!.deleteObject(myStage as NSManagedObject)
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+    }
+    
+    func deleteAllPanes()
+    {  // This is used to allow for testing of pane creation, so can delete all the panes if needed
+        var error : NSError?
+        
+        let fetchRequest = NSFetchRequest(entityName: "Panes")
+        
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Panes]
+        for myPane in fetchResults!
+        {
+            managedObjectContext!.deleteObject(myPane as NSManagedObject)
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+    }
+
+    func getPanes() -> [Panes]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Panes")
+        
+        let sortDescriptor = NSSortDescriptor(key: "pane_name", ascending: true)
+        
+        // Set the list of sort descriptors in the fetch request,
+        // so it includes the sort descriptor
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "pane_available == true")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Create a new fetch request using the entity
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Panes]
+        
+        return fetchResults!
+    }
+
+    func getPane(paneName:String) -> [Panes]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Panes")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "pane_name == \"\(paneName)\"")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        let sortDescriptor = NSSortDescriptor(key: "pane_name", ascending: true)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Create a new fetch request using the entity
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Panes]
+        
+        return fetchResults!
+    }
+    
+    func togglePaneVisible(paneName: String)
+    {
+        var error : NSError?
+        
+        let fetchRequest = NSFetchRequest(entityName: "Panes")
+        
+        let predicate = NSPredicate(format: "pane_name == \"\(paneName)\"")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Panes]
+        for myPane in fetchResults!
+        {
+            if myPane.pane_visible == true
+            {
+                myPane.pane_visible = false
+            }
+            else
+            {
+                myPane.pane_visible = true
+            }
+
+            if(managedObjectContext!.save(&error) )
+            {
+                println(error?.localizedDescription)
+            }
+        }
+    }
+
+    func setPaneOrder(paneName: String, paneOrder: Int)
+    {
+        var error : NSError?
+        
+        let fetchRequest = NSFetchRequest(entityName: "Panes")
+        
+        let predicate = NSPredicate(format: "pane_name == \"\(paneName)\"")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Panes]
+        for myPane in fetchResults!
+        {
+            myPane.pane_order = paneOrder
+            
+            if(managedObjectContext!.save(&error) )
+            {
+                println(error?.localizedDescription)
+            }
+        }
+    }
+    
+    func savePane(inPaneName:String, inPaneAvailable: Bool, inPaneVisible: Bool, inPaneOrder: Int)
+    {
+        // Save the details of this pane to the database
+        var error: NSError?
+        let myPane = NSEntityDescription.insertNewObjectForEntityForName("Panes", inManagedObjectContext: self.managedObjectContext!) as! Panes
+        
+        myPane.pane_name = inPaneName
+        myPane.pane_available = inPaneAvailable
+        myPane.pane_visible = inPaneVisible
+        myPane.pane_order = inPaneOrder
+        
+        if !managedObjectContext!.save(&error)
+        {
+            println(error?.localizedDescription)
+        }
+    }
 }

@@ -91,7 +91,6 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
             labelSwitchArchive.hidden = true
         }
         
-        
         if myActionType == "Select"
         {
             projectNameText.enabled = false
@@ -119,7 +118,6 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         
         teamMembersTable.tableFooterView = UIView(frame:CGRectZero)
         projectList.tableFooterView = UIView(frame:CGRectZero)
-
         
         buttonSave.setTitle(myActionType, forState: UIControlState.Normal)
     }
@@ -549,6 +547,8 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         {
             myProjectList = myDatabaseConnection.getProjects()
         }
+        
+        myProjects.removeAll()
         
         for myProjectRecord in myProjectList
         {

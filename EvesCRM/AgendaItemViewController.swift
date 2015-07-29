@@ -13,7 +13,7 @@ protocol MyAgendaItemDelegate
     func myAgendaItemDidFinish(controller:agendaItemViewController, actionType: String)
 }
 
-class agendaItemViewController: UIViewController, MyMeetingTaskDelegate
+class agendaItemViewController: UIViewController, MyTaskDelegate
 {
     var delegate: MyAgendaItemDelegate?
 
@@ -249,7 +249,7 @@ class agendaItemViewController: UIViewController, MyMeetingTaskDelegate
     
     @IBAction func btnAddAction(sender: UIButton)
     {
-        let taskViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("meetingTasks") as! meetingTaskViewController
+        let taskViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("tasks") as! taskViewController
         taskViewControl.delegate = self
  //       taskViewControl.event = event
  //       taskViewControl.actionType = actionType
@@ -327,7 +327,7 @@ class agendaItemViewController: UIViewController, MyMeetingTaskDelegate
         colActions.hidden = false
     }
 
-    func myMeetingTaskDidFinish(controller:meetingTaskViewController, actionType: String)
+    func myTaskDidFinish(controller:taskViewController, actionType: String)
     {
         if actionType == "Cancel"
         {

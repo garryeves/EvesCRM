@@ -62,7 +62,7 @@
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Tpl-JU-n9H" userLabel="txtTitle">
                                 <rect key="frame" x="0.0" y="-30" width="97" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Owner" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cVV-NQ-Bx9" userLabel="lblOwner">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
@@ -91,7 +91,7 @@
                                     <constraint firstAttribute="width" constant="50" id="PcG-bU-xKP"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                                 <variation key="default">
                                     <mask key="constraints">
                                         <exclude reference="PcG-bU-xKP"/>
@@ -902,10 +902,10 @@
             </objects>
             <point key="canvasLocation" x="2015.25" y="-212.25"/>
         </scene>
-        <!--Meeting Tasks-->
+        <!--Tasks-->
         <scene sceneID="M3V-5D-hAr">
             <objects>
-                <viewController storyboardIdentifier="meetingTasks" title="Meeting Tasks" id="Er5-bg-pW1" customClass="meetingTaskViewController" customModule="EvesCRM" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="tasks" title="Meeting Tasks" id="Er5-bg-pW1" userLabel="Tasks" customClass="taskViewController" customModule="EvesCRM" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="LwA-LR-ekp"/>
                         <viewControllerLayoutGuide type="bottom" id="gU9-wd-DGI"/>
@@ -1091,7 +1091,7 @@
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="nVH-yX-JPf" userLabel="txtTaskTitle">
                                 <rect key="frame" x="0.0" y="-30" width="97" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textField>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" keyboardDismissMode="interactive" translatesAutoresizingMaskIntoConstraints="NO" id="mtU-vu-bZ4" userLabel="txtTaskDescription">
                                 <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
@@ -1115,7 +1115,7 @@
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="6BP-lN-CrG" userLabel="txtUpdateSource">
                                 <rect key="frame" x="0.0" y="-30" width="97" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textField>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2VD-N0-8r8" userLabel="txtUpdateDetails">
                                 <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
@@ -2782,7 +2782,7 @@
                                     </constraint>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                                 <variation key="default">
                                     <mask key="constraints">
                                         <exclude reference="TZg-gR-FPD"/>
@@ -2802,7 +2802,7 @@
                                     <constraint firstAttribute="width" constant="60" id="oyj-3P-3gc"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                                 <variation key="default">
                                     <mask key="constraints">
                                         <exclude reference="oyj-3P-3gc"/>
@@ -2820,7 +2820,7 @@
                                     <constraint firstAttribute="width" constant="60" id="PqW-au-3Ce"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                                 <variation key="default">
                                     <mask key="constraints">
                                         <exclude reference="PqW-au-3Ce"/>
@@ -2838,7 +2838,7 @@
                                     <constraint firstAttribute="width" constant="60" id="tyN-3F-XAs"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                                 <variation key="default">
                                     <mask key="constraints">
                                         <exclude reference="tyN-3F-XAs"/>
@@ -2856,7 +2856,7 @@
                                     <constraint firstAttribute="width" constant="60" id="5mN-xJ-7pQ"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                                 <variation key="default">
                                     <mask key="constraints">
                                         <exclude reference="5mN-xJ-7pQ"/>
@@ -4207,12 +4207,12 @@
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="CbT-Xr-gYO" userLabel="txtAttendeeName">
                                 <rect key="frame" x="0.0" y="-30" width="97" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="words"/>
                             </textField>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="gqy-8H-LPd" userLabel="txtAttendeeEmail">
                                 <rect key="frame" x="0.0" y="-30" width="97" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" keyboardType="emailAddress"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3Vo-6X-YVZ" userLabel="btnPreviousMinutes">
                                 <rect key="frame" x="-23" y="-15" width="46" height="30"/>

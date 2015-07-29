@@ -35,7 +35,7 @@
 		341F23101AFB560200FC2883 /* DropboxSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341F230E1AFB560200FC2883 /* DropboxSDK.framework */; };
 		341F23121AFC284400FC2883 /* DropboxCoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341F23111AFC284400FC2883 /* DropboxCoreService.swift */; };
 		341F23131AFC284400FC2883 /* DropboxCoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341F23111AFC284400FC2883 /* DropboxCoreService.swift */; };
-		342A357C1B5F727200D6DB29 /* meetingTaskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342A357B1B5F727200D6DB29 /* meetingTaskViewController.swift */; };
+		342A357C1B5F727200D6DB29 /* taskViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342A357B1B5F727200D6DB29 /* taskViewController.swift */; };
 		342C0A151B4B7CED00A73CA5 /* MeetingSupportingDocs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342C0A0F1B4B7CED00A73CA5 /* MeetingSupportingDocs.swift */; };
 		342C0A161B4B7CED00A73CA5 /* MeetingSupportingDocs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342C0A0F1B4B7CED00A73CA5 /* MeetingSupportingDocs.swift */; };
 		342C0A181B4B7CED00A73CA5 /* MeetingTasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342C0A101B4B7CED00A73CA5 /* MeetingTasks.swift */; };
@@ -253,7 +253,7 @@
 		341F230D1AFB305F00FC2883 /* EvesCRMBridging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EvesCRMBridging.h; sourceTree = "<group>"; };
 		341F230E1AFB560200FC2883 /* DropboxSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DropboxSDK.framework; sourceTree = "<group>"; };
 		341F23111AFC284400FC2883 /* DropboxCoreService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DropboxCoreService.swift; sourceTree = "<group>"; };
-		342A357B1B5F727200D6DB29 /* meetingTaskViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = meetingTaskViewController.swift; sourceTree = "<group>"; };
+		342A357B1B5F727200D6DB29 /* taskViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = taskViewController.swift; sourceTree = "<group>"; };
 		342C0A0A1B4B6BE600A73CA5 /* EvesCRM 5.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 5.xcdatamodel"; sourceTree = "<group>"; };
 		342C0A0F1B4B7CED00A73CA5 /* MeetingSupportingDocs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeetingSupportingDocs.swift; sourceTree = "<group>"; };
 		342C0A101B4B7CED00A73CA5 /* MeetingTasks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeetingTasks.swift; sourceTree = "<group>"; };
@@ -564,7 +564,7 @@
 				342C0A211B4B844D00A73CA5 /* meetingsViewController.swift */,
 				344726601B54D6A800BEFF0B /* coreDatabase.swift */,
 				3410561D1B589D92002B0ED9 /* AgendaItemViewController.swift */,
-				342A357B1B5F727200D6DB29 /* meetingTaskViewController.swift */,
+				342A357B1B5F727200D6DB29 /* taskViewController.swift */,
 				34627D221B60B1C80096DAC4 /* taskManagementClasses.swift */,
 			);
 			path = EvesCRM;
@@ -884,7 +884,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				34A578C01B5F6110008D3D8E /* Task.swift in Sources */,
-				342A357C1B5F727200D6DB29 /* meetingTaskViewController.swift in Sources */,
+				342A357C1B5F727200D6DB29 /* taskViewController.swift in Sources */,
 				34A183291B0EDBB400FC369D /* StringHelper.m in Sources */,
 				3410561E1B589D92002B0ED9 /* AgendaItemViewController.swift in Sources */,
 				346B70F91AF75FF4005E1BC2 /* ProjectTeamMembers.swift in Sources */,

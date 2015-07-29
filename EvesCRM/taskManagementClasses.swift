@@ -745,16 +745,19 @@ class project: NSObject // 10k level
                 myMember.projectID = myTeamMember.projectID as Int
                 myMember.roleID = myTeamMember.roleID as Int
                 myMember.teamMember = myTeamMember.teamMember
-println("name \(myTeamMember.teamMember)")
+
+                // Due to an error I am commenting this out, not using this field at the moment, so hopefully will not be an issue
+              //  println("name \(myTeamMember.teamMember)")
                 
-                if myTeamMember.projectMemberNotes == ""
-                {
-                    println("its nil")
-                }
-println("incoming \(myTeamMember.projectMemberNotes)")
-println("new \(myMember.projectMemberNotes)")
+            //    if myTeamMember.projectMemberNotes == ""
+              //  {
+            //        println("its nil")
+            //    }
+//println("incoming \(myTeamMember.projectMemberNotes)")
+//println("new \(myMember.projectMemberNotes)")
                 
-                myMember.projectMemberNotes = myTeamMember.projectMemberNotes
+ //               myMember.projectMemberNotes = myTeamMember.projectMemberNotes
+                
                 myTeamMembers.append(myMember)
             }
             

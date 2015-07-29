@@ -46,7 +46,7 @@ class MaintainPanesViewController: UIViewController {
         self.tablePane.registerClass(UITableViewCell.self, forCellReuseIdentifier: cellReuse)
 
         // Go and get the Pane data
-        myPanes = displayPanes(inManagedContext: myManagedContext).listPanes
+        myPanes = displayPanes().listPanes
         
         buttonChangeVisibile.hidden = true
         
@@ -187,7 +187,7 @@ class MaintainPanesViewController: UIViewController {
     
     func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int)
     {
-        var myUpdatePanes = displayPanes(inManagedContext: myManagedContext)
+        var myUpdatePanes = displayPanes()
         
         if pickerView == Table1Picker
         {
@@ -216,11 +216,11 @@ class MaintainPanesViewController: UIViewController {
     {
         // Lets update the table
         
-        var myUpdatePanes = displayPanes(inManagedContext: myManagedContext)
+        var myUpdatePanes = displayPanes()
         
         myUpdatePanes.toogleVisibleStatus(mySelectedPane)
         
-        myPanes = displayPanes(inManagedContext: myManagedContext).listPanes
+        myPanes = displayPanes().listPanes
         tablePane.reloadData()
         mySelectedPane = ""
         mySelectedCurrentState = false
@@ -246,7 +246,7 @@ class MaintainPanesViewController: UIViewController {
         myPicker4.removeAll(keepCapacity: false)
         
         var loopCount: Int = 0
-        for myPane in displayPanes(inManagedContext: myManagedContext).listVisiblePanes
+        for myPane in displayPanes().listVisiblePanes
         {
             myPicker1.append(myPane.paneName)
             myPicker2.append(myPane.paneName)
@@ -327,16 +327,13 @@ class MaintainPanesViewController: UIViewController {
     }
     @IBAction func btnResetPanes(sender: UIButton)
     {
-        
-        
         // this is to allow cleaning of panes if needed
         
-        let myPanes2 = displayPanes(inManagedContext: myManagedContext!)
-        myPanes2.deleteAllPanes()
+        myDatabaseConnection.deleteAllPanes()
         
         // End delete phase
         
-        myPanes = displayPanes(inManagedContext: myManagedContext).listPanes
+        myPanes = displayPanes().listPanes
         
         tablePane.reloadData()
         buttonChangeVisibile.hidden = true
