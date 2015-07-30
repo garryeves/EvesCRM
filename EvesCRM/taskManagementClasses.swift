@@ -913,9 +913,16 @@ class task: NSObject
     {
         get
         {
-            var myDateFormatter = NSDateFormatter()
-            myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
-            return myDateFormatter.stringFromDate(myDueDate)
+            if myDueDate == getDefaultDate()
+            {
+                return ""
+            }
+            else
+            {
+                var myDateFormatter = NSDateFormatter()
+                myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
+                return myDateFormatter.stringFromDate(myDueDate)
+            }
         }
     }
     
@@ -935,9 +942,16 @@ class task: NSObject
     {
         get
         {
-            var myDateFormatter = NSDateFormatter()
-            myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
-            return myDateFormatter.stringFromDate(myStartDate)
+            if myStartDate == getDefaultDate()
+            {
+                return ""
+            }
+            else
+            {
+                var myDateFormatter = NSDateFormatter()
+                myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
+                return myDateFormatter.stringFromDate(myStartDate)
+            }
         }
     }
     
@@ -1057,12 +1071,34 @@ class task: NSObject
         }
     }
     
+    var history: [taskUpdates]
+    {
+        var myHistory: [taskUpdates] = Array()
+        
+        let myHistoryRows = myDatabaseConnection.getTaskUpdates(myTaskID)
+        
+        for myHistoryRow in myHistoryRows
+        {
+            let myItem = taskUpdates(inUpdate: myHistoryRow)
+            myHistory.append(myItem)
+        }
+        
+        return myHistory
+    }
+    
+    
     override init()
     {
+        super.init()
         let currentNumberofEntries = myDatabaseConnection.getTaskCount()
         myTaskID = currentNumberofEntries + 1
         
         myTaskOrder = 1
+        
+        myDueDate = getDefaultDate()
+        myStartDate = getDefaultDate()
+    
+        save()
     }
     
     init(inTaskID: Int)
@@ -1144,21 +1180,6 @@ class task: NSObject
         myDatabaseConnection.deleteTask(myTaskID)
     }
     
-    func history() -> [taskUpdates]
-    {
-        var myHistory: [taskUpdates] = Array()
-        
-        let myHistoryRows = myDatabaseConnection.getTaskUpdates(myTaskID)
-        
-        for myHistoryRow in myHistoryRows
-        {
-            let myItem = taskUpdates(inUpdate: myHistoryRow)
-            myHistory.append(myItem)
-        }
-        
-        return myHistory
-    }
-    
     func addHistoryRecord(inHistoryDetails: String, inHistorySource: String)
     {
         let myItem = taskUpdates(inTaskID: myTaskID)
@@ -1224,6 +1245,13 @@ class task: NSObject
     func storeTaskOrder(inNewOrderValue: Int)
     {  // This is used by the "setTaskOrder in order to not trigger a cascade update of taskOrder
         myTaskOrder = inNewOrderValue
+    }
+    
+    func getDefaultDate() -> NSDate
+    {
+        let dateStringFormatter = NSDateFormatter()
+        dateStringFormatter.dateFormat = "yyyy-MM-dd"
+        return dateStringFormatter.dateFromString("9999-12-31")!
     }
 }
 
@@ -1362,6 +1390,7 @@ class taskUpdates: NSObject
         {
             var myDateFormatter = NSDateFormatter()
             myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
+            myDateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
             return myDateFormatter.stringFromDate(myUpdateDate)
         }
     }

@@ -70,10 +70,11 @@ class agendaItemViewController: UIViewController, MyTaskDelegate
             txtTimeAllocation.text = "\(agendaItem.timeAllocation)"
             btnOwner.setTitle(agendaItem.owner, forState: .Normal)
             txtTitle.text = agendaItem.title
-            
         }
         
         myPicker.hidden = true
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateTask:", name:"NotificationUpdateAgendaTask", object: nil)
     }
     
     override func didReceiveMemoryWarning()
@@ -89,41 +90,12 @@ class agendaItemViewController: UIViewController, MyTaskDelegate
 
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
     {
-   /*     var retVal: Int = 0
-        
-        if collectionView == colAttendees
-        {
-            retVal = event.attendees.count
-        }
-        
-        if collectionView == colAgenda
-        {
-            retVal = 2
-        }
-        
-        return retVal
-*/
-        
         return 1
     }
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
-/*        var retVal: Int = 0
-        
-        if collectionView == colAttendees
-        {
-            retVal = 3
-        }
-        
-        if collectionView == colAgenda
-        {
-            retVal = 4
-        }
-
-        return retVal
-*/
-    return 4
+        return agendaItem.tasks.count
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
@@ -131,10 +103,24 @@ class agendaItemViewController: UIViewController, MyTaskDelegate
         var cell : myTaskItem!
  
         cell = collectionView.dequeueReusableCellWithReuseIdentifier(cellTaskName, forIndexPath: indexPath) as! myTaskItem
-        cell.lblTaskName.text = "Name"
-        cell.lblTaskStatus.text = "Status"
-        cell.lblTaskOwner.text = "Owner"
-        cell.lblTaskTargetDate.text = "Target date"
+
+        if agendaItem.tasks.count == 0
+        {
+            cell.lblTaskName.text = ""
+            cell.lblTaskStatus.text = ""
+            cell.lblTaskOwner.text = ""
+            cell.lblTaskTargetDate.text = ""
+            cell.btnAction.setTitle("", forState: .Normal)
+        }
+        else
+        {
+            cell.lblTaskName.text = agendaItem.tasks[indexPath.row].title
+            cell.lblTaskStatus.text = agendaItem.tasks[indexPath.row].status
+            cell.lblTaskOwner.text = "Owner"
+            cell.lblTaskTargetDate.text = agendaItem.tasks[indexPath.row].displayDueDate
+            cell.btnAction.setTitle("Update", forState: .Normal)
+            cell.btnAction.tag = agendaItem.tasks[indexPath.row].taskID
+        }
         
         let swiftColor = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
         if (indexPath.row % 2 == 0)  // was .row
@@ -230,19 +216,18 @@ class agendaItemViewController: UIViewController, MyTaskDelegate
         agendaItem.status = btnStatus.currentTitle!
         agendaItem.decisionMade = txtDecisionMade.text
         agendaItem.discussionNotes = txtDiscussionNotes.text
-        agendaItem.timeAllocation = txtTimeAllocation.text.toInt()!
-        agendaItem.owner = btnOwner.currentTitle!
-        agendaItem.title = txtTitle.text
-
-        if btnSave.currentTitle == "Save"
+        if txtTimeAllocation.text == ""
         {
-            agendaItem.save(event.eventID)
+            agendaItem.timeAllocation = 10
         }
         else
         {
-            // Perform update work
-            agendaItem.update(event.eventID)
+            agendaItem.timeAllocation = txtTimeAllocation.text.toInt()!
         }
+        agendaItem.owner = btnOwner.currentTitle!
+        agendaItem.title = txtTitle.text
+
+        agendaItem.save()
         
         delegate?.myAgendaItemDidFinish(self, actionType: "Changed")
     }
@@ -251,11 +236,23 @@ class agendaItemViewController: UIViewController, MyTaskDelegate
     {
         let taskViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("tasks") as! taskViewController
         taskViewControl.delegate = self
- //       taskViewControl.event = event
- //       taskViewControl.actionType = actionType
+        taskViewControl.taskType = "minutes"
+        let workingTask = task()
+        taskViewControl.myTask = workingTask
         
- //       let newAgendaItem = meetingAgendaItem()
- //       taskViewControl.agendaItem = newAgendaItem
+        self.presentViewController(taskViewControl, animated: true, completion: nil)
+    }
+    
+    func updateTask(notification: NSNotification)
+    {
+        let itemToUpdate = notification.userInfo!["itemNo"] as! Int
+        
+        let taskViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("tasks") as! taskViewController
+        taskViewControl.delegate = self
+        taskViewControl.taskType = "minutes"
+
+        let workingTask = task(inTaskID: itemToUpdate)
+        taskViewControl.myTask = workingTask
         
         self.presentViewController(taskViewControl, animated: true, completion: nil)
     }
@@ -282,7 +279,6 @@ class agendaItemViewController: UIViewController, MyTaskDelegate
         myPicker.hidden = false
         myPicker.reloadAllComponents()
         pickerTarget = "Status"
-
     }
     
     func hideFields()
@@ -327,7 +323,7 @@ class agendaItemViewController: UIViewController, MyTaskDelegate
         colActions.hidden = false
     }
 
-    func myTaskDidFinish(controller:taskViewController, actionType: String)
+    func myTaskDidFinish(controller:taskViewController, actionType: String, currentTask: task)
     {
         if actionType == "Cancel"
         {
@@ -336,12 +332,15 @@ class agendaItemViewController: UIViewController, MyTaskDelegate
         else
         {
             // reload the task Items collection view
+            
+            // Associate the task with the meeting
+            
+            agendaItem.addTask(currentTask)
+            colActions.reloadData()
         }
         
         controller.dismissViewControllerAnimated(true, completion: nil)
     }
-
-    
 }
 
 class myTaskItemHeader: UICollectionReusableView
@@ -363,9 +362,9 @@ class myTaskItem: UICollectionViewCell
     
     @IBAction func btnAction(sender: UIButton)
     {
-      //  if btnAction.currentTitle == "Update"
-      //  {
-      //      NSNotificationCenter.defaultCenter().postNotificationName("NotificationUpdateAgendaItem", object: nil, userInfo:["itemNo":btnAction.tag])
-      //  }
+        if btnAction.currentTitle == "Update"
+        {
+            NSNotificationCenter.defaultCenter().postNotificationName("NotificationUpdateAgendaTask", object: nil, userInfo:["itemNo":btnAction.tag])
+        }
     }
 }

@@ -1038,6 +1038,10 @@ class coreDatabase: NSObject
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
+
+        let sortDescriptor = NSSortDescriptor(key: "updateDate", ascending: false)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [TaskUpdates]
@@ -1854,5 +1858,237 @@ class coreDatabase: NSObject
         {
             println(error?.localizedDescription)
         }
+    }
+    
+    func resetMeetings()
+    {
+        var error : NSError?
+        
+        let fetchRequest1 = NSFetchRequest(entityName: "MeetingAgenda")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults1 = managedObjectContext!.executeFetchRequest(fetchRequest1, error: nil) as? [MeetingAgenda]
+        
+        for myMeeting in fetchResults1!
+        {
+            managedObjectContext!.deleteObject(myMeeting as NSManagedObject)
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+    
+        let fetchRequest2 = NSFetchRequest(entityName: "MeetingAttendees")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults2 = managedObjectContext!.executeFetchRequest(fetchRequest2, error: nil) as? [MeetingAttendees]
+        
+        for myMeeting2 in fetchResults2!
+        {
+            managedObjectContext!.deleteObject(myMeeting2 as NSManagedObject)
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+
+        let fetchRequest3 = NSFetchRequest(entityName: "MeetingAgendaItem")
+
+        let fetchResults3 = managedObjectContext!.executeFetchRequest(fetchRequest3, error: nil) as? [MeetingAgendaItem]
+        
+        for myMeeting3 in fetchResults3!
+        {
+            managedObjectContext!.deleteObject(myMeeting3 as NSManagedObject)
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+        
+        let fetchRequest4 = NSFetchRequest(entityName: "MeetingTasks")
+        
+        let fetchResults4 = managedObjectContext!.executeFetchRequest(fetchRequest4, error: nil) as? [MeetingTasks]
+        
+        for myMeeting4 in fetchResults4!
+        {
+            managedObjectContext!.deleteObject(myMeeting4 as NSManagedObject)
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+
+        let fetchRequest5 = NSFetchRequest(entityName: "MeetingItemsBroughtForward")
+        
+        let fetchResults5 = managedObjectContext!.executeFetchRequest(fetchRequest5, error: nil) as? [MeetingItemsBroughtForward]
+        
+        for myMeeting5 in fetchResults5!
+        {
+            managedObjectContext!.deleteObject(myMeeting5 as NSManagedObject)
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+
+        
+        let fetchRequest6 = NSFetchRequest(entityName: "MeetingSupportingDocs")
+        
+        let fetchResults6 = managedObjectContext!.executeFetchRequest(fetchRequest6, error: nil) as? [MeetingSupportingDocs]
+        
+        for myMeeting6 in fetchResults6!
+        {
+            managedObjectContext!.deleteObject(myMeeting6 as NSManagedObject)
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+    }
+    
+    func resetTasks()
+    {
+        var error : NSError?
+        
+        let fetchRequest1 = NSFetchRequest(entityName: "MeetingTasks")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults1 = managedObjectContext!.executeFetchRequest(fetchRequest1, error: nil) as? [MeetingTasks]
+        
+        for myMeeting in fetchResults1!
+        {
+            managedObjectContext!.deleteObject(myMeeting as NSManagedObject)
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+        
+        let fetchRequest2 = NSFetchRequest(entityName: "Task")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults2 = managedObjectContext!.executeFetchRequest(fetchRequest2, error: nil) as? [Task]
+        
+        for myMeeting2 in fetchResults2!
+        {
+            managedObjectContext!.deleteObject(myMeeting2 as NSManagedObject)
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+        
+        let fetchRequest3 = NSFetchRequest(entityName: "TaskContext")
+        
+        let fetchResults3 = managedObjectContext!.executeFetchRequest(fetchRequest3, error: nil) as? [TaskContext]
+        
+        for myMeeting3 in fetchResults3!
+        {
+            managedObjectContext!.deleteObject(myMeeting3 as NSManagedObject)
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+        
+        let fetchRequest4 = NSFetchRequest(entityName: "TaskUpdates")
+        
+        let fetchResults4 = managedObjectContext!.executeFetchRequest(fetchRequest4, error: nil) as? [TaskUpdates]
+        
+        for myMeeting4 in fetchResults4!
+        {
+            managedObjectContext!.deleteObject(myMeeting4 as NSManagedObject)
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+    }
+
+    func getAgendaTasks(inMeetingID: String, inAgendaID: String)->[MeetingTasks]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "MeetingTasks")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(agendaID == \"\(inAgendaID)\") AND (meetingID == \"\(inMeetingID)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [MeetingTasks]
+        
+        return fetchResults!
+    }
+    
+    func saveAgendaTask(inAgendaID: String, inMeetingID: String, inTaskID: Int)
+    {
+        var myTask: MeetingTasks
+        var error : NSError?
+        
+        myTask = NSEntityDescription.insertNewObjectForEntityForName("MeetingTasks", inManagedObjectContext: managedObjectContext!) as! MeetingTasks
+        myTask.agendaID = inAgendaID
+        myTask.meetingID = inMeetingID
+        myTask.taskID = inTaskID
+            
+        if(managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+    }
+
+    func deleteAgendaTask(inAgendaID: String, inMeetingID: String, inTaskID: Int)
+    {
+        var error : NSError?
+        
+        let fetchRequest = NSFetchRequest(entityName: "MeetingTasks")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(agendaID == \"\(inAgendaID)\") AND (meetingID == \"\(inMeetingID)\") AND (taskID == \(inTaskID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [MeetingTasks]
+        
+        for myItem in fetchResults!
+        {
+            managedObjectContext!.deleteObject(myItem as NSManagedObject)
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+    }
+    
+    func getAgendaTask(inAgendaID: String, inMeetingID: String, inTaskID: Int)->[MeetingTasks]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "MeetingTasks")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(agendaID == \"\(inAgendaID)\") AND (meetingID == \"\(inMeetingID)\") AND (taskID == \(inTaskID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [MeetingTasks]
+        
+        return fetchResults!
     }
 }

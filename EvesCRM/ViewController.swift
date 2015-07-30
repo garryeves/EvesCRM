@@ -124,6 +124,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     var myGmailData: gmailData!
 
     var myRowClicked: Int = 0
+    var calendarTable: String = ""
     
     // Peoplepicker settings
     
@@ -199,6 +200,11 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
    //   code to reset projects if needed for testing
    //     myDatabaseConnection.resetprojects()
         
+   //   code to reset meetings if needed for testing        
+   //     myDatabaseConnection.resetMeetings()
+        
+        //   code to reset tasks if needed for testing
+   //     myDatabaseConnection.resetTasks()
         
         // Work out if a project has been added to the data store, so we can then select it
         let myProjects = myDatabaseConnection.getProjects()
@@ -959,15 +965,33 @@ println("facebook ID = \(myFacebookID)")
 
                 })
 
-                calendarOption.addAction(edit)
-                calendarOption.addAction(agenda)
-                calendarOption.addAction(minutes)
-                calendarOption.addAction(personNotes)
+                var agendaDisplay: Bool = false
+                if eventDetails.calendarItems[myRowClicked].startDate.compare(NSDate()) == NSComparisonResult.OrderedDescending
+                { // Start date is in the future
+                    calendarOption.addAction(edit)
+                    calendarOption.addAction(agenda)
+                    agendaDisplay = true
+                }
                 
-                calendarOption.popoverPresentationController?.sourceView = self.view
-                calendarOption.popoverPresentationController?.sourceRect = CGRectMake(self.view.bounds.width / 2.0, self.view.bounds.height / 2.0, 1.0, 1.0)
+                // Is there an Agenda created for the meeting, if not then do not display Minutes or Notes options
+                
+                var minutesDisplay: Bool = false
+                eventDetails.calendarItems[myRowClicked].loadAgenda()
+                if eventDetails.calendarItems[myRowClicked].agendaItems.count > 0
+                { // Start date is in the future
+                    calendarOption.addAction(minutes)
+                    calendarOption.addAction(personNotes)
+                    minutesDisplay = true
+                }
+            
+                if agendaDisplay || minutesDisplay
+                {
+                    calendarOption.popoverPresentationController?.sourceView = self.view
+                    calendarOption.popoverPresentationController?.sourceRect = CGRectMake(self.view.bounds.width / 2.0, self.view.bounds.height / 2.0, 1.0, 1.0)
 
-                self.presentViewController(calendarOption, animated: true, completion: nil)
+                    self.presentViewController(calendarOption, animated: true, completion: nil)
+                }
+                calendarTable = inTable
 
             case "Project Membership":
                 // Project team membership details
@@ -2136,11 +2160,11 @@ println("Nothing found")
     
     func openMeetings(inType: String)
     {
+println("Passing in event \(eventDetails.calendarItems[myRowClicked].eventID)")
         let meetingViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("Meetings") as! meetingsViewController
         meetingViewControl.delegate = self
         meetingViewControl.event = eventDetails.calendarItems[myRowClicked]
         meetingViewControl.actionType = inType
-        
         self.presentViewController(meetingViewControl, animated: true, completion: nil)
     }
     
@@ -2148,9 +2172,27 @@ println("Nothing found")
     func myMeetingsDidFinish(controller:meetingsViewController)
     {
         controller.dismissViewControllerAnimated(true, completion: nil)
+        populateArrayDetails(calendarTable)
+        
+        switch calendarTable
+        {
+        case "Table1":
+            dataTable1.reloadData()
+            
+        case "Table2":
+            dataTable2.reloadData()
+            
+        case "Table3":
+            dataTable3.reloadData()
+            
+        case "Table4":
+            dataTable4.reloadData()
+            
+        default:
+            println("myMeetingsDidFinish: myMeetingsDidFinish hit default for some reason")
+        }
     }
-    
-    
+
     func initialPopulationOfTables()
     {
         var decodeString: String = ""

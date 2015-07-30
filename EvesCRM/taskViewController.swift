@@ -10,13 +10,14 @@ import Foundation
 
 protocol MyTaskDelegate
 {
-    func myTaskDidFinish(controller:taskViewController, actionType: String)
+    func myTaskDidFinish(controller:taskViewController, actionType: String, currentTask: task)
 }
 
 class taskViewController: UIViewController
 {
     var delegate: MyTaskDelegate?
     var taskType: String = ""
+    var myTask: task!
     
     @IBOutlet weak var btnCancel: UIButton!
     @IBOutlet weak var btnSave: UIButton!
@@ -46,6 +47,8 @@ class taskViewController: UIViewController
     
     private var pickerOptions: [String] = Array()
     private var pickerTarget: String = ""
+    private var myStartDate: NSDate!
+    private var myDueDate: NSDate!
     
     override func viewDidLoad()
     {
@@ -64,6 +67,33 @@ class taskViewController: UIViewController
         txtUpdateDetails.layer.borderWidth = 0.5
         txtUpdateDetails.layer.cornerRadius = 5.0
         txtUpdateDetails.layer.masksToBounds = true
+        
+        if myTask.taskID != 0
+        {
+            // Lets load up the fields
+            txtTaskTitle.text = myTask.title
+            txtTaskDescription.text = myTask.details
+            if myTask.displayDueDate == ""
+            {
+                btnTargetDate.setTitle("None", forState: .Normal)
+            }
+            else
+            {
+                btnTargetDate.setTitle(myTask.displayDueDate, forState: .Normal)
+            }
+        //    btnOwner.setTitle(myTask., forState: .Normal)
+            if myTask.status == ""
+            {
+                btnStatus.setTitle("Open", forState: .Normal)
+            }
+            else
+            {
+                btnStatus.setTitle(myTask.status, forState: .Normal)
+            }
+            
+            myStartDate = myTask.startDate
+            myDueDate = myTask.dueDate
+        }
     }
     
     override func didReceiveMemoryWarning()
@@ -84,26 +114,44 @@ class taskViewController: UIViewController
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
-        return 3
+        return myTask.history.count
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
     {
         var cell : myHistory!
-        
         cell = collectionView.dequeueReusableCellWithReuseIdentifier(resuseID, forIndexPath: indexPath) as! myHistory
-        cell.lblDate.text = "Name"
-        cell.txtUpdate.text = "Status"
-        cell.lblSource.text = "Owner"
-
+ 
+        if myTask.history.count > 0
+        {
+            cell.lblDate.text = myTask.history[indexPath.row].displayUpdateDate
+            cell.lblSource.text = myTask.history[indexPath.row].source
+            cell.txtUpdate.text = myTask.history[indexPath.row].details
+            
+            let fixedWidth = cell.txtUpdate.frame.size.width
+            cell.txtUpdate.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.max))
+            let newSize = cell.txtUpdate.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.max))
+            var newFrame = cell.txtUpdate.frame
+            newFrame.size = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
+            cell.txtUpdate.frame = newFrame;
+        }
+        else
+        {
+            cell.lblDate.text = ""
+            cell.txtUpdate.text = ""
+            cell.lblSource.text = ""
+        }
+        
         let swiftColor = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
         if (indexPath.row % 2 == 0)  // was .row
         {
             cell.backgroundColor = swiftColor
+            cell.txtUpdate.backgroundColor = swiftColor
         }
         else
         {
             cell.backgroundColor = UIColor.clearColor()
+            cell.txtUpdate.backgroundColor = UIColor.clearColor()
         }
         
         return cell
@@ -124,7 +172,9 @@ class taskViewController: UIViewController
     {
         var retVal: CGSize!
         
-        retVal = CGSize(width: colHistory.bounds.size.width, height: 39)
+        retVal = CGSize(width: colHistory.bounds.size.width, height: 80)
+        
+        //retVal = CGSize(width: colHistory.bounds.size.width, height: 39)
         
         return retVal
     }
@@ -159,17 +209,41 @@ class taskViewController: UIViewController
     
     @IBAction func btnCancel(sender: UIButton)
     {
-        delegate?.myTaskDidFinish(self, actionType: "Cancel")
+        delegate?.myTaskDidFinish(self, actionType: "Cancel", currentTask: myTask)
     }
     
     @IBAction func btnSave(sender: UIButton)
     {
-        delegate?.myTaskDidFinish(self, actionType: "Changed")
+        myTask.title = txtTaskTitle.text
+        myTask.details = txtTaskDescription.text
+        myTask.dueDate = myDueDate
+        myTask.startDate = myStartDate
+        myTask.status = btnStatus.currentTitle!
+        //    btnOwner.setTitle(myTask., forState: .Normal)
+        
+        myTask.save()
+        delegate?.myTaskDidFinish(self, actionType: "Changed", currentTask: myTask)
     }
     
     @IBAction func btnAddUpdate(sender: UIButton)
     {
-
+        if count(txtUpdateDetails.text) > 0 && count(txtUpdateSource.text) > 0
+        {
+            myTask.addHistoryRecord(txtUpdateDetails.text, inHistorySource: txtUpdateSource.text)
+            txtUpdateDetails.text = ""
+            txtUpdateSource.text = ""
+            colHistory.reloadData()
+        }
+        else
+        {
+            var alert = UIAlertController(title: "Add Task Update", message:
+                "You need to enter update details and source", preferredStyle: UIAlertControllerStyle.Alert)
+            
+            self.presentViewController(alert, animated: false, completion: nil)
+            
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+                handler: nil))
+        }
     }
     
     @IBAction func btnTargetDate(sender: UIButton)
@@ -207,6 +281,7 @@ class taskViewController: UIViewController
         var dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "dd MMM yyyy"
         btnTargetDate.setTitle(dateFormatter.stringFromDate(myDatePicker.date), forState: .Normal)
+        myDueDate = myDatePicker.date
         
         myDatePicker.hidden = true
         btnSetTargetDate.hidden = true

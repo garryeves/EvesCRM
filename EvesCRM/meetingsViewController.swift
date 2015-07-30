@@ -76,7 +76,8 @@ class meetingsViewController: UIViewController, MyAgendaItemDelegate
         myPicker.hidden = true
         
         event.loadAgenda()
-        
+ println("Note = \(event.event.notes)")
+ println("ID = \(event.eventID)")
         if event.chair != ""
         {
             btnChair.setTitle(event.chair, forState: .Normal)
@@ -313,12 +314,13 @@ class meetingsViewController: UIViewController, MyAgendaItemDelegate
     
     @IBAction func btnAddAgendaItem(sender: UIButton)
     {
+        event.saveAgenda()
         let agendaViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("AgendaItems") as! agendaItemViewController
         agendaViewControl.delegate = self
         agendaViewControl.event = event
         agendaViewControl.actionType = actionType
         
-        let newAgendaItem = meetingAgendaItem()
+        let newAgendaItem = meetingAgendaItem(inMeetingID: event.eventID)
         agendaViewControl.agendaItem = newAgendaItem
         
         self.presentViewController(agendaViewControl, animated: true, completion: nil)
@@ -402,6 +404,7 @@ class meetingsViewController: UIViewController, MyAgendaItemDelegate
             // reload the Agenda Items collection view
             event.loadAgendaItems()
             colAgenda.reloadData()
+            event.saveAgenda()
         }
         
         controller.dismissViewControllerAnimated(true, completion: nil)
@@ -418,6 +421,7 @@ class meetingsViewController: UIViewController, MyAgendaItemDelegate
     
     func updateAgendaItem(notification: NSNotification)
     {
+        event.saveAgenda()
         let itemToUpdate = notification.userInfo!["itemNo"] as! Int
         
         let agendaViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("AgendaItems") as! agendaItemViewController
