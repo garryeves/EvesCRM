@@ -1335,3 +1335,46 @@ class iOSReminder
         return tableContents
     }
 }
+
+class MeetingModel: NSObject
+{
+    private var myDelegate: MyMeetingsDelegate!
+    private var myEvent: myCalendarItem!
+    private var myActionType: String = ""
+    
+    var delegate: MyMeetingsDelegate
+        {
+        get
+        {
+            return myDelegate
+        }
+        set
+        {
+            myDelegate = newValue
+        }
+    }
+    
+    var actionType: String
+        {
+        get
+        {
+            return myActionType
+        }
+        set
+        {
+            myActionType = newValue
+        }
+    }
+    
+    var event: myCalendarItem
+        {
+        get
+        {
+            return myEvent
+        }
+        set
+        {
+            myEvent = newValue
+        }
+    }
+}

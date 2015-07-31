@@ -234,11 +234,15 @@ class agendaItemViewController: UIViewController, MyTaskDelegate
     
     @IBAction func btnAddAction(sender: UIButton)
     {
-        let taskViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("tasks") as! taskViewController
-        taskViewControl.delegate = self
-        taskViewControl.taskType = "minutes"
+        let taskViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("taskTab") as! tasksTabViewController
+        
+        var myPassedTask = TaskModel()
+        myPassedTask.taskType = "minutes"
         let workingTask = task()
-        taskViewControl.myTask = workingTask
+        myPassedTask.currentTask = workingTask
+        myPassedTask.delegate = self
+ 
+        taskViewControl.myPassedTask = myPassedTask
         
         self.presentViewController(taskViewControl, animated: true, completion: nil)
     }
@@ -247,12 +251,15 @@ class agendaItemViewController: UIViewController, MyTaskDelegate
     {
         let itemToUpdate = notification.userInfo!["itemNo"] as! Int
         
-        let taskViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("tasks") as! taskViewController
-        taskViewControl.delegate = self
-        taskViewControl.taskType = "minutes"
-
+        let taskViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("taskTab") as! tasksTabViewController
+        
+        var myPassedTask = TaskModel()
+        myPassedTask.taskType = "minutes"
         let workingTask = task(inTaskID: itemToUpdate)
-        taskViewControl.myTask = workingTask
+        myPassedTask.currentTask = workingTask
+        myPassedTask.delegate = self
+        
+        taskViewControl.myPassedTask = myPassedTask
         
         self.presentViewController(taskViewControl, animated: true, completion: nil)
     }
@@ -341,6 +348,13 @@ class agendaItemViewController: UIViewController, MyTaskDelegate
         
         controller.dismissViewControllerAnimated(true, completion: nil)
     }
+    
+    func myTaskUpdateDidFinish(controller:taskUpdatesViewController, actionType: String, currentTask: task)
+    {
+        colActions.reloadData()
+        controller.dismissViewControllerAnimated(true, completion: nil)
+    }
+
 }
 
 class myTaskItemHeader: UICollectionReusableView

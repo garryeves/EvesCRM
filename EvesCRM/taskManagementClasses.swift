@@ -1438,3 +1438,46 @@ class taskUpdates: NSObject
         myDatabaseConnection.saveTaskUpdate(myTaskID, inDetails: myDetails, inSource: mySource)
     }
 }
+
+class TaskModel: NSObject
+{
+    private var myTaskType: String = ""
+    private var myTask: task!
+    private var myDelegate: MyTaskDelegate!
+ 
+    var delegate: MyTaskDelegate
+        {
+        get
+        {
+            return myDelegate
+        }
+        set
+        {
+            myDelegate = newValue
+        }
+    }
+    
+    var taskType: String
+    {
+        get
+        {
+            return myTaskType
+        }
+        set
+        {
+            myTaskType = newValue
+        }
+    }
+    
+    var currentTask: task
+    {
+        get
+        {
+            return myTask
+        }
+        set
+        {
+            myTask = newValue
+        }
+    }
+}

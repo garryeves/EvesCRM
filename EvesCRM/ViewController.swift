@@ -2160,15 +2160,43 @@ println("Nothing found")
     
     func openMeetings(inType: String)
     {
-println("Passing in event \(eventDetails.calendarItems[myRowClicked].eventID)")
-        let meetingViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("Meetings") as! meetingsViewController
-        meetingViewControl.delegate = self
-        meetingViewControl.event = eventDetails.calendarItems[myRowClicked]
-        meetingViewControl.actionType = inType
+        let meetingViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("MeetingsTab") as! meetingTabViewController
+        
+        var myPassedMeeting = MeetingModel()
+        myPassedMeeting.actionType = inType
+        let workingTask = eventDetails.calendarItems[myRowClicked]
+        myPassedMeeting.event = workingTask
+        myPassedMeeting.delegate = self
+        
+        meetingViewControl.myPassedMeeting = myPassedMeeting
+        
         self.presentViewController(meetingViewControl, animated: true, completion: nil)
     }
     
-    
+    func myMeetingsAgendaDidFinish(controller:meetingAgendaViewController)
+    {
+        controller.dismissViewControllerAnimated(true, completion: nil)
+        populateArrayDetails(calendarTable)
+        
+        switch calendarTable
+        {
+        case "Table1":
+            dataTable1.reloadData()
+            
+        case "Table2":
+            dataTable2.reloadData()
+            
+        case "Table3":
+            dataTable3.reloadData()
+            
+        case "Table4":
+            dataTable4.reloadData()
+            
+        default:
+            println("myMeetingsDidFinish: myMeetingsDidFinish hit default for some reason")
+        }
+    }
+
     func myMeetingsDidFinish(controller:meetingsViewController)
     {
         controller.dismissViewControllerAnimated(true, completion: nil)
