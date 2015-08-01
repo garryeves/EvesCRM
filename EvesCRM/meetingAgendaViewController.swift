@@ -17,11 +17,21 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate
     @IBOutlet weak var colAgenda: UICollectionView!
     @IBOutlet weak var btnAddAgendaItem: UIButton!
     @IBOutlet weak var btnBack: UIButton!
+    @IBOutlet weak var lblAddAgendaItem: UILabel!
+    @IBOutlet weak var lblDescription: UILabel!
+    @IBOutlet weak var lblTimeAllocation: UILabel!
+    @IBOutlet weak var txtDescription: UITextField!
+    @IBOutlet weak var txtTimeAllocation: UITextField!
+    @IBOutlet weak var lblOwner: UILabel!
+    @IBOutlet weak var btnOwner: UIButton!
+    @IBOutlet weak var myPicker: UIPickerView!
     
     private let reuseAgendaTime = "reuseAgendaTime"
     private let reuseAgendaTitle = "reuseAgendaTitle"
     private let reuseAgendaOwner = "reuseAgendaOwner"
     private let reuseAgendaAction = "reuseAgendaAction"
+    
+    private var pickerOptions: [String] = Array()
     
     override func viewDidLoad()
     {
@@ -35,6 +45,10 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate
         {
             btnAddAgendaItem.hidden = true
         }
+        
+        myPicker.hidden = true
+        
+        btnOwner.setTitle("Select Owner", forState: .Normal)
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateAgendaItem:", name:"NotificationUpdateAgendaItem", object: nil)
     }
@@ -99,12 +113,31 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate
         return headerView
     }
     
-    
     func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
     {
         return CGSize(width: colAgenda.bounds.size.width, height: 39)
     }
     
+    func numberOfComponentsInPickerView(TableTypeSelection1: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(TableTypeSelection1: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return pickerOptions.count
+    }
+    
+    func pickerView(TableTypeSelection1: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String! {
+        return pickerOptions[row]
+    }
+    
+    func pickerView(TableTypeSelection1: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        // Write code for select
+        btnOwner.setTitle(pickerOptions[row], forState: .Normal)
+        
+        myPicker.hidden = true
+        showFields()
+    }
+
     @IBAction func btnBackClick(sender: UIButton)
     {
         passedMeeting.delegate.myMeetingsAgendaDidFinish(self)
@@ -112,17 +145,79 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate
     
     @IBAction func btnAddAgendaItem(sender: UIButton)
     {
-        let agendaViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("AgendaItems") as! agendaItemViewController
-        agendaViewControl.delegate = self
-        agendaViewControl.event = passedMeeting.event
-        agendaViewControl.actionType = passedMeeting.actionType
+        let agendaItem = meetingAgendaItem(inMeetingID: passedMeeting.event.eventID)
+        agendaItem.status = "Open"
+        agendaItem.decisionMade = ""
+        agendaItem.discussionNotes = ""
+        if txtTimeAllocation.text == ""
+        {
+            agendaItem.timeAllocation = 10
+        }
+        else
+        {
+            agendaItem.timeAllocation = txtTimeAllocation.text.toInt()!
+        }
+        if btnOwner.currentTitle != "Select Owner"
+        {
+            agendaItem.owner = btnOwner.currentTitle!
+        }
         
-        let newAgendaItem = meetingAgendaItem(inMeetingID: passedMeeting.event.eventID)
-        agendaViewControl.agendaItem = newAgendaItem
+        agendaItem.title = txtDescription.text
         
-        self.presentViewController(agendaViewControl, animated: true, completion: nil)
+        agendaItem.save()
+
+        // reload the Agenda Items collection view
+        passedMeeting.event.loadAgendaItems()
+        colAgenda.reloadData()
+        passedMeeting.event.saveAgenda()
+        
+        // set the fields to blank
+        
+        txtTimeAllocation.text = ""
+        txtDescription.text = ""
+        btnOwner.setTitle("Select Owner", forState: .Normal)
     }
     
+    @IBAction func btnOwner(sender: UIButton)
+    {
+        pickerOptions.removeAll(keepCapacity: false)
+        for attendee in passedMeeting.event.attendees
+        {
+            pickerOptions.append(attendee.name)
+        }
+        hideFields()
+        myPicker.hidden = false
+        myPicker.reloadAllComponents()
+    }
+    
+    func hideFields()
+    {
+        lblAgendaItems.hidden = true
+        colAgenda.hidden = true
+        btnAddAgendaItem.hidden = true
+        lblAddAgendaItem.hidden = true
+        lblDescription.hidden = true
+        lblTimeAllocation.hidden = true
+        txtDescription.hidden = true
+        txtTimeAllocation.hidden = true
+        lblOwner.hidden = true
+        btnOwner.hidden = true
+    }
+    
+    func showFields()
+    {
+        lblAgendaItems.hidden = false
+        colAgenda.hidden = false
+        btnAddAgendaItem.hidden = false
+        lblAddAgendaItem.hidden = false
+        lblDescription.hidden = false
+        lblTimeAllocation.hidden = false
+        txtDescription.hidden = false
+        txtTimeAllocation.hidden = false
+        lblOwner.hidden = false
+        btnOwner.hidden = false
+    }
+
     func myAgendaItemDidFinish(controller:agendaItemViewController, actionType: String)
     {
         if actionType == "Cancel"

@@ -32,7 +32,6 @@ class meetingsViewController: UIViewController
     @IBOutlet weak var btnChair: UIButton!
     @IBOutlet weak var btnMinutes: UIButton!
     @IBOutlet weak var btnBack: UIButton!
-    @IBOutlet weak var lblAddAttendee: UILabel!
     @IBOutlet weak var txtAttendeeName: UITextField!
     @IBOutlet weak var txtAttendeeEmail: UITextField!
     @IBOutlet weak var btnAddAttendee: UIButton!
@@ -172,7 +171,7 @@ class meetingsViewController: UIViewController
     
     func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
     {
-        return CGSize(width: 400, height: 39)
+        return CGSize(width: collectionView.frame.size.width, height: 39)
     }
     
     @IBAction func btnChairClick(sender: UIButton)
@@ -249,7 +248,6 @@ class meetingsViewController: UIViewController
         btnChair.hidden = true
         btnMinutes.hidden = true
         btnBack.hidden = true
-        lblAddAttendee.hidden = true
         txtAttendeeName.hidden = true
         txtAttendeeEmail.hidden = true
         btnAddAttendee.hidden = true
@@ -277,7 +275,6 @@ class meetingsViewController: UIViewController
         btnChair.hidden = false
         btnMinutes.hidden = false
         btnBack.hidden = false
-        lblAddAttendee.hidden = false
         txtAttendeeName.hidden = false
         txtAttendeeEmail.hidden = false
         btnAddAttendee.hidden = false
