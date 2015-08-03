@@ -213,23 +213,34 @@ class agendaItemViewController: UIViewController, MyTaskDelegate
     
     @IBAction func btnSave(sender: UIButton)
     {
-        agendaItem.status = btnStatus.currentTitle!
-        agendaItem.decisionMade = txtDecisionMade.text
-        agendaItem.discussionNotes = txtDiscussionNotes.text
-        if txtTimeAllocation.text == ""
+        if txtTitle.text == ""
         {
-            agendaItem.timeAllocation = 10
+            var alert = UIAlertController(title: "Add Agenda Item", message:
+                "You must provide a description for the Agenda Item before you can Add it", preferredStyle: UIAlertControllerStyle.Alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+            
+            self.presentViewController(alert, animated: false, completion: nil)
         }
         else
         {
-            agendaItem.timeAllocation = txtTimeAllocation.text.toInt()!
-        }
-        agendaItem.owner = btnOwner.currentTitle!
-        agendaItem.title = txtTitle.text
+            agendaItem.status = btnStatus.currentTitle!
+            agendaItem.decisionMade = txtDecisionMade.text
+            agendaItem.discussionNotes = txtDiscussionNotes.text
+            if txtTimeAllocation.text == ""
+            {
+                agendaItem.timeAllocation = 10
+            }
+            else
+            {
+                agendaItem.timeAllocation = txtTimeAllocation.text.toInt()!
+            }
+            agendaItem.owner = btnOwner.currentTitle!
+            agendaItem.title = txtTitle.text
 
-        agendaItem.save()
+            agendaItem.save()
         
-        delegate?.myAgendaItemDidFinish(self, actionType: "Changed")
+            delegate?.myAgendaItemDidFinish(self, actionType: "Changed")
+        }
     }
     
     @IBAction func btnAddAction(sender: UIButton)

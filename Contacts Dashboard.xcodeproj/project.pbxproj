@@ -283,6 +283,7 @@
 		342CA6BC1B26CE6F006FEAED /* Source */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Source; sourceTree = "<group>"; };
 		342CA6BF1B26D0B3006FEAED /* gtm-oauth2-master */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "gtm-oauth2-master"; sourceTree = "<group>"; };
 		3436F9431B28113E0085C58A /* GTMOAuth2ViewTouch.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GTMOAuth2ViewTouch.xib; sourceTree = "<group>"; };
+		3443A4A31B6F2F4400B0D63A /* EvesCRM 9.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 9.xcdatamodel"; sourceTree = "<group>"; };
 		344726601B54D6A800BEFF0B /* coreDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = coreDatabase.swift; sourceTree = "<group>"; };
 		344F22691AF1DC20002C373E /* ENSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ENSDK.framework; sourceTree = "<group>"; };
 		344F226A1AF1DC20002C373E /* ENSDKResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ENSDKResources.bundle; sourceTree = "<group>"; };
@@ -1294,6 +1295,7 @@
 		3406506C1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				3443A4A31B6F2F4400B0D63A /* EvesCRM 9.xcdatamodel */,
 				34877BC51B61E2210040DF71 /* EvesCRM 8.xcdatamodel */,
 				34A578B11B5F5F93008D3D8E /* EvesCRM 7.xcdatamodel */,
 				346E23451B54EBB4004F0931 /* EvesCRM 6.xcdatamodel */,
@@ -1303,7 +1305,7 @@
 				346B70F21AF75EFE005E1BC2 /* EvesCRM 2.xcdatamodel */,
 				3406506D1ADDF8FF00C90CBB /* EvesCRM.xcdatamodel */,
 			);
-			currentVersion = 34877BC51B61E2210040DF71 /* EvesCRM 8.xcdatamodel */;
+			currentVersion = 3443A4A31B6F2F4400B0D63A /* EvesCRM 9.xcdatamodel */;
 			path = EvesCRM.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

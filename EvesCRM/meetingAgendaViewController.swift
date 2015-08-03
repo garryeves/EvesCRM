@@ -145,37 +145,48 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate
     
     @IBAction func btnAddAgendaItem(sender: UIButton)
     {
-        let agendaItem = meetingAgendaItem(inMeetingID: passedMeeting.event.eventID)
-        agendaItem.status = "Open"
-        agendaItem.decisionMade = ""
-        agendaItem.discussionNotes = ""
-        if txtTimeAllocation.text == ""
+        if txtDescription.text == ""
         {
-            agendaItem.timeAllocation = 10
+            var alert = UIAlertController(title: "Add Agenda Item", message:
+        "You must provide a description for the Agenda Item before you can Add it", preferredStyle: UIAlertControllerStyle.Alert)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+    
+            self.presentViewController(alert, animated: false, completion: nil)
         }
         else
         {
-            agendaItem.timeAllocation = txtTimeAllocation.text.toInt()!
-        }
-        if btnOwner.currentTitle != "Select Owner"
-        {
-            agendaItem.owner = btnOwner.currentTitle!
-        }
+            let agendaItem = meetingAgendaItem(inMeetingID: passedMeeting.event.eventID)
+            agendaItem.status = "Open"
+            agendaItem.decisionMade = ""
+            agendaItem.discussionNotes = ""
+            if txtTimeAllocation.text == ""
+            {
+                agendaItem.timeAllocation = 10
+            }
+            else
+            {
+                agendaItem.timeAllocation = txtTimeAllocation.text.toInt()!
+            }
+            if btnOwner.currentTitle != "Select Owner"
+            {
+                agendaItem.owner = btnOwner.currentTitle!
+            }
         
-        agendaItem.title = txtDescription.text
+            agendaItem.title = txtDescription.text
         
-        agendaItem.save()
+            agendaItem.save()
 
-        // reload the Agenda Items collection view
-        passedMeeting.event.loadAgendaItems()
-        colAgenda.reloadData()
-        passedMeeting.event.saveAgenda()
+            // reload the Agenda Items collection view
+            passedMeeting.event.loadAgendaItems()
+            colAgenda.reloadData()
+            passedMeeting.event.saveAgenda()
         
-        // set the fields to blank
+            // set the fields to blank
         
-        txtTimeAllocation.text = ""
-        txtDescription.text = ""
-        btnOwner.setTitle("Select Owner", forState: .Normal)
+            txtTimeAllocation.text = ""
+            txtDescription.text = ""
+            btnOwner.setTitle("Select Owner", forState: .Normal)
+        }
     }
     
     @IBAction func btnOwner(sender: UIButton)

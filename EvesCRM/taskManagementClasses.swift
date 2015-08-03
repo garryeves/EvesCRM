@@ -864,6 +864,7 @@ class task: NSObject
     private var myEnergyLevel: String = ""
     private var myEstimatedTime: Int = 0
     private var myEstimatedTimeType: String = ""
+    private var myProjectID: Int = 0
 
     var taskID: Int
     {
@@ -1071,6 +1072,18 @@ class task: NSObject
         }
     }
     
+    var projectID: Int
+        {
+        get
+        {
+            return myProjectID
+        }
+        set
+        {
+            myProjectID = newValue
+        }
+    }
+    
     var history: [taskUpdates]
     {
         var myHistory: [taskUpdates] = Array()
@@ -1085,7 +1098,6 @@ class task: NSObject
         
         return myHistory
     }
-    
     
     override init()
     {
@@ -1121,6 +1133,7 @@ class task: NSObject
             myEstimatedTime = myTask.estimatedTime as Int
             myEstimatedTimeType = myTask.estimatedTimeType
             myTaskOrder = myTask.taskOrder as Int
+            myProjectID = myTask.projectID as Int
             
             // get contexts
             
@@ -1137,7 +1150,7 @@ class task: NSObject
     
     func save()
     {
-        myDatabaseConnection.saveTask(myTaskID, inTitle: myTitle, inDetails: myDetails, inDueDate: myDueDate, inStartDate: myStartDate, inStatus: myStatus, inParentID: myParentID, inParentType: myParentType, inTaskMode: myTaskMode, inTaskOrder: myTaskOrder, inPriority: myPriority, inEnergyLevel: myEnergyLevel, inEstimatedTime: myEstimatedTime, inEstimatedTimeType: myEstimatedTimeType)
+        myDatabaseConnection.saveTask(myTaskID, inTitle: myTitle, inDetails: myDetails, inDueDate: myDueDate, inStartDate: myStartDate, inStatus: myStatus, inParentID: myParentID, inParentType: myParentType, inTaskMode: myTaskMode, inTaskOrder: myTaskOrder, inPriority: myPriority, inEnergyLevel: myEnergyLevel, inEstimatedTime: myEstimatedTime, inEstimatedTimeType: myEstimatedTimeType, inProjectID: myProjectID)
         
         // Save context link
         
@@ -1255,6 +1268,46 @@ class task: NSObject
     }
 }
 
+class contexts: NSObject
+{
+    private var myContexts:[context] = Array()
+    
+    override init()
+    {
+        let myData = myDatabaseConnection.getContexts()
+        
+        for myItem in myData
+        {
+            let myContext = context(inContext: myItem)
+            myContexts.append(myContext)
+        }
+    }
+    
+    var contexts: [context]
+    {
+        get
+        {
+            return myContexts
+        }
+    }
+
+    var contextsByHierarchy: [context]
+    {
+        get
+        {
+            var workingArray: [context] = Array()
+            
+            workingArray = myContexts
+            
+            
+            workingArray.sorted { $0.contextHierarchy < $1.contextHierarchy }
+            
+            
+            return workingArray
+        }
+    }
+}
+
 class context: NSObject
 {
     private var myContextID: Int = 0
@@ -1340,8 +1393,29 @@ class context: NSObject
         }
     }
     
+    var contextHierarchy: String
+    {
+        get
+        {
+            var retString: String = ""
+        
+            if myParentContext == 0
+            {
+                retString = myName
+            }
+            else
+            { // Navigate to parent
+                let theParent = context(inContextID: myParentContext)
+                retString = "\(theParent.contextHierarchy) - \(myName)"
+            }
+        
+            return retString
+        }
+    }
+    
     override init()
     {
+        super.init()
         let myContexts = myDatabaseConnection.getAllContexts()
         
         let currentNumberofEntries = myContexts.count
@@ -1361,6 +1435,16 @@ class context: NSObject
             myParentContext = myContext.parentContext as Int
             myStatus = myContext.status
         }
+    }
+    
+    init(inContext: Context)
+    {
+        myContextID = inContext.contextID as Int
+        myName = inContext.name
+        myEmail = inContext.email
+        myAutoEmail = inContext.autoEmail
+        myParentContext = inContext.parentContext as Int
+        myStatus = inContext.status
     }
     
     func save()

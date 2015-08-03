@@ -206,6 +206,9 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         //   code to reset tasks if needed for testing
    //     myDatabaseConnection.resetTasks()
         
+        //   code to reset contexts if needed for testing
+        //     myDatabaseConnection.resetContexts()
+        
         // Work out if a project has been added to the data store, so we can then select it
         let myProjects = myDatabaseConnection.getProjects()
         

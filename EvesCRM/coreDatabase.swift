@@ -24,6 +24,10 @@ class coreDatabase: NSObject
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         
+        let sortDescriptor = NSSortDescriptor(key: "projectName", ascending: true)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
         // Execute the fetch request, and cast the results to an array of LogItem objects
         let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Projects]
         
@@ -752,7 +756,7 @@ class coreDatabase: NSObject
         }
     }
 
-    func saveTask(inTaskID: Int, inTitle: String, inDetails: String, inDueDate: NSDate, inStartDate: NSDate, inStatus: String, inParentID: Int, inParentType: String,inTaskMode: String, inTaskOrder: Int, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int, inEstimatedTimeType: String)
+    func saveTask(inTaskID: Int, inTitle: String, inDetails: String, inDueDate: NSDate, inStartDate: NSDate, inStatus: String, inParentID: Int, inParentType: String,inTaskMode: String, inTaskOrder: Int, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int, inEstimatedTimeType: String, inProjectID: Int)
     {
         // first check to see if decode exists, if not we create
         var error: NSError?
@@ -777,6 +781,7 @@ class coreDatabase: NSObject
             myTask.energyLevel = inEnergyLevel
             myTask.estimatedTime = inEstimatedTime
             myTask.estimatedTimeType = inEstimatedTimeType
+            myTask.projectID = inProjectID
         }
         else
         { // Update
@@ -794,6 +799,7 @@ class coreDatabase: NSObject
             myTask.energyLevel = inEnergyLevel
             myTask.estimatedTime = inEstimatedTime
             myTask.estimatedTimeType = inEstimatedTimeType
+            myTask.projectID = inProjectID
         }
         
         if(managedObjectContext!.save(&error) )
@@ -1056,7 +1062,7 @@ class coreDatabase: NSObject
         var error: NSError?
         var myContext: Context!
         
-        let myContexts = getContexts()
+        let myContexts = getContextDetails(inContextID)
         
         if myContexts.count == 0
         { // Add
@@ -1083,7 +1089,7 @@ class coreDatabase: NSObject
             //   println(error?.localizedDescription)
         }
     }
-    
+        
     func getContexts()->[Context]
     {
         let fetchRequest = NSFetchRequest(entityName: "Context")
@@ -2090,5 +2096,40 @@ class coreDatabase: NSObject
         let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [MeetingTasks]
         
         return fetchResults!
+    }
+    
+    func resetContexts()
+    {
+        var error : NSError?
+        
+        let fetchRequest = NSFetchRequest(entityName: "Context")
+        
+                // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Context]
+        
+        for myItem in fetchResults!
+        {
+            managedObjectContext!.deleteObject(myItem as NSManagedObject)
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+
+        let fetchRequest2 = NSFetchRequest(entityName: "TaskContext")
+        
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults2 = managedObjectContext!.executeFetchRequest(fetchRequest2, error: nil) as? [TaskContext]
+        for myItem2 in fetchResults2!
+        {
+            managedObjectContext!.deleteObject(myItem2 as NSManagedObject)
+        }
+        
+        if(managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+
     }
 }
