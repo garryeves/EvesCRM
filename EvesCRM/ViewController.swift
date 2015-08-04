@@ -24,7 +24,7 @@ private let dataTable1_CELL_IDENTIFER = "dataTable1Cell"
 var dropboxCoreService: DropboxCoreService = DropboxCoreService()
 var myDatabaseConnection: coreDatabase!
 
-class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate, MyMeetingsDelegate {
+class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate, MyMeetingsDelegate, SideBarDelegate {
     
     @IBOutlet weak var TableTypeSelection1: UIPickerView!
     
@@ -42,16 +42,12 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     @IBOutlet weak var dataTable2: UITableView!
     @IBOutlet weak var dataTable3: UITableView!
     @IBOutlet weak var dataTable4: UITableView!
-    @IBOutlet weak var buttonMaintainProjects: UIButton!
-    @IBOutlet weak var buttonSelectProject: UIButton!
     @IBOutlet weak var StartLabel: UILabel!
     @IBOutlet weak var setSelectionButton: UIButton!
-    @IBOutlet weak var settingsButton: UIButton!
     @IBOutlet weak var labelName: UILabel!
-    @IBOutlet weak var peoplePickerButton: UIButton!
     @IBOutlet weak var myWebView: UIWebView!
     @IBOutlet weak var btnCloseWindow: UIButton!
-    
+
     var TableOptions: [String]!
     
     // Store the tag number of the button pressed so that we can make sure we update the correct button text and table
@@ -128,6 +124,8 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     
     // Peoplepicker settings
     
+    var sideBar:SideBar!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -184,7 +182,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         buttonAdd2.hidden = true
         buttonAdd3.hidden = true
         buttonAdd4.hidden = true
-        peoplePickerButton.hidden = false
         
         myWebView.hidden = true
         btnCloseWindow.hidden = true
@@ -211,16 +208,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         
         // Work out if a project has been added to the data store, so we can then select it
         let myProjects = myDatabaseConnection.getProjects()
-        
-        if myProjects.count > 0
-        {
-            buttonSelectProject.hidden = false
-        }
-        else
-        {
-            buttonSelectProject.hidden = true 
-        }
-        
+                
         dataTable1.estimatedRowHeight = 12.0
         dataTable1.rowHeight = UITableViewAutomaticDimension
         dataTable2.estimatedRowHeight = 12.0
@@ -257,6 +245,11 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "myGmailDidFinish", name:"NotificationGmailDidFinish", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "myHangoutsDidFinish", name:"NotificationHangoutsDidFinish", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "gmailSignedIn:", name:"NotificationGmailConnected", object: nil)
+        
+        sideBar = SideBar()
+        
+        sideBar = SideBar(sourceView: self.view)
+        sideBar.delegate = self
     }
 
     override func didReceiveMemoryWarning() {
@@ -312,7 +305,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         dataTable3.hidden = true
         dataTable4.hidden = true
         StartLabel.hidden = true
-        peoplePickerButton.hidden = true
         buttonAdd1.hidden = true
         buttonAdd2.hidden = true
         buttonAdd3.hidden = true
@@ -384,7 +376,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             dataTable3.hidden = false
             dataTable4.hidden = false
             StartLabel.hidden = true
-            peoplePickerButton.hidden = false
         }
     }
 
@@ -1000,80 +991,12 @@ println("facebook ID = \(myFacebookID)")
                 // Project team membership details
                 if myDisplayType == "Project"
                 {
-                    TableTypeSelection1.hidden = true
-                    setSelectionButton.hidden = true
-                    TableTypeButton1.hidden = false
-                    TableTypeButton2.hidden = false
-                    TableTypeButton3.hidden = false
-                    TableTypeButton4.hidden = false
-                    dataTable1.hidden = false
-                    dataTable2.hidden = false
-                    dataTable3.hidden = false
-                    dataTable4.hidden = false
-                    StartLabel.hidden = true
-                    
-                    myDisplayType = "Person"
-                    
-                    // we need to go and find the record for the person we have selected
-                    
-                    personContact = iOSContact(contactRecord: findPersonRecord(projectMemberArray[rowID], adbk))
-                    
-                    table1Contents = Array()
-                    table2Contents = Array()
-                    table3Contents = Array()
-                    table4Contents = Array()
-                    
-                    populateArraysForTables("Table1")
-                    populateArraysForTables("Table2")
-                    populateArraysForTables("Table3")
-                    populateArraysForTables("Table4")
-                    
-                    // Here is where we will set the titles for the buttons
-                    
-                    let myFullName = personContact.fullName
-                    
-                    TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: myFullName), forState: .Normal)
-                    TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myFullName), forState: .Normal)
-                    TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myFullName), forState: .Normal)
-                    TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myFullName), forState: .Normal)
+                    let myPerson: ABRecord = findPersonRecord(projectMemberArray[rowID], adbk) as ABRecord
+                    loadPerson(myPerson)
                 }
                 else
                 {
-                    TableTypeSelection1.hidden = true
-                    setSelectionButton.hidden = true
-                    TableTypeButton1.hidden = false
-                    TableTypeButton2.hidden = false
-                    TableTypeButton3.hidden = false
-                    TableTypeButton4.hidden = false
-                    dataTable1.hidden = false
-                    dataTable2.hidden = false
-                    dataTable3.hidden = false
-                    dataTable4.hidden = false
-                    StartLabel.hidden = true
-                    
-                    myDisplayType = "Project"
-                    
-                    mySelectedProject = project()
-                    mySelectedProject.load(projectMemberArray[rowID].toInt()!)
-                    
-                    let mySelectProjects = myDatabaseConnection.getProjectDetails(mySelectedProject.projectID)
-                    
-                    table1Contents = Array()
-                    table2Contents = Array()
-                    table3Contents = Array()
-                    table4Contents = Array()
-                    
-                    populateArraysForTables("Table1")
-                    populateArraysForTables("Table2")
-                    populateArraysForTables("Table3")
-                    populateArraysForTables("Table4")
-                    
-                    // Here is where we will set the titles for the buttons
-                    
-                    TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: mySelectedProject.projectName), forState: .Normal)
-                    TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: mySelectedProject.projectName), forState: .Normal)
-                    TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: mySelectedProject.projectName), forState: .Normal)
-                    TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: mySelectedProject.projectName), forState: .Normal)
+                    loadProject(projectMemberArray[rowID].toInt()!)
                 }
             
         case "OneNote":
@@ -1096,7 +1019,6 @@ println("facebook ID = \(myFacebookID)")
             dataTable2.hidden = true
             dataTable3.hidden = true
             dataTable4.hidden = true
-            peoplePickerButton.hidden = true
             
             myWebView.hidden = false
             btnCloseWindow.hidden = false
@@ -1111,7 +1033,6 @@ println("facebook ID = \(myFacebookID)")
             dataTable2.hidden = true
             dataTable3.hidden = true
             dataTable4.hidden = true
-            peoplePickerButton.hidden = true
             
             myWebView.hidden = false
             btnCloseWindow.hidden = false
@@ -1382,26 +1303,6 @@ println("facebook ID = \(myFacebookID)")
 
     }
     
-    @IBAction func buttonMaintainProjects(sender: UIButton) {
-        let MaintainProjectViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("MaintainProject") as! MaintainProjectViewController
-        
-        MaintainProjectViewControl.delegate = self
-        MaintainProjectViewControl.myActionType = "Add"
-
-        self.presentViewController(MaintainProjectViewControl, animated: true, completion: nil)
-    }
-    
-    @IBAction func buttonSelectProject(sender: UIButton)
-    {
-        let MaintainProjectViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("MaintainProject") as! MaintainProjectViewController
-        
-        MaintainProjectViewControl.delegate = self
-        MaintainProjectViewControl.myActionType = "Select"
-        
-        self.presentViewController(MaintainProjectViewControl, animated: true, completion: nil)
-
-    }
-    
     func myMaintainProjectDidFinish(controller:MaintainProjectViewController, actionType: String)
     {
         if actionType == "Changed"
@@ -1411,51 +1312,6 @@ println("facebook ID = \(myFacebookID)")
         controller.dismissViewControllerAnimated(true, completion: nil)
     }
 
-    func myMaintainProjectSelect(controller:MaintainProjectViewController, projectID: Int, projectName: String)
-    {
-        controller.dismissViewControllerAnimated(true, completion: nil)
-        TableTypeSelection1.hidden = true
-        setSelectionButton.hidden = true
-        TableTypeButton1.hidden = false
-        TableTypeButton2.hidden = false
-        TableTypeButton3.hidden = false
-        TableTypeButton4.hidden = false
-        dataTable1.hidden = false
-        dataTable2.hidden = false
-        dataTable3.hidden = false
-        dataTable4.hidden = false
-        StartLabel.hidden = true
-        
-        myDisplayType = "Project"
-        mySelectedProject = project()
-        mySelectedProject.load(projectID)
-
-        displayScreen()
-        
-        table1Contents = Array()
-        table2Contents = Array()
-        table3Contents = Array()
-        table4Contents = Array()
-        
-        populateArraysForTables("Table1")
-        populateArraysForTables("Table2")
-        populateArraysForTables("Table3")
-        
-        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
-        {
-            self.populateArraysForTables("Table4")
-        }
-    
-        //populateArraysForTables("Table4")
-    
-        // Here is where we will set the titles for the buttons
-        
-        TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: projectName), forState: .Normal)
-        TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: projectName), forState: .Normal)
-        TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: projectName), forState: .Normal)
-        TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: projectName), forState: .Normal)
-    }
-    
     func setAddButtonState(inTable: Int)
     {
         // Hide all of the buttons
@@ -1568,54 +1424,11 @@ println("facebook ID = \(myFacebookID)")
         }
     }
     
-// Peoplepicker code
-
-    @IBAction func peoplePickerButtonClick(sender: UIButton)
-    {
-        let picker = ABPeoplePickerNavigationController()
-        
-        picker.peoplePickerDelegate = self
-        presentViewController(picker, animated: true, completion: nil)
-    }
-    
     func peoplePickerNavigationController(peoplePicker: ABPeoplePickerNavigationController!, didSelectPerson person: ABRecordRef!)
     {
         peoplePicker.dismissViewControllerAnimated(true, completion: nil)
-        myDisplayType = "Person"
         
-        personContact = iOSContact(contactRecord: person)
-        
-        displayScreen()
-        TableTypeSelection1.hidden = true
-        setSelectionButton.hidden = true
-        TableTypeButton1.hidden = false
-        TableTypeButton2.hidden = false
-        TableTypeButton3.hidden = false
-        TableTypeButton4.hidden = false
-        dataTable1.hidden = false
-        dataTable2.hidden = false
-        dataTable3.hidden = false
-        dataTable4.hidden = false
-        StartLabel.hidden = true
-        
-        table1Contents = Array()
-        table2Contents = Array()
-        table3Contents = Array()
-        table4Contents = Array()
-        
-        populateArraysForTables("Table1")
-        populateArraysForTables("Table2")
-        populateArraysForTables("Table3")
-        populateArraysForTables("Table4")
-        
-        // Here is where we will set the titles for the buttons
-        
-        let myFullName = personContact.fullName
-        
-        TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: myFullName), forState: .Normal)
-        TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myFullName), forState: .Normal)
-        TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myFullName), forState: .Normal)
-        TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myFullName), forState: .Normal)
+        loadPerson(person)
     }
 
     func peoplePickerNavigationControllerDidCancel(peoplePicker: ABPeoplePickerNavigationController!)
@@ -2129,16 +1942,6 @@ println("Nothing found")
                 println("populateArrayDetails: inTable hit default for some reason")
             
         }
-    }
-    
-    @IBAction func settingsButton(sender: UIButton)
-    {
-        let settingViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("Settings") as! settingsViewController
-        settingViewControl.delegate = self
-        settingViewControl.evernoteSession = evernoteSession
-        settingViewControl.dropboxCoreService = dropboxCoreService
-
-        self.presentViewController(settingViewControl, animated: true, completion: nil)
     }
     
     func mySettingsDidFinish(controller:settingsViewController)
@@ -2669,7 +2472,6 @@ println("Nothing found")
         dataTable2.hidden = false
         dataTable3.hidden = false
         dataTable4.hidden = false
-        peoplePickerButton.hidden = false
         
         myWebView.hidden = true
         btnCloseWindow.hidden = true
@@ -2735,5 +2537,163 @@ println("Nothing found")
                     self.myHangoutsMessages.getPersonMessages(searchString, emailAddresses: self.personContact.emailAddresses, inMessageType: "Hangouts")
             }
         }
+    }
+    
+    func sideBarDidSelectButtonAtIndex(passedItem:menuObject)
+    {
+        switch passedItem.displayType
+        {
+            case "Project" :
+                let myProject = passedItem.displayObject as! Projects
+                loadProject(myProject.projectID as Int)
+            
+            case "Context":
+                let myPerson: ABRecord! = findPersonRecord(passedItem.displayString, adbk) as ABRecord!
+            
+                if myPerson == nil
+                {
+                    var alert = UIAlertController(title: "Context", message:
+                        "No person record found for \(passedItem.displayString)", preferredStyle: UIAlertControllerStyle.Alert)
+                    
+                    self.presentViewController(alert, animated: false, completion: nil)
+                    
+                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+                }
+                else
+                {
+                    loadPerson(myPerson)
+                }
+            
+            case "Action":
+println("Action: \(passedItem.displayString)")
+                switch passedItem.displayString
+                {
+                    case "Address Book":
+                        let picker = ABPeoplePickerNavigationController()
+                        
+                        picker.peoplePickerDelegate = self
+                        presentViewController(picker, animated: true, completion: nil)
+                    
+                    case "Maintain Projects":
+                        let MaintainProjectViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("MaintainProject") as! MaintainProjectViewController
+                        
+                        MaintainProjectViewControl.delegate = self
+                        MaintainProjectViewControl.myActionType = "Add"
+                        
+                        self.presentViewController(MaintainProjectViewControl, animated: true, completion: nil)
+                    
+                    case "Settings":
+                        let settingViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("Settings") as! settingsViewController
+                        settingViewControl.delegate = self
+                        settingViewControl.evernoteSession = evernoteSession
+                        settingViewControl.dropboxCoreService = dropboxCoreService
+                        
+                        self.presentViewController(settingViewControl, animated: true, completion: nil)
+                
+                    default: println("sideBarDidSelectButtonAtIndex - Action selector: Hit default")
+                    
+                }
+            
+            default:
+                println("sideBarDidSelectButtonAtIndex: Hit default")
+        }
+    }
+    
+    func sideBarWillOpen(target: UIView)
+    {
+        self.view.bringSubviewToFront(target)
+    }
+    
+    func loadProject(inProjectID: Int)
+    {
+        TableTypeSelection1.hidden = true
+        setSelectionButton.hidden = true
+        TableTypeButton1.hidden = false
+        TableTypeButton2.hidden = false
+        TableTypeButton3.hidden = false
+        TableTypeButton4.hidden = false
+        dataTable1.hidden = false
+        dataTable2.hidden = false
+        dataTable3.hidden = false
+        dataTable4.hidden = false
+        StartLabel.hidden = true
+        
+        myDisplayType = "Project"
+        mySelectedProject = project()
+        mySelectedProject.load(inProjectID)
+        
+        displayScreen()
+        
+        table1Contents = Array()
+        table2Contents = Array()
+        table3Contents = Array()
+        table4Contents = Array()
+        
+        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
+        {
+            self.populateArraysForTables("Table1")
+        }
+        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
+        {
+            self.populateArraysForTables("Table2")
+        }
+        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
+        {
+            self.populateArraysForTables("Table3")
+        }
+        
+        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
+        {
+            self.populateArraysForTables("Table4")
+        }
+        
+        //populateArraysForTables("Table4")
+        
+        // Here is where we will set the titles for the buttons
+        
+        TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: mySelectedProject.projectName), forState: .Normal)
+        TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: mySelectedProject.projectName), forState: .Normal)
+        TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: mySelectedProject.projectName), forState: .Normal)
+        TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: mySelectedProject.projectName), forState: .Normal)
+    }
+    
+    func loadPerson(personRecord: ABRecord)
+    {
+        TableTypeSelection1.hidden = true
+        setSelectionButton.hidden = true
+        TableTypeButton1.hidden = false
+        TableTypeButton2.hidden = false
+        TableTypeButton3.hidden = false
+        TableTypeButton4.hidden = false
+        dataTable1.hidden = false
+        dataTable2.hidden = false
+        dataTable3.hidden = false
+        dataTable4.hidden = false
+        StartLabel.hidden = true
+    
+        myDisplayType = "Person"
+    
+        // we need to go and find the record for the person we have selected
+    
+        personContact = iOSContact(contactRecord: personRecord)
+    
+        table1Contents = Array()
+        table2Contents = Array()
+        table3Contents = Array()
+        table4Contents = Array()
+    
+        populateArraysForTables("Table1")
+        populateArraysForTables("Table2")
+        populateArraysForTables("Table3")
+        populateArraysForTables("Table4")
+    
+        // Here is where we will set the titles for the buttons
+    
+        let myFullName = personContact.fullName
+    
+        TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: myFullName), forState: .Normal)
+        TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myFullName), forState: .Normal)
+        TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myFullName), forState: .Normal)
+        TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myFullName), forState: .Normal)
     }
 }

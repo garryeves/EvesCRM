@@ -865,6 +865,7 @@ class task: NSObject
     private var myEstimatedTime: Int = 0
     private var myEstimatedTimeType: String = ""
     private var myProjectID: Int = 0
+    private var myCompletionDate: NSDate!
 
     var taskID: Int
     {
@@ -965,6 +966,10 @@ class task: NSObject
         set
         {
             myStatus = newValue
+            if newValue == "Completed"
+            {
+                myCompletionDate = NSDate()
+            }
         }
     }
     
@@ -1098,7 +1103,32 @@ class task: NSObject
         
         return myHistory
     }
-    
+
+    var completionDate: NSDate
+    {
+        get
+        {
+            return myCompletionDate
+        }
+    }
+
+    var displayCompletionDate: String
+        {
+        get
+        {
+            if myCompletionDate == getDefaultDate()
+            {
+                return ""
+            }
+            else
+            {
+                var myDateFormatter = NSDateFormatter()
+                myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
+                return myDateFormatter.stringFromDate(myCompletionDate)
+            }
+        }
+    }
+
     override init()
     {
         super.init()
@@ -1109,6 +1139,7 @@ class task: NSObject
         
         myDueDate = getDefaultDate()
         myStartDate = getDefaultDate()
+        myCompletionDate = getDefaultDate()
     
         save()
     }
@@ -1134,6 +1165,7 @@ class task: NSObject
             myEstimatedTimeType = myTask.estimatedTimeType
             myTaskOrder = myTask.taskOrder as Int
             myProjectID = myTask.projectID as Int
+            myCompletionDate = myTask.completionDate
             
             // get contexts
             
@@ -1150,7 +1182,7 @@ class task: NSObject
     
     func save()
     {
-        myDatabaseConnection.saveTask(myTaskID, inTitle: myTitle, inDetails: myDetails, inDueDate: myDueDate, inStartDate: myStartDate, inStatus: myStatus, inParentID: myParentID, inParentType: myParentType, inTaskMode: myTaskMode, inTaskOrder: myTaskOrder, inPriority: myPriority, inEnergyLevel: myEnergyLevel, inEstimatedTime: myEstimatedTime, inEstimatedTimeType: myEstimatedTimeType, inProjectID: myProjectID)
+        myDatabaseConnection.saveTask(myTaskID, inTitle: myTitle, inDetails: myDetails, inDueDate: myDueDate, inStartDate: myStartDate, inStatus: myStatus, inParentID: myParentID, inParentType: myParentType, inTaskMode: myTaskMode, inTaskOrder: myTaskOrder, inPriority: myPriority, inEnergyLevel: myEnergyLevel, inEstimatedTime: myEstimatedTime, inEstimatedTimeType: myEstimatedTimeType, inProjectID: myProjectID, inCompletionDate: myCompletionDate!)
         
         // Save context link
         
@@ -1265,6 +1297,19 @@ class task: NSObject
         let dateStringFormatter = NSDateFormatter()
         dateStringFormatter.dateFormat = "yyyy-MM-dd"
         return dateStringFormatter.dateFromString("9999-12-31")!
+    }
+    
+    func markComplete()
+    {
+        myCompletionDate = NSDate()
+        myStatus = "Completed"
+        save()
+    }
+    
+    func reopen()
+    {
+        myStatus = "Open"
+        save()
     }
 }
 

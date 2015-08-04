@@ -2,7 +2,7 @@
 //  Task.swift
 //  
 //
-//  Created by Garry Eves on 3/08/2015.
+//  Created by Garry Eves on 4/08/2015.
 //
 //
 
@@ -19,12 +19,13 @@ class Task: NSManagedObject {
     @NSManaged var parentID: NSNumber
     @NSManaged var parentType: String
     @NSManaged var priority: String
+    @NSManaged var projectID: NSNumber
     @NSManaged var startDate: NSDate
     @NSManaged var status: String
     @NSManaged var taskID: NSNumber
     @NSManaged var taskMode: String
     @NSManaged var taskOrder: NSNumber
     @NSManaged var title: String
-    @NSManaged var projectID: NSNumber
+    @NSManaged var completionDate: NSDate
 
 }

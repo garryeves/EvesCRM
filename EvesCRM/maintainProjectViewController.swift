@@ -13,7 +13,6 @@ import AddressBookUI
 
 protocol MyMaintainProjectDelegate{
     func myMaintainProjectDidFinish(controller:MaintainProjectViewController, actionType: String)
-    func myMaintainProjectSelect(controller:MaintainProjectViewController, projectID: Int, projectName: String)
 }
 
 class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationControllerDelegate
@@ -91,22 +90,8 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
             labelSwitchArchive.hidden = true
         }
         
-        if myActionType == "Select"
-        {
-            projectNameText.enabled = false
-            startDatePicker.enabled = false
-            endDatePicker.enabled = false
-            buttonSave.hidden = true
-            
-        //    statusPicker.setUserInteractionEnabled = false
-            
-            buttonSave.hidden = true
-            buttonAddTeamMember.hidden = true
-        }
-        else
-        {
-            buttonAddTeamMember.hidden = false
-        }
+
+        buttonAddTeamMember.hidden = false
         
         statusSelected = statusOptions[0].stageDescription
         teamMembersTable.hidden = false
@@ -185,7 +170,6 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
     {
-        
         var retVal: CGFloat = 0.0
         
         if (tableView == projectList)
@@ -240,7 +224,6 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         }
         return retVal
     }
-    
 
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
     {
@@ -292,17 +275,9 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
             startDatePicker.date = myProjects[indexPath.row].projectStartDate
             endDatePicker.date = myProjects[indexPath.row].projectEndDate
 
-            if myActionType == "Select"
-            {
-                buttonSave.hidden = false
-                buttonAddTeamMember.hidden = true
-            }
-            else
-            {
-                myActionType = "Edit"
-                buttonSave.setTitle("Save", forState: UIControlState.Normal)
-                buttonAddTeamMember.hidden = false
-            }
+            myActionType = "Edit"
+            buttonSave.setTitle("Save", forState: UIControlState.Normal)
+            buttonAddTeamMember.hidden = false
             
             teamMembersTable.hidden = false
             teamMembersLabel.hidden = false
@@ -336,61 +311,45 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
  
         else if tableView == teamMembersTable
         {
-            if myActionType == "Select"
-            {
-                buttonAddTeamMember.hidden = true
-            }
-            else
-            {
-                buttonDeleteTeamMember.hidden = false
-                buttonConfirmTeamMember.hidden = false
-                labelTeamMemberName.hidden = false
-                teamMembersTable.hidden = true
-                pickerPersonRole.hidden = false
+            buttonDeleteTeamMember.hidden = false
+            buttonConfirmTeamMember.hidden = false
+            labelTeamMemberName.hidden = false
+            teamMembersTable.hidden = true
+            pickerPersonRole.hidden = false
             
-                mySelectedTeamMember = mySelectedRoles[indexPath.row]
-                labelTeamMemberName.text = mySelectedTeamMember.teamMember
-                let myRoleRow = mySelectedTeamMember.roleID as Int - 1
-                pickerPersonRole.selectRow(myRoleRow, inComponent: 0, animated: true)
-                teamMemberAction = "Edit"
-                buttonAddTeamMember.hidden = true
-                buttonConfirmTeamMember.setTitle("Update Project Team Member", forState: UIControlState.Normal)
-            }
+            mySelectedTeamMember = mySelectedRoles[indexPath.row]
+            labelTeamMemberName.text = mySelectedTeamMember.teamMember
+            let myRoleRow = mySelectedTeamMember.roleID as Int - 1
+            pickerPersonRole.selectRow(myRoleRow, inComponent: 0, animated: true)
+            teamMemberAction = "Edit"
+            buttonAddTeamMember.hidden = true
+            buttonConfirmTeamMember.setTitle("Update Project Team Member", forState: UIControlState.Normal)
         }
     }
-    
- // when selecting an exisiting project set myActionType = Edit
     
     @IBAction func buttonCancel(sender: UIButton)
     {
         delegate?.myMaintainProjectDidFinish(self, actionType: "Cancel")
     }
+    
     @IBAction func buttonSave(sender: UIButton)
     {
         
-        if myActionType == "Select"
+        if projectNameText.text == ""
         {
-            delegate?.myMaintainProjectSelect(self, projectID: mySelectedProject.projectID, projectName: mySelectedProject.projectName)
+            var alert = UIAlertController(title: "Project Maintenance", message:
+                    "You need to provide a Project Name", preferredStyle: UIAlertControllerStyle.Alert)
+                
+            self.presentViewController(alert, animated: false, completion: nil)
+                
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+                    handler: nil))
         }
         else
         {
-            if projectNameText.text == ""
-            {
-                var alert = UIAlertController(title: "Project Maintenance", message:
-                    "You need to provide a Project Name", preferredStyle: UIAlertControllerStyle.Alert)
-                
-                self.presentViewController(alert, animated: false, completion: nil)
-                
-                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
-                    handler: nil))
-            }
-            else
-            {
-                saveProject()
-                delegate?.myMaintainProjectDidFinish(self, actionType: "Changed")
-            }
+            saveProject()
+            delegate?.myMaintainProjectDidFinish(self, actionType: "Changed")
         }
-        
     }
         
     @IBAction func buttonAddTeamMember(sender: UIButton)

@@ -559,15 +559,15 @@ class iOSContact
 
 
 
-func findPersonRecord(inName: String, adbk: ABAddressBook) -> ABRecord
+func findPersonRecord(inName: String, adbk: ABAddressBook) -> ABRecord!
 {
-    
     //  there may be a better way to do this, but it works.
     var person: ABRecord!
 
     var contactList: NSArray = ABAddressBookCopyArrayOfAllPeople(adbk).takeRetainedValue()
     
-    for record:ABRecordRef in contactList {
+    for record:ABRecordRef in contactList
+    {
         var contactPerson: ABRecordRef = record
         var contactName: String = ABRecordCopyCompositeName(contactPerson).takeRetainedValue() as String
 

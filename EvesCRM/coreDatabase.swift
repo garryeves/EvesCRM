@@ -756,7 +756,7 @@ class coreDatabase: NSObject
         }
     }
 
-    func saveTask(inTaskID: Int, inTitle: String, inDetails: String, inDueDate: NSDate, inStartDate: NSDate, inStatus: String, inParentID: Int, inParentType: String,inTaskMode: String, inTaskOrder: Int, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int, inEstimatedTimeType: String, inProjectID: Int)
+    func saveTask(inTaskID: Int, inTitle: String, inDetails: String, inDueDate: NSDate, inStartDate: NSDate, inStatus: String, inParentID: Int, inParentType: String,inTaskMode: String, inTaskOrder: Int, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int, inEstimatedTimeType: String, inProjectID: Int, inCompletionDate: NSDate)
     {
         // first check to see if decode exists, if not we create
         var error: NSError?
@@ -782,6 +782,7 @@ class coreDatabase: NSObject
             myTask.estimatedTime = inEstimatedTime
             myTask.estimatedTimeType = inEstimatedTimeType
             myTask.projectID = inProjectID
+            myTask.completionDate = inCompletionDate
         }
         else
         { // Update
@@ -800,6 +801,7 @@ class coreDatabase: NSObject
             myTask.estimatedTime = inEstimatedTime
             myTask.estimatedTimeType = inEstimatedTimeType
             myTask.projectID = inProjectID
+            myTask.completionDate = inCompletionDate
         }
         
         if(managedObjectContext!.save(&error) )

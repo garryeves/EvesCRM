@@ -179,12 +179,47 @@ class taskViewController: UIViewController
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
     {
         var cell: myContextItem!
-        
+
         cell = collectionView.dequeueReusableCellWithReuseIdentifier("reuseContext", forIndexPath: indexPath) as! myContextItem
         cell.lblContext.text = passedTask.currentTask.contexts[indexPath.row].name
         cell.btnRemove.setTitle("Remove", forState: .Normal)
         cell.btnRemove.tag = passedTask.currentTask.contexts[indexPath.row].contextID
-
+        
+  //      var frmPlay : CGRect = cell.lblContext.frame
+        
+   //     let originXbutton = frmPlay.origin.x
+   //     let originYbutton = frmPlay.origin.y
+        
+   //     let originWidthbutton = frmPlay.size.width
+   //     let originHeightbutton = frmPlay.size.height
+        
+   //     cell.lblContext.frame = frmPlay
+        
+   //     cell.lblContext.frame = CGRectMake(
+   //         originXbutton,
+   //         originYbutton,
+   //         colContexts.bounds.size.width-100,
+   //         originHeightbutton)
+    
+        cell.lblContext.sizeThatFits(CGSizeMake(colContexts.bounds.size.width - 110, 35))
+        cell.btnRemove.sizeThatFits(CGSizeMake(100, 35))
+        
+    //    cell.lblContext.frame = CGSizeMake(colContexts.bounds.size.width - 110, 35)
+    //    cell.btnRemove.frame = CGSizeMake(100, 35)
+        
+  //      CGSize retval =  CGSizeMake(100, 100)
+    //    retval.height += 35; retval.width += 35
+        
+        
+    //    cell.btnRemove.frame.width = myWidth
+        
+   //     if indexPath.section == 2
+   //     {
+   //         cell = collectionView.dequeueReusableCellWithReuseIdentifier("reuseAction", forIndexPath: indexPath) as! myContextItem
+   //         cell.btnRemove.setTitle("Remove", forState: .Normal)
+   //         cell.btnRemove.tag = passedTask.currentTask.contexts[indexPath.row].contextID
+   //     }
+        
         let swiftColor = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
         if (indexPath.row % 2 == 0)  // was .row
         {

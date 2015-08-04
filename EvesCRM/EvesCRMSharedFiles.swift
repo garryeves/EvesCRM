@@ -537,3 +537,46 @@ class MyDisplayCollectionViewCell: UICollectionViewCell
         Label.text = ""
     }
 }
+
+class menuObject: NSObject
+{
+    private var myDisplayString: String = ""
+    private var myDisplayType: String = ""
+    private var myDisplayObject: NSObject!
+    
+    var displayString: String
+    {
+        get
+        {
+            return myDisplayString
+        }
+        set
+        {
+            myDisplayString = newValue
+        }
+    }
+
+    var displayType: String
+    {
+        get
+        {
+            return myDisplayType
+        }
+        set
+        {
+            myDisplayType = newValue
+        }
+    }
+
+    var displayObject: NSObject
+    {
+        get
+        {
+            return myDisplayObject
+        }
+        set
+        {
+            myDisplayObject = newValue
+        }
+    }
+}

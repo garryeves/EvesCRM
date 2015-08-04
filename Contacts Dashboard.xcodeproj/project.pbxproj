@@ -106,6 +106,8 @@
 		347518DC1AE3635100FF1C46 /* EvesCRMSharedFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347518D81AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift */; };
 		348E6D4B1ADF74C800697268 /* ContactDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348E6D4A1ADF74C800697268 /* ContactDetails.swift */; };
 		348E6D4C1ADF74C800697268 /* ContactDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348E6D4A1ADF74C800697268 /* ContactDetails.swift */; };
+		349331C91B705756004AA569 /* SideBarTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349331C81B705756004AA569 /* SideBarTableViewController.swift */; };
+		349331CF1B70576C004AA569 /* SideBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349331CE1B70576C004AA569 /* SideBar.swift */; };
 		349C4D3F1B033B6400EC8099 /* Stages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349C4D3E1B033B6400EC8099 /* Stages.swift */; };
 		349C4D401B033B6400EC8099 /* Stages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349C4D3E1B033B6400EC8099 /* Stages.swift */; };
 		34A182D21B0EDB3D00FC369D /* LiveConnectClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182C41B0EDB3D00FC369D /* LiveConnectClient.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -308,6 +310,9 @@
 		347518D81AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EvesCRMSharedFiles.swift; sourceTree = "<group>"; };
 		34877BC51B61E2210040DF71 /* EvesCRM 8.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 8.xcdatamodel"; sourceTree = "<group>"; };
 		348E6D4A1ADF74C800697268 /* ContactDetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactDetails.swift; sourceTree = "<group>"; };
+		349331B81B704457004AA569 /* EvesCRM 10.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 10.xcdatamodel"; sourceTree = "<group>"; };
+		349331C81B705756004AA569 /* SideBarTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SideBarTableViewController.swift; sourceTree = "<group>"; };
+		349331CE1B70576C004AA569 /* SideBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SideBar.swift; sourceTree = "<group>"; };
 		349C4D3D1B033AF300EC8099 /* EvesCRM 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 4.xcdatamodel"; sourceTree = "<group>"; };
 		349C4D3E1B033B6400EC8099 /* Stages.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stages.swift; sourceTree = "<group>"; };
 		34A182C21B0EDB3D00FC369D /* LiveAuthDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveAuthDelegate.h; sourceTree = "<group>"; };
@@ -558,6 +563,8 @@
 				3406506C1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld */,
 				340650681ADDF8FF00C90CBB /* Supporting Files */,
 				3406506F1ADDF8FF00C90CBB /* ViewController.swift */,
+				349331CE1B70576C004AA569 /* SideBar.swift */,
+				349331C81B705756004AA569 /* SideBarTableViewController.swift */,
 				348E6D4A1ADF74C800697268 /* ContactDetails.swift */,
 				347518D81AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift */,
 				346D5E011AE5F9C700F858E7 /* CalendarDetails.swift */,
@@ -914,6 +921,7 @@
 				342C0A151B4B7CED00A73CA5 /* MeetingSupportingDocs.swift in Sources */,
 				34B525391B130F1C00093250 /* oneNote.swift in Sources */,
 				349C4D3F1B033B6400EC8099 /* Stages.swift in Sources */,
+				349331C91B705756004AA569 /* SideBarTableViewController.swift in Sources */,
 				346B70DE1AF70B8F005E1BC2 /* maintainProjectViewController.swift in Sources */,
 				34A183251B0EDBB400FC369D /* LiveConnectionHelper.m in Sources */,
 				34111C3A1AEC898B003090EB /* reminderViewController.swift in Sources */,
@@ -956,6 +964,7 @@
 				341F23121AFC284400FC2883 /* DropboxCoreService.swift in Sources */,
 				34F35BD31B6B3F7000A19ACE /* taskUpdatesViewController.swift in Sources */,
 				34A1831F1B0EDBB400FC369D /* JsonWriter.m in Sources */,
+				349331CF1B70576C004AA569 /* SideBar.swift in Sources */,
 				34A182D21B0EDB3D00FC369D /* LiveConnectClient.m in Sources */,
 				34A183061B0EDB5C00FC369D /* LiveOperationCore.m in Sources */,
 				344F22721AF1DFF3002C373E /* evernoteDetails.swift in Sources */,
@@ -1295,6 +1304,7 @@
 		3406506C1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				349331B81B704457004AA569 /* EvesCRM 10.xcdatamodel */,
 				3443A4A31B6F2F4400B0D63A /* EvesCRM 9.xcdatamodel */,
 				34877BC51B61E2210040DF71 /* EvesCRM 8.xcdatamodel */,
 				34A578B11B5F5F93008D3D8E /* EvesCRM 7.xcdatamodel */,
@@ -1305,7 +1315,7 @@
 				346B70F21AF75EFE005E1BC2 /* EvesCRM 2.xcdatamodel */,
 				3406506D1ADDF8FF00C90CBB /* EvesCRM.xcdatamodel */,
 			);
-			currentVersion = 3443A4A31B6F2F4400B0D63A /* EvesCRM 9.xcdatamodel */;
+			currentVersion = 349331B81B704457004AA569 /* EvesCRM 10.xcdatamodel */;
 			path = EvesCRM.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
