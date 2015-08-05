@@ -31,7 +31,6 @@ class meetingsViewController: UIViewController
     @IBOutlet weak var colAttendees: UICollectionView!
     @IBOutlet weak var btnChair: UIButton!
     @IBOutlet weak var btnMinutes: UIButton!
-    @IBOutlet weak var btnBack: UIButton!
     @IBOutlet weak var txtAttendeeName: UITextField!
     @IBOutlet weak var txtAttendeeEmail: UITextField!
     @IBOutlet weak var btnAddAttendee: UIButton!
@@ -76,6 +75,14 @@ class meetingsViewController: UIViewController
             btnMinutes.setTitle(passedMeeting.event.minutes, forState: .Normal)
         }
         
+        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
+        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
+        self.view.addGestureRecognizer(showGestureRecognizer)
+        
+        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
+        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
+        self.view.addGestureRecognizer(hideGestureRecognizer)
+
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "attendeeRemoved:", name:"NotificationAttendeeRemoved", object: nil)
     }
     
@@ -87,7 +94,26 @@ class meetingsViewController: UIViewController
     
     override func viewWillLayoutSubviews()
     {
+        super.viewWillLayoutSubviews()
+
         colAttendees.collectionViewLayout.invalidateLayout()
+        colAttendees.reloadData()
+    }
+    
+    func handleSwipe(recognizer:UISwipeGestureRecognizer)
+    {
+        if recognizer.direction == UISwipeGestureRecognizerDirection.Left
+        {
+           // Move to next item in tab hierarchy
+            
+            let myCurrentTab = self.tabBarController
+            
+            myCurrentTab!.selectedIndex = myCurrentTab!.selectedIndex + 1
+        }
+        else
+        {
+            passedMeeting.delegate.myMeetingsDidFinish(self)
+        }
     }
     
     func numberOfComponentsInPickerView(TableTypeSelection1: UIPickerView) -> Int {
@@ -149,6 +175,9 @@ class meetingsViewController: UIViewController
         {
             cell.backgroundColor = UIColor.clearColor()
         }
+        
+        cell.layoutSubviews()
+        
         return cell
     }
     
@@ -200,11 +229,6 @@ class meetingsViewController: UIViewController
         pickerTarget = "minutes"
     }
     
-    @IBAction func btnBackClick(sender: UIButton)
-    {
-        passedMeeting.delegate.myMeetingsDidFinish(self)
-    }
-    
     @IBAction func btnAddAttendee(sender: UIButton)
     {
         if txtAttendeeName.text == ""
@@ -247,7 +271,6 @@ class meetingsViewController: UIViewController
         colAttendees.hidden = true
         btnChair.hidden = true
         btnMinutes.hidden = true
-        btnBack.hidden = true
         txtAttendeeName.hidden = true
         txtAttendeeEmail.hidden = true
         btnAddAttendee.hidden = true
@@ -274,7 +297,6 @@ class meetingsViewController: UIViewController
         colAttendees.hidden = false
         btnChair.hidden = false
         btnMinutes.hidden = false
-        btnBack.hidden = false
         txtAttendeeName.hidden = false
         txtAttendeeEmail.hidden = false
         btnAddAttendee.hidden = false
@@ -311,6 +333,12 @@ class myAttendeeDisplayItem: UICollectionViewCell
     @IBOutlet weak var lblName: UILabel!
     @IBOutlet weak var lblStatus: UILabel!
     @IBOutlet weak var btnAction: UIButton!
+
+    override func layoutSubviews()
+    {
+        contentView.frame = bounds
+        super.layoutSubviews()
+    }
     
     @IBAction func btnAction(sender: UIButton)
     {

@@ -16,7 +16,6 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate
     @IBOutlet weak var lblAgendaItems: UILabel!
     @IBOutlet weak var colAgenda: UICollectionView!
     @IBOutlet weak var btnAddAgendaItem: UIButton!
-    @IBOutlet weak var btnBack: UIButton!
     @IBOutlet weak var lblAddAgendaItem: UILabel!
     @IBOutlet weak var lblDescription: UILabel!
     @IBOutlet weak var lblTimeAllocation: UILabel!
@@ -50,6 +49,14 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate
         
         btnOwner.setTitle("Select Owner", forState: .Normal)
         
+        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
+        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
+        self.view.addGestureRecognizer(showGestureRecognizer)
+        
+        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
+        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
+        self.view.addGestureRecognizer(hideGestureRecognizer)
+        
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateAgendaItem:", name:"NotificationUpdateAgendaItem", object: nil)
     }
     
@@ -61,7 +68,26 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate
     
     override func viewWillLayoutSubviews()
     {
+        super.viewWillLayoutSubviews()
         colAgenda.collectionViewLayout.invalidateLayout()
+        
+        colAgenda.reloadData()
+    }
+    
+    func handleSwipe(recognizer:UISwipeGestureRecognizer)
+    {
+        if recognizer.direction == UISwipeGestureRecognizerDirection.Left
+        {
+            // Do nothing
+        }
+        else
+        {
+            // Move to previous item in tab hierarchy
+            
+            let myCurrentTab = self.tabBarController
+            
+            myCurrentTab!.selectedIndex = myCurrentTab!.selectedIndex - 1
+        }
     }
     
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
@@ -94,6 +120,9 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate
         {
             cell.backgroundColor = UIColor.clearColor()
         }
+        
+        cell.layoutSubviews()
+        
         return cell
     }
     
@@ -136,11 +165,6 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate
         
         myPicker.hidden = true
         showFields()
-    }
-
-    @IBAction func btnBackClick(sender: UIButton)
-    {
-        passedMeeting.delegate.myMeetingsAgendaDidFinish(self)
     }
     
     @IBAction func btnAddAgendaItem(sender: UIButton)
@@ -277,6 +301,12 @@ class myAgendaItem: UICollectionViewCell
     @IBOutlet weak var lblItem: UILabel!
     @IBOutlet weak var lblOwner: UILabel!
     @IBOutlet weak var btnAction: UIButton!
+  
+    override func layoutSubviews()
+    {
+        contentView.frame = bounds
+        super.layoutSubviews()
+    }
     
     @IBAction func btnAction(sender: UIButton)
     {

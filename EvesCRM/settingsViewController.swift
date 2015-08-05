@@ -15,8 +15,6 @@ protocol MySettingsDelegate{
 
 class settingsViewController: UIViewController, MyMaintainPanesDelegate {
     
-    @IBOutlet weak var backButton: UIButton!
-    
     @IBOutlet weak var calStepperPrevious: UIStepper!
     @IBOutlet weak var CalStepperAfter: UIStepper!
     @IBOutlet weak var calStepperRed: UIStepper!
@@ -126,6 +124,14 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate {
             ButtonConnectDropbox.hidden = true
         }
         
+        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
+        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
+        self.view.addGestureRecognizer(showGestureRecognizer)
+        
+        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
+        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
+        self.view.addGestureRecognizer(hideGestureRecognizer)
+
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "myEvernoteAuthenticationDidFinish", name:"NotificationEvernoteAuthenticationDidFinish", object: nil)
     }
     
@@ -135,6 +141,18 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate {
         // Dispose of any resources that can be recreated.
     }
    
+    func handleSwipe(recognizer:UISwipeGestureRecognizer)
+    {
+        if recognizer.direction == UISwipeGestureRecognizerDirection.Left
+        {
+            // Do nothing
+        }
+        else
+        {
+            delegate?.mySettingsDidFinish(self)
+        }
+    }
+
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         
@@ -188,11 +206,6 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate {
         {
             myStageSelected = indexPath.row
         }
-    }
-    
-    @IBAction func backButton(sender: UIButton)
-    {
-        delegate?.mySettingsDidFinish(self)
     }
     
     @IBAction func calStepperPreviousClick(sender: UIStepper)

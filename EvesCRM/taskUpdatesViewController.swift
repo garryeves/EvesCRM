@@ -17,7 +17,6 @@ class taskUpdatesViewController: UIViewController
 {
     private var passedTask: TaskModel!
     
-    @IBOutlet weak var btnCancel: UIButton!
     @IBOutlet weak var lblAddUpdate: UILabel!
     @IBOutlet weak var lblUpdateSource: UILabel!
     @IBOutlet weak var lblUpdateDetails: UILabel!
@@ -38,6 +37,15 @@ class taskUpdatesViewController: UIViewController
         txtUpdateDetails.layer.masksToBounds = true
         
         passedTask = (tabBarController as! tasksTabViewController).myPassedTask
+        
+        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
+        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
+        self.view.addGestureRecognizer(showGestureRecognizer)
+        
+        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
+        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
+        self.view.addGestureRecognizer(hideGestureRecognizer)
+
     }
     
     override func didReceiveMemoryWarning()
@@ -49,6 +57,22 @@ class taskUpdatesViewController: UIViewController
     override func viewWillLayoutSubviews()
     {
         colHistory.collectionViewLayout.invalidateLayout()
+    }
+    
+    func handleSwipe(recognizer:UISwipeGestureRecognizer)
+    {
+        if recognizer.direction == UISwipeGestureRecognizerDirection.Left
+        {
+            // Do nothing
+        }
+        else
+        {
+            // Move to previous item in tab hierarchy
+            
+            let myCurrentTab = self.tabBarController
+            
+            myCurrentTab!.selectedIndex = myCurrentTab!.selectedIndex - 1
+        }
     }
     
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
@@ -121,11 +145,6 @@ class taskUpdatesViewController: UIViewController
         //retVal = CGSize(width: colHistory.bounds.size.width, height: 39)
         
         return retVal
-    }
-    
-    @IBAction func btnCancel(sender: UIButton)
-    {
-        passedTask.delegate.myTaskUpdateDidFinish(self, actionType: "Cancel", currentTask: passedTask.currentTask)
     }
     
     @IBAction func btnAddUpdate(sender: UIButton)

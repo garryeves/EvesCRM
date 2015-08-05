@@ -18,7 +18,6 @@ class taskViewController: UIViewController
 {
     private var passedTask: TaskModel!
     
-    @IBOutlet weak var btnCancel: UIButton!
     @IBOutlet weak var btnSave: UIButton!
     @IBOutlet weak var lblTaskTitle: UILabel!
     @IBOutlet weak var lblTaskDescription: UILabel!
@@ -150,6 +149,14 @@ class taskViewController: UIViewController
             txtNewContext.hidden = true
             btnNewContext.hidden = true
             
+            let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
+            showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
+            self.view.addGestureRecognizer(showGestureRecognizer)
+            
+            let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
+            hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
+            self.view.addGestureRecognizer(hideGestureRecognizer)
+
             NSNotificationCenter.defaultCenter().addObserver(self, selector: "removeTaskContext:", name:"NotificationRemoveTaskContext", object: nil)
 
         }
@@ -163,7 +170,26 @@ class taskViewController: UIViewController
     
     override func viewWillLayoutSubviews()
     {
+        super.viewWillLayoutSubviews()
         colContexts.collectionViewLayout.invalidateLayout()
+        
+        colContexts.reloadData()
+    }
+    
+    func handleSwipe(recognizer:UISwipeGestureRecognizer)
+    {
+        if recognizer.direction == UISwipeGestureRecognizerDirection.Left
+        {
+            // Move to next item in tab hierarchy
+            
+            let myCurrentTab = self.tabBarController
+            
+            myCurrentTab!.selectedIndex = myCurrentTab!.selectedIndex + 1
+        }
+        else
+        {
+            passedTask.delegate.myTaskDidFinish(self, actionType: "Cancel", currentTask: passedTask.currentTask)
+        }
     }
     
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
@@ -181,45 +207,11 @@ class taskViewController: UIViewController
         var cell: myContextItem!
 
         cell = collectionView.dequeueReusableCellWithReuseIdentifier("reuseContext", forIndexPath: indexPath) as! myContextItem
+        
         cell.lblContext.text = passedTask.currentTask.contexts[indexPath.row].name
         cell.btnRemove.setTitle("Remove", forState: .Normal)
         cell.btnRemove.tag = passedTask.currentTask.contexts[indexPath.row].contextID
-        
-  //      var frmPlay : CGRect = cell.lblContext.frame
-        
-   //     let originXbutton = frmPlay.origin.x
-   //     let originYbutton = frmPlay.origin.y
-        
-   //     let originWidthbutton = frmPlay.size.width
-   //     let originHeightbutton = frmPlay.size.height
-        
-   //     cell.lblContext.frame = frmPlay
-        
-   //     cell.lblContext.frame = CGRectMake(
-   //         originXbutton,
-   //         originYbutton,
-   //         colContexts.bounds.size.width-100,
-   //         originHeightbutton)
-    
-        cell.lblContext.sizeThatFits(CGSizeMake(colContexts.bounds.size.width - 110, 35))
-        cell.btnRemove.sizeThatFits(CGSizeMake(100, 35))
-        
-    //    cell.lblContext.frame = CGSizeMake(colContexts.bounds.size.width - 110, 35)
-    //    cell.btnRemove.frame = CGSizeMake(100, 35)
-        
-  //      CGSize retval =  CGSizeMake(100, 100)
-    //    retval.height += 35; retval.width += 35
-        
-        
-    //    cell.btnRemove.frame.width = myWidth
-        
-   //     if indexPath.section == 2
-   //     {
-   //         cell = collectionView.dequeueReusableCellWithReuseIdentifier("reuseAction", forIndexPath: indexPath) as! myContextItem
-   //         cell.btnRemove.setTitle("Remove", forState: .Normal)
-   //         cell.btnRemove.tag = passedTask.currentTask.contexts[indexPath.row].contextID
-   //     }
-        
+         
         let swiftColor = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
         if (indexPath.row % 2 == 0)  // was .row
         {
@@ -229,6 +221,9 @@ class taskViewController: UIViewController
         {
             cell.backgroundColor = UIColor.clearColor()
         }
+        
+        cell.layoutSubviews()
+        
         return cell
     }
 /*
@@ -307,16 +302,38 @@ class taskViewController: UIViewController
         
         if pickerTarget == "Context"
         {
-            setContext(myContexts[row].contextID)
+            var matchFound: Bool = false
+            // if we have just selected an "unknown" context then we need ot create it
+            
+            // first lets see if there is already a context with this name
+            let myContextList = contexts()
+            
+            for myContext in myContextList.contexts
+            {
+                if myContext.name.lowercaseString == pickerOptions[row].lowercaseString
+                {
+                    // Existing context found, so use this record
+                    
+                    setContext(myContext.contextID)
+                    matchFound = true
+                    break
+                }
+            }
+            
+            // if no match then create context
+            
+            if !matchFound
+            {
+                let myNewContext = context()
+                myNewContext.name = pickerOptions[row]
+                myNewContext.save()
+                
+                setContext(myNewContext.contextID)
+            }
         }
 
         myPicker.hidden = true
         showFields()
-    }
-    
-    @IBAction func btnCancel(sender: UIButton)
-    {
-        passedTask.delegate.myTaskDidFinish(self, actionType: "Cancel", currentTask: passedTask.currentTask)
     }
     
     @IBAction func btnSave(sender: UIButton)
@@ -359,7 +376,7 @@ class taskViewController: UIViewController
         else
         {
             saveTask()
-    
+            
             lblNewContext.hidden = false
             txtNewContext.hidden = false
             btnNewContext.hidden = false
@@ -370,12 +387,34 @@ class taskViewController: UIViewController
             pickerOptions.removeAll(keepCapacity: false)
             myContexts.removeAll(keepCapacity: false)
             
-            for myContext in myContextList.contextsByHierarchy
-            {
-                pickerOptions.append(myContext.contextHierarchy)
-                myContexts.append(myContext)
+            if passedTask.taskType == "minutes"
+            { // a meeting task
+                // First need to loop through the meetings attendees
+                
+                for myAttendee in passedTask.event.attendees
+                {
+                    // check in the address book to see if we have a person for this email address, this is so we make sure we try and use consistent Context names
+                    let personName = findPersonbyEmail(myAttendee.emailAddress, adbk)
+                    
+                    if personName != ""
+                    { // we have found the context
+                        pickerOptions.append(personName)
+                    }
+                    else
+                    {
+                        pickerOptions.append(myAttendee.name)
+                    }
+                }
             }
-            
+            else
+            { // Not a meeting task
+                for myContext in myContextList.contextsByHierarchy
+                {
+                    pickerOptions.append(myContext.contextHierarchy)
+                    myContexts.append(myContext)
+                }
+            }
+
             hideFields()
             
             if pickerOptions.count > 0
@@ -538,7 +577,6 @@ class taskViewController: UIViewController
     
     func showFields()
     {
-        btnCancel.hidden = false
         btnSave.hidden = false
         lblTaskTitle.hidden = false
         lblTaskDescription.hidden = false
@@ -566,7 +604,6 @@ class taskViewController: UIViewController
     
     func hideFields()
     {
-        btnCancel.hidden = true
         btnSave.hidden = true
         lblTaskTitle.hidden = true
         lblTaskDescription.hidden = true
@@ -649,7 +686,13 @@ class myContextItem: UICollectionViewCell
 {
     @IBOutlet weak var lblContext: UILabel!
     @IBOutlet weak var btnRemove: UIButton!
-
+  
+    override func layoutSubviews()
+    {
+        contentView.frame = bounds
+        super.layoutSubviews()
+    }
+    
     @IBAction func btnRemove(sender: UIButton)
     {
         if btnRemove.currentTitle == "Remove"

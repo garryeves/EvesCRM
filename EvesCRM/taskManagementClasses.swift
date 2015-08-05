@@ -1573,9 +1573,10 @@ class TaskModel: NSObject
     private var myTaskType: String = ""
     private var myTask: task!
     private var myDelegate: MyTaskDelegate!
+    private var myEvent: myCalendarItem!
  
     var delegate: MyTaskDelegate
-        {
+    {
         get
         {
             return myDelegate
@@ -1607,6 +1608,18 @@ class TaskModel: NSObject
         set
         {
             myTask = newValue
+        }
+    }
+    
+    var event: myCalendarItem
+    {
+        get
+        {
+            return myEvent
+        }
+        set
+        {
+            myEvent = newValue
         }
     }
 }

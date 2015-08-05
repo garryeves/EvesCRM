@@ -17,7 +17,6 @@ class agendaItemViewController: UIViewController, MyTaskDelegate
 {
     var delegate: MyAgendaItemDelegate?
 
-    @IBOutlet weak var btnBack: UIButton!
     @IBOutlet weak var btnSave: UIButton!
     @IBOutlet weak var lblDescription: UILabel!
     @IBOutlet weak var txtTitle: UITextField!
@@ -74,6 +73,14 @@ class agendaItemViewController: UIViewController, MyTaskDelegate
         
         myPicker.hidden = true
         
+        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
+        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
+        self.view.addGestureRecognizer(showGestureRecognizer)
+        
+        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
+        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
+        self.view.addGestureRecognizer(hideGestureRecognizer)
+
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateTask:", name:"NotificationUpdateAgendaTask", object: nil)
     }
     
@@ -85,9 +92,24 @@ class agendaItemViewController: UIViewController, MyTaskDelegate
     
     override func viewWillLayoutSubviews()
     {
+        super.viewWillLayoutSubviews()
         colActions.collectionViewLayout.invalidateLayout()
+        
+        colActions.reloadData()
     }
 
+    func handleSwipe(recognizer:UISwipeGestureRecognizer)
+    {
+        if recognizer.direction == UISwipeGestureRecognizerDirection.Left
+        {
+            // Do nothing
+        }
+        else
+        {
+            delegate?.myAgendaItemDidFinish(self, actionType: "Cancel")
+        }
+    }
+    
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
     {
         return 1
@@ -132,6 +154,8 @@ class agendaItemViewController: UIViewController, MyTaskDelegate
             cell.backgroundColor = UIColor.clearColor()
         }
        
+        cell.layoutSubviews()
+        
         return cell
     }
 
@@ -205,11 +229,6 @@ class agendaItemViewController: UIViewController, MyTaskDelegate
         myPicker.hidden = true
         showFields()
     }
-
-    @IBAction func btnBack(sender: UIButton)
-    {
-        delegate?.myAgendaItemDidFinish(self, actionType: "Cancel")
-    }
     
     @IBAction func btnSave(sender: UIButton)
     {
@@ -252,6 +271,7 @@ class agendaItemViewController: UIViewController, MyTaskDelegate
         let workingTask = task()
         myPassedTask.currentTask = workingTask
         myPassedTask.delegate = self
+        myPassedTask.event = event
  
         taskViewControl.myPassedTask = myPassedTask
         
@@ -269,6 +289,7 @@ class agendaItemViewController: UIViewController, MyTaskDelegate
         let workingTask = task(inTaskID: itemToUpdate)
         myPassedTask.currentTask = workingTask
         myPassedTask.delegate = self
+        myPassedTask.event = event
         
         taskViewControl.myPassedTask = myPassedTask
         
@@ -301,7 +322,6 @@ class agendaItemViewController: UIViewController, MyTaskDelegate
     
     func hideFields()
     {
-        btnBack.hidden = true
         btnSave.hidden = true
         lblDescription.hidden = true
         txtTitle.hidden = true
@@ -322,7 +342,6 @@ class agendaItemViewController: UIViewController, MyTaskDelegate
     
     func showFields()
     {
-        btnBack.hidden = false
         btnSave.hidden = false
         lblDescription.hidden = false
         txtTitle.hidden = false
@@ -384,6 +403,12 @@ class myTaskItem: UICollectionViewCell
     @IBOutlet weak var lblTaskOwner: UILabel!
     @IBOutlet weak var lblTaskName: UILabel!
     @IBOutlet weak var btnAction: UIButton!
+
+    override func layoutSubviews()
+    {
+        contentView.frame = bounds
+        super.layoutSubviews()
+    }
     
     @IBAction func btnAction(sender: UIButton)
     {

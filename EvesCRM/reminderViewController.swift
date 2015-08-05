@@ -142,6 +142,14 @@ class reminderViewController: UIViewController {
         notesText.layer.borderColor = borderColor.CGColor
         notesText.layer.cornerRadius = 5.0
         
+        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
+        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
+        self.view.addGestureRecognizer(showGestureRecognizer)
+        
+        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
+        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
+        self.view.addGestureRecognizer(hideGestureRecognizer)
+
     }
  
     override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
@@ -149,6 +157,18 @@ class reminderViewController: UIViewController {
         notesText.endEditing(true)
     }
     
+    func handleSwipe(recognizer:UISwipeGestureRecognizer)
+    {
+        if recognizer.direction == UISwipeGestureRecognizerDirection.Left
+        {
+            // Do nothing
+        }
+        else
+        {
+            delegate?.myReminderDidFinish(self, actionType: "Cancel")
+        }
+    }
+
     func numberOfComponentsInPickerView(priorityPicker: UIPickerView) -> Int {
         return 1
     }
@@ -169,10 +189,6 @@ class reminderViewController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
-    }
-    
-     @IBAction func cancelButtonPressed(sender: UIButton) {
-        delegate?.myReminderDidFinish(self, actionType: "Cancel")
     }
     
     @IBAction func completeButtonPressed(sender: UIButton)

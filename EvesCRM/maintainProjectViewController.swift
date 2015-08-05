@@ -25,7 +25,6 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     @IBOutlet weak var endDateLabel: UILabel!
     @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var teamMembersLabel: UILabel!
-    @IBOutlet weak var buttonCancel: UIButton!
     @IBOutlet weak var buttonSave: UIButton!
     @IBOutlet weak var projectNameText: UITextField!
     @IBOutlet weak var startDatePicker: UIDatePicker!
@@ -105,6 +104,15 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         projectList.tableFooterView = UIView(frame:CGRectZero)
         
         buttonSave.setTitle(myActionType, forState: UIControlState.Normal)
+        
+        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
+        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
+        self.view.addGestureRecognizer(showGestureRecognizer)
+        
+        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
+        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
+        self.view.addGestureRecognizer(hideGestureRecognizer)
+
     }
     
     override func didReceiveMemoryWarning()
@@ -117,6 +125,17 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         projectNameText.endEditing(true)
     }
     
+    func handleSwipe(recognizer:UISwipeGestureRecognizer)
+    {
+        if recognizer.direction == UISwipeGestureRecognizerDirection.Left
+        {
+            // Do nothing
+        }
+        else
+        {
+            delegate?.myMaintainProjectDidFinish(self, actionType: "Cancel")        }
+    }
+
     
     func numberOfComponentsInPickerView(inPicker: UIPickerView) -> Int
     {
@@ -325,11 +344,6 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
             buttonAddTeamMember.hidden = true
             buttonConfirmTeamMember.setTitle("Update Project Team Member", forState: UIControlState.Normal)
         }
-    }
-    
-    @IBAction func buttonCancel(sender: UIButton)
-    {
-        delegate?.myMaintainProjectDidFinish(self, actionType: "Cancel")
     }
     
     @IBAction func buttonSave(sender: UIButton)

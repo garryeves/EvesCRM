@@ -23,6 +23,7 @@ private let dataTable1_CELL_IDENTIFER = "dataTable1Cell"
 
 var dropboxCoreService: DropboxCoreService = DropboxCoreService()
 var myDatabaseConnection: coreDatabase!
+var adbk : ABAddressBook!
 
 class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate, MyMeetingsDelegate, SideBarDelegate {
     
@@ -65,8 +66,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     
     // store the details of the person selected in the People table
     var personContact: iOSContact!
-    
-    var adbk : ABAddressBook!
     
     var eventStore: EKEventStore!
     
@@ -380,17 +379,18 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     }
 
     func createAddressBook() -> Bool {
-        if self.adbk != nil {
+        if adbk != nil {
             return true
         }
         var err : Unmanaged<CFError>? = nil
-        let adbk : ABAddressBook? = ABAddressBookCreateWithOptions(nil, &err).takeRetainedValue()
-        if adbk == nil {
+        let myAdbk : ABAddressBook? = ABAddressBookCreateWithOptions(nil, &err).takeRetainedValue()
+        if myAdbk == nil
+        {
             println(err)
-            self.adbk = nil
+            adbk = nil
             return false
         }
-        self.adbk = adbk
+        adbk = myAdbk
         
         return true
     }
@@ -413,13 +413,13 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             if ok == true {
                 return true
             }
-            self.adbk = nil
+            adbk = nil
             return false
         case .Restricted:
-            self.adbk = nil
+            adbk = nil
             return false
         case .Denied:
-            self.adbk = nil
+            adbk = nil
             return false
         }
     }

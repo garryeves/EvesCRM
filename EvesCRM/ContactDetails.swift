@@ -553,12 +553,6 @@ class iOSContact
     
 }
 
-
-
-
-
-
-
 func findPersonRecord(inName: String, adbk: ABAddressBook) -> ABRecord!
 {
     //  there may be a better way to do this, but it works.
@@ -579,6 +573,48 @@ func findPersonRecord(inName: String, adbk: ABAddressBook) -> ABRecord!
         }
     }
     
+    return person
+}
+
+func findPersonbyEmail(inEmail: String, adbk: ABAddressBook) -> String
+{
+    //  there may be a better way to do this, but it works.
+    var person: String = ""
+    var recordFound: Bool = false
+    var contactList: NSArray = ABAddressBookCopyArrayOfAllPeople(adbk).takeRetainedValue()
+    
+    for record:ABRecordRef in contactList
+    {
+        var contactPerson: ABRecordRef = record
+        var contactName: String = ABRecordCopyCompositeName(contactPerson).takeRetainedValue() as String
+        
+        let decodeProperty = ABRecordCopyValue(contactPerson, kABPersonEmailProperty)
+        let emailAddrs: ABMultiValueRef = Unmanaged.fromOpaque(decodeProperty.toOpaque()).takeUnretainedValue() as NSObject as ABMultiValueRef
+        
+        let recordCount = ABMultiValueGetCount(emailAddrs)
+        var myString: String = ""
+        
+        if recordCount > 0
+        {
+            for loopCount in 0...recordCount-1
+            {
+                myString = ABMultiValueCopyValueAtIndex(emailAddrs, loopCount).takeRetainedValue() as! String
+                
+                if myString == inEmail
+                {
+                    person = contactName
+                    recordFound = true
+                    break
+                }
+            }
+        }
+
+        if recordFound
+        {
+            break
+        }
+    }
+
     return person
 }
 

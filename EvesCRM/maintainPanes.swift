@@ -16,7 +16,6 @@ protocol MyMaintainPanesDelegate
 
 class MaintainPanesViewController: UIViewController {
     
-    @IBOutlet weak var buttonBack: UIButton!
     @IBOutlet weak var buttonChangeVisibile: UIButton!
     @IBOutlet weak var tablePane: UITableView!
     
@@ -62,6 +61,13 @@ class MaintainPanesViewController: UIViewController {
         
         // Go and get the initial state for the pickers (i.e what is in the table.  If no initial statedefined, then default
         
+        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
+        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
+        self.view.addGestureRecognizer(showGestureRecognizer)
+        
+        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
+        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
+        self.view.addGestureRecognizer(hideGestureRecognizer)
     }
     
     override func didReceiveMemoryWarning()
@@ -70,6 +76,18 @@ class MaintainPanesViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    func handleSwipe(recognizer:UISwipeGestureRecognizer)
+    {
+        if recognizer.direction == UISwipeGestureRecognizerDirection.Left
+        {
+            // Do nothing
+        }
+        else
+        {
+            delegate?.MaintainPanesDidFinish(self)
+        }
+    }
+
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
@@ -207,11 +225,6 @@ class MaintainPanesViewController: UIViewController {
         }
     }
 
-    
-    @IBAction func buttonBackClick(sender: UIButton)
-    {
-        delegate?.MaintainPanesDidFinish(self)
-    }
     @IBAction func buttonChangeVisibileClick(sender: UIButton)
     {
         // Lets update the table
