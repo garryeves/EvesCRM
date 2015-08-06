@@ -2,7 +2,7 @@
 //  Task.swift
 //  
 //
-//  Created by Garry Eves on 4/08/2015.
+//  Created by Garry Eves on 6/08/2015.
 //
 //
 
@@ -11,6 +11,7 @@ import CoreData
 
 class Task: NSManagedObject {
 
+    @NSManaged var completionDate: NSDate
     @NSManaged var details: String
     @NSManaged var dueDate: NSDate
     @NSManaged var energyLevel: String
@@ -26,6 +27,9 @@ class Task: NSManagedObject {
     @NSManaged var taskMode: String
     @NSManaged var taskOrder: NSNumber
     @NSManaged var title: String
-    @NSManaged var completionDate: NSDate
+    @NSManaged var repeatInterval: NSNumber
+    @NSManaged var repeatType: String
+    @NSManaged var repeatBase: String
+    @NSManaged var flagged: NSNumber
 
 }

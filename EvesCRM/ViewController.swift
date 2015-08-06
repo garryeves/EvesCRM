@@ -25,7 +25,7 @@ var dropboxCoreService: DropboxCoreService = DropboxCoreService()
 var myDatabaseConnection: coreDatabase!
 var adbk : ABAddressBook!
 
-class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate, MyMeetingsDelegate, SideBarDelegate {
+class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate, MyMeetingsDelegate, SideBarDelegate, MyMaintainPanesDelegate {
     
     @IBOutlet weak var TableTypeSelection1: UIPickerView!
     
@@ -191,19 +191,18 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         dataTable4.tableFooterView = UIView(frame:CGRectZero)
 
         populateContactList()
-        
-        
+    
    //   code to reset projects if needed for testing
    //     myDatabaseConnection.resetprojects()
         
    //   code to reset meetings if needed for testing        
-   //     myDatabaseConnection.resetMeetings()
+  //      myDatabaseConnection.resetMeetings()
         
         //   code to reset tasks if needed for testing
-   //     myDatabaseConnection.resetTasks()
+  //      myDatabaseConnection.resetTasks()
         
         //   code to reset contexts if needed for testing
-        //     myDatabaseConnection.resetContexts()
+ //            myDatabaseConnection.resetContexts()
         
         // Work out if a project has been added to the data store, so we can then select it
         let myProjects = myDatabaseConnection.getProjects()
@@ -2589,6 +2588,13 @@ println("Action: \(passedItem.displayString)")
                         settingViewControl.dropboxCoreService = dropboxCoreService
                         
                         self.presentViewController(settingViewControl, animated: true, completion: nil)
+                    
+                    case "Maintain Display Panes":
+                        let maintainPaneViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("MaintainPanes") as! MaintainPanesViewController
+                        
+                        maintainPaneViewControl.delegate = self
+                        
+                        self.presentViewController(maintainPaneViewControl, animated: true, completion: nil)
                 
                     default: println("sideBarDidSelectButtonAtIndex - Action selector: Hit default")
                     
@@ -2695,5 +2701,10 @@ println("Action: \(passedItem.displayString)")
         TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myFullName), forState: .Normal)
         TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myFullName), forState: .Normal)
         TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myFullName), forState: .Normal)
+    }
+    
+    func MaintainPanesDidFinish(controller:MaintainPanesViewController)
+    {
+        controller.dismissViewControllerAnimated(true, completion: nil)
     }
 }

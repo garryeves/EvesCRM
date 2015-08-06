@@ -14,11 +14,10 @@ protocol MyTaskDelegate
     func myTaskUpdateDidFinish(controller:taskUpdatesViewController, actionType: String, currentTask: task)
 }
 
-class taskViewController: UIViewController
+class taskViewController: UIViewController,  UITextViewDelegate
 {
     private var passedTask: TaskModel!
     
-    @IBOutlet weak var btnSave: UIButton!
     @IBOutlet weak var lblTaskTitle: UILabel!
     @IBOutlet weak var lblTaskDescription: UILabel!
     @IBOutlet weak var lblTargetDate: UILabel!
@@ -158,7 +157,9 @@ class taskViewController: UIViewController
             self.view.addGestureRecognizer(hideGestureRecognizer)
 
             NSNotificationCenter.defaultCenter().addObserver(self, selector: "removeTaskContext:", name:"NotificationRemoveTaskContext", object: nil)
-
+            
+            txtTaskDescription.delegate = self
+            
         }
     }
     
@@ -274,25 +275,29 @@ class taskViewController: UIViewController
             txtNewContext.hidden = true
             btnNewContext.hidden = true
         }
-        
+
         if pickerTarget == "Status"
         {
             btnStatus.setTitle(pickerOptions[row], forState: .Normal)
+            passedTask.currentTask.status = btnStatus.currentTitle!
         }
         
         if pickerTarget == "TimeInterval"
         {
             btnEstTimeInterval.setTitle(pickerOptions[row], forState: .Normal)
+            passedTask.currentTask.estimatedTimeType = btnEstTimeInterval.currentTitle!
         }
 
         if pickerTarget == "Priority"
         {
             btnPriority.setTitle(pickerOptions[row], forState: .Normal)
+            passedTask.currentTask.priority = btnPriority.currentTitle!
         }
 
         if pickerTarget == "Energy"
         {
             btnEnergy.setTitle(pickerOptions[row], forState: .Normal)
+            passedTask.currentTask.energyLevel = btnEnergy.currentTitle!
         }
 
         if pickerTarget == "Project"
@@ -336,23 +341,6 @@ class taskViewController: UIViewController
         showFields()
     }
     
-    @IBAction func btnSave(sender: UIButton)
-    {
-        if txtTaskTitle.text == ""
-        {
-            var alert = UIAlertController(title: "Add Task", message:
-                "You must provide a description for the Task before you can Save it", preferredStyle: UIAlertControllerStyle.Alert)
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
-            
-            self.presentViewController(alert, animated: false, completion: nil)
-        }
-        else
-        {
-            saveTask()
-            passedTask.delegate.myTaskDidFinish(self, actionType: "Changed", currentTask: passedTask.currentTask)
-        }
-    }
-    
     @IBAction func btnTargetDate(sender: UIButton)
     {
         btnSetTargetDate.setTitle("Set Target Date", forState: .Normal)
@@ -375,8 +363,6 @@ class taskViewController: UIViewController
         }
         else
         {
-            saveTask()
-            
             lblNewContext.hidden = false
             txtNewContext.hidden = false
             btnNewContext.hidden = false
@@ -447,12 +433,14 @@ class taskViewController: UIViewController
         {
             btnTargetDate.setTitle(dateFormatter.stringFromDate(myDatePicker.date), forState: .Normal)
             myDueDate = myDatePicker.date
+            passedTask.currentTask.dueDate = myDueDate
             btnSetTargetDate.hidden = true
         }
         else
         {
             btnStart.setTitle(dateFormatter.stringFromDate(myDatePicker.date), forState: .Normal)
             myStartDate = myDatePicker.date
+            passedTask.currentTask.startDate = myStartDate
             btnSetTargetDate.hidden = true
         }
         
@@ -575,9 +563,30 @@ class taskViewController: UIViewController
         pickerTarget = "Project"
     }
     
+    @IBAction func txtTaskDetail(sender: UITextField)
+    {
+        if txtTaskTitle.text != ""
+        {
+            passedTask.currentTask.title = txtTaskTitle.text
+        }
+    }
+    
+    @IBAction func txtEstTime(sender: UITextField)
+    {
+        passedTask.currentTask.estimatedTime = txtEstTime.text.toInt()!
+    }
+    
+    func textViewDidEndEditing(textView: UITextView)
+    { //Handle the text changes here
+        
+        if textView == txtTaskDescription
+        {
+            passedTask.currentTask.details = textView.text
+        }
+    }
+    
     func showFields()
     {
-        btnSave.hidden = false
         lblTaskTitle.hidden = false
         lblTaskDescription.hidden = false
         lblTargetDate.hidden = false
@@ -604,7 +613,6 @@ class taskViewController: UIViewController
     
     func hideFields()
     {
-        btnSave.hidden = true
         lblTaskTitle.hidden = true
         lblTaskDescription.hidden = true
         lblTargetDate.hidden = true
@@ -629,22 +637,6 @@ class taskViewController: UIViewController
         btnProject.hidden = true
     }
     
-    func saveTask()
-    {
-        passedTask.currentTask.title = txtTaskTitle.text
-        passedTask.currentTask.details = txtTaskDescription.text
-        passedTask.currentTask.dueDate = myDueDate
-        passedTask.currentTask.startDate = myStartDate
-        passedTask.currentTask.status = btnStatus.currentTitle!
-        passedTask.currentTask.priority = btnPriority.currentTitle!
-        passedTask.currentTask.energyLevel = btnEnergy.currentTitle!
-        passedTask.currentTask.estimatedTime = txtEstTime.text.toInt()!
-        passedTask.currentTask.estimatedTimeType = btnEstTimeInterval.currentTitle!
-        passedTask.currentTask.projectID = myProjectID
-            
-        passedTask.currentTask.save()
-    }
-    
     func setProjectName(inProjectID: Int)
     {
         let myProjects = myDatabaseConnection.getProjectDetails(inProjectID)
@@ -659,6 +651,7 @@ class taskViewController: UIViewController
             btnProject.setTitle(myProjects[0].projectName, forState: .Normal)
             myProjectID = myProjects[0].projectID as Int
         }
+        passedTask.currentTask.projectID = myProjectID
     }
     
     func setContext(inContextID: Int)

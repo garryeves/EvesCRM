@@ -106,7 +106,7 @@ class coreDatabase: NSObject
             managedObjectContext!.deleteObject(myStage as NSManagedObject)
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
@@ -144,7 +144,7 @@ class coreDatabase: NSObject
         mySelectedRole.roleID = getMaxRoleID()
         mySelectedRole.roleDescription = inRoleName
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
@@ -168,7 +168,7 @@ class coreDatabase: NSObject
             managedObjectContext!.deleteObject(myStage as NSManagedObject)
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
@@ -197,7 +197,7 @@ class coreDatabase: NSObject
             myProjectTeam.projectMemberNotes = inNotes
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             //   println(error?.localizedDescription)
         }
@@ -221,7 +221,7 @@ class coreDatabase: NSObject
             managedObjectContext!.deleteObject(myStage as NSManagedObject)
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
@@ -375,7 +375,7 @@ class coreDatabase: NSObject
             myDecode.decode_value = inCodeValue
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             //   println(error?.localizedDescription)
         }
@@ -404,7 +404,7 @@ class coreDatabase: NSObject
             managedObjectContext!.deleteObject(myStage as NSManagedObject)
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
@@ -444,7 +444,7 @@ class coreDatabase: NSObject
         
         myStage.stageDescription = inStageDesc
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
@@ -468,7 +468,7 @@ class coreDatabase: NSObject
             managedObjectContext!.deleteObject(myStage as NSManagedObject)
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
@@ -490,7 +490,7 @@ class coreDatabase: NSObject
         myAgenda.endTime = inEvent.endDate
         myAgenda.minutesType = inEvent.minutesType
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
@@ -530,7 +530,7 @@ class coreDatabase: NSObject
         myAgenda.endTime = inEvent.endDate
         myAgenda.minutesType = inEvent.minutesType
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
@@ -573,7 +573,7 @@ class coreDatabase: NSObject
             myPerson.name = myAttendee.name
             myPerson.type = myAttendee.type
             
-            if(managedObjectContext!.save(&error) )
+            if(!managedObjectContext!.save(&error) )
             {
                 println(error?.localizedDescription)
             }
@@ -600,7 +600,7 @@ class coreDatabase: NSObject
             managedObjectContext!.deleteObject(myMeeting as NSManagedObject)
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
@@ -649,14 +649,14 @@ class coreDatabase: NSObject
         mySavedItem.title = inItem.title
         mySavedItem.agendaID = inItem.agendaID
 
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
 
     }
     
-    func loadSpecificAgendaItem(inMeetingID: String, inAgendaID: String)->[MeetingAgendaItem]
+    func loadSpecificAgendaItem(inMeetingID: String, inAgendaID: Int)->[MeetingAgendaItem]
     {
         let fetchRequest = NSFetchRequest(entityName: "MeetingAgendaItem")
         
@@ -665,7 +665,7 @@ class coreDatabase: NSObject
         
         var predicate: NSPredicate
         
-        predicate = NSPredicate(format: "(meetingID == \"\(inMeetingID)\") AND (agendaID = \"\(inAgendaID)\")")
+        predicate = NSPredicate(format: "(meetingID == \"\(inMeetingID)\") AND (agendaID == \(inAgendaID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -696,7 +696,7 @@ class coreDatabase: NSObject
         myAgendaItem.owner = inItem.owner
         myAgendaItem.title = inItem.title
         
-        if (managedObjectContext!.save(&error) )
+        if (!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
@@ -710,7 +710,7 @@ class coreDatabase: NSObject
         var predicate: NSPredicate
         
         let fetchRequest = NSFetchRequest(entityName: "MeetingAgendaItem")
-        predicate = NSPredicate(format: "(meetingID == \"\(inMeetingID)\") AND (agendaID = \"\(inItem.agendaID)\")")
+        predicate = NSPredicate(format: "(meetingID == \"\(inMeetingID)\") AND (agendaID == \(inItem.agendaID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -723,7 +723,7 @@ class coreDatabase: NSObject
             managedObjectContext!.deleteObject(myMeeting as NSManagedObject)
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
@@ -750,13 +750,13 @@ class coreDatabase: NSObject
             managedObjectContext!.deleteObject(myMeeting as NSManagedObject)
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
     }
 
-    func saveTask(inTaskID: Int, inTitle: String, inDetails: String, inDueDate: NSDate, inStartDate: NSDate, inStatus: String, inParentID: Int, inParentType: String,inTaskMode: String, inTaskOrder: Int, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int, inEstimatedTimeType: String, inProjectID: Int, inCompletionDate: NSDate)
+    func saveTask(inTaskID: Int, inTitle: String, inDetails: String, inDueDate: NSDate, inStartDate: NSDate, inStatus: String, inParentID: Int, inParentType: String,inTaskMode: String, inTaskOrder: Int, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int, inEstimatedTimeType: String, inProjectID: Int, inCompletionDate: NSDate, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inFlagged: Bool)
     {
         // first check to see if decode exists, if not we create
         var error: NSError?
@@ -783,6 +783,10 @@ class coreDatabase: NSObject
             myTask.estimatedTimeType = inEstimatedTimeType
             myTask.projectID = inProjectID
             myTask.completionDate = inCompletionDate
+            myTask.repeatInterval = inRepeatInterval
+            myTask.repeatType = inRepeatType
+            myTask.repeatBase = inRepeatBase
+            myTask.flagged = inFlagged
         }
         else
         { // Update
@@ -802,9 +806,13 @@ class coreDatabase: NSObject
             myTask.estimatedTimeType = inEstimatedTimeType
             myTask.projectID = inProjectID
             myTask.completionDate = inCompletionDate
+            myTask.repeatInterval = inRepeatInterval
+            myTask.repeatType = inRepeatType
+            myTask.repeatBase = inRepeatBase
+            myTask.flagged = inFlagged
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             //   println(error?.localizedDescription)
         }
@@ -828,7 +836,7 @@ class coreDatabase: NSObject
             managedObjectContext!.deleteObject(myStage as NSManagedObject)
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
@@ -978,7 +986,7 @@ class coreDatabase: NSObject
         return fetchResults!.count
     }
     
-    func saveProject(inProjectID: Int, inProjectEndDate: NSDate, inProjectName: String, inProjectStartDate: NSDate, inProjectStatus: String, inReviewFrequency: Int, inLastReviewDate: NSDate, inAreaID: Int)
+    func saveProject(inProjectID: Int, inProjectEndDate: NSDate, inProjectName: String, inProjectStartDate: NSDate, inProjectStatus: String, inReviewFrequency: Int, inLastReviewDate: NSDate, inAreaID: Int, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String)
     {
         // first check to see if decode exists, if not we create
         
@@ -998,6 +1006,9 @@ class coreDatabase: NSObject
             myProject.reviewFrequency = inReviewFrequency
             myProject.lastReviewDate = inLastReviewDate
             myProject.areaID = inAreaID
+            myProject.repeatInterval = inRepeatInterval
+            myProject.repeatType = inRepeatType
+            myProject.repeatBase = inRepeatBase
         }
         else
         { // Update
@@ -1009,9 +1020,12 @@ class coreDatabase: NSObject
             myProject.reviewFrequency = inReviewFrequency
             myProject.lastReviewDate = inLastReviewDate
             myProject.areaID = inAreaID
+            myProject.repeatInterval = inRepeatInterval
+            myProject.repeatType = inRepeatType
+            myProject.repeatBase = inRepeatBase
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             //   println(error?.localizedDescription)
         }
@@ -1030,7 +1044,7 @@ class coreDatabase: NSObject
         myTaskUpdate.details = inDetails
         myTaskUpdate.source = inSource
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             //   println(error?.localizedDescription)
         }
@@ -1057,7 +1071,7 @@ class coreDatabase: NSObject
         return fetchResults!
     }
 
-    func saveContext(inContextID: Int, inName: String, inEmail: String, inAutoEmail: String, inParentContext: Int, inStatus: String)
+    func saveContext(inContextID: Int, inName: String, inEmail: String, inAutoEmail: String, inParentContext: Int, inStatus: String, inPersonID: Int32)
     {
         // first check to see if decode exists, if not we create
 
@@ -1075,6 +1089,7 @@ class coreDatabase: NSObject
             myContext.autoEmail = inAutoEmail
             myContext.parentContext = inParentContext
             myContext.status = inStatus
+            myContext.personID = NSNumber(int: inPersonID)
         }
         else
         {
@@ -1084,9 +1099,10 @@ class coreDatabase: NSObject
             myContext.autoEmail = inAutoEmail
             myContext.parentContext = inParentContext
             myContext.status = inStatus
+            myContext.personID = NSNumber(int: inPersonID)
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             //   println(error?.localizedDescription)
         }
@@ -1155,7 +1171,7 @@ class coreDatabase: NSObject
             myContext.taskID = inTaskID
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             //   println(error?.localizedDescription)
         }
@@ -1179,7 +1195,7 @@ class coreDatabase: NSObject
             managedObjectContext!.deleteObject(myStage as NSManagedObject)
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
@@ -1261,7 +1277,7 @@ class coreDatabase: NSObject
             myArea.status = inStatus
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             //   println(error?.localizedDescription)
         }
@@ -1337,7 +1353,7 @@ class coreDatabase: NSObject
             myProject.areaID = inAreaID
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             //   println(error?.localizedDescription)
         }
@@ -1362,7 +1378,7 @@ class coreDatabase: NSObject
             myProject.areaID = 0
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             //   println(error?.localizedDescription)
         }
@@ -1393,7 +1409,7 @@ class coreDatabase: NSObject
             myGoal.status = inStatus
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             //   println(error?.localizedDescription)
         }
@@ -1452,7 +1468,7 @@ class coreDatabase: NSObject
             myArea.goalID = inGoalID
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             //   println(error?.localizedDescription)
         }
@@ -1477,7 +1493,7 @@ class coreDatabase: NSObject
             myArea.goalID = 0
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             //   println(error?.localizedDescription)
         }
@@ -1508,7 +1524,7 @@ class coreDatabase: NSObject
             myVision.status = inStatus
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             //   println(error?.localizedDescription)
         }
@@ -1568,7 +1584,7 @@ class coreDatabase: NSObject
             myGoal.visionID = inVisionID
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             //   println(error?.localizedDescription)
         }
@@ -1593,7 +1609,7 @@ class coreDatabase: NSObject
             myGoal.visionID = 0
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             //   println(error?.localizedDescription)
         }
@@ -1622,7 +1638,7 @@ class coreDatabase: NSObject
             myPurpose.status = inStatus
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             //   println(error?.localizedDescription)
         }
@@ -1664,7 +1680,7 @@ class coreDatabase: NSObject
             myVision.purposeID = inPurposeID
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             //   println(error?.localizedDescription)
         }
@@ -1689,7 +1705,7 @@ class coreDatabase: NSObject
             myVision.purposeID = 0
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             //   println(error?.localizedDescription)
         }
@@ -1708,7 +1724,7 @@ class coreDatabase: NSObject
             managedObjectContext!.deleteObject(myStage as NSManagedObject)
         }
     
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
@@ -1723,7 +1739,7 @@ class coreDatabase: NSObject
             managedObjectContext!.deleteObject(myStage as NSManagedObject)
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
@@ -1742,7 +1758,7 @@ class coreDatabase: NSObject
             managedObjectContext!.deleteObject(myPane as NSManagedObject)
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
@@ -1820,7 +1836,7 @@ class coreDatabase: NSObject
                 myPane.pane_visible = true
             }
 
-            if(managedObjectContext!.save(&error) )
+            if(!managedObjectContext!.save(&error) )
             {
                 println(error?.localizedDescription)
             }
@@ -1844,7 +1860,7 @@ class coreDatabase: NSObject
         {
             myPane.pane_order = paneOrder
             
-            if(managedObjectContext!.save(&error) )
+            if(!managedObjectContext!.save(&error) )
             {
                 println(error?.localizedDescription)
             }
@@ -1882,7 +1898,7 @@ class coreDatabase: NSObject
             managedObjectContext!.deleteObject(myMeeting as NSManagedObject)
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
@@ -1897,7 +1913,7 @@ class coreDatabase: NSObject
             managedObjectContext!.deleteObject(myMeeting2 as NSManagedObject)
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
@@ -1911,7 +1927,7 @@ class coreDatabase: NSObject
             managedObjectContext!.deleteObject(myMeeting3 as NSManagedObject)
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
@@ -1925,7 +1941,7 @@ class coreDatabase: NSObject
             managedObjectContext!.deleteObject(myMeeting4 as NSManagedObject)
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
@@ -1939,7 +1955,7 @@ class coreDatabase: NSObject
             managedObjectContext!.deleteObject(myMeeting5 as NSManagedObject)
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
@@ -1954,7 +1970,7 @@ class coreDatabase: NSObject
             managedObjectContext!.deleteObject(myMeeting6 as NSManagedObject)
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
@@ -1974,7 +1990,7 @@ class coreDatabase: NSObject
             managedObjectContext!.deleteObject(myMeeting as NSManagedObject)
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
@@ -1989,7 +2005,7 @@ class coreDatabase: NSObject
             managedObjectContext!.deleteObject(myMeeting2 as NSManagedObject)
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
@@ -2003,7 +2019,7 @@ class coreDatabase: NSObject
             managedObjectContext!.deleteObject(myMeeting3 as NSManagedObject)
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
@@ -2017,19 +2033,19 @@ class coreDatabase: NSObject
             managedObjectContext!.deleteObject(myMeeting4 as NSManagedObject)
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
     }
 
-    func getAgendaTasks(inMeetingID: String, inAgendaID: String)->[MeetingTasks]
+    func getAgendaTasks(inMeetingID: String, inAgendaID: Int)->[MeetingTasks]
     {
         let fetchRequest = NSFetchRequest(entityName: "MeetingTasks")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(agendaID == \"\(inAgendaID)\") AND (meetingID == \"\(inMeetingID)\")")
+        let predicate = NSPredicate(format: "(agendaID == \(inAgendaID)) AND (meetingID == \"\(inMeetingID)\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -2040,7 +2056,7 @@ class coreDatabase: NSObject
         return fetchResults!
     }
     
-    func saveAgendaTask(inAgendaID: String, inMeetingID: String, inTaskID: Int)
+    func saveAgendaTask(inAgendaID: Int, inMeetingID: String, inTaskID: Int)
     {
         var myTask: MeetingTasks
         var error : NSError?
@@ -2050,13 +2066,13 @@ class coreDatabase: NSObject
         myTask.meetingID = inMeetingID
         myTask.taskID = inTaskID
             
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
     }
 
-    func deleteAgendaTask(inAgendaID: String, inMeetingID: String, inTaskID: Int)
+    func deleteAgendaTask(inAgendaID: Int, inMeetingID: String, inTaskID: Int)
     {
         var error : NSError?
         
@@ -2064,7 +2080,7 @@ class coreDatabase: NSObject
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(agendaID == \"\(inAgendaID)\") AND (meetingID == \"\(inMeetingID)\") AND (taskID == \(inTaskID))")
+        let predicate = NSPredicate(format: "(agendaID == \(inAgendaID)) AND (meetingID == \"\(inMeetingID)\") AND (taskID == \(inTaskID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -2077,19 +2093,19 @@ class coreDatabase: NSObject
             managedObjectContext!.deleteObject(myItem as NSManagedObject)
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
     }
     
-    func getAgendaTask(inAgendaID: String, inMeetingID: String, inTaskID: Int)->[MeetingTasks]
+    func getAgendaTask(inAgendaID: Int, inMeetingID: String, inTaskID: Int)->[MeetingTasks]
     {
         let fetchRequest = NSFetchRequest(entityName: "MeetingTasks")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(agendaID == \"\(inAgendaID)\") AND (meetingID == \"\(inMeetingID)\") AND (taskID == \(inTaskID))")
+        let predicate = NSPredicate(format: "(agendaID == \(inAgendaID)) AND (meetingID == \"\(inMeetingID)\") AND (taskID == \(inTaskID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -2114,7 +2130,7 @@ class coreDatabase: NSObject
             managedObjectContext!.deleteObject(myItem as NSManagedObject)
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }
@@ -2128,7 +2144,7 @@ class coreDatabase: NSObject
             managedObjectContext!.deleteObject(myItem2 as NSManagedObject)
         }
         
-        if(managedObjectContext!.save(&error) )
+        if(!managedObjectContext!.save(&error) )
         {
             println(error?.localizedDescription)
         }

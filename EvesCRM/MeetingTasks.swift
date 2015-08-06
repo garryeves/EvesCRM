@@ -2,7 +2,7 @@
 //  MeetingTasks.swift
 //  
 //
-//  Created by Garry Eves on 28/07/2015.
+//  Created by Garry Eves on 6/08/2015.
 //
 //
 
@@ -11,7 +11,7 @@ import CoreData
 
 class MeetingTasks: NSManagedObject {
 
-    @NSManaged var agendaID: String
+    @NSManaged var agendaID: NSNumber
     @NSManaged var meetingID: String
     @NSManaged var taskID: NSNumber
 

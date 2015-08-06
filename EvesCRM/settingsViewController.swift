@@ -13,8 +13,8 @@ protocol MySettingsDelegate{
     func mySettingsDidFinish(controller:settingsViewController)
 }
 
-class settingsViewController: UIViewController, MyMaintainPanesDelegate {
-    
+class settingsViewController: UIViewController
+{
     @IBOutlet weak var calStepperPrevious: UIStepper!
     @IBOutlet weak var CalStepperAfter: UIStepper!
     @IBOutlet weak var calStepperRed: UIStepper!
@@ -34,7 +34,6 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate {
     @IBOutlet weak var deleteRole: UIButton!
     @IBOutlet weak var addStage: UIButton!
     @IBOutlet weak var deleteStage: UIButton!
-    @IBOutlet weak var buttonMaintainPanes: UIButton!
     @IBOutlet weak var buttonConnectEvernote: UIButton!
     @IBOutlet weak var ButtonConnectDropbox: UIButton!
     
@@ -365,6 +364,7 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate {
             myStageSelected = -1
         }
     }
+    
     @IBAction func ButtonConnectDropboxClick(sender: UIButton)
     {
         connectToDropbox()
@@ -374,22 +374,7 @@ class settingsViewController: UIViewController, MyMaintainPanesDelegate {
     {
         connectToEvernote()
     }
-    
-    @IBAction func buttonMaintainPanesClick(sender: UIButton)
-    {
-        let maintainPaneViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("MaintainPanes") as! MaintainPanesViewController
-        
-        maintainPaneViewControl.delegate = self
-        maintainPaneViewControl.myManagedContext = myManagedContext
-        
-        self.presentViewController(maintainPaneViewControl, animated: true, completion: nil)
-    }
-    
-    func MaintainPanesDidFinish(controller:MaintainPanesViewController)
-    {
-        controller.dismissViewControllerAnimated(true, completion: nil)
-    }
-    
+
     //Evernote
     
     func connectToEvernote()

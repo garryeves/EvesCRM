@@ -41,7 +41,6 @@ class meetingsViewController: UIViewController
     @IBOutlet weak var lblNextMeeting: UILabel!
     @IBOutlet weak var lnlNextMeetingDetails: UILabel!
     @IBOutlet weak var myPicker: UIPickerView!
-    @IBOutlet weak var btnSave: UIButton!
     
     private let reuseAttendeeIdentifier = "AttendeeCell"
     private let reuseAttendeeStatusIdentifier = "AttendeeStatusCell"
@@ -244,17 +243,10 @@ class meetingsViewController: UIViewController
         {
             passedMeeting.event.addAttendee(txtAttendeeName.text, inEmailAddress: txtAttendeeEmail.text, inType: "Participant" , inStatus: "Added")
             colAttendees.reloadData()
-            
-            passedMeeting.event.saveAgenda()
-            
+        
             txtAttendeeName.text = ""
             txtAttendeeEmail.text = ""
         }
-    }
-    
-    @IBAction func btnSaveClick(sender: UIButton)
-    {
-        passedMeeting.event.saveAgenda()
     }
     
     func hideFields()
@@ -280,7 +272,6 @@ class meetingsViewController: UIViewController
         lblPreviousMeeting.hidden = true
         lblNextMeeting.hidden = true
         lnlNextMeetingDetails.hidden = true
-        btnSave.hidden = true
     }
     
     func showFields()
@@ -306,7 +297,6 @@ class meetingsViewController: UIViewController
         lblPreviousMeeting.hidden = false
         lblNextMeeting.hidden = false
         lnlNextMeetingDetails.hidden = false
-        btnSave.hidden = false
     }
     
     func attendeeRemoved(notification: NSNotification)
@@ -314,7 +304,6 @@ class meetingsViewController: UIViewController
         let itemToRemove = notification.userInfo!["itemNo"] as! Int
         
         passedMeeting.event.removeAttendee(itemToRemove)
-        passedMeeting.event.saveAgenda()
         colAttendees.reloadData()
     }
 }

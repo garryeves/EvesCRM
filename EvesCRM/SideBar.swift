@@ -79,11 +79,11 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
         displayObject = createMenuItem("Contexts", inType: "Header", inObject: "Contexts")
         menuDetails.append(displayObject)
         
-        let myContexts = myDatabaseConnection.getContexts()
+        let myContextList = contexts()
         
-        for myContext in myContexts
+        for myContext in myContextList.contextsByHierarchy
         {
-            displayObject = createMenuItem(myContext.name, inType: "Context", inObject: myContext)
+            displayObject = createMenuItem(myContext.contextHierarchy, inType: "Context", inObject: myContext)
             menuDetails.append(displayObject)
         }
         
@@ -96,9 +96,12 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
         displayObject = createMenuItem("Maintain Projects", inType: "Action", inObject: "Maintain Projects")
         menuDetails.append(displayObject)
         
+        displayObject = createMenuItem("Maintain Display Panes", inType: "Action", inObject: "Maintain Display Panes")
+        menuDetails.append(displayObject)
+       
         displayObject = createMenuItem("Settings", inType: "Action", inObject: "Settings")
         menuDetails.append(displayObject)
-        
+
         sideBarTableViewController.tableData = menuDetails
         sideBarTableViewController.tableView.reloadData()
     }

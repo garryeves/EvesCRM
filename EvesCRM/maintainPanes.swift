@@ -34,7 +34,6 @@ class MaintainPanesViewController: UIViewController {
     private var myPicker2: [String]!
     private var myPicker3: [String]!
     private var myPicker4: [String]!
-    var myManagedContext: NSManagedObjectContext!
     
     let cellReuse = "tablePane"
 
@@ -338,6 +337,7 @@ class MaintainPanesViewController: UIViewController {
             Table4Picker.selectRow(myIndex4, inComponent: 0, animated: true)
         }
     }
+    
     @IBAction func btnResetPanes(sender: UIButton)
     {
         // this is to allow cleaning of panes if needed

@@ -540,6 +540,9 @@ class project: NSObject // 10k level
     private var myTeamMembers: [projectTeamMember] = Array()
     private var myTasks: [task] = Array()
     private var myAreaID: Int = 0
+    private var myRepeatInterval: Int = 0
+    private var myRepeatType: String = ""
+    private var myRepeatBase: String = ""
 
     var projectEndDate: NSDate
     {
@@ -701,6 +704,42 @@ class project: NSObject // 10k level
         }
     }
     
+    var repeatInterval: Int
+    {
+        get
+        {
+            return myRepeatInterval
+        }
+        set
+        {
+            myRepeatInterval = newValue
+        }
+    }
+    
+    var repeatType: String
+    {
+        get
+        {
+            return myRepeatType
+        }
+        set
+        {
+            myRepeatType = newValue
+        }
+    }
+    
+    var repeatBase: String
+    {
+        get
+        {
+            return myRepeatBase
+        }
+        set
+        {
+            myRepeatBase = newValue
+        }
+    }
+    
     override init()
     {
         super.init()
@@ -732,6 +771,9 @@ class project: NSObject // 10k level
             myReviewFrequency = myProject.reviewFrequency as Int
             myLastReviewDate = myProject.lastReviewDate
             myAreaID = myProject.areaID as Int
+            myRepeatInterval = myProject.repeatInterval as Int
+            myRepeatType = myProject.repeatType
+            myRepeatBase = myProject.repeatBase
                 
             // load team members
         
@@ -820,7 +862,7 @@ class project: NSObject // 10k level
     {
         // Save Project
         
-        myDatabaseConnection.saveProject(myProjectID, inProjectEndDate: myProjectEndDate, inProjectName: myProjectName, inProjectStartDate: myProjectStartDate, inProjectStatus: myProjectStatus, inReviewFrequency: myReviewFrequency, inLastReviewDate: myLastReviewDate, inAreaID: myAreaID)
+        myDatabaseConnection.saveProject(myProjectID, inProjectEndDate: myProjectEndDate, inProjectName: myProjectName, inProjectStartDate: myProjectStartDate, inProjectStatus: myProjectStatus, inReviewFrequency: myReviewFrequency, inLastReviewDate: myLastReviewDate, inAreaID: myAreaID, inRepeatInterval: myRepeatInterval, inRepeatType: myRepeatType, inRepeatBase: myRepeatBase)
         
         // Save Team Members
         
@@ -866,6 +908,10 @@ class task: NSObject
     private var myEstimatedTimeType: String = ""
     private var myProjectID: Int = 0
     private var myCompletionDate: NSDate!
+    private var myRepeatInterval: Int = 0
+    private var myRepeatType: String = ""
+    private var myRepeatBase: String = ""
+    private var myFlagged: Bool = false
 
     var taskID: Int
     {
@@ -884,6 +930,7 @@ class task: NSObject
         set
         {
             myTitle = newValue
+            save()
         }
     }
     
@@ -896,6 +943,7 @@ class task: NSObject
         set
         {
             myDetails = newValue
+            save()
         }
     }
     
@@ -908,6 +956,7 @@ class task: NSObject
         set
         {
             myDueDate = newValue
+            save()
         }
     }
     
@@ -937,6 +986,7 @@ class task: NSObject
         set
         {
             myStartDate = newValue
+            save()
         }
     }
  
@@ -970,11 +1020,12 @@ class task: NSObject
             {
                 myCompletionDate = NSDate()
             }
+            save()
         }
     }
     
     var contexts: [context]
-        {
+    {
         get
         {
             return myContexts
@@ -982,6 +1033,7 @@ class task: NSObject
         set
         {
             myContexts = newValue
+            save()
         }
     }
     
@@ -1002,6 +1054,7 @@ class task: NSObject
         set
         {
             myTaskID = newValue
+            save()
         }
     }
 
@@ -1014,6 +1067,7 @@ class task: NSObject
         set
         {
             myParentType = newValue
+            save()
         }
     }
     
@@ -1026,6 +1080,7 @@ class task: NSObject
         set
         {
             myTaskMode = newValue
+            save()
         }
     }
     
@@ -1038,6 +1093,7 @@ class task: NSObject
         set
         {
             myPriority = newValue
+            save()
         }
     }
     
@@ -1050,6 +1106,7 @@ class task: NSObject
         set
         {
             myEnergyLevel = newValue
+            save()
         }
     }
     
@@ -1062,6 +1119,7 @@ class task: NSObject
         set
         {
             myEstimatedTime = newValue
+            save()
         }
     }
     
@@ -1074,6 +1132,7 @@ class task: NSObject
         set
         {
             myEstimatedTimeType = newValue
+            save()
         }
     }
     
@@ -1086,6 +1145,7 @@ class task: NSObject
         set
         {
             myProjectID = newValue
+            save()
         }
     }
     
@@ -1113,7 +1173,7 @@ class task: NSObject
     }
 
     var displayCompletionDate: String
-        {
+    {
         get
         {
             if myCompletionDate == getDefaultDate()
@@ -1129,6 +1189,58 @@ class task: NSObject
         }
     }
 
+    var repeatInterval: Int
+    {
+        get
+        {
+            return myRepeatInterval
+        }
+        set
+        {
+            myRepeatInterval = newValue
+            save()
+        }
+    }
+    
+    var repeatType: String
+    {
+        get
+        {
+            return myRepeatType
+        }
+        set
+        {
+            myRepeatType = newValue
+            save()
+        }
+    }
+    
+    var repeatBase: String
+    {
+        get
+        {
+            return myRepeatBase
+        }
+        set
+        {
+            myRepeatBase = newValue
+            save()
+        }
+    }
+
+    var flagged: Bool
+    {
+        get
+        {
+            return myFlagged
+        }
+        set
+        {
+            myFlagged = newValue
+            save()
+        }
+    }
+    
     override init()
     {
         super.init()
@@ -1140,6 +1252,8 @@ class task: NSObject
         myDueDate = getDefaultDate()
         myStartDate = getDefaultDate()
         myCompletionDate = getDefaultDate()
+        
+        myTitle = "New Task"
     
         save()
     }
@@ -1166,6 +1280,10 @@ class task: NSObject
             myTaskOrder = myTask.taskOrder as Int
             myProjectID = myTask.projectID as Int
             myCompletionDate = myTask.completionDate
+            myRepeatInterval = myTask.repeatInterval as Int
+            myRepeatType = myTask.repeatType
+            myRepeatBase = myTask.repeatBase
+            myFlagged = myTask.flagged as Bool
             
             // get contexts
             
@@ -1182,7 +1300,7 @@ class task: NSObject
     
     func save()
     {
-        myDatabaseConnection.saveTask(myTaskID, inTitle: myTitle, inDetails: myDetails, inDueDate: myDueDate, inStartDate: myStartDate, inStatus: myStatus, inParentID: myParentID, inParentType: myParentType, inTaskMode: myTaskMode, inTaskOrder: myTaskOrder, inPriority: myPriority, inEnergyLevel: myEnergyLevel, inEstimatedTime: myEstimatedTime, inEstimatedTimeType: myEstimatedTimeType, inProjectID: myProjectID, inCompletionDate: myCompletionDate!)
+        myDatabaseConnection.saveTask(myTaskID, inTitle: myTitle, inDetails: myDetails, inDueDate: myDueDate, inStartDate: myStartDate, inStatus: myStatus, inParentID: myParentID, inParentType: myParentType, inTaskMode: myTaskMode, inTaskOrder: myTaskOrder, inPriority: myPriority, inEnergyLevel: myEnergyLevel, inEstimatedTime: myEstimatedTime, inEstimatedTimeType: myEstimatedTimeType, inProjectID: myProjectID, inCompletionDate: myCompletionDate!, inRepeatInterval: myRepeatInterval, inRepeatType: myRepeatType, inRepeatBase: myRepeatBase, inFlagged: myFlagged)
         
         // Save context link
         
@@ -1285,11 +1403,13 @@ class task: NSObject
         }
                 
         myTaskOrder = inNewOrderValue
+        save()
     }
 
     func storeTaskOrder(inNewOrderValue: Int)
     {  // This is used by the "setTaskOrder in order to not trigger a cascade update of taskOrder
         myTaskOrder = inNewOrderValue
+        save()
     }
     
     func getDefaultDate() -> NSDate
@@ -1361,6 +1481,7 @@ class context: NSObject
     private var myAutoEmail: String = ""
     private var myParentContext: Int = 0
     private var myStatus: String = ""
+    private var myPersonID: Int32 = 0
     
     var contextID: Int
     {
@@ -1458,6 +1579,18 @@ class context: NSObject
         }
     }
     
+    var personID: Int32
+    {
+        get
+        {
+            return myPersonID
+        }
+        set
+        {
+            myPersonID = newValue
+        }
+    }
+    
     override init()
     {
         super.init()
@@ -1479,6 +1612,7 @@ class context: NSObject
             myAutoEmail = myContext.autoEmail
             myParentContext = myContext.parentContext as Int
             myStatus = myContext.status
+            myPersonID = myContext.personID.intValue
         }
     }
     
@@ -1490,11 +1624,12 @@ class context: NSObject
         myAutoEmail = inContext.autoEmail
         myParentContext = inContext.parentContext as Int
         myStatus = inContext.status
+        myPersonID = inContext.personID.intValue
     }
     
     func save()
     {
-        myDatabaseConnection.saveContext(myContextID, inName: myName, inEmail: myEmail, inAutoEmail: myAutoEmail, inParentContext: myParentContext, inStatus: myStatus)
+        myDatabaseConnection.saveContext(myContextID, inName: myName, inEmail: myEmail, inAutoEmail: myAutoEmail, inParentContext: myParentContext, inStatus: myStatus, inPersonID: myPersonID)
     }
 }
 

@@ -2,7 +2,7 @@
 //  MeetingSupportingDocs.swift
 //  
 //
-//  Created by Garry Eves on 7/07/2015.
+//  Created by Garry Eves on 6/08/2015.
 //
 //
 
@@ -11,9 +11,9 @@ import CoreData
 
 class MeetingSupportingDocs: NSManagedObject {
 
+    @NSManaged var agendaID: NSNumber
     @NSManaged var attachmentPath: String
-    @NSManaged var title: String
-    @NSManaged var agendaID: String
     @NSManaged var meetingID: String
+    @NSManaged var title: String
 
 }

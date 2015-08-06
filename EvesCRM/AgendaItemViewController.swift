@@ -13,11 +13,10 @@ protocol MyAgendaItemDelegate
     func myAgendaItemDidFinish(controller:agendaItemViewController, actionType: String)
 }
 
-class agendaItemViewController: UIViewController, MyTaskDelegate
+class agendaItemViewController: UIViewController, MyTaskDelegate, UITextViewDelegate
 {
     var delegate: MyAgendaItemDelegate?
 
-    @IBOutlet weak var btnSave: UIButton!
     @IBOutlet weak var lblDescription: UILabel!
     @IBOutlet weak var txtTitle: UITextField!
     @IBOutlet weak var lblOwner: UILabel!
@@ -55,14 +54,8 @@ class agendaItemViewController: UIViewController, MyTaskDelegate
             btnAddAction.enabled = false
         }
         
-        if agendaItem.agendaID == ""
+        if agendaItem.agendaID != 0
         {
-            btnSave.setTitle("Save", forState: .Normal)
-        }
-        else
-        {
-            btnSave.setTitle("Update", forState: .Normal)
-            
             btnStatus.setTitle(agendaItem.status, forState: .Normal)
             txtDecisionMade.text = agendaItem.decisionMade
             txtDiscussionNotes.text = agendaItem.discussionNotes
@@ -82,6 +75,18 @@ class agendaItemViewController: UIViewController, MyTaskDelegate
         self.view.addGestureRecognizer(hideGestureRecognizer)
 
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateTask:", name:"NotificationUpdateAgendaTask", object: nil)
+        
+        txtDiscussionNotes.layer.borderColor = UIColor.lightGrayColor().CGColor
+        txtDiscussionNotes.layer.borderWidth = 0.5
+        txtDiscussionNotes.layer.cornerRadius = 5.0
+        txtDiscussionNotes.layer.masksToBounds = true
+        txtDiscussionNotes.delegate = self
+        
+        txtDecisionMade.layer.borderColor = UIColor.lightGrayColor().CGColor
+        txtDecisionMade.layer.borderWidth = 0.5
+        txtDecisionMade.layer.cornerRadius = 5.0
+        txtDecisionMade.layer.masksToBounds = true
+        txtDecisionMade.delegate = self
     }
     
     override func didReceiveMemoryWarning()
@@ -219,47 +224,17 @@ class agendaItemViewController: UIViewController, MyTaskDelegate
         if pickerTarget == "Owner"
         {
             btnOwner.setTitle(pickerOptions[row], forState: .Normal)
+            agendaItem.owner = btnOwner.currentTitle!
         }
         
         if pickerTarget == "Status"
         {
             btnStatus.setTitle(pickerOptions[row], forState: .Normal)
+            agendaItem.status = btnStatus.currentTitle!
         }
         
         myPicker.hidden = true
         showFields()
-    }
-    
-    @IBAction func btnSave(sender: UIButton)
-    {
-        if txtTitle.text == ""
-        {
-            var alert = UIAlertController(title: "Add Agenda Item", message:
-                "You must provide a description for the Agenda Item before you can Add it", preferredStyle: UIAlertControllerStyle.Alert)
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
-            
-            self.presentViewController(alert, animated: false, completion: nil)
-        }
-        else
-        {
-            agendaItem.status = btnStatus.currentTitle!
-            agendaItem.decisionMade = txtDecisionMade.text
-            agendaItem.discussionNotes = txtDiscussionNotes.text
-            if txtTimeAllocation.text == ""
-            {
-                agendaItem.timeAllocation = 10
-            }
-            else
-            {
-                agendaItem.timeAllocation = txtTimeAllocation.text.toInt()!
-            }
-            agendaItem.owner = btnOwner.currentTitle!
-            agendaItem.title = txtTitle.text
-
-            agendaItem.save()
-        
-            delegate?.myAgendaItemDidFinish(self, actionType: "Changed")
-        }
     }
     
     @IBAction func btnAddAction(sender: UIButton)
@@ -320,9 +295,34 @@ class agendaItemViewController: UIViewController, MyTaskDelegate
         pickerTarget = "Status"
     }
     
+    @IBAction func txtTitle(sender: UITextField)
+    {
+        if txtTitle.text != ""
+        {
+            agendaItem.title = txtTitle.text
+        }
+    }
+    
+    @IBAction func txtTimeAllocation(sender: UITextField)
+    {
+        agendaItem.timeAllocation = txtTimeAllocation.text.toInt()!
+    }
+    
+    func textViewDidEndEditing(textView: UITextView)
+    { //Handle the text changes here
+        if textView == txtDiscussionNotes
+        {
+            agendaItem.discussionNotes = txtDiscussionNotes.text
+        }
+        if textView == txtDecisionMade
+        {
+            agendaItem.decisionMade = txtDecisionMade.text
+        }
+
+    }
+    
     func hideFields()
     {
-        btnSave.hidden = true
         lblDescription.hidden = true
         txtTitle.hidden = true
         lblOwner.hidden = true
@@ -342,7 +342,6 @@ class agendaItemViewController: UIViewController, MyTaskDelegate
     
     func showFields()
     {
-        btnSave.hidden = false
         lblDescription.hidden = false
         txtTitle.hidden = false
         lblOwner.hidden = false
@@ -362,20 +361,12 @@ class agendaItemViewController: UIViewController, MyTaskDelegate
 
     func myTaskDidFinish(controller:taskViewController, actionType: String, currentTask: task)
     {
-        if actionType == "Cancel"
-        {
-            // Do nothing.  Including for calrity
-        }
-        else
-        {
-            // reload the task Items collection view
+        // reload the task Items collection view
             
-            // Associate the task with the meeting
+        // Associate the task with the meeting
             
-            agendaItem.addTask(currentTask)
-            colActions.reloadData()
-        }
-        
+        agendaItem.addTask(currentTask)
+        colActions.reloadData()
         controller.dismissViewControllerAnimated(true, completion: nil)
     }
     

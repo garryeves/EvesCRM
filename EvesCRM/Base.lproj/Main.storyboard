@@ -40,9 +40,6 @@
                                 <state key="normal" title="Update">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <connections>
-                                    <action selector="btnSave:" destination="nZI-ez-gZX" eventType="touchUpInside" id="XBc-F7-Qu6"/>
-                                </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Description" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hND-ys-G8q" userLabel="lblDescription">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
@@ -54,6 +51,9 @@
                                 <rect key="frame" x="0.0" y="-30" width="97" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                <connections>
+                                    <action selector="txtTitle:" destination="nZI-ez-gZX" eventType="editingDidEnd" id="Ids-wR-jO6"/>
+                                </connections>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Owner" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cVV-NQ-Bx9" userLabel="lblOwner">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
@@ -93,6 +93,9 @@
                                         <include reference="PcG-bU-xKP"/>
                                     </mask>
                                 </variation>
+                                <connections>
+                                    <action selector="txtTimeAllocation:" destination="nZI-ez-gZX" eventType="editingDidEnd" id="rEZ-i6-0Eg"/>
+                                </connections>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Status" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0dl-4h-Ubp" userLabel="lblStatus">
                                 <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
@@ -848,7 +851,6 @@
                     <connections>
                         <outlet property="btnAddAction" destination="HqB-nV-TlY" id="gI4-Ud-tWo"/>
                         <outlet property="btnOwner" destination="3vs-Sp-Iyh" id="08e-Om-FHt"/>
-                        <outlet property="btnSave" destination="XM3-fu-aXa" id="jsd-3c-FHW"/>
                         <outlet property="btnStatus" destination="1ED-AS-I5j" id="a8a-hI-ng4"/>
                         <outlet property="colActions" destination="hDM-El-wHg" id="SkW-yO-SCx"/>
                         <outlet property="lblActions" destination="s0g-YQ-XeO" id="hX8-Su-fn9"/>
@@ -967,6 +969,9 @@
                                 <rect key="frame" x="0.0" y="-30" width="97" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                <connections>
+                                    <action selector="txtTaskDetail:" destination="Er5-bg-pW1" eventType="editingDidEnd" id="i2I-wY-pzu"/>
+                                </connections>
                             </textField>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" keyboardDismissMode="interactive" translatesAutoresizingMaskIntoConstraints="NO" id="mtU-vu-bZ4" userLabel="txtTaskDescription">
                                 <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
@@ -1115,6 +1120,9 @@
                                         <include reference="RAB-Mo-gUQ"/>
                                     </mask>
                                 </variation>
+                                <connections>
+                                    <action selector="txtEstTime:" destination="Er5-bg-pW1" eventType="editingDidEnd" id="6Fb-HJ-WjI"/>
+                                </connections>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KU9-Dy-ZBi" userLabel="btnEstTimeInterval">
                                 <rect key="frame" x="-23" y="-15" width="46" height="30"/>
@@ -1383,9 +1391,6 @@
                                 <state key="normal" title="Save">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <connections>
-                                    <action selector="btnSave:" destination="Er5-bg-pW1" eventType="touchUpInside" id="jSc-pe-iwa"/>
-                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -1779,7 +1784,6 @@
                         <outlet property="btnOwner" destination="440-lX-cAE" id="H7g-XD-71C"/>
                         <outlet property="btnPriority" destination="X41-ms-r1v" id="cNz-mv-K6B"/>
                         <outlet property="btnProject" destination="fl1-VX-LXV" id="Mhu-yO-hpw"/>
-                        <outlet property="btnSave" destination="ZWb-Le-K1b" id="DCs-B4-3ud"/>
                         <outlet property="btnSetTargetDate" destination="GRZ-7P-fgh" id="v7n-wa-Clg"/>
                         <outlet property="btnStart" destination="vQz-XL-Pim" id="aaw-nQ-WrJ"/>
                         <outlet property="btnStatus" destination="s76-qw-Nkq" id="eXD-eJ-okh"/>
@@ -2591,15 +2595,6 @@
                                     <action selector="buttonConnectEvernoteClick:" destination="IrM-yb-4SV" eventType="touchUpInside" id="LJa-hv-Kn1"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5o7-4R-w5f">
-                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
-                                <state key="normal" title="Maintain Panes">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="buttonMaintainPanesClick:" destination="IrM-yb-4SV" eventType="touchUpInside" id="TS3-Rb-jTw"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JOk-o3-lDw">
                                 <rect key="frame" x="-23" y="-15" width="46" height="30"/>
                                 <state key="normal" title="Reset Roles">
@@ -2737,9 +2732,6 @@
                             </constraint>
                             <constraint firstItem="WRe-7w-Nxw" firstAttribute="leading" secondItem="VDv-7e-f69" secondAttribute="leadingMargin" id="TMf-9n-DY1"/>
                             <constraint firstItem="cTl-LG-Z9u" firstAttribute="top" secondItem="mbn-fd-vJS" secondAttribute="bottom" constant="8" id="TcW-eD-cEd"/>
-                            <constraint firstItem="5o7-4R-w5f" firstAttribute="top" secondItem="gNB-gj-3RS" secondAttribute="bottom" constant="38" id="UDI-io-Mhr">
-                                <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
-                            </constraint>
                             <constraint firstItem="aZK-3L-V1Z" firstAttribute="top" secondItem="6gL-yw-eIR" secondAttribute="bottom" constant="25" id="Ubv-j5-U4p">
                                 <variation key="heightClass=regular-widthClass=regular" constant="15"/>
                             </constraint>
@@ -2798,7 +2790,6 @@
                             </constraint>
                             <constraint firstItem="8ND-1z-nyi" firstAttribute="centerX" secondItem="cTl-LG-Z9u" secondAttribute="centerX" constant="122.5" id="dgu-pE-Akm"/>
                             <constraint firstItem="BKO-nA-hWf" firstAttribute="leading" secondItem="VDv-7e-f69" secondAttribute="leadingMargin" id="dkU-jj-CVn"/>
-                            <constraint firstItem="So5-j5-NMK" firstAttribute="top" secondItem="5o7-4R-w5f" secondAttribute="bottom" constant="8" id="eHk-xw-3PK"/>
                             <constraint firstItem="DEc-Zh-6h3" firstAttribute="width" secondItem="aZK-3L-V1Z" secondAttribute="width" id="fAc-g0-OAH"/>
                             <constraint firstItem="JOk-o3-lDw" firstAttribute="top" secondItem="wlq-c0-YX0" secondAttribute="bottom" constant="15" id="fKZ-qq-Ae1"/>
                             <constraint firstItem="f1V-yN-XQO" firstAttribute="top" secondItem="aZK-3L-V1Z" secondAttribute="bottom" constant="23" id="fPs-Sw-Pt1"/>
@@ -2856,9 +2847,6 @@
                             <constraint firstItem="Hpr-Az-FRs" firstAttribute="leading" secondItem="Hzi-3B-aVi" secondAttribute="trailing" constant="40" id="skt-we-Yut">
                                 <variation key="heightClass=regular-widthClass=regular" constant="15"/>
                             </constraint>
-                            <constraint firstAttribute="trailingMargin" secondItem="5o7-4R-w5f" secondAttribute="trailing" constant="157" id="t6C-eK-sVP">
-                                <variation key="heightClass=regular-widthClass=regular" constant="15"/>
-                            </constraint>
                             <constraint firstItem="aZK-3L-V1Z" firstAttribute="width" secondItem="jBh-Sw-jMW" secondAttribute="width" id="tbb-4h-jrI"/>
                             <constraint firstItem="6za-lw-ZpA" firstAttribute="leading" secondItem="6gL-yw-eIR" secondAttribute="trailing" constant="8" id="uKK-Ed-xBZ">
                                 <variation key="heightClass=regular-widthClass=regular" constant="32"/>
@@ -2887,7 +2875,6 @@
                             </constraint>
                             <constraint firstItem="Hpr-Az-FRs" firstAttribute="top" secondItem="5YL-GI-4nm" secondAttribute="bottom" constant="15" id="zRm-Dm-Cd3"/>
                             <constraint firstItem="f1V-yN-XQO" firstAttribute="top" secondItem="duL-cm-xLn" secondAttribute="bottom" constant="31" id="zUB-F6-5CE"/>
-                            <constraint firstItem="cTl-LG-Z9u" firstAttribute="top" secondItem="5o7-4R-w5f" secondAttribute="bottom" constant="8" id="zzr-XI-qSa"/>
                         </constraints>
                         <variation key="default">
                             <mask key="subviews">
@@ -2922,7 +2909,6 @@
                                 <exclude reference="cTl-LG-Z9u"/>
                                 <exclude reference="mnK-Hk-GdZ"/>
                                 <exclude reference="mbn-fd-vJS"/>
-                                <exclude reference="5o7-4R-w5f"/>
                                 <exclude reference="JOk-o3-lDw"/>
                                 <exclude reference="Hpr-Az-FRs"/>
                             </mask>
@@ -2953,7 +2939,6 @@
                                 <exclude reference="GAr-dt-ohW"/>
                                 <exclude reference="QUm-sh-VXi"/>
                                 <exclude reference="VO4-aM-rZz"/>
-                                <exclude reference="eHk-xw-3PK"/>
                                 <exclude reference="rPg-Jz-WFs"/>
                                 <exclude reference="TMf-9n-DY1"/>
                                 <exclude reference="ada-hA-VkO"/>
@@ -2972,7 +2957,6 @@
                                 <exclude reference="z8r-L5-JRD"/>
                                 <exclude reference="TcW-eD-cEd"/>
                                 <exclude reference="rcJ-8J-L00"/>
-                                <exclude reference="zzr-XI-qSa"/>
                                 <exclude reference="Ygu-E3-OHk"/>
                                 <exclude reference="z6e-Iu-GJU"/>
                                 <exclude reference="Cni-uw-aAB"/>
@@ -2996,8 +2980,6 @@
                                 <exclude reference="iEn-WA-Azw"/>
                                 <exclude reference="m9M-Pu-hy0"/>
                                 <exclude reference="qie-4K-5t1"/>
-                                <exclude reference="UDI-io-Mhr"/>
-                                <exclude reference="t6C-eK-sVP"/>
                                 <exclude reference="2Ed-eM-qXY"/>
                                 <exclude reference="RXQ-Lj-20B"/>
                                 <exclude reference="lV4-th-zcx"/>
@@ -3089,7 +3071,6 @@
                                 <include reference="cTl-LG-Z9u"/>
                                 <include reference="mnK-Hk-GdZ"/>
                                 <include reference="mbn-fd-vJS"/>
-                                <include reference="5o7-4R-w5f"/>
                                 <include reference="JOk-o3-lDw"/>
                                 <include reference="Hpr-Az-FRs"/>
                             </mask>
@@ -3120,7 +3101,6 @@
                                 <exclude reference="GAr-dt-ohW"/>
                                 <exclude reference="QUm-sh-VXi"/>
                                 <include reference="VO4-aM-rZz"/>
-                                <include reference="eHk-xw-3PK"/>
                                 <include reference="rPg-Jz-WFs"/>
                                 <include reference="TMf-9n-DY1"/>
                                 <include reference="ada-hA-VkO"/>
@@ -3139,7 +3119,6 @@
                                 <exclude reference="z8r-L5-JRD"/>
                                 <include reference="TcW-eD-cEd"/>
                                 <include reference="rcJ-8J-L00"/>
-                                <include reference="zzr-XI-qSa"/>
                                 <include reference="Ygu-E3-OHk"/>
                                 <exclude reference="z6e-Iu-GJU"/>
                                 <include reference="Cni-uw-aAB"/>
@@ -3163,8 +3142,6 @@
                                 <include reference="iEn-WA-Azw"/>
                                 <exclude reference="m9M-Pu-hy0"/>
                                 <include reference="qie-4K-5t1"/>
-                                <include reference="UDI-io-Mhr"/>
-                                <include reference="t6C-eK-sVP"/>
                                 <include reference="2Ed-eM-qXY"/>
                                 <exclude reference="RXQ-Lj-20B"/>
                                 <include reference="lV4-th-zcx"/>
@@ -3232,7 +3209,6 @@
                         <outlet property="addRole" destination="4ML-Au-ZWM" id="Wia-wa-4bn"/>
                         <outlet property="addStage" destination="5sQ-35-e8d" id="0qY-O7-u1v"/>
                         <outlet property="buttonConnectEvernote" destination="mbn-fd-vJS" id="YIW-Ms-VHY"/>
-                        <outlet property="buttonMaintainPanes" destination="5o7-4R-w5f" id="zHa-F6-9Dq"/>
                         <outlet property="buttonResetRoles" destination="JOk-o3-lDw" id="INX-Df-8zN"/>
                         <outlet property="buttonResetStages" destination="Hpr-Az-FRs" id="3I0-T1-Brd"/>
                         <outlet property="calStepperPrevious" destination="aZK-3L-V1Z" id="bwS-r0-bFP"/>
@@ -3774,9 +3750,6 @@
                                 <state key="normal" title="Update">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <connections>
-                                    <action selector="btnSaveClick:" destination="arh-xo-0lx" eventType="touchUpInside" id="qtN-39-Kav"/>
-                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nD4-qY-yov" userLabel="btnAddAttendee">
                                 <rect key="frame" x="-23" y="-15" width="46" height="30"/>
@@ -4449,7 +4422,6 @@
                         <outlet property="btnChair" destination="lQT-KX-cdV" id="FG6-RD-smM"/>
                         <outlet property="btnMinutes" destination="tmK-Ra-TxE" id="g6o-mp-ypv"/>
                         <outlet property="btnPreviousMinutes" destination="3Vo-6X-YVZ" id="5mB-lX-0Ls"/>
-                        <outlet property="btnSave" destination="TFX-EV-80g" id="LPA-ol-bn5"/>
                         <outlet property="colAttendees" destination="pSN-DU-Pw8" id="5X9-J2-S85"/>
                         <outlet property="lblAT" destination="i5X-a9-xyb" id="tKe-Ku-7VE"/>
                         <outlet property="lblAttendeesHead" destination="u0Q-P3-DVb" id="Ve2-3w-t0Y"/>

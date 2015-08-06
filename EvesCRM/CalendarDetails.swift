@@ -20,7 +20,7 @@ class meetingAgendaItem
     private var myTimeAllocation: Int = 0
     private var myOwner: String = ""
     private var myTitle: String = ""
-    private var myAgendaID: String = ""
+    private var myAgendaID: Int = 0
     private var myTasks: [task] = Array()
     private var myMeetingID: String = ""
 
@@ -33,6 +33,7 @@ class meetingAgendaItem
         set
         {
             myActualEndTime = newValue
+            save()
         }
     }
     
@@ -45,6 +46,7 @@ class meetingAgendaItem
         set
         {
             myActualStartTime = newValue
+            save()
         }
     }
     
@@ -57,6 +59,7 @@ class meetingAgendaItem
         set
         {
             myStatus = newValue
+            save()
         }
     }
     
@@ -69,6 +72,7 @@ class meetingAgendaItem
         set
         {
             myDecisionMade = newValue
+            save()
         }
     }
     
@@ -81,6 +85,7 @@ class meetingAgendaItem
         set
         {
             myDiscussionNotes = newValue
+            save()
         }
     }
     
@@ -93,6 +98,7 @@ class meetingAgendaItem
         set
         {
             myTimeAllocation = newValue
+            save()
         }
     }
     
@@ -105,6 +111,7 @@ class meetingAgendaItem
         set
         {
             myOwner = newValue
+            save()
         }
     }
     
@@ -117,10 +124,11 @@ class meetingAgendaItem
         set
         {
             myTitle = newValue
+            save()
         }
     }
     
-    var agendaID: String
+    var agendaID: Int
     {
         get
         {
@@ -129,6 +137,7 @@ class meetingAgendaItem
         set
         {
             myAgendaID = newValue
+            save()
         }
     }
     
@@ -143,27 +152,43 @@ class meetingAgendaItem
     init(inMeetingID: String)
     {
         myMeetingID = inMeetingID
+        myTitle = "New Item"
+        myTimeAllocation = 10
+        
+        let tempAgendaItems = myDatabaseConnection.loadAgendaItem(myMeetingID)
+        
+        myAgendaID = tempAgendaItems.count + 1
+        
+        myDatabaseConnection.saveAgendaItem(myMeetingID, inItem: self)
     }
     
-    func save()
+    init(inMeetingID: String, inAgendaID: Int)
     {
-        // call code to perform the save
+        myMeetingID = inMeetingID
         
-        // Before we can save this we need to get the Agenda ID.
-        // To allow for previous meeting actions this will mean that the first AgendaID will alway be 2
-
-        if myAgendaID == ""
+        let tempAgendaItems = myDatabaseConnection.loadSpecificAgendaItem(myMeetingID, inAgendaID: inAgendaID)
+     
+        if tempAgendaItems.count > 0
         {
-            let tempAgendaItems = myDatabaseConnection.loadAgendaItem(myMeetingID)
-        
-            myAgendaID = "\(tempAgendaItems.count + 2)"
-        
-            myDatabaseConnection.saveAgendaItem(myMeetingID, inItem: self)
+            myAgendaID = tempAgendaItems[0].agendaID as Int
+            myTitle = tempAgendaItems[0].title
+            myOwner = tempAgendaItems[0].owner
+            myTimeAllocation = tempAgendaItems[0].timeAllocation as Int
+            myDiscussionNotes = tempAgendaItems[0].discussionNotes
+            myDecisionMade = tempAgendaItems[0].decisionMade
+            myStatus = tempAgendaItems[0].status
+            myActualStartTime = tempAgendaItems[0].actualStartTime
+            myActualEndTime = tempAgendaItems[0].actualEndTime
         }
         else
         {
-            myDatabaseConnection.updateAgendaItem(myMeetingID, inItem: self)
+            myAgendaID = 0
         }
+    }
+    
+    func save()
+    {        
+        myDatabaseConnection.updateAgendaItem(myMeetingID, inItem: self)
     }
     
     func delete()
@@ -302,12 +327,37 @@ class myCalendarItem
     
     private var mySavedData: Bool = false
 
-    init(inEventStore: EKEventStore)
+    init(inEventStore: EKEventStore, inEvent: EKEvent, inAttendee: EKParticipant?)
     {
         startDateFormatter.dateStyle = dateFormat
         startDateFormatter.timeStyle = timeFormat
         endDateFormatter.timeStyle = timeFormat
         eventStore = inEventStore
+        
+        myEvent = inEvent
+        myTitle = inEvent.title
+        myStartDate = inEvent.startDate
+        myEndDate = inEvent.endDate
+        myLocation = inEvent.location
+        
+        if inEvent.recurrenceRules != nil
+        {
+            // This is a recurring event
+            var myWorkingRecur: NSArray = inEvent.recurrenceRules
+            
+            for myItem in myWorkingRecur
+            {
+                myRecurrenceFrequency = myItem.interval
+                var testFrequency: EKRecurrenceFrequency = myItem.frequency
+                myRecurrence = Int(testFrequency.value)
+            }
+        }
+        // Need to validate this works when displaying by person and also by project
+        if inAttendee != nil
+        {
+            myStatus = Int(inAttendee!.participantStatus.value)
+            myType = Int(inAttendee!.participantType.value)
+        }
     }
     
     var event: EKEvent
@@ -320,6 +370,7 @@ class myCalendarItem
         {
             myEvent = newValue
             myEventID = myEvent.eventIdentifier
+            save()
         }
     }
     
@@ -332,6 +383,7 @@ class myCalendarItem
         set
         {
             myTitle = newValue
+            save()
         }
     }
     
@@ -344,6 +396,7 @@ class myCalendarItem
         set
         {
             myStartDate = newValue
+            save()
         }
     }
     
@@ -357,7 +410,7 @@ class myCalendarItem
     }
     
     var displayScheduledDate: String
-        {
+    {
         get
         {
             var myString : String = ""
@@ -380,6 +433,7 @@ class myCalendarItem
         set
         {
             myEndDate = newValue
+            save()
         }
     }
     
@@ -400,6 +454,7 @@ class myCalendarItem
         set
         {
             myRecurrence = newValue
+            save()
         }
     }
     
@@ -428,6 +483,7 @@ class myCalendarItem
         set
         {
             myRecurrenceFrequency = newValue
+            save()
         }
     }
 
@@ -440,6 +496,7 @@ class myCalendarItem
         set
         {
             myLocation = newValue
+            save()
         }
     }
 
@@ -452,6 +509,7 @@ class myCalendarItem
         set
         {
             myStatus = newValue
+            save()
         }
     }
     
@@ -482,6 +540,7 @@ class myCalendarItem
         set
         {
             myType = newValue
+            save()
         }
     }
     
@@ -517,6 +576,7 @@ class myCalendarItem
         set
         {
             myChair = newValue
+            save()
         }
     }
 
@@ -529,6 +589,7 @@ class myCalendarItem
         set
         {
             myMinutes = newValue
+            save()
         }
     }
     
@@ -541,6 +602,7 @@ class myCalendarItem
         set
         {
             myPreviousMinutes = newValue
+            save()
         }
     }
     
@@ -553,6 +615,7 @@ class myCalendarItem
         set
         {
             myNextMeeting = newValue
+            save()
         }
     }
     
@@ -609,6 +672,7 @@ class myCalendarItem
         set
         {
             myMinutesType = newValue
+            save()
         }
     }
     
@@ -629,12 +693,20 @@ class myCalendarItem
         attendee.status = inStatus
  
         myAttendees.append(attendee)
+        
+        // Save Attendees
+        
+        myDatabaseConnection.saveAttendee(eventID, inAttendees: myAttendees)
     }
     
     func removeAttendee(inIndex: Int)
     {
         // we should know the index of the item we want to delete from the control, so only need its index in order to perform the required action
         myAttendees.removeAtIndex(inIndex)
+        
+        // Save Attendees
+        
+        myDatabaseConnection.saveAttendee(eventID, inAttendees: myAttendees)
     }
     
     func populateAttendeesFromInvite()
@@ -657,7 +729,7 @@ class myCalendarItem
         }
     }
     
-    func saveAgenda()
+    func save()
     {
         // if this is for a repeating event then we need to add in the original startdate to the Notes
 
@@ -696,9 +768,6 @@ class myCalendarItem
         {
             myDatabaseConnection.createAgenda(self)
         }
-        // Save Attendees
-        
-        myDatabaseConnection.saveAttendee(eventID, inAttendees: myAttendees)
         
         mySavedData = true
     }
@@ -738,6 +807,11 @@ class myCalendarItem
         var chairFound: Bool = false
         var minutesFound: Bool = false
         
+        var tempName: String = ""
+        var tempStatus: String = ""
+        var tempEmail: String = ""
+        var tempType: String = ""
+        
         if myEventID == ""
         {
             mySavedValues = myDatabaseConnection.loadAttendees(myEvent.eventIdentifier)
@@ -757,11 +831,16 @@ class myCalendarItem
                 for savedAttendee in mySavedValues
                 {
                     inviteeFound = false
+                    tempName = savedAttendee.name
+                    tempStatus = savedAttendee.attendenceStatus
+                    tempEmail = savedAttendee.email
+                    tempType = savedAttendee.type
+                    
                     for invitee in myEvent.attendees as! [EKParticipant]
                     {
                         // Check to see if any "Invited" people are no longer on calendar invite, and if so remove from Agenda.
                 
-                        if invitee.name == savedAttendee.name
+                        if invitee.name == tempName
                         {
                             // Invitee found
                     
@@ -787,19 +866,19 @@ class myCalendarItem
                     {
                         // Person not found on invite
                     
-                        if savedAttendee.attendenceStatus == "Added"
+                        if tempStatus == "Added"
                         {
                             // Mnaually added person, so continue
-                            addAttendee(savedAttendee.name, inEmailAddress: savedAttendee.email, inType: savedAttendee.type, inStatus: savedAttendee.attendenceStatus)
+                            addAttendee(tempName, inEmailAddress: tempEmail, inType: tempType, inStatus: tempStatus)
                         }
                     }
             
-                    if savedAttendee.name == myChair
+                    if tempName == myChair
                     {
                         chairFound = true
                     }
             
-                    if savedAttendee.name == myMinutes
+                    if tempName == myMinutes
                     {
                         minutesFound = true
                     }
@@ -808,13 +887,13 @@ class myCalendarItem
                 if !chairFound
                 {
                     myChair = ""
-                    saveAgenda()
+                    save()
                 }
             
                 if !minutesFound
                 {
                     myMinutes = ""
-                    saveAgenda()
+                    save()
                 }
 
                 // Now we need to check for people added into the meeting but not in the saved list.
@@ -835,7 +914,8 @@ class myCalendarItem
                     inviteeFound = false
                     for checkAttendee in mySavedValues
                     {
-                        if invitee.name == checkAttendee.name
+                        tempName = checkAttendee.name
+                        if invitee.name == tempName
                         {
                             // Invitee found
                             inviteeFound = true
@@ -905,30 +985,16 @@ class myCalendarItem
         
         if mySavedValues.count > 0
         {
-            for savedAttendee in mySavedValues
+            for savedAgenda in mySavedValues
             {
-                addAgendaItem(savedAttendee.agendaID, inTitle: savedAttendee.title, inOwner: savedAttendee.owner, inStatus: savedAttendee.status, inDecisionMade: savedAttendee.decisionMade, inDiscussionNotes: savedAttendee.discussionNotes, inTimeAllocation: savedAttendee.timeAllocation as Int)
+                let myAgendaItem =  meetingAgendaItem(inMeetingID: savedAgenda.meetingID, inAgendaID:savedAgenda.agendaID as Int)
+                myAgendaItem.loadTasks()
+                myAgendaItems.append(myAgendaItem)
             }
         }
     }
-    
-    func addAgendaItem(inAgendaID: String, inTitle: String, inOwner: String, inStatus: String, inDecisionMade: String, inDiscussionNotes: String, inTimeAllocation: Int)
-    {
-        let myAgendaItem: meetingAgendaItem = meetingAgendaItem(inMeetingID: myEventID)
         
-        myAgendaItem.status = inStatus
-        myAgendaItem.decisionMade = inDecisionMade
-        myAgendaItem.discussionNotes = inDiscussionNotes
-        myAgendaItem.timeAllocation = inTimeAllocation
-        myAgendaItem.owner = inOwner
-        myAgendaItem.title = inTitle
-        myAgendaItem.agendaID = inAgendaID
-        myAgendaItem.loadTasks()
-        
-        myAgendaItems.append(myAgendaItem)
-    }
-    
-    func updateAgendaItems(inAgendaID: String, inTitle: String, inOwner: String, inStatus: String, inDecisionMade: String, inDiscussionNotes: String, inTimeAllocation: Int, inActualStartTime: NSDate, inActualEndTime: NSDate)
+    func updateAgendaItems(inAgendaID: Int, inTitle: String, inOwner: String, inStatus: String, inDecisionMade: String, inDiscussionNotes: String, inTimeAllocation: Int, inActualStartTime: NSDate, inActualEndTime: NSDate)
     {
         for myAgendaItem in myAgendaItems
         {
@@ -1089,33 +1155,7 @@ class iOSCalendar
 
     private func storeEvent(inEvent: EKEvent, inAttendee: EKParticipant?)
     {
-        let calendarEntry = myCalendarItem(inEventStore: eventStore)
-        
-        calendarEntry.event = inEvent
-        calendarEntry.title = inEvent.title
-        calendarEntry.startDate = inEvent.startDate
-        calendarEntry.endDate = inEvent.endDate
-        calendarEntry.location = inEvent.location
-        
-        var myRecurrence: String = ""
-        if inEvent.recurrenceRules != nil
-        {
-            // This is a recurring event
-            var myWorkingRecur: NSArray = inEvent.recurrenceRules
-            
-            for myItem in myWorkingRecur
-            {
-                calendarEntry.recurrenceFrequency = myItem.interval
-                var testFrequency: EKRecurrenceFrequency = myItem.frequency
-                calendarEntry.recurrence = Int(testFrequency.value)
-            }
-        }
-        // Need to validate this works when displaying by person and also by project
-        if inAttendee != nil
-        {
-            calendarEntry.status = Int(inAttendee!.participantStatus.value)
-            calendarEntry.attendeeType = Int(inAttendee!.participantType.value)
-        }
+        let calendarEntry = myCalendarItem(inEventStore: eventStore, inEvent: inEvent, inAttendee: inAttendee)
         
         eventDetails.append(calendarEntry)
         eventRecords.append(inEvent)

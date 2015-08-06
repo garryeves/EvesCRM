@@ -2,7 +2,7 @@
 //  Projects.swift
 //  
 //
-//  Created by Garry Eves on 28/07/2015.
+//  Created by Garry Eves on 6/08/2015.
 //
 //
 
@@ -19,5 +19,8 @@ class Projects: NSManagedObject {
     @NSManaged var projectStartDate: NSDate
     @NSManaged var projectStatus: String
     @NSManaged var reviewFrequency: NSNumber
+    @NSManaged var repeatInterval: NSNumber
+    @NSManaged var repeatType: String
+    @NSManaged var repeatBase: String
 
 }

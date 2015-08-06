@@ -295,6 +295,8 @@
 		345E027E1AEF714800BE8D0A /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		345E02801AEF715700BE8D0A /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		345E02821AEF71CF00BE8D0A /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
+		346233191B72FD3600A889AC /* EvesCRM 11.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 11.xcdatamodel"; sourceTree = "<group>"; };
+		3462331E1B73197700A889AC /* EvesCRM 12.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 12.xcdatamodel"; sourceTree = "<group>"; };
 		34627D221B60B1C80096DAC4 /* taskManagementClasses.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = taskManagementClasses.swift; sourceTree = "<group>"; };
 		346A2E4A1B66027100C6C63E /* Projects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Projects.swift; sourceTree = "<group>"; };
 		346A2E4B1B66027100C6C63E /* AreaOfResponsibility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AreaOfResponsibility.swift; sourceTree = "<group>"; };
@@ -1304,6 +1306,8 @@
 		3406506C1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				3462331E1B73197700A889AC /* EvesCRM 12.xcdatamodel */,
+				346233191B72FD3600A889AC /* EvesCRM 11.xcdatamodel */,
 				349331B81B704457004AA569 /* EvesCRM 10.xcdatamodel */,
 				3443A4A31B6F2F4400B0D63A /* EvesCRM 9.xcdatamodel */,
 				34877BC51B61E2210040DF71 /* EvesCRM 8.xcdatamodel */,
@@ -1315,7 +1319,7 @@
 				346B70F21AF75EFE005E1BC2 /* EvesCRM 2.xcdatamodel */,
 				3406506D1ADDF8FF00C90CBB /* EvesCRM.xcdatamodel */,
 			);
-			currentVersion = 349331B81B704457004AA569 /* EvesCRM 10.xcdatamodel */;
+			currentVersion = 3462331E1B73197700A889AC /* EvesCRM 12.xcdatamodel */;
 			path = EvesCRM.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

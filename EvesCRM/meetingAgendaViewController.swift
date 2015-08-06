@@ -37,8 +37,6 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate
         super.viewDidLoad()
         
         passedMeeting = (tabBarController as! meetingTabViewController).myPassedMeeting
-
-        passedMeeting.event.saveAgenda()
         
         if passedMeeting.actionType != "Agenda"
         {
@@ -203,7 +201,6 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate
             // reload the Agenda Items collection view
             passedMeeting.event.loadAgendaItems()
             colAgenda.reloadData()
-            passedMeeting.event.saveAgenda()
         
             // set the fields to blank
         
@@ -255,24 +252,14 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate
 
     func myAgendaItemDidFinish(controller:agendaItemViewController, actionType: String)
     {
-        if actionType == "Cancel"
-        {
-            // Do nothing.  Including for calrity
-        }
-        else
-        {
-            // reload the Agenda Items collection view
-            passedMeeting.event.loadAgendaItems()
-            colAgenda.reloadData()
-            passedMeeting.event.saveAgenda()
-        }
+        passedMeeting.event.loadAgendaItems()
+        colAgenda.reloadData()
         
         controller.dismissViewControllerAnimated(true, completion: nil)
     }
     
     func updateAgendaItem(notification: NSNotification)
     {
-        passedMeeting.event.saveAgenda()
         let itemToUpdate = notification.userInfo!["itemNo"] as! Int
         
         let agendaViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("AgendaItems") as! agendaItemViewController
