@@ -14,9 +14,8 @@ protocol MyReminderDelegate{
 }
 
 
-class reminderViewController: UIViewController {
-
-    
+class reminderViewController: UIViewController, UITextViewDelegate
+{
     private var reminderStore = EKEventStore()
     private var targetReminderCal: EKCalendar!
     private var myReminder: EKReminder!
@@ -150,6 +149,11 @@ class reminderViewController: UIViewController {
         hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
         self.view.addGestureRecognizer(hideGestureRecognizer)
 
+        notesText.layer.borderColor = UIColor.lightGrayColor().CGColor
+        notesText.layer.borderWidth = 0.5
+        notesText.layer.cornerRadius = 5.0
+        notesText.layer.masksToBounds = true
+        notesText.delegate = self
     }
  
     override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {

@@ -553,7 +553,7 @@ class iOSContact
     
 }
 
-func findPersonRecord(inName: String, adbk: ABAddressBook) -> ABRecord!
+func findPersonRecord(inName: String) -> ABRecord!
 {
     //  there may be a better way to do this, but it works.
     var person: ABRecord!
@@ -576,10 +576,10 @@ func findPersonRecord(inName: String, adbk: ABAddressBook) -> ABRecord!
     return person
 }
 
-func findPersonbyEmail(inEmail: String, adbk: ABAddressBook) -> String
+func findPersonbyEmail(inEmail: String) -> ABRecord!
 {
     //  there may be a better way to do this, but it works.
-    var person: String = ""
+    var person: ABRecord!
     var recordFound: Bool = false
     var contactList: NSArray = ABAddressBookCopyArrayOfAllPeople(adbk).takeRetainedValue()
     
@@ -602,7 +602,7 @@ func findPersonbyEmail(inEmail: String, adbk: ABAddressBook) -> String
                 
                 if myString == inEmail
                 {
-                    person = contactName
+                    person = record
                     recordFound = true
                     break
                 }

@@ -60,7 +60,14 @@ class agendaItemViewController: UIViewController, MyTaskDelegate, UITextViewDele
             txtDecisionMade.text = agendaItem.decisionMade
             txtDiscussionNotes.text = agendaItem.discussionNotes
             txtTimeAllocation.text = "\(agendaItem.timeAllocation)"
-            btnOwner.setTitle(agendaItem.owner, forState: .Normal)
+            if agendaItem.owner == ""
+            {
+                btnOwner.setTitle("Select Item Owner", forState: .Normal)
+            }
+            else
+            {
+                btnOwner.setTitle(agendaItem.owner, forState: .Normal)
+            }
             txtTitle.text = agendaItem.title
         }
         
@@ -274,6 +281,8 @@ class agendaItemViewController: UIViewController, MyTaskDelegate, UITextViewDele
     @IBAction func btnOwner(sender: UIButton)
     {
         pickerOptions.removeAll(keepCapacity: false)
+
+        pickerOptions.append("")
         for attendee in event.attendees
         {
             pickerOptions.append(attendee.name)

@@ -699,6 +699,17 @@ class myCalendarItem
         myDatabaseConnection.saveAttendee(eventID, inAttendees: myAttendees)
     }
     
+    private func initaliseAttendee(inName: String, inEmailAddress: String, inType: String, inStatus: String)
+    {
+        let attendee: meetingAttendee = meetingAttendee()
+        attendee.name = inName
+        attendee.emailAddress = inEmailAddress
+        attendee.type = inType
+        attendee.status = inStatus
+        
+        myAttendees.append(attendee)
+    }
+
     func removeAttendee(inIndex: Int)
     {
         // we should know the index of the item we want to delete from the control, so only need its index in order to perform the required action
@@ -812,6 +823,9 @@ class myCalendarItem
         var tempEmail: String = ""
         var tempType: String = ""
         
+        
+        // Get all of the attendees
+        
         if myEventID == ""
         {
             mySavedValues = myDatabaseConnection.loadAttendees(myEvent.eventIdentifier)
@@ -820,6 +834,7 @@ class myCalendarItem
         {
             mySavedValues = myDatabaseConnection.loadAttendees(myEventID)
         }
+        
         
         myAttendees.removeAll(keepCapacity: false)
         
@@ -854,7 +869,7 @@ class myCalendarItem
                                 emailAddress = emailText[nextPlace!...emailEndPos]
                             }
                     
-                            addAttendee(invitee.name, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
+                            initaliseAttendee(invitee.name, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
                     
                             inviteeFound = true
                     
@@ -869,7 +884,7 @@ class myCalendarItem
                         if tempStatus == "Added"
                         {
                             // Mnaually added person, so continue
-                            addAttendee(tempName, inEmailAddress: tempEmail, inType: tempType, inStatus: tempStatus)
+                            initaliseAttendee(tempName, inEmailAddress: tempEmail, inType: tempType, inStatus: tempStatus)
                         }
                     }
             
@@ -937,7 +952,7 @@ class myCalendarItem
                             emailAddress = emailText[nextPlace!...emailEndPos]
                         }
                 
-                        addAttendee(invitee.name, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
+                        initaliseAttendee(invitee.name, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
                     }
                 }
             }
@@ -955,7 +970,7 @@ class myCalendarItem
                         emailAddress = emailText[nextPlace!...emailEndPos]
                     }
                     
-                    addAttendee(invitee.name, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
+                    initaliseAttendee(invitee.name, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
                 }
             }
         }
@@ -963,8 +978,15 @@ class myCalendarItem
         { // In the past so we just used the entried from the table
             for savedAttendee in mySavedValues
             {
-                addAttendee(savedAttendee.name, inEmailAddress: savedAttendee.email, inType: savedAttendee.type, inStatus: savedAttendee.attendenceStatus)
+                initaliseAttendee(savedAttendee.name, inEmailAddress: savedAttendee.email, inType: savedAttendee.type, inStatus: savedAttendee.attendenceStatus)
             }
+        }
+
+        // Save Attendees
+        
+        if myAttendees.count > 0
+        {
+            myDatabaseConnection.saveAttendee(eventID, inAttendees: myAttendees)
         }
     }
     

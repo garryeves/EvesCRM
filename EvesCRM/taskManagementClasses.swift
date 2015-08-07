@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import AddressBook
 
 class purposeAndCoreValue: NSObject // 50k Level
 {
@@ -24,6 +25,7 @@ class purposeAndCoreValue: NSObject // 50k Level
         set
         {
             myPurposeID = newValue
+            save()
         }
     }
 
@@ -36,6 +38,7 @@ class purposeAndCoreValue: NSObject // 50k Level
         set
         {
             myTitle = newValue
+            save()
         }
     }
 
@@ -48,6 +51,7 @@ class purposeAndCoreValue: NSObject // 50k Level
         set
         {
             myStatus = newValue
+            save()
         }
     }
     
@@ -137,6 +141,7 @@ class gvision: NSObject // (3-5 year goals) 40k Level
         set
         {
             myVisionID = newValue
+            save()
         }
     }
     
@@ -149,6 +154,7 @@ class gvision: NSObject // (3-5 year goals) 40k Level
         set
         {
             myTitle = newValue
+            save()
         }
     }
     
@@ -161,6 +167,7 @@ class gvision: NSObject // (3-5 year goals) 40k Level
         set
         {
             myStatus = newValue
+            save()
         }
     }
     
@@ -251,6 +258,7 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
         set
         {
             myGoalID = newValue
+            save()
         }
     }
     
@@ -263,6 +271,7 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
         set
         {
             myTitle = newValue
+            save()
         }
     }
     
@@ -275,6 +284,7 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
         set
         {
             myStatus = newValue
+            save()
         }
     }
     
@@ -365,6 +375,7 @@ class areaOfResponsibility // 20k Level
         set
         {
             myAreaID = newValue
+            save()
         }
     }
     
@@ -377,6 +388,7 @@ class areaOfResponsibility // 20k Level
         set
         {
             myTitle = newValue
+            save()
         }
     }
     
@@ -389,6 +401,7 @@ class areaOfResponsibility // 20k Level
         set
         {
             myStatus = newValue
+            save()
         }
     }
     
@@ -478,6 +491,7 @@ class projectTeamMember: NSObject
         set
         {
             myProjectID = newValue
+            save()
         }
     }
 
@@ -490,6 +504,7 @@ class projectTeamMember: NSObject
         set
         {
             myProjectMemberNotes = newValue
+            save()
         }
     }
 
@@ -502,6 +517,7 @@ class projectTeamMember: NSObject
         set
         {
             myRoleID = newValue
+            save()
         }
     }
 
@@ -514,7 +530,22 @@ class projectTeamMember: NSObject
         set
         {
             myTeamMember = newValue
+            save()
         }
+    }
+    
+    init(inProjectID: Int, inTeamMember: String, inRoleID: Int)
+    {
+        super.init()
+        myProjectID = inProjectID
+        myTeamMember = inTeamMember
+        myRoleID = inRoleID
+        save()
+    }
+    
+    override init()
+    {
+        // Do nothing
     }
 
     func save()
@@ -554,6 +585,7 @@ class project: NSObject // 10k level
         set
         {
             myProjectEndDate = newValue
+            save()
         }
     }
     
@@ -591,6 +623,7 @@ class project: NSObject // 10k level
         set
         {
             myProjectName = newValue
+            save()
         }
     }
 
@@ -603,6 +636,7 @@ class project: NSObject // 10k level
         set
         {
             myProjectStartDate = newValue
+            save()
         }
     }
   
@@ -648,6 +682,7 @@ class project: NSObject // 10k level
         set
         {
             myProjectStatus = newValue
+            save()
         }
     }
 
@@ -660,6 +695,7 @@ class project: NSObject // 10k level
         set
         {
             myReviewFrequency = newValue
+            save()
         }
     }
     
@@ -672,6 +708,7 @@ class project: NSObject // 10k level
         set
         {
             myLastReviewDate = newValue
+            save()
         }
     }
     
@@ -701,6 +738,7 @@ class project: NSObject // 10k level
         set
         {
             myAreaID = newValue
+            save()
         }
     }
     
@@ -713,6 +751,7 @@ class project: NSObject // 10k level
         set
         {
             myRepeatInterval = newValue
+            save()
         }
     }
     
@@ -725,6 +764,7 @@ class project: NSObject // 10k level
         set
         {
             myRepeatType = newValue
+            save()
         }
     }
     
@@ -737,6 +777,7 @@ class project: NSObject // 10k level
         set
         {
             myRepeatBase = newValue
+            save()
         }
     }
     
@@ -777,31 +818,7 @@ class project: NSObject // 10k level
                 
             // load team members
         
-            myTeamMembers.removeAll()
-            
-            let myProjectTeamMembers = myDatabaseConnection.getTeamMembers(inProjectID)
-            
-            for myTeamMember in myProjectTeamMembers
-            {
-                let myMember = projectTeamMember()
-                myMember.projectID = myTeamMember.projectID as Int
-                myMember.roleID = myTeamMember.roleID as Int
-                myMember.teamMember = myTeamMember.teamMember
-
-                // Due to an error I am commenting this out, not using this field at the moment, so hopefully will not be an issue
-              //  println("name \(myTeamMember.teamMember)")
-                
-            //    if myTeamMember.projectMemberNotes == ""
-              //  {
-            //        println("its nil")
-            //    }
-//println("incoming \(myTeamMember.projectMemberNotes)")
-//println("new \(myMember.projectMemberNotes)")
-                
- //               myMember.projectMemberNotes = myTeamMember.projectMemberNotes
-                
-                myTeamMembers.append(myMember)
-            }
+            loadTeamMembers()
             
             // load tasks
             
@@ -815,46 +832,73 @@ class project: NSObject // 10k level
                 myTasks.append(myNewTask)
             }
         }
+    }
         
-        func addTaskToProject(inTaskID: Int)
+    func loadTeamMembers()
+    {
+        myTeamMembers.removeAll()
+            
+        let myProjectTeamMembers = myDatabaseConnection.getTeamMembers(myProjectID)
+            
+        for myTeamMember in myProjectTeamMembers
         {
-            let nextOrder = myDatabaseConnection.getMaxProjectTaskOrder(myProjectID) + 1
+            let myMember = projectTeamMember(inProjectID: myTeamMember.projectID as Int, inTeamMember: myTeamMember.teamMember, inRoleID: myTeamMember.roleID as Int )
             
-            let myTempTask = task(inTaskID: inTaskID)
-            myTempTask.parentID = myProjectID
-            myTempTask.parentType = "Project"
-            myTempTask.setTaskOrder(nextOrder)
-            myTempTask.save()
+            myMember.projectMemberNotes = myTeamMember.projectMemberNotes
             
-            myTasks.removeAll()
-            
-            let myProjectTasks = myDatabaseConnection.getTasks(myProjectID, inParentType: "Project")
-            
-            for myProjectTask in myProjectTasks
-            {
-                let myNewTask = task(inTaskID: myProjectTask.taskID as Int)
-                myTasks.append(myNewTask)
-            }
-
+            // Due to an error I am commenting this out, not using this field at the moment, so hopefully will not be an issue
+            //  println("name \(myTeamMember.teamMember)")
+                
+            //    if myTeamMember.projectMemberNotes == ""
+            //  {
+            //        println("its nil")
+            //    }
+            //println("incoming \(myTeamMember.projectMemberNotes)")
+            //println("new \(myMember.projectMemberNotes)")
+                
+            //               myMember.projectMemberNotes = myTeamMember.projectMemberNotes
+                
+            myTeamMembers.append(myMember)
         }
+    }
         
-        func removeTaskFromProject(inTaskID: Int)
+    func addTaskToProject(inTaskID: Int)
+    {
+        let nextOrder = myDatabaseConnection.getMaxProjectTaskOrder(myProjectID) + 1
+            
+        let myTempTask = task(inTaskID: inTaskID)
+        myTempTask.parentID = myProjectID
+        myTempTask.parentType = "Project"
+        myTempTask.setTaskOrder(nextOrder)
+        myTempTask.save()
+            
+        myTasks.removeAll()
+            
+        let myProjectTasks = myDatabaseConnection.getTasks(myProjectID, inParentType: "Project")
+            
+        for myProjectTask in myProjectTasks
         {
-            let myTempTask = task(inTaskID: inTaskID)
-            myTempTask.parentID = 0
-            myTempTask.parentType = ""
-            myTempTask.setTaskOrder(0)
-            myTempTask.save()
+            let myNewTask = task(inTaskID: myProjectTask.taskID as Int)
+            myTasks.append(myNewTask)
+        }
+    }
+        
+    func removeTaskFromProject(inTaskID: Int)
+    {
+        let myTempTask = task(inTaskID: inTaskID)
+        myTempTask.parentID = 0
+        myTempTask.parentType = ""
+        myTempTask.setTaskOrder(0)
+        myTempTask.save()
             
-            myTasks.removeAll()
+        myTasks.removeAll()
             
-            let myProjectTasks = myDatabaseConnection.getTasks(myProjectID, inParentType: "Project")
+        let myProjectTasks = myDatabaseConnection.getTasks(myProjectID, inParentType: "Project")
             
-            for myProjectTask in myProjectTasks
-            {
-                let myNewTask = task(inTaskID: myProjectTask.taskID as Int)
-                myTasks.append(myNewTask)
-            }
+        for myProjectTask in myProjectTasks
+        {
+            let myNewTask = task(inTaskID: myProjectTask.taskID as Int)
+            myTasks.append(myNewTask)
         }
     }
     
@@ -912,6 +956,7 @@ class task: NSObject
     private var myRepeatType: String = ""
     private var myRepeatBase: String = ""
     private var myFlagged: Bool = false
+    private var myUrgency: String = ""
 
     var taskID: Int
     {
@@ -1240,7 +1285,20 @@ class task: NSObject
             save()
         }
     }
-    
+
+    var urgency: String
+    {
+        get
+        {
+            return myUrgency
+        }
+        set
+        {
+            myUrgency = newValue
+            save()
+        }
+    }
+
     override init()
     {
         super.init()
@@ -1252,6 +1310,7 @@ class task: NSObject
         myDueDate = getDefaultDate()
         myStartDate = getDefaultDate()
         myCompletionDate = getDefaultDate()
+        myStatus = "Open"
         
         myTitle = "New Task"
     
@@ -1284,6 +1343,7 @@ class task: NSObject
             myRepeatType = myTask.repeatType
             myRepeatBase = myTask.repeatBase
             myFlagged = myTask.flagged as Bool
+            myUrgency = myTask.urgency
             
             // get contexts
             
@@ -1300,7 +1360,7 @@ class task: NSObject
     
     func save()
     {
-        myDatabaseConnection.saveTask(myTaskID, inTitle: myTitle, inDetails: myDetails, inDueDate: myDueDate, inStartDate: myStartDate, inStatus: myStatus, inParentID: myParentID, inParentType: myParentType, inTaskMode: myTaskMode, inTaskOrder: myTaskOrder, inPriority: myPriority, inEnergyLevel: myEnergyLevel, inEstimatedTime: myEstimatedTime, inEstimatedTimeType: myEstimatedTimeType, inProjectID: myProjectID, inCompletionDate: myCompletionDate!, inRepeatInterval: myRepeatInterval, inRepeatType: myRepeatType, inRepeatBase: myRepeatBase, inFlagged: myFlagged)
+        myDatabaseConnection.saveTask(myTaskID, inTitle: myTitle, inDetails: myDetails, inDueDate: myDueDate, inStartDate: myStartDate, inStatus: myStatus, inParentID: myParentID, inParentType: myParentType, inTaskMode: myTaskMode, inTaskOrder: myTaskOrder, inPriority: myPriority, inEnergyLevel: myEnergyLevel, inEstimatedTime: myEstimatedTime, inEstimatedTimeType: myEstimatedTimeType, inProjectID: myProjectID, inCompletionDate: myCompletionDate!, inRepeatInterval: myRepeatInterval, inRepeatType: myRepeatType, inRepeatBase: myRepeatBase, inFlagged: myFlagged, inUrgency: myUrgency)
         
         // Save context link
         
@@ -1312,15 +1372,38 @@ class task: NSObject
     
     func addContextToTask(inContextID: Int)
     {
-        myDatabaseConnection.saveTaskContext(inContextID, inTaskID: myTaskID)
+        var itemFound: Bool = false
         
-        let myContextList = myDatabaseConnection.getContextsForTask(myTaskID)
-        myContexts.removeAll()
+        // first we need to make sure the context is not already present
         
-        for myContextItem in myContextList
+        // Get the context name
+        
+        let myContext = context(inContextID: inContextID)
+        
+        let myCheck = myDatabaseConnection.getContextsForTask(myTaskID)
+        
+        for myItem in myCheck
         {
-            let myNewContext = context(inContextID: myContextItem.contextID as Int)
-            myContexts.append(myNewContext)
+            let myRetrievedContext = context(inContextID: myItem.contextID as Int)
+            if myRetrievedContext.name.lowercaseString == myContext.name.lowercaseString
+            {
+                itemFound = true
+                break
+            }
+        }
+        
+        if !itemFound
+        { // Not match found
+            myDatabaseConnection.saveTaskContext(inContextID, inTaskID: myTaskID)
+        
+            let myContextList = myDatabaseConnection.getContextsForTask(myTaskID)
+            myContexts.removeAll()
+        
+            for myContextItem in myContextList
+            {
+                let myNewContext = context(inContextID: myContextItem.contextID as Int)
+                myContexts.append(myNewContext)
+            }
         }
     }
     
@@ -1591,13 +1674,39 @@ class context: NSObject
         }
     }
     
-    override init()
+    init(inContextName: String)
     {
         super.init()
         let myContexts = myDatabaseConnection.getAllContexts()
         
         let currentNumberofEntries = myContexts.count
         myContextID = currentNumberofEntries + 1
+        
+        // Now we need to check the Addressbook to see if there is a match for the person, so we can store the personID
+        
+        let myPerson: ABRecord! = findPersonRecord(inContextName) as ABRecord!
+        
+        if myPerson == nil
+        { // No match on Name so check on Email Addresses
+            let myPersonEmail:ABRecord! = findPersonbyEmail(inContextName)
+            
+            if myPersonEmail != nil
+            {
+                myName = ABRecordCopyCompositeName(myPersonEmail).takeRetainedValue() as String
+                myEmail = inContextName
+                myPersonID = ABRecordGetRecordID(myPersonEmail)
+            }
+            else
+            {  // No match so use text passed in
+                myName = inContextName
+            }
+        }
+        else
+        {
+            myName = ABRecordCopyCompositeName(myPerson).takeRetainedValue() as String
+            myPersonID = ABRecordGetRecordID(myPerson)
+        }
+        save()
     }
     
     init(inContextID: Int)

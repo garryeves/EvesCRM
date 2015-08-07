@@ -756,7 +756,7 @@ class coreDatabase: NSObject
         }
     }
 
-    func saveTask(inTaskID: Int, inTitle: String, inDetails: String, inDueDate: NSDate, inStartDate: NSDate, inStatus: String, inParentID: Int, inParentType: String,inTaskMode: String, inTaskOrder: Int, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int, inEstimatedTimeType: String, inProjectID: Int, inCompletionDate: NSDate, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inFlagged: Bool)
+    func saveTask(inTaskID: Int, inTitle: String, inDetails: String, inDueDate: NSDate, inStartDate: NSDate, inStatus: String, inParentID: Int, inParentType: String,inTaskMode: String, inTaskOrder: Int, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int, inEstimatedTimeType: String, inProjectID: Int, inCompletionDate: NSDate, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inFlagged: Bool, inUrgency: String)
     {
         // first check to see if decode exists, if not we create
         var error: NSError?
@@ -787,6 +787,7 @@ class coreDatabase: NSObject
             myTask.repeatType = inRepeatType
             myTask.repeatBase = inRepeatBase
             myTask.flagged = inFlagged
+            myTask.urgency = inUrgency
         }
         else
         { // Update
@@ -810,6 +811,7 @@ class coreDatabase: NSObject
             myTask.repeatType = inRepeatType
             myTask.repeatBase = inRepeatBase
             myTask.flagged = inFlagged
+            myTask.urgency = inUrgency
         }
         
         if(!managedObjectContext!.save(&error) )

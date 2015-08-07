@@ -213,6 +213,8 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate
     @IBAction func btnOwner(sender: UIButton)
     {
         pickerOptions.removeAll(keepCapacity: false)
+        
+        pickerOptions.append("")
         for attendee in passedMeeting.event.attendees
         {
             pickerOptions.append(attendee.name)

@@ -193,16 +193,16 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         populateContactList()
     
    //   code to reset projects if needed for testing
-   //     myDatabaseConnection.resetprojects()
+  //      myDatabaseConnection.resetprojects()
         
    //   code to reset meetings if needed for testing        
   //      myDatabaseConnection.resetMeetings()
         
         //   code to reset tasks if needed for testing
-  //      myDatabaseConnection.resetTasks()
+    //    myDatabaseConnection.resetTasks()
         
         //   code to reset contexts if needed for testing
- //            myDatabaseConnection.resetContexts()
+     //        myDatabaseConnection.resetContexts()
         
         // Work out if a project has been added to the data store, so we can then select it
         let myProjects = myDatabaseConnection.getProjects()
@@ -990,7 +990,7 @@ println("facebook ID = \(myFacebookID)")
                 // Project team membership details
                 if myDisplayType == "Project"
                 {
-                    let myPerson: ABRecord = findPersonRecord(projectMemberArray[rowID], adbk) as ABRecord
+                    let myPerson: ABRecord = findPersonRecord(projectMemberArray[rowID]) as ABRecord
                     loadPerson(myPerson)
                 }
                 else
@@ -1304,10 +1304,8 @@ println("facebook ID = \(myFacebookID)")
     
     func myMaintainProjectDidFinish(controller:MaintainProjectViewController, actionType: String)
     {
-        if actionType == "Changed"
-        {
-            populateArraysForTables(reBuildTableName)
-        }
+        populateArraysForTables(reBuildTableName)
+        
         controller.dismissViewControllerAnimated(true, completion: nil)
     }
 
@@ -2547,7 +2545,7 @@ println("Nothing found")
                 loadProject(myProject.projectID as Int)
             
             case "Context":
-                let myPerson: ABRecord! = findPersonRecord(passedItem.displayString, adbk) as ABRecord!
+                let myPerson: ABRecord! = findPersonRecord(passedItem.displayString) as ABRecord!
             
                 if myPerson == nil
                 {

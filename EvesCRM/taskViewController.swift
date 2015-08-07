@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import AddressBook
 
 protocol MyTaskDelegate
 {
@@ -47,13 +48,15 @@ class taskViewController: UIViewController,  UITextViewDelegate
     @IBOutlet weak var lblProject: UILabel!
     @IBOutlet weak var btnProject: UIButton!
     
+    @IBOutlet weak var lblUrgency: UILabel!
+    @IBOutlet weak var btnUrgency: UIButton!
+    
     private var pickerOptions: [String] = Array()
     private var pickerTarget: String = ""
     private var myStartDate: NSDate!
     private var myDueDate: NSDate!
     private var myProjectID: Int = 0
     private var myProjectDetails: [Projects] = Array()
-    private var myContexts: [context] = Array()
     
     override func viewDidLoad()
     {
@@ -122,6 +125,16 @@ class taskViewController: UIViewController,  UITextViewDelegate
             {
                 btnEnergy.setTitle(passedTask.currentTask.energyLevel, forState: .Normal)
             }
+            
+            if passedTask.currentTask.urgency == ""
+            {
+                btnUrgency.setTitle("Click to set", forState: .Normal)
+            }
+            else
+            {
+                btnUrgency.setTitle(passedTask.currentTask.urgency, forState: .Normal)
+            }
+
             
             if passedTask.currentTask.estimatedTimeType == ""
             {
@@ -300,9 +313,18 @@ class taskViewController: UIViewController,  UITextViewDelegate
             passedTask.currentTask.energyLevel = btnEnergy.currentTitle!
         }
 
+        if pickerTarget == "Urgency"
+        {
+            btnUrgency.setTitle(pickerOptions[row], forState: .Normal)
+            passedTask.currentTask.urgency = btnUrgency.currentTitle!
+        }
+
         if pickerTarget == "Project"
         {
-            setProjectName(myProjectDetails[row].projectID as Int)
+            if row > 0
+            {
+                setProjectName(myProjectDetails[row - 1].projectID as Int)
+            }
         }
         
         if pickerTarget == "Context"
@@ -318,7 +340,7 @@ class taskViewController: UIViewController,  UITextViewDelegate
                 if myContext.name.lowercaseString == pickerOptions[row].lowercaseString
                 {
                     // Existing context found, so use this record
-                    
+                
                     setContext(myContext.contextID)
                     matchFound = true
                     break
@@ -329,9 +351,7 @@ class taskViewController: UIViewController,  UITextViewDelegate
             
             if !matchFound
             {
-                let myNewContext = context()
-                myNewContext.name = pickerOptions[row]
-                myNewContext.save()
+                let myNewContext = context(inContextName: pickerOptions[row])
                 
                 setContext(myNewContext.contextID)
             }
@@ -371,7 +391,8 @@ class taskViewController: UIViewController,  UITextViewDelegate
             let myContextList = contexts()
             
             pickerOptions.removeAll(keepCapacity: false)
-            myContexts.removeAll(keepCapacity: false)
+            
+            pickerOptions.append("")
             
             if passedTask.taskType == "minutes"
             { // a meeting task
@@ -380,10 +401,11 @@ class taskViewController: UIViewController,  UITextViewDelegate
                 for myAttendee in passedTask.event.attendees
                 {
                     // check in the address book to see if we have a person for this email address, this is so we make sure we try and use consistent Context names
-                    let personName = findPersonbyEmail(myAttendee.emailAddress, adbk)
+                    let person:ABRecord! = findPersonbyEmail(myAttendee.emailAddress)
                     
-                    if personName != ""
-                    { // we have found the context
+                    if person != nil
+                    {
+                        let personName = ABRecordCopyCompositeName(person).takeRetainedValue() as String
                         pickerOptions.append(personName)
                     }
                     else
@@ -397,7 +419,6 @@ class taskViewController: UIViewController,  UITextViewDelegate
                 for myContext in myContextList.contextsByHierarchy
                 {
                     pickerOptions.append(myContext.contextHierarchy)
-                    myContexts.append(myContext)
                 }
             }
 
@@ -462,6 +483,7 @@ class taskViewController: UIViewController,  UITextViewDelegate
     @IBAction func btnEstTimeInterval(sender: UIButton)
     {
         pickerOptions.removeAll(keepCapacity: false)
+        pickerOptions.append("")
         pickerOptions.append("Minutes")
         pickerOptions.append("Hours")
         pickerOptions.append("Days")
@@ -477,6 +499,7 @@ class taskViewController: UIViewController,  UITextViewDelegate
     @IBAction func btnPriority(sender: UIButton)
     {
         pickerOptions.removeAll(keepCapacity: false)
+        pickerOptions.append("")
         pickerOptions.append("High")
         pickerOptions.append("Medium")
         pickerOptions.append("Low")
@@ -489,6 +512,7 @@ class taskViewController: UIViewController,  UITextViewDelegate
     @IBAction func btnEnergy(sender: UIButton)
     {
         pickerOptions.removeAll(keepCapacity: false)
+        pickerOptions.append("")
         pickerOptions.append("High")
         pickerOptions.append("Medium")
         pickerOptions.append("Low")
@@ -531,9 +555,7 @@ class taskViewController: UIViewController,  UITextViewDelegate
 
             if !matchFound
             {
-                let myNewContext = context()
-                myNewContext.name = txtNewContext.text
-                myNewContext.save()
+                let myNewContext = context(inContextName: txtNewContext.text)
             
                 setContext(myNewContext.contextID)
             }
@@ -550,6 +572,8 @@ class taskViewController: UIViewController,  UITextViewDelegate
         pickerOptions.removeAll(keepCapacity: false)
         myProjectDetails.removeAll(keepCapacity: false)
         
+        pickerOptions.append("")
+        
         let myProjects = myDatabaseConnection.getAllOpenProjects()
         
         for myProject in myProjects
@@ -561,6 +585,20 @@ class taskViewController: UIViewController,  UITextViewDelegate
         myPicker.hidden = false
         myPicker.reloadAllComponents()
         pickerTarget = "Project"
+    }
+    
+    @IBAction func btnUrgency(sender: UIButton)
+    {
+        pickerOptions.removeAll(keepCapacity: false)
+        pickerOptions.append("")
+        pickerOptions.append("High")
+        pickerOptions.append("Medium")
+        pickerOptions.append("Low")
+        hideFields()
+        myPicker.hidden = false
+        myPicker.reloadAllComponents()
+        pickerTarget = "Urgency"
+
     }
     
     @IBAction func txtTaskDetail(sender: UITextField)
@@ -609,6 +647,8 @@ class taskViewController: UIViewController,  UITextViewDelegate
         btnEnergy.hidden = false
         lblProject.hidden = false
         btnProject.hidden = false
+        lblUrgency.hidden = false
+        btnUrgency.hidden = false
     }
     
     func hideFields()
@@ -635,6 +675,8 @@ class taskViewController: UIViewController,  UITextViewDelegate
         btnEnergy.hidden = true
         lblProject.hidden = true
         btnProject.hidden = true
+        lblUrgency.hidden = true
+        btnUrgency.hidden = true
     }
     
     func setProjectName(inProjectID: Int)
