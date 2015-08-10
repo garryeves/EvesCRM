@@ -474,6 +474,150 @@ class coreDatabase: NSObject
         }
     }
     
+    func searchPastAgendaByPartialMeetingIDBeforeStart(inSearchText: String, inMeetingStartDate: NSDate)->[MeetingAgenda]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "MeetingAgenda")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "(meetingID contains \"\(inSearchText)\") && (startTime <= %@)", inMeetingStartDate)
+        
+        let sortDescriptor = NSSortDescriptor(key: "startTime", ascending: false)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [MeetingAgenda]
+        
+        return fetchResults!
+    }
+    
+    func searchPastAgendaWithoutPartialMeetingIDBeforeStart(inSearchText: String, inMeetingStartDate: NSDate)->[MeetingAgenda]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "MeetingAgenda")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "NOT (meetingID contains \"\(inSearchText)\") && (startTime <= %@)", inMeetingStartDate)
+        
+        let sortDescriptor = NSSortDescriptor(key: "startTime", ascending: false)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [MeetingAgenda]
+        
+        return fetchResults!
+    }
+
+    func listAgendaReverseDateBeforeStart(inMeetingStartDate: NSDate)->[MeetingAgenda]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "MeetingAgenda")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "(startTime <= %@)", inMeetingStartDate)
+        
+        let sortDescriptor = NSSortDescriptor(key: "startTime", ascending: false)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [MeetingAgenda]
+        
+        return fetchResults!
+    }
+    
+    func searchPastAgendaByPartialMeetingIDAfterStart(inSearchText: String, inMeetingStartDate: NSDate)->[MeetingAgenda]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "MeetingAgenda")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "(meetingID contains \"\(inSearchText)\") && (startTime >= %@)", inMeetingStartDate)
+        
+        let sortDescriptor = NSSortDescriptor(key: "startTime", ascending: false)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [MeetingAgenda]
+        
+        return fetchResults!
+    }
+    
+    func searchPastAgendaWithoutPartialMeetingIDAfterStart(inSearchText: String, inMeetingStartDate: NSDate)->[MeetingAgenda]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "MeetingAgenda")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "NOT (meetingID contains \"\(inSearchText)\") && (startTime >= %@)", inMeetingStartDate)
+        
+        let sortDescriptor = NSSortDescriptor(key: "startTime", ascending: false)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [MeetingAgenda]
+        
+        return fetchResults!
+    }
+    
+    func listAgendaReverseDateAfterStart(inMeetingStartDate: NSDate)->[MeetingAgenda]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "MeetingAgenda")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "(startTime >= %@)", inMeetingStartDate)
+        
+        let sortDescriptor = NSSortDescriptor(key: "startTime", ascending: false)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [MeetingAgenda]
+        
+        return fetchResults!
+    }
+    
     func createAgenda(inEvent: myCalendarItem)
     {
         var myAgenda: MeetingAgenda
@@ -494,6 +638,26 @@ class coreDatabase: NSObject
         {
             println(error?.localizedDescription)
         }
+    }
+    
+    func loadPreviousAgenda(inMeetingID: String)->[MeetingAgenda]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "MeetingAgenda")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "previousMeetingID == \"\(inMeetingID)\"")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [MeetingAgenda]
+        
+        return fetchResults!
     }
     
     func loadAgenda(inMeetingID: String)->[MeetingAgenda]
@@ -519,7 +683,7 @@ class coreDatabase: NSObject
     func updateAgenda(inEvent: myCalendarItem)
     {
         var error : NSError?
-        
+
         let myAgenda = loadAgenda(inEvent.eventID)[0]
         myAgenda.previousMeetingID = inEvent.previousMinutes
         myAgenda.name = inEvent.title
@@ -536,6 +700,58 @@ class coreDatabase: NSObject
         }
     }
 
+    func updatePreviousAgendaID(inPreviousMeetingID: String, inMeetingID: String)
+    {
+        var error : NSError?
+  
+        let fetchRequest = NSFetchRequest(entityName: "MeetingAgenda")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "meetingID == \"\(inMeetingID)\"")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [MeetingAgenda]
+        
+        for myResult in fetchResults!
+        {
+            myResult.previousMeetingID = inPreviousMeetingID
+        }
+  //      fetchResults[0].previousMeetingID = inPreviousMeetingID
+        
+        if(!managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+    }
+    
+    func loadAgendaForProject(inProjectID: Int)->[MeetingAgenda]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "MeetingAgenda")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "projectID == \(inProjectID)")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [MeetingAgenda]
+        
+        return fetchResults!
+    }
+   
+    
     func loadAttendees(inMeetingID: String)->[MeetingAttendees]
     {
         let fetchRequest = NSFetchRequest(entityName: "MeetingAttendees")
@@ -546,6 +762,26 @@ class coreDatabase: NSObject
         var predicate: NSPredicate
         
         predicate = NSPredicate(format: "meetingID == \"\(inMeetingID)\"")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [MeetingAttendees]
+        
+        return fetchResults!
+    }
+    
+    func loadMeetingsForAttendee(inAttendeeName: String)->[MeetingAttendees]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "MeetingAttendees")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "name == \"\(inAttendeeName)\"")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

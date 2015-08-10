@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import EventKit
 
 protocol MyMeetingsDelegate
 {
@@ -39,15 +40,18 @@ class meetingsViewController: UIViewController
     @IBOutlet weak var btnPreviousMinutes: UIButton!
     @IBOutlet weak var lblPreviousMeeting: UILabel!
     @IBOutlet weak var lblNextMeeting: UILabel!
-    @IBOutlet weak var lnlNextMeetingDetails: UILabel!
+    @IBOutlet weak var btnNextMeeting: UIButton!
     @IBOutlet weak var myPicker: UIPickerView!
+    @IBOutlet weak var btnSelect: UIButton!
     
     private let reuseAttendeeIdentifier = "AttendeeCell"
     private let reuseAttendeeStatusIdentifier = "AttendeeStatusCell"
     private let reuseAttendeeAction = "AttendeeActionCell"
     
     private var pickerOptions: [String] = Array()
+    private var pickerEventArray: [String] = Array()
     private var pickerTarget: String = ""
+    private var mySelectedRow: Int = 0
     
     override func viewDidLoad()
     {
@@ -61,6 +65,7 @@ class meetingsViewController: UIViewController
         lblStartTime.text = passedMeeting.event.displayScheduledDate
         lblMeetingName.text = passedMeeting.event.title
         myPicker.hidden = true
+        btnSelect.hidden = true
         
         passedMeeting.event.loadAgenda()
 
@@ -73,6 +78,43 @@ class meetingsViewController: UIViewController
         {
             btnMinutes.setTitle(passedMeeting.event.minutes, forState: .Normal)
         }
+        
+        if passedMeeting.event.previousMinutes != ""
+        {
+            // Get the previous meetings details
+
+            let myItems = myDatabaseConnection.loadAgenda(passedMeeting.event.previousMinutes)
+           
+            for myItem in myItems
+            {
+                var startDateFormatter = NSDateFormatter()
+                startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
+                let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+            
+                let myDisplayString = "\(myItem.name) - \(myDisplayDate)"
+            
+                btnPreviousMinutes.setTitle(myDisplayString, forState: .Normal)
+            }
+        }
+
+        if passedMeeting.event.nextMeeting != ""
+        {
+            // Get the previous meetings details
+            
+            let myItems = myDatabaseConnection.loadAgenda(passedMeeting.event.nextMeeting)
+            
+            for myItem in myItems
+            {
+                var startDateFormatter = NSDateFormatter()
+                startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
+                let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+                
+                let myDisplayString = "\(myItem.name) - \(myDisplayDate)"
+                
+                btnNextMeeting.setTitle(myDisplayString, forState: .Normal)
+            }
+        }
+
         
         let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
         showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
@@ -129,20 +171,8 @@ class meetingsViewController: UIViewController
     
     func pickerView(TableTypeSelection1: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         // Write code for select
-        if pickerTarget == "chair"
-        {
-            btnChair.setTitle(pickerOptions[row], forState: .Normal)
-            passedMeeting.event.chair = pickerOptions[row]
-        }
 
-        if pickerTarget == "minutes"
-        {
-            btnMinutes.setTitle(pickerOptions[row], forState: .Normal)
-            passedMeeting.event.minutes = pickerOptions[row]
-        }
-
-        myPicker.hidden = true
-        showFields()
+        mySelectedRow = row
     }
     
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
@@ -211,6 +241,8 @@ class meetingsViewController: UIViewController
         }
         hideFields()
         myPicker.hidden = false
+        btnSelect.hidden = false
+        btnSelect.setTitle("Set Chairperson", forState: .Normal)
         myPicker.reloadAllComponents()
         pickerTarget = "chair"
     }
@@ -224,6 +256,8 @@ class meetingsViewController: UIViewController
         }
         hideFields()
         myPicker.hidden = false
+        btnSelect.setTitle("Set Minutes taker", forState: .Normal)
+        btnSelect.hidden = false
         myPicker.reloadAllComponents()
         pickerTarget = "minutes"
     }
@@ -249,6 +283,229 @@ class meetingsViewController: UIViewController
         }
     }
     
+    @IBAction func btnPreviousMinutes(sender: UIButton)
+    {
+        getPreviousMeeting()
+    }
+    
+    @IBAction func btnNextMeeting(sender: UIButton)
+    {
+        getNextMeeting()
+    }
+    
+    @IBAction func btnSelect(sender: UIButton)
+    {
+        if pickerTarget == "chair"
+        {
+            btnChair.setTitle(pickerOptions[mySelectedRow], forState: .Normal)
+            passedMeeting.event.chair = pickerOptions[mySelectedRow]
+        }
+        
+        if pickerTarget == "minutes"
+        {
+            btnMinutes.setTitle(pickerOptions[mySelectedRow], forState: .Normal)
+            passedMeeting.event.minutes = pickerOptions[mySelectedRow]
+        }
+        
+        if pickerTarget == "previousMeeting"
+        {
+            // Check to see if an existing meeting already has this previos ID
+            
+            let myItems = myDatabaseConnection.loadPreviousAgenda(pickerEventArray[mySelectedRow])
+            
+            if myItems.count > 0
+            { // Existing meeting found
+                for myItem in myItems
+                {
+                    var startDateFormatter = NSDateFormatter()
+                    startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
+                    let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+                    
+                    let calendarOption: UIAlertController = UIAlertController(title: "Existing meeting found", message: "A meeting \(myItem.name) - \(myDisplayDate) has this set as previous meeting.  Do you want to continue, which will clear the previous meeting from the original meeting?  ", preferredStyle: .ActionSheet)
+                    
+                    let myYes = UIAlertAction(title: "Yes, update the details", style: .Default, handler: { (action: UIAlertAction!) -> () in
+                        // go and update the previous meeting
+                        
+                        myDatabaseConnection.updatePreviousAgendaID("", inMeetingID: myItem.meetingID)
+                        
+                        self.passedMeeting.event.previousMinutes = self.pickerEventArray[self.mySelectedRow]
+                        
+                        if self.passedMeeting.event.previousMinutes != ""
+                        {
+                            // Get the previous meetings details
+                            
+                            let myDisplayItems = myDatabaseConnection.loadAgenda(self.passedMeeting.event.previousMinutes)
+                            
+                            for myDisplayItem in myDisplayItems
+                            {
+                                var startDateFormatter = NSDateFormatter()
+                                startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
+                                let myDisplayDate = startDateFormatter.stringFromDate(myDisplayItem.startTime)
+                                
+                                let myDisplayString = "\(myDisplayItem.name) - \(myDisplayDate)"
+                                
+                                self.btnPreviousMinutes.setTitle(myDisplayString, forState: .Normal)
+                            }
+                        }
+                    })
+                    
+                    let myNo = UIAlertAction(title: "No, leave the existing details", style: .Default, handler: { (action: UIAlertAction!) -> () in
+                        // do nothing
+                    })
+                    
+                    calendarOption.addAction(myYes)
+                    calendarOption.addAction(myNo)
+                    
+                    calendarOption.popoverPresentationController?.sourceView = self.view
+                    calendarOption.popoverPresentationController?.sourceRect = CGRectMake(self.view.bounds.width / 2.0, self.view.bounds.height / 2.0, 1.0, 1.0)
+                    
+                    self.presentViewController(calendarOption, animated: true, completion: nil)
+                }
+            }
+            else
+            {
+                passedMeeting.event.previousMinutes = pickerEventArray[mySelectedRow]
+                
+                if passedMeeting.event.previousMinutes != ""
+                {
+                    // Get the previous meetings details
+                    
+                    let myDisplayItems = myDatabaseConnection.loadAgenda(passedMeeting.event.previousMinutes)
+                    
+                    for myDisplayItem in myDisplayItems
+                    {
+                        var startDateFormatter = NSDateFormatter()
+                        startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
+                        let myDisplayDate = startDateFormatter.stringFromDate(myDisplayItem.startTime)
+                        
+                        let myDisplayString = "\(myDisplayItem.name) - \(myDisplayDate)"
+                        
+                        btnPreviousMinutes.setTitle(myDisplayString, forState: .Normal)
+                    }
+                }
+                
+            }
+        }
+        
+        if pickerTarget == "nextMeeting"
+        {
+            // Check to see if an existing meeting already has this previos ID
+            
+            let myItems = myDatabaseConnection.loadAgenda(pickerEventArray[mySelectedRow])
+            
+            if myItems.count > 0
+            {
+                for myItem in myItems
+                {
+                    if myItem.previousMeetingID != ""
+                    {
+                        var startDateFormatter = NSDateFormatter()
+                        startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
+                        let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+                        
+                        let calendarOption: UIAlertController = UIAlertController(title: "Existing meeting found", message: "A meeting \(myItem.name) - \(myDisplayDate) has this set as next meeting.  Do you want to continue, which will clear the next meeting from the original meeting?  ", preferredStyle: .ActionSheet)
+                        
+                        let myYes = UIAlertAction(title: "Yes, update the details", style: .Default, handler: { (action: UIAlertAction!) -> () in
+                            // go and update the previous meeting
+                            
+//                            myDatabaseConnection.updatePreviousAgendaID("", inMeetingID: myItem.previousMeetingID)
+                            
+                            let myOriginalNextMeeting = self.passedMeeting.event.nextMeeting
+                            
+                            myDatabaseConnection.updatePreviousAgendaID("", inMeetingID: myOriginalNextMeeting)
+                            
+                            self.passedMeeting.event.nextMeeting = self.pickerEventArray[self.mySelectedRow]
+                            
+                            if self.passedMeeting.event.nextMeeting != ""
+                            {
+                                // Get the previous meetings details
+                                
+                                let myItems = myDatabaseConnection.loadAgenda(self.passedMeeting.event.nextMeeting)
+                                
+                                for myItem in myItems
+                                {
+                                    var startDateFormatter = NSDateFormatter()
+                                    startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
+                                    let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+                                    
+                                    let myDisplayString = "\(myItem.name) - \(myDisplayDate)"
+                                    
+                                    self.btnNextMeeting.setTitle(myDisplayString, forState: .Normal)
+                                }
+                            }
+                        })
+                        
+                        let myNo = UIAlertAction(title: "No, leave the existing details", style: .Default, handler: { (action: UIAlertAction!) -> () in
+                            // do nothing
+                        })
+                        
+                        calendarOption.addAction(myYes)
+                        calendarOption.addAction(myNo)
+                        
+                        calendarOption.popoverPresentationController?.sourceView = self.view
+                        calendarOption.popoverPresentationController?.sourceRect = CGRectMake(self.view.bounds.width / 2.0, self.view.bounds.height / 2.0, 1.0, 1.0)
+                        
+                        self.presentViewController(calendarOption, animated: true, completion: nil)
+                    }
+                    else
+                    {
+                        let myOriginalNextMeeting = self.passedMeeting.event.nextMeeting
+                        
+                        myDatabaseConnection.updatePreviousAgendaID("", inMeetingID: myOriginalNextMeeting)
+
+                        passedMeeting.event.nextMeeting = pickerEventArray[mySelectedRow]
+                        if passedMeeting.event.nextMeeting != ""
+                        {
+                            // Get the previous meetings details
+                            
+                            let myItems = myDatabaseConnection.loadAgenda(passedMeeting.event.nextMeeting)
+                            
+                            for myItem in myItems
+                            {
+                                var startDateFormatter = NSDateFormatter()
+                                startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
+                                let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+                                
+                                let myDisplayString = "\(myItem.name) - \(myDisplayDate)"
+                                
+                                btnNextMeeting.setTitle(myDisplayString, forState: .Normal)
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                let myOriginalNextMeeting = self.passedMeeting.event.nextMeeting
+                
+                myDatabaseConnection.updatePreviousAgendaID("", inMeetingID: myOriginalNextMeeting)
+
+                passedMeeting.event.nextMeeting = pickerEventArray[mySelectedRow]
+                if passedMeeting.event.nextMeeting != ""
+                {
+                    // Get the previous meetings details
+                    
+                    let myItems = myDatabaseConnection.loadAgenda(passedMeeting.event.nextMeeting)
+                    
+                    for myItem in myItems
+                    {
+                        var startDateFormatter = NSDateFormatter()
+                        startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
+                        let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+                        
+                        let myDisplayString = "\(myItem.name) - \(myDisplayDate)"
+                        
+                        btnNextMeeting.setTitle(myDisplayString, forState: .Normal)
+                    }
+                }
+            }
+        }
+        
+        myPicker.hidden = true
+        btnSelect.hidden = true
+        showFields()
+    }
+    
     func hideFields()
     {
         lblMeetingHead.hidden = true
@@ -271,7 +528,7 @@ class meetingsViewController: UIViewController
         btnPreviousMinutes.hidden = true
         lblPreviousMeeting.hidden = true
         lblNextMeeting.hidden = true
-        lnlNextMeetingDetails.hidden = true
+        btnNextMeeting.hidden = true
     }
     
     func showFields()
@@ -296,7 +553,7 @@ class meetingsViewController: UIViewController
         btnPreviousMinutes.hidden = false
         lblPreviousMeeting.hidden = false
         lblNextMeeting.hidden = false
-        lnlNextMeetingDetails.hidden = false
+        btnNextMeeting.hidden = false
     }
     
     func attendeeRemoved(notification: NSNotification)
@@ -305,6 +562,231 @@ class meetingsViewController: UIViewController
         
         passedMeeting.event.removeAttendee(itemToRemove)
         colAttendees.reloadData()
+    }
+    
+    func getPreviousMeeting()
+    {
+        // We only list items here that we have Meeting records for, as otherwise there is no previous actions to get and display
+        
+        // if a recurring meeting invite then display previous occurances at the top of the list
+        
+        pickerOptions.removeAll(keepCapacity: false)
+        pickerEventArray.removeAll(keepCapacity: false)
+        
+        if passedMeeting.event.event.recurrenceRules != nil
+        {
+            // Recurring event, so display rucurrences first
+         
+            // get the meeting id, and remove the trailing portion in order to use in a search
+            
+            let myStringArr = passedMeeting.event.event.eventIdentifier.componentsSeparatedByString("/")
+
+            
+            let myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDAfterStart(myStringArr[0], inMeetingStartDate: passedMeeting.event.startDate)
+            
+            if myItems.count > 1
+            { // There is an previous meeting
+                for myItem in myItems
+                {
+                    if myItem.meetingID != passedMeeting.event.event.eventIdentifier
+                    { // Not this meeting meeting
+                        var startDateFormatter = NSDateFormatter()
+                        startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
+                        let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+                        
+                        pickerOptions.append("\(myItem.name) - \(myDisplayDate)")
+                        pickerEventArray.append(myItem.meetingID)
+                    }
+                }
+            }
+            
+            // display remaining items, newest first
+
+            let myNonItems = myDatabaseConnection.searchPastAgendaWithoutPartialMeetingIDAfterStart(myStringArr[0], inMeetingStartDate: passedMeeting.event.startDate)
+            
+            if myNonItems.count > 0
+            { // There is an previous meeting
+                for myItem in myNonItems
+                {
+                    var startDateFormatter = NSDateFormatter()
+                    startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
+                    let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+                        
+                    pickerOptions.append("\(myItem.name) - \(myDisplayDate)")
+                    pickerEventArray.append(myItem.meetingID)
+                }
+            }
+            
+            // Next meeting could also be a non entry so need to show calendar items as well
+        }
+        else
+        {
+            //non-recurring event, so display in date order, newest first
+            
+            // list items prior to meeting date
+            
+            let myItems = myDatabaseConnection.listAgendaReverseDateAfterStart(passedMeeting.event.startDate)
+            
+            if myItems.count > 0
+            { // There is an previous meeting
+                for myItem in myItems
+                {
+                    if myItem.meetingID != passedMeeting.event.event.eventIdentifier
+                    { // Not this meeting meeting
+                        var startDateFormatter = NSDateFormatter()
+                        startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
+                        let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+                        
+                        pickerOptions.append("\(myItem.name) - \(myDisplayDate)")
+                        pickerEventArray.append(myItem.meetingID)
+                    }
+                }
+            }
+        }
+        
+        if pickerOptions.count > 0
+        {
+            hideFields()
+            myPicker.hidden = false
+            btnSelect.setTitle("Set previous meeting", forState: .Normal)
+            btnSelect.hidden = false
+            myPicker.reloadAllComponents()
+            pickerTarget = "previousMeeting"
+        }
+    }
+    
+    func getNextMeeting()
+    {
+        // We only list items here that we have Meeting records for, as otherwise there is no previous actions to get and display
+        
+        // if a recurring meeting invite then display previous occurances at the top of the list
+        
+        pickerOptions.removeAll(keepCapacity: false)
+        pickerEventArray.removeAll(keepCapacity: false)
+
+        var events: [EKEvent] = []
+        
+        let baseDate = NSDate()
+        
+        let myEndDateString = myDatabaseConnection.getDecodeValue("CalAfterWeeks")
+        // This is string value so need to convert to integer
+        
+        let myEndDateValue:NSTimeInterval = (myEndDateString as NSString).doubleValue * 7 * 24 * 60 * 60
+        
+        let endDate = baseDate.dateByAddingTimeInterval(myEndDateValue)
+        
+        /* Create the predicate that we can later pass to the event store in order to fetch the events */
+        let searchPredicate = eventStore.predicateForEventsWithStartDate(
+            NSDate(),
+            endDate: endDate,
+            calendars: nil)
+        
+        /* Fetch all the events that fall between the starting and the ending dates */
+        
+        if eventStore.sources().count > 0
+        {
+            if eventStore.eventsMatchingPredicate(searchPredicate) != nil
+            {
+                events = eventStore.eventsMatchingPredicate(searchPredicate) as! [EKEvent]
+            }
+        }
+        
+        if events.count >  0
+        {
+            // Go through all the events and print them to the console
+            for event in events
+            {
+                var myDisplayString = event.title
+                
+                var startDateFormatter = NSDateFormatter()
+                startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
+                let myDisplayDate = startDateFormatter.stringFromDate(event.startDate)
+                
+                pickerOptions.append("\(event.title) - \(myDisplayDate)")
+                pickerEventArray.append(event.eventIdentifier)
+            }
+        }
+        
+        if passedMeeting.event.event.recurrenceRules != nil
+        {
+            // Recurring event, so display rucurrences first
+            
+            // get the meeting id, and remove the trailing portion in order to use in a search
+            
+            let myStringArr = passedMeeting.event.event.eventIdentifier.componentsSeparatedByString("/")
+            
+            let myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(myStringArr[0], inMeetingStartDate: passedMeeting.event.startDate)
+            
+            if myItems.count > 1
+            { // There is an previous meeting
+                for myItem in myItems
+                {
+                    if myItem.meetingID != passedMeeting.event.event.eventIdentifier
+                    { // Not this meeting meeting
+                        var startDateFormatter = NSDateFormatter()
+                        startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
+                        let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+                        
+                        pickerOptions.append("\(myItem.name) - \(myDisplayDate)")
+                        pickerEventArray.append(myItem.meetingID)
+                    }
+                }
+            }
+ /*
+            // display remaining items, newest first
+            
+            let myNonItems = myDatabaseConnection.searchPastAgendaWithoutPartialMeetingIDBeforeStart(myStringArr[0], inMeetingStartDate: passedMeeting.event.startDate)
+            
+            if myNonItems.count > 0
+            { // There is an previous meeting
+                for myItem in myNonItems
+                {
+                    var startDateFormatter = NSDateFormatter()
+                    startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
+                    let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+                    
+                    pickerOptions.append("\(myItem.name) - \(myDisplayDate)")
+                    pickerEventArray.append(myItem.meetingID)
+                }
+            }
+*/
+        }
+/*
+        else
+        {
+            //non-recurring event, so display in date order, newest first
+            
+            // list items prior to meeting date
+            
+            let myItems = myDatabaseConnection.listAgendaReverseDateBeforeStart(passedMeeting.event.startDate)
+            
+            if myItems.count > 0
+            { // There is an previous meeting
+                for myItem in myItems
+                {
+                    if myItem.meetingID != passedMeeting.event.event.eventIdentifier
+                    { // Not this meeting meeting
+                        var startDateFormatter = NSDateFormatter()
+                        startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
+                        let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+                        
+                        pickerOptions.append("\(myItem.name) - \(myDisplayDate)")
+                        pickerEventArray.append(myItem.meetingID)
+                    }
+                }
+            }
+        }
+      */
+            
+        if pickerOptions.count > 0
+        {
+            hideFields()
+            myPicker.hidden = false
+            btnSelect.setTitle("Set next meeting", forState: .Normal)
+            btnSelect.hidden = false
+            myPicker.reloadAllComponents()
+            pickerTarget = "nextMeeting"
+        }
     }
 }
 
@@ -337,4 +819,3 @@ class myAttendeeDisplayItem: UICollectionViewCell
         }
     }
 }
-

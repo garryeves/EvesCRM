@@ -24,6 +24,7 @@ private let dataTable1_CELL_IDENTIFER = "dataTable1Cell"
 var dropboxCoreService: DropboxCoreService = DropboxCoreService()
 var myDatabaseConnection: coreDatabase!
 var adbk : ABAddressBook!
+var eventStore: EKEventStore!
 
 class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate, MyMeetingsDelegate, SideBarDelegate, MyMaintainPanesDelegate {
     
@@ -66,8 +67,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     
     // store the details of the person selected in the People table
     var personContact: iOSContact!
-    
-    var eventStore: EKEventStore!
     
     // Do not like this workaround, but is best way I can find to store for rebuilding tables
     
@@ -120,6 +119,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
 
     var myRowClicked: Int = 0
     var calendarTable: String = ""
+    var myCalendarItems: [myCalendarItem] = Array()
     
     // Peoplepicker settings
     
@@ -730,7 +730,53 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             {
                 loadHangouts()
             }
-        
+            
+        case "Meetings":
+            myCalendarItems.removeAll(keepCapacity: false)
+            
+            var myReturnedData: [MeetingAgenda] = Array()
+            if myDisplayType == "Project"
+            {
+                myReturnedData = myDatabaseConnection.loadAgendaForProject(mySelectedProject.projectID)
+            }
+            else
+            {
+                // Get the meeting IDs based on the attendee name
+                
+                let myMeetingList = myDatabaseConnection.loadMeetingsForAttendee(personContact.fullName)
+                //  get project details
+                
+                for myMeeting in myMeetingList
+                {
+                    let myProjectList = myDatabaseConnection.loadAgenda(myMeeting.meetingID)
+                    
+                    for myProject in myProjectList
+                    {  //append project details to work array
+                        myReturnedData.append(myProject)
+                    }
+                }
+            }
+            
+            // Sort workarray by startdate, with oldest first
+        //    myReturnedData.sort({ $0.startDate.compare($1.startDate) == NSComparisonResult.OrderedAscending })
+            myReturnedData.sort({$0.startTime.timeIntervalSinceNow < $1.startTime.timeIntervalSinceNow})
+            
+            // Load calendar items array based on return array
+            
+            for myItem in myReturnedData
+            {
+                let myTempCal = myCalendarItem(inEventStore: eventStore, inMeetingAgenda: myItem)
+                
+                myCalendarItems.append(myTempCal)
+            }
+            
+            workArray = buildMeetingDisplay()
+            
+            if workArray.count == 0
+            {
+                writeRowToArray("No meetings found", &workArray)
+            }
+
             /*case "Facebook":
                 if myDisplayType == "Project"
                 {
@@ -935,7 +981,7 @@ println("facebook ID = \(myFacebookID)")
                 let edit = UIAlertAction(title: "Edit Meeting", style: .Default, handler: { (action: UIAlertAction!) -> () in
                     // doing something for "product page
                     let evc = EKEventEditViewController()
-                    evc.eventStore = self.eventStore
+                    evc.eventStore = eventStore
                     evc.editViewDelegate = self
                     evc.event = self.eventDetails.events[rowID]
                     self.presentViewController(evc, animated: true, completion: nil)
@@ -943,18 +989,18 @@ println("facebook ID = \(myFacebookID)")
                 
                 let agenda = UIAlertAction(title: "Agenda", style: .Default, handler: { (action: UIAlertAction!) -> () in
                     // doing something for "product page"
-                    self.openMeetings("Agenda")
+                    self.openMeetings("Agenda", workingTask: self.eventDetails.calendarItems[rowID])
                 })
                 
                 let minutes = UIAlertAction(title: "Minutes", style: .Default, handler: { (action: UIAlertAction!) -> () in
                     // doing something for "product page"
-                    self.openMeetings("Minutes")
+                    self.openMeetings("Minutes", workingTask: self.eventDetails.calendarItems[rowID])
 
                 })
                 
                 let personNotes = UIAlertAction(title: "Personal Notes", style: .Default, handler: { (action: UIAlertAction!) -> () in
                     // doing something for "product page"
-                    self.openMeetings("Personal Notes")
+                    self.openMeetings("Personal Notes", workingTask: self.eventDetails.calendarItems[rowID])
 
                 })
 
@@ -1036,6 +1082,10 @@ println("facebook ID = \(myFacebookID)")
             myWebView.hidden = false
             btnCloseWindow.hidden = false
             myWebView.loadHTMLString(myHangoutsMessages.messages[rowID].body, baseURL: nil)
+            
+        case "Meetings":
+            
+            openMeetings("Edit", workingTask: myCalendarItems[rowID])
             
             default:
                 let a = 1
@@ -1220,7 +1270,7 @@ println("facebook ID = \(myFacebookID)")
             
             case "Calendar":
                 let evc = EKEventEditViewController()
-                evc.eventStore = self.eventStore
+                evc.eventStore = eventStore
                 evc.editViewDelegate = self
                 self.presentViewController(evc, animated: true, completion: nil)
           
@@ -1961,13 +2011,13 @@ println("Nothing found")
         }
     }
     
-    func openMeetings(inType: String)
+    func openMeetings(inType: String, workingTask: myCalendarItem)
     {
         let meetingViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("MeetingsTab") as! meetingTabViewController
         
         var myPassedMeeting = MeetingModel()
         myPassedMeeting.actionType = inType
-        let workingTask = eventDetails.calendarItems[myRowClicked]
+     //   let workingTask = eventDetails.calendarItems[myRowClicked]
         myPassedMeeting.event = workingTask
         myPassedMeeting.delegate = self
         
@@ -2704,5 +2754,34 @@ println("Action: \(passedItem.displayString)")
     func MaintainPanesDidFinish(controller:MaintainPanesViewController)
     {
         controller.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func buildMeetingDisplay() -> [TableData]
+    {
+        var tableContents: [TableData] = [TableData]()
+        
+        // Build up the details we want to show ing the calendar
+        
+        for event in myCalendarItems
+        {
+            var myString = "\(event.title)\n"
+            myString += "\(event.displayScheduledDate)\n"
+            
+            if event.location != ""
+            {
+                myString += "At \(event.location)\n"
+            }
+            
+            if event.startDate.compare(NSDate()) == NSComparisonResult.OrderedAscending
+            {
+                // Event is in the past
+                writeRowToArray(myString, &tableContents, inDisplayFormat: "Gray")
+            }
+            else
+            {
+                writeRowToArray(myString, &tableContents)
+            }
+        }
+        return tableContents
     }
 }
