@@ -731,7 +731,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func loadAgendaForProject(inProjectID: Int)->[MeetingAgenda]
+    func loadAgendaForProject(inProjectName: String)->[MeetingAgenda]
     {
         let fetchRequest = NSFetchRequest(entityName: "MeetingAgenda")
         
@@ -740,7 +740,7 @@ class coreDatabase: NSObject
         
         var predicate: NSPredicate
         
-        predicate = NSPredicate(format: "projectID == \(inProjectID)")
+        predicate = NSPredicate(format: "name contains \"\(inProjectName)\"")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -2284,6 +2284,23 @@ class coreDatabase: NSObject
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         let predicate = NSPredicate(format: "(agendaID == \(inAgendaID)) AND (meetingID == \"\(inMeetingID)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [MeetingTasks]
+        
+        return fetchResults!
+    }
+    
+    func getMeetingsTasks(inMeetingID: String)->[MeetingTasks]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "MeetingTasks")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(meetingID == \"\(inMeetingID)\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

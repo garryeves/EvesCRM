@@ -47,9 +47,9 @@ class taskViewController: UIViewController,  UITextViewDelegate
     @IBOutlet weak var btnNewContext: UIButton!
     @IBOutlet weak var lblProject: UILabel!
     @IBOutlet weak var btnProject: UIButton!
-    
     @IBOutlet weak var lblUrgency: UILabel!
     @IBOutlet weak var btnUrgency: UIButton!
+    @IBOutlet weak var btnSelect: UIButton!
     
     private var pickerOptions: [String] = Array()
     private var pickerTarget: String = ""
@@ -57,6 +57,7 @@ class taskViewController: UIViewController,  UITextViewDelegate
     private var myDueDate: NSDate!
     private var myProjectID: Int = 0
     private var myProjectDetails: [Projects] = Array()
+    private var mySelectedRow: Int = 0
     
     override func viewDidLoad()
     {
@@ -64,6 +65,7 @@ class taskViewController: UIViewController,  UITextViewDelegate
         
         myDatePicker.hidden = true
         myPicker.hidden = true
+        btnSelect.hidden = true
         btnSetTargetDate.hidden = true
         
         txtTaskDescription.layer.borderColor = UIColor.lightGrayColor().CGColor
@@ -172,7 +174,6 @@ class taskViewController: UIViewController,  UITextViewDelegate
             NSNotificationCenter.defaultCenter().addObserver(self, selector: "removeTaskContext:", name:"NotificationRemoveTaskContext", object: nil)
             
             txtTaskDescription.delegate = self
-            
         }
     }
     
@@ -280,85 +281,7 @@ class taskViewController: UIViewController,  UITextViewDelegate
     
     func pickerView(TableTypeSelection1: UIPickerView, didSelectRow row: Int, inComponent component: Int)
     {
-        // Write code for select
-        if pickerTarget == "Context"
-        {
-          //  btnOwner.setTitle(pickerOptions[row], forState: .Normal)
-            lblNewContext.hidden = true
-            txtNewContext.hidden = true
-            btnNewContext.hidden = true
-        }
-
-        if pickerTarget == "Status"
-        {
-            btnStatus.setTitle(pickerOptions[row], forState: .Normal)
-            passedTask.currentTask.status = btnStatus.currentTitle!
-        }
-        
-        if pickerTarget == "TimeInterval"
-        {
-            btnEstTimeInterval.setTitle(pickerOptions[row], forState: .Normal)
-            passedTask.currentTask.estimatedTimeType = btnEstTimeInterval.currentTitle!
-        }
-
-        if pickerTarget == "Priority"
-        {
-            btnPriority.setTitle(pickerOptions[row], forState: .Normal)
-            passedTask.currentTask.priority = btnPriority.currentTitle!
-        }
-
-        if pickerTarget == "Energy"
-        {
-            btnEnergy.setTitle(pickerOptions[row], forState: .Normal)
-            passedTask.currentTask.energyLevel = btnEnergy.currentTitle!
-        }
-
-        if pickerTarget == "Urgency"
-        {
-            btnUrgency.setTitle(pickerOptions[row], forState: .Normal)
-            passedTask.currentTask.urgency = btnUrgency.currentTitle!
-        }
-
-        if pickerTarget == "Project"
-        {
-            if row > 0
-            {
-                setProjectName(myProjectDetails[row - 1].projectID as Int)
-            }
-        }
-        
-        if pickerTarget == "Context"
-        {
-            var matchFound: Bool = false
-            // if we have just selected an "unknown" context then we need ot create it
-            
-            // first lets see if there is already a context with this name
-            let myContextList = contexts()
-            
-            for myContext in myContextList.contexts
-            {
-                if myContext.name.lowercaseString == pickerOptions[row].lowercaseString
-                {
-                    // Existing context found, so use this record
-                
-                    setContext(myContext.contextID)
-                    matchFound = true
-                    break
-                }
-            }
-            
-            // if no match then create context
-            
-            if !matchFound
-            {
-                let myNewContext = context(inContextName: pickerOptions[row])
-                
-                setContext(myNewContext.contextID)
-            }
-        }
-
-        myPicker.hidden = true
-        showFields()
+        mySelectedRow = row
     }
     
     @IBAction func btnTargetDate(sender: UIButton)
@@ -427,7 +350,11 @@ class taskViewController: UIViewController,  UITextViewDelegate
             if pickerOptions.count > 0
             {
                 myPicker.hidden = false
+                btnSelect.hidden = false
                 myPicker.reloadAllComponents()
+                btnSelect.setTitle("Set Context", forState: .Normal)
+                myPicker.selectRow(0,inComponent: 0, animated: true)
+                mySelectedRow = 0
             }
             
             pickerTarget = "Context"
@@ -437,12 +364,17 @@ class taskViewController: UIViewController,  UITextViewDelegate
     @IBAction func btnStatus(sender: UIButton)
     {
         pickerOptions.removeAll(keepCapacity: false)
+        pickerOptions.append("")
         pickerOptions.append("Open")
         pickerOptions.append("Closed")
         hideFields()
         myPicker.hidden = false
+        btnSelect.hidden = false
         myPicker.reloadAllComponents()
         pickerTarget = "Status"
+        btnSelect.setTitle("Set Status", forState: .Normal)
+        myPicker.selectRow(0,inComponent: 0, animated: true)
+        mySelectedRow = 0
     }
     
     @IBAction func btnSetTargetDate(sender: UIButton)
@@ -492,8 +424,12 @@ class taskViewController: UIViewController,  UITextViewDelegate
         pickerOptions.append("Years")
         hideFields()
         myPicker.hidden = false
+        btnSelect.hidden = false
         myPicker.reloadAllComponents()
         pickerTarget = "TimeInterval"
+        btnSelect.setTitle("Set Time Interval", forState: .Normal)
+        myPicker.selectRow(0,inComponent: 0, animated: true)
+        mySelectedRow = 0
     }
     
     @IBAction func btnPriority(sender: UIButton)
@@ -505,8 +441,12 @@ class taskViewController: UIViewController,  UITextViewDelegate
         pickerOptions.append("Low")
         hideFields()
         myPicker.hidden = false
+        btnSelect.hidden = false
         myPicker.reloadAllComponents()
         pickerTarget = "Priority"
+        btnSelect.setTitle("Set Priority", forState: .Normal)
+        myPicker.selectRow(0,inComponent: 0, animated: true)
+        mySelectedRow = 0
     }
     
     @IBAction func btnEnergy(sender: UIButton)
@@ -518,8 +458,12 @@ class taskViewController: UIViewController,  UITextViewDelegate
         pickerOptions.append("Low")
         hideFields()
         myPicker.hidden = false
+        btnSelect.hidden = false
         myPicker.reloadAllComponents()
         pickerTarget = "Energy"
+        btnSelect.setTitle("Set Energy", forState: .Normal)
+        myPicker.selectRow(0,inComponent: 0, animated: true)
+        mySelectedRow = 0
     }
     
     @IBAction func btnNewContext(sender: UIButton)
@@ -564,6 +508,7 @@ class taskViewController: UIViewController,  UITextViewDelegate
         txtNewContext.hidden = true
         btnNewContext.hidden = true
         myPicker.hidden = true
+        btnSelect.hidden = true
         showFields()
     }
     
@@ -583,8 +528,12 @@ class taskViewController: UIViewController,  UITextViewDelegate
         }
         hideFields()
         myPicker.hidden = false
+        btnSelect.hidden = false
         myPicker.reloadAllComponents()
         pickerTarget = "Project"
+        btnSelect.setTitle("Set Project", forState: .Normal)
+        myPicker.selectRow(0,inComponent: 0, animated: true)
+        mySelectedRow = 0
     }
     
     @IBAction func btnUrgency(sender: UIButton)
@@ -596,9 +545,12 @@ class taskViewController: UIViewController,  UITextViewDelegate
         pickerOptions.append("Low")
         hideFields()
         myPicker.hidden = false
+        btnSelect.hidden = false
         myPicker.reloadAllComponents()
         pickerTarget = "Urgency"
-
+        btnSelect.setTitle("Set Urgency", forState: .Normal)
+        myPicker.selectRow(0,inComponent: 0, animated: true)
+        mySelectedRow = 0
     }
     
     @IBAction func txtTaskDetail(sender: UITextField)
@@ -612,6 +564,93 @@ class taskViewController: UIViewController,  UITextViewDelegate
     @IBAction func txtEstTime(sender: UITextField)
     {
         passedTask.currentTask.estimatedTime = txtEstTime.text.toInt()!
+    }
+    
+    @IBAction func btnSelect(sender: UIButton)
+    {
+        // Write code for select
+
+        if mySelectedRow != 0
+        {
+            if pickerTarget == "Context"
+            {
+                btnOwner.setTitle(pickerOptions[mySelectedRow], forState: .Normal)
+                lblNewContext.hidden = true
+                txtNewContext.hidden = true
+                btnNewContext.hidden = true
+            }
+        
+            if pickerTarget == "Status"
+            {
+                btnStatus.setTitle(pickerOptions[mySelectedRow], forState: .Normal)
+                passedTask.currentTask.status = btnStatus.currentTitle!
+            }
+        
+            if pickerTarget == "TimeInterval"
+            {
+                btnEstTimeInterval.setTitle(pickerOptions[mySelectedRow], forState: .Normal)
+                passedTask.currentTask.estimatedTimeType = btnEstTimeInterval.currentTitle!
+            }
+        
+            if pickerTarget == "Priority"
+            {
+                btnPriority.setTitle(pickerOptions[mySelectedRow], forState: .Normal)
+                passedTask.currentTask.priority = btnPriority.currentTitle!
+            }
+        
+            if pickerTarget == "Energy"
+            {
+                btnEnergy.setTitle(pickerOptions[mySelectedRow], forState: .Normal)
+                passedTask.currentTask.energyLevel = btnEnergy.currentTitle!
+            }
+        
+            if pickerTarget == "Urgency"
+            {
+                btnUrgency.setTitle(pickerOptions[mySelectedRow], forState: .Normal)
+                passedTask.currentTask.urgency = btnUrgency.currentTitle!
+            }
+        
+            if pickerTarget == "Project"
+            {
+                setProjectName(myProjectDetails[mySelectedRow - 1].projectID as Int)
+            }
+        
+            if pickerTarget == "Context"
+            {
+                var matchFound: Bool = false
+                // if we have just selected an "unknown" context then we need ot create it
+            
+                // first lets see if there is already a context with this name
+                let myContextList = contexts()
+            
+                for myContext in myContextList.contexts
+                {
+                    if myContext.name.lowercaseString == pickerOptions[mySelectedRow].lowercaseString
+                    {
+                        // Existing context found, so use this record
+                    
+                        setContext(myContext.contextID)
+                        matchFound = true
+                        break
+                    }
+                }
+            
+                // if no match then create context
+            
+                if !matchFound
+                {
+                    let myNewContext = context(inContextName: pickerOptions[mySelectedRow])
+                
+                    setContext(myNewContext.contextID)
+                }
+            }
+        }
+        myPicker.hidden = true
+        btnSelect.hidden = true
+        lblNewContext.hidden = true
+        txtNewContext.hidden = true
+        btnNewContext.hidden = true
+        showFields()
     }
     
     func textViewDidEndEditing(textView: UITextView)

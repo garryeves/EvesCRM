@@ -23,6 +23,7 @@ class meetingAgendaItem
     private var myAgendaID: Int = 0
     private var myTasks: [task] = Array()
     private var myMeetingID: String = ""
+    private var myUpdateAllowed: Bool = true
 
     var actualEndTime: NSDate?
     {
@@ -186,15 +187,35 @@ class meetingAgendaItem
         }
     }
     
+    init()
+    {
+       // Do nothing
+    }
+    
+    func createPreviousMeetingRow()
+    {
+        myTitle = "Review of previous meeting actions"
+        myTimeAllocation = 10
+        myStatus = "Open"
+        myOwner = "All"
+        myUpdateAllowed = false
+    }
+    
     func save()
     {        
-        myDatabaseConnection.updateAgendaItem(myMeetingID, inItem: self)
+        if myUpdateAllowed
+        {
+            myDatabaseConnection.updateAgendaItem(myMeetingID, inItem: self)
+        }
     }
     
     func delete()
     {
         // call code to perform the delete
-        myDatabaseConnection.deleteAgendaItem(myMeetingID, inItem: self)
+        if myUpdateAllowed
+        {
+            myDatabaseConnection.deleteAgendaItem(myMeetingID, inItem: self)
+        }
     }
     
     func loadTasks()
@@ -379,6 +400,33 @@ class myCalendarItem
         myMinutesType = inMeetingAgenda.minutesType
         
     }
+    
+    init(inEventStore: EKEventStore, inMeetingID: String)
+    {
+        let mySavedValues = myDatabaseConnection.loadAgenda(inMeetingID)
+        
+        if mySavedValues.count > 0
+        {
+            
+            myTitle = mySavedValues[0].name
+            myStartDate = mySavedValues[0].startTime
+            myEndDate = mySavedValues[0].endTime
+            myLocation = mySavedValues[0].location
+            myPreviousMinutes = mySavedValues[0].previousMeetingID
+            myEventID = mySavedValues[0].meetingID
+            myChair = mySavedValues[0].chair
+            myMinutes = mySavedValues[0].minutes
+            myLocation = mySavedValues[0].location
+            myMinutesType = mySavedValues[0].minutesType
+            mySavedData = true
+        }
+
+        startDateFormatter.dateStyle = dateFormat
+        startDateFormatter.timeStyle = timeFormat
+        endDateFormatter.timeStyle = timeFormat
+        eventStore = inEventStore
+    }
+
 
     var event: EKEvent
     {
@@ -633,13 +681,16 @@ class myCalendarItem
             // get the meeting record for the meeting that has this meetings ID as it previousMeetingID
             var retVal: String = ""
             
-            let myItems = myDatabaseConnection.loadPreviousAgenda(myEventID)
-            
-            for myItem in myItems
+            if myEventID != ""
             {
-                retVal = myItem.meetingID
+                let myItems = myDatabaseConnection.loadPreviousAgenda(myEventID)
+            
+                for myItem in myItems
+                {
+                    retVal = myItem.meetingID
+                }
             }
-    
+            
             return retVal
         }
         set
@@ -906,29 +957,32 @@ class myCalendarItem
                         tempEmail = savedAttendee.email
                         tempType = savedAttendee.type
                     
-                        for invitee in myEvent.attendees as! [EKParticipant]
+                        if myEvent.hasAttendees
                         {
-                            // Check to see if any "Invited" people are no longer on calendar invite, and if so remove from Agenda.
-                
-                            if invitee.name == tempName
+                            for invitee in myEvent.attendees as! [EKParticipant]
                             {
-                                // Invitee found
-                    
-                                var emailText: String = "\(invitee.URL)"
-                                var emailStartPos = find(emailText,":")
-                                var nextPlace = emailStartPos?.successor()
-                                var emailAddress: String = ""
-                                if nextPlace != nil
+                                // Check to see if any "Invited" people are no longer on calendar invite, and if so remove from Agenda.
+                
+                                if invitee.name == tempName
                                 {
-                                    var emailEndPos = emailText.endIndex.predecessor()
-                                    emailAddress = emailText[nextPlace!...emailEndPos]
+                                    // Invitee found
+                    
+                                    var emailText: String = "\(invitee.URL)"
+                                    var emailStartPos = find(emailText,":")
+                                    var nextPlace = emailStartPos?.successor()
+                                    var emailAddress: String = ""
+                                    if nextPlace != nil
+                                    {
+                                        var emailEndPos = emailText.endIndex.predecessor()
+                                        emailAddress = emailText[nextPlace!...emailEndPos]
+                                    }
+                    
+                                    initaliseAttendee(invitee.name, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
+                    
+                                    inviteeFound = true
+                    
+                                    break
                                 }
-                    
-                                initaliseAttendee(invitee.name, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
-                    
-                                inviteeFound = true
-                    
-                                break
                             }
                         }
                 
@@ -977,26 +1031,49 @@ class myCalendarItem
                         mySavedValues = myDatabaseConnection.loadAttendees(myEventID)
                     }
             
-                    for invitee in myEvent.attendees as! [EKParticipant]
+                    if myEvent.hasAttendees
                     {
-                        // Check to see if any "Invited" people are no longer on calendar invite, and if so remove from Agenda.
-                
-                        inviteeFound = false
-                        for checkAttendee in mySavedValues
+                        for invitee in myEvent.attendees as! [EKParticipant]
                         {
-                            tempName = checkAttendee.name
-                            if invitee.name == tempName
+                            // Check to see if any "Invited" people are no longer on calendar invite, and if so remove from Agenda.
+                
+                            inviteeFound = false
+                            for checkAttendee in mySavedValues
                             {
-                                // Invitee found
-                                inviteeFound = true
-                                break
+                                tempName = checkAttendee.name
+                                if invitee.name == tempName
+                                {
+                                    // Invitee found
+                                    inviteeFound = true
+                                    break
+                                }
+                            }
+                
+                            if !inviteeFound
+                            {
+                                // New invitee so add into table
+                
+                                var emailText: String = "\(invitee.URL)"
+                                var emailStartPos = find(emailText,":")
+                                var nextPlace = emailStartPos?.successor()
+                                var emailAddress: String = ""
+                                if nextPlace != nil
+                                {
+                                    var emailEndPos = emailText.endIndex.predecessor()
+                                    emailAddress = emailText[nextPlace!...emailEndPos]
+                                }
+                
+                                initaliseAttendee(invitee.name, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
                             }
                         }
-                
-                        if !inviteeFound
+                    }
+                }
+                else
+                {
+                    if myEvent.hasAttendees
+                    {
+                        for invitee in myEvent.attendees as! [EKParticipant]
                         {
-                            // New invitee so add into table
-                
                             var emailText: String = "\(invitee.URL)"
                             var emailStartPos = find(emailText,":")
                             var nextPlace = emailStartPos?.successor()
@@ -1006,26 +1083,9 @@ class myCalendarItem
                                 var emailEndPos = emailText.endIndex.predecessor()
                                 emailAddress = emailText[nextPlace!...emailEndPos]
                             }
-                
+                    
                             initaliseAttendee(invitee.name, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
                         }
-                    }
-                }
-                else
-                {
-                    for invitee in myEvent.attendees as! [EKParticipant]
-                    {
-                        var emailText: String = "\(invitee.URL)"
-                        var emailStartPos = find(emailText,":")
-                        var nextPlace = emailStartPos?.successor()
-                        var emailAddress: String = ""
-                        if nextPlace != nil
-                        {
-                            var emailEndPos = emailText.endIndex.predecessor()
-                            emailAddress = emailText[nextPlace!...emailEndPos]
-                        }
-                    
-                        initaliseAttendee(invitee.name, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
                     }
                 }
             }
@@ -1045,6 +1105,7 @@ class myCalendarItem
             }
         }
     }
+    
     func loadAgendaItems()
     {
         var mySavedValues: [MeetingAgendaItem]!

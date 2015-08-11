@@ -81,8 +81,6 @@ class agendaItemViewController: UIViewController, MyTaskDelegate, UITextViewDele
         hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
         self.view.addGestureRecognizer(hideGestureRecognizer)
 
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateTask:", name:"NotificationUpdateAgendaTask", object: nil)
-        
         txtDiscussionNotes.layer.borderColor = UIColor.lightGrayColor().CGColor
         txtDiscussionNotes.layer.borderWidth = 0.5
         txtDiscussionNotes.layer.cornerRadius = 5.0
@@ -144,7 +142,6 @@ class agendaItemViewController: UIViewController, MyTaskDelegate, UITextViewDele
             cell.lblTaskStatus.text = ""
             cell.lblTaskOwner.text = ""
             cell.lblTaskTargetDate.text = ""
-            cell.btnAction.setTitle("", forState: .Normal)
         }
         else
         {
@@ -152,8 +149,6 @@ class agendaItemViewController: UIViewController, MyTaskDelegate, UITextViewDele
             cell.lblTaskStatus.text = agendaItem.tasks[indexPath.row].status
             cell.lblTaskOwner.text = "Owner"
             cell.lblTaskTargetDate.text = agendaItem.tasks[indexPath.row].displayDueDate
-            cell.btnAction.setTitle("Update", forState: .Normal)
-            cell.btnAction.tag = agendaItem.tasks[indexPath.row].taskID
         }
         
         let swiftColor = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
@@ -182,28 +177,21 @@ class agendaItemViewController: UIViewController, MyTaskDelegate, UITextViewDele
         return headerView
     }
     
-    /*
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
     {
-        if collectionView == colAttendees
-        {
-            let cell = collectionView.cellForItemAtIndexPath(indexPath) as! MyDisplayCollectionViewCell
-            
-            if indexPath.indexAtPosition(1) == 2
-            {
-                event.removeAttendee(indexPath.indexAtPosition(0))
-                colAttendees.reloadData()
-                event.saveAgenda()
-            }
-        }
+        let taskViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("taskTab") as! tasksTabViewController
         
+        var myPassedTask = TaskModel()
+        myPassedTask.taskType = "minutes"
+        myPassedTask.currentTask = agendaItem.tasks[indexPath.row]
+        myPassedTask.delegate = self
+        myPassedTask.event = event
         
-        if collectionView == colAgenda
-        {
-            
-        }
+        taskViewControl.myPassedTask = myPassedTask
+        
+        self.presentViewController(taskViewControl, animated: true, completion: nil)
     }
-*/
+
     
     func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
     {
@@ -255,24 +243,6 @@ class agendaItemViewController: UIViewController, MyTaskDelegate, UITextViewDele
         myPassedTask.delegate = self
         myPassedTask.event = event
  
-        taskViewControl.myPassedTask = myPassedTask
-        
-        self.presentViewController(taskViewControl, animated: true, completion: nil)
-    }
-    
-    func updateTask(notification: NSNotification)
-    {
-        let itemToUpdate = notification.userInfo!["itemNo"] as! Int
-        
-        let taskViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("taskTab") as! tasksTabViewController
-        
-        var myPassedTask = TaskModel()
-        myPassedTask.taskType = "minutes"
-        let workingTask = task(inTaskID: itemToUpdate)
-        myPassedTask.currentTask = workingTask
-        myPassedTask.delegate = self
-        myPassedTask.event = event
-        
         taskViewControl.myPassedTask = myPassedTask
         
         self.presentViewController(taskViewControl, animated: true, completion: nil)
@@ -393,7 +363,6 @@ class myTaskItemHeader: UICollectionReusableView
     @IBOutlet weak var lblTaskTargetDate: UILabel!
     @IBOutlet weak var lblTaskOwner: UILabel!
     @IBOutlet weak var lblTaskName: UILabel!
-    @IBOutlet weak var lblAction: UILabel!
 }
 
 class myTaskItem: UICollectionViewCell
@@ -402,19 +371,10 @@ class myTaskItem: UICollectionViewCell
     @IBOutlet weak var lblTaskTargetDate: UILabel!
     @IBOutlet weak var lblTaskOwner: UILabel!
     @IBOutlet weak var lblTaskName: UILabel!
-    @IBOutlet weak var btnAction: UIButton!
 
     override func layoutSubviews()
     {
         contentView.frame = bounds
         super.layoutSubviews()
-    }
-    
-    @IBAction func btnAction(sender: UIButton)
-    {
-        if btnAction.currentTitle == "Update"
-        {
-            NSNotificationCenter.defaultCenter().postNotificationName("NotificationUpdateAgendaTask", object: nil, userInfo:["itemNo":btnAction.tag])
-        }
-    }
+    }    
 }

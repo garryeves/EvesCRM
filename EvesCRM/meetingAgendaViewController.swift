@@ -8,7 +8,7 @@
 
 import Foundation
 
-class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate
+class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTaskListDelegate
 {
     
     private var passedMeeting: MeetingModel!
@@ -31,6 +31,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate
     private let reuseAgendaAction = "reuseAgendaAction"
     
     private var pickerOptions: [String] = Array()
+    private var myAgendaList: [meetingAgendaItem] = Array()
     
     override func viewDidLoad()
     {
@@ -41,6 +42,35 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate
         if passedMeeting.actionType != "Agenda"
         {
             btnAddAgendaItem.hidden = true
+        }
+        
+        // Do we need to show the "Previous Meeting Actions?"
+        
+        if passedMeeting.event.previousMinutes == ""
+        { // No previous meeting
+            myAgendaList = passedMeeting.event.agendaItems
+        }
+        else
+        { // Previous meeting exists
+            // Does the previous meeting have any tasks
+            let myData = myDatabaseConnection.getMeetingsTasks(passedMeeting.event.previousMinutes)
+            
+            if myData.count > 0
+            {  // There are tasks for the previous meeting
+                let previousMinutes  = meetingAgendaItem()
+                
+                previousMinutes.createPreviousMeetingRow()
+                myAgendaList.removeAll(keepCapacity: false)
+                myAgendaList.append(previousMinutes)
+                for myItem in passedMeeting.event.agendaItems
+                {
+                    myAgendaList.append(myItem)
+                }
+            }
+            else
+            { // Not tasks for the previous meeting
+                myAgendaList = passedMeeting.event.agendaItems
+            }
         }
         
         myPicker.hidden = true
@@ -54,8 +84,6 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate
         let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
         hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
         self.view.addGestureRecognizer(hideGestureRecognizer)
-        
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateAgendaItem:", name:"NotificationUpdateAgendaItem", object: nil)
     }
     
     override func didReceiveMemoryWarning()
@@ -95,7 +123,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
-        return passedMeeting.event.agendaItems.count
+        return myAgendaList.count
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
@@ -103,11 +131,9 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate
         var cell: myAgendaItem!
             
         cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseAgendaTime, forIndexPath: indexPath) as! myAgendaItem
-        cell.lblTime.text = "\(passedMeeting.event.agendaItems[indexPath.row].timeAllocation)"
-        cell.lblItem.text = passedMeeting.event.agendaItems[indexPath.row].title
-        cell.lblOwner.text = passedMeeting.event.agendaItems[indexPath.row].owner
-        cell.btnAction.setTitle("Update", forState: .Normal)
-        cell.btnAction.tag = indexPath.row
+        cell.lblTime.text = "\(myAgendaList[indexPath.row].timeAllocation)"
+        cell.lblItem.text = myAgendaList[indexPath.row].title
+        cell.lblOwner.text = myAgendaList[indexPath.row].owner
             
         let swiftColor = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
         if (indexPath.row % 2 == 0)  // was .row
@@ -125,8 +151,30 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
-    {  // Leaving stub in here for use in other collections
+    {
+        let itemToUpdate = indexPath.row
         
+        if myAgendaList[itemToUpdate].agendaID == 0
+        {  // This is a previous meeting tasks row, so call the task list
+            let taskListViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("taskList") as! taskListViewController
+            taskListViewControl.delegate = self
+            taskListViewControl.myTaskListType = "Meeting"
+            taskListViewControl.myMeetingID = passedMeeting.event.previousMinutes
+            
+            self.presentViewController(taskListViewControl, animated: true, completion: nil)
+        }
+        else
+        {  // This is a normal Agenda item so call the Agenda item screen
+            let agendaViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("AgendaItems") as! agendaItemViewController
+            agendaViewControl.delegate = self
+            agendaViewControl.event = passedMeeting.event
+            agendaViewControl.actionType = passedMeeting.actionType
+        
+            let agendaItem = myAgendaList[itemToUpdate]
+            agendaViewControl.agendaItem = agendaItem
+        
+            self.presentViewController(agendaViewControl, animated: true, completion: nil)
+        }
     }
     
     func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView
@@ -260,19 +308,12 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate
         controller.dismissViewControllerAnimated(true, completion: nil)
     }
     
-    func updateAgendaItem(notification: NSNotification)
+    func myTaskListDidFinish(controller:taskListViewController)
     {
-        let itemToUpdate = notification.userInfo!["itemNo"] as! Int
+        passedMeeting.event.loadAgendaItems()
+        colAgenda.reloadData()
         
-        let agendaViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("AgendaItems") as! agendaItemViewController
-        agendaViewControl.delegate = self
-        agendaViewControl.event = passedMeeting.event
-        agendaViewControl.actionType = passedMeeting.actionType
-        
-        let agendaItem = passedMeeting.event.agendaItems[itemToUpdate]
-        agendaViewControl.agendaItem = agendaItem
-        
-        self.presentViewController(agendaViewControl, animated: true, completion: nil)
+        controller.dismissViewControllerAnimated(true, completion: nil)
     }
 }
 
@@ -281,7 +322,6 @@ class myAgendaItemHeader: UICollectionReusableView
     @IBOutlet weak var lblTime: UILabel!
     @IBOutlet weak var lblItem: UILabel!
     @IBOutlet weak var lblOwner: UILabel!
-    @IBOutlet weak var lblAction: UILabel!
 }
 
 class myAgendaItem: UICollectionViewCell
@@ -289,20 +329,11 @@ class myAgendaItem: UICollectionViewCell
     @IBOutlet weak var lblTime: UILabel!
     @IBOutlet weak var lblItem: UILabel!
     @IBOutlet weak var lblOwner: UILabel!
-    @IBOutlet weak var btnAction: UIButton!
   
     override func layoutSubviews()
     {
         contentView.frame = bounds
         super.layoutSubviews()
-    }
-    
-    @IBAction func btnAction(sender: UIButton)
-    {
-        if btnAction.currentTitle == "Update"
-        {
-            NSNotificationCenter.defaultCenter().postNotificationName("NotificationUpdateAgendaItem", object: nil, userInfo:["itemNo":btnAction.tag])
-        }
     }
 }
 

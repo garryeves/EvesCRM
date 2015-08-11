@@ -196,10 +196,10 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
   //      myDatabaseConnection.resetprojects()
         
    //   code to reset meetings if needed for testing        
-  //      myDatabaseConnection.resetMeetings()
+ //       myDatabaseConnection.resetMeetings()
         
         //   code to reset tasks if needed for testing
-    //    myDatabaseConnection.resetTasks()
+ //       myDatabaseConnection.resetTasks()
         
         //   code to reset contexts if needed for testing
      //        myDatabaseConnection.resetContexts()
@@ -223,7 +223,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         TableTypeButton2.setTitle("Details", forState: .Normal)
         TableTypeButton3.setTitle("Project Membership", forState: .Normal)
         TableTypeButton4.setTitle("Reminders", forState: .Normal)
-        
+       
         TableOptions = Array()
         
         myEvernote = EvernoteDetails(inSession: self.evernoteSession)
@@ -737,7 +737,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             var myReturnedData: [MeetingAgenda] = Array()
             if myDisplayType == "Project"
             {
-                myReturnedData = myDatabaseConnection.loadAgendaForProject(mySelectedProject.projectID)
+                myReturnedData = myDatabaseConnection.loadAgendaForProject(mySelectedProject.projectName)
             }
             else
             {
@@ -2612,7 +2612,6 @@ println("Nothing found")
                 }
             
             case "Action":
-println("Action: \(passedItem.displayString)")
                 switch passedItem.displayString
                 {
                     case "Address Book":
@@ -2730,7 +2729,8 @@ println("Action: \(passedItem.displayString)")
         // we need to go and find the record for the person we have selected
     
         personContact = iOSContact(contactRecord: personRecord)
-    
+        displayScreen()
+        
         table1Contents = Array()
         table2Contents = Array()
         table3Contents = Array()

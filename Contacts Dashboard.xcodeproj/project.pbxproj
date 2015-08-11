@@ -18,6 +18,8 @@
 		340650841ADDF8FF00C90CBB /* EvesCRMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340650831ADDF8FF00C90CBB /* EvesCRMTests.swift */; };
 		3406508F1ADDF93600C90CBB /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3406508D1ADDF93600C90CBB /* AddressBook.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		340650901ADDF93600C90CBB /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3406508E1ADDF93600C90CBB /* AddressBookUI.framework */; };
+		340F84A71B79BE220028439B /* taskListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340F84A61B79BE220028439B /* taskListViewController.swift */; };
+		340F84A81B79BE220028439B /* taskListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340F84A61B79BE220028439B /* taskListViewController.swift */; };
 		3410561E1B589D92002B0ED9 /* AgendaItemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3410561D1B589D92002B0ED9 /* AgendaItemViewController.swift */; };
 		3410561F1B589D92002B0ED9 /* AgendaItemViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3410561D1B589D92002B0ED9 /* AgendaItemViewController.swift */; };
 		34111C3A1AEC898B003090EB /* reminderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34111C391AEC898B003090EB /* reminderViewController.swift */; };
@@ -249,6 +251,7 @@
 		340650831ADDF8FF00C90CBB /* EvesCRMTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvesCRMTests.swift; sourceTree = "<group>"; };
 		3406508D1ADDF93600C90CBB /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		3406508E1ADDF93600C90CBB /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
+		340F84A61B79BE220028439B /* taskListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = taskListViewController.swift; sourceTree = "<group>"; };
 		3410561D1B589D92002B0ED9 /* AgendaItemViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AgendaItemViewController.swift; sourceTree = "<group>"; };
 		34111C391AEC898B003090EB /* reminderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = reminderViewController.swift; sourceTree = "<group>"; };
 		341E08C61B01B1B90036202D /* settingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = settingsViewController.swift; sourceTree = "<group>"; };
@@ -593,6 +596,7 @@
 				34F35BCB1B6B18AF00A19ACE /* tasksTabViewController.swift */,
 				34F35BDD1B6B549000A19ACE /* meetingTabViewController.swift */,
 				34F35BE41B6B54A200A19ACE /* meetingAgendaViewController.swift */,
+				340F84A61B79BE220028439B /* taskListViewController.swift */,
 			);
 			path = EvesCRM;
 			sourceTree = "<group>";
@@ -913,6 +917,7 @@
 				34A578C01B5F6110008D3D8E /* Task.swift in Sources */,
 				342A357C1B5F727200D6DB29 /* taskViewController.swift in Sources */,
 				34A183291B0EDBB400FC369D /* StringHelper.m in Sources */,
+				340F84A71B79BE220028439B /* taskListViewController.swift in Sources */,
 				3410561E1B589D92002B0ED9 /* AgendaItemViewController.swift in Sources */,
 				346B70F91AF75FF4005E1BC2 /* ProjectTeamMembers.swift in Sources */,
 				344726611B54D6A800BEFF0B /* coreDatabase.swift in Sources */,
@@ -1020,6 +1025,7 @@
 				346D5E031AE5F9C700F858E7 /* CalendarDetails.swift in Sources */,
 				34B9C0121B26BA70005E52F9 /* gMail.swift in Sources */,
 				34A1832A1B0EDBB400FC369D /* StringHelper.m in Sources */,
+				340F84A81B79BE220028439B /* taskListViewController.swift in Sources */,
 				342C0A231B4B844D00A73CA5 /* meetingsViewController.swift in Sources */,
 				342CA6A31B26C79B006FEAED /* GTLNetworking_Sources.m in Sources */,
 				34BDECAD1B0089CC008C9F3F /* Decodes.swift in Sources */,
