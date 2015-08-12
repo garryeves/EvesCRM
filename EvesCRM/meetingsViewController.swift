@@ -44,6 +44,10 @@ class meetingsViewController: UIViewController
     @IBOutlet weak var myPicker: UIPickerView!
     @IBOutlet weak var btnSelect: UIButton!
     
+    @IBOutlet weak var btnShare: UIBarButtonItem!
+    @IBOutlet weak var btnHead: UIBarButtonItem!
+    @IBOutlet weak var toolbar: UIToolbar!
+    
     private let reuseAttendeeIdentifier = "AttendeeCell"
     private let reuseAttendeeStatusIdentifier = "AttendeeStatusCell"
     private let reuseAttendeeAction = "AttendeeActionCell"
@@ -53,6 +57,14 @@ class meetingsViewController: UIViewController
     private var pickerTarget: String = ""
     private var mySelectedRow: Int = 0
     
+    lazy var activityPopover:UIPopoverController = {
+        return UIPopoverController(contentViewController: self.activityViewController)
+        }()
+    
+    lazy var activityViewController:UIActivityViewController = {
+        return self.createActivityController()
+         }()
+    
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -61,6 +73,20 @@ class meetingsViewController: UIViewController
         
         lblMeetingHead.text = passedMeeting.actionType
         
+        toolbar.translucent = false
+        
+        var spacer = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace,
+            target: self, action: nil)
+        
+        var share = UIBarButtonItem(barButtonSystemItem: .Action, target: self, action: "share:")
+        
+        var pageHead = UIBarButtonItem(title: passedMeeting.actionType, style: UIBarButtonItemStyle.Plain, target: self, action: "doNothing")
+        pageHead.tintColor = UIColor.blackColor()
+        
+        var spacer2 = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace,
+            target: self, action: nil)
+        self.toolbar.items=[spacer,pageHead, spacer2, share]
+        
         lblLocation.text = passedMeeting.event.location
         lblStartTime.text = passedMeeting.event.displayScheduledDate
         lblMeetingName.text = passedMeeting.event.title
@@ -68,7 +94,7 @@ class meetingsViewController: UIViewController
         btnSelect.hidden = true
         
         passedMeeting.event.loadAgenda()
-
+        
         if passedMeeting.event.chair != ""
         {
             btnChair.setTitle(passedMeeting.event.chair, forState: .Normal)
@@ -114,7 +140,6 @@ class meetingsViewController: UIViewController
                 btnNextMeeting.setTitle(myDisplayString, forState: .Normal)
             }
         }
-
         
         let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
         showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
@@ -224,8 +249,7 @@ class meetingsViewController: UIViewController
         }
         
         return headerView
-     }
-    
+    }
     
     func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
     {
@@ -506,6 +530,21 @@ class meetingsViewController: UIViewController
         showFields()
     }
     
+    @IBAction func btnShare(sender: UIBarButtonItem)
+    {
+        let textToShare = "Swift is awesome!  Check out this website about it!"
+        
+        if let myWebsite = NSURL(string: "http://www.codingexplorer.com/")
+        {
+            let objectsToShare = [textToShare, myWebsite]
+            let activityVC = UIActivityViewController(activityItems: objectsToShare, applicationActivities: nil)
+            
+            self.presentViewController(activityVC, animated: true, completion: nil)
+        }
+    }
+    
+    
+    
     func hideFields()
     {
         lblMeetingHead.hidden = true
@@ -573,13 +612,13 @@ class meetingsViewController: UIViewController
         pickerOptions.removeAll(keepCapacity: false)
         pickerEventArray.removeAll(keepCapacity: false)
         
-        if passedMeeting.event.event.recurrenceRules != nil
+        if passedMeeting.event.event!.recurrenceRules != nil
         {
             // Recurring event, so display rucurrences first
          
             // get the meeting id, and remove the trailing portion in order to use in a search
             
-            let myStringArr = passedMeeting.event.event.eventIdentifier.componentsSeparatedByString("/")
+            let myStringArr = passedMeeting.event.event!.eventIdentifier.componentsSeparatedByString("/")
 
             
             let myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDAfterStart(myStringArr[0], inMeetingStartDate: passedMeeting.event.startDate)
@@ -588,7 +627,7 @@ class meetingsViewController: UIViewController
             { // There is an previous meeting
                 for myItem in myItems
                 {
-                    if myItem.meetingID != passedMeeting.event.event.eventIdentifier
+                    if myItem.meetingID != passedMeeting.event.event!.eventIdentifier
                     { // Not this meeting meeting
                         var startDateFormatter = NSDateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
@@ -631,7 +670,7 @@ class meetingsViewController: UIViewController
             { // There is an previous meeting
                 for myItem in myItems
                 {
-                    if myItem.meetingID != passedMeeting.event.event.eventIdentifier
+                    if myItem.meetingID != passedMeeting.event.event!.eventIdentifier
                     { // Not this meeting meeting
                         var startDateFormatter = NSDateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
@@ -707,13 +746,13 @@ class meetingsViewController: UIViewController
             }
         }
         
-        if passedMeeting.event.event.recurrenceRules != nil
+        if passedMeeting.event.event!.recurrenceRules != nil
         {
             // Recurring event, so display rucurrences first
             
             // get the meeting id, and remove the trailing portion in order to use in a search
             
-            let myStringArr = passedMeeting.event.event.eventIdentifier.componentsSeparatedByString("/")
+            let myStringArr = passedMeeting.event.event!.eventIdentifier.componentsSeparatedByString("/")
             
             let myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(myStringArr[0], inMeetingStartDate: passedMeeting.event.startDate)
             
@@ -721,7 +760,7 @@ class meetingsViewController: UIViewController
             { // There is an previous meeting
                 for myItem in myItems
                 {
-                    if myItem.meetingID != passedMeeting.event.event.eventIdentifier
+                    if myItem.meetingID != passedMeeting.event.event!.eventIdentifier
                     { // Not this meeting meeting
                         var startDateFormatter = NSDateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
@@ -786,6 +825,71 @@ class meetingsViewController: UIViewController
             btnSelect.hidden = false
             myPicker.reloadAllComponents()
             pickerTarget = "nextMeeting"
+        }
+    }
+    
+    func createActivityController() -> UIActivityViewController
+    {
+        // Build up the details we want to share
+
+        var sharingActivityProvider: SharingActivityProvider = SharingActivityProvider();
+        sharingActivityProvider.HTMLString = passedMeeting.event.buildShareHTMLString()
+        sharingActivityProvider.plainString = passedMeeting.event.buildShareString()
+        
+        var activityItems : Array = [sharingActivityProvider];
+        
+        var activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+        
+            // you can specify these if you'd like.
+        activityViewController.excludedActivityTypes =  [
+                UIActivityTypePostToTwitter,
+                UIActivityTypePostToFacebook,
+                UIActivityTypePostToWeibo,
+                UIActivityTypeMessage,
+            //        UIActivityTypeMail,
+            //        UIActivityTypePrint,
+            //        UIActivityTypeCopyToPasteboard,
+                UIActivityTypeAssignToContact,
+                UIActivityTypeSaveToCameraRoll,
+                UIActivityTypeAddToReadingList,
+                UIActivityTypePostToFlickr,
+                UIActivityTypePostToVimeo,
+                UIActivityTypePostToTencentWeibo
+            ]
+
+        return activityViewController
+    }
+    
+    func doNothing()
+    {
+        // as it says, do nothing
+    }
+
+    func share(sender: AnyObject)
+    {
+        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+            self.navigationController?.presentViewController(activityViewController, animated: true, completion: nil)
+        } else if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            // actually, you don't have to do this. But if you do want a popover, this is how to do it.
+            iPad(sender)
+        }
+    }
+    
+    func iPad(sender: AnyObject) {
+        if !self.activityPopover.popoverVisible {
+            if sender is UIBarButtonItem {
+                self.activityPopover.presentPopoverFromBarButtonItem(sender as! UIBarButtonItem,
+                    permittedArrowDirections:.Any,
+                    animated:true)
+            } else {
+                var b = sender as! UIButton
+                self.activityPopover.presentPopoverFromRect(b.frame,
+                    inView: self.view,
+                    permittedArrowDirections:.Any,
+                    animated:true)
+            }
+        } else {
+            self.activityPopover.dismissPopoverAnimated(true)
         }
     }
 }

@@ -1085,7 +1085,7 @@ println("facebook ID = \(myFacebookID)")
             
         case "Meetings":
             
-            openMeetings("Edit", workingTask: myCalendarItems[rowID])
+            openMeetings("Meeting Details", workingTask: myCalendarItems[rowID])
             
             default:
                 let a = 1

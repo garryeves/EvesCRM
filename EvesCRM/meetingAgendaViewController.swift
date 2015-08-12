@@ -24,6 +24,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
     @IBOutlet weak var lblOwner: UILabel!
     @IBOutlet weak var btnOwner: UIButton!
     @IBOutlet weak var myPicker: UIPickerView!
+    @IBOutlet weak var toolbar: UIToolbar!
     
     private let reuseAgendaTime = "reuseAgendaTime"
     private let reuseAgendaTitle = "reuseAgendaTitle"
@@ -33,49 +34,51 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
     private var pickerOptions: [String] = Array()
     private var myAgendaList: [meetingAgendaItem] = Array()
     
+    private var myDateFormatter = NSDateFormatter()
+    private let myCalendar = NSCalendar.currentCalendar()
+    private var myWorkingTime: NSDate = NSDate()
+    
+    lazy var activityPopover:UIPopoverController = {
+        return UIPopoverController(contentViewController: self.activityViewController)
+        }()
+    
+    lazy var activityViewController:UIActivityViewController = {
+        return self.createActivityController()
+        }()
+    
     override func viewDidLoad()
     {
         super.viewDidLoad()
         
         passedMeeting = (tabBarController as! meetingTabViewController).myPassedMeeting
         
+        toolbar.translucent = false
+        
+        var spacer = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace,
+            target: self, action: nil)
+        
+        var share = UIBarButtonItem(barButtonSystemItem: .Action, target: self, action: "share:")
+        
+        var pageHead = UIBarButtonItem(title: passedMeeting.actionType, style: UIBarButtonItemStyle.Plain, target: self, action: "doNothing")
+        pageHead.tintColor = UIColor.blackColor()
+        
+        var spacer2 = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace,
+            target: self, action: nil)
+        self.toolbar.items=[spacer,pageHead, spacer2, share]
+        
         if passedMeeting.actionType != "Agenda"
         {
             btnAddAgendaItem.hidden = true
         }
         
-        // Do we need to show the "Previous Meeting Actions?"
-        
-        if passedMeeting.event.previousMinutes == ""
-        { // No previous meeting
-            myAgendaList = passedMeeting.event.agendaItems
-        }
-        else
-        { // Previous meeting exists
-            // Does the previous meeting have any tasks
-            let myData = myDatabaseConnection.getMeetingsTasks(passedMeeting.event.previousMinutes)
-            
-            if myData.count > 0
-            {  // There are tasks for the previous meeting
-                let previousMinutes  = meetingAgendaItem()
-                
-                previousMinutes.createPreviousMeetingRow()
-                myAgendaList.removeAll(keepCapacity: false)
-                myAgendaList.append(previousMinutes)
-                for myItem in passedMeeting.event.agendaItems
-                {
-                    myAgendaList.append(myItem)
-                }
-            }
-            else
-            { // Not tasks for the previous meeting
-                myAgendaList = passedMeeting.event.agendaItems
-            }
-        }
+        buildAgendaArray()
         
         myPicker.hidden = true
         
         btnOwner.setTitle("Select Owner", forState: .Normal)
+        
+        myDateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
+        myWorkingTime = passedMeeting.event.startDate
         
         let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
         showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
@@ -96,7 +99,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
     {
         super.viewWillLayoutSubviews()
         colAgenda.collectionViewLayout.invalidateLayout()
-        
+        myWorkingTime = passedMeeting.event.startDate
         colAgenda.reloadData()
     }
     
@@ -131,11 +134,18 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
         var cell: myAgendaItem!
             
         cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseAgendaTime, forIndexPath: indexPath) as! myAgendaItem
-        cell.lblTime.text = "\(myAgendaList[indexPath.row].timeAllocation)"
+        cell.lblTime.text = "\(myDateFormatter.stringFromDate(myWorkingTime))"
         cell.lblItem.text = myAgendaList[indexPath.row].title
         cell.lblOwner.text = myAgendaList[indexPath.row].owner
-            
+
+        myWorkingTime = myCalendar.dateByAddingUnit(
+            .CalendarUnitMinute,
+            value: myAgendaList[indexPath.row].timeAllocation,
+            toDate: myWorkingTime,
+            options: nil)!
+        
         let swiftColor = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
+        
         if (indexPath.row % 2 == 0)  // was .row
         {
             cell.backgroundColor = swiftColor
@@ -248,6 +258,9 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
 
             // reload the Agenda Items collection view
             passedMeeting.event.loadAgendaItems()
+            buildAgendaArray()
+            
+            myWorkingTime = passedMeeting.event.startDate
             colAgenda.reloadData()
         
             // set the fields to blank
@@ -300,9 +313,44 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
         btnOwner.hidden = false
     }
 
+    func buildAgendaArray()
+    {
+        if passedMeeting.event.previousMinutes == ""
+        { // No previous meeting
+            myAgendaList = passedMeeting.event.agendaItems
+        }
+        else
+        { // Previous meeting exists
+            // Does the previous meeting have any tasks
+            let myData = myDatabaseConnection.getMeetingsTasks(passedMeeting.event.previousMinutes)
+        
+            if myData.count > 0
+            {  // There are tasks for the previous meeting
+                let previousMinutes  = meetingAgendaItem()
+            
+                previousMinutes.createPreviousMeetingRow()
+                myAgendaList.removeAll(keepCapacity: false)
+                myAgendaList.append(previousMinutes)
+                for myItem in passedMeeting.event.agendaItems
+                {
+                    myAgendaList.append(myItem)
+                }
+            }
+            else
+            { // Not tasks for the previous meeting
+                myAgendaList = passedMeeting.event.agendaItems
+            }
+        }
+        let closeMeeting = meetingAgendaItem()
+        closeMeeting.createCloseMeetingRow()
+        myAgendaList.append(closeMeeting)
+    }
+    
     func myAgendaItemDidFinish(controller:agendaItemViewController, actionType: String)
     {
         passedMeeting.event.loadAgendaItems()
+        buildAgendaArray()
+        myWorkingTime = passedMeeting.event.startDate
         colAgenda.reloadData()
         
         controller.dismissViewControllerAnimated(true, completion: nil)
@@ -311,9 +359,76 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
     func myTaskListDidFinish(controller:taskListViewController)
     {
         passedMeeting.event.loadAgendaItems()
+        buildAgendaArray()
+        myWorkingTime = passedMeeting.event.startDate
         colAgenda.reloadData()
         
         controller.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func createActivityController() -> UIActivityViewController
+    {
+        // Build up the details we want to share
+        
+        var sharingActivityProvider: SharingActivityProvider = SharingActivityProvider();
+        sharingActivityProvider.HTMLString = passedMeeting.event.buildShareHTMLString()
+        sharingActivityProvider.plainString = passedMeeting.event.buildShareString()
+        
+        var activityItems : Array = [sharingActivityProvider];
+        
+        var activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+        
+        // you can specify these if you'd like.
+        activityViewController.excludedActivityTypes =  [
+            UIActivityTypePostToTwitter,
+            UIActivityTypePostToFacebook,
+            UIActivityTypePostToWeibo,
+            UIActivityTypeMessage,
+            //        UIActivityTypeMail,
+            //        UIActivityTypePrint,
+            //        UIActivityTypeCopyToPasteboard,
+            UIActivityTypeAssignToContact,
+            UIActivityTypeSaveToCameraRoll,
+            UIActivityTypeAddToReadingList,
+            UIActivityTypePostToFlickr,
+            UIActivityTypePostToVimeo,
+            UIActivityTypePostToTencentWeibo
+        ]
+        
+        return activityViewController
+    }
+
+    func doNothing()
+    {
+        // as it says, do nothing
+    }
+    
+    func share(sender: AnyObject)
+    {
+        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+            self.navigationController?.presentViewController(activityViewController, animated: true, completion: nil)
+        } else if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            // actually, you don't have to do this. But if you do want a popover, this is how to do it.
+            iPad(sender)
+        }
+    }
+    
+    func iPad(sender: AnyObject) {
+        if !self.activityPopover.popoverVisible {
+            if sender is UIBarButtonItem {
+                self.activityPopover.presentPopoverFromBarButtonItem(sender as! UIBarButtonItem,
+                    permittedArrowDirections:.Any,
+                    animated:true)
+            } else {
+                var b = sender as! UIButton
+                self.activityPopover.presentPopoverFromRect(b.frame,
+                    inView: self.view,
+                    permittedArrowDirections:.Any,
+                    animated:true)
+            }
+        } else {
+            self.activityPopover.dismissPopoverAnimated(true)
+        }
     }
 }
 

@@ -580,3 +580,32 @@ class menuObject: NSObject
         }
     }
 }
+
+class SharingActivityProvider: UIActivityItemProvider, UIActivityItemSource
+{
+    var HTMLString : String!
+    var plainString : String!
+    
+    override func activityViewController(activityViewController: UIActivityViewController, itemForActivityType activityType: String) -> AnyObject?
+    {
+        switch activityType
+        {
+        case UIActivityTypeMail:
+            return HTMLString
+            
+        case UIActivityTypePrint:
+            return HTMLString
+            
+        case UIActivityTypeCopyToPasteboard:
+            return HTMLString
+            
+        default:
+            return plainString
+        }
+    }
+    
+    override func activityViewControllerPlaceholderItem(activityViewController: UIActivityViewController) -> AnyObject
+    {
+        return "";
+    }
+}
