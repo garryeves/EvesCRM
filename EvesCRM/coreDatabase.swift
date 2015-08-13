@@ -1101,6 +1101,23 @@ class coreDatabase: NSObject
         return fetchResults!
     }
 
+    func getTasksForProject(inProjectID: Int)->[Task]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Task")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(projectID = \(inProjectID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Task]
+        
+        return fetchResults!
+    }
+
     
     func getMaxProjectTaskOrder(inProjectID: Int)->Int
     {
@@ -1213,6 +1230,24 @@ class coreDatabase: NSObject
         
         return fetchResults!
     }
+    
+    func getActiveTask(inTaskID: Int)->[Task]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Task")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(taskID == \(inTaskID)) && (status == \"Open\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Task]
+        
+        return fetchResults!
+    }
+
     
     func getTaskCount()->Int
     {
@@ -1363,6 +1398,24 @@ class coreDatabase: NSObject
         return fetchResults!
     }
 
+    func getContextByName(inContextName: String)->[Context]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Context")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(name = \"\(inContextName)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Context]
+        
+        return fetchResults!
+    }
+
+    
     func getContextDetails(inContextID: Int)->[Context]
     {
         let fetchRequest = NSFetchRequest(entityName: "Context")

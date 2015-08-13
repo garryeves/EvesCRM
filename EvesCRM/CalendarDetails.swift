@@ -1198,6 +1198,20 @@ class myCalendarItem
         myExportString = writeLine(myExportString, inLineString: myLine)
         
         myExportString = writeLine(myExportString, inLineString: "")
+        
+        if myStartDate.compare(NSDate()) == NSComparisonResult.OrderedAscending
+        {  // Historical so show Minutes
+            myLine = "Minutes"
+        }
+        else
+        {
+            myLine = "Agenda"
+        }
+
+        myExportString = writeLine(myExportString, inLineString: myLine)
+        
+        myExportString = writeLine(myExportString, inLineString: "")
+        
         myLine = ""
         
         if myChair != ""
@@ -1329,54 +1343,159 @@ class myCalendarItem
         
         myLine = "Agenda Items"
         myExportString = writeLine(myExportString, inLineString: myLine)
-        
         myExportString = writeLine(myExportString, inLineString: "")
         
-        myLine = "||Time"
-        myLine += "||Item"
-        myLine += "||Owner||"
-        myExportString = writeLine(myExportString, inLineString: myLine)
-        
-        if myPreviousMinutes != ""
-        { // Previous meeting exists
-            // Does the previous meeting have any tasks
-            let myData = myDatabaseConnection.getMeetingsTasks(myPreviousMinutes)
+        if myStartDate.compare(NSDate()) == NSComparisonResult.OrderedAscending
+        {  // Historical so show Minutes
             
-            if myData.count > 0
-            {  // There are tasks for the previous meeting
+            for myItem in myAgendaItems
+            {
+                myLine = "\(myItem.title)"
+                myExportString = writeLine(myExportString, inLineString: myLine)
+                
+                myExportString = writeLine(myExportString, inLineString: "")
+                
+                myLine = "Discussion Notes"
+                myExportString = writeLine(myExportString, inLineString: myLine)
+                
+                myLine = "\(myItem.discussionNotes)"
+                myExportString = writeLine(myExportString, inLineString: myLine)
+                
+                myExportString = writeLine(myExportString, inLineString: "")
+                
+                myLine = "Decisions Made"
+                myExportString = writeLine(myExportString, inLineString: myLine)
+                
+                myLine = "\(myItem.decisionMade)"
+                myExportString = writeLine(myExportString, inLineString: myLine)
+                
+                myExportString = writeLine(myExportString, inLineString: "")
+                
+                myLine = "Actions"
+                myExportString = writeLine(myExportString, inLineString: myLine)
+                
+                if myItem.tasks.count == 0
+                {
+                    myLine = "No actions assigned"
+                    myExportString = writeLine(myExportString, inLineString: myLine)
+                }
+                else
+                {
+                    myLine = "||Task"
+                    myLine += "||Status"
+                    myLine += "||Project"
+                    myLine += "||Due Date"
+                    myLine += "||Context||"
+                    
+                    myExportString = writeLine(myExportString, inLineString: myLine)
+                    
+                    for myTask in myItem.tasks
+                    {
+                        myLine = "||\(myTask.title)"
+                        myLine += "||\(myTask.status)"
+                        
+                        // Get the project name to display
+                        
+                        let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID)
+                        
+                        if myData3.count == 0
+                        {
+                            myLine += "||No Project set"
+                        }
+                        else
+                        {
+                            myLine += "||\(myData3[0].projectName)"
+                        }
+                        
+                        if myTask.displayDueDate == ""
+                        {
+                            myLine += "||No due date set"
+                        }
+                        else
+                        {
+                            myLine += "||\(myTask.displayDueDate)"
+                        }
+                        
+                        if myTask.contexts.count == 0
+                        {
+                            myLine += "||No context set"
+                        }
+                        else if myTask.contexts.count == 1
+                        {
+                            myLine += "||\(myTask.contexts[0].name)"
+                        }
+                        else
+                        {
+                            var itemCount: Int = 0
+                            myLine += "||"
+                            for myItem4 in myTask.contexts
+                            {
+                                if itemCount > 0
+                                {
+                                    myLine += ", "
+                                }
+                                myLine += "\(myItem4.name)"
+                                itemCount++
+                            }
+                            myLine += "||"
+                        }
+                        
+                        myExportString = writeLine(myExportString, inLineString: myLine)
+                    }
+                    myExportString = writeLine(myExportString, inLineString: "")
+                }
+            }
+        }
+        else
+        {  // Future so show Agenda
+            myLine = "||Time"
+            myLine += "||Item"
+            myLine += "||Owner||"
+            myExportString = writeLine(myExportString, inLineString: myLine)
+            
+            if myPreviousMinutes != ""
+            { // Previous meeting exists
+                // Does the previous meeting have any tasks
+                let myData = myDatabaseConnection.getMeetingsTasks(myPreviousMinutes)
+                
+                if myData.count > 0
+                {  // There are tasks for the previous meeting
+                    myLine = "||\(myDateFormatter.stringFromDate(myWorkingTime))"
+                    myLine += "||Actions from Previous Meeting"
+                    myLine += "||All||"
+                    myExportString = writeLine(myExportString, inLineString: myLine)
+                    
+                    myWorkingTime = myCalendar.dateByAddingUnit(
+                        .CalendarUnitMinute,
+                        value: 10,
+                        toDate: myWorkingTime,
+                        options: nil)!
+                }
+            }
+            
+            myExportString = writeLine(myExportString, inLineString: "")
+            
+            for myItem in myAgendaItems
+            {
                 myLine = "||\(myDateFormatter.stringFromDate(myWorkingTime))"
-                myLine += "||Actions from Previous Meeting"
-                myLine += "||All||"
+                myLine += "||\(myItem.title)"
+                myLine += "||\(myItem.owner)||"
                 myExportString = writeLine(myExportString, inLineString: myLine)
                 
                 myWorkingTime = myCalendar.dateByAddingUnit(
                     .CalendarUnitMinute,
-                    value: 10,
+                    value: myItem.timeAllocation,
                     toDate: myWorkingTime,
                     options: nil)!
+                
             }
-        }
-        
-        for myItem in myAgendaItems
-        {
+            
             myLine = "||\(myDateFormatter.stringFromDate(myWorkingTime))"
-            myLine += "||\(myItem.title)"
-            myLine += "||\(myItem.owner)||"
+            myLine += "||Meeting Close"
+            myLine += "||||"
+            
             myExportString = writeLine(myExportString, inLineString: myLine)
-            
-            myWorkingTime = myCalendar.dateByAddingUnit(
-                .CalendarUnitMinute,
-                value: myItem.timeAllocation,
-                toDate: myWorkingTime,
-                options: nil)!
-            
         }
-        
-        myLine = "||\(myDateFormatter.stringFromDate(myWorkingTime))"
-        myLine += "||Meeting Close"
-        myLine += "||||"
-        
-        myExportString = writeLine(myExportString, inLineString: myLine)
         
         if nextMeeting != ""
         {
@@ -1433,6 +1552,20 @@ class myCalendarItem
         myExportString = writeHTMLLine(myExportString, inLineString: myLine)
         
         myExportString = writeHTMLLine(myExportString, inLineString: "")
+        
+        if myStartDate.compare(NSDate()) == NSComparisonResult.OrderedAscending
+        {  // Historical so show Minutes
+            myLine = "<center><h2>Minutes</h2></center>"
+        }
+        else
+        {
+            myLine = "<center><h2>Agenda</h2></center>"
+        }
+        
+        myExportString = writeHTMLLine(myExportString, inLineString: myLine)
+        
+        myExportString = writeHTMLLine(myExportString, inLineString: "")
+        
         
         myLine = "On : \(displayScheduledDate)    At : \(myLocation)"
         myExportString = writeHTMLLine(myExportString, inLineString: myLine)
@@ -1567,57 +1700,165 @@ class myCalendarItem
         myLine = "<h2>Agenda Items</h2>"
         myExportString = writeHTMLLine(myExportString, inLineString: myLine)
         
-        myTaskTable = "<table border=\"1\">"
-        myTaskTable += "<tr>"
-        myTaskTable += "<th>Time</th>"
-        myTaskTable += "<th>Item</th>"
-        myTaskTable += "<th>Owner</th>"
-        myTaskTable += "</tr>"
-        
-        if myPreviousMinutes != ""
-        { // Previous meeting exists
-            // Does the previous meeting have any tasks
-            let myData = myDatabaseConnection.getMeetingsTasks(myPreviousMinutes)
+        if myStartDate.compare(NSDate()) == NSComparisonResult.OrderedAscending
+        {  // Historical so show Minutes
+
+            for myItem in myAgendaItems
+            {
+                myLine = "<h3>\(myItem.title)</h3>"
+                myExportString = writeHTMLLine(myExportString, inLineString: myLine)
             
-            if myData.count > 0
-            {  // There are tasks for the previous meeting
+                myExportString = writeHTMLLine(myExportString, inLineString: "")
+                
+                myLine = "Discussion Notes"
+                myExportString = writeHTMLLine(myExportString, inLineString: myLine)
+                
+                myLine = "\(myItem.discussionNotes)"
+                myExportString = writeHTMLLine(myExportString, inLineString: myLine)
+
+                myExportString = writeHTMLLine(myExportString, inLineString: "")
+                
+                myLine = "Decisions Made"
+                myExportString = writeHTMLLine(myExportString, inLineString: myLine)
+                
+                myLine = "\(myItem.decisionMade)"
+                myExportString = writeHTMLLine(myExportString, inLineString: myLine)
+
+                myExportString = writeHTMLLine(myExportString, inLineString: "")
+                
+                myLine = "Actions"
+                myExportString = writeHTMLLine(myExportString, inLineString: myLine)
+
+                if myItem.tasks.count == 0
+                {
+                    myLine = "No actions assigned"
+                    myExportString = writeHTMLLine(myExportString, inLineString: myLine)
+                }
+                else
+                {
+                    myTaskTable = "<table border=\"1\">"
+                    myTaskTable += "<tr>"
+                    myTaskTable += "<th>Task</th>"
+                    myTaskTable += "<th>Status</th>"
+                    myTaskTable += "<th>Project</th>"
+                    myTaskTable += "<th>Due Date</th>"
+                    myTaskTable += "<th>Context</th>"
+                    myTaskTable += "</tr>"
+                    
+                    for myTask in myItem.tasks
+                    {
+                        myTaskTable += "<tr>"
+                        myTaskTable += "<td>\(myTask.title)</td>"
+                        myTaskTable += "<td>\(myTask.status)</td>"
+                        
+                        // Get the project name to display
+                        
+                        let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID)
+                        
+                        if myData3.count == 0
+                        {
+                            myTaskTable += "<td>No Project set</td>"
+                        }
+                        else
+                        {
+                            myTaskTable += "<td>\(myData3[0].projectName)</td>"
+                        }
+                        
+                        if myTask.displayDueDate == ""
+                        {
+                            myTaskTable += "<td>No due date set</td>"
+                        }
+                        else
+                        {
+                            myTaskTable += "<td>\(myTask.displayDueDate)</td>"
+                        }
+                        
+                        if myTask.contexts.count == 0
+                        {
+                            myTaskTable += "<td>No context set</td>"
+                        }
+                        else if myTask.contexts.count == 1
+                        {
+                            myTaskTable += "<td>\(myTask.contexts[0].name)</td>"
+                        }
+                        else
+                        {
+                            var itemCount: Int = 0
+                            myTaskTable += "<td>"
+                            for myItem4 in myTask.contexts
+                            {
+                                if itemCount > 0
+                                {
+                                    myTaskTable += "<p>"
+                                }
+                                myTaskTable += "\(myItem4.name)"
+                                itemCount++
+                            }
+                            myTaskTable += "</td>"
+                        }
+                        
+                        myTaskTable += "</tr>"
+                    }
+                    myTaskTable += "</table>"
+                    myExportString = writeHTMLLine(myExportString, inLineString: myTaskTable)
+                }
+                myExportString = writeHTMLLine(myExportString, inLineString: "")
+            }
+        }
+        else
+        {  // Future so show Agenda
+            myTaskTable = "<table border=\"1\">"
+            myTaskTable += "<tr>"
+            myTaskTable += "<th>Time</th>"
+            myTaskTable += "<th>Item</th>"
+            myTaskTable += "<th>Owner</th>"
+            myTaskTable += "</tr>"
+            
+            if myPreviousMinutes != ""
+            { // Previous meeting exists
+                // Does the previous meeting have any tasks
+                let myData = myDatabaseConnection.getMeetingsTasks(myPreviousMinutes)
+                
+                if myData.count > 0
+                {  // There are tasks for the previous meeting
+                    myTaskTable += "<tr>"
+                    myTaskTable += "<td>\(myDateFormatter.stringFromDate(myWorkingTime))</td>"
+                    myTaskTable += "<td>Actions from Previous Meeting</td>"
+                    myTaskTable += "<td>All</td>"
+                    myTaskTable += "</tr>"
+                    
+                    myWorkingTime = myCalendar.dateByAddingUnit(
+                        .CalendarUnitMinute,
+                        value: 10,
+                        toDate: myWorkingTime,
+                        options: nil)!
+                }
+            }
+            
+            for myItem in myAgendaItems
+            {
                 myTaskTable += "<tr>"
                 myTaskTable += "<td>\(myDateFormatter.stringFromDate(myWorkingTime))</td>"
-                myTaskTable += "<td>Actions from Previous Meeting</td>"
-                myTaskTable += "<td>All</td>"
+                myTaskTable += "<td>\(myItem.title)</td>"
+                myTaskTable += "<td>\(myItem.owner)</td>"
                 myTaskTable += "</tr>"
                 
                 myWorkingTime = myCalendar.dateByAddingUnit(
                     .CalendarUnitMinute,
-                    value: 10,
+                    value: myItem.timeAllocation,
                     toDate: myWorkingTime,
                     options: nil)!
+                
             }
-        }
-        
-        for myItem in myAgendaItems
-        {
+            
             myTaskTable += "<tr>"
             myTaskTable += "<td>\(myDateFormatter.stringFromDate(myWorkingTime))</td>"
-            myTaskTable += "<td>\(myItem.title)</td>"
-            myTaskTable += "<td>\(myItem.owner)</td>"
+            myTaskTable += "<td>Meeting Close</td>"
+            myTaskTable += "<td></td>"
             myTaskTable += "</tr>"
-            
-            myWorkingTime = myCalendar.dateByAddingUnit(
-                .CalendarUnitMinute,
-                value: myItem.timeAllocation,
-                toDate: myWorkingTime,
-                options: nil)!
-            
+            myTaskTable += "</table>"
+            myExportString = writeHTMLLine(myExportString, inLineString: myTaskTable)
         }
-        
-        myTaskTable += "<tr>"
-        myTaskTable += "<td>\(myDateFormatter.stringFromDate(myWorkingTime))</td>"
-        myTaskTable += "<td>Meeting Close</td>"
-        myTaskTable += "<td></td>"
-        myTaskTable += "</tr>"
-        myTaskTable += "</table>"
-        myExportString = writeHTMLLine(myExportString, inLineString: myTaskTable)
         
         if nextMeeting != ""
         {

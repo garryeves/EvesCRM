@@ -1514,6 +1514,251 @@ class task: NSObject
         myStatus = "Open"
         save()
     }
+    
+    private func writeLine(inTargetString: String, inLineString: String) -> String
+    {
+        var myString = inTargetString
+        
+        if count(inTargetString) > 0
+        {
+            myString += "\n"
+        }
+        
+        myString += inLineString
+        
+        return myString
+    }
+
+    func buildShareString() -> String
+    {
+        var myExportString: String = ""
+        var myLine: String = ""
+        var myContextTable: String = ""
+        
+        myLine = "\(myTitle)"
+        myExportString = writeLine(myExportString, inLineString: myLine)
+        
+        myExportString = writeLine(myExportString, inLineString: "")
+        
+        myLine = "\(myDetails)"
+        myExportString = writeLine(myExportString, inLineString: myLine)
+        
+        myExportString = writeLine(myExportString, inLineString: "")
+        
+        if myProjectID > 0
+        {
+            let myData3 = myDatabaseConnection.getProjectDetails(myProjectID)
+            
+            if myData3.count != 0
+            {
+                myLine = "Project: \(myData3[0].projectName)"
+                myExportString = writeLine(myExportString, inLineString: myLine)
+                myExportString = writeLine(myExportString, inLineString: "")
+            }
+        }
+        
+        myLine = ""
+        
+        if displayStartDate != ""
+        {
+            myLine += "Start : \(displayStartDate)      "
+        }
+        
+        if displayDueDate != ""
+        {
+            myLine += "Due : \(displayDueDate)      "
+        }
+        
+        if myEstimatedTime > 0
+        {
+            myLine += "Estimated Time \(myEstimatedTime) \(myEstimatedTimeType)"
+        }
+        
+        myExportString = writeLine(myExportString, inLineString: myLine)
+        
+        myExportString = writeLine(myExportString, inLineString: "")
+        
+        if myContexts.count > 0
+        {
+            myLine = "Contexts"
+            myExportString = writeLine(myExportString, inLineString: myLine)
+            
+            myContextTable = ""
+            
+            for myContext in myContexts
+            {
+                myLine = "\(myContext.name)"
+                myExportString = writeLine(myExportString, inLineString: myLine)
+            }
+            
+            myExportString = writeLine(myExportString, inLineString: "")
+            myExportString = writeLine(myExportString, inLineString: "")
+        }
+        
+        myLine = ""
+        
+        if myPriority != ""
+        {
+            myLine += "Priority : \(myPriority)      "
+        }
+        
+        if myUrgency != ""
+        {
+            myLine += "Urgency : \(myUrgency)      "
+        }
+        
+        if myEnergyLevel != ""
+        {
+            myLine += "Energy : \(myEnergyLevel)"
+        }
+        
+        myExportString = writeLine(myExportString, inLineString: myLine)
+        
+        if history.count > 0
+        { //  task updates displayed here
+            myExportString = writeLine(myExportString, inLineString: "")
+            myExportString = writeLine(myExportString, inLineString: "")
+            myLine = "Update history"
+            myExportString = writeLine(myExportString, inLineString: myLine)
+            
+            for myItem in history
+            {
+                myLine = "||\(myItem.displayUpdateDate)"
+                myLine += "||\(myItem.source)"
+                myLine += "||\(myItem.details)||"
+                myExportString = writeLine(myExportString, inLineString: myLine)
+            }
+        }
+        
+        return myExportString
+    }
+    
+    private func writeHTMLLine(inTargetString: String, inLineString: String) -> String
+    {
+        var myString = inTargetString
+        
+        if count(inTargetString) > 0
+        {
+            myString += "<p>"
+        }
+        
+        myString += inLineString
+        
+        return myString
+    }
+    
+    func buildShareHTMLString() -> String
+    {
+        var myExportString: String = ""
+        var myLine: String = ""
+        var myContextTable: String = ""
+        
+        myLine = "<html><body><h2>\(myTitle)</h2>"
+        myExportString = writeHTMLLine(myExportString, inLineString: myLine)
+        
+        myExportString = writeHTMLLine(myExportString, inLineString: "")
+        
+        myLine = "\(myDetails)"
+        myExportString = writeHTMLLine(myExportString, inLineString: myLine)
+        
+        myExportString = writeHTMLLine(myExportString, inLineString: "")
+        
+        if myProjectID > 0
+        {
+            let myData3 = myDatabaseConnection.getProjectDetails(myProjectID)
+            
+            if myData3.count != 0
+            {
+                myLine = "Project: \(myData3[0].projectName)"
+                myExportString = writeHTMLLine(myExportString, inLineString: myLine)
+                myExportString = writeHTMLLine(myExportString, inLineString: "")
+            }
+        }
+        
+        myLine = ""
+        
+        if displayStartDate != ""
+        {
+            myLine += "Start : \(displayStartDate)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+        }
+
+        if displayDueDate != ""
+        {
+            myLine += "Due : \(displayDueDate)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+        }
+        
+        if myEstimatedTime > 0
+        {
+            myLine += "Estimated Time \(myEstimatedTime) \(myEstimatedTimeType)"
+        }
+        
+        myExportString = writeHTMLLine(myExportString, inLineString: myLine)
+        
+        myExportString = writeHTMLLine(myExportString, inLineString: "")
+        
+        if myContexts.count > 0
+        {
+            myLine = "<h3>Contexts</h3>"
+            myExportString = writeHTMLLine(myExportString, inLineString: myLine)
+        
+            myContextTable = "<table>"
+        
+            for myContext in myContexts
+            {
+                myContextTable += "<tr><td>\(myContext.name)</td></tr>"
+            }
+     
+            myContextTable += "</table>"
+            myExportString = writeHTMLLine(myExportString, inLineString: myContextTable)
+            myExportString = writeHTMLLine(myExportString, inLineString: "")
+            myExportString = writeHTMLLine(myExportString, inLineString: "")
+        }
+        
+        myLine = ""
+        
+        if myPriority != ""
+        {
+            myLine += "Priority : \(myPriority)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+        }
+
+        if myUrgency != ""
+        {
+            myLine += "Urgency : \(myUrgency)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+        }
+        
+        if myEnergyLevel != ""
+        {
+            myLine += "Energy : \(myEnergyLevel)"
+        }
+
+        myExportString = writeHTMLLine(myExportString, inLineString: myLine)
+        
+        if history.count > 0
+        { //  task updates displayed here
+            myExportString = writeHTMLLine(myExportString, inLineString: "")
+            myExportString = writeHTMLLine(myExportString, inLineString: "")
+            myLine = "<h3>Update history</h3>"
+            myExportString = writeHTMLLine(myExportString, inLineString: myLine)
+        
+            myContextTable = "<table border=\"1\">"
+
+            for myItem in history
+            {
+                myContextTable += "<tr>"
+                myContextTable += "<td>\(myItem.displayUpdateDate)</td>"
+                myContextTable += "<td>\(myItem.source)</td>"
+                myContextTable += "<td>\(myItem.details)</td>"
+                myContextTable += "</tr>"
+            }
+            
+            myContextTable += "</table>"
+            myExportString = writeHTMLLine(myExportString, inLineString: myContextTable)
+        }
+        
+        myExportString = writeHTMLLine(myExportString, inLineString: "</body></html>")
+        
+        return myExportString
+    }
 }
 
 class contexts: NSObject

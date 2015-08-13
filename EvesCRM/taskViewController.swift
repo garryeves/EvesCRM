@@ -50,6 +50,7 @@ class taskViewController: UIViewController,  UITextViewDelegate
     @IBOutlet weak var lblUrgency: UILabel!
     @IBOutlet weak var btnUrgency: UIButton!
     @IBOutlet weak var btnSelect: UIButton!
+    @IBOutlet weak var toolbar: UIToolbar!
     
     private var pickerOptions: [String] = Array()
     private var pickerTarget: String = ""
@@ -59,6 +60,15 @@ class taskViewController: UIViewController,  UITextViewDelegate
     private var myProjectDetails: [Projects] = Array()
     private var mySelectedRow: Int = 0
     
+    
+    lazy var activityPopover:UIPopoverController = {
+        return UIPopoverController(contentViewController: self.activityViewController)
+        }()
+    
+    lazy var activityViewController:UIActivityViewController = {
+        return self.createActivityController()
+        }()
+
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -74,6 +84,15 @@ class taskViewController: UIViewController,  UITextViewDelegate
         txtTaskDescription.layer.masksToBounds = true
         
         passedTask = (tabBarController as! tasksTabViewController).myPassedTask
+
+        toolbar.translucent = false
+        
+        var spacer = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace,
+            target: self, action: nil)
+        
+        var share = UIBarButtonItem(barButtonSystemItem: .Action, target: self, action: "share:")
+        
+        self.toolbar.items=[spacer, share]
         
         if passedTask.currentTask.taskID != 0
         {
@@ -753,6 +772,71 @@ class taskViewController: UIViewController,  UITextViewDelegate
         // Reload the collection data
         
         colContexts.reloadData()
+    }
+    
+    func createActivityController() -> UIActivityViewController
+    {
+        // Build up the details we want to share
+        
+        var sharingActivityProvider: SharingActivityProvider = SharingActivityProvider();
+        sharingActivityProvider.HTMLString = passedTask.currentTask.buildShareHTMLString()
+        sharingActivityProvider.plainString = passedTask.currentTask.buildShareString()
+        
+        var activityItems : Array = [sharingActivityProvider];
+        
+        var activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+        
+        // you can specify these if you'd like.
+        activityViewController.excludedActivityTypes =  [
+            UIActivityTypePostToTwitter,
+            UIActivityTypePostToFacebook,
+            UIActivityTypePostToWeibo,
+            UIActivityTypeMessage,
+            //        UIActivityTypeMail,
+            //        UIActivityTypePrint,
+            //        UIActivityTypeCopyToPasteboard,
+            UIActivityTypeAssignToContact,
+            UIActivityTypeSaveToCameraRoll,
+            UIActivityTypeAddToReadingList,
+            UIActivityTypePostToFlickr,
+            UIActivityTypePostToVimeo,
+            UIActivityTypePostToTencentWeibo
+        ]
+        
+        return activityViewController
+    }
+    
+    func doNothing()
+    {
+        // as it says, do nothing
+    }
+    
+    func share(sender: AnyObject)
+    {
+        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
+            self.navigationController?.presentViewController(activityViewController, animated: true, completion: nil)
+        } else if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            // actually, you don't have to do this. But if you do want a popover, this is how to do it.
+            iPad(sender)
+        }
+    }
+    
+    func iPad(sender: AnyObject) {
+        if !self.activityPopover.popoverVisible {
+            if sender is UIBarButtonItem {
+                self.activityPopover.presentPopoverFromBarButtonItem(sender as! UIBarButtonItem,
+                    permittedArrowDirections:.Any,
+                    animated:true)
+            } else {
+                var b = sender as! UIButton
+                self.activityPopover.presentPopoverFromRect(b.frame,
+                    inView: self.view,
+                    permittedArrowDirections:.Any,
+                    animated:true)
+            }
+        } else {
+            self.activityPopover.dismissPopoverAnimated(true)
+        }
     }
 }
 

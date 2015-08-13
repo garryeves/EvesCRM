@@ -26,7 +26,7 @@ var myDatabaseConnection: coreDatabase!
 var adbk : ABAddressBook!
 var eventStore: EKEventStore!
 
-class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate, MyMeetingsDelegate, SideBarDelegate, MyMaintainPanesDelegate {
+class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate, MyMeetingsDelegate, SideBarDelegate, MyMaintainPanesDelegate, MyTaskDelegate {
     
     @IBOutlet weak var TableTypeSelection1: UIPickerView!
     
@@ -120,6 +120,8 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     var myRowClicked: Int = 0
     var calendarTable: String = ""
     var myCalendarItems: [myCalendarItem] = Array()
+    
+    var myTaskItems: [task] = Array()
     
     // Peoplepicker settings
     
@@ -777,6 +779,61 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 writeRowToArray("No meetings found", &workArray)
             }
 
+        case "Tasks":
+            myTaskItems.removeAll(keepCapacity: false)
+            
+            var myReturnedData: [Task] = Array()
+            if myDisplayType == "Project"
+            {
+                myReturnedData = myDatabaseConnection.getTasksForProject(mySelectedProject.projectID)
+            }
+            else
+            {
+                // Get the context name
+                
+                let myContext = myDatabaseConnection.getContextByName(personContact.fullName)
+                
+                if myContext.count != 0
+                {
+                    // Context retrieved
+                    
+                    // Get the tasks based on the retrieved context ID
+                
+                    let myTaskContextList = myDatabaseConnection.getTasksForContext(myContext[0].contextID as Int)
+                
+                    for myTaskContext in myTaskContextList
+                    {
+                        // Get the context details
+                        let myTaskList = myDatabaseConnection.getActiveTask(myTaskContext.taskID as Int)
+                    
+                        for myTask in myTaskList
+                        {  //append project details to work array
+                            myReturnedData.append(myTask)
+                        }
+                    }
+                }
+            }
+            
+            // Sort workarray by dueDate, with oldest first
+            myReturnedData.sort({$0.dueDate.timeIntervalSinceNow < $1.dueDate.timeIntervalSinceNow})
+            
+            // Load calendar items array based on return array
+            
+            for myItem in myReturnedData
+            {
+                let myTempTask = task(inTaskID: myItem.taskID as Int)
+                
+                myTaskItems.append(myTempTask)
+            }
+            
+            workArray = buildTaskDisplay()
+            
+            if workArray.count == 0
+            {
+                writeRowToArray("No tasks found", &workArray)
+            }
+            
+            
             /*case "Facebook":
                 if myDisplayType == "Project"
                 {
@@ -1086,6 +1143,19 @@ println("facebook ID = \(myFacebookID)")
         case "Meetings":
             
             openMeetings("Meeting Details", workingTask: myCalendarItems[rowID])
+            
+        case "Tasks":
+            
+            let taskViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("taskTab") as! tasksTabViewController
+            
+            var myPassedTask = TaskModel()
+            myPassedTask.taskType = ""
+            myPassedTask.currentTask = myTaskItems[rowID]
+            myPassedTask.delegate = self
+            taskViewControl.myPassedTask = myPassedTask
+            
+            self.presentViewController(taskViewControl, animated: true, completion: nil)
+
             
             default:
                 let a = 1
@@ -2783,5 +2853,56 @@ println("Nothing found")
             }
         }
         return tableContents
+    }
+    
+    func buildTaskDisplay() -> [TableData]
+    {
+        var tableContents: [TableData] = [TableData]()
+        
+        // Build up the details we want to show ing the calendar
+        
+        for myTask in myTaskItems
+        {
+            var myString = "\(myTask.title)\n"
+            
+            myString += "Project: "
+            
+            let myData = myDatabaseConnection.getProjectDetails(myTask.projectID)
+            
+            if myData.count == 0
+            {
+                myString += "No project set"
+            }
+            else
+            {
+                myString += myData[0].projectName
+            }
+
+            myString += "   Due: "
+            if myTask.displayDueDate == ""
+            {
+                myString += "No due date set"
+            }
+            else
+            {
+                myString += myTask.displayDueDate
+            }
+            writeRowToArray(myString, &tableContents)
+        }
+        return tableContents
+    }
+
+    func myTaskDidFinish(controller:taskViewController, actionType: String, currentTask: task)
+    {
+        // reload the task Items collection view
+        
+        // Associate the task with the meeting
+        
+        controller.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func myTaskUpdateDidFinish(controller:taskUpdatesViewController, actionType: String, currentTask: task)
+    {
+        controller.dismissViewControllerAnimated(true, completion: nil)
     }
 }
