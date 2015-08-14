@@ -585,6 +585,7 @@ class SharingActivityProvider: UIActivityItemProvider, UIActivityItemSource
 {
     var HTMLString : String!
     var plainString : String!
+    var messageSubject: String!
     
     override func activityViewController(activityViewController: UIActivityViewController, itemForActivityType activityType: String) -> AnyObject?
     {
@@ -607,5 +608,11 @@ class SharingActivityProvider: UIActivityItemProvider, UIActivityItemSource
     override func activityViewControllerPlaceholderItem(activityViewController: UIActivityViewController) -> AnyObject
     {
         return "";
+    }
+    
+    
+    override func activityViewController(activityViewController: UIActivityViewController, subjectForActivityType activityType: String?) -> String
+    {
+        return messageSubject
     }
 }

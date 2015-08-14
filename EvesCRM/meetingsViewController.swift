@@ -833,8 +833,19 @@ class meetingsViewController: UIViewController
         // Build up the details we want to share
 
         var sharingActivityProvider: SharingActivityProvider = SharingActivityProvider();
-        sharingActivityProvider.HTMLString = passedMeeting.event.buildShareHTMLString()
+        
+        let myTmp1 = passedMeeting.event.buildShareHTMLString().stringByReplacingOccurrencesOfString("\n", withString: "<p>")
+        sharingActivityProvider.HTMLString = myTmp1
         sharingActivityProvider.plainString = passedMeeting.event.buildShareString()
+        
+        if passedMeeting.event.startDate.compare(NSDate()) == NSComparisonResult.OrderedAscending
+        {  // Historical so show Minutes
+            sharingActivityProvider.messageSubject = "Minutes for meeting: \(passedMeeting.event.title)"
+        }
+        else
+        {
+            sharingActivityProvider.messageSubject = "Agenda for meeting: \(passedMeeting.event.title)"
+        }
         
         var activityItems : Array = [sharingActivityProvider];
         

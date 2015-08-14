@@ -1535,7 +1535,7 @@ class task: NSObject
         var myLine: String = ""
         var myContextTable: String = ""
         
-        myLine = "\(myTitle)"
+        myLine = "                \(myTitle)"
         myExportString = writeLine(myExportString, inLineString: myLine)
         
         myExportString = writeLine(myExportString, inLineString: "")
@@ -1561,12 +1561,12 @@ class task: NSObject
         
         if displayStartDate != ""
         {
-            myLine += "Start : \(displayStartDate)      "
+            myLine += "Start: \(displayStartDate)      "
         }
         
         if displayDueDate != ""
         {
-            myLine += "Due : \(displayDueDate)      "
+            myLine += "Due: \(displayDueDate)      "
         }
         
         if myEstimatedTime > 0
@@ -1599,17 +1599,17 @@ class task: NSObject
         
         if myPriority != ""
         {
-            myLine += "Priority : \(myPriority)      "
+            myLine += "Priority: \(myPriority)      "
         }
         
         if myUrgency != ""
         {
-            myLine += "Urgency : \(myUrgency)      "
+            myLine += "Urgency: \(myUrgency)      "
         }
         
         if myEnergyLevel != ""
         {
-            myLine += "Energy : \(myEnergyLevel)"
+            myLine += "Energy: \(myEnergyLevel)"
         }
         
         myExportString = writeLine(myExportString, inLineString: myLine)
@@ -1653,7 +1653,7 @@ class task: NSObject
         var myLine: String = ""
         var myContextTable: String = ""
         
-        myLine = "<html><body><h2>\(myTitle)</h2>"
+        myLine = "<html><body><h3><center>\(myTitle)</center></h3>"
         myExportString = writeHTMLLine(myExportString, inLineString: myLine)
         
         myExportString = writeHTMLLine(myExportString, inLineString: "")
@@ -1679,12 +1679,12 @@ class task: NSObject
         
         if displayStartDate != ""
         {
-            myLine += "Start : \(displayStartDate)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+            myLine += "Start: \(displayStartDate)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
         }
 
         if displayDueDate != ""
         {
-            myLine += "Due : \(displayDueDate)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+            myLine += "Due: \(displayDueDate)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
         }
         
         if myEstimatedTime > 0
@@ -1698,7 +1698,7 @@ class task: NSObject
         
         if myContexts.count > 0
         {
-            myLine = "<h3>Contexts</h3>"
+            myLine = "<h4>Contexts</h4>"
             myExportString = writeHTMLLine(myExportString, inLineString: myLine)
         
             myContextTable = "<table>"
@@ -1718,17 +1718,17 @@ class task: NSObject
         
         if myPriority != ""
         {
-            myLine += "Priority : \(myPriority)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+            myLine += "Priority: \(myPriority)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
         }
 
         if myUrgency != ""
         {
-            myLine += "Urgency : \(myUrgency)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+            myLine += "Urgency: \(myUrgency)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
         }
         
         if myEnergyLevel != ""
         {
-            myLine += "Energy : \(myEnergyLevel)"
+            myLine += "Energy: \(myEnergyLevel)"
         }
 
         myExportString = writeHTMLLine(myExportString, inLineString: myLine)
@@ -1737,7 +1737,7 @@ class task: NSObject
         { //  task updates displayed here
             myExportString = writeHTMLLine(myExportString, inLineString: "")
             myExportString = writeHTMLLine(myExportString, inLineString: "")
-            myLine = "<h3>Update history</h3>"
+            myLine = "<h4>Update history</h4>"
             myExportString = writeHTMLLine(myExportString, inLineString: myLine)
         
             myContextTable = "<table border=\"1\">"

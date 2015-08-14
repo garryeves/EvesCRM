@@ -778,9 +778,13 @@ class taskViewController: UIViewController,  UITextViewDelegate
     {
         // Build up the details we want to share
         
-        var sharingActivityProvider: SharingActivityProvider = SharingActivityProvider();
-        sharingActivityProvider.HTMLString = passedTask.currentTask.buildShareHTMLString()
+        var sharingActivityProvider: SharingActivityProvider = SharingActivityProvider()
+        
+        let myTmp1 = passedTask.currentTask.buildShareHTMLString().stringByReplacingOccurrencesOfString("\n", withString: "<p>")
+        sharingActivityProvider.HTMLString = myTmp1
         sharingActivityProvider.plainString = passedTask.currentTask.buildShareString()
+        
+        sharingActivityProvider.messageSubject = "Task: \(passedTask.currentTask.title)"
         
         var activityItems : Array = [sharingActivityProvider];
         

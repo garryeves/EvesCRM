@@ -407,7 +407,6 @@ class myCalendarItem
         myMinutes = inMeetingAgenda.minutes
         myLocation = inMeetingAgenda.location
         myMinutesType = inMeetingAgenda.minutesType
-        
     }
     
     init(inEventStore: EKEventStore, inMeetingID: String)
@@ -490,7 +489,7 @@ class myCalendarItem
     {
         get
         {
-            var myString : String = ""
+            var myString: String = ""
             startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
             
             myString = startDateFormatter.stringFromDate(myStartDate)
@@ -1189,25 +1188,30 @@ class myCalendarItem
         
         var myWorkingTime = myStartDate
         
-        myLine = "Meeting: \(myTitle)"
-        myExportString = writeLine(myExportString, inLineString: myLine)
-        
-        myExportString = writeLine(myExportString, inLineString: "")
-        
-        myLine = "On : \(displayScheduledDate)    At : \(myLocation)"
-        myExportString = writeLine(myExportString, inLineString: myLine)
-        
-        myExportString = writeLine(myExportString, inLineString: "")
-        
         if myStartDate.compare(NSDate()) == NSComparisonResult.OrderedAscending
         {  // Historical so show Minutes
-            myLine = "Minutes"
+            myLine = "                Minutes"
         }
         else
         {
-            myLine = "Agenda"
+            myLine = "                Agenda"
         }
-
+        
+        myExportString = writeLine(myExportString, inLineString: myLine)
+        
+        myExportString = writeLine(myExportString, inLineString: "")
+        
+        myLine = "       Meeting: \(myTitle)"
+        myExportString = writeLine(myExportString, inLineString: myLine)
+        
+        myExportString = writeLine(myExportString, inLineString: "")
+        
+        myLine = "On: \(displayScheduledDate)    "
+        
+        if myLocation != ""
+        {
+            myLine += "At: \(myLocation)"
+        }
         myExportString = writeLine(myExportString, inLineString: myLine)
         
         myExportString = writeLine(myExportString, inLineString: "")
@@ -1216,12 +1220,12 @@ class myCalendarItem
         
         if myChair != ""
         {
-            myLine += "Chair : \(myChair)       "
+            myLine += "Chair: \(myChair)       "
         }
         
         if myMinutes != ""
         {
-            myLine += "Minutes : \(myMinutes)"
+            myLine += "Minutes: \(myMinutes)"
         }
         
         myExportString = writeLine(myExportString, inLineString: myLine)
@@ -1241,7 +1245,7 @@ class myCalendarItem
                 
                 let myDisplayString = "\(myItem.name) - \(myDisplayDate)"
                 
-                myLine = "Previous Meeting : \(myDisplayString)"
+                myLine = "Previous Meeting: \(myDisplayString)"
                 myExportString = writeLine(myExportString, inLineString: myLine)
             }
         }
@@ -1341,7 +1345,7 @@ class myCalendarItem
         myExportString = writeLine(myExportString, inLineString: "")
         myExportString = writeLine(myExportString, inLineString: "")
         
-        myLine = "Agenda Items"
+        myLine = "                Agenda Items"
         myExportString = writeLine(myExportString, inLineString: myLine)
         myExportString = writeLine(myExportString, inLineString: "")
         
@@ -1355,32 +1359,33 @@ class myCalendarItem
                 
                 myExportString = writeLine(myExportString, inLineString: "")
                 
-                myLine = "Discussion Notes"
-                myExportString = writeLine(myExportString, inLineString: myLine)
-                
-                myLine = "\(myItem.discussionNotes)"
-                myExportString = writeLine(myExportString, inLineString: myLine)
-                
-                myExportString = writeLine(myExportString, inLineString: "")
-                
-                myLine = "Decisions Made"
-                myExportString = writeLine(myExportString, inLineString: myLine)
-                
-                myLine = "\(myItem.decisionMade)"
-                myExportString = writeLine(myExportString, inLineString: myLine)
-                
-                myExportString = writeLine(myExportString, inLineString: "")
-                
-                myLine = "Actions"
-                myExportString = writeLine(myExportString, inLineString: myLine)
-                
-                if myItem.tasks.count == 0
+                if myItem.discussionNotes != ""
                 {
-                    myLine = "No actions assigned"
+                    myLine = "Discussion Notes"
                     myExportString = writeLine(myExportString, inLineString: myLine)
+                
+                    myLine = "\(myItem.discussionNotes)"
+                    myExportString = writeLine(myExportString, inLineString: myLine)
+                
+                    myExportString = writeLine(myExportString, inLineString: "")
                 }
-                else
+                
+                if myItem.decisionMade != ""
                 {
+                    myLine = "Decisions Made"
+                    myExportString = writeLine(myExportString, inLineString: myLine)
+                
+                    myLine = "\(myItem.decisionMade)"
+                    myExportString = writeLine(myExportString, inLineString: myLine)
+                
+                    myExportString = writeLine(myExportString, inLineString: "")
+                }
+                
+                if myItem.tasks.count != 0
+                {
+                    myLine = "Actions"
+                    myExportString = writeLine(myExportString, inLineString: myLine)
+                
                     myLine = "||Task"
                     myLine += "||Status"
                     myLine += "||Project"
@@ -1514,7 +1519,7 @@ class myCalendarItem
                 myExportString = writeLine(myExportString, inLineString: "")
                 myExportString = writeLine(myExportString, inLineString: "")
                 
-                myLine = "Next Meeting : \(myDisplayString)"
+                myLine = "Next Meeting: \(myDisplayString)"
                 myExportString = writeLine(myExportString, inLineString: myLine)
                 
             }
@@ -1548,26 +1553,31 @@ class myCalendarItem
         
         var myWorkingTime = myStartDate
         
-        myLine = "<html><body><h1>\(myTitle)</h1>"
-        myExportString = writeHTMLLine(myExportString, inLineString: myLine)
-        
-        myExportString = writeHTMLLine(myExportString, inLineString: "")
+        myLine = "<html><body>"
         
         if myStartDate.compare(NSDate()) == NSComparisonResult.OrderedAscending
         {  // Historical so show Minutes
-            myLine = "<center><h2>Minutes</h2></center>"
+            myLine += "<center><h1>Minutes</h1></center>"
         }
         else
         {
-            myLine = "<center><h2>Agenda</h2></center>"
+            myLine += "<center><h1>Agenda</h1></center>"
         }
         
         myExportString = writeHTMLLine(myExportString, inLineString: myLine)
         
+        myLine = "<center><h2>\(myTitle)</h2></center>"
+        myExportString = writeHTMLLine(myExportString, inLineString: myLine)
+        
         myExportString = writeHTMLLine(myExportString, inLineString: "")
         
+        myLine = "On: \(displayScheduledDate)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
         
-        myLine = "On : \(displayScheduledDate)    At : \(myLocation)"
+        if myLocation != ""
+        {
+            myLine += "At: \(myLocation)"
+        }
+        
         myExportString = writeHTMLLine(myExportString, inLineString: myLine)
         
         myExportString = writeHTMLLine(myExportString, inLineString: "")
@@ -1575,12 +1585,12 @@ class myCalendarItem
         
         if myChair != ""
         {
-            myLine += "Chair : \(myChair)       "
+            myLine += "Chair: \(myChair)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
         }
         
         if myMinutes != ""
         {
-            myLine += "Minutes : \(myMinutes)"
+            myLine += "Minutes: \(myMinutes)"
         }
         
         myExportString = writeHTMLLine(myExportString, inLineString: myLine)
@@ -1600,7 +1610,7 @@ class myCalendarItem
                 
                 let myDisplayString = "\(myItem.name) - \(myDisplayDate)"
                 
-                myLine = "Previous Meeting : \(myDisplayString)"
+                myLine = "Previous Meeting: \(myDisplayString)"
                 myExportString = writeHTMLLine(myExportString, inLineString: myLine)
             }
         }
@@ -1614,7 +1624,7 @@ class myCalendarItem
             
             if myData.count > 0
             {  // There are tasks for the previous meeting
-                myLine = "<h2>Actions from Previous Meeting</h2>"
+                myLine = "<center><h3>Actions from Previous Meeting</h3></center>"
                 myExportString = writeHTMLLine(myExportString, inLineString: myLine)
                 
                 var myTaskList: [task] = Array()
@@ -1697,7 +1707,7 @@ class myCalendarItem
             }
         }
         
-        myLine = "<h2>Agenda Items</h2>"
+        myLine = "<center><h3>Agenda Items</h3></center>"
         myExportString = writeHTMLLine(myExportString, inLineString: myLine)
         
         if myStartDate.compare(NSDate()) == NSComparisonResult.OrderedAscending
@@ -1705,37 +1715,38 @@ class myCalendarItem
 
             for myItem in myAgendaItems
             {
-                myLine = "<h3>\(myItem.title)</h3>"
+                myLine = "<h4>\(myItem.title)</h4>"
                 myExportString = writeHTMLLine(myExportString, inLineString: myLine)
             
                 myExportString = writeHTMLLine(myExportString, inLineString: "")
                 
-                myLine = "Discussion Notes"
-                myExportString = writeHTMLLine(myExportString, inLineString: myLine)
-                
-                myLine = "\(myItem.discussionNotes)"
-                myExportString = writeHTMLLine(myExportString, inLineString: myLine)
-
-                myExportString = writeHTMLLine(myExportString, inLineString: "")
-                
-                myLine = "Decisions Made"
-                myExportString = writeHTMLLine(myExportString, inLineString: myLine)
-                
-                myLine = "\(myItem.decisionMade)"
-                myExportString = writeHTMLLine(myExportString, inLineString: myLine)
-
-                myExportString = writeHTMLLine(myExportString, inLineString: "")
-                
-                myLine = "Actions"
-                myExportString = writeHTMLLine(myExportString, inLineString: myLine)
-
-                if myItem.tasks.count == 0
+                if myItem.discussionNotes != ""
                 {
-                    myLine = "No actions assigned"
+                    myLine = "<h5>Discussion Notes</h5>"
                     myExportString = writeHTMLLine(myExportString, inLineString: myLine)
+                
+                    myLine = "\(myItem.discussionNotes)"
+                    myExportString = writeHTMLLine(myExportString, inLineString: myLine)
+
+                    myExportString = writeHTMLLine(myExportString, inLineString: "")
                 }
-                else
+                
+                if myItem.decisionMade != ""
                 {
+                    myLine = "<h5>Decisions Made</h5>"
+                    myExportString = writeHTMLLine(myExportString, inLineString: myLine)
+                
+                    myLine = "\(myItem.decisionMade)"
+                    myExportString = writeHTMLLine(myExportString, inLineString: myLine)
+
+                    myExportString = writeHTMLLine(myExportString, inLineString: "")
+                }
+                
+                if myItem.tasks.count != 0
+                {
+                    myLine = "<h5>Actions</h5>"
+                    myExportString = writeHTMLLine(myExportString, inLineString: myLine)
+
                     myTaskTable = "<table border=\"1\">"
                     myTaskTable += "<tr>"
                     myTaskTable += "<th>Task</th>"
@@ -1877,7 +1888,7 @@ class myCalendarItem
                 myExportString = writeHTMLLine(myExportString, inLineString: "")
                 myExportString = writeHTMLLine(myExportString, inLineString: "")
                 
-                myLine = "Next Meeting : \(myDisplayString)"
+                myLine = "<b>Next Meeting:</b> \(myDisplayString)"
                 myExportString = writeHTMLLine(myExportString, inLineString: myLine)
                 
             }
@@ -1919,14 +1930,118 @@ class iOSCalendar
         for myEmail in emailAddresses
         {
             parseCalendarByEmail(myEmail)
+            loadMeetingsForContext(myEmail)
         }
+        
+        // Now sort the array into date order
+        
+         eventDetails.sort({$0.startDate.timeIntervalSinceNow < $1.startDate.timeIntervalSinceNow})
     }
     
     func loadCalendarDetails(projectName: String)
     {
         parseCalendarByProject(projectName)
+        
+        loadMeetingsForProject(projectName)
+        
+        // now sort the array into date order
+        
+        eventDetails.sort({$0.startDate.timeIntervalSinceNow < $1.startDate.timeIntervalSinceNow})
     }
 
+    private func loadMeetingsForContext(inSearchString: String)
+    {
+        var meetingFound: Bool = false
+        
+        let myMeetingArray = getMeetingsForDateRange()
+        
+        // Check through the meetings for ones that match the context
+        
+        for myMeeting in myMeetingArray
+        {
+            let myAttendeeList = myDatabaseConnection.loadAttendees(myMeeting.meetingID)
+
+            for myAttendee in myAttendeeList
+            {
+                if (myAttendee.name == inSearchString) || (myAttendee.email == inSearchString)
+                {
+                    // Check to see if there is already an entry for this meeting, as if there is we do not need to add it
+                    meetingFound = false
+                    for myCheck in eventDetails
+                    {
+                        if myCheck.eventID == myMeeting.meetingID
+                        {
+                            meetingFound = true
+                            break
+                        }
+                    }
+                    
+                    if !meetingFound
+                    {
+                        let calendarEntry = myCalendarItem(inEventStore: eventStore, inMeetingAgenda: myMeeting)
+                    
+                        eventDetails.append(calendarEntry)
+            //        eventRecords.append(nil)
+                    }
+                }
+            }
+        }
+    }
+    
+    private func loadMeetingsForProject(inSearchString: String)
+    {
+        var meetingFound: Bool = false
+        var dateMatch: Bool = false
+        
+        let myMeetingArray = getMeetingsForDateRange()
+        
+        // Check through the meetings for ones that match the context
+        
+        for myMeeting in myMeetingArray
+        {
+            if myMeeting.name.lowercaseString.rangeOfString(inSearchString.lowercaseString) != nil
+            {
+                // Check to see if there is already an entry for this meeting, as if there is we do not need to add it
+                meetingFound = false
+                dateMatch = true
+                for myCheck in eventDetails
+                {
+                    if myCheck.eventID == myMeeting.meetingID
+                    {
+                        meetingFound = true
+                        break
+                    }
+                    
+                    if myCheck.title == myMeeting.name
+                    {  // Meeting names are the same
+                        if myCheck.startDate == myMeeting.startTime
+                        { // Dates are the same
+                            dateMatch = true
+                            break
+                        }
+                    }
+                    // Events Ids do not match
+                }
+                
+                if !meetingFound
+                {
+                    let calendarEntry = myCalendarItem(inEventStore: eventStore, inMeetingAgenda: myMeeting)
+                    
+                    eventDetails.append(calendarEntry)
+                    //        eventRecords.append(nil)
+                }
+                
+                if !dateMatch
+                {
+                    let calendarEntry = myCalendarItem(inEventStore: eventStore, inMeetingAgenda: myMeeting)
+                    
+                    eventDetails.append(calendarEntry)
+                    //        eventRecords.append(nil)
+                }
+            }
+        }
+    }
+    
     private func parseCalendarByEmail(inEmail: String)
     {
         let events = getEventsForDateRange()
@@ -2026,6 +2141,43 @@ class iOSCalendar
         return events
     }
 
+    private func getMeetingsForDateRange() -> [MeetingAgenda]
+    {
+        var meetings: [MeetingAgenda] = Array()
+        
+        let baseDate = NSDate()
+        
+        /* The event starts date */
+        //Calculate - Days * hours * mins * secs
+        
+        let myStartDateString = myDatabaseConnection.getDecodeValue("CalBeforeWeeks")
+        // This is string value so need to convert to integer, and subtract from 0 to get a negative
+        
+        let myStartDateValue:NSTimeInterval = 0 - ((((myStartDateString as NSString).doubleValue * 7) + 1) * 24 * 60 * 60)
+        
+        let startDate = baseDate.dateByAddingTimeInterval(myStartDateValue)
+        
+        /* The end date */
+        //Calculate - Days * hours * mins * secs
+        
+        let myEndDateString = myDatabaseConnection.getDecodeValue("CalAfterWeeks")
+        // This is string value so need to convert to integer
+        
+        let myEndDateValue:NSTimeInterval = (myEndDateString as NSString).doubleValue * 7 * 24 * 60 * 60
+        
+        let endDate = baseDate.dateByAddingTimeInterval(myEndDateValue)
+        
+        /* Create the predicate that we can later pass to the event store in order to fetch the events */
+        let searchPredicate = eventStore.predicateForEventsWithStartDate(
+            startDate,
+            endDate: endDate,
+            calendars: nil)
+        
+        /* Fetch all the meetings that fall between the starting and the ending dates */
+        
+        return myDatabaseConnection.getAgendaForDateRange(startDate, inEndDate: endDate)
+    }
+    
     private func storeEvent(inEvent: EKEvent, inAttendee: EKParticipant?)
     {
         let calendarEntry = myCalendarItem(inEventStore: eventStore, inEvent: inEvent, inAttendee: inAttendee)

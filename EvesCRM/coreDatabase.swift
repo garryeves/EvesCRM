@@ -751,6 +751,25 @@ class coreDatabase: NSObject
         return fetchResults!
     }
    
+    func getAgendaForDateRange(inStartDate: NSDate, inEndDate: NSDate)->[MeetingAgenda]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "MeetingAgenda")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "(startTime >= %@) && (endTime <= %@)", inStartDate, inEndDate)
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [MeetingAgenda]
+        
+        return fetchResults!
+    }
     
     func loadAttendees(inMeetingID: String)->[MeetingAttendees]
     {

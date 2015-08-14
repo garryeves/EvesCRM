@@ -14,17 +14,14 @@ protocol MyMaintainPanesDelegate
     func MaintainPanesDidFinish(controller:MaintainPanesViewController)
 }
 
-class MaintainPanesViewController: UIViewController {
-    
-    @IBOutlet weak var buttonChangeVisibile: UIButton!
-    @IBOutlet weak var tablePane: UITableView!
-    
+class MaintainPanesViewController: UIViewController
+{
     @IBOutlet weak var Table1Picker: UIPickerView!
     @IBOutlet weak var Table2Picker: UIPickerView!
     @IBOutlet weak var Table3Picker: UIPickerView!
     @IBOutlet weak var Table4Picker: UIPickerView!
-    
     @IBOutlet weak var btnResetPanes: UIButton!
+    @IBOutlet weak var colPanes: UICollectionView!
     
     var delegate: MyMaintainPanesDelegate?
     private var myPanes: [displayPane]!
@@ -35,22 +32,15 @@ class MaintainPanesViewController: UIViewController {
     private var myPicker3: [String]!
     private var myPicker4: [String]!
     
-    let cellReuse = "tablePane"
+    let cellReuse = "reusePane"
 
     override func viewDidLoad()
     {
         super.viewDidLoad()
         
-        self.tablePane.registerClass(UITableViewCell.self, forCellReuseIdentifier: cellReuse)
-
         // Go and get the Pane data
         myPanes = displayPanes().listPanes
         
-        buttonChangeVisibile.hidden = true
-        
-        tablePane.estimatedRowHeight = 12.0
-        tablePane.rowHeight = UITableViewAutomaticDimension
-        tablePane.tableFooterView = UIView(frame:CGRectZero)
         myPicker1 = Array()
         myPicker2 = Array()
         myPicker3 = Array()
@@ -59,6 +49,8 @@ class MaintainPanesViewController: UIViewController {
         populatePicker()
         
         // Go and get the initial state for the pickers (i.e what is in the table.  If no initial statedefined, then default
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "removePane", name:"NotificationRemovePane", object: nil)
         
         let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
         showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
@@ -75,6 +67,14 @@ class MaintainPanesViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    override func viewWillLayoutSubviews()
+    {
+        super.viewWillLayoutSubviews()
+        colPanes.collectionViewLayout.invalidateLayout()
+        
+        colPanes.reloadData()
+    }
+    
     func handleSwipe(recognizer:UISwipeGestureRecognizer)
     {
         if recognizer.direction == UISwipeGestureRecognizerDirection.Left
@@ -84,70 +84,6 @@ class MaintainPanesViewController: UIViewController {
         else
         {
             delegate?.MaintainPanesDidFinish(self)
-        }
-    }
-
-    
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
-    {
-        var retVal: Int = 0
-        
-        if tableView == tablePane
-        {
-            retVal = myPanes.count ?? 0
-        }
-        return retVal
-    }
-    
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
-    {
-        if tableView == tablePane
-        {
-            let cell = tablePane.dequeueReusableCellWithIdentifier(cellReuse) as! UITableViewCell
-            cell.textLabel!.text = "\(myPanes[indexPath.row].paneName) - "
-            if myPanes[indexPath.row].paneVisible
-            {
-                cell.textLabel!.text = cell.textLabel!.text!  + "visible"
-                let cell2 = setCellFormatting(cell,"")
-                return cell2
-            }
-            else
-            {
-                cell.textLabel!.text = cell.textLabel!.text!  + "hidden"
-                let cell2 = setCellFormatting(cell,"Gray")
-                return cell2
-            }
-        }
-        else
-        {
-            // Dummy statements to allow use of else
-            let cell = tablePane.dequeueReusableCellWithIdentifier(cellReuse) as! UITableViewCell
-            return cell
-        }
-    }
-    
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
-    {
-        
-        if tableView == tablePane
-        {
-            mySelectedPane = myPanes[indexPath.row].paneName
-            mySelectedCurrentState = myPanes[indexPath.row].paneVisible
-            
-            var buttonText: String = "Press to "
-            if mySelectedCurrentState
-            {
-                buttonText += "hide "
-            }
-            else
-            {
-                buttonText += "show "
-            }
-            
-            buttonText += mySelectedPane
-            
-            buttonChangeVisibile.setTitle(buttonText, forState: UIControlState.Normal)
-            buttonChangeVisibile.hidden = false
         }
     }
     
@@ -224,19 +160,64 @@ class MaintainPanesViewController: UIViewController {
         }
     }
 
-    @IBAction func buttonChangeVisibileClick(sender: UIButton)
+    
+    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
     {
-        // Lets update the table
+        return 1
+    }
+    
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
+    {
+        return myPanes.count ?? 0
+    }
+    
+    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
+    {
+        var cell : myPaneItem!
         
-        var myUpdatePanes = displayPanes()
+        cell = collectionView.dequeueReusableCellWithReuseIdentifier(cellReuse, forIndexPath: indexPath) as! myPaneItem
         
-        myUpdatePanes.toogleVisibleStatus(mySelectedPane)
+        cell.lblPaneName.text = myPanes[indexPath.row].paneName
         
+        if myPanes[indexPath.row].paneVisible
+        {
+            cell.btnHide.setTitle("Hide", forState: UIControlState.Normal)
+        }
+        else
+        {
+            cell.btnHide.setTitle("Show", forState: UIControlState.Normal)
+        }
+        
+        let swiftColor = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
+        if (indexPath.row % 2 == 0)
+        {
+            cell.backgroundColor = swiftColor
+        }
+        else
+        {
+            cell.backgroundColor = UIColor.clearColor()
+        }
+        
+        cell.layoutSubviews()
+        
+        return cell
+    }
+    
+    func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
+    {
+        var retVal: CGSize!
+        
+        retVal = CGSize(width: colPanes.bounds.size.width, height: 39)
+        
+        return retVal
+    }
+
+    func removePane()
+    {
         myPanes = displayPanes().listPanes
-        tablePane.reloadData()
+        colPanes.reloadData()
         mySelectedPane = ""
         mySelectedCurrentState = false
-        buttonChangeVisibile.hidden = true
         populatePicker()
     }
     
@@ -280,7 +261,7 @@ class MaintainPanesViewController: UIViewController {
                 table3Default = loopCount
             }
             
-            if myPane.paneName == "Reminders"
+            if myPane.paneName == "Tasks"
             {
                 table4Default = loopCount
             }
@@ -348,8 +329,7 @@ class MaintainPanesViewController: UIViewController {
         
         myPanes = displayPanes().listPanes
         
-        tablePane.reloadData()
-        buttonChangeVisibile.hidden = true
+        colPanes.reloadData()
         myPicker1 = Array()
         myPicker2 = Array()
         myPicker3 = Array()
@@ -358,4 +338,29 @@ class MaintainPanesViewController: UIViewController {
         populatePicker()
     }
 }
+
+class myPaneItem: UICollectionViewCell
+{
+    
+    @IBOutlet weak var lblPaneName: UILabel!
+    @IBOutlet weak var btnHide: UIButton!
+    
+    override func layoutSubviews()
+    {
+        contentView.frame = bounds
+        super.layoutSubviews()
+    }
+    
+    @IBAction func btnHide(sender: UIButton)
+    {
+        // Lets update the table
+        
+        var myUpdatePanes = displayPanes()
+        
+        myUpdatePanes.toogleVisibleStatus(lblPaneName.text!)
+        
+        NSNotificationCenter.defaultCenter().postNotificationName("NotificationRemovePane", object: nil)
+    }
+}
+
 

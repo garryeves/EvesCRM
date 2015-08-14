@@ -224,7 +224,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         itemSelected = "Calendar"
         TableTypeButton2.setTitle("Details", forState: .Normal)
         TableTypeButton3.setTitle("Project Membership", forState: .Normal)
-        TableTypeButton4.setTitle("Reminders", forState: .Normal)
+        TableTypeButton4.setTitle("Tasks", forState: .Normal)
        
         TableOptions = Array()
         
