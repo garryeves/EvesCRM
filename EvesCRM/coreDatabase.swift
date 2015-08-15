@@ -1278,7 +1278,7 @@ class coreDatabase: NSObject
         return fetchResults!.count
     }
     
-    func saveProject(inProjectID: Int, inProjectEndDate: NSDate, inProjectName: String, inProjectStartDate: NSDate, inProjectStatus: String, inReviewFrequency: Int, inLastReviewDate: NSDate, inAreaID: Int, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String)
+    func saveProject(inProjectID: Int, inProjectEndDate: NSDate, inProjectName: String, inProjectStartDate: NSDate, inProjectStatus: String, inReviewFrequency: Int, inLastReviewDate: NSDate, inAreaID: Int, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inTeamID: Int)
     {
         // first check to see if decode exists, if not we create
         
@@ -1301,6 +1301,7 @@ class coreDatabase: NSObject
             myProject.repeatInterval = inRepeatInterval
             myProject.repeatType = inRepeatType
             myProject.repeatBase = inRepeatBase
+            myProject.teamID = inTeamID
         }
         else
         { // Update
@@ -1315,6 +1316,7 @@ class coreDatabase: NSObject
             myProject.repeatInterval = inRepeatInterval
             myProject.repeatType = inRepeatType
             myProject.repeatBase = inRepeatBase
+            myProject.teamID = inTeamID
         }
         
         if(!managedObjectContext!.save(&error) )
@@ -1410,6 +1412,10 @@ class coreDatabase: NSObject
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
+        
+        let sortDescriptor = NSSortDescriptor(key: "name", ascending: true)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Context]

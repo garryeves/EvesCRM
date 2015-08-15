@@ -740,35 +740,7 @@ class myCalendarItem
             }
         }
     }
-/*
-    var originalEventID: String
-    {  // This is used because changing a recurring event occurance adds some extra text into the ID, this is to allow us to strip that off
-        get
-        {
-            if myEventID == ""
-            {
-                myEventID = myEvent.eventIdentifier
-            }
-            
-            let start = myEventID.startIndex
-            let end = find(myEventID, "/")
-            
-            var returnString: String = ""
-            
-            if end != nil
-            {
-                let myEnd = end?.predecessor()
-                returnString = myEventID[start...myEnd!]
-            }
-            else
-            { // no space found
-                returnString = myEventID
-            }
-
-            return returnString
-        }
-    }
-*/
+    
     var minutesType: String
     {
         get
@@ -799,6 +771,10 @@ class myCalendarItem
         attendee.status = inStatus
  
         myAttendees.append(attendee)
+        
+        // make sure we have saved the Agenda
+        
+        save()
         
         // Save Attendees
         
@@ -989,7 +965,7 @@ class myCalendarItem
                                     }
                     
                                     initaliseAttendee(invitee.name, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
-                    
+             
                                     inviteeFound = true
                     
                                     break
@@ -1074,7 +1050,7 @@ class myCalendarItem
                                     emailAddress = emailText[nextPlace!...emailEndPos]
                                 }
                 
-                                initaliseAttendee(invitee.name, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
+                                addAttendee(invitee.name, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
                             }
                         }
                     }
@@ -1095,7 +1071,7 @@ class myCalendarItem
                                 emailAddress = emailText[nextPlace!...emailEndPos]
                             }
                     
-                            initaliseAttendee(invitee.name, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
+                            addAttendee(invitee.name, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
                         }
                     }
                 }

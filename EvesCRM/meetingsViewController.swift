@@ -93,7 +93,7 @@ class meetingsViewController: UIViewController
         myPicker.hidden = true
         btnSelect.hidden = true
         
-        passedMeeting.event.loadAgenda()
+ //       passedMeeting.event.loadAgenda()
         
         if passedMeeting.event.chair != ""
         {

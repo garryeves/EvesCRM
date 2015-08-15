@@ -574,6 +574,7 @@ class project: NSObject // 10k level
     private var myRepeatInterval: Int = 0
     private var myRepeatType: String = ""
     private var myRepeatBase: String = ""
+    private var myTeamID: Int = 0
 
     var projectEndDate: NSDate
     {
@@ -781,6 +782,19 @@ class project: NSObject // 10k level
         }
     }
     
+    var teamID: Int
+        {
+        get
+        {
+            return myTeamID
+        }
+        set
+        {
+            myTeamID = newValue
+            save()
+        }
+    }
+    
     override init()
     {
         super.init()
@@ -815,6 +829,7 @@ class project: NSObject // 10k level
             myRepeatInterval = myProject.repeatInterval as Int
             myRepeatType = myProject.repeatType
             myRepeatBase = myProject.repeatBase
+            myTeamID = myProject.teamID as Int
                 
             // load team members
         
@@ -906,7 +921,7 @@ class project: NSObject // 10k level
     {
         // Save Project
         
-        myDatabaseConnection.saveProject(myProjectID, inProjectEndDate: myProjectEndDate, inProjectName: myProjectName, inProjectStartDate: myProjectStartDate, inProjectStatus: myProjectStatus, inReviewFrequency: myReviewFrequency, inLastReviewDate: myLastReviewDate, inAreaID: myAreaID, inRepeatInterval: myRepeatInterval, inRepeatType: myRepeatType, inRepeatBase: myRepeatBase)
+        myDatabaseConnection.saveProject(myProjectID, inProjectEndDate: myProjectEndDate, inProjectName: myProjectName, inProjectStartDate: myProjectStartDate, inProjectStatus: myProjectStatus, inReviewFrequency: myReviewFrequency, inLastReviewDate: myLastReviewDate, inAreaID: myAreaID, inRepeatInterval: myRepeatInterval, inRepeatType: myRepeatType, inRepeatBase: myRepeatBase, inTeamID: myTeamID)
         
         // Save Team Members
         
@@ -1919,39 +1934,78 @@ class context: NSObject
         }
     }
     
+    func removeWhitespace(string: String) -> String {
+        let components = string.componentsSeparatedByCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()).filter({!isEmpty($0)})
+        return join(" ", components)
+    }
+    
     init(inContextName: String)
     {
         super.init()
-        let myContexts = myDatabaseConnection.getAllContexts()
+        var matchFound: Bool = false
         
-        let currentNumberofEntries = myContexts.count
-        myContextID = currentNumberofEntries + 1
+        let myContextList = contexts()
         
-        // Now we need to check the Addressbook to see if there is a match for the person, so we can store the personID
+        // String of any unneeded whilespace
         
-        let myPerson: ABRecord! = findPersonRecord(inContextName) as ABRecord!
+        let strippedContext = removeWhitespace(inContextName)
         
-        if myPerson == nil
-        { // No match on Name so check on Email Addresses
-            let myPersonEmail:ABRecord! = findPersonbyEmail(inContextName)
-            
-            if myPersonEmail != nil
+        for myContext in myContextList.contexts
+        {
+            if myContext.name.lowercaseString == strippedContext.lowercaseString
             {
-                myName = ABRecordCopyCompositeName(myPersonEmail).takeRetainedValue() as String
-                myEmail = inContextName
-                myPersonID = ABRecordGetRecordID(myPersonEmail)
+                // Existing context found, so use this record
+                
+                myContextID = myContext.contextID as Int
+                myName = myContext.name
+                myEmail = myContext.email
+                myAutoEmail = myContext.autoEmail
+                myParentContext = myContext.parentContext as Int
+                myStatus = myContext.status
+                myPersonID = myContext.personID
+
+                matchFound = true
+                break
+            }
+        }
+        
+        // if no match then create context
+        
+        if !matchFound
+        {
+            let myContexts = myDatabaseConnection.getAllContexts()
+        
+            let currentNumberofEntries = myContexts.count
+            myContextID = currentNumberofEntries + 1
+        
+            save()
+            
+            // Now we need to check the Addressbook to see if there is a match for the person, so we can store the personID
+        
+            let myPerson: ABRecord! = findPersonRecord(inContextName) as ABRecord!
+        
+            if myPerson == nil
+            { // No match on Name so check on Email Addresses
+                let myPersonEmail:ABRecord! = findPersonbyEmail(inContextName)
+            
+                if myPersonEmail != nil
+                {
+                    myName = ABRecordCopyCompositeName(myPersonEmail).takeRetainedValue() as String
+                    myEmail = inContextName
+                    myPersonID = ABRecordGetRecordID(myPersonEmail)
+                }
+                else
+                {  // No match so use text passed in
+                    myName = strippedContext
+                }
             }
             else
-            {  // No match so use text passed in
-                myName = inContextName
+            {
+                myName = ABRecordCopyCompositeName(myPerson).takeRetainedValue() as String
+                myPersonID = ABRecordGetRecordID(myPerson)
             }
+            save()
         }
-        else
-        {
-            myName = ABRecordCopyCompositeName(myPerson).takeRetainedValue() as String
-            myPersonID = ABRecordGetRecordID(myPerson)
-        }
-        save()
     }
     
     init(inContextID: Int)

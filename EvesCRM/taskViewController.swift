@@ -355,6 +355,10 @@ class taskViewController: UIViewController,  UITextViewDelegate
                         pickerOptions.append(myAttendee.name)
                     }
                 }
+                for myContext in myContextList.contextsByHierarchy
+                {
+                    pickerOptions.append(myContext.contextHierarchy)
+                }
             }
             else
             { // Not a meeting task
@@ -499,6 +503,7 @@ class taskViewController: UIViewController,  UITextViewDelegate
         }
         else
         {
+            /*
             // first lets see if there is already a context with this name
             let myContextList = contexts()
         
@@ -522,13 +527,18 @@ class taskViewController: UIViewController,  UITextViewDelegate
             
                 setContext(myNewContext.contextID)
             }
+*/
+            
+            let myNewContext = context(inContextName: txtNewContext.text)
+            
+            setContext(myNewContext.contextID)
+            lblNewContext.hidden = true
+            txtNewContext.hidden = true
+            btnNewContext.hidden = true
+            myPicker.hidden = true
+            btnSelect.hidden = true
+            showFields()
         }
-        lblNewContext.hidden = true
-        txtNewContext.hidden = true
-        btnNewContext.hidden = true
-        myPicker.hidden = true
-        btnSelect.hidden = true
-        showFields()
     }
     
     @IBAction func btnProject(sender: UIButton)
@@ -591,14 +601,6 @@ class taskViewController: UIViewController,  UITextViewDelegate
 
         if mySelectedRow != 0
         {
-            if pickerTarget == "Context"
-            {
-                btnOwner.setTitle(pickerOptions[mySelectedRow], forState: .Normal)
-                lblNewContext.hidden = true
-                txtNewContext.hidden = true
-                btnNewContext.hidden = true
-            }
-        
             if pickerTarget == "Status"
             {
                 btnStatus.setTitle(pickerOptions[mySelectedRow], forState: .Normal)
@@ -636,6 +638,11 @@ class taskViewController: UIViewController,  UITextViewDelegate
         
             if pickerTarget == "Context"
             {
+                let myNewContext = context(inContextName: pickerOptions[mySelectedRow])
+                
+                setContext(myNewContext.contextID)
+                
+                /*
                 var matchFound: Bool = false
                 // if we have just selected an "unknown" context then we need ot create it
             
@@ -662,6 +669,7 @@ class taskViewController: UIViewController,  UITextViewDelegate
                 
                     setContext(myNewContext.contextID)
                 }
+*/
             }
         }
         myPicker.hidden = true
