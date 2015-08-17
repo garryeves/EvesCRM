@@ -131,6 +131,9 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         super.viewDidLoad()
 
         myDatabaseConnection = coreDatabase()
+ 
+        //   code to reset decodes if needed for testing
+ //       myDatabaseConnection.deleteDecodeValue()
         
         initialPopulationOfTables()
         
@@ -195,16 +198,16 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         populateContactList()
     
    //   code to reset projects if needed for testing
-  //      myDatabaseConnection.resetprojects()
+    //    myDatabaseConnection.resetprojects()
         
    //   code to reset meetings if needed for testing        
- //       myDatabaseConnection.resetMeetings()
+   //     myDatabaseConnection.resetMeetings()
         
         //   code to reset tasks if needed for testing
- //       myDatabaseConnection.resetTasks()
+    //    myDatabaseConnection.resetTasks()
         
         //   code to reset contexts if needed for testing
-     //        myDatabaseConnection.resetContexts()
+    //         myDatabaseConnection.resetContexts()
         
         // Work out if a project has been added to the data store, so we can then select it
         let myProjects = myDatabaseConnection.getProjects()
@@ -1903,7 +1906,7 @@ println("Nothing found")
                         
                         // Work out the comparision date we need to use, so we can flag items not updated in last 2 weeks
                         
-                        let myLastUpdateString = myDatabaseConnection.getDecodeValue("OmniPurple")
+                        let myLastUpdateString = myDatabaseConnection.getDecodeValue("Tasks - Days since last update")
                         // This is string value, and is also positive, so need to convert to integer
                         
                         let myLastUpdateValue = 0 - (myLastUpdateString as NSString).integerValue
@@ -1980,7 +1983,7 @@ println("Nothing found")
                         myDisplayString += "\nDue: \(splitText[4])"
                         
                         // Work out the comparision dat we need to use, so we can see if the due date is in the next 7 days
-                        let myDueDateString = myDatabaseConnection.getDecodeValue("OmniOrange")
+                        let myDueDateString = myDatabaseConnection.getDecodeValue("Tasks - Days before due date")
                         // This is string value so need to convert to integer
                         
                         let myDueDateValue = (myDueDateString as NSString).integerValue
@@ -1997,7 +2000,7 @@ println("Nothing found")
                         }
                         
                         // Work out the comparision dat we need to use, so we can see if the due date is in the next 7 days
-                        let myOverdueDateString = myDatabaseConnection.getDecodeValue("OmniRed")
+                        let myOverdueDateString = myDatabaseConnection.getDecodeValue("Tasks - Days after due date")
                         // This is string value so need to convert to integer
                         
                         let myOverdueDateValue = (myOverdueDateString as NSString).integerValue
@@ -2148,39 +2151,53 @@ println("Nothing found")
     {
         var decodeString: String = ""
 
-        decodeString = myDatabaseConnection.getDecodeValue("CalBeforeWeeks")
+        decodeString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date")
         
         if decodeString == ""
         {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("CalBeforeWeeks", inCodeValue: "1")
+            myDatabaseConnection.updateDecodeValue("Calendar - Weeks before current date", inCodeValue: "1", inCodeType: "stepper")
         }
 
-        decodeString = myDatabaseConnection.getDecodeValue("CalAfterWeeks")
+        decodeString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date")
         
         if decodeString == ""
         {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("CalAfterWeeks", inCodeValue: "4")
+            myDatabaseConnection.updateDecodeValue("Calendar - Weeks after current date", inCodeValue: "4", inCodeType: "stepper")
         }
         
-        decodeString = myDatabaseConnection.getDecodeValue("OmniRed")
+        decodeString = myDatabaseConnection.getDecodeValue("Tasks - Days after due date")
         
         if decodeString == ""
         {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("OmniRed", inCodeValue: "0")
+            myDatabaseConnection.updateDecodeValue("Tasks - Days after due date", inCodeValue: "0", inCodeType: "stepper")
         }
         
-        decodeString = myDatabaseConnection.getDecodeValue("OmniOrange")
+        decodeString = myDatabaseConnection.getDecodeValue("Tasks - Days before due date")
         
         if decodeString == ""
         {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("OmniOrange", inCodeValue: "7")
+            myDatabaseConnection.updateDecodeValue("Tasks - Days before due date", inCodeValue: "7", inCodeType: "stepper")
         }
         
-        decodeString = myDatabaseConnection.getDecodeValue("OmniPurple")
+        decodeString = myDatabaseConnection.getDecodeValue("Tasks - Days since last update")
         
         if decodeString == ""
         {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("OmniPurple", inCodeValue: "14")
+            myDatabaseConnection.updateDecodeValue("Tasks - Days since last update", inCodeValue: "14", inCodeType: "stepper")
+        }
+        
+        decodeString = myDatabaseConnection.getDecodeValue("dummyNumber")
+        
+        if decodeString == ""
+        {  // Nothing found so go and create
+            myDatabaseConnection.updateDecodeValue("dummyNumber", inCodeValue: "1", inCodeType: "number")
+        }
+        
+        decodeString = myDatabaseConnection.getDecodeValue("dummyString")
+        
+        if decodeString == ""
+        {  // Nothing found so go and create
+            myDatabaseConnection.updateDecodeValue("dummyString", inCodeValue: "Test string", inCodeType: "string")
         }
         
         if myDatabaseConnection.getRoles().count == 0

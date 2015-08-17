@@ -234,7 +234,7 @@ func populateRoles()
     
     for initialRole in initialRoles
     {
-        myDatabaseConnection.createRole(initialRole)
+        myDatabaseConnection.createRole(initialRole, inTeamID: 0)
     }
 }
 
@@ -409,9 +409,9 @@ func populateStages()
     
     for myItem in loadSet
     {
-        if !myDatabaseConnection.stageExists(myItem)
+        if !myDatabaseConnection.stageExists(myItem, inTeamID: 0)
         {
-            myDatabaseConnection.createStage(myItem)
+            myDatabaseConnection.createStage(myItem, inTeamID: 0)
         }
     }
 }

@@ -169,6 +169,8 @@
 		34A578C31B5F6170008D3D8E /* MeetingTasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A578C21B5F6170008D3D8E /* MeetingTasks.swift */; };
 		34A578C41B5F6170008D3D8E /* MeetingTasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A578C21B5F6170008D3D8E /* MeetingTasks.swift */; };
 		34B3BDA01AF0979E00C5B09D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406506F1ADDF8FF00C90CBB /* ViewController.swift */; };
+		34B4C7E41B8191930098F6BC /* TaskAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B4C7E11B8191930098F6BC /* TaskAttachment.swift */; };
+		34B4C7E51B8191930098F6BC /* TaskAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B4C7E11B8191930098F6BC /* TaskAttachment.swift */; };
 		34B525391B130F1C00093250 /* oneNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B525381B130F1C00093250 /* oneNote.swift */; };
 		34B5253A1B130F1C00093250 /* oneNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B525381B130F1C00093250 /* oneNote.swift */; };
 		34B9C0111B26BA70005E52F9 /* gMail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B9C0101B26BA70005E52F9 /* gMail.swift */; };
@@ -383,6 +385,8 @@
 		34A578BC1B5F6110008D3D8E /* Context.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Context.swift; sourceTree = "<group>"; };
 		34A578BF1B5F6110008D3D8E /* Task.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
 		34A578C21B5F6170008D3D8E /* MeetingTasks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeetingTasks.swift; sourceTree = "<group>"; };
+		34B4C7DC1B8190D50098F6BC /* EvesCRM 15.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 15.xcdatamodel"; sourceTree = "<group>"; };
+		34B4C7E11B8191930098F6BC /* TaskAttachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskAttachment.swift; sourceTree = "<group>"; };
 		34B525381B130F1C00093250 /* oneNote.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = oneNote.swift; sourceTree = "<group>"; };
 		34B9C0101B26BA70005E52F9 /* gMail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = gMail.swift; sourceTree = "<group>"; };
 		34BDECA81B0086D3008C9F3F /* EvesCRM 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 3.xcdatamodel"; sourceTree = "<group>"; };
@@ -561,6 +565,7 @@
 				346A2E4C1B66027100C6C63E /* PurposeAndCoreValue.swift */,
 				346A2E4E1B66027100C6C63E /* Vision.swift */,
 				346A2E4F1B66027100C6C63E /* GoalAndObjective.swift */,
+				34B4C7E11B8191930098F6BC /* TaskAttachment.swift */,
 				34F199BB1AF6046A00963ABF /* EvesCRM.entitlements */,
 				3406506A1ADDF8FF00C90CBB /* AppDelegate.swift */,
 				342CA6931B26C761006FEAED /* Google */,
@@ -918,6 +923,7 @@
 				34A578C01B5F6110008D3D8E /* Task.swift in Sources */,
 				342A357C1B5F727200D6DB29 /* taskViewController.swift in Sources */,
 				34A183291B0EDBB400FC369D /* StringHelper.m in Sources */,
+				34B4C7E41B8191930098F6BC /* TaskAttachment.swift in Sources */,
 				340F84A71B79BE220028439B /* taskListViewController.swift in Sources */,
 				3410561E1B589D92002B0ED9 /* AgendaItemViewController.swift in Sources */,
 				346B70F91AF75FF4005E1BC2 /* ProjectTeamMembers.swift in Sources */,
@@ -1014,6 +1020,7 @@
 				34F35BE61B6B54A200A19ACE /* meetingAgendaViewController.swift in Sources */,
 				34A578BE1B5F6110008D3D8E /* Context.swift in Sources */,
 				34A578BB1B5F6110008D3D8E /* TaskContext.swift in Sources */,
+				34B4C7E51B8191930098F6BC /* TaskAttachment.swift in Sources */,
 				34A183221B0EDBB400FC369D /* LiveApiHelper.m in Sources */,
 				34F35BCD1B6B18AF00A19ACE /* tasksTabViewController.swift in Sources */,
 				346B70FA1AF75FF4005E1BC2 /* ProjectTeamMembers.swift in Sources */,
@@ -1314,6 +1321,7 @@
 		3406506C1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				34B4C7DC1B8190D50098F6BC /* EvesCRM 15.xcdatamodel */,
 				34130F291B7EE28A00FEEE05 /* EvesCRM 14.xcdatamodel */,
 				346A89F51B748916008624A4 /* EvesCRM 13.xcdatamodel */,
 				3462331E1B73197700A889AC /* EvesCRM 12.xcdatamodel */,
@@ -1329,7 +1337,7 @@
 				346B70F21AF75EFE005E1BC2 /* EvesCRM 2.xcdatamodel */,
 				3406506D1ADDF8FF00C90CBB /* EvesCRM.xcdatamodel */,
 			);
-			currentVersion = 34130F291B7EE28A00FEEE05 /* EvesCRM 14.xcdatamodel */;
+			currentVersion = 34B4C7DC1B8190D50098F6BC /* EvesCRM 15.xcdatamodel */;
 			path = EvesCRM.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

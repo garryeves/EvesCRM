@@ -2,7 +2,7 @@
 //  MeetingAgenda.swift
 //  
 //
-//  Created by Garry Eves on 7/07/2015.
+//  Created by Garry Eves on 17/08/2015.
 //
 //
 
@@ -11,14 +11,15 @@ import CoreData
 
 class MeetingAgenda: NSManagedObject {
 
-    @NSManaged var previousMeetingID: String
-    @NSManaged var meetingID: String
-    @NSManaged var name: String
     @NSManaged var chair: String
-    @NSManaged var minutes: String
-    @NSManaged var location: String
-    @NSManaged var startTime: NSDate
     @NSManaged var endTime: NSDate
+    @NSManaged var location: String
+    @NSManaged var meetingID: String
+    @NSManaged var minutes: String
     @NSManaged var minutesType: String
+    @NSManaged var name: String
+    @NSManaged var previousMeetingID: String
+    @NSManaged var startTime: NSDate
+    @NSManaged var teamID: NSNumber
 
 }

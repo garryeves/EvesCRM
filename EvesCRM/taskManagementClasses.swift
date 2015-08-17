@@ -1825,6 +1825,7 @@ class context: NSObject
     private var myParentContext: Int = 0
     private var myStatus: String = ""
     private var myPersonID: Int32 = 0
+    private var myTeamID: Int = 0
     
     var contextID: Int
     {
@@ -1843,6 +1844,7 @@ class context: NSObject
         set
         {
             myName = newValue
+            save()
         }
     }
     
@@ -1855,6 +1857,7 @@ class context: NSObject
         set
         {
             myEmail = newValue
+            save()
         }
     }
     
@@ -1867,6 +1870,7 @@ class context: NSObject
         set
         {
             myAutoEmail = newValue
+            save()
         }
     }
     
@@ -1879,6 +1883,7 @@ class context: NSObject
         set
         {
             myParentContext = newValue
+            save()
         }
     }
     
@@ -1891,6 +1896,7 @@ class context: NSObject
         set
         {
             myStatus = newValue
+            save()
         }
     }
     
@@ -1931,6 +1937,20 @@ class context: NSObject
         set
         {
             myPersonID = newValue
+            save()
+        }
+    }
+    
+    var teamID: Int
+        {
+        get
+        {
+            return myTeamID
+        }
+        set
+        {
+            myTeamID = newValue
+            save()
         }
     }
     
@@ -1963,6 +1983,7 @@ class context: NSObject
                 myParentContext = myContext.parentContext as Int
                 myStatus = myContext.status
                 myPersonID = myContext.personID
+                myTeamID = myContext.teamID
 
                 matchFound = true
                 break
@@ -2021,6 +2042,7 @@ class context: NSObject
             myParentContext = myContext.parentContext as Int
             myStatus = myContext.status
             myPersonID = myContext.personID.intValue
+            myTeamID = myContext.teamID as Int
         }
     }
     
@@ -2033,11 +2055,12 @@ class context: NSObject
         myParentContext = inContext.parentContext as Int
         myStatus = inContext.status
         myPersonID = inContext.personID.intValue
+        myTeamID = inContext.teamID as Int
     }
     
     func save()
     {
-        myDatabaseConnection.saveContext(myContextID, inName: myName, inEmail: myEmail, inAutoEmail: myAutoEmail, inParentContext: myParentContext, inStatus: myStatus, inPersonID: myPersonID)
+        myDatabaseConnection.saveContext(myContextID, inName: myName, inEmail: myEmail, inAutoEmail: myAutoEmail, inParentContext: myParentContext, inStatus: myStatus, inPersonID: myPersonID, inTeamID: myTeamID)
     }
 }
 

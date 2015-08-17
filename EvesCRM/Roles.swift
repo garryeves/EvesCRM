@@ -2,7 +2,7 @@
 //  Roles.swift
 //  
 //
-//  Created by Garry Eves on 4/05/2015.
+//  Created by Garry Eves on 17/08/2015.
 //
 //
 
@@ -13,5 +13,6 @@ class Roles: NSManagedObject {
 
     @NSManaged var roleDescription: String
     @NSManaged var roleID: NSNumber
+    @NSManaged var teamID: NSNumber
 
 }

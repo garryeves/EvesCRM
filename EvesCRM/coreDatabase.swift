@@ -135,7 +135,7 @@ class coreDatabase: NSObject
         return retVal + 1
     }
     
-    func createRole(inRoleName: String)
+    func createRole(inRoleName: String, inTeamID: Int)
     {
         var mySelectedRole: Roles
         var error : NSError?
@@ -143,6 +143,7 @@ class coreDatabase: NSObject
         mySelectedRole = NSEntityDescription.insertNewObjectForEntityForName("Roles", inManagedObjectContext: managedObjectContext!) as! Roles
         mySelectedRole.roleID = getMaxRoleID()
         mySelectedRole.roleDescription = inRoleName
+        mySelectedRole.teamID = inTeamID
         
         if(!managedObjectContext!.save(&error) )
         {
@@ -150,13 +151,13 @@ class coreDatabase: NSObject
         }
     }
     
-    func deleteRoleEntry(inRoleName: String)
+    func deleteRoleEntry(inRoleName: String, inTeamID: Int)
     {
         var error : NSError?
         
         let fetchRequest = NSFetchRequest(entityName: "Roles")
         
-        let predicate = NSPredicate(format: "roleDescription == \"\(inRoleName)\"")
+        let predicate = NSPredicate(format: "(roleDescription == \"\(inRoleName)\") && (teamID == \(inTeamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -326,10 +327,10 @@ class coreDatabase: NSObject
         }
     }
     
-    func getDecodeValue(inCodeType: String) -> String
+    func getDecodeValue(inCodeKey: String) -> String
     {
         let fetchRequest = NSFetchRequest(entityName: "Decodes")
-        let predicate = NSPredicate(format: "decode_name == \"\(inCodeType)\"")
+        let predicate = NSPredicate(format: "decode_name == \"\(inCodeKey)\"")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -347,7 +348,22 @@ class coreDatabase: NSObject
         }
     }
     
-    func updateDecodeValue(inCodeType: String, inCodeValue: String)
+    func getVisibleDecodes() -> [Decodes]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Decodes")
+        
+        let predicate = NSPredicate(format: "decodeType != \"hidden\"")
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Decodes]
+        
+        return fetchResults!
+    }
+    
+    func updateDecodeValue(inCodeKey: String, inCodeValue: String, inCodeType: String)
     {
         // first check to see if decode exists, if not we create
         
@@ -358,13 +374,14 @@ class coreDatabase: NSObject
         { // Add
             myDecode = NSEntityDescription.insertNewObjectForEntityForName("Decodes", inManagedObjectContext: managedObjectContext!) as! Decodes
             
-            myDecode.decode_name = inCodeType
+            myDecode.decode_name = inCodeKey
             myDecode.decode_value = inCodeValue
+            myDecode.decodeType = inCodeType
         }
         else
         { // Update
             let fetchRequest = NSFetchRequest(entityName: "Decodes")
-            let predicate = NSPredicate(format: "decode_name == \"\(inCodeType)\"")
+            let predicate = NSPredicate(format: "decode_name == \"\(inCodeKey)\"")
             
             // Set the predicate on the fetch request
             fetchRequest.predicate = predicate
@@ -373,8 +390,28 @@ class coreDatabase: NSObject
             let myDecodes = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Decodes]
             myDecode = myDecodes![0]
             myDecode.decode_value = inCodeValue
+            myDecode.decodeType = inCodeType
         }
         
+        if(!managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+    
+    func deleteDecodeValue()
+    {
+        var error : NSError?
+
+        let fetchRequest = NSFetchRequest(entityName: "Decodes")
+        
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Decodes]
+    
+        for myDecode in fetchResults!
+        {
+            managedObjectContext!.deleteObject(myDecode as NSManagedObject)
+        }
+
         if(!managedObjectContext!.save(&error) )
         {
             //   println(error?.localizedDescription)
@@ -385,6 +422,21 @@ class coreDatabase: NSObject
     {
         let fetchRequest = NSFetchRequest(entityName: "Stages")
         
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Stages]
+        
+        return fetchResults!
+    }
+    
+    func getVisibleStages()->[Stages]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Stages")
+    
+        let predicate = NSPredicate(format: "(stageDescription != \"Archived\")")
+    
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+
         // Execute the fetch request, and cast the results to an array of  objects
         let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Stages]
         
@@ -410,13 +462,13 @@ class coreDatabase: NSObject
         }
     }
 
-    func stageExists(inStageDesc:String)-> Bool
+    func stageExists(inStageDesc:String, inTeamID: Int)-> Bool
     {
         let fetchRequest = NSFetchRequest(entityName: "Stages")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "stageDescription == \"\(inStageDesc)\"")
+        let predicate = NSPredicate(format: "(stageDescription == \"\(inStageDesc)\") && (teamID == \(inTeamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -436,13 +488,14 @@ class coreDatabase: NSObject
         }
     }
     
-    func createStage(inStageDesc: String)
+    func createStage(inStageDesc: String, inTeamID: Int)
     {
         // Save the details of this pane to the database
         var error: NSError?
         let myStage = NSEntityDescription.insertNewObjectForEntityForName("Stages", inManagedObjectContext: managedObjectContext!) as! Stages
         
         myStage.stageDescription = inStageDesc
+        myStage.teamID = inTeamID
         
         if(!managedObjectContext!.save(&error) )
         {
@@ -450,13 +503,13 @@ class coreDatabase: NSObject
         }
     }
     
-    func deleteStageEntry(inStageDesc: String)
+    func deleteStageEntry(inStageDesc: String, inTeamID: Int)
     {
         var error : NSError?
         
         let fetchRequest = NSFetchRequest(entityName: "Stages")
         
-        let predicate = NSPredicate(format: "stageDescription == \"\(inStageDesc)\"")
+        let predicate = NSPredicate(format: "(stageDescription == \"\(inStageDesc)\") && (teamID == \(inTeamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -633,6 +686,7 @@ class coreDatabase: NSObject
         myAgenda.startTime = inEvent.startDate
         myAgenda.endTime = inEvent.endDate
         myAgenda.minutesType = inEvent.minutesType
+        myAgenda.teamID = inEvent.teamID
         
         if(!managedObjectContext!.save(&error) )
         {
@@ -1365,7 +1419,7 @@ class coreDatabase: NSObject
         return fetchResults!
     }
 
-    func saveContext(inContextID: Int, inName: String, inEmail: String, inAutoEmail: String, inParentContext: Int, inStatus: String, inPersonID: Int32)
+    func saveContext(inContextID: Int, inName: String, inEmail: String, inAutoEmail: String, inParentContext: Int, inStatus: String, inPersonID: Int32, inTeamID: Int)
     {
         // first check to see if decode exists, if not we create
 
@@ -1384,6 +1438,7 @@ class coreDatabase: NSObject
             myContext.parentContext = inParentContext
             myContext.status = inStatus
             myContext.personID = NSNumber(int: inPersonID)
+            myContext.teamID = inTeamID
         }
         else
         {
@@ -1394,6 +1449,7 @@ class coreDatabase: NSObject
             myContext.parentContext = inParentContext
             myContext.status = inStatus
             myContext.personID = NSNumber(int: inPersonID)
+            myContext.teamID = inTeamID
         }
         
         if(!managedObjectContext!.save(&error) )

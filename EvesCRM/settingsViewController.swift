@@ -38,6 +38,10 @@ class settingsViewController: UIViewController
     @IBOutlet weak var ButtonConnectDropbox: UIButton!
     
     
+    @IBOutlet weak var colRoles: UICollectionView!
+    @IBOutlet weak var colStages: UICollectionView!
+    @IBOutlet weak var colDecodes: UICollectionView!
+    
     @IBOutlet weak var buttonResetRoles: UIButton!
     @IBOutlet weak var buttonResetStages: UIButton!
     
@@ -45,8 +49,7 @@ class settingsViewController: UIViewController
     
     private var myRoles: [Roles]!
     private var myStages: [Stages]!
-    private var myRoleSelected: Int = -1
-    private var myStageSelected: Int = -1
+    private var myDecodes: [Decodes]!
     
     private let ROLE_CELL_IDENTIFER = "roleNameCell"
     private let STAGE_CELL_IDENTIFER = "stageNameCell"
@@ -61,57 +64,15 @@ class settingsViewController: UIViewController
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        
-        self.roleTable.registerClass(UITableViewCell.self, forCellReuseIdentifier: ROLE_CELL_IDENTIFER)
-        self.stagesTable.registerClass(UITableViewCell.self, forCellReuseIdentifier: STAGE_CELL_IDENTIFER)
-        
-        // Set textfields to be disable to force use of Stepper to change the numbers
-        textBeforeCal.enabled = false
-        textAfterCal.enabled = false
-        textAfterDueDate.enabled = false
-        textBeforeDueDate.enabled = false
-        textSinceLastUpdate.enabled = false
 
-        roleTable.estimatedRowHeight = 12.0
-        roleTable.rowHeight = UITableViewAutomaticDimension
-        stagesTable.estimatedRowHeight = 12.0
-        stagesTable.rowHeight = UITableViewAutomaticDimension
-        
-        // Populate the data fields
-        
-        var decodeString: String = ""
-        
-        decodeString = myDatabaseConnection.getDecodeValue("CalBeforeWeeks")
-        
-        textBeforeCal.text = decodeString
-        
-        calStepperPrevious.value = (decodeString as NSString).doubleValue
-        
-        decodeString = myDatabaseConnection.getDecodeValue("CalAfterWeeks")
-        
-        textAfterCal.text = decodeString
-        CalStepperAfter.value = (decodeString as NSString).doubleValue
-        
-        decodeString = myDatabaseConnection.getDecodeValue("OmniRed")
-        
-        textAfterDueDate.text = decodeString
-        calStepperRed.value = (decodeString as NSString).doubleValue
-        
-        decodeString = myDatabaseConnection.getDecodeValue("OmniOrange")
-        
-        textBeforeDueDate.text = decodeString
-        CalStepperOrange.value = (decodeString as NSString).doubleValue
-
-        decodeString = myDatabaseConnection.getDecodeValue("OmniPurple")
-        
-        textSinceLastUpdate.text = decodeString
-        CalStepperPurple.value = (decodeString as NSString).doubleValue
-        
-        // Load the roles table
-        
+        // Load the Roles
         myRoles = myDatabaseConnection.getRoles()
         
-        myStages = myDatabaseConnection.getStages()
+        // Load the Stages
+        myStages = myDatabaseConnection.getVisibleStages()
+        
+        // Load the decodes
+        myDecodes = myDatabaseConnection.getVisibleDecodes()
         
         if evernoteSession.isAuthenticated
         {
@@ -132,6 +93,9 @@ class settingsViewController: UIViewController
         self.view.addGestureRecognizer(hideGestureRecognizer)
 
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "myEvernoteAuthenticationDidFinish", name:"NotificationEvernoteAuthenticationDidFinish", object: nil)
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "changeSettings:", name:"NotificationChangeSettings", object: nil)
+
     }
     
     override func didReceiveMemoryWarning()
@@ -152,106 +116,147 @@ class settingsViewController: UIViewController
         }
     }
 
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
     {
-        
-        var retVal: Int = 0
-        
-        if (tableView == roleTable)
-        {
-            retVal = self.myRoles.count ?? 0
-        }
-        else if (tableView == stagesTable)
-        {
-            retVal = self.myStages.count ?? 0
-        }
-        return retVal
+        return 1
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
-        if (tableView == roleTable)
+        if collectionView == colRoles
         {
-            let cell = roleTable.dequeueReusableCellWithIdentifier(ROLE_CELL_IDENTIFER) as! UITableViewCell
-            cell.textLabel!.text = myRoles[indexPath.row].roleDescription
-            return cell
-            
+            return myRoles.count
         }
-        else if (tableView == stagesTable)
+        else if collectionView == colStages
         {
-            let cell = stagesTable.dequeueReusableCellWithIdentifier(STAGE_CELL_IDENTIFER) as! UITableViewCell
-            cell.textLabel!.text = myStages[indexPath.row].stageDescription
+            return myStages.count
+        }
+        else
+        {
+            return myDecodes.count
+        }
+    }
+    
+    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
+    {
+        let swiftColor = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
+        
+        if collectionView == colRoles
+        {
+            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("reuseRoles", forIndexPath: indexPath) as! mySettingRoles
+            cell.lblRole.text = myRoles[indexPath.row].roleDescription
             
+            if (indexPath.row % 2 == 0)  // was .row
+            {
+                cell.backgroundColor = swiftColor
+            }
+            else
+            {
+                cell.backgroundColor = UIColor.clearColor()
+            }
+            
+            cell.layoutSubviews()
+            return cell
+        }
+        else if collectionView == colStages
+        {
+            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("reuseStages", forIndexPath: indexPath) as! mySettingStages
+            cell.lblRole.text  = myStages[indexPath.row].stageDescription
+            
+            if (indexPath.row % 2 == 0)  // was .row
+            {
+                cell.backgroundColor = swiftColor
+            }
+            else
+            {
+                cell.backgroundColor = UIColor.clearColor()
+            }
+            
+            cell.layoutSubviews()
             return cell
         }
         else
         {
-            // Dummy statements to allow use of else
-            let cell = roleTable.dequeueReusableCellWithIdentifier(ROLE_CELL_IDENTIFER) as! UITableViewCell
-            return cell
+            if myDecodes[indexPath.row].decodeType == "stepper"
+            {
+                let cell = collectionView.dequeueReusableCellWithReuseIdentifier("reuseStepper", forIndexPath: indexPath) as! mySettingStepper
+                cell.lblKey.text = myDecodes[indexPath.row].decode_name
+                cell.lblValue.text = myDecodes[indexPath.row].decode_value
+                cell.myStepper.value = NSString(string: myDecodes[indexPath.row].decode_value).doubleValue
+                cell.lookupKey = myDecodes[indexPath.row].decodeType
+                
+                if (indexPath.row % 2 == 0)  // was .row
+                {
+                    cell.backgroundColor = swiftColor
+                }
+                else
+                {
+                    cell.backgroundColor = UIColor.clearColor()
+                }
+                
+                cell.layoutSubviews()
+                return cell
+            }
+            else if myDecodes[indexPath.row].decodeType == "number"
+            {
+                let cell = collectionView.dequeueReusableCellWithReuseIdentifier("reuseNumber", forIndexPath: indexPath) as! mySettingNumber
+                cell.lblKey.text = myDecodes[indexPath.row].decode_name
+                cell.txtValue.text = myDecodes[indexPath.row].decode_value
+                cell.lookupKey = myDecodes[indexPath.row].decodeType
+                
+                if (indexPath.row % 2 == 0)  // was .row
+                {
+                    cell.backgroundColor = swiftColor
+                }
+                else
+                {
+                    cell.backgroundColor = UIColor.clearColor()
+                }
+                
+                cell.layoutSubviews()
+                return cell
+            }
+            else
+            {
+                let cell = collectionView.dequeueReusableCellWithReuseIdentifier("reuseString", forIndexPath: indexPath) as! mySettingString
+                cell.lblKey.text = myDecodes[indexPath.row].decode_name
+                cell.txtValue.text = myDecodes[indexPath.row].decode_value
+                cell.lookupKey = myDecodes[indexPath.row].decodeType
+                
+                if (indexPath.row % 2 == 0)  // was .row
+                {
+                    cell.backgroundColor = swiftColor
+                }
+                else
+                {
+                    cell.backgroundColor = UIColor.clearColor()
+                }
+                
+                cell.layoutSubviews()
+                return cell
+            }
         }
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
+    {
+        var retVal: CGSize!
         
-        myRoleSelected = -1
-        myStageSelected = -1
-        
-        if tableView == roleTable
+        if collectionView == colRoles
         {
-            myRoleSelected = indexPath.row
+            retVal = CGSize(width: colRoles.bounds.size.width, height: 39)
         }
-        else if tableView == stagesTable
+        else if collectionView == colStages
         {
-            myStageSelected = indexPath.row
+            retVal = CGSize(width: colStages.bounds.size.width, height: 39)
         }
+        else
+        {
+            retVal = CGSize(width: colDecodes.bounds.size.width, height: 39)
+        }
+
+        return retVal
     }
-    
-    @IBAction func calStepperPreviousClick(sender: UIStepper)
-    {
-        var decodeString: String = "\(Int(calStepperPrevious.value))"
-        
-        myDatabaseConnection.updateDecodeValue("CalBeforeWeeks", inCodeValue: decodeString)
-       
-        textBeforeCal.text = decodeString
-    }
-    
-    @IBAction func CalStepperAfterClick(sender: UIStepper)
-    {
-        var decodeString: String = "\(Int(CalStepperAfter.value))"
-        
-        myDatabaseConnection.updateDecodeValue("CalAfterWeeks", inCodeValue: decodeString)
-        
-        textAfterCal.text = decodeString
-    }
-    
-    @IBAction func calStepperRedClick(sender: UIStepper)
-    {
-        var decodeString: String = "\(Int(calStepperRed.value))"
-        
-        myDatabaseConnection.updateDecodeValue("OmniRed", inCodeValue: decodeString)
-        
-        textAfterDueDate.text = decodeString
-    }
-    
-    @IBAction func CalStepperOrangeClick(sender: UIStepper)
-    {
-        var decodeString: String = "\(Int(CalStepperOrange.value))"
-        
-        myDatabaseConnection.updateDecodeValue("OmniOrange", inCodeValue: decodeString)
-        
-        textBeforeDueDate.text = decodeString
-    }
-    
-    @IBAction func CalStepperPurpleClick(sender: UIStepper)
-    {
-        var decodeString: String = "\(Int(CalStepperPurple.value))"
-        
-        myDatabaseConnection.updateDecodeValue("OmniPurple", inCodeValue: decodeString)
-        
-        textSinceLastUpdate.text = decodeString
-    }
-    
     
     @IBAction func addRoleClick(sender: UIButton)
     {
@@ -271,35 +276,10 @@ class settingsViewController: UIViewController
         {
             // Add the new role
             
-            myDatabaseConnection.createRole(textRole.text)
+            myDatabaseConnection.createRole(textRole.text, inTeamID: 0)
             myRoles = myDatabaseConnection.getRoles()
             roleTable.reloadData()
             textRole.text = ""
-        }
-    }
-    
-    @IBAction func deleteRoleClick(sender: UIButton)
-    {
-        if myRoleSelected < 0
-        {
-            var alert = UIAlertController(title: "Delete Role", message:
-                "You need to select a role before you can delete it", preferredStyle: UIAlertControllerStyle.Alert)
-            
-            self.presentViewController(alert, animated: false, completion: nil)
-            
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
-                handler: nil))
-        }
-        else
-        {
-            // Delete the new role
-            
-            myDatabaseConnection.deleteRoleEntry(myRoles[myRoleSelected].roleDescription)
-            
-            myRoles = myDatabaseConnection.getRoles()
-            roleTable.reloadData()
-            
-            myRoleSelected = -1
         }
     }
     
@@ -321,47 +301,10 @@ class settingsViewController: UIViewController
         {
             // Add the new role
             
-            myDatabaseConnection.createStage(textStage.text)
+            myDatabaseConnection.createStage(textStage.text, inTeamID: 0)
             myStages = myDatabaseConnection.getStages()
             stagesTable.reloadData()
             textStage.text = ""
-        }
-    }
-    
-    @IBAction func deleteStageClick(sender: UIButton)
-    {
-        if myStageSelected < 0
-        {
-            var alert = UIAlertController(title: "Delete Stage", message:
-                "You need to select a stage before you can delete it", preferredStyle: UIAlertControllerStyle.Alert)
-            
-            self.presentViewController(alert, animated: false, completion: nil)
-            
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
-                handler: nil))
-        }
-        else
-        {
-            if myStages[myStageSelected].stageDescription == "Archived"
-            {
-                var alert = UIAlertController(title: "Delete Stage", message:
-                    "You can not delete the Archived stage", preferredStyle: UIAlertControllerStyle.Alert)
-                
-                self.presentViewController(alert, animated: false, completion: nil)
-                
-                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
-                    handler: nil))
-            }
-            else
-            {
-                // Delete the new role
-            
-                myDatabaseConnection.deleteStageEntry(myStages[myStageSelected].stageDescription)
-                
-                myStages = myDatabaseConnection.getStages()
-                stagesTable.reloadData()
-            }
-            myStageSelected = -1
         }
     }
     
@@ -426,7 +369,6 @@ class settingsViewController: UIViewController
         myRoles = myDatabaseConnection.getRoles()
         roleTable.reloadData()
         textRole.text = ""
-        myRoleSelected = -1
     }
     
     @IBAction func buttonResetStagesClick(sender: UIButton)
@@ -436,7 +378,125 @@ class settingsViewController: UIViewController
         
         myStages = myDatabaseConnection.getStages()
         stagesTable.reloadData()
-        myStageSelected = -1
         textStage.text = ""
     }
+    
+    func changeSettings(notification: NSNotification)
+    {
+        let settingChanged = notification.userInfo!["setting"] as! String
+        
+        if settingChanged == "Role"
+        {
+            myRoles = myDatabaseConnection.getRoles()
+            colRoles.reloadData()
+        }
+        else if settingChanged == "Stage"
+        {
+            myStages = myDatabaseConnection.getVisibleStages()
+            colStages.reloadData()
+        }
+        else
+        {
+            myDecodes = myDatabaseConnection.getVisibleDecodes()
+            colDecodes.reloadData()
+        }
+    }
 }
+
+class mySettingRoles: UICollectionViewCell
+{
+    @IBOutlet weak var lblRole: UILabel!
+    @IBOutlet weak var btnRemove: UIButton!
+    
+    override func layoutSubviews()
+    {
+        contentView.frame = bounds
+        super.layoutSubviews()
+    }
+    
+    @IBAction func btnRemove(sender: UIButton)
+    {
+        myDatabaseConnection.deleteRoleEntry(lblRole.text!, inTeamID: 0)
+        NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeSettings", object: nil, userInfo:["setting":"Role"])
+    }
+}
+
+class mySettingStages: UICollectionViewCell
+{
+    @IBOutlet weak var lblRole: UILabel!
+    @IBOutlet weak var btnRemove: UIButton!
+    
+    override func layoutSubviews()
+    {
+        contentView.frame = bounds
+        super.layoutSubviews()
+    }
+    
+    @IBAction func btnRemove(sender: UIButton)
+    {
+        myDatabaseConnection.deleteStageEntry(lblRole.text!, inTeamID: 0)
+        NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeSettings", object: nil, userInfo:["setting":"Stage"])
+    }
+}
+
+class mySettingStepper: UICollectionViewCell
+{
+    @IBOutlet weak var lblKey: UILabel!
+    @IBOutlet weak var lblValue: UILabel!
+    @IBOutlet weak var myStepper: UIStepper!
+    var lookupKey: String!
+    
+    override func layoutSubviews()
+    {
+        contentView.frame = bounds
+        super.layoutSubviews()
+    }
+    
+    @IBAction func myStepper(sender: UIStepper)
+    {
+        myDatabaseConnection.updateDecodeValue(lblKey.text!, inCodeValue: "\(myStepper.value)", inCodeType: lookupKey)
+        lblValue.text = "\(myStepper.value)"
+        NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeSettings", object: nil, userInfo:["setting":"Decode"])
+    }
+}
+
+class mySettingString: UICollectionViewCell
+{
+    @IBOutlet weak var lblKey: UILabel!
+    @IBOutlet weak var txtValue: UITextField!
+    @IBOutlet weak var btnSet: UIButton!
+    var lookupKey: String!
+    
+    override func layoutSubviews()
+    {
+        contentView.frame = bounds
+        super.layoutSubviews()
+    }
+    
+    @IBAction func btnSet(sender: UIButton)
+    {
+        myDatabaseConnection.updateDecodeValue(lblKey.text!, inCodeValue: txtValue.text, inCodeType: lookupKey)
+        NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeSettings", object: nil, userInfo:["setting":"Decode"])
+    }
+}
+
+class mySettingNumber: UICollectionViewCell
+{
+    @IBOutlet weak var lblKey: UILabel!
+    @IBOutlet weak var txtValue: UITextField!
+    @IBOutlet weak var btnSet: UIButton!
+    var lookupKey: String!
+    
+    override func layoutSubviews()
+    {
+        contentView.frame = bounds
+        super.layoutSubviews()
+    }
+    
+    @IBAction func btnSet(sender: UIButton)
+    {
+        myDatabaseConnection.updateDecodeValue(lblKey.text!, inCodeValue: txtValue.text, inCodeType: lookupKey)
+        NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeSettings", object: nil, userInfo:["setting":"Decode"])
+    }
+}
+

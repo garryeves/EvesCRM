@@ -2,7 +2,7 @@
 //  Context.swift
 //  
 //
-//  Created by Garry Eves on 6/08/2015.
+//  Created by Garry Eves on 17/08/2015.
 //
 //
 
@@ -16,7 +16,8 @@ class Context: NSManagedObject {
     @NSManaged var email: String
     @NSManaged var name: String
     @NSManaged var parentContext: NSNumber
-    @NSManaged var status: String
     @NSManaged var personID: NSNumber
+    @NSManaged var status: String
+    @NSManaged var teamID: NSNumber
 
 }
