@@ -15,6 +15,7 @@ class purposeAndCoreValue: NSObject // 50k Level
     private var myTitle: String = ""
     private var myStatus: String = ""
     private var myVision: [gvision] = Array()
+    private var myTeamID: Int = 0
    
     var purposeID: Int
     {
@@ -63,21 +64,35 @@ class purposeAndCoreValue: NSObject // 50k Level
         }
     }
 
+    var teamID: Int
+    {
+        get
+        {
+            return myTeamID
+        }
+        set
+        {
+            myTeamID = newValue
+            save()
+        }
+    }
+    
     func load(inPurposeID: Int)
     {
         // Load the details
         
-        let myVisions = myDatabaseConnection.getVisions(inPurposeID)
+        let myVisions = myDatabaseConnection.getVisions(inPurposeID, inTeamID: myTeamID)
         
         for myPurpose in myVisions
         {
             myPurposeID = myPurpose.purposeID as Int
             myTitle = myPurpose.title
             myStatus = myPurpose.status
+            myTeamID = myPurpose.teamID as Int
         }
         
         // Load the Members
-        let myVisionList = myDatabaseConnection.getOpenVisionsForPurpose(myPurposeID)
+        let myVisionList = myDatabaseConnection.getOpenVisionsForPurpose(myPurposeID, inTeamID: myTeamID)
         myVision.removeAll()
         
         for myVis in myVisionList
@@ -90,14 +105,14 @@ class purposeAndCoreValue: NSObject // 50k Level
     
     func save()
     {
-        myDatabaseConnection.savePurpose(myPurposeID, inTitle: myTitle, inStatus: myStatus)
+        myDatabaseConnection.savePurpose(myPurposeID, inTitle: myTitle, inStatus: myStatus, inTeamID: myTeamID)
     }
     
     func addVision(inVisionID: Int)
     {
-        myDatabaseConnection.savePurposeVision(myPurposeID, inVisionID: inVisionID)
+        myDatabaseConnection.savePurposeVision(myPurposeID, inVisionID: inVisionID, inTeamID: myTeamID)
         
-        let myVisionList = myDatabaseConnection.getOpenVisionsForPurpose(myPurposeID)
+        let myVisionList = myDatabaseConnection.getOpenVisionsForPurpose(myPurposeID, inTeamID: myTeamID)
         myVision.removeAll()
         
         for myVis in myVisionList
@@ -110,9 +125,9 @@ class purposeAndCoreValue: NSObject // 50k Level
     
     func removeVision(inVisionID: Int)
     {
-        myDatabaseConnection.deletePurposeVision(inVisionID)
+        myDatabaseConnection.deletePurposeVision(inVisionID, inTeamID: myTeamID)
         
-        let myVisionList = myDatabaseConnection.getOpenVisionsForPurpose(myPurposeID)
+        let myVisionList = myDatabaseConnection.getOpenVisionsForPurpose(myPurposeID, inTeamID: myTeamID)
         myVision.removeAll()
         
         for myVis in myVisionList
@@ -131,6 +146,7 @@ class gvision: NSObject // (3-5 year goals) 40k Level
     private var myTitle: String = ""
     private var myStatus: String = ""
     private var myGoals: [goalAndObjective] = Array()
+    private var myTeamID: Int = 0
     
     var visionID: Int
     {
@@ -179,11 +195,24 @@ class gvision: NSObject // (3-5 year goals) 40k Level
         }
     }
     
+    var teamID: Int
+        {
+        get
+        {
+            return myTeamID
+        }
+        set
+        {
+            myTeamID = newValue
+            save()
+        }
+    }
+    
     func load(inVisionID: Int)
     {
         // Load the details
         
-        let myVisions = myDatabaseConnection.getVisions(inVisionID)
+        let myVisions = myDatabaseConnection.getVisions(inVisionID, inTeamID: myTeamID)
         
         for myVision in myVisions
         {
@@ -191,10 +220,11 @@ class gvision: NSObject // (3-5 year goals) 40k Level
             myVisionID = myVision.visionID as Int
             myTitle = myVision.title
             myStatus = myVision.status
+            myTeamID = myVision.teamID as Int
         }
         
         // Load the Members
-        let myGoalList = myDatabaseConnection.getOpenGoalsForVision(myVisionID)
+        let myGoalList = myDatabaseConnection.getOpenGoalsForVision(myVisionID, inTeamID: myTeamID)
         myGoals.removeAll()
         
         for myGoal in myGoalList
@@ -207,14 +237,14 @@ class gvision: NSObject // (3-5 year goals) 40k Level
     
     func save()
     {
-        myDatabaseConnection.saveVision(myVisionID, inPurposeID: myPurposeID, inTitle: myTitle, inStatus: myStatus)
+        myDatabaseConnection.saveVision(myVisionID, inPurposeID: myPurposeID, inTitle: myTitle, inStatus: myStatus, inTeamID: myTeamID)
     }
     
     func addGoal(inGoalID: Int)
     {
-        myDatabaseConnection.saveVisionGoal(myVisionID, inGoalID: inGoalID)
+        myDatabaseConnection.saveVisionGoal(myVisionID, inGoalID: inGoalID, inTeamID: myTeamID)
         
-        let myGoalList = myDatabaseConnection.getOpenGoalsForVision(myVisionID)
+        let myGoalList = myDatabaseConnection.getOpenGoalsForVision(myVisionID, inTeamID: myTeamID)
         myGoals.removeAll()
         
         for myGoal in myGoalList
@@ -227,9 +257,9 @@ class gvision: NSObject // (3-5 year goals) 40k Level
     
     func removeGoal(inGoalID: Int)
     {
-        myDatabaseConnection.deleteVisionGoal(inGoalID)
+        myDatabaseConnection.deleteVisionGoal(inGoalID, inTeamID: myTeamID)
         
-        let myGoalList = myDatabaseConnection.getOpenGoalsForVision(myVisionID)
+        let myGoalList = myDatabaseConnection.getOpenGoalsForVision(myVisionID, inTeamID: myTeamID)
         myGoals.removeAll()
         
         for myGoal in myGoalList
@@ -248,6 +278,7 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
     private var myTitle: String = ""
     private var myStatus: String = ""
     private var myAreas: [areaOfResponsibility] = Array()
+    private var myTeamID: Int = 0
     
     var goalID: Int
     {
@@ -296,11 +327,24 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
         }
     }
     
+    var teamID: Int
+    {
+        get
+        {
+            return myTeamID
+        }
+        set
+        {
+            myTeamID = newValue
+            save()
+        }
+    }
+    
     func load(inGoalID: Int)
     {
         // Load the details
         
-        let myGoals = myDatabaseConnection.getGoals(inGoalID)
+        let myGoals = myDatabaseConnection.getGoals(inGoalID, inTeamID: myTeamID)
         
         for myGoal in myGoals
         {
@@ -308,10 +352,11 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
             myVisionID = myGoal.visionID as Int
             myTitle = myGoal.title
             myStatus = myGoal.status
+            myTeamID = myGoal.teamID as Int
         }
         
         // Load the Members
-        let myAreaList = myDatabaseConnection.getOpenAreasForGoal(myGoalID)
+        let myAreaList = myDatabaseConnection.getOpenAreasForGoal(myGoalID, inTeamID: myTeamID)
         myAreas.removeAll()
         
         for myArea in myAreaList
@@ -324,14 +369,14 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
     
     func save()
     {
-        myDatabaseConnection.saveGoal(myGoalID, inVisionID: myVisionID, inTitle: myTitle, inStatus: myStatus)
+        myDatabaseConnection.saveGoal(myGoalID, inVisionID: myVisionID, inTitle: myTitle, inStatus: myStatus, inTeamID: myTeamID)
     }
     
     func addArea(inAreaID: Int)
     {
-        myDatabaseConnection.saveGoalArea(myGoalID, inAreaID: inAreaID)
+        myDatabaseConnection.saveGoalArea(myGoalID, inAreaID: inAreaID, inTeamID: myTeamID)
         
-        let myAreaList = myDatabaseConnection.getOpenAreasForGoal(myGoalID)
+        let myAreaList = myDatabaseConnection.getOpenAreasForGoal(myGoalID, inTeamID: myTeamID)
         myAreas.removeAll()
         
         for myArea in myAreaList
@@ -344,9 +389,9 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
 
     func removeArea(inAreaID: Int)
     {
-        myDatabaseConnection.deleteGoalArea(inAreaID)
+        myDatabaseConnection.deleteGoalArea(inAreaID, inTeamID: myTeamID)
         
-        let myAreaList = myDatabaseConnection.getOpenAreasForGoal(myGoalID)
+        let myAreaList = myDatabaseConnection.getOpenAreasForGoal(myGoalID, inTeamID: myTeamID)
         myAreas.removeAll()
         
         for myArea in myAreaList
@@ -365,6 +410,7 @@ class areaOfResponsibility // 20k Level
     private var myTitle: String = ""
     private var myStatus: String = ""
     private var myProjects: [project] = Array()
+    private var myTeamID: Int = 0
     
     var areaID: Int
     {
@@ -413,11 +459,24 @@ class areaOfResponsibility // 20k Level
         }
     }
     
+    var teamID: Int
+    {
+        get
+        {
+            return myTeamID
+        }
+        set
+        {
+            myTeamID = newValue
+            save()
+        }
+    }
+    
     func load(inAreaID: Int)
     {
         // Load the details
         
-        let myAreas = myDatabaseConnection.getAreaOfResponsibility(inAreaID)
+        let myAreas = myDatabaseConnection.getAreaOfResponsibility(inAreaID, inTeamID: myTeamID)
         
         for myArea in myAreas
         {
@@ -425,10 +484,11 @@ class areaOfResponsibility // 20k Level
             myGoalID = myArea.goalID as Int
             myTitle = myArea.title
             myStatus = myArea.status
+            myTeamID = myArea.teamID as Int
         }
         
         // Load the Members
-        let myProjectList = myDatabaseConnection.getOpenProjectsForArea(inAreaID)
+        let myProjectList = myDatabaseConnection.getOpenProjectsForArea(inAreaID, inTeamID: myTeamID)
         myProjects.removeAll()
         
         for myProject in myProjectList
@@ -441,14 +501,14 @@ class areaOfResponsibility // 20k Level
 
     func save()
     {
-        myDatabaseConnection.saveAreaOfResponsibility(myAreaID, inGoalID: myGoalID, inTitle: myTitle, inStatus: myStatus)
+        myDatabaseConnection.saveAreaOfResponsibility(myAreaID, inGoalID: myGoalID, inTitle: myTitle, inStatus: myStatus, inTeamID: myTeamID)
     }
     
     func addProject(inProjectID: Int)
     {
-        myDatabaseConnection.saveAreaProject(inProjectID, inAreaID: myAreaID)
+        myDatabaseConnection.saveAreaProject(inProjectID, inAreaID: myAreaID, inTeamID: myTeamID)
         
-        let myProjectList = myDatabaseConnection.getOpenProjectsForArea(myAreaID)
+        let myProjectList = myDatabaseConnection.getOpenProjectsForArea(myAreaID, inTeamID: myTeamID)
         myProjects.removeAll()
         
         for myProject in myProjectList
@@ -461,9 +521,9 @@ class areaOfResponsibility // 20k Level
     
     func removeProject(inProjectID: Int)
     {
-        myDatabaseConnection.deleteAreaProject(inProjectID)
+        myDatabaseConnection.deleteAreaProject(inProjectID, inTeamID: myTeamID)
         
-        let myProjectList = myDatabaseConnection.getOpenProjectsForArea(myAreaID)
+        let myProjectList = myDatabaseConnection.getOpenProjectsForArea(myAreaID, inTeamID: myTeamID)
         myProjects.removeAll()
         
         for myProject in myProjectList
@@ -798,8 +858,8 @@ class project: NSObject // 10k level
     override init()
     {
         super.init()
-        
-        let currentNumberofEntries = myDatabaseConnection.getAllProjects().count
+ 
+        let currentNumberofEntries = myDatabaseConnection.getProjectCount()
         let nextProjectID = currentNumberofEntries + 1
         
         myProjectID = nextProjectID
@@ -814,7 +874,7 @@ class project: NSObject // 10k level
     func load(inProjectID: Int)
     {
  // GRE whatever calls projects should check to make sure it is not marked as "Archived", as we are not deleting Projects, only marking them as archived
-        let myProjects = myDatabaseConnection.getProjectDetails(inProjectID)
+        let myProjects = myDatabaseConnection.getProjectDetails(inProjectID, inTeamID: myTeamID)
         
         for myProject in myProjects
         {
@@ -839,7 +899,7 @@ class project: NSObject // 10k level
             
             myTasks.removeAll()
             
-            let myProjectTasks = myDatabaseConnection.getTasks(myProjectID, inParentType: "Project")
+            let myProjectTasks = myDatabaseConnection.getTasks(myProjectID, inParentType: "Project", inTeamID: myTeamID)
             
             for myProjectTask in myProjectTasks
             {
@@ -889,7 +949,7 @@ class project: NSObject // 10k level
             
         myTasks.removeAll()
             
-        let myProjectTasks = myDatabaseConnection.getTasks(myProjectID, inParentType: "Project")
+        let myProjectTasks = myDatabaseConnection.getTasks(myProjectID, inParentType: "Project", inTeamID: myTeamID)
             
         for myProjectTask in myProjectTasks
         {
@@ -908,7 +968,7 @@ class project: NSObject // 10k level
             
         myTasks.removeAll()
             
-        let myProjectTasks = myDatabaseConnection.getTasks(myProjectID, inParentType: "Project")
+        let myProjectTasks = myDatabaseConnection.getTasks(myProjectID, inParentType: "Project", inTeamID: myTeamID)
             
         for myProjectTask in myProjectTasks
         {
@@ -972,7 +1032,8 @@ class task: NSObject
     private var myRepeatBase: String = ""
     private var myFlagged: Bool = false
     private var myUrgency: String = ""
-
+    private var myTeamID: Int = 0
+    
     var taskID: Int
     {
         get
@@ -1313,13 +1374,26 @@ class task: NSObject
             save()
         }
     }
-
+    
+    var teamID: Int
+    {
+        get
+        {
+            return myTeamID
+        }
+        set
+        {
+            myTeamID = newValue
+            save()
+        }
+    }
+    
     override init()
     {
         super.init()
         let currentNumberofEntries = myDatabaseConnection.getTaskCount()
         myTaskID = currentNumberofEntries + 1
-        
+  
         myTaskOrder = 1
         
         myDueDate = getDefaultDate()
@@ -1334,7 +1408,7 @@ class task: NSObject
     
     init(inTaskID: Int)
     {
-        let myTaskData = myDatabaseConnection.getTask(inTaskID)
+        let myTaskData = myDatabaseConnection.getTask(inTaskID, inTeamID: myTeamID)
         
         for myTask in myTaskData
         {
@@ -1359,6 +1433,7 @@ class task: NSObject
             myRepeatBase = myTask.repeatBase
             myFlagged = myTask.flagged as Bool
             myUrgency = myTask.urgency
+            myTeamID = myTask.teamID as Int
             
             // get contexts
             
@@ -1375,7 +1450,7 @@ class task: NSObject
     
     func save()
     {
-        myDatabaseConnection.saveTask(myTaskID, inTitle: myTitle, inDetails: myDetails, inDueDate: myDueDate, inStartDate: myStartDate, inStatus: myStatus, inParentID: myParentID, inParentType: myParentType, inTaskMode: myTaskMode, inTaskOrder: myTaskOrder, inPriority: myPriority, inEnergyLevel: myEnergyLevel, inEstimatedTime: myEstimatedTime, inEstimatedTimeType: myEstimatedTimeType, inProjectID: myProjectID, inCompletionDate: myCompletionDate!, inRepeatInterval: myRepeatInterval, inRepeatType: myRepeatType, inRepeatBase: myRepeatBase, inFlagged: myFlagged, inUrgency: myUrgency)
+        myDatabaseConnection.saveTask(myTaskID, inTitle: myTitle, inDetails: myDetails, inDueDate: myDueDate, inStartDate: myStartDate, inStatus: myStatus, inParentID: myParentID, inParentType: myParentType, inTaskMode: myTaskMode, inTaskOrder: myTaskOrder, inPriority: myPriority, inEnergyLevel: myEnergyLevel, inEstimatedTime: myEstimatedTime, inEstimatedTimeType: myEstimatedTimeType, inProjectID: myProjectID, inCompletionDate: myCompletionDate!, inRepeatInterval: myRepeatInterval, inRepeatType: myRepeatType, inRepeatBase: myRepeatBase, inFlagged: myFlagged, inUrgency: myUrgency, inTeamID: myTeamID)
         
         // Save context link
         
@@ -1452,7 +1527,7 @@ class task: NSObject
     
     func setTaskOrder(inNewOrderValue: Int)
     {
-        let myOtherTasks = myDatabaseConnection.getTasks(myParentID, inParentType: myParentType)
+        let myOtherTasks = myDatabaseConnection.getTasks(myParentID, inParentType: myParentType, inTeamID: myTeamID)
                 
         if inNewOrderValue == 0
         {
@@ -1562,7 +1637,7 @@ class task: NSObject
         
         if myProjectID > 0
         {
-            let myData3 = myDatabaseConnection.getProjectDetails(myProjectID)
+            let myData3 = myDatabaseConnection.getProjectDetails(myProjectID, inTeamID: myTeamID)
             
             if myData3.count != 0
             {
@@ -1680,7 +1755,7 @@ class task: NSObject
         
         if myProjectID > 0
         {
-            let myData3 = myDatabaseConnection.getProjectDetails(myProjectID)
+            let myData3 = myDatabaseConnection.getProjectDetails(myProjectID, inTeamID: myTeamID)
             
             if myData3.count != 0
             {
@@ -1782,7 +1857,7 @@ class contexts: NSObject
     
     override init()
     {
-        let myData = myDatabaseConnection.getContexts()
+        let myData = myDatabaseConnection.getContexts(myTeamID)
         
         for myItem in myData
         {
@@ -1994,9 +2069,7 @@ class context: NSObject
         
         if !matchFound
         {
-            let myContexts = myDatabaseConnection.getAllContexts()
-        
-            let currentNumberofEntries = myContexts.count
+            let currentNumberofEntries = myDatabaseConnection.getContextCount()
             myContextID = currentNumberofEntries + 1
         
             save()
@@ -2031,7 +2104,7 @@ class context: NSObject
     
     init(inContextID: Int)
     {
-        let myContexts = myDatabaseConnection.getContextDetails(inContextID)
+        let myContexts = myDatabaseConnection.getContextDetails(inContextID, inTeamID: myTeamID)
         
         for myContext in myContexts
         {

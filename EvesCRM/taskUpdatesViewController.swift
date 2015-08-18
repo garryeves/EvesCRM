@@ -110,11 +110,10 @@ class taskUpdatesViewController: UIViewController
             cell.lblSource.text = ""
         }
         
-        let swiftColor = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
         if (indexPath.row % 2 == 0)  // was .row
         {
-            cell.backgroundColor = swiftColor
-            cell.txtUpdate.backgroundColor = swiftColor
+            cell.backgroundColor = myRowColour
+            cell.txtUpdate.backgroundColor = myRowColour
         }
         else
         {

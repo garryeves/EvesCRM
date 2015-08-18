@@ -246,10 +246,9 @@ class taskViewController: UIViewController,  UITextViewDelegate
         cell.btnRemove.setTitle("Remove", forState: .Normal)
         cell.btnRemove.tag = passedTask.currentTask.contexts[indexPath.row].contextID
          
-        let swiftColor = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
         if (indexPath.row % 2 == 0)  // was .row
         {
-            cell.backgroundColor = swiftColor
+            cell.backgroundColor = myRowColour
         }
         else
         {
@@ -548,7 +547,7 @@ class taskViewController: UIViewController,  UITextViewDelegate
         
         pickerOptions.append("")
         
-        let myProjects = myDatabaseConnection.getAllOpenProjects()
+        let myProjects = myDatabaseConnection.getAllOpenProjects(myTeamID)
         
         for myProject in myProjects
         {
@@ -747,7 +746,7 @@ class taskViewController: UIViewController,  UITextViewDelegate
     
     func setProjectName(inProjectID: Int)
     {
-        let myProjects = myDatabaseConnection.getProjectDetails(inProjectID)
+        let myProjects = myDatabaseConnection.getProjectDetails(inProjectID, inTeamID: myTeamID)
         
         if myProjects.count == 0
         {

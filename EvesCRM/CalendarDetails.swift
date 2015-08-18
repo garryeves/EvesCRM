@@ -412,7 +412,7 @@ class myCalendarItem
     
     init(inEventStore: EKEventStore, inMeetingID: String)
     {
-        let mySavedValues = myDatabaseConnection.loadAgenda(inMeetingID)
+        let mySavedValues = myDatabaseConnection.loadAgenda(inMeetingID, inTeamID: myTeamID)
         
         if mySavedValues.count > 0
         {
@@ -692,7 +692,7 @@ class myCalendarItem
             
             if myEventID != ""
             {
-                let myItems = myDatabaseConnection.loadPreviousAgenda(myEventID)
+                let myItems = myDatabaseConnection.loadPreviousAgenda(myEventID, inTeamID: myTeamID)
             
                 for myItem in myItems
                 {
@@ -710,11 +710,11 @@ class myCalendarItem
             
             // check to see if there is already a meeting
             
-            let tempAgenda = myDatabaseConnection.loadAgenda(myNextMeeting)
+            let tempAgenda = myDatabaseConnection.loadAgenda(myNextMeeting, inTeamID: myTeamID)
              
             if tempAgenda.count > 0
             { // existing record found, so update
-                myDatabaseConnection.updatePreviousAgendaID(myEventID, inMeetingID: myNextMeeting)
+                myDatabaseConnection.updatePreviousAgendaID(myEventID, inMeetingID: myNextMeeting, inTeamID: myTeamID)
             }
             else
             { // No record found so insert
@@ -889,11 +889,11 @@ class myCalendarItem
         var mySavedValues: [MeetingAgenda]!
         if myEventID == ""
         {
-            mySavedValues = myDatabaseConnection.loadAgenda(myEvent!.eventIdentifier)
+            mySavedValues = myDatabaseConnection.loadAgenda(myEvent!.eventIdentifier, inTeamID: myTeamID)
         }
         else
         {
-            mySavedValues = myDatabaseConnection.loadAgenda(myEventID)
+            mySavedValues = myDatabaseConnection.loadAgenda(myEventID, inTeamID: myTeamID)
         }
         
         if mySavedValues.count > 0
@@ -1225,7 +1225,7 @@ class myCalendarItem
         {
             // Get the previous meetings details
             
-            let myItems = myDatabaseConnection.loadAgenda(myPreviousMinutes)
+            let myItems = myDatabaseConnection.loadAgenda(myPreviousMinutes, inTeamID: myTeamID)
             
             for myItem in myItems
             {
@@ -1283,7 +1283,7 @@ class myCalendarItem
                     
                     // Get the project name to display
                     
-                    let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID)
+                    let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID, inTeamID: myTeamID)
                     
                     if myData3.count == 0
                     {
@@ -1391,7 +1391,7 @@ class myCalendarItem
                         
                         // Get the project name to display
                         
-                        let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID)
+                        let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID, inTeamID: myTeamID)
                         
                         if myData3.count == 0
                         {
@@ -1496,7 +1496,7 @@ class myCalendarItem
         {
             // Get the previous meetings details
             
-            let myItems = myDatabaseConnection.loadAgenda(nextMeeting)
+            let myItems = myDatabaseConnection.loadAgenda(nextMeeting, inTeamID: myTeamID)
             
             for myItem in myItems
             {
@@ -1590,7 +1590,7 @@ class myCalendarItem
         {
             // Get the previous meetings details
             
-            let myItems = myDatabaseConnection.loadAgenda(myPreviousMinutes)
+            let myItems = myDatabaseConnection.loadAgenda(myPreviousMinutes, inTeamID: myTeamID)
             
             for myItem in myItems
             {
@@ -1646,7 +1646,7 @@ class myCalendarItem
                     
                     // Get the project name to display
                     
-                    let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID)
+                    let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID, inTeamID: myTeamID)
                     
                     if myData3.count == 0
                     {
@@ -1754,7 +1754,7 @@ class myCalendarItem
                         
                         // Get the project name to display
                         
-                        let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID)
+                        let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID, inTeamID: myTeamID)
                         
                         if myData3.count == 0
                         {
@@ -1865,7 +1865,7 @@ class myCalendarItem
         {
             // Get the previous meetings details
             
-            let myItems = myDatabaseConnection.loadAgenda(nextMeeting)
+            let myItems = myDatabaseConnection.loadAgenda(nextMeeting, inTeamID: myTeamID)
             
             for myItem in myItems
             {
@@ -2096,7 +2096,7 @@ class iOSCalendar
         /* The event starts date */
         //Calculate - Days * hours * mins * secs
         
-        let myStartDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date")
+        let myStartDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date", inTeamID: myTeamID)
         // This is string value so need to convert to integer, and subtract from 0 to get a negative
         
         let myStartDateValue:NSTimeInterval = 0 - ((((myStartDateString as NSString).doubleValue * 7) + 1) * 24 * 60 * 60)
@@ -2106,7 +2106,7 @@ class iOSCalendar
         /* The end date */
         //Calculate - Days * hours * mins * secs
         
-        let myEndDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date")
+        let myEndDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date", inTeamID: myTeamID)
         // This is string value so need to convert to integer
         
         let myEndDateValue:NSTimeInterval = (myEndDateString as NSString).doubleValue * 7 * 24 * 60 * 60
@@ -2140,7 +2140,7 @@ class iOSCalendar
         /* The event starts date */
         //Calculate - Days * hours * mins * secs
         
-        let myStartDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date")
+        let myStartDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date", inTeamID: myTeamID)
         // This is string value so need to convert to integer, and subtract from 0 to get a negative
         
         let myStartDateValue:NSTimeInterval = 0 - ((((myStartDateString as NSString).doubleValue * 7) + 1) * 24 * 60 * 60)
@@ -2150,7 +2150,7 @@ class iOSCalendar
         /* The end date */
         //Calculate - Days * hours * mins * secs
         
-        let myEndDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date")
+        let myEndDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date", inTeamID: myTeamID)
         // This is string value so need to convert to integer
         
         let myEndDateValue:NSTimeInterval = (myEndDateString as NSString).doubleValue * 7 * 24 * 60 * 60
@@ -2165,7 +2165,7 @@ class iOSCalendar
         
         /* Fetch all the meetings that fall between the starting and the ending dates */
         
-        return myDatabaseConnection.getAgendaForDateRange(startDate, inEndDate: endDate)
+        return myDatabaseConnection.getAgendaForDateRange(startDate, inEndDate: endDate, inTeamID: myTeamID)
     }
     
     private func storeEvent(inEvent: EKEvent, inAttendee: EKParticipant?)

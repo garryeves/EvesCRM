@@ -17,15 +17,6 @@ import Accounts
 //import "ENSDK/Headers/ENSDK.h"
 
 // PeoplePicker code
-
-private let CONTACT_CELL_IDENTIFER = "contactNameCell"
-private let dataTable1_CELL_IDENTIFER = "dataTable1Cell"
-
-var dropboxCoreService: DropboxCoreService = DropboxCoreService()
-var myDatabaseConnection: coreDatabase!
-var adbk : ABAddressBook!
-var eventStore: EKEventStore!
-
 class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate, MyMeetingsDelegate, SideBarDelegate, MyMaintainPanesDelegate, MyTaskDelegate {
     
     @IBOutlet weak var TableTypeSelection1: UIPickerView!
@@ -50,6 +41,9 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     @IBOutlet weak var myWebView: UIWebView!
     @IBOutlet weak var btnCloseWindow: UIButton!
 
+    let CONTACT_CELL_IDENTIFER = "contactNameCell"
+    let dataTable1_CELL_IDENTIFER = "dataTable1Cell"
+    
     var TableOptions: [String]!
     
     // Store the tag number of the button pressed so that we can make sure we update the correct button text and table
@@ -131,6 +125,12 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         super.viewDidLoad()
 
         myDatabaseConnection = coreDatabase()
+        
+        // sync with the master database
+        
+        let myDBSync = DBSync()
+        
+        myDBSync.sync()
  
         //   code to reset decodes if needed for testing
  //       myDatabaseConnection.deleteDecodeValue()
@@ -210,7 +210,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     //         myDatabaseConnection.resetContexts()
         
         // Work out if a project has been added to the data store, so we can then select it
-        let myProjects = myDatabaseConnection.getProjects()
+        let myProjects = myDatabaseConnection.getProjects(myTeamID)
                 
         dataTable1.estimatedRowHeight = 12.0
         dataTable1.rowHeight = UITableViewAutomaticDimension
@@ -525,10 +525,9 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
   
     func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath)
     {
-        let swiftColor = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
         if (indexPath.row % 2 == 0)
         {
-            cell.backgroundColor = swiftColor
+            cell.backgroundColor = myRowColour
         }
         else
         {
@@ -742,7 +741,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             var myReturnedData: [MeetingAgenda] = Array()
             if myDisplayType == "Project"
             {
-                myReturnedData = myDatabaseConnection.loadAgendaForProject(mySelectedProject.projectName)
+                myReturnedData = myDatabaseConnection.loadAgendaForProject(mySelectedProject.projectName, inTeamID: myTeamID)
             }
             else
             {
@@ -753,7 +752,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 
                 for myMeeting in myMeetingList
                 {
-                    let myProjectList = myDatabaseConnection.loadAgenda(myMeeting.meetingID)
+                    let myProjectList = myDatabaseConnection.loadAgenda(myMeeting.meetingID, inTeamID: myTeamID)
                     
                     for myProject in myProjectList
                     {  //append project details to work array
@@ -788,13 +787,13 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             var myReturnedData: [Task] = Array()
             if myDisplayType == "Project"
             {
-                myReturnedData = myDatabaseConnection.getTasksForProject(mySelectedProject.projectID)
+                myReturnedData = myDatabaseConnection.getTasksForProject(mySelectedProject.projectID, inTeamID: myTeamID)
             }
             else
             {
                 // Get the context name
                 
-                let myContext = myDatabaseConnection.getContextByName(personContact.fullName)
+                let myContext = myDatabaseConnection.getContextByName(personContact.fullName, inTeamID: myTeamID)
                 
                 if myContext.count != 0
                 {
@@ -807,7 +806,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     for myTaskContext in myTaskContextList
                     {
                         // Get the context details
-                        let myTaskList = myDatabaseConnection.getActiveTask(myTaskContext.taskID as Int)
+                        let myTaskList = myDatabaseConnection.getActiveTask(myTaskContext.taskID as Int, inTeamID: myTeamID)
                     
                         for myTask in myTaskList
                         {  //append project details to work array
@@ -1906,7 +1905,7 @@ println("Nothing found")
                         
                         // Work out the comparision date we need to use, so we can flag items not updated in last 2 weeks
                         
-                        let myLastUpdateString = myDatabaseConnection.getDecodeValue("Tasks - Days since last update")
+                        let myLastUpdateString = myDatabaseConnection.getDecodeValue("Tasks - Days since last update", inTeamID: myTeamID)
                         // This is string value, and is also positive, so need to convert to integer
                         
                         let myLastUpdateValue = 0 - (myLastUpdateString as NSString).integerValue
@@ -1983,7 +1982,7 @@ println("Nothing found")
                         myDisplayString += "\nDue: \(splitText[4])"
                         
                         // Work out the comparision dat we need to use, so we can see if the due date is in the next 7 days
-                        let myDueDateString = myDatabaseConnection.getDecodeValue("Tasks - Days before due date")
+                        let myDueDateString = myDatabaseConnection.getDecodeValue("Tasks - Days before due date", inTeamID: myTeamID)
                         // This is string value so need to convert to integer
                         
                         let myDueDateValue = (myDueDateString as NSString).integerValue
@@ -2000,7 +1999,7 @@ println("Nothing found")
                         }
                         
                         // Work out the comparision dat we need to use, so we can see if the due date is in the next 7 days
-                        let myOverdueDateString = myDatabaseConnection.getDecodeValue("Tasks - Days after due date")
+                        let myOverdueDateString = myDatabaseConnection.getDecodeValue("Tasks - Days after due date", inTeamID: myTeamID)
                         // This is string value so need to convert to integer
                         
                         let myOverdueDateValue = (myOverdueDateString as NSString).integerValue
@@ -2151,63 +2150,49 @@ println("Nothing found")
     {
         var decodeString: String = ""
 
-        decodeString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date")
+        decodeString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date", inTeamID: myTeamID)
         
         if decodeString == ""
         {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("Calendar - Weeks before current date", inCodeValue: "1", inCodeType: "stepper")
+            myDatabaseConnection.updateDecodeValue("Calendar - Weeks before current date", inCodeValue: "1", inCodeType: "stepper", inTeamID: myTeamID)
         }
 
-        decodeString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date")
+        decodeString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date", inTeamID: myTeamID)
         
         if decodeString == ""
         {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("Calendar - Weeks after current date", inCodeValue: "4", inCodeType: "stepper")
+            myDatabaseConnection.updateDecodeValue("Calendar - Weeks after current date", inCodeValue: "4", inCodeType: "stepper", inTeamID: myTeamID)
         }
         
-        decodeString = myDatabaseConnection.getDecodeValue("Tasks - Days after due date")
+        decodeString = myDatabaseConnection.getDecodeValue("Tasks - Days after due date", inTeamID: myTeamID)
         
         if decodeString == ""
         {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("Tasks - Days after due date", inCodeValue: "0", inCodeType: "stepper")
+            myDatabaseConnection.updateDecodeValue("Tasks - Days after due date", inCodeValue: "0", inCodeType: "stepper", inTeamID: myTeamID)
         }
         
-        decodeString = myDatabaseConnection.getDecodeValue("Tasks - Days before due date")
+        decodeString = myDatabaseConnection.getDecodeValue("Tasks - Days before due date", inTeamID: myTeamID)
         
         if decodeString == ""
         {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("Tasks - Days before due date", inCodeValue: "7", inCodeType: "stepper")
+            myDatabaseConnection.updateDecodeValue("Tasks - Days before due date", inCodeValue: "7", inCodeType: "stepper", inTeamID: myTeamID)
         }
         
-        decodeString = myDatabaseConnection.getDecodeValue("Tasks - Days since last update")
+        decodeString = myDatabaseConnection.getDecodeValue("Tasks - Days since last update", inTeamID: myTeamID)
         
         if decodeString == ""
         {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("Tasks - Days since last update", inCodeValue: "14", inCodeType: "stepper")
+            myDatabaseConnection.updateDecodeValue("Tasks - Days since last update", inCodeValue: "14", inCodeType: "stepper", inTeamID: myTeamID)
         }
         
-        decodeString = myDatabaseConnection.getDecodeValue("dummyNumber")
-        
-        if decodeString == ""
-        {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("dummyNumber", inCodeValue: "1", inCodeType: "number")
-        }
-        
-        decodeString = myDatabaseConnection.getDecodeValue("dummyString")
-        
-        if decodeString == ""
-        {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("dummyString", inCodeValue: "Test string", inCodeType: "string")
-        }
-        
-        if myDatabaseConnection.getRoles().count == 0
+        if myDatabaseConnection.getRoles(myTeamID).count == 0
         {
             // There are no roles defined so we need to go in and create them
             
             populateRoles()
         }
         
-        if myDatabaseConnection.getStages().count == 0
+        if myDatabaseConnection.getStages(myTeamID).count == 0
         {
             // There are no roles defined so we need to go in and create them
             
@@ -2884,7 +2869,7 @@ println("Nothing found")
             
             myString += "Project: "
             
-            let myData = myDatabaseConnection.getProjectDetails(myTask.projectID)
+            let myData = myDatabaseConnection.getProjectDetails(myTask.projectID, inTeamID: myTeamID)
             
             if myData.count == 0
             {

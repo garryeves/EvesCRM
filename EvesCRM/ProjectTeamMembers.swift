@@ -2,7 +2,7 @@
 //  ProjectTeamMembers.swift
 //  
 //
-//  Created by Garry Eves on 17/08/2015.
+//  Created by Garry Eves on 18/08/2015.
 //
 //
 
@@ -15,5 +15,7 @@ class ProjectTeamMembers: NSManagedObject {
     @NSManaged var projectMemberNotes: String
     @NSManaged var roleID: NSNumber
     @NSManaged var teamMember: String
+    @NSManaged var updateTime: NSDate
+    @NSManaged var updateType: String
 
 }

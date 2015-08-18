@@ -11,6 +11,13 @@ import AddressBook
 import EventKit
 
 // Here I am definging my own struct to use in the Display array.  This is to allow passing of multiple different types of information
+var dropboxCoreService: DropboxCoreService = DropboxCoreService()
+var myDatabaseConnection: coreDatabase!
+var adbk : ABAddressBook!
+var eventStore: EKEventStore!
+var myTeamID: Int = 0
+
+let myRowColour = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
 
 struct TableData
 {
@@ -234,7 +241,7 @@ func populateRoles()
     
     for initialRole in initialRoles
     {
-        myDatabaseConnection.createRole(initialRole, inTeamID: 0)
+        myDatabaseConnection.createRole(initialRole, inTeamID: myTeamID)
     }
 }
 
@@ -263,7 +270,7 @@ func displayTeamMembers(inProject: project, inout lookupArray: [String])->[Table
     {
         titleText = myTeamMember.teamMember
         titleText += " : "
-        titleText += myDatabaseConnection.getRoleDescription(myTeamMember.roleID)
+        titleText += myDatabaseConnection.getRoleDescription(myTeamMember.roleID, inTeamID: myTeamID)
         
         lookupArray.append(myTeamMember.teamMember)
         
@@ -290,13 +297,13 @@ func displayProjectsForPerson(inPerson: String, inout lookupArray: [String]) -> 
     {
         for myProject in myProjects
         {
-            let myDetails = myDatabaseConnection.getProjectDetails(myProject.projectID as Int)
+            let myDetails = myDatabaseConnection.getProjectDetails(myProject.projectID as Int, inTeamID: myTeamID)
         
             if myDetails[0].projectStatus != "Archived"
             {
                 titleText = myDetails[0].projectName
                 titleText += " : "
-                titleText += myDatabaseConnection.getRoleDescription(myProject.roleID)
+                titleText += myDatabaseConnection.getRoleDescription(myProject.roleID, inTeamID: myTeamID)
                 
                 lookupArray.append(myProject.projectID.stringValue)
                 
@@ -409,9 +416,9 @@ func populateStages()
     
     for myItem in loadSet
     {
-        if !myDatabaseConnection.stageExists(myItem, inTeamID: 0)
+        if !myDatabaseConnection.stageExists(myItem, inTeamID: myTeamID)
         {
-            myDatabaseConnection.createStage(myItem, inTeamID: 0)
+            myDatabaseConnection.createStage(myItem, inTeamID: myTeamID)
         }
     }
 }

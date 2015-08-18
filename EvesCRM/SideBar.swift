@@ -63,7 +63,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
         
         menuDetails.removeAll(keepCapacity: false)
         
-        let myProjects = myDatabaseConnection.getAllOpenProjects()
+        let myProjects = myDatabaseConnection.getAllOpenProjects(myTeamID)
         
         displayObject = createMenuItem("Projects", inType: "Header", inObject: "Projects")
         menuDetails.append(displayObject)

@@ -15,25 +15,10 @@ protocol MySettingsDelegate{
 
 class settingsViewController: UIViewController
 {
-    @IBOutlet weak var calStepperPrevious: UIStepper!
-    @IBOutlet weak var CalStepperAfter: UIStepper!
-    @IBOutlet weak var calStepperRed: UIStepper!
-    @IBOutlet weak var CalStepperOrange: UIStepper!
-    @IBOutlet weak var CalStepperPurple: UIStepper!
-    @IBOutlet weak var textBeforeCal: UITextField!
-    @IBOutlet weak var textAfterCal: UITextField!
-    @IBOutlet weak var textAfterDueDate: UITextField!
-    @IBOutlet weak var textBeforeDueDate: UITextField!
-    @IBOutlet weak var textSinceLastUpdate: UITextField!
-
-    @IBOutlet weak var stagesTable: UITableView!
-    @IBOutlet weak var roleTable: UITableView!
     @IBOutlet weak var textRole: UITextField!
     @IBOutlet weak var textStage: UITextField!
     @IBOutlet weak var addRole: UIButton!
-    @IBOutlet weak var deleteRole: UIButton!
     @IBOutlet weak var addStage: UIButton!
-    @IBOutlet weak var deleteStage: UIButton!
     @IBOutlet weak var buttonConnectEvernote: UIButton!
     @IBOutlet weak var ButtonConnectDropbox: UIButton!
     
@@ -51,28 +36,24 @@ class settingsViewController: UIViewController
     private var myStages: [Stages]!
     private var myDecodes: [Decodes]!
     
-    private let ROLE_CELL_IDENTIFER = "roleNameCell"
-    private let STAGE_CELL_IDENTIFER = "stageNameCell"
-    
     private var evernotePass1: Bool = false
     private var EvernoteAuthenticationDone: Bool = false
     var evernoteSession: ENSession!
     private var myEvernote: EvernoteDetails!
     var dropboxCoreService: DropboxCoreService!
-    var myManagedContext: NSManagedObjectContext!
 
     override func viewDidLoad()
     {
         super.viewDidLoad()
 
         // Load the Roles
-        myRoles = myDatabaseConnection.getRoles()
+        myRoles = myDatabaseConnection.getRoles(myTeamID)
         
         // Load the Stages
-        myStages = myDatabaseConnection.getVisibleStages()
+        myStages = myDatabaseConnection.getVisibleStages(myTeamID)
         
         // Load the decodes
-        myDecodes = myDatabaseConnection.getVisibleDecodes()
+        myDecodes = myDatabaseConnection.getVisibleDecodes(myTeamID)
         
         if evernoteSession.isAuthenticated
         {
@@ -104,6 +85,20 @@ class settingsViewController: UIViewController
         // Dispose of any resources that can be recreated.
     }
    
+    override func viewWillLayoutSubviews()
+    {
+        super.viewWillLayoutSubviews()
+        
+        colRoles.collectionViewLayout.invalidateLayout()
+        colRoles.reloadData()
+        
+        colStages.collectionViewLayout.invalidateLayout()
+        colStages.reloadData()
+        
+        colDecodes.collectionViewLayout.invalidateLayout()
+        colDecodes.reloadData()
+    }
+    
     func handleSwipe(recognizer:UISwipeGestureRecognizer)
     {
         if recognizer.direction == UISwipeGestureRecognizerDirection.Left
@@ -139,8 +134,6 @@ class settingsViewController: UIViewController
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
     {
-        let swiftColor = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
-        
         if collectionView == colRoles
         {
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("reuseRoles", forIndexPath: indexPath) as! mySettingRoles
@@ -148,7 +141,7 @@ class settingsViewController: UIViewController
             
             if (indexPath.row % 2 == 0)  // was .row
             {
-                cell.backgroundColor = swiftColor
+                cell.backgroundColor = myRowColour
             }
             else
             {
@@ -165,7 +158,7 @@ class settingsViewController: UIViewController
             
             if (indexPath.row % 2 == 0)  // was .row
             {
-                cell.backgroundColor = swiftColor
+                cell.backgroundColor = myRowColour
             }
             else
             {
@@ -187,7 +180,7 @@ class settingsViewController: UIViewController
                 
                 if (indexPath.row % 2 == 0)  // was .row
                 {
-                    cell.backgroundColor = swiftColor
+                    cell.backgroundColor = myRowColour
                 }
                 else
                 {
@@ -206,7 +199,7 @@ class settingsViewController: UIViewController
                 
                 if (indexPath.row % 2 == 0)  // was .row
                 {
-                    cell.backgroundColor = swiftColor
+                    cell.backgroundColor = myRowColour
                 }
                 else
                 {
@@ -225,7 +218,7 @@ class settingsViewController: UIViewController
                 
                 if (indexPath.row % 2 == 0)  // was .row
                 {
-                    cell.backgroundColor = swiftColor
+                    cell.backgroundColor = myRowColour
                 }
                 else
                 {
@@ -276,9 +269,9 @@ class settingsViewController: UIViewController
         {
             // Add the new role
             
-            myDatabaseConnection.createRole(textRole.text, inTeamID: 0)
-            myRoles = myDatabaseConnection.getRoles()
-            roleTable.reloadData()
+            myDatabaseConnection.createRole(textRole.text, inTeamID: myTeamID)
+            myRoles = myDatabaseConnection.getRoles(myTeamID)
+            colRoles.reloadData()
             textRole.text = ""
         }
     }
@@ -301,9 +294,9 @@ class settingsViewController: UIViewController
         {
             // Add the new role
             
-            myDatabaseConnection.createStage(textStage.text, inTeamID: 0)
-            myStages = myDatabaseConnection.getStages()
-            stagesTable.reloadData()
+            myDatabaseConnection.createStage(textStage.text, inTeamID: myTeamID)
+            myStages = myDatabaseConnection.getStages(myTeamID)
+            colStages.reloadData()
             textStage.text = ""
         }
     }
@@ -363,21 +356,21 @@ class settingsViewController: UIViewController
     
     @IBAction func buttonResetRolesClick(sender: UIButton)
     {
-        myDatabaseConnection.deleteAllRoles()
+        myDatabaseConnection.deleteAllRoles(myTeamID)
         populateRoles()
         
-        myRoles = myDatabaseConnection.getRoles()
-        roleTable.reloadData()
+        myRoles = myDatabaseConnection.getRoles(myTeamID)
+        colRoles.reloadData()
         textRole.text = ""
     }
     
     @IBAction func buttonResetStagesClick(sender: UIButton)
     {
-        myDatabaseConnection.deleteAllStages()
+        myDatabaseConnection.deleteAllStages(myTeamID)
         populateStages()
         
-        myStages = myDatabaseConnection.getStages()
-        stagesTable.reloadData()
+        myStages = myDatabaseConnection.getVisibleStages(myTeamID)
+        colStages.reloadData()
         textStage.text = ""
     }
     
@@ -387,20 +380,21 @@ class settingsViewController: UIViewController
         
         if settingChanged == "Role"
         {
-            myRoles = myDatabaseConnection.getRoles()
+            myRoles = myDatabaseConnection.getRoles(myTeamID)
             colRoles.reloadData()
         }
         else if settingChanged == "Stage"
         {
-            myStages = myDatabaseConnection.getVisibleStages()
+            myStages = myDatabaseConnection.getVisibleStages(myTeamID)
             colStages.reloadData()
         }
         else
         {
-            myDecodes = myDatabaseConnection.getVisibleDecodes()
+            myDecodes = myDatabaseConnection.getVisibleDecodes(myTeamID)
             colDecodes.reloadData()
         }
     }
+    
 }
 
 class mySettingRoles: UICollectionViewCell
@@ -416,7 +410,7 @@ class mySettingRoles: UICollectionViewCell
     
     @IBAction func btnRemove(sender: UIButton)
     {
-        myDatabaseConnection.deleteRoleEntry(lblRole.text!, inTeamID: 0)
+        myDatabaseConnection.deleteRoleEntry(lblRole.text!, inTeamID: myTeamID)
         NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeSettings", object: nil, userInfo:["setting":"Role"])
     }
 }
@@ -434,7 +428,7 @@ class mySettingStages: UICollectionViewCell
     
     @IBAction func btnRemove(sender: UIButton)
     {
-        myDatabaseConnection.deleteStageEntry(lblRole.text!, inTeamID: 0)
+        myDatabaseConnection.deleteStageEntry(lblRole.text!, inTeamID: myTeamID)
         NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeSettings", object: nil, userInfo:["setting":"Stage"])
     }
 }
@@ -454,7 +448,7 @@ class mySettingStepper: UICollectionViewCell
     
     @IBAction func myStepper(sender: UIStepper)
     {
-        myDatabaseConnection.updateDecodeValue(lblKey.text!, inCodeValue: "\(myStepper.value)", inCodeType: lookupKey)
+        myDatabaseConnection.updateDecodeValue(lblKey.text!, inCodeValue: "\(Int(myStepper.value))", inCodeType: lookupKey, inTeamID: myTeamID)
         lblValue.text = "\(myStepper.value)"
         NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeSettings", object: nil, userInfo:["setting":"Decode"])
     }
@@ -464,19 +458,25 @@ class mySettingString: UICollectionViewCell
 {
     @IBOutlet weak var lblKey: UILabel!
     @IBOutlet weak var txtValue: UITextField!
-    @IBOutlet weak var btnSet: UIButton!
     var lookupKey: String!
-    
+
     override func layoutSubviews()
     {
         contentView.frame = bounds
         super.layoutSubviews()
     }
     
-    @IBAction func btnSet(sender: UIButton)
+    @IBAction func txtValue(sender: UITextField)
     {
-        myDatabaseConnection.updateDecodeValue(lblKey.text!, inCodeValue: txtValue.text, inCodeType: lookupKey)
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeSettings", object: nil, userInfo:["setting":"Decode"])
+        if txtValue == ""
+        {
+            // Do nothing as can not have blannk string
+        }
+        else
+        {
+            myDatabaseConnection.updateDecodeValue(lblKey.text!, inCodeValue: txtValue.text, inCodeType: lookupKey, inTeamID: myTeamID)
+            NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeSettings", object: nil, userInfo:["setting":"Decode"])
+        }
     }
 }
 
@@ -484,7 +484,6 @@ class mySettingNumber: UICollectionViewCell
 {
     @IBOutlet weak var lblKey: UILabel!
     @IBOutlet weak var txtValue: UITextField!
-    @IBOutlet weak var btnSet: UIButton!
     var lookupKey: String!
     
     override func layoutSubviews()
@@ -493,10 +492,18 @@ class mySettingNumber: UICollectionViewCell
         super.layoutSubviews()
     }
     
-    @IBAction func btnSet(sender: UIButton)
+    @IBAction func txtValue(sender: UITextField)
     {
-        myDatabaseConnection.updateDecodeValue(lblKey.text!, inCodeValue: txtValue.text, inCodeType: lookupKey)
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeSettings", object: nil, userInfo:["setting":"Decode"])
+        if txtValue == ""
+        {
+            // Do nothing as can not have blannk string
+        }
+        else
+        {
+            myDatabaseConnection.updateDecodeValue(lblKey.text!, inCodeValue: txtValue.text, inCodeType: lookupKey, inTeamID: myTeamID)
+            NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeSettings", object: nil, userInfo:["setting":"Decode"])
+        }
+
     }
 }
 

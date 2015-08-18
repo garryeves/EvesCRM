@@ -19,7 +19,7 @@ class displayPanes
 
         myPanes = Array()
         
-        let tablePanes = myDatabaseConnection.getPanes()
+        let tablePanes = myDatabaseConnection.getPanes(myTeamID)
         
         if tablePanes.count > 0
         {
@@ -131,7 +131,7 @@ class displayPane
     
     func savePane()
     {
-        myDatabaseConnection.savePane(myPaneName, inPaneAvailable: myPaneAvailable, inPaneVisible: myPaneVisible, inPaneOrder: myPaneOrder)
+        myDatabaseConnection.savePane(myPaneName, inPaneAvailable: myPaneAvailable, inPaneVisible: myPaneVisible, inPaneOrder: myPaneOrder, inTeamID: myTeamID)
         
         paneLoaded = true
     }
@@ -161,7 +161,7 @@ class displayPane
     func loadPane(paneName:String)
     {
         paneLoaded = false
-        let fetchResults = myDatabaseConnection.getPane(paneName)
+        let fetchResults = myDatabaseConnection.getPane(paneName, inTeamID: myTeamID)
         
         if fetchResults.count > 0
         {
@@ -178,7 +178,7 @@ class displayPane
     
     func toggleVisible()
     {
-        myDatabaseConnection.togglePaneVisible(myPaneName)
+        myDatabaseConnection.togglePaneVisible(myPaneName, inTeamID: myTeamID)
         
         myPaneVisible = !myPaneVisible
     }
@@ -228,7 +228,7 @@ class displayPane
         set
         {
             myPaneOrder = newValue
-            myDatabaseConnection.setPaneOrder(myPaneName, paneOrder: newValue)
+            myDatabaseConnection.setPaneOrder(myPaneName, paneOrder: newValue, inTeamID: myTeamID)
         }
     }
 }

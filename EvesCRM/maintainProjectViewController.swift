@@ -66,9 +66,9 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
 
         getProjects()
         
-        myRoles = myDatabaseConnection.getRoles()
+        myRoles = myDatabaseConnection.getRoles(myTeamID)
         
-        statusOptions = myDatabaseConnection.getStages()
+        statusOptions = myDatabaseConnection.getStages(myTeamID)
         
         if myProjects.count > 0
         {
@@ -223,7 +223,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
             var titleText: String = ""
             titleText = mySelectedRoles[indexPath.row].teamMember
             titleText += " : "
-            titleText += myDatabaseConnection.getRoleDescription(mySelectedRoles[indexPath.row].roleID)
+            titleText += myDatabaseConnection.getRoleDescription(mySelectedRoles[indexPath.row].roleID, inTeamID: myTeamID)
             let titleRect = titleText.boundingRectWithSize(CGSizeMake(self.view.frame.size.width - 64, 128), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: nil, context: nil)
             
             retVal = titleRect.height
@@ -277,7 +277,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
             {
                 titleText = mySelectedRoles[indexPath.row].teamMember
                 titleText += " : "
-                titleText += myDatabaseConnection.getRoleDescription(mySelectedRoles[indexPath.row].roleID)
+                titleText += myDatabaseConnection.getRoleDescription(mySelectedRoles[indexPath.row].roleID, inTeamID: myTeamID)
             }
            
             cell.textLabel!.text = titleText
@@ -546,11 +546,11 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         var myProjectList: [Projects]
         if inArchiveFlag
         {
-            myProjectList = myDatabaseConnection.getProjects(inArchiveFlag: true)
+            myProjectList = myDatabaseConnection.getProjects(myTeamID, inArchiveFlag: true)
         }
         else
         {
-            myProjectList = myDatabaseConnection.getProjects()
+            myProjectList = myDatabaseConnection.getProjects(myTeamID)
         }
         
         myProjects.removeAll()

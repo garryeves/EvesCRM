@@ -144,11 +144,9 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
             toDate: myWorkingTime,
             options: nil)!
         
-        let swiftColor = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
-        
         if (indexPath.row % 2 == 0)  // was .row
         {
-            cell.backgroundColor = swiftColor
+            cell.backgroundColor = myRowColour
         }
         else
         {

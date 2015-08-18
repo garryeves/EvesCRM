@@ -122,7 +122,7 @@ class taskListViewController: UIViewController, MyTaskDelegate, UITextViewDelega
             
             // Get the project name to display
             
-            let myData = myDatabaseConnection.getProjectDetails(myTaskList[indexPath.row].projectID)
+            let myData = myDatabaseConnection.getProjectDetails(myTaskList[indexPath.row].projectID, inTeamID: myTeamID)
             
             if myData.count == 0
             {
@@ -153,11 +153,10 @@ class taskListViewController: UIViewController, MyTaskDelegate, UITextViewDelega
             cell.txtContext.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
         }
         
-        let swiftColor = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
         if (indexPath.row % 2 == 0)
         {
-            cell.backgroundColor = swiftColor
-            cell.txtContext.backgroundColor = swiftColor
+            cell.backgroundColor = myRowColour
+            cell.txtContext.backgroundColor = myRowColour
         }
         else
         {

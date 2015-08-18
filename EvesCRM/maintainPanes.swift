@@ -188,10 +188,9 @@ class MaintainPanesViewController: UIViewController
             cell.btnHide.setTitle("Show", forState: UIControlState.Normal)
         }
         
-        let swiftColor = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
         if (indexPath.row % 2 == 0)
         {
-            cell.backgroundColor = swiftColor
+            cell.backgroundColor = myRowColour
         }
         else
         {
@@ -323,7 +322,7 @@ class MaintainPanesViewController: UIViewController
     {
         // this is to allow cleaning of panes if needed
         
-        myDatabaseConnection.deleteAllPanes()
+        myDatabaseConnection.deleteAllPanes(myTeamID)
         
         // End delete phase
         

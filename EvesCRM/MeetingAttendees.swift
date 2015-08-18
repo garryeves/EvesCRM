@@ -2,7 +2,7 @@
 //  MeetingAttendees.swift
 //  
 //
-//  Created by Garry Eves on 17/08/2015.
+//  Created by Garry Eves on 18/08/2015.
 //
 //
 
@@ -16,5 +16,7 @@ class MeetingAttendees: NSManagedObject {
     @NSManaged var meetingID: String
     @NSManaged var name: String
     @NSManaged var type: String
+    @NSManaged var updateTime: NSDate
+    @NSManaged var updateType: String
 
 }

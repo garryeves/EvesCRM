@@ -2,7 +2,7 @@
 //  Task.swift
 //  
 //
-//  Created by Garry Eves on 17/08/2015.
+//  Created by Garry Eves on 18/08/2015.
 //
 //
 
@@ -32,5 +32,8 @@ class Task: NSManagedObject {
     @NSManaged var taskOrder: NSNumber
     @NSManaged var title: String
     @NSManaged var urgency: String
+    @NSManaged var updateTime: NSDate
+    @NSManaged var updateType: String
+    @NSManaged var teamID: NSNumber
 
 }

@@ -43,7 +43,6 @@ class reminderViewController: UIViewController, UITextViewDelegate
     @IBOutlet weak var dueDateLabel: UILabel!
     @IBOutlet weak var errorLabel: UILabel!
     @IBOutlet weak var completeButton: UIButton!
-    @IBOutlet weak var saveButton: UIButton!
     @IBOutlet weak var notesText: UITextView!
     
     override func viewDidLoad() {
@@ -113,7 +112,6 @@ class reminderViewController: UIViewController, UITextViewDelegate
                 dueDateLabel.hidden = true
                 errorLabel.hidden = false
                 completeButton.hidden = true
-                saveButton.hidden = true
                 
                 errorLabel.text = "Could not find requested Reminder.  Please press 'Cancel' to return to main screen"
             }
@@ -156,7 +154,8 @@ class reminderViewController: UIViewController, UITextViewDelegate
         notesText.delegate = self
     }
  
-    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
+    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent)
+    {
         descriptionText.endEditing(true)
         notesText.endEditing(true)
     }
@@ -188,6 +187,7 @@ class reminderViewController: UIViewController, UITextViewDelegate
     func pickerView(inPicker: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
        // actionSelection()
         itemSelected = priorityOptions[row]
+        save()
     }
     
     override func didReceiveMemoryWarning() {
@@ -211,13 +211,21 @@ class reminderViewController: UIViewController, UITextViewDelegate
         delegate?.myReminderDidFinish(self, actionType: "Changed")
     }
     
-    @IBAction func saveButtonPressed(sender: UIButton) {
-
-        // if we are adding a new reminder then need to instantiated it, else it means we are editting so do not need to do anything
-        
-        var myError : NSError? = nil
-        var myCalendar: EKCalendar!
-        
+    @IBAction func showDueDateChanged(sender: UISwitch)
+    {
+        if showDueDateSwitch.on
+        {
+            dueDatePicker.hidden = false
+        }
+        else
+        {
+            dueDatePicker.hidden = true
+        }
+        save()
+    }
+    
+    @IBAction func txtDescription(sender: UITextField)
+    {
         if descriptionText.text == ""
         {
             var alert = UIAlertController(title: "Reminders", message:
@@ -227,114 +235,127 @@ class reminderViewController: UIViewController, UITextViewDelegate
             
             alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
                 handler: nil))
+            
+            
+            descriptionText.becomeFirstResponder()
         }
         else
         {
-            if inAction == "Add"
-            {
-                // First need to check to see if the Reminder list exists.  if it does not then we need to create it
-            
-                let myCalendars = reminderStore.calendarsForEntityType(EKEntityTypeReminder) as! [EKCalendar]
-                var calExists = false
-                for calendar in myCalendars
-                {
-                    if calendar.title == inCalendarName
-                    {
-                        calExists = true
-                        myCalendar = calendar
-                    }
-                }
-            
-                myError = nil
-                if !calExists
-                {
-                    myCalendar = EKCalendar(forEntityType:EKEntityTypeReminder, eventStore:reminderStore)
-                    myCalendar.title=inCalendarName
-                
-                
-                    // What are the source options
-                
-                    for cal in reminderStore.sources()
-                    {
-                        if cal.title! == "iCloud"
-                        {
-                            myCalendar.source = cal as! EKSource
-                            break
-                        }
-                    }
-    
-                    let ok = reminderStore.saveCalendar(myCalendar, commit:true, error:&myError)
-                
-                    if myError != nil
-                    {
-                        println("Saving Calendar failed with error: \(myError!)")
-                    }
-                }
-            
-                // Now set the calendar for the Reminder
-            
-                myReminder = EKReminder(eventStore: reminderStore)
-                myReminder.calendar = myCalendar
-            }
-
-            myReminder.title = descriptionText.text
-
-            myReminder.notes = notesText.text
-        
-            // need to check if we need to set a due date
-            if showDueDateSwitch.on
-            {
-                // Due date set
-                if myReminder.hasAlarms
-                {
-                    myReminder.removeAlarm(myReminder.alarms[0] as! EKAlarm)
-                }
-                let myAlarm = EKAlarm(absoluteDate: dueDatePicker.date)
-            
-                myReminder.addAlarm(myAlarm)
-            }
-            else
-            {
-                // Due date not set
-                // if due date was set when we went into edit mode the need to "unset" it
-                if iniitialSwitchState == "On"
-                {
-                    // We had a due date at the start so need to "unset" the date
-                    myReminder.removeAlarm(myReminder.alarms[0] as! EKAlarm)
-                }
-            }
-        
-            switch priorityOptions[priorityPicker.selectedRowInComponent(0)]
-            {
-                case "High":  myReminder.priority = 1 // High priority
-                
-                case "Medium": myReminder.priority = 5 // Medium priority
-                
-                case "Low": myReminder.priority = 9 // Low priority
-                
-                default: myReminder.priority = 0 // No priority
-            }
-        
-            myError = nil
-    
-            reminderStore.saveReminder(myReminder, commit: true, error: &myError)
-        
-            if myError != nil
-            {
-                println("Saving event to Calendar failed with error: \(myError!)")
-            }
-            delegate?.myReminderDidFinish(self, actionType: "Changed")
+            save()
         }
     }
     
-    @IBAction func showDueDateChanged(sender: UISwitch) {
+    @IBAction func datePicker(sender: UIDatePicker)
+    {
+        save()
+    }
+    
+    func textViewDidEndEditing(textView: UITextView)
+    { //Handle the text changes here
+        
+        if textView == notesText
+        {
+            save()
+        }
+    }
+    
+    func save()
+    {
+        var myError : NSError? = nil
+        var myCalendar: EKCalendar!
+        
+        if inAction == "Add"
+        {
+            // First need to check to see if the Reminder list exists.  if it does not then we need to create it
+            
+            let myCalendars = reminderStore.calendarsForEntityType(EKEntityTypeReminder) as! [EKCalendar]
+            var calExists = false
+            for calendar in myCalendars
+            {
+                if calendar.title == inCalendarName
+                {
+                    calExists = true
+                    myCalendar = calendar
+                }
+            }
+            
+            myError = nil
+            if !calExists
+            {
+                myCalendar = EKCalendar(forEntityType:EKEntityTypeReminder, eventStore:reminderStore)
+                myCalendar.title=inCalendarName
+                
+                
+                // What are the source options
+                
+                for cal in reminderStore.sources()
+                {
+                    if cal.title! == "iCloud"
+                    {
+                        myCalendar.source = cal as! EKSource
+                        break
+                    }
+                }
+                
+                let ok = reminderStore.saveCalendar(myCalendar, commit:true, error:&myError)
+                
+                if myError != nil
+                {
+                    println("Saving Calendar failed with error: \(myError!)")
+                }
+            }
+            
+            // Now set the calendar for the Reminder
+            
+            myReminder = EKReminder(eventStore: reminderStore)
+            myReminder.calendar = myCalendar
+        }
+        
+        myReminder.title = descriptionText.text
+        
+        myReminder.notes = notesText.text
+        
+        // need to check if we need to set a due date
         if showDueDateSwitch.on
         {
-            dueDatePicker.hidden = false
+            // Due date set
+            if myReminder.hasAlarms
+            {
+                myReminder.removeAlarm(myReminder.alarms[0] as! EKAlarm)
+            }
+            let myAlarm = EKAlarm(absoluteDate: dueDatePicker.date)
+            
+            myReminder.addAlarm(myAlarm)
         }
         else
         {
-            dueDatePicker.hidden = true
+            // Due date not set
+            // if due date was set when we went into edit mode the need to "unset" it
+            if iniitialSwitchState == "On"
+            {
+                // We had a due date at the start so need to "unset" the date
+                myReminder.removeAlarm(myReminder.alarms[0] as! EKAlarm)
+            }
+        }
+        
+        switch priorityOptions[priorityPicker.selectedRowInComponent(0)]
+        {
+        case "High":  myReminder.priority = 1 // High priority
+            
+        case "Medium": myReminder.priority = 5 // Medium priority
+            
+        case "Low": myReminder.priority = 9 // Low priority
+            
+        default: myReminder.priority = 0 // No priority
+        }
+        
+        myError = nil
+        
+        reminderStore.saveReminder(myReminder, commit: true, error: &myError)
+        
+        if myError != nil
+        {
+            println("Saving event to Calendar failed with error: \(myError!)")
         }
     }
  }
