@@ -182,6 +182,8 @@
 		34BDECBF1B009C17008C9F3F /* Panes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BDECBD1B009C17008C9F3F /* Panes.swift */; };
 		34C7E8071B5F625C005555B3 /* TaskUpdates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7E8061B5F625C005555B3 /* TaskUpdates.swift */; };
 		34C7E8081B5F625C005555B3 /* TaskUpdates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7E8061B5F625C005555B3 /* TaskUpdates.swift */; };
+		34C899F71B8447340087DA8E /* TaskPredecessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C899F61B8447340087DA8E /* TaskPredecessor.swift */; };
+		34C899F81B8447340087DA8E /* TaskPredecessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C899F61B8447340087DA8E /* TaskPredecessor.swift */; };
 		34CC8C0D1B281E5200D6EB0D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 34CC8C0C1B281E5200D6EB0D /* GoogleService-Info.plist */; };
 		34CC8C0E1B281E5200D6EB0D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 34CC8C0C1B281E5200D6EB0D /* GoogleService-Info.plist */; };
 		34F199BF1AF6060200963ABF /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34F199BE1AF6060200963ABF /* CoreData.framework */; };
@@ -395,6 +397,8 @@
 		34BDECAB1B0089CC008C9F3F /* Decodes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Decodes.swift; sourceTree = "<group>"; };
 		34BDECBD1B009C17008C9F3F /* Panes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Panes.swift; sourceTree = "<group>"; };
 		34C7E8061B5F625C005555B3 /* TaskUpdates.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskUpdates.swift; sourceTree = "<group>"; };
+		34C899F11B8446080087DA8E /* EvesCRM 17.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 17.xcdatamodel"; sourceTree = "<group>"; };
+		34C899F61B8447340087DA8E /* TaskPredecessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskPredecessor.swift; sourceTree = "<group>"; };
 		34CC8C0C1B281E5200D6EB0D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		34F199BB1AF6046A00963ABF /* EvesCRM.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = EvesCRM.entitlements; sourceTree = "<group>"; };
 		34F199BE1AF6060200963ABF /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
@@ -560,6 +564,7 @@
 				34A578BC1B5F6110008D3D8E /* Context.swift */,
 				34A578B91B5F6110008D3D8E /* TaskContext.swift */,
 				34C7E8061B5F625C005555B3 /* TaskUpdates.swift */,
+				34C899F61B8447340087DA8E /* TaskPredecessor.swift */,
 				346A2E4A1B66027100C6C63E /* Projects.swift */,
 				346A2E4B1B66027100C6C63E /* AreaOfResponsibility.swift */,
 				346A2E4C1B66027100C6C63E /* PurposeAndCoreValue.swift */,
@@ -966,6 +971,7 @@
 				34A1832B1B0EDBB400FC369D /* UrlHelper.m in Sources */,
 				34A183231B0EDBB400FC369D /* LiveAuthHelper.m in Sources */,
 				342C0A221B4B844D00A73CA5 /* meetingsViewController.swift in Sources */,
+				34C899F71B8447340087DA8E /* TaskPredecessor.swift in Sources */,
 				346A2E531B66027100C6C63E /* AreaOfResponsibility.swift in Sources */,
 				34A183081B0EDB5C00FC369D /* LiveUploadOperationCore.m in Sources */,
 				34F35BCC1B6B18AF00A19ACE /* tasksTabViewController.swift in Sources */,
@@ -1062,6 +1068,7 @@
 				34F35BDF1B6B549000A19ACE /* meetingTabViewController.swift in Sources */,
 				340650841ADDF8FF00C90CBB /* EvesCRMTests.swift in Sources */,
 				34A182D71B0EDB3D00FC369D /* LiveDownloadOperation.m in Sources */,
+				34C899F81B8447340087DA8E /* TaskPredecessor.swift in Sources */,
 				34A182D51B0EDB3D00FC369D /* LiveConnectSession.m in Sources */,
 				349C4D401B033B6400EC8099 /* Stages.swift in Sources */,
 				34A183201B0EDBB400FC369D /* JsonWriter.m in Sources */,
@@ -1322,6 +1329,7 @@
 		3406506C1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				34C899F11B8446080087DA8E /* EvesCRM 17.xcdatamodel */,
 				343B3F181B82CA930053777B /* EvesCRM 16.xcdatamodel */,
 				34B4C7DC1B8190D50098F6BC /* EvesCRM 15.xcdatamodel */,
 				34130F291B7EE28A00FEEE05 /* EvesCRM 14.xcdatamodel */,
@@ -1339,7 +1347,7 @@
 				346B70F21AF75EFE005E1BC2 /* EvesCRM 2.xcdatamodel */,
 				3406506D1ADDF8FF00C90CBB /* EvesCRM.xcdatamodel */,
 			);
-			currentVersion = 343B3F181B82CA930053777B /* EvesCRM 16.xcdatamodel */;
+			currentVersion = 34C899F11B8446080087DA8E /* EvesCRM 17.xcdatamodel */;
 			path = EvesCRM.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

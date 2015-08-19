@@ -87,13 +87,10 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
             menuDetails.append(displayObject)
         }
         
-        displayObject = createMenuItem("Actions", inType: "Header", inObject: "Contexts")
+        displayObject = createMenuItem("Actions", inType: "Header", inObject: "Action")
         menuDetails.append(displayObject)
         
         displayObject = createMenuItem("Address Book", inType: "Action", inObject: "Address Book")
-        menuDetails.append(displayObject)
-        
-        displayObject = createMenuItem("Maintain Projects", inType: "Action", inObject: "Maintain Projects")
         menuDetails.append(displayObject)
         
         displayObject = createMenuItem("Maintain Display Panes", inType: "Action", inObject: "Maintain Display Panes")

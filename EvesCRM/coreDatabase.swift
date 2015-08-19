@@ -640,7 +640,7 @@ class coreDatabase: NSObject
         
         var predicate: NSPredicate
         
-        predicate = NSPredicate(format: " && (teamID == \(inTeamID))  && (updateType != \"Delete\") NOT (meetingID contains \"\(inSearchText)\") && (startTime <= %@)", inMeetingStartDate)
+        predicate = NSPredicate(format: "(teamID == \(inTeamID))  && (updateType != \"Delete\") && (startTime <= %@) && (not meetingID contains \"\(inSearchText)\") ", inMeetingStartDate)
         
         let sortDescriptor = NSSortDescriptor(key: "startTime", ascending: false)
         let sortDescriptors = [sortDescriptor]
@@ -1172,7 +1172,7 @@ class coreDatabase: NSObject
         }
     }
 
-    func saveTask(inTaskID: Int, inTitle: String, inDetails: String, inDueDate: NSDate, inStartDate: NSDate, inStatus: String, inParentID: Int, inParentType: String,inTaskMode: String, inTaskOrder: Int, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int, inEstimatedTimeType: String, inProjectID: Int, inCompletionDate: NSDate, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inFlagged: Bool, inUrgency: String, inTeamID: Int)
+    func saveTask(inTaskID: Int, inTitle: String, inDetails: String, inDueDate: NSDate, inStartDate: NSDate, inStatus: String, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int, inEstimatedTimeType: String, inProjectID: Int, inCompletionDate: NSDate, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inFlagged: Bool, inUrgency: String, inTeamID: Int)
     {
         var error: NSError?
         var myTask: Task!
@@ -1188,10 +1188,6 @@ class coreDatabase: NSObject
             myTask.dueDate = inDueDate
             myTask.startDate = inStartDate
             myTask.status = inStatus
-            myTask.parentID = inParentID
-            myTask.parentType = inParentType
-            myTask.taskMode = inTaskMode
-            myTask.taskOrder = inTaskOrder
             myTask.priority = inPriority
             myTask.energyLevel = inEnergyLevel
             myTask.estimatedTime = inEstimatedTime
@@ -1215,10 +1211,6 @@ class coreDatabase: NSObject
             myTask.dueDate = inDueDate
             myTask.startDate = inStartDate
             myTask.status = inStatus
-            myTask.parentID = inParentID
-            myTask.parentType = inParentType
-            myTask.taskMode = inTaskMode
-            myTask.taskOrder = inTaskOrder
             myTask.priority = inPriority
             myTask.energyLevel = inEnergyLevel
             myTask.estimatedTime = inEstimatedTime
@@ -1270,18 +1262,18 @@ class coreDatabase: NSObject
         }
     }
     
-    func getTasks(inParentID: Int, inParentType: String, inTeamID: Int)->[Task]
+    func getTasks(inTeamID: Int)->[Task]
     {
         let fetchRequest = NSFetchRequest(entityName: "Task")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(parentID == \(inParentID)) && (parentType = \"\(inParentType)\") && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(inTeamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         
-        let sortDescriptor = NSSortDescriptor(key: "parentID", ascending: true)
+        let sortDescriptor = NSSortDescriptor(key: "taskID", ascending: true)
         let sortDescriptors = [sortDescriptor]
         fetchRequest.sortDescriptors = sortDescriptors
 
@@ -1308,7 +1300,7 @@ class coreDatabase: NSObject
         return fetchResults!
     }
 
-    func getMaxProjectTaskOrder(inProjectID: Int)->Int
+ /*   func getMaxProjectTaskOrder(inProjectID: Int)->Int
     {
         let fetchRequest = NSFetchRequest(entityName: "Task")
         
@@ -1341,14 +1333,14 @@ class coreDatabase: NSObject
         
         return fetchResults!.count
     }
-    
+  */
     func getTasksWithoutProject(inTeamID: Int)->[Task]
     {
         let fetchRequest = NSFetchRequest(entityName: "Task")
 
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(parentID == 0) && (parentType == \"Project\") && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(projectID == 0) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1460,6 +1452,111 @@ class coreDatabase: NSObject
         let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Task]
         
         return fetchResults!.count
+    }
+    
+    func getTaskPredecessors(inTaskID: Int)->[TaskPredecessor]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "TaskPredecessor")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(taskID == \(inTaskID)) && (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [TaskPredecessor]
+        
+        return fetchResults!
+    }
+   
+    func savePredecessorTask(inTaskID: Int, inPredecessorID: Int, inPredecessorType: String)
+    {
+        var error: NSError?
+        var myTask: TaskPredecessor!
+        
+        let myTasks = getTaskPredecessors(inTaskID)
+        
+        if myTasks.count == 0
+        { // Add
+            myTask = NSEntityDescription.insertNewObjectForEntityForName("TaskPredecessor", inManagedObjectContext: self.managedObjectContext!) as! TaskPredecessor
+            myTask.taskID = inTaskID
+            myTask.predecessorID = inPredecessorID
+            myTask.predecessorType = inPredecessorType
+            myTask.updateTime = NSDate()
+            myTask.updateType = "Add"
+        }
+        else
+        { // Update
+            myTask.predecessorID = inPredecessorID
+            myTask.predecessorType = inPredecessorType
+            myTask.updateTime = NSDate()
+            if myTask.updateType != "Add"
+            {
+                myTask.updateType = "Update"
+            }
+        }
+
+        if(!managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+    
+    func updatePredecessorTaskType(inTaskID: Int, inPredecessorID: Int, inPredecessorType: String)
+    {
+        var error : NSError?
+        
+        let fetchRequest = NSFetchRequest(entityName: "TaskPredecessor")
+        
+        let predicate = NSPredicate(format: "(taskID == \(inTaskID)) && (predecessorID == \(inPredecessorID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [TaskPredecessor]
+        for myStage in fetchResults!
+        {
+            myStage.predecessorType = inPredecessorType
+            myStage.updateTime = NSDate()
+            if myStage.updateType != "Add"
+            {
+                myStage.updateType = "Update"
+            }
+            
+            if(!managedObjectContext!.save(&error) )
+            {
+                println(error?.localizedDescription)
+            }
+        }
+    }
+
+    func deleteTaskPredecessor(inTaskID: Int, inPredecessorID: Int)
+    {
+        var error : NSError?
+        
+        let fetchRequest = NSFetchRequest(entityName: "TaskPredecessor")
+        
+        let predicate = NSPredicate(format: "(taskID == \(inTaskID)) && (predecessorID == \(inPredecessorID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [TaskPredecessor]
+        for myStage in fetchResults!
+        {
+            myStage.updateTime = NSDate()
+            myStage.updateType = "Delete"
+            
+            if(!managedObjectContext!.save(&error) )
+            {
+                println(error?.localizedDescription)
+            }
+            //            managedObjectContext!.deleteObject(myStage as NSManagedObject)
+        }
     }
     
     func saveProject(inProjectID: Int, inProjectEndDate: NSDate, inProjectName: String, inProjectStartDate: NSDate, inProjectStatus: String, inReviewFrequency: Int, inLastReviewDate: NSDate, inAreaID: Int, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inTeamID: Int)
@@ -3150,6 +3247,22 @@ class coreDatabase: NSObject
         {
             println(error?.localizedDescription)
         }
+        
+        let fetchRequest21 = NSFetchRequest(entityName: "TaskPredecessor")
+        
+        // Set the predicate on the fetch request
+        fetchRequest21.predicate = predicate
+        let fetchResults21 = managedObjectContext!.executeFetchRequest(fetchRequest21, error: nil) as? [TaskPredecessor]
+        
+        for myItem21 in fetchResults21!
+        {
+            managedObjectContext!.deleteObject(myItem21 as NSManagedObject)
+        }
+        
+        if(!managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
     }
 
     func clearSyncedItems()
@@ -3517,6 +3630,23 @@ class coreDatabase: NSObject
                 println(error?.localizedDescription)
             }
         }
+        
+        let fetchRequest21 = NSFetchRequest(entityName: "TaskPredecessor")
+        
+        // Set the predicate on the fetch request
+        fetchRequest21.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults21 = managedObjectContext!.executeFetchRequest(fetchRequest21, error: nil) as? [TaskPredecessor]
+        
+        for myItem21 in fetchResults21!
+        {
+            myItem21.updateType = ""
+            
+            if(!managedObjectContext!.save(&error) )
+            {
+                println(error?.localizedDescription)
+            }
+        }
     }
-
 }

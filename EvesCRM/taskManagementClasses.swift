@@ -899,7 +899,7 @@ class project: NSObject // 10k level
             
             myTasks.removeAll()
             
-            let myProjectTasks = myDatabaseConnection.getTasks(myProjectID, inParentType: "Project", inTeamID: myTeamID)
+            let myProjectTasks = myDatabaseConnection.getTasksForProject(myProjectID, inTeamID: myTeamID)
             
             for myProjectTask in myProjectTasks
             {
@@ -938,18 +938,14 @@ class project: NSObject // 10k level
     }
         
     func addTaskToProject(inTaskID: Int)
-    {
-        let nextOrder = myDatabaseConnection.getMaxProjectTaskOrder(myProjectID) + 1
-            
+    {            
         let myTempTask = task(inTaskID: inTaskID)
-        myTempTask.parentID = myProjectID
-        myTempTask.parentType = "Project"
-        myTempTask.setTaskOrder(nextOrder)
+        myTempTask.projectID = myProjectID
         myTempTask.save()
             
         myTasks.removeAll()
             
-        let myProjectTasks = myDatabaseConnection.getTasks(myProjectID, inParentType: "Project", inTeamID: myTeamID)
+        let myProjectTasks = myDatabaseConnection.getTasksForProject(myProjectID, inTeamID: myTeamID)
             
         for myProjectTask in myProjectTasks
         {
@@ -961,14 +957,12 @@ class project: NSObject // 10k level
     func removeTaskFromProject(inTaskID: Int)
     {
         let myTempTask = task(inTaskID: inTaskID)
-        myTempTask.parentID = 0
-        myTempTask.parentType = ""
-        myTempTask.setTaskOrder(0)
+        myTempTask.projectID = 0
         myTempTask.save()
             
         myTasks.removeAll()
             
-        let myProjectTasks = myDatabaseConnection.getTasks(myProjectID, inParentType: "Project", inTeamID: myTeamID)
+        let myProjectTasks = myDatabaseConnection.getTasksForProject(myProjectID, inTeamID: myTeamID)
             
         for myProjectTask in myProjectTasks
         {
@@ -1008,6 +1002,42 @@ class project: NSObject // 10k level
    //  There is no delete in this class, as I do not want to delete projects, instead they will be marked as archived and not displayed
 }
 
+class taskPredecessor: NSObject
+{
+    private var myPredecessorID: Int = 0
+    private var myPredecessorType: String = ""
+    
+    var predecessorID: Int
+    {
+        get
+        {
+            return myPredecessorID
+        }
+        set
+        {
+            myPredecessorID = newValue
+        }
+    }
+    
+    var predecessorType: String
+    {
+        get
+        {
+            return myPredecessorType
+        }
+        set
+        {
+            myPredecessorType = newValue
+        }
+    }
+    
+    init(inPredecessorID: Int, inPredecessorType: String)
+    {
+        myPredecessorID = inPredecessorID
+        myPredecessorType = inPredecessorType
+    }
+}
+
 class task: NSObject
 {
     private var myTaskID: Int = 0
@@ -1017,10 +1047,6 @@ class task: NSObject
     private var myStartDate: NSDate!
     private var myStatus: String = ""
     private var myContexts: [context] = Array()
-    private var myTaskOrder: Int = 0
-    private var myParentID: Int = 0
-    private var myParentType: String = ""
-    private var myTaskMode: String = ""
     private var myPriority: String = ""
     private var myEnergyLevel: String = ""
     private var myEstimatedTime: Int = 0
@@ -1033,7 +1059,8 @@ class task: NSObject
     private var myFlagged: Bool = false
     private var myUrgency: String = ""
     private var myTeamID: Int = 0
-    
+    private var myPredecessors: [taskPredecessor] = Array()
+ 
     var taskID: Int
     {
         get
@@ -1158,52 +1185,6 @@ class task: NSObject
         }
     }
     
-    var taskOrder: Int
-    {
-        get
-        {
-            return myTaskOrder
-        }
-    }
-
-    var parentID: Int
-    {
-        get
-        {
-            return myParentID
-        }
-        set
-        {
-            myTaskID = newValue
-            save()
-        }
-    }
-
-    var parentType: String
-    {
-        get
-        {
-            return myParentType
-        }
-        set
-        {
-            myParentType = newValue
-            save()
-        }
-    }
-    
-    var taskMode: String
-    {
-        get
-        {
-            return myTaskMode
-        }
-        set
-        {
-            myTaskMode = newValue
-            save()
-        }
-    }
     
     var priority: String
     {
@@ -1388,13 +1369,19 @@ class task: NSObject
         }
     }
     
+    var predecessors: [taskPredecessor]
+    {
+        get
+        {
+            return myPredecessors
+        }
+    }
+    
     override init()
     {
         super.init()
         let currentNumberofEntries = myDatabaseConnection.getTaskCount()
         myTaskID = currentNumberofEntries + 1
-  
-        myTaskOrder = 1
         
         myDueDate = getDefaultDate()
         myStartDate = getDefaultDate()
@@ -1418,14 +1405,10 @@ class task: NSObject
             myDueDate = myTask.dueDate
             myStartDate = myTask.startDate
             myStatus = myTask.status
-            myParentID = myTask.parentID as Int
-            myParentType = myTask.parentType
-            myTaskMode = myTask.taskMode
             myPriority = myTask.priority
             myEnergyLevel = myTask.energyLevel
             myEstimatedTime = myTask.estimatedTime as Int
             myEstimatedTimeType = myTask.estimatedTimeType
-            myTaskOrder = myTask.taskOrder as Int
             myProjectID = myTask.projectID as Int
             myCompletionDate = myTask.completionDate
             myRepeatInterval = myTask.repeatInterval as Int
@@ -1445,12 +1428,22 @@ class task: NSObject
                 let myNewContext = context(inContextID: myContextItem.contextID as Int)
                 myContexts.append(myNewContext)
             }
+            
+            let myPredecessorList = myDatabaseConnection.getTaskPredecessors(inTaskID)
+            
+            myPredecessors.removeAll()
+            
+            for myPredecessorItem in myPredecessorList
+            {
+                let myNewPredecessor = taskPredecessor(inPredecessorID: myPredecessorItem.predecessorID as Int, inPredecessorType: myPredecessorItem.predecessorType)
+                myPredecessors.append(myNewPredecessor)
+            }
         }
     }
     
     func save()
     {
-        myDatabaseConnection.saveTask(myTaskID, inTitle: myTitle, inDetails: myDetails, inDueDate: myDueDate, inStartDate: myStartDate, inStatus: myStatus, inParentID: myParentID, inParentType: myParentType, inTaskMode: myTaskMode, inTaskOrder: myTaskOrder, inPriority: myPriority, inEnergyLevel: myEnergyLevel, inEstimatedTime: myEstimatedTime, inEstimatedTimeType: myEstimatedTimeType, inProjectID: myProjectID, inCompletionDate: myCompletionDate!, inRepeatInterval: myRepeatInterval, inRepeatType: myRepeatType, inRepeatBase: myRepeatBase, inFlagged: myFlagged, inUrgency: myUrgency, inTeamID: myTeamID)
+        myDatabaseConnection.saveTask(myTaskID, inTitle: myTitle, inDetails: myDetails, inDueDate: myDueDate, inStartDate: myStartDate, inStatus: myStatus, inPriority: myPriority, inEnergyLevel: myEnergyLevel, inEstimatedTime: myEstimatedTime, inEstimatedTimeType: myEstimatedTimeType, inProjectID: myProjectID, inCompletionDate: myCompletionDate!, inRepeatInterval: myRepeatInterval, inRepeatType: myRepeatType, inRepeatBase: myRepeatBase, inFlagged: myFlagged, inUrgency: myUrgency, inTeamID: myTeamID)
         
         // Save context link
         
@@ -1525,66 +1518,22 @@ class task: NSObject
         myItem.save()
     }
     
-    func setTaskOrder(inNewOrderValue: Int)
+    
+    func addPredecessor(inPredecessorID: Int, inPredecessorType: String)
     {
-        let myOtherTasks = myDatabaseConnection.getTasks(myParentID, inParentType: myParentType, inTeamID: myTeamID)
-                
-        if inNewOrderValue == 0
-        {
-            // This means we are removing the current value, so subsequent tasks should be decremented by 1
-            for myOtherTask in myOtherTasks
-            {
-                if myOtherTask.taskOrder as Int > myTaskOrder
-                {
-                    let myNewTask = task(inTaskID: myOtherTask.taskID as Int)
-                    myNewTask.storeTaskOrder(myNewTask.taskOrder - 1)
-                    myNewTask.save()
-                }
-            }
-        }
-        else
-        {
-            // This means we are moving existing tasks around
-            
-            if inNewOrderValue < myTaskOrder
-            {  //new position is less than current position
-                
-                for myOtherTask in myOtherTasks
-                {
-                    let currentValue = myOtherTask.taskOrder as Int
-                    if currentValue >= inNewOrderValue && currentValue < myTaskOrder
-                    {
-                        let myNewTask = task(inTaskID: myOtherTask.taskID as Int)
-                        myNewTask.storeTaskOrder(myNewTask.taskOrder + 1)
-                        myNewTask.save()
-                    }
-                }
-            }
-            else
-            {  // new position is higher than current position
-                for myOtherTask in myOtherTasks
-                {
-                    let currentValue = myOtherTask.taskOrder as Int
-                    if currentValue > myTaskOrder && currentValue <= inNewOrderValue
-                    {
-                        let myNewTask = task(inTaskID: myOtherTask.taskID as Int)
-                        myNewTask.storeTaskOrder(myNewTask.taskOrder - 1)
-                        myNewTask.save()
-                    }
-                }
-            }
-        }
-                
-        myTaskOrder = inNewOrderValue
-        save()
+        myDatabaseConnection.savePredecessorTask(myTaskID, inPredecessorID: inPredecessorID, inPredecessorType: inPredecessorType)
     }
 
-    func storeTaskOrder(inNewOrderValue: Int)
-    {  // This is used by the "setTaskOrder in order to not trigger a cascade update of taskOrder
-        myTaskOrder = inNewOrderValue
-        save()
+    func removePredecessor(inPredecessorID: Int, inPredecessorType: String)
+    {
+        myDatabaseConnection.deleteTaskPredecessor(myTaskID, inPredecessorID: inPredecessorID)
     }
-    
+
+    func changePredecessor(inPredecessorID: Int, inPredecessorType: String)
+    {
+        myDatabaseConnection.updatePredecessorTaskType(myTaskID, inPredecessorID: inPredecessorID, inPredecessorType: inPredecessorType)
+    }
+
     func getDefaultDate() -> NSDate
     {
         let dateStringFormatter = NSDateFormatter()

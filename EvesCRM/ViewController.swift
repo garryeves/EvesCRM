@@ -102,6 +102,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
 
     var projectMemberArray: [String] = Array()
     var mySelectedProject: project!
+    var myContextName: String = ""
     
     // OneNote
     var myOneNoteNotebooks: oneNoteNotebooks!
@@ -332,6 +333,10 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             if myDisplayType == "Project"
             {
                 myFullName = mySelectedProject.projectName
+            }
+            else if myDisplayType == "Context"
+            {
+                myFullName = myContextName
             }
             else
             {
@@ -605,6 +610,10 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         {
             labelName.text = mySelectedProject.projectName
         }
+        else if myDisplayType == "Context"
+        {
+            labelName.text = myContextName
+        }
         else
         {
             labelName.text = personContact.fullName
@@ -620,6 +629,10 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 {
                     workArray = parseProjectDetails(mySelectedProject)
                 }
+                else if myDisplayType == "Context"
+                {
+                    writeRowToArray("Context = \(myContextName)", &workArray)
+                }
                 else
                 {
                     workArray = personContact.tableData
@@ -630,6 +643,10 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 if myDisplayType == "Project"
                 {
                     eventDetails.loadCalendarDetails(mySelectedProject.projectName)
+                }
+                else if myDisplayType == "Context"
+                {
+                    writeRowToArray("No calendar entries found", &workArray)
                 }
                 else
                 {
@@ -643,14 +660,21 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 }
             case "Reminders":
                 reminderDetails = iOSReminder()
-
+                var workingName: String = ""
                 if myDisplayType == "Project"
                 {
                     reminderDetails.parseReminderDetails(mySelectedProject.projectName)
                 }
                 else
                 {
-                    var workingName: String = personContact.fullName
+                    if myDisplayType == "Context"
+                    {
+                        workingName = myContextName
+                    }
+                    else
+                    {
+                        workingName = personContact.fullName
+                    }
                     reminderDetails.parseReminderDetails(workingName)
                 }
                 workArray = reminderDetails.displayReminder()
@@ -663,7 +687,15 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 }
                 else
                 {
-                    let searchString = personContact.fullName
+                    var searchString: String = ""
+                    if myDisplayType == "Context"
+                    {
+                        searchString = myContextName
+                    }
+                    else
+                    {
+                        searchString = personContact.fullName
+                    }
                     myEvernote.findEvernoteNotes(searchString)
                 }
                 EvernoteTargetTable = inTable
@@ -676,7 +708,15 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 }
                 else
                 {
-                    let searchString = personContact.fullName
+                    var searchString: String = ""
+                    if myDisplayType == "Context"
+                    {
+                        searchString = myContextName
+                    }
+                    else
+                    {
+                        searchString = personContact.fullName
+                    }
                     workArray = displayProjectsForPerson(searchString, &projectMemberArray)
                 }
 
@@ -734,52 +774,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             {
                 loadHangouts()
             }
-            
-        case "Meetings":
-            myCalendarItems.removeAll(keepCapacity: false)
-            
-            var myReturnedData: [MeetingAgenda] = Array()
-            if myDisplayType == "Project"
-            {
-                myReturnedData = myDatabaseConnection.loadAgendaForProject(mySelectedProject.projectName, inTeamID: myTeamID)
-            }
-            else
-            {
-                // Get the meeting IDs based on the attendee name
-                
-                let myMeetingList = myDatabaseConnection.loadMeetingsForAttendee(personContact.fullName)
-                //  get project details
-                
-                for myMeeting in myMeetingList
-                {
-                    let myProjectList = myDatabaseConnection.loadAgenda(myMeeting.meetingID, inTeamID: myTeamID)
-                    
-                    for myProject in myProjectList
-                    {  //append project details to work array
-                        myReturnedData.append(myProject)
-                    }
-                }
-            }
-            
-            // Sort workarray by startdate, with oldest first
-        //    myReturnedData.sort({ $0.startDate.compare($1.startDate) == NSComparisonResult.OrderedAscending })
-            myReturnedData.sort({$0.startTime.timeIntervalSinceNow < $1.startTime.timeIntervalSinceNow})
-            
-            // Load calendar items array based on return array
-            
-            for myItem in myReturnedData
-            {
-                let myTempCal = myCalendarItem(inEventStore: eventStore, inMeetingAgenda: myItem)
-                
-                myCalendarItems.append(myTempCal)
-            }
-            
-            workArray = buildMeetingDisplay()
-            
-            if workArray.count == 0
-            {
-                writeRowToArray("No meetings found", &workArray)
-            }
 
         case "Tasks":
             myTaskItems.removeAll(keepCapacity: false)
@@ -792,8 +786,17 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             else
             {
                 // Get the context name
+                var searchString: String = ""
+                if myDisplayType == "Context"
+                {
+                    searchString = myContextName
+                }
+                else
+                {
+                    searchString = personContact.fullName
+                }
                 
-                let myContext = myDatabaseConnection.getContextByName(personContact.fullName, inTeamID: myTeamID)
+                let myContext = myDatabaseConnection.getContextByName(searchString, inTeamID: myTeamID)
                 
                 if myContext.count != 0
                 {
@@ -1004,6 +1007,10 @@ println("facebook ID = \(myFacebookID)")
                     {
                         myFullName = mySelectedProject.projectName
                     }
+                    else if myDisplayType == "Context"
+                    {
+                        myFullName = myContextName
+                    }
                     else
                     {
                         myFullName = personContact.fullName
@@ -1141,11 +1148,7 @@ println("facebook ID = \(myFacebookID)")
             myWebView.hidden = false
             btnCloseWindow.hidden = false
             myWebView.loadHTMLString(myHangoutsMessages.messages[rowID].body, baseURL: nil)
-            
-        case "Meetings":
-            
-            openMeetings("Meeting Details", workingTask: myCalendarItems[rowID])
-            
+        
         case "Tasks":
             
             let taskViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("taskTab") as! tasksTabViewController
@@ -1298,6 +1301,10 @@ println("facebook ID = \(myFacebookID)")
                 {
                     myFullName = mySelectedProject.projectName
                 }
+                else if myDisplayType == "Context"
+                {
+                    myFullName = myContextName
+                }
                 else
                 {
                     myFullName = personContact.fullName
@@ -1310,6 +1317,10 @@ println("facebook ID = \(myFacebookID)")
                 if myDisplayType == "Project"
                 {
                     myFullName = mySelectedProject.projectName
+                }
+                else if myDisplayType == "Context"
+                {
+                    myFullName = myContextName
                 }
                 else
                 {
@@ -1327,7 +1338,15 @@ println("facebook ID = \(myFacebookID)")
                 }
                 else
                 {
-                    let myFullName = personContact.fullName
+                    var myFullName: String = ""
+                    if myDisplayType == "Context"
+                    {
+                        myFullName = myContextName
+                    }
+                    else
+                    {
+                        myFullName = personContact.fullName
+                    }
                     myOmniUrlPath = "omnifocus:///add?name=Set Context to '\(myFullName)'"
                 }
 
@@ -1379,7 +1398,15 @@ println("facebook ID = \(myFacebookID)")
                 }
                 else
                 {
-                    let myFullName = personContact.fullName
+                    var myFullName: String = ""
+                    if myDisplayType == "Context"
+                    {
+                        myFullName = myContextName
+                    }
+                    else
+                    {
+                        myFullName = personContact.fullName
+                    }
                     
                     if myFullName != ""
                     {
@@ -1861,6 +1888,10 @@ println("Nothing found")
                 {
                     myFullName = mySelectedProject.projectName
                 }
+                else if myDisplayType == "Context"
+                {
+                    myFullName = myContextName
+                }
                 else
                 {
                     myFullName = personContact.fullName
@@ -2211,6 +2242,10 @@ println("Nothing found")
         if myDisplayType == "Person"
         {
             myButtonName = personContact.fullName
+        }
+        else if myDisplayType == "Context"
+        {
+            myButtonName = myContextName
         }
         else
         {
@@ -2626,7 +2661,15 @@ println("Nothing found")
         }
         else
         {
-            let searchString = personContact.fullName
+            var searchString: String = ""
+            if myDisplayType == "Context"
+            {
+                searchString = myContextName
+            }
+            else
+            {
+                searchString = personContact.fullName
+            }
             dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
             {
                 self.myGmailMessages.getPersonMessages(searchString, emailAddresses: self.personContact.emailAddresses, inMessageType: "Mail")
@@ -2650,7 +2693,15 @@ println("Nothing found")
         }
         else
         {
-            let searchString = personContact.fullName
+            var searchString: String = ""
+            if myDisplayType == "Context"
+            {
+                searchString = myContextName
+            }
+            else
+            {
+                searchString = personContact.fullName
+            }
             dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
             {
                     self.myHangoutsMessages.getPersonMessages(searchString, emailAddresses: self.personContact.emailAddresses, inMessageType: "Hangouts")
@@ -2662,6 +2713,21 @@ println("Nothing found")
     {
         switch passedItem.displayType
         {
+            case "Header":
+                switch passedItem.displayString
+                {
+                    case "Projects":
+                        let MaintainProjectViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("MaintainProject") as! MaintainProjectViewController
+                    
+                        MaintainProjectViewControl.delegate = self
+                        MaintainProjectViewControl.myActionType = "Add"
+                    
+                        self.presentViewController(MaintainProjectViewControl, animated: true, completion: nil)
+                    
+                    default: println("sideBarDidSelectButtonAtIndex - Action selector: Hit default")
+                }
+
+            
             case "Project" :
                 let myProject = passedItem.displayObject as! Projects
                 loadProject(myProject.projectID as Int)
@@ -2671,12 +2737,7 @@ println("Nothing found")
             
                 if myPerson == nil
                 {
-                    var alert = UIAlertController(title: "Context", message:
-                        "No person record found for \(passedItem.displayString)", preferredStyle: UIAlertControllerStyle.Alert)
-                    
-                    self.presentViewController(alert, animated: false, completion: nil)
-                    
-                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+                    loadContext(passedItem.displayString)
                 }
                 else
                 {
@@ -2823,6 +2884,47 @@ println("Nothing found")
         TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myFullName), forState: .Normal)
     }
     
+    func loadContext(inContext: String)
+    {
+        TableTypeSelection1.hidden = true
+        setSelectionButton.hidden = true
+        TableTypeButton1.hidden = false
+        TableTypeButton2.hidden = false
+        TableTypeButton3.hidden = false
+        TableTypeButton4.hidden = false
+        dataTable1.hidden = false
+        dataTable2.hidden = false
+        dataTable3.hidden = false
+        dataTable4.hidden = false
+        StartLabel.hidden = true
+        
+        myDisplayType = "Context"
+        myContextName = inContext
+        
+        // we need to go and find the record for the person we have selected
+
+        displayScreen()
+        
+        table1Contents = Array()
+        table2Contents = Array()
+        table3Contents = Array()
+        table4Contents = Array()
+        
+        populateArraysForTables("Table1")
+        populateArraysForTables("Table2")
+        populateArraysForTables("Table3")
+        populateArraysForTables("Table4")
+        
+        // Here is where we will set the titles for the buttons
+        
+        let myFullName = inContext
+        
+        TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: myFullName), forState: .Normal)
+        TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myFullName), forState: .Normal)
+        TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myFullName), forState: .Normal)
+        TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myFullName), forState: .Normal)
+    }
+
     func MaintainPanesDidFinish(controller:MaintainPanesViewController)
     {
         controller.dismissViewControllerAnimated(true, completion: nil)

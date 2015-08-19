@@ -705,24 +705,6 @@ class myCalendarItem
         set
         {
             myNextMeeting = newValue
-            
-            // Need to update the "next meeting", to sets its previous meeting ID to be this one
-            
-            // check to see if there is already a meeting
-            
-            let tempAgenda = myDatabaseConnection.loadAgenda(myNextMeeting, inTeamID: myTeamID)
-             
-            if tempAgenda.count > 0
-            { // existing record found, so update
-                myDatabaseConnection.updatePreviousAgendaID(myEventID, inMeetingID: myNextMeeting, inTeamID: myTeamID)
-            }
-            else
-            { // No record found so insert
-                
-                let tempItem = eventStore.eventWithIdentifier(myNextMeeting)
-                let tempCalendar = myCalendarItem(inEventStore: eventStore, inEvent: tempItem, inAttendee: nil)
-                tempCalendar.previousMinutes = myEventID
-            }
         }
     }
     
@@ -1886,6 +1868,27 @@ class myCalendarItem
         myExportString = writeHTMLLine(myExportString, inLineString: "</body></html>")
         return myExportString
     }
+    
+    func setNextMeeting(inCalendarItem: myCalendarItem)
+    {
+        // Need to update the "next meeting", to sets its previous meeting ID to be this one
+            
+        // check to see if there is already a meeting
+        
+        let nextMeetingID = inCalendarItem.eventID
+        let tempAgenda = myDatabaseConnection.loadAgenda(nextMeetingID, inTeamID: myTeamID)
+        
+        if tempAgenda.count > 0
+        { // existing record found, so update
+            myDatabaseConnection.updatePreviousAgendaID(myEventID, inMeetingID: nextMeetingID, inTeamID: myTeamID)
+            myNextMeeting = nextMeetingID
+        }
+        else
+        { // No record found so insert
+            inCalendarItem.previousMinutes = myEventID
+            myNextMeeting = inCalendarItem.eventID
+        }
+    }
 }
 
 class iOSCalendar
@@ -1926,6 +1929,43 @@ class iOSCalendar
         // Now sort the array into date order
         
          eventDetails.sort({$0.startDate.timeIntervalSinceNow < $1.startDate.timeIntervalSinceNow})
+    }
+    
+    func loadCalendarForEvent(inEventID: String, inStartDate: NSDate)
+    {
+        /* The end date */
+        //Calculate - Days * hours * mins * secs
+        
+        let myEndDateValue:NSTimeInterval = 60 * 60
+        
+        let endDate = inStartDate.dateByAddingTimeInterval(myEndDateValue)
+        
+        /* Create the predicate that we can later pass to the event store in order to fetch the events */
+        let searchPredicate = eventStore.predicateForEventsWithStartDate(
+            inStartDate,
+            endDate: endDate,
+            calendars: nil)
+        
+        /* Fetch all the events that fall between the starting and the ending dates */
+        
+        if eventStore.sources().count > 0
+        {
+            if eventStore.eventsMatchingPredicate(searchPredicate) != nil
+            {
+                let events = eventStore.eventsMatchingPredicate(searchPredicate) as! [EKEvent]
+            
+                for event in events
+                {
+                    if event.eventIdentifier == inEventID
+                    {
+                        eventRecords.append(event)
+                        let calendarEntry = myCalendarItem(inEventStore: eventStore, inEvent: event, inAttendee: nil)
+                    
+                        eventDetails.append(calendarEntry)
+                    }
+                }
+            }
+        }
     }
     
     func loadCalendarDetails(projectName: String)
