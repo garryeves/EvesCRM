@@ -416,7 +416,6 @@ class myCalendarItem
         
         if mySavedValues.count > 0
         {
-            
             myTitle = mySavedValues[0].name
             myStartDate = mySavedValues[0].startTime
             myEndDate = mySavedValues[0].endTime
@@ -434,8 +433,35 @@ class myCalendarItem
         startDateFormatter.timeStyle = timeFormat
         endDateFormatter.timeStyle = timeFormat
         eventStore = inEventStore
+        
+        // We neeed to go and the the event details from the calendar, if they exist
+        
+        let nextEvent = iOSCalendar(inEventStore: eventStore)
+        
+        nextEvent.loadCalendarForEvent(myEventID, inStartDate: myStartDate)
+        
+        if nextEvent.events.count == 0
+        {
+            // No event found, so do nothing else
+        }
+        else if nextEvent.events.count == 1
+        {
+            // only 1 found so set it
+            myEvent = nextEvent.events[0]
+        }
+        else
+        {
+            // Multiple found, so find the one with the matching start date
+            
+            for myItem in nextEvent.events
+            {
+                if myItem.startDate == myStartDate
+                {
+                    myEvent = myItem
+                }
+            }
+        }
     }
-
 
     var event: EKEvent?
     {
@@ -1962,6 +1988,7 @@ class iOSCalendar
                         let calendarEntry = myCalendarItem(inEventStore: eventStore, inEvent: event, inAttendee: nil)
                     
                         eventDetails.append(calendarEntry)
+                        eventRecords.append(event)
                     }
                 }
             }

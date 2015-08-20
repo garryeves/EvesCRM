@@ -9,12 +9,15 @@
 import UIKit
 import CoreData
 
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
 
     var window: UIWindow?
+    static var SMAppDelegateCustomKeyboardWillAppearToken: Int = 0
 
-
+    var SMTEExpansionEnabled: String = "SMTEExpansionEnabled"
+    
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
         
@@ -52,20 +55,142 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
     }
 
     
-    func application(application: UIApplication, handleOpenURL url: NSURL) -> Bool {
-        return ENSession.sharedSession().handleOpenURL(url)
+    func application(application: UIApplication, handleOpenURL url: NSURL) -> Bool
+    {
+        
+println("appdelegate application - handleOpenURL = \(url.scheme)")
+        var error: NSError?
+        
+        var retVal: Bool = false
+        // Textexpander
+        
+        var textExpander: SMTEDelegateController!
+        
+        if "EvesCRM-fill-xc" == url.scheme
+        {
+            //var tabController: UITabBarController = self.window.rootViewController
+            //var currentViewController: UIViewController = self
+            
+       //     var textExpander: SMTEDelegateController = SMTEDelegateController()
+           // textExpander = currentViewController.performSelector(textExpander)
+            
+            textExpander = SMTEDelegateController()
+            
+            if textExpander.handleFillCompletionURL(url)
+            {
+                retVal = true
+            }
+        }
+        else if "EvesCRM-get-snippets-xc" == url.scheme
+        {
+            //   UITabBarController *tabController = (UITabBarController*)self.window.rootViewController;
+            //   UIViewController *currentViewController = tabController.selectedViewController;
+            //SMTEDelegateController *textExpander = [currentViewController performSelector:@selector(textExpander)];
+      //      var textExpander: SMTEDelegateController = SMTEDelegateController()
+            
+            // textExpander = currentViewController.performSelector(textExpander)
+
+            textExpander = SMTEDelegateController()
+            
+            var cancel: ObjCBool = false
+
+            if textExpander.handleGetSnippetsURL(url, error:&error, cancelFlag:&cancel) == false
+            {
+                NSLog("Failed to handle URL: user canceled: %@, error: %@", cancel ? "yes" : "no", error!)
+            }
+            else
+            {
+                if cancel
+                {
+                    NSLog("User cancelled get snippets");
+                    var standardUserDefaults: NSUserDefaults = NSUserDefaults()
+                    standardUserDefaults.setBool(false, forKey:SMTEExpansionEnabled)
+                }
+                else if error != nil
+                {
+                    NSLog("Error updating TextExpander snippets: %@", error!);
+                }
+                else
+                {
+                    NSLog("Successfully updated TextExpander Snippets");
+                }
+                retVal = true
+            }
+        }
+        else
+        {
+            retVal = ENSession.sharedSession().handleOpenURL(url)
+        }
+        
+        return retVal
     }
     
     func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
 println("appdelegate application - source Application = \(sourceApplication)")
+        var error: NSError?
+        var textExpander: SMTEDelegateController!
+        var retVal: Bool = false
+        
         if sourceApplication == "dropboxCoreService"
         {
-            return dropboxCoreService.finalizeAuthentication(url)
+            retVal = dropboxCoreService.finalizeAuthentication(url)
         }
-        else
+        else if "EvesCRM-fill-xc" == url.scheme
         {
-            return GIDSignIn.sharedInstance().handleURL(url, sourceApplication: sourceApplication, annotation: annotation)
+            //var tabController: UITabBarController = self.window.rootViewController
+            //var currentViewController: UIViewController = self
+            
+            //     var textExpander: SMTEDelegateController = SMTEDelegateController()
+            // textExpander = currentViewController.performSelector(textExpander)
+            
+            textExpander = SMTEDelegateController()
+            
+            if textExpander.handleFillCompletionURL(url)
+            {
+                retVal = true
+            }
         }
+        else if "EvesCRM-get-snippets-xc" == url.scheme
+        {
+            //   UITabBarController *tabController = (UITabBarController*)self.window.rootViewController;
+            //   UIViewController *currentViewController = tabController.selectedViewController;
+            //SMTEDelegateController *textExpander = [currentViewController performSelector:@selector(textExpander)];
+            //      var textExpander: SMTEDelegateController = SMTEDelegateController()
+            // textExpander = currentViewController.performSelector(textExpander)
+            
+            var cancel: ObjCBool = false
+            textExpander = SMTEDelegateController()
+            
+            if textExpander.handleGetSnippetsURL(url, error:&error, cancelFlag:&cancel) == false
+            {
+                NSLog("Failed to handle URL: user canceled: %@, error: %@", cancel ? "yes" : "no", error!)
+            }
+            else
+            {
+                if cancel
+                {
+                    NSLog("User cancelled get snippets");
+                    var standardUserDefaults: NSUserDefaults = NSUserDefaults()
+                    standardUserDefaults.setBool(false, forKey:SMTEExpansionEnabled)
+                }
+                else if error != nil
+                {
+                    NSLog("Error updating TextExpander snippets: %@", error!);
+                }
+                else
+                {
+                    NSLog("Successfully updated TextExpander Snippets");
+                }
+                retVal = true
+            }
+        }
+
+        else //if sourceApplication!.rangeOfString("google") != nil
+        {
+            retVal = GIDSignIn.sharedInstance().handleURL(url, sourceApplication: sourceApplication, annotation: annotation)
+        }
+        
+        return retVal
     }
     
     func applicationWillResignActive(application: UIApplication) {

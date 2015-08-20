@@ -51,3 +51,6 @@
 
 // Facebook
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
+
+// TextExpander
+#import "TextExpander/SMTEDelegateController.h"

@@ -45,6 +45,26 @@
 				<string>com.garryeves.EvesCRM</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.garryeves.EvesCRM</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>EvesCRM-get-snippets-xc</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.garryeves.EvesCRM</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>EvesCRM-fill-xc</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>4</string>

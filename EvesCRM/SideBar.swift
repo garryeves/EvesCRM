@@ -96,9 +96,12 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
         displayObject = createMenuItem("Maintain Display Panes", inType: "Action", inObject: "Maintain Display Panes")
         menuDetails.append(displayObject)
        
-        displayObject = createMenuItem("Settings", inType: "Action", inObject: "Settings")
+        displayObject = createMenuItem("Load TextExpander Snippets", inType: "Action", inObject: "Load TextExpander Snippets")
         menuDetails.append(displayObject)
 
+        displayObject = createMenuItem("Settings", inType: "Action", inObject: "Settings")
+        menuDetails.append(displayObject)
+        
         sideBarTableViewController.tableData = menuDetails
         sideBarTableViewController.tableView.reloadData()
     }

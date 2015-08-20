@@ -1282,14 +1282,14 @@ class coreDatabase: NSObject
         
         return fetchResults!
     }
-
+    
     func getTasksForProject(inProjectID: Int, inTeamID: Int)->[Task]
     {
         let fetchRequest = NSFetchRequest(entityName: "Task")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectID = \(inProjectID)) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(projectID = \(inProjectID)) && (updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Closed\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1340,7 +1340,7 @@ class coreDatabase: NSObject
 
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectID == 0) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(projectID == 0) && (updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Closed\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1377,7 +1377,7 @@ class coreDatabase: NSObject
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate2 = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate2 = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Closed\")")
         
         // Set the predicate on the fetch request
         fetchTask.predicate = predicate2
@@ -1433,7 +1433,7 @@ class coreDatabase: NSObject
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(taskID == \(inTaskID)) && (status == \"Open\") && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(taskID == \(inTaskID))  && (status != \"Closed\") && (updateType != \"Delete\") && (teamID == \(inTeamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

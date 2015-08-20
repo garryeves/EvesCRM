@@ -37,7 +37,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
     private var myDateFormatter = NSDateFormatter()
     private let myCalendar = NSCalendar.currentCalendar()
     private var myWorkingTime: NSDate = NSDate()
-    
+        
     lazy var activityPopover:UIPopoverController = {
         return UIPopoverController(contentViewController: self.activityViewController)
         }()
@@ -45,6 +45,12 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
     lazy var activityViewController:UIActivityViewController = {
         return self.createActivityController()
         }()
+    
+    // Textexpander
+    
+    private var snippetExpanded: Bool = false
+    
+    var textExpander: SMTEDelegateController!
     
     override func viewDidLoad()
     {
@@ -87,6 +93,11 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
         let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
         hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
         self.view.addGestureRecognizer(hideGestureRecognizer)
+        
+        // TextExpander
+        textExpander = SMTEDelegateController()
+        txtDescription.delegate = textExpander
+        textExpander.nextDelegate = self
     }
     
     override func didReceiveMemoryWarning()
@@ -319,24 +330,14 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
         }
         else
         { // Previous meeting exists
-            // Does the previous meeting have any tasks
-            let myData = myDatabaseConnection.getMeetingsTasks(passedMeeting.event.previousMinutes)
-        
-            if myData.count > 0
-            {  // There are tasks for the previous meeting
-                let previousMinutes  = meetingAgendaItem()
+            let previousMinutes  = meetingAgendaItem()
             
-                previousMinutes.createPreviousMeetingRow()
-                myAgendaList.removeAll(keepCapacity: false)
-                myAgendaList.append(previousMinutes)
-                for myItem in passedMeeting.event.agendaItems
-                {
-                    myAgendaList.append(myItem)
-                }
-            }
-            else
-            { // Not tasks for the previous meeting
-                myAgendaList = passedMeeting.event.agendaItems
+            previousMinutes.createPreviousMeetingRow()
+            myAgendaList.removeAll(keepCapacity: false)
+            myAgendaList.append(previousMinutes)
+            for myItem in passedMeeting.event.agendaItems
+            {
+                myAgendaList.append(myItem)
             }
         }
         let closeMeeting = meetingAgendaItem()
@@ -439,6 +440,158 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
             self.activityPopover.dismissPopoverAnimated(true)
         }
     }
+    
+    
+    //---------------------------------------------------------------
+    // These three methods implement the SMTEFillDelegate protocol to support fill-ins
+    
+    /* When an abbreviation for a snippet that looks like a fill-in snippet has been
+    * typed, SMTEDelegateController will call your fill delegate's implementation of
+    * this method.
+    * Provide some kind of identifier for the given UITextView/UITextField/UISearchBar/UIWebView
+    * The ID doesn't have to be fancy, "maintext" or "searchbar" will do.
+    * Return nil to avoid the fill-in app-switching process (the snippet will be expanded
+    * with "(field name)" where the fill fields are).
+    *
+    * Note that in the case of a UIWebView, the uiTextObject passed will actually be
+    * an NSDictionary with two of these keys:
+    *     - SMTEkWebView          The UIWebView object (key always present)
+    *     - SMTEkElementID        The HTML element's id attribute (if found, preferred over Name)
+    *     - SMTEkElementName      The HTML element's name attribute (if id not found and name found)
+    * (If no id or name attribute is found, fill-in's cannot be supported, as there is
+    * no way for TE to insert the filled-in text.)
+    * Unless there is only one editable area in your web view, this implies that the returned
+    * identifier string needs to include element id/name information. Eg. "webview-field2".
+    */
+//    - (NSString*)identifierForTextArea: (id)uiTextObject {
+//    NSString *result = nil;
+//    if (self.textView == uiTextObject)
+//    result =  @"myTextView";
+//    if (self.textField == uiTextObject)
+//    result =  @"myTextField";
+//    if (self.searchBar == uiTextObject)
+//    result =  @"mySearchBar";
+//    return result;
+//    }
+    
+    /* Usually called milliseconds after identifierForTextArea:, SMTEDelegateController is
+    * about to call [[UIApplication sharedApplication] openURL: "tetouch-xc: *x-callback-url/fillin?..."]
+    * In other words, the TEtouch is about to be activated. Your app should save state
+    * and make any other preparations.
+    *
+    * Return NO to cancel the process.
+    */
+//    - (BOOL)prepareForFillSwitch: (NSString*)textIdentifier {
+    // At this point the app should save state since TextExpander touch is about
+    // to activate.
+    // It especially needs to save the contents of the textview/textfield!
+//    return YES;
+//    }
+    
+    /* Restore active typing location and insertion cursor position to a text item
+    * based on the identifier the fill delegate provided earlier.
+    * (This call is made from handleFillCompletionURL: )
+    *
+    * In the case of a UIWebView, this method should build and return an NSDictionary
+    * like the one sent to the fill delegate in identifierForTextArea: when the snippet
+    * was triggered.
+    * That is, you should make the UIWebView become first responder, then return an
+    * NSDictionary with two of these keys:
+    *     - SMTEkWebView          The UIWebView object (key must be present)
+    *     - SMTEkElementID        The HTML element's id attribute (preferred over Name)
+    *     - SMTEkElementName      The HTML element's name attribute (only if no id)
+    * TE will use the same Javascripts that it uses to expand normal snippets to focus the appropriate
+    * element and insert the filled text.
+    *
+    * Note 1: If your app is still loaded after returning from TEtouch's fill window,
+    * probably no work needs to be done (the text item will still be the first
+    * responder, and the insertion cursor position will still be the same).
+    * Note 2: If the requested insertionPointLocation cannot be honored (ie. text has
+    * been reset because of the app switching), then update it to whatever is reasonable.
+    *
+    * Return nil to cancel insertion of the fill-in text. Users will not expect a cancel
+    * at this point unless userCanceledFill is set. Even in the cancel case, they will likely
+    * expect the identified text object to become the first responder.
+    */
+//    - (id)makeIdentifiedTextObjectFirstResponder: (NSString*)textIdentifier
+//    fillWasCanceled: (BOOL)userCanceledFill
+//    cursorPosition: (NSInteger*)ioInsertionPointLocation;
+//    {
+//    self.snippetExpanded = YES;
+//    if ([@"myTextView" isEqualToString: textIdentifier]) {
+//    [self.textView becomeFirstResponder];
+//    UITextPosition *theLoc = [self.textView positionFromPosition: self.textView.beginningOfDocument
+//    offset: *ioInsertionPointLocation];
+//    if (theLoc != nil)
+//    self.textView.selectedTextRange = [self.textView textRangeFromPosition: theLoc toPosition: theLoc];
+//    return self.textView;
+//    }
+//    if ([@"myTextField" isEqualToString: textIdentifier]) {
+//    [self.textField becomeFirstResponder];
+//    UITextPosition *theLoc = [self.textField positionFromPosition: self.textField.beginningOfDocument
+//    offset: *ioInsertionPointLocation];
+//    if (theLoc != nil)
+//    self.textField.selectedTextRange = [self.textField textRangeFromPosition: theLoc toPosition: theLoc];
+//    return self.textField;
+//    }
+//    if ([@"mySearchBar" isEqualToString: textIdentifier]) {
+//    [self.searchBar becomeFirstResponder];
+    // Note: UISearchBar does not support cursor positioning.
+    // Since we don't save search bar text as part of our state, if our app was unloaded while TE was
+    // presenting the fill-in window, the search bar might now be empty to we should return
+    // insertionPointLocation of 0.
+//    NSInteger searchTextLen = [self.searchBar.text length];
+//    if (searchTextLen < *ioInsertionPointLocation)
+//    *ioInsertionPointLocation = searchTextLen;
+//    return self.searchBar;
+//    }
+//    return nil;
+//    }
+
+    // The following are the UITextFieldDelegate methods; they simply write to the console log for demonstration purposes
+    
+    
+    func textFieldShouldBeginEditing(textField: UITextField) -> Bool
+    {
+        println("nextDelegate textFieldShouldBeginEditing")
+        return true
+    }
+
+    func textFieldDidBeginEditing(textField: UITextField)
+    {
+        println("nextDelegate textFieldDidBeginEditing")
+    }
+
+    func textFieldShouldEndEditing(textField: UITextField) -> Bool
+    {
+        println("nextDelegate textFieldShouldEndEditing")
+        return true
+    }
+    
+    func textFieldDidEndEditing(textField: UITextField)
+    {
+        println("nextDelegate textFieldDidEndEditing")
+    }
+
+    func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool
+    {
+        println("nextDelegate textField:shouldChangeCharactersInRange: \(NSStringFromRange(range)) Original=\(textField.text), replacement = \(string)")
+        return true
+    }
+
+    func textFieldShouldClear(textField: UITextField) -> Bool
+    {
+        println("nextDelegate textFieldShouldClear")
+        return true
+    }
+
+    func textFieldShouldReturn(textField: UITextField) -> Bool
+    {
+        println("nextDelegate textFieldShouldReturn")
+        return true
+    }
+
+    
 }
 
 class myAgendaItemHeader: UICollectionReusableView

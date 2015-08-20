@@ -39,6 +39,32 @@ class taskListViewController: UIViewController, MyTaskDelegate, UITextViewDelega
             
             // Get list of tasks for the meeting
             
+            // Parse through All of the previous meetings that led to this meeting looking for tasks that are not yet closed, as need to display them for completeness
+            
+            let myMeetingRecords = myDatabaseConnection.loadAgenda(myMeetingID, inTeamID: myTeamID)
+            
+            if myMeetingRecords.count == 0
+            {
+                // No meeting found, so no further action
+            }
+            else
+            {
+                for myMeetingRecord in myMeetingRecords
+                {
+                    if myMeetingRecord.previousMeetingID != ""
+                    {
+                        let myOutstandingTasks = parsePastMeeting(myMeetingRecord.previousMeetingID)
+                    
+                        if myOutstandingTasks.count > 0
+                        {
+                            for myTask in myOutstandingTasks
+                            {
+                                myTaskList.append(myTask)
+                            }
+                        }
+                    }
+                }
+            }
             let myData = myDatabaseConnection.getMeetingsTasks(myMeetingID)
             
             for myItem in myData
@@ -227,6 +253,52 @@ class taskListViewController: UIViewController, MyTaskDelegate, UITextViewDelega
     {
         colTaskList.reloadData()
         controller.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func parsePastMeeting(inMeetingID: String) -> [task]
+    {
+        // Get the the details for the meeting, in order to determine the previous task ID
+        var myReturnArray: [task] = Array()
+        
+        let myData = myDatabaseConnection.loadAgenda(inMeetingID, inTeamID: myTeamID)
+        
+        if myData.count == 0
+        {
+            // No meeting found, so no further action
+        }
+        else
+        {
+            for myItem in myData
+            {
+                var myArray: [task] = Array()
+                let myData2 = myDatabaseConnection.getMeetingsTasks(myItem.meetingID)
+                
+                for myItem2 in myData2
+                {
+                    let newTask = task(inTaskID: myItem2.taskID as Int)
+                    if newTask.status != "Closed"
+                    {
+                        myArray.append(newTask)
+                    }
+                }
+                
+                if myItem.previousMeetingID != ""
+                {
+                    myReturnArray = parsePastMeeting(myItem.previousMeetingID)
+                    
+                    for myWork in myArray
+                    {
+                        myReturnArray.append(myWork)
+                    }
+                }
+                else
+                {
+                    myReturnArray = myArray
+                }
+            }
+        }
+       
+        return myReturnArray
     }
 }
 

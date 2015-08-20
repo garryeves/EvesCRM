@@ -122,6 +122,11 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     
     var sideBar:SideBar!
     
+    // Textexpander
+    
+    var textExpander: SMTEDelegateController!
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -202,10 +207,10 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     //    myDatabaseConnection.resetprojects()
         
    //   code to reset meetings if needed for testing        
-   //     myDatabaseConnection.resetMeetings()
+  //      myDatabaseConnection.resetMeetings()
         
         //   code to reset tasks if needed for testing
-    //    myDatabaseConnection.resetTasks()
+  //      myDatabaseConnection.resetTasks()
         
         //   code to reset contexts if needed for testing
     //         myDatabaseConnection.resetContexts()
@@ -254,6 +259,21 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         
         sideBar = SideBar(sourceView: self.view)
         sideBar.delegate = self
+
+        // Textexpander
+        
+        if SMTEDelegateController.isTextExpanderTouchInstalled() == true
+        {
+            if textExpander == nil
+            {
+                // Lazy load of TextExpander
+                textExpander = SMTEDelegateController()
+                textExpander.clientAppName = "EvesCRM"
+                textExpander.getSnippetsScheme = "EvesCRM-get-snippets-xc"
+                textExpander.fillCompletionScheme = "EvesCRM-fill-xc"
+                textExpander.fillDelegate = self
+            }
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -2776,7 +2796,25 @@ println("Nothing found")
                         
                         self.presentViewController(maintainPaneViewControl, animated: true, completion: nil)
                 
-                    default: println("sideBarDidSelectButtonAtIndex - Action selector: Hit default")
+                    
+                case "Load TextExpander Snippets" :
+                    // Textexpander
+                    
+                    if SMTEDelegateController.isTextExpanderTouchInstalled() == true
+                    {
+                        if textExpander == nil
+                        {
+                            // Lazy load of TextExpander
+                            textExpander = SMTEDelegateController()
+                            textExpander.clientAppName = "EvesCRM"
+                            textExpander.getSnippetsScheme = "EvesCRM-get-snippets-xc"
+                            textExpander.fillCompletionScheme = "EvesCRM-fill-xc"
+                            textExpander.fillDelegate = self
+                        }
+                        textExpander.getSnippets()
+                    }
+                    
+                default: println("sideBarDidSelectButtonAtIndex - Action selector: Hit default")
                     
                 }
             

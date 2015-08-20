@@ -643,7 +643,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
         {
             for myItem in myItems
             {
-                let tempMeeting = myCalendarItem(inEventStore: eventStore, inMeetingAgenda: myItem)
+                let tempMeeting = myCalendarItem(inEventStore: eventStore, inMeetingID: passedMeeting.event.previousMinutes)
                 tempMeeting.loadAgenda()
                 targetPassedMeeting.event = tempMeeting
             }
@@ -677,7 +677,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
         {
             for myItem in myItems
             {
-                let tempMeeting = myCalendarItem(inEventStore: eventStore, inMeetingAgenda: myItem)
+                let tempMeeting = myCalendarItem(inEventStore: eventStore, inMeetingID: passedMeeting.event.nextMeeting)
                 tempMeeting.loadAgenda()
                 targetPassedMeeting.event = tempMeeting
             }
