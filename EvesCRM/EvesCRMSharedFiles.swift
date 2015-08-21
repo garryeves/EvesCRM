@@ -17,6 +17,8 @@ var adbk : ABAddressBook!
 var eventStore: EKEventStore!
 var myTeamID: Int = 0
 
+var myCurrentViewController: AnyObject!
+
 let myRowColour = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
 
 struct TableData

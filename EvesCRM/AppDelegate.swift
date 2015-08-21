@@ -62,6 +62,8 @@ println("appdelegate application - handleOpenURL = \(url.scheme)")
         var error: NSError?
         
         var retVal: Bool = false
+  
+   /*
         // Textexpander
         
         var textExpander: SMTEDelegateController!
@@ -121,12 +123,16 @@ println("appdelegate application - handleOpenURL = \(url.scheme)")
         {
             retVal = ENSession.sharedSession().handleOpenURL(url)
         }
+    */
         
+        retVal = ENSession.sharedSession().handleOpenURL(url)
         return retVal
     }
     
     func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
 println("appdelegate application - source Application = \(sourceApplication)")
+println("appdelegate application - source Application URL = \(url.scheme)")
+        
         var error: NSError?
         var textExpander: SMTEDelegateController!
         var retVal: Bool = false
@@ -137,27 +143,31 @@ println("appdelegate application - source Application = \(sourceApplication)")
         }
         else if "EvesCRM-fill-xc" == url.scheme
         {
-            //var tabController: UITabBarController = self.window.rootViewController
-            //var currentViewController: UIViewController = self
+            var tempController: agendaItemViewController!
             
-            //     var textExpander: SMTEDelegateController = SMTEDelegateController()
-            // textExpander = currentViewController.performSelector(textExpander)
+            if myCurrentViewController.isKindOfClass(agendaItemViewController)
+            {
+                tempController = myCurrentViewController as! agendaItemViewController
+            }
+
+            var textExpander: SMTEDelegateController = tempController.textExpander
+    
             
-            textExpander = SMTEDelegateController()
+            // let myURL = NSURL(string: "EvesCRM://x-callback-url/SMTEsetlog?log=off")
+            // let myURL = NSURL(string: "EvesCRM://x-callback-url/SMTEsetlog?log=detailed")
+            // textExpander.handleFillCompletionURL(myURL)
             
-            if textExpander.handleFillCompletionURL(url)
+            if textExpander.handleFillCompletionURL(url) == true
             {
                 retVal = true
+            }
+            else
+            {
+                println("failed")
             }
         }
         else if "EvesCRM-get-snippets-xc" == url.scheme
         {
-            //   UITabBarController *tabController = (UITabBarController*)self.window.rootViewController;
-            //   UIViewController *currentViewController = tabController.selectedViewController;
-            //SMTEDelegateController *textExpander = [currentViewController performSelector:@selector(textExpander)];
-            //      var textExpander: SMTEDelegateController = SMTEDelegateController()
-            // textExpander = currentViewController.performSelector(textExpander)
-            
             var cancel: ObjCBool = false
             textExpander = SMTEDelegateController()
             
@@ -205,8 +215,8 @@ println("appdelegate application - source Application = \(sourceApplication)")
 
     func applicationWillEnterForeground(application: UIApplication) {
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
-        
-        ENSession.sharedSession().listNotebooksWithCompletion{(a :[AnyObject]!, b : NSError!) -> Void in print(a)}
+//   println("applicationWillEnterForeground")
+//        ENSession.sharedSession().listNotebooksWithCompletion{(a :[AnyObject]!, b : NSError!) -> Void in print(a)}
     }
 
     func applicationDidBecomeActive(application: UIApplication) {
