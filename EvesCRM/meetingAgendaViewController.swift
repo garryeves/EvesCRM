@@ -97,7 +97,12 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
         // TextExpander
         textExpander = SMTEDelegateController()
         txtDescription.delegate = textExpander
+        textExpander.clientAppName = "EvesCRM"
+        textExpander.fillCompletionScheme = "EvesCRM-fill-xc"
+        textExpander.fillDelegate = self
         textExpander.nextDelegate = self
+        myCurrentViewController = meetingAgendaViewController()
+        myCurrentViewController = self
     }
     
     override func didReceiveMemoryWarning()
@@ -440,8 +445,6 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
             self.activityPopover.dismissPopoverAnimated(true)
         }
     }
-    
-    
     //---------------------------------------------------------------
     // These three methods implement the SMTEFillDelegate protocol to support fill-ins
     
@@ -463,16 +466,35 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
     * Unless there is only one editable area in your web view, this implies that the returned
     * identifier string needs to include element id/name information. Eg. "webview-field2".
     */
-//    - (NSString*)identifierForTextArea: (id)uiTextObject {
-//    NSString *result = nil;
-//    if (self.textView == uiTextObject)
-//    result =  @"myTextView";
-//    if (self.textField == uiTextObject)
-//    result =  @"myTextField";
-//    if (self.searchBar == uiTextObject)
-//    result =  @"mySearchBar";
-//    return result;
-//    }
+    
+    func identifierForTextArea(uiTextObject: AnyObject) -> String
+    {
+        var result: String = ""
+        
+        if uiTextObject.isKindOfClass(UITextField)
+        {
+            if uiTextObject.tag == 1
+            {
+                result = "txtDescription"
+            }
+        }
+        
+        if uiTextObject.isKindOfClass(UITextView)
+        {
+            if uiTextObject.tag == 1
+            {
+                result = "unused"
+            }
+        }
+        
+        if uiTextObject.isKindOfClass(UISearchBar)
+        {
+            result =  "mySearchBar"
+        }
+        
+        return result
+    }
+    
     
     /* Usually called milliseconds after identifierForTextArea:, SMTEDelegateController is
     * about to call [[UIApplication sharedApplication] openURL: "tetouch-xc: *x-callback-url/fillin?..."]
@@ -481,12 +503,15 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
     *
     * Return NO to cancel the process.
     */
-//    - (BOOL)prepareForFillSwitch: (NSString*)textIdentifier {
-    // At this point the app should save state since TextExpander touch is about
-    // to activate.
-    // It especially needs to save the contents of the textview/textfield!
-//    return YES;
-//    }
+
+    func prepareForFillSwitch(textIdentifier: String) -> Bool
+    {
+        // At this point the app should save state since TextExpander touch is about
+        // to activate.
+        // It especially needs to save the contents of the textview/textfield!
+        
+        return true
+    }
     
     /* Restore active typing location and insertion cursor position to a text item
     * based on the identifier the fill delegate provided earlier.
@@ -513,83 +538,155 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
     * at this point unless userCanceledFill is set. Even in the cancel case, they will likely
     * expect the identified text object to become the first responder.
     */
-//    - (id)makeIdentifiedTextObjectFirstResponder: (NSString*)textIdentifier
-//    fillWasCanceled: (BOOL)userCanceledFill
-//    cursorPosition: (NSInteger*)ioInsertionPointLocation;
-//    {
-//    self.snippetExpanded = YES;
-//    if ([@"myTextView" isEqualToString: textIdentifier]) {
-//    [self.textView becomeFirstResponder];
-//    UITextPosition *theLoc = [self.textView positionFromPosition: self.textView.beginningOfDocument
-//    offset: *ioInsertionPointLocation];
-//    if (theLoc != nil)
-//    self.textView.selectedTextRange = [self.textView textRangeFromPosition: theLoc toPosition: theLoc];
-//    return self.textView;
-//    }
-//    if ([@"myTextField" isEqualToString: textIdentifier]) {
-//    [self.textField becomeFirstResponder];
-//    UITextPosition *theLoc = [self.textField positionFromPosition: self.textField.beginningOfDocument
-//    offset: *ioInsertionPointLocation];
-//    if (theLoc != nil)
-//    self.textField.selectedTextRange = [self.textField textRangeFromPosition: theLoc toPosition: theLoc];
-//    return self.textField;
-//    }
-//    if ([@"mySearchBar" isEqualToString: textIdentifier]) {
-//    [self.searchBar becomeFirstResponder];
-    // Note: UISearchBar does not support cursor positioning.
-    // Since we don't save search bar text as part of our state, if our app was unloaded while TE was
-    // presenting the fill-in window, the search bar might now be empty to we should return
-    // insertionPointLocation of 0.
-//    NSInteger searchTextLen = [self.searchBar.text length];
-//    if (searchTextLen < *ioInsertionPointLocation)
-//    *ioInsertionPointLocation = searchTextLen;
-//    return self.searchBar;
-//    }
-//    return nil;
-//    }
-
-    // The following are the UITextFieldDelegate methods; they simply write to the console log for demonstration purposes
     
+    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: Int) -> AnyObject
+    {
+        snippetExpanded = true
+
+        if "txtDescription" == textIdentifier
+        {
+            txtDescription.becomeFirstResponder()
+            let theLoc = txtDescription.positionFromPosition(txtDescription.beginningOfDocument, offset: ioInsertionPointLocation)
+            if theLoc != nil
+            {
+                txtDescription.selectedTextRange = txtDescription.textRangeFromPosition(theLoc, toPosition: theLoc)
+            }
+            return txtDescription
+        }
+            //        else if "mySearchBar" == textIdentifier
+            //        {
+            //            searchBar.becomeFirstResponder()
+            // Note: UISearchBar does not support cursor positioning.
+            // Since we don't save search bar text as part of our state, if our app was unloaded while TE was
+            // presenting the fill-in window, the search bar might now be empty to we should return
+            // insertionPointLocation of 0.
+            //            let searchTextLen = searchBar.text.length
+            //            if searchTextLen < ioInsertionPointLocation
+            //            {
+            //                ioInsertionPointLocation = searchTextLen
+            //            }
+            //            return searchBar
+            //        }
+        else
+        {
+            
+            //return nil
+            
+            return ""
+        }
+    }
+    
+    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool
+    {
+        if (textExpander.isAttemptingToExpandText)
+        {
+            snippetExpanded = true
+        }
+        return true
+    }
+    
+    // Workaround for what appears to be an iOS 7 bug which affects expansion of snippets
+    // whose content is greater than one line. The UITextView fails to update its display
+    // to show the full content. Try commenting this out and expanding "sig1" to see the issue.
+    //
+    // Given other oddities of UITextView on iOS 7, we had assumed this would be fixed along the way.
+    // Instead, we'll have to work up an isolated case and file a bug. We don't want to bake this kind
+    // of workaround into the SDK, so instead we provide an example here.
+    // If you have a better workaround suggestion, we'd love to hear it.
+    
+    func twiddleText(textView: UITextView)
+    {
+        let SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO = UIDevice.currentDevice().systemVersion
+        if SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO >= "7.0"
+        {
+            textView.textStorage.edited(NSTextStorageEditActions.EditedCharacters,range:NSMakeRange(0, textView.textStorage.length),changeInLength:0)
+        }
+    }
+    
+    func textViewDidChange(textView: UITextView)
+    {
+        if snippetExpanded
+        {
+            usleep(10000)
+            twiddleText(textView)
+            
+            // performSelector(twiddleText:, withObject: textView, afterDelay:0.01)
+            snippetExpanded = false
+        }
+    }
+    
+    
+    /*
+    // The following are the UITextViewDelegate methods; they simply write to the console log for demonstration purposes
+    
+    func textViewDidBeginEditing(textView: UITextView)
+    {
+    println("nextDelegate textViewDidBeginEditing")
+    }
+    func textViewShouldBeginEditing(textView: UITextView) -> Bool
+    {
+    println("nextDelegate textViewShouldBeginEditing")
+    return true
+    }
+    
+    func textViewShouldEndEditing(textView: UITextView) -> Bool
+    {
+    println("nextDelegate textViewShouldEndEditing")
+    return true
+    }
+    
+    func textViewDidEndEditing(textView: UITextView)
+    {
+    println("nextDelegate textViewDidEndEditing")
+    }
+    
+    func textViewDidChangeSelection(textView: UITextView)
+    {
+    println("nextDelegate textViewDidChangeSelection")
+    }
+    
+    // The following are the UITextFieldDelegate methods; they simply write to the console log for demonstration purposes
     
     func textFieldShouldBeginEditing(textField: UITextField) -> Bool
     {
-        println("nextDelegate textFieldShouldBeginEditing")
-        return true
+    println("nextDelegate textFieldShouldBeginEditing")
+    return true
     }
-
+    
     func textFieldDidBeginEditing(textField: UITextField)
     {
-        println("nextDelegate textFieldDidBeginEditing")
+    println("nextDelegate textFieldDidBeginEditing")
     }
-
+    
     func textFieldShouldEndEditing(textField: UITextField) -> Bool
     {
-        println("nextDelegate textFieldShouldEndEditing")
-        return true
+    println("nextDelegate textFieldShouldEndEditing")
+    return true
     }
     
     func textFieldDidEndEditing(textField: UITextField)
     {
-        println("nextDelegate textFieldDidEndEditing")
+    println("nextDelegate textFieldDidEndEditing")
     }
-
+    
     func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool
     {
-        println("nextDelegate textField:shouldChangeCharactersInRange: \(NSStringFromRange(range)) Original=\(textField.text), replacement = \(string)")
-        return true
+    println("nextDelegate textField:shouldChangeCharactersInRange: \(NSStringFromRange(range)) Original=\(textField.text), replacement = \(string)")
+    return true
     }
-
+    
     func textFieldShouldClear(textField: UITextField) -> Bool
     {
-        println("nextDelegate textFieldShouldClear")
-        return true
+    println("nextDelegate textFieldShouldClear")
+    return true
     }
-
+    
     func textFieldShouldReturn(textField: UITextField) -> Bool
     {
-        println("nextDelegate textFieldShouldReturn")
-        return true
+    println("nextDelegate textFieldShouldReturn")
+    return true
     }
+    */
 
     
 }

@@ -143,16 +143,59 @@ println("appdelegate application - source Application URL = \(url.scheme)")
         }
         else if "EvesCRM-fill-xc" == url.scheme
         {
-            var tempController: agendaItemViewController!
-            
+            var textExpander: SMTEDelegateController!
             if myCurrentViewController.isKindOfClass(agendaItemViewController)
             {
+                var tempController: agendaItemViewController!
                 tempController = myCurrentViewController as! agendaItemViewController
+                textExpander = tempController.textExpander
+            }
+            else if myCurrentViewController.isKindOfClass(meetingAgendaViewController)
+            {
+                var tempController: meetingAgendaViewController!
+                tempController = myCurrentViewController as! meetingAgendaViewController
+                textExpander = tempController.textExpander
+            }
+            else if myCurrentViewController.isKindOfClass(taskViewController)
+            {
+                var tempController: taskViewController!
+                tempController = myCurrentViewController as! taskViewController
+                textExpander = tempController.textExpander
+            }
+            else if myCurrentViewController.isKindOfClass(settingsViewController)
+            {
+                var tempController: settingsViewController!
+                tempController = myCurrentViewController as! settingsViewController
+                textExpander = tempController.textExpander
+            }
+            else if myCurrentViewController.isKindOfClass(meetingsViewController)
+            {
+                var tempController: meetingsViewController!
+                tempController = myCurrentViewController as! meetingsViewController
+                textExpander = tempController.textExpander
+            }
+            else if myCurrentViewController.isKindOfClass(reminderViewController)
+            {
+                var tempController: reminderViewController!
+                tempController = myCurrentViewController as! reminderViewController
+                textExpander = tempController.textExpander
+            }
+            else if myCurrentViewController.isKindOfClass(MaintainProjectViewController)
+            {
+                var tempController: MaintainProjectViewController!
+                tempController = myCurrentViewController as! MaintainProjectViewController
+                textExpander = tempController.textExpander
+            }
+            else if myCurrentViewController.isKindOfClass(taskUpdatesViewController)
+            {
+                var tempController: taskUpdatesViewController!
+                tempController = myCurrentViewController as! taskUpdatesViewController
+                textExpander = tempController.textExpander
             }
 
-            var textExpander: SMTEDelegateController = tempController.textExpander
-    
             
+//            var textExpander: SMTEDelegateController = tempController.textExpander
+
             // let myURL = NSURL(string: "EvesCRM://x-callback-url/SMTEsetlog?log=off")
             // let myURL = NSURL(string: "EvesCRM://x-callback-url/SMTEsetlog?log=detailed")
             // textExpander.handleFillCompletionURL(myURL)

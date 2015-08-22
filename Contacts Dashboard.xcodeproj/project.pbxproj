@@ -645,19 +645,19 @@
 			children = (
 				3406506A1ADDF8FF00C90CBB /* AppDelegate.swift */,
 				3406506F1ADDF8FF00C90CBB /* ViewController.swift */,
-				349331C81B705756004AA569 /* SideBarTableViewController.swift */,
-				34111C391AEC898B003090EB /* reminderViewController.swift */,
-				346B70DD1AF70B8F005E1BC2 /* maintainProjectViewController.swift */,
-				341E08C61B01B1B90036202D /* settingsViewController.swift */,
-				34FED38C1B044BF1006B414C /* maintainPanes.swift */,
-				342C0A211B4B844D00A73CA5 /* meetingsViewController.swift */,
 				3410561D1B589D92002B0ED9 /* AgendaItemViewController.swift */,
-				342A357B1B5F727200D6DB29 /* taskViewController.swift */,
-				34F35BD21B6B3F7000A19ACE /* taskUpdatesViewController.swift */,
-				34F35BCB1B6B18AF00A19ACE /* tasksTabViewController.swift */,
+				34FED38C1B044BF1006B414C /* maintainPanes.swift */,
+				346B70DD1AF70B8F005E1BC2 /* maintainProjectViewController.swift */,
 				34F35BDD1B6B549000A19ACE /* meetingTabViewController.swift */,
 				34F35BE41B6B54A200A19ACE /* meetingAgendaViewController.swift */,
+				342C0A211B4B844D00A73CA5 /* meetingsViewController.swift */,
+				34111C391AEC898B003090EB /* reminderViewController.swift */,
+				341E08C61B01B1B90036202D /* settingsViewController.swift */,
+				349331C81B705756004AA569 /* SideBarTableViewController.swift */,
 				340F84A61B79BE220028439B /* taskListViewController.swift */,
+				34F35BCB1B6B18AF00A19ACE /* tasksTabViewController.swift */,
+				342A357B1B5F727200D6DB29 /* taskViewController.swift */,
+				34F35BD21B6B3F7000A19ACE /* taskUpdatesViewController.swift */,
 			);
 			name = "My ViewControllers";
 			sourceTree = "<group>";

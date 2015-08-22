@@ -1338,6 +1338,81 @@ class myCalendarItem
                     myExportString = writeLine(myExportString, inLineString: myLine)
                 }
             }
+            
+            // Outstanding previous meetings
+            
+            let myOutstandingTasks = parsePastMeeting(myPreviousMinutes)
+            
+            if myOutstandingTasks.count > 0
+            {
+                // We want to build up a table here to display the data
+                myExportString = writeLine(myExportString, inLineString: "")
+                myExportString = writeLine(myExportString, inLineString: "")
+                myLine = "Outstanding Actions from Previous Meetings"
+                myExportString = writeLine(myExportString, inLineString: myLine)
+                myExportString = writeLine(myExportString, inLineString: "")
+                
+                myLine = "||Task"
+                myLine += "||Status"
+                myLine += "||Project"
+                myLine += "||Due Date"
+                myLine += "||Context||"
+                
+                myExportString = writeLine(myExportString, inLineString: myLine)
+                
+                for myTask in myOutstandingTasks
+                {
+                    myLine = "||\(myTask.title)"
+                    myLine += "||\(myTask.status)"
+                    
+                    // Get the project name to display
+                    
+                    let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID, inTeamID: myTeamID)
+                    
+                    if myData3.count == 0
+                    {
+                        myLine += "||No Project set"
+                    }
+                    else
+                    {
+                        myLine += "||\(myData3[0].projectName)"
+                    }
+                    
+                    if myTask.displayDueDate == ""
+                    {
+                        myLine += "||No due date set"
+                    }
+                    else
+                    {
+                        myLine += "||\(myTask.displayDueDate)"
+                    }
+                    
+                    if myTask.contexts.count == 0
+                    {
+                        myLine += "||No context set"
+                    }
+                    else if myTask.contexts.count == 1
+                    {
+                        myLine += "||\(myTask.contexts[0].name)"
+                    }
+                    else
+                    {
+                        var itemCount: Int = 0
+                        myLine += "||"
+                        for myItem4 in myTask.contexts
+                        {
+                            if itemCount > 0
+                            {
+                                myLine += ", "
+                            }
+                            myLine += "\(myItem4.name)"
+                            itemCount++
+                        }
+                        myLine += "||"
+                    }
+                    myExportString = writeLine(myExportString, inLineString: myLine)
+                }
+            }
         }
         
         myExportString = writeLine(myExportString, inLineString: "")
@@ -1698,6 +1773,83 @@ class myCalendarItem
                         myTaskTable += "</td>"
                     }
                     
+                    myTaskTable += "</tr>"
+                }
+                myTaskTable += "</table>"
+                myExportString = writeHTMLLine(myExportString, inLineString: myTaskTable)
+            }
+            
+            // Outstanding previous meetings
+            
+            let myOutstandingTasks = parsePastMeeting(myPreviousMinutes)
+                
+            if myOutstandingTasks.count > 0
+            {
+                // We want to build up a table here to display the data
+                myLine = "<center><h3>Outstanding Actions from Previous Meetings</h3></center>"
+                myExportString = writeHTMLLine(myExportString, inLineString: myLine)
+                
+                myTaskTable = "<table border=\"1\">"
+                myTaskTable += "<tr>"
+                myTaskTable += "<th>Task</th>"
+                myTaskTable += "<th>Status</th>"
+                myTaskTable += "<th>Project</th>"
+                myTaskTable += "<th>Due Date</th>"
+                myTaskTable += "<th>Context</th>"
+                myTaskTable += "</tr>"
+
+                for myTask in myOutstandingTasks
+                {
+                    myTaskTable += "<tr>"
+                    myTaskTable += "<td>\(myTask.title)</td>"
+                    myTaskTable += "<td>\(myTask.status)</td>"
+                        
+                    // Get the project name to display
+                        
+                    let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID, inTeamID: myTeamID)
+                        
+                    if myData3.count == 0
+                    {
+                        myTaskTable += "<td>No Project set</td>"
+                    }
+                    else
+                    {
+                        myTaskTable += "<td>\(myData3[0].projectName)</td>"
+                    }
+                        
+                    if myTask.displayDueDate == ""
+                    {
+                        myTaskTable += "<td>No due date set</td>"
+                    }
+                    else
+                    {
+                        myTaskTable += "<td>\(myTask.displayDueDate)</td>"
+                    }
+                        
+                    if myTask.contexts.count == 0
+                    {
+                        myTaskTable += "<td>No context set</td>"
+                    }
+                    else if myTask.contexts.count == 1
+                    {
+                        myTaskTable += "<td>\(myTask.contexts[0].name)</td>"
+                    }
+                    else
+                    {
+                        var itemCount: Int = 0
+                        myTaskTable += "<td>"
+                        for myItem4 in myTask.contexts
+                        {
+                            if itemCount > 0
+                            {
+                                myTaskTable += "<p>"
+                            }
+                            myTaskTable += "\(myItem4.name)"
+                            itemCount++
+                        }
+                        myTaskTable += "</td>"
+                    }
+                        
                     myTaskTable += "</tr>"
                 }
                 myTaskTable += "</table>"
@@ -2500,3 +2652,50 @@ class MeetingModel: NSObject
         }
     }
 }
+
+func parsePastMeeting(inMeetingID: String) -> [task]
+{
+    // Get the the details for the meeting, in order to determine the previous task ID
+    var myReturnArray: [task] = Array()
+    
+    let myData = myDatabaseConnection.loadAgenda(inMeetingID, inTeamID: myTeamID)
+    
+    if myData.count == 0
+    {
+        // No meeting found, so no further action
+    }
+    else
+    {
+        for myItem in myData
+        {
+            var myArray: [task] = Array()
+            let myData2 = myDatabaseConnection.getMeetingsTasks(myItem.meetingID)
+            
+            for myItem2 in myData2
+            {
+                let newTask = task(inTaskID: myItem2.taskID as Int)
+                if newTask.status != "Closed"
+                {
+                    myArray.append(newTask)
+                }
+            }
+            
+            if myItem.previousMeetingID != ""
+            {
+                myReturnArray = parsePastMeeting(myItem.previousMeetingID)
+                
+                for myWork in myArray
+                {
+                    myReturnArray.append(myWork)
+                }
+            }
+            else
+            {
+                myReturnArray = myArray
+            }
+        }
+    }
+    
+    return myReturnArray
+}
+
