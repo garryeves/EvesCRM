@@ -74,14 +74,27 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
             menuDetails.append(displayObject)
         }
         
-        // Get list of Contexts
+        let myContextList = contexts()
+        // Get list of People Contexts
+        
+        displayObject = createMenuItem("Contexts", inType: "Header", inObject: "People")
+        menuDetails.append(displayObject)
+        
+        for myContext in myContextList.peopleContextsByHierarchy
+        {
+            displayObject = createMenuItem(myContext.contextHierarchy, inType: "People", inObject: myContext)
+            menuDetails.append(displayObject)
+        }
+        
+        displayObject = createMenuItem("Address Book", inType: "People", inObject: "Address Book")
+        menuDetails.append(displayObject)
+        
+        // Get list of Non People Contexts
         
         displayObject = createMenuItem("Contexts", inType: "Header", inObject: "Contexts")
         menuDetails.append(displayObject)
         
-        let myContextList = contexts()
-        
-        for myContext in myContextList.contextsByHierarchy
+        for myContext in myContextList.nonPeopleContextsByHierarchy
         {
             displayObject = createMenuItem(myContext.contextHierarchy, inType: "Context", inObject: myContext)
             menuDetails.append(displayObject)
@@ -90,15 +103,12 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
         displayObject = createMenuItem("Actions", inType: "Header", inObject: "Action")
         menuDetails.append(displayObject)
         
-        displayObject = createMenuItem("Address Book", inType: "Action", inObject: "Address Book")
-        menuDetails.append(displayObject)
-        
         displayObject = createMenuItem("Maintain Display Panes", inType: "Action", inObject: "Maintain Display Panes")
         menuDetails.append(displayObject)
        
         displayObject = createMenuItem("Load TextExpander Snippets", inType: "Action", inObject: "Load TextExpander Snippets")
         menuDetails.append(displayObject)
-
+        
         displayObject = createMenuItem("Settings", inType: "Action", inObject: "Settings")
         menuDetails.append(displayObject)
         
@@ -192,28 +202,4 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
         showSideBar(false)
         delegate?.sideBarWillClose?()
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }

@@ -42,8 +42,9 @@ class displayPanes
     {
         // Populate roles with initial values
         //  Do this by checking to see if it exists already, if it does then do nothing otherwise create the pane
+//        var loadSet = ["Calendar", "Details", "Evernote", "GMail", "Hangouts", "Omnifocus", "OneNote", "Project Membership", "Reminders", "Tasks"]
         
-        var loadSet = ["Calendar", "Details", "Evernote", "GMail", "Hangouts", "Omnifocus", "OneNote", "Project Membership", "Reminders", "Tasks"]
+        var loadSet = ["Calendar", "Details", "Evernote", "GMail", "Hangouts", "OneNote", "Project Membership", "Reminders", "Tasks"]
  
         for myItem in loadSet
         {

@@ -596,29 +596,29 @@
 		34948C1D1B87018300C1F12D /* Database Tables */ = {
 			isa = PBXGroup;
 			children = (
-				343B3F1D1B83045D0053777B /* DBSync.swift */,
 				344726601B54D6A800BEFF0B /* coreDatabase.swift */,
-				346B70F41AF75FF4005E1BC2 /* Roles.swift */,
-				346B70F51AF75FF4005E1BC2 /* ProjectTeamMembers.swift */,
-				342C0A0F1B4B7CED00A73CA5 /* MeetingSupportingDocs.swift */,
+				343B3F1D1B83045D0053777B /* DBSync.swift */,
+				346A2E4B1B66027100C6C63E /* AreaOfResponsibility.swift */,
+				34A578BC1B5F6110008D3D8E /* Context.swift */,
+				34BDECAB1B0089CC008C9F3F /* Decodes.swift */,
+				346A2E4F1B66027100C6C63E /* GoalAndObjective.swift */,
+				342C0A141B4B7CED00A73CA5 /* MeetingAgenda.swift */,
 				342C0A121B4B7CED00A73CA5 /* MeetingAgendaItem.swift */,
 				342C0A131B4B7CED00A73CA5 /* MeetingAttendees.swift */,
-				342C0A141B4B7CED00A73CA5 /* MeetingAgenda.swift */,
+				342C0A0F1B4B7CED00A73CA5 /* MeetingSupportingDocs.swift */,
 				34A578C21B5F6170008D3D8E /* MeetingTasks.swift */,
-				34A578BF1B5F6110008D3D8E /* Task.swift */,
-				34A578BC1B5F6110008D3D8E /* Context.swift */,
-				34A578B91B5F6110008D3D8E /* TaskContext.swift */,
-				34C7E8061B5F625C005555B3 /* TaskUpdates.swift */,
-				34C899F61B8447340087DA8E /* TaskPredecessor.swift */,
-				346A2E4A1B66027100C6C63E /* Projects.swift */,
-				346A2E4B1B66027100C6C63E /* AreaOfResponsibility.swift */,
-				346A2E4C1B66027100C6C63E /* PurposeAndCoreValue.swift */,
-				346A2E4E1B66027100C6C63E /* Vision.swift */,
-				346A2E4F1B66027100C6C63E /* GoalAndObjective.swift */,
-				34B4C7E11B8191930098F6BC /* TaskAttachment.swift */,
-				349C4D3E1B033B6400EC8099 /* Stages.swift */,
 				34BDECBD1B009C17008C9F3F /* Panes.swift */,
-				34BDECAB1B0089CC008C9F3F /* Decodes.swift */,
+				346A2E4A1B66027100C6C63E /* Projects.swift */,
+				346B70F51AF75FF4005E1BC2 /* ProjectTeamMembers.swift */,
+				346A2E4C1B66027100C6C63E /* PurposeAndCoreValue.swift */,
+				346B70F41AF75FF4005E1BC2 /* Roles.swift */,
+				349C4D3E1B033B6400EC8099 /* Stages.swift */,
+				34A578BF1B5F6110008D3D8E /* Task.swift */,
+				34B4C7E11B8191930098F6BC /* TaskAttachment.swift */,
+				34A578B91B5F6110008D3D8E /* TaskContext.swift */,
+				34C899F61B8447340087DA8E /* TaskPredecessor.swift */,
+				34C7E8061B5F625C005555B3 /* TaskUpdates.swift */,
+				346A2E4E1B66027100C6C63E /* Vision.swift */,
 			);
 			name = "Database Tables";
 			sourceTree = "<group>";
@@ -626,16 +626,16 @@
 		34948C221B8701DB00C1F12D /* My Classes */ = {
 			isa = PBXGroup;
 			children = (
-				34627D221B60B1C80096DAC4 /* taskManagementClasses.swift */,
-				349331CE1B70576C004AA569 /* SideBar.swift */,
-				348E6D4A1ADF74C800697268 /* ContactDetails.swift */,
-				347518D81AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift */,
 				346D5E011AE5F9C700F858E7 /* CalendarDetails.swift */,
-				344F22711AF1DFF3002C373E /* evernoteDetails.swift */,
+				348E6D4A1ADF74C800697268 /* ContactDetails.swift */,
 				34BDECA91B008846008C9F3F /* displayPanes.swift */,
 				341F23111AFC284400FC2883 /* DropboxCoreService.swift */,
-				34B525381B130F1C00093250 /* oneNote.swift */,
+				344F22711AF1DFF3002C373E /* evernoteDetails.swift */,
+				347518D81AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift */,
 				34B9C0101B26BA70005E52F9 /* gMail.swift */,
+				34B525381B130F1C00093250 /* oneNote.swift */,
+				34627D221B60B1C80096DAC4 /* taskManagementClasses.swift */,
+				349331CE1B70576C004AA569 /* SideBar.swift */,
 			);
 			name = "My Classes";
 			sourceTree = "<group>";

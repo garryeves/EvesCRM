@@ -1831,9 +1831,47 @@ class contexts: NSObject
             
             workingArray = myContexts
             
+            workingArray.sorted { $0.contextHierarchy < $1.contextHierarchy }
+            
+            return workingArray
+        }
+    }
+    
+    var peopleContextsByHierarchy: [context]
+    {
+        get
+        {
+            var workingArray: [context] = Array()
+            
+            for myContext in myContexts
+            {
+                if myContext.personID != 0
+                {
+                    workingArray.append(myContext)
+                }
+            }
             
             workingArray.sorted { $0.contextHierarchy < $1.contextHierarchy }
             
+            return workingArray
+        }
+    }
+
+    var nonPeopleContextsByHierarchy: [context]
+        {
+        get
+        {
+            var workingArray: [context] = Array()
+            
+            for myContext in myContexts
+            {
+                if myContext.personID == 0
+                {
+                    workingArray.append(myContext)
+                }
+            }
+            
+            workingArray.sorted { $0.contextHierarchy < $1.contextHierarchy }
             
             return workingArray
         }

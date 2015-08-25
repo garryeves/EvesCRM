@@ -307,6 +307,7 @@ println("appdelegate application - source Application URL = \(url.scheme)")
         
         let mOptions = [NSMigratePersistentStoresAutomaticallyOption: true,
             NSInferMappingModelAutomaticallyOption: true,
+    //        NSPersistentStoreRebuildFromUbiquitousContentOption: true,
             NSPersistentStoreUbiquitousContentNameKey : "EvesCRMStore"]
       
         //_persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
@@ -331,7 +332,7 @@ println("appdelegate application - source Application URL = \(url.scheme)")
             NSLog("Unresolved error \(error), \(error!.userInfo)")
             abort()
         }
-        
+        self.registerCoordinatorForStoreNotifications (coordinator!)
         return coordinator
     }()
 
@@ -341,8 +342,13 @@ println("appdelegate application - source Application URL = \(url.scheme)")
         if coordinator == nil {
             return nil
         }
-        var managedObjectContext = NSManagedObjectContext()
+        
+        var managedObjectContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
+        managedObjectContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         managedObjectContext.persistentStoreCoordinator = coordinator
+        
+    //    var managedObjectContext = NSManagedObjectContext()
+     //   managedObjectContext.persistentStoreCoordinator = coordinator
         return managedObjectContext
     }()
 
@@ -365,21 +371,23 @@ println("appdelegate application - source Application URL = \(url.scheme)")
     func registerCoordinatorForStoreNotifications (coordinator : NSPersistentStoreCoordinator) {
         let nc : NSNotificationCenter = NSNotificationCenter.defaultCenter();
         
-        nc.addObserver(self, selector: "handleStoresWillChange:",
+        nc.addObserver(self, selector: "storesWillChange:",
             name: NSPersistentStoreCoordinatorStoresWillChangeNotification,
             object: coordinator)
         
-        nc.addObserver(self, selector: "handleStoresDidChange:",
+        nc.addObserver(self, selector: "storesDidChange:",
             name: NSPersistentStoreCoordinatorStoresDidChangeNotification,
             object: coordinator)
         
-        nc.addObserver(self, selector: "handleStoresWillRemove:",
-            name: NSPersistentStoreCoordinatorWillRemoveStoreNotification,
-            object: coordinator)
+ //       nc.addObserver(self, selector: "handleStoresWillRemove:",
+ //           name: NSPersistentStoreCoordinatorWillRemoveStoreNotification,
+ //           object: coordinator)
         
-        nc.addObserver(self, selector: "handleStoreChangedUbiquitousContent:",
+        nc.addObserver(self, selector: "persistentStoreDidImportUbiquitousContentChanges:",
             name: NSPersistentStoreDidImportUbiquitousContentChangesNotification,
             object: coordinator)
+        
+        nc.addObserver(self, selector: "mergeChanges:", name: NSManagedObjectContextDidSaveNotification, object: coordinator);
     }
     
     // GRE Added for Google sign in
@@ -400,5 +408,70 @@ println("appdelegate application - source Application URL = \(url.scheme)")
             // Perform any operations when the user disconnects from app here.
             // ...
     }
+    
+    
+    // GRE coredata
+    
+    // Subscribe to NSPersistentStoreCoordinatorStoresWillChangeNotification
+    // most likely to be called if the user enables / disables iCloud
+    // (either globally, or just for your app) or if the user changes
+    // iCloud accounts.
+    func storesWillChange(notification: NSNotification) {
+        NSLog("storesWillChange notif:\(notification)");
+        if let moc = self.managedObjectContext {
+            moc.performBlockAndWait {
+                var error: NSError? = nil;
+                if moc.hasChanges && !moc.save(&error) {
+                    NSLog("Save error: \(error)");
+                } else {
+                    // drop any managed objects
+                }
+                
+                // Reset context anyway, as suggested by Apple Support
+                // The reason is that when storesWillChange notification occurs, Core Data is going to switch the stores. During and after that switch (happening in background), your currently fetched objects will become invalid.
+                
+                moc.reset();
+            }
+            
+            // now reset your UI to be prepared for a totally different
+            // set of data (eg, popToRootViewControllerAnimated:)
+            // BUT don't load any new data yet.
+        }
+    }
+    
+    // Subscribe to NSPersistentStoreCoordinatorStoresDidChangeNotification
+    func storesDidChange(notification: NSNotification) {
+        // here is when you can refresh your UI and
+        // load new data from the new store
+        NSLog("storesDidChange posting notif");
+        self.postRefetchDatabaseNotification();
+    }
+    
+    func postRefetchDatabaseNotification() {
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            NSNotificationCenter.defaultCenter().postNotificationName(
+                "kRefetchDatabaseNotification", // Replace with your constant of the refetch name, and add observer in the proper place - e.g. RootViewController
+                object: nil);
+        })
+    }
+    
+    func mergeChanges(notification: NSNotification) {
+        NSLog("mergeChanges notif:\(notification)")
+        if let moc = managedObjectContext {
+            moc.performBlock {
+                moc.mergeChangesFromContextDidSaveNotification(notification)
+                self.postRefetchDatabaseNotification()
+            }
+        }
+    }
+    
+    func persistentStoreDidImportUbiquitousContentChanges(notification: NSNotification) {
+        self.mergeChanges(notification);
+    }
+
+    
+    
+    
+    
 }
 

@@ -2752,7 +2752,16 @@ println("Nothing found")
                 let myProject = passedItem.displayObject as! Projects
                 loadProject(myProject.projectID as Int)
             
-            case "Context":
+        case "People":
+            if passedItem.displayString == "Address Book"
+            {
+                let picker = ABPeoplePickerNavigationController()
+                
+                picker.peoplePickerDelegate = self
+                presentViewController(picker, animated: true, completion: nil)
+            }
+            else
+            {
                 let myPerson: ABRecord! = findPersonRecord(passedItem.displayString) as ABRecord!
             
                 if myPerson == nil
@@ -2763,16 +2772,14 @@ println("Nothing found")
                 {
                     loadPerson(myPerson)
                 }
+            }
+
+            case "Context":
+                loadContext(passedItem.displayString)
             
             case "Action":
                 switch passedItem.displayString
                 {
-                    case "Address Book":
-                        let picker = ABPeoplePickerNavigationController()
-                        
-                        picker.peoplePickerDelegate = self
-                        presentViewController(picker, animated: true, completion: nil)
-                    
                     case "Maintain Projects":
                         let MaintainProjectViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("MaintainProject") as! MaintainProjectViewController
                         
@@ -2795,26 +2802,25 @@ println("Nothing found")
                         maintainPaneViewControl.delegate = self
                         
                         self.presentViewController(maintainPaneViewControl, animated: true, completion: nil)
-                
                     
-                case "Load TextExpander Snippets" :
-                    // Textexpander
+                    case "Load TextExpander Snippets" :
+                        // Textexpander
                     
-                    if SMTEDelegateController.isTextExpanderTouchInstalled() == true
-                    {
-                        if textExpander == nil
+                        if SMTEDelegateController.isTextExpanderTouchInstalled() == true
                         {
-                            // Lazy load of TextExpander
-                            textExpander = SMTEDelegateController()
-                            textExpander.clientAppName = "EvesCRM"
-                            textExpander.getSnippetsScheme = "EvesCRM-get-snippets-xc"
-                            textExpander.fillCompletionScheme = "EvesCRM-fill-xc"
-                            textExpander.fillDelegate = self
+                            if textExpander == nil
+                            {
+                                // Lazy load of TextExpander
+                                textExpander = SMTEDelegateController()
+                                textExpander.clientAppName = "EvesCRM"
+                                textExpander.getSnippetsScheme = "EvesCRM-get-snippets-xc"
+                                textExpander.fillCompletionScheme = "EvesCRM-fill-xc"
+                                textExpander.fillDelegate = self
+                            }
+                            textExpander.getSnippets()
                         }
-                        textExpander.getSnippets()
-                    }
                     
-                default: println("sideBarDidSelectButtonAtIndex - Action selector: Hit default")
+                    default: println("sideBarDidSelectButtonAtIndex - Action selector: Hit default")
                     
                 }
             

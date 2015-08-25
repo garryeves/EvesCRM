@@ -9,10 +9,12 @@
 import UIKit
 import CoreData
 
+
 class coreDatabase: NSObject
 {
-    private let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
-
+    
+    private let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext 
+    
     func getAllOpenProjects(inTeamID: Int)->[Projects]
     {
         let fetchRequest = NSFetchRequest(entityName: "Projects")

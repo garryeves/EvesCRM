@@ -196,7 +196,7 @@
                                         <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="717" height="50"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tf2-2R-YWt" userLabel="lblTaskStatus">
@@ -366,7 +366,8 @@
                                                     <exclude reference="tLB-Bu-GUs"/>
                                                 </mask>
                                             </variation>
-                                            <variation key="heightClass=regular-widthClass=regular">
+                                            <variation key="heightClass=regular-widthClass=regular" misplaced="YES">
+                                                <rect key="frame" x="376" y="8" width="100" height="34"/>
                                                 <mask key="constraints">
                                                     <include reference="tLB-Bu-GUs"/>
                                                 </mask>
@@ -385,7 +386,8 @@
                                                     <exclude reference="NhW-u2-1ug"/>
                                                 </mask>
                                             </variation>
-                                            <variation key="heightClass=regular-widthClass=regular">
+                                            <variation key="heightClass=regular-widthClass=regular" misplaced="YES">
+                                                <rect key="frame" x="266" y="8" width="100" height="34"/>
                                                 <mask key="constraints">
                                                     <include reference="NhW-u2-1ug"/>
                                                 </mask>
@@ -396,6 +398,9 @@
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
+                                            <variation key="heightClass=regular-widthClass=regular" misplaced="YES">
+                                                <rect key="frame" x="8" y="8" width="88" height="34"/>
+                                            </variation>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Owner" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Kqo-uC-x2B" userLabel="lblTaskOwner">
                                             <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
@@ -410,7 +415,8 @@
                                                     <exclude reference="n9O-bj-uum"/>
                                                 </mask>
                                             </variation>
-                                            <variation key="heightClass=regular-widthClass=regular">
+                                            <variation key="heightClass=regular-widthClass=regular" misplaced="YES">
+                                                <rect key="frame" x="106" y="8" width="150" height="34"/>
                                                 <mask key="constraints">
                                                     <include reference="n9O-bj-uum"/>
                                                 </mask>
@@ -1061,7 +1067,7 @@
                                         <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="248" height="50"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="scS-SC-OnQ" userLabel="lblContext">
@@ -1810,7 +1816,7 @@
                             </mask>
                         </variation>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Details" id="Uxp-dY-nX7"/>
+                    <tabBarItem key="tabBarItem" title="Details" image="task-32" id="Uxp-dY-nX7"/>
                     <connections>
                         <outlet property="btnEnergy" destination="yiu-Ik-75X" id="2cp-Va-Alk"/>
                         <outlet property="btnEstTimeInterval" destination="KU9-Dy-ZBi" id="fhK-rT-nie"/>
@@ -2446,7 +2452,7 @@
                                         <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="320" height="50"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fC0-JJ-t3O" userLabel="lblRole">
@@ -2558,7 +2564,7 @@
                                         <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="290" height="50"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ITw-Fi-Lo5" userLabel="lblStage">
@@ -2659,11 +2665,22 @@
                                     <action selector="addStageClick:" destination="IrM-yb-4SV" eventType="touchUpInside" id="LBz-VT-oMv"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Hpr-Az-FRs">
+                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
+                                <state key="normal" title="Reset Stages">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="buttonResetStagesClick:" destination="IrM-yb-4SV" eventType="touchUpInside" id="5De-oN-SDg"/>
+                                </connections>
+                            </button>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="HAV-Sv-r7A" userLabel="colDecodes">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="300" id="QHt-ej-1oF"/>
+                                    <constraint firstAttribute="height" constant="300" id="QHt-ej-1oF">
+                                        <variation key="heightClass=regular-widthClass=regular" constant="340"/>
+                                    </constraint>
                                 </constraints>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="JUz-rd-CE5">
                                     <size key="itemSize" width="50" height="50"/>
@@ -2676,7 +2693,7 @@
                                         <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="512" height="50"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5PA-xN-3dl" userLabel="lblKey">
@@ -2805,7 +2822,7 @@
                                         <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="525" height="50"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dEJ-S0-1FM" userLabel="lblKey">
@@ -2901,7 +2918,7 @@
                                         <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="540" height="50"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="mLw-DE-YcZ" userLabel="txtValue">
@@ -3007,15 +3024,6 @@
                                     <outlet property="delegate" destination="IrM-yb-4SV" id="yqG-lB-zpc"/>
                                 </connections>
                             </collectionView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Hpr-Az-FRs">
-                                <rect key="frame" x="-23" y="-15" width="46" height="30"/>
-                                <state key="normal" title="Reset Stages">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="buttonResetStagesClick:" destination="IrM-yb-4SV" eventType="touchUpInside" id="5De-oN-SDg"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -3046,13 +3054,13 @@
                             <constraint firstAttribute="trailingMargin" secondItem="HAV-Sv-r7A" secondAttribute="trailing" constant="392" id="EG4-EC-Izj">
                                 <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
                             </constraint>
-                            <constraint firstItem="XRp-vg-2lv" firstAttribute="top" secondItem="HAV-Sv-r7A" secondAttribute="bottom" constant="13" id="EGU-8o-JKz">
-                                <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
-                            </constraint>
                             <constraint firstItem="So5-j5-NMK" firstAttribute="top" secondItem="mnK-Hk-GdZ" secondAttribute="bottom" constant="8" id="EUs-NQ-zEs"/>
                             <constraint firstItem="Vvu-It-AdM" firstAttribute="width" secondItem="JEr-5r-2OO" secondAttribute="width" id="LLC-0v-jwh"/>
                             <constraint firstItem="mbn-fd-vJS" firstAttribute="leading" secondItem="mnK-Hk-GdZ" secondAttribute="trailing" constant="56" id="LVb-Rn-4Df">
                                 <variation key="heightClass=regular-widthClass=regular" constant="20"/>
+                            </constraint>
+                            <constraint firstItem="XRp-vg-2lv" firstAttribute="top" secondItem="HAV-Sv-r7A" secondAttribute="bottom" constant="40" id="OLQ-Bt-fdb">
+                                <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
                             </constraint>
                             <constraint firstAttribute="trailingMargin" secondItem="5YL-GI-4nm" secondAttribute="trailing" constant="120" id="OTg-K0-INY">
                                 <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
@@ -3102,7 +3110,6 @@
                                 <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
                             </constraint>
                             <constraint firstAttribute="trailingMargin" secondItem="cTl-LG-Z9u" secondAttribute="trailing" constant="96" id="oHL-j3-xkb"/>
-                            <constraint firstItem="4ML-Au-ZWM" firstAttribute="leading" secondItem="VDv-7e-f69" secondAttribute="leadingMargin" id="qie-4K-5t1"/>
                             <constraint firstItem="cTl-LG-Z9u" firstAttribute="top" secondItem="mnK-Hk-GdZ" secondAttribute="bottom" constant="8" id="rcJ-8J-L00"/>
                             <constraint firstItem="HAV-Sv-r7A" firstAttribute="top" secondItem="4ML-Au-ZWM" secondAttribute="bottom" constant="8" id="tPL-ig-0UV">
                                 <variation key="heightClass=regular-widthClass=regular" constant="10"/>
@@ -3131,8 +3138,8 @@
                                 <exclude reference="Vvu-It-AdM"/>
                                 <exclude reference="JEr-5r-2OO"/>
                                 <exclude reference="5sQ-35-e8d"/>
-                                <exclude reference="HAV-Sv-r7A"/>
                                 <exclude reference="Hpr-Az-FRs"/>
+                                <exclude reference="HAV-Sv-r7A"/>
                             </mask>
                             <mask key="constraints">
                                 <exclude reference="AVz-gO-fmh"/>
@@ -3143,7 +3150,7 @@
                                 <exclude reference="EUs-NQ-zEs"/>
                                 <exclude reference="VO4-aM-rZz"/>
                                 <exclude reference="iPq-vK-PGe"/>
-                                <exclude reference="EGU-8o-JKz"/>
+                                <exclude reference="OLQ-Bt-fdb"/>
                                 <exclude reference="TcW-eD-cEd"/>
                                 <exclude reference="oHL-j3-xkb"/>
                                 <exclude reference="rcJ-8J-L00"/>
@@ -3153,7 +3160,6 @@
                                 <exclude reference="iJj-Ls-B6k"/>
                                 <exclude reference="XpK-Rf-5zd"/>
                                 <exclude reference="iEn-WA-Azw"/>
-                                <exclude reference="qie-4K-5t1"/>
                                 <exclude reference="2Ed-eM-qXY"/>
                                 <exclude reference="g5z-8U-ett"/>
                                 <exclude reference="VCo-sh-vPV"/>
@@ -3194,8 +3200,8 @@
                                 <include reference="Vvu-It-AdM"/>
                                 <include reference="JEr-5r-2OO"/>
                                 <include reference="5sQ-35-e8d"/>
-                                <include reference="HAV-Sv-r7A"/>
                                 <include reference="Hpr-Az-FRs"/>
+                                <include reference="HAV-Sv-r7A"/>
                             </mask>
                             <mask key="constraints">
                                 <include reference="AVz-gO-fmh"/>
@@ -3206,7 +3212,7 @@
                                 <include reference="EUs-NQ-zEs"/>
                                 <include reference="VO4-aM-rZz"/>
                                 <include reference="iPq-vK-PGe"/>
-                                <include reference="EGU-8o-JKz"/>
+                                <include reference="OLQ-Bt-fdb"/>
                                 <include reference="TcW-eD-cEd"/>
                                 <include reference="oHL-j3-xkb"/>
                                 <include reference="rcJ-8J-L00"/>
@@ -3216,7 +3222,6 @@
                                 <include reference="iJj-Ls-B6k"/>
                                 <include reference="XpK-Rf-5zd"/>
                                 <include reference="iEn-WA-Azw"/>
-                                <exclude reference="qie-4K-5t1"/>
                                 <include reference="2Ed-eM-qXY"/>
                                 <include reference="g5z-8U-ett"/>
                                 <include reference="VCo-sh-vPV"/>
@@ -3343,7 +3348,7 @@
                                         <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="404" height="50"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LCy-PL-DQw">
@@ -3884,7 +3889,7 @@
                                         <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="765" height="39"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0EF-CU-aNH" userLabel="lblStatus">
@@ -4033,6 +4038,9 @@
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
+                                            <variation key="heightClass=regular-widthClass=regular" misplaced="YES">
+                                                <rect key="frame" x="8" y="8" width="114" height="13"/>
+                                            </variation>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Status" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SXt-RN-GTL">
                                             <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
@@ -4047,7 +4055,8 @@
                                                     <exclude reference="Zo5-wu-sVO"/>
                                                 </mask>
                                             </variation>
-                                            <variation key="heightClass=regular-widthClass=regular">
+                                            <variation key="heightClass=regular-widthClass=regular" misplaced="YES">
+                                                <rect key="frame" x="132" y="8" width="100" height="13"/>
                                                 <mask key="constraints">
                                                     <include reference="Zo5-wu-sVO"/>
                                                 </mask>
@@ -4066,7 +4075,8 @@
                                                     <exclude reference="p3M-M4-XBk"/>
                                                 </mask>
                                             </variation>
-                                            <variation key="heightClass=regular-widthClass=regular">
+                                            <variation key="heightClass=regular-widthClass=regular" misplaced="YES">
+                                                <rect key="frame" x="242" y="8" width="70" height="13"/>
                                                 <mask key="constraints">
                                                     <include reference="p3M-M4-XBk"/>
                                                 </mask>
@@ -4631,7 +4641,7 @@
                             </mask>
                         </variation>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Details" id="zFg-Hu-EWz"/>
+                    <tabBarItem key="tabBarItem" title="Details" image="meeting-32" id="zFg-Hu-EWz"/>
                     <toolbarItems/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
@@ -4666,7 +4676,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="u7G-ez-2XM" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2852.25" y="1247.25"/>
+            <point key="canvasLocation" x="4314.75" y="655.5"/>
         </scene>
         <!--MeetingsTab-->
         <scene sceneID="zmC-Qc-niF">
@@ -4713,7 +4723,7 @@
                                         <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="675" height="88"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tvW-c9-mzF" userLabel="lblTargetDate">
@@ -4994,7 +5004,7 @@
                                         <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="768" height="39"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="igJ-aE-7Mh" userLabel="lblItem">
@@ -5136,6 +5146,9 @@
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
+                                            <variation key="heightClass=regular-widthClass=regular" misplaced="YES">
+                                                <rect key="frame" x="118" y="8" width="34" height="13"/>
+                                            </variation>
                                         </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Owner" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Bl-Ln-4PX">
                                             <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
@@ -5150,7 +5163,8 @@
                                                     <exclude reference="fbl-jv-c6Q"/>
                                                 </mask>
                                             </variation>
-                                            <variation key="heightClass=regular-widthClass=regular">
+                                            <variation key="heightClass=regular-widthClass=regular" misplaced="YES">
+                                                <rect key="frame" x="162" y="8" width="150" height="13"/>
                                                 <mask key="constraints">
                                                     <include reference="fbl-jv-c6Q"/>
                                                 </mask>
@@ -5483,7 +5497,7 @@
                             </mask>
                         </variation>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Agenda" id="hJA-WB-hZN"/>
+                    <tabBarItem key="tabBarItem" title="Agenda" image="presentation-32" id="hJA-WB-hZN"/>
                     <connections>
                         <outlet property="btnAddAgendaItem" destination="JNl-UR-dZs" id="jVU-v7-NlF"/>
                         <outlet property="btnOwner" destination="P5P-Q0-vWc" id="0VG-cM-2cF"/>
@@ -6623,7 +6637,7 @@
                                         <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
-                                            <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="628" height="50"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8lJ-I9-nQZ" userLabel="lblDate">
@@ -6846,7 +6860,7 @@
                             </mask>
                         </variation>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Updates" id="Td2-Fm-eLC"/>
+                    <tabBarItem key="tabBarItem" title="Updates" image="monoHistory-32" id="Td2-Fm-eLC"/>
                     <connections>
                         <outlet property="btnAddUpdate" destination="6iL-ce-5Me" id="DwH-GE-WzE"/>
                         <outlet property="colHistory" destination="X3L-oP-Kwo" id="Hth-bU-l37"/>
@@ -6862,4 +6876,10 @@
             <point key="canvasLocation" x="3164.25" y="-119.25"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="meeting-32" width="32" height="32"/>
+        <image name="monoHistory-32" width="32" height="32"/>
+        <image name="presentation-32" width="32" height="32"/>
+        <image name="task-32" width="32" height="32"/>
+    </resources>
 </document>
