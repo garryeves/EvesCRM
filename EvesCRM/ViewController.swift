@@ -17,7 +17,8 @@ import Accounts
 //import "ENSDK/Headers/ENSDK.h"
 
 // PeoplePicker code
-class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate, MyMeetingsDelegate, SideBarDelegate, MyMaintainPanesDelegate, MyTaskDelegate {
+class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate, MyMeetingsDelegate, SideBarDelegate, MyMaintainPanesDelegate, MyTaskDelegate
+{
     
     @IBOutlet weak var TableTypeSelection1: UIPickerView!
     
@@ -2737,12 +2738,23 @@ println("Nothing found")
                 switch passedItem.displayString
                 {
                     case "Projects":
-                        let MaintainProjectViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("MaintainProject") as! MaintainProjectViewController
+                     //   let MaintainProjectViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("MaintainProject") as! MaintainProjectViewController
                     
-                        MaintainProjectViewControl.delegate = self
-                        MaintainProjectViewControl.myActionType = "Add"
+                     //   MaintainProjectViewControl.delegate = self
+                     //   MaintainProjectViewControl.myActionType = "Add"
                     
-                        self.presentViewController(MaintainProjectViewControl, animated: true, completion: nil)
+                     //   self.presentViewController(MaintainProjectViewControl, animated: true, completion: nil)
+                    
+                    
+                        let projectViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("planningTab") as! GTDPlanningTabViewController
+                        
+                        var myPassedGTD = GTDModel()
+                        
+                        myPassedGTD.delegate = self
+                        
+                        projectViewControl.myPassedGTD = myPassedGTD
+                        
+                        self.presentViewController(projectViewControl, animated: true, completion: nil)
                     
                     default: println("sideBarDidSelectButtonAtIndex - Action selector: Hit default")
                 }
@@ -2780,14 +2792,6 @@ println("Nothing found")
             case "Action":
                 switch passedItem.displayString
                 {
-                    case "Maintain Projects":
-                        let MaintainProjectViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("MaintainProject") as! MaintainProjectViewController
-                        
-                        MaintainProjectViewControl.delegate = self
-                        MaintainProjectViewControl.myActionType = "Add"
-                        
-                        self.presentViewController(MaintainProjectViewControl, animated: true, completion: nil)
-                    
                     case "Settings":
                         let settingViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("Settings") as! settingsViewController
                         settingViewControl.delegate = self
@@ -3050,6 +3054,11 @@ println("Nothing found")
     }
     
     func myTaskUpdateDidFinish(controller:taskUpdatesViewController, actionType: String, currentTask: task)
+    {
+        controller.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func myGTDPlanningDidFinish(controller:MaintainGTDPlanningViewController)
     {
         controller.dismissViewControllerAnimated(true, completion: nil)
     }

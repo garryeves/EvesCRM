@@ -2249,3 +2249,20 @@ class TaskModel: NSObject
         }
     }
 }
+
+class GTDModel: NSObject
+{
+    private var myDelegate: MyMaintainProjectDelegate!
+    
+    var delegate: MyMaintainProjectDelegate
+    {
+        get
+        {
+            return myDelegate
+        }
+        set
+        {
+            myDelegate = newValue
+        }
+    }
+}

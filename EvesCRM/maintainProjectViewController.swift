@@ -13,11 +13,13 @@ import AddressBookUI
 
 protocol MyMaintainProjectDelegate{
     func myMaintainProjectDidFinish(controller:MaintainProjectViewController, actionType: String)
+    func myGTDPlanningDidFinish(controller:MaintainGTDPlanningViewController)
 }
 
-class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationControllerDelegate
+class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate
 {
-   
+   private var passedGTD: GTDModel!
+    
     @IBOutlet weak var projectList: UITableView!
     @IBOutlet weak var teamMembersTable: UITableView!
     @IBOutlet weak var projectNameLabel: UILabel!
@@ -38,7 +40,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     @IBOutlet weak var switchArchive: UISwitch!
     @IBOutlet weak var labelSwitchArchive: UILabel!
     @IBOutlet weak var lableNoProjects: UILabel!
-    var delegate: MyMaintainProjectDelegate?
+ //   var delegate: MyMaintainProjectDelegate?
     
     private var statusOptions: [Stages]!
     
@@ -65,6 +67,8 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     {
         super.viewDidLoad()
        
+        passedGTD = (tabBarController as! GTDPlanningTabViewController).myPassedGTD
+        
         self.projectList.registerClass(UITableViewCell.self, forCellReuseIdentifier: reuseIdentifierProject)
         self.teamMembersTable.registerClass(UITableViewCell.self, forCellReuseIdentifier: reuseIdentifierTeam)
 
@@ -144,7 +148,8 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         }
         else
         {
-            delegate?.myMaintainProjectDidFinish(self, actionType: "Cancel")        }
+            passedGTD.delegate.myMaintainProjectDidFinish(self, actionType: "Cancel")
+        }
     }
 
     func numberOfComponentsInPickerView(inPicker: UIPickerView) -> Int
@@ -601,6 +606,16 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         endDatePicker.hidden = false
         statusPicker.hidden = false
         buttonAddTeamMember.hidden = false
+    }
+    
+    func myGTDPlanningDidFinish(controller:MaintainGTDPlanningViewController)
+    {
+        controller.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func myMaintainProjectDidFinish(controller:MaintainProjectViewController, actionType: String)
+    {
+        controller.dismissViewControllerAnimated(true, completion: nil)
     }
     
     //---------------------------------------------------------------
