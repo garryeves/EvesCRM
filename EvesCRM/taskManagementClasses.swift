@@ -16,6 +16,7 @@ class purposeAndCoreValue: NSObject // 50k Level
     private var myStatus: String = ""
     private var myVision: [gvision] = Array()
     private var myTeamID: Int = 0
+    private var myNote: String = ""
    
     var purposeID: Int
     {
@@ -77,8 +78,23 @@ class purposeAndCoreValue: NSObject // 50k Level
         }
     }
     
-    func load(inPurposeID: Int)
+    var note: String
     {
+        get
+        {
+            return myNote
+        }
+        set
+        {
+            myNote = newValue
+            save()
+        }
+    }
+    
+    init(inPurposeID: Int)
+    {
+        super.init()
+        
         // Load the details
         
         let myVisions = myDatabaseConnection.getVisions(inPurposeID, inTeamID: myTeamID)
@@ -89,6 +105,7 @@ class purposeAndCoreValue: NSObject // 50k Level
             myTitle = myPurpose.title
             myStatus = myPurpose.status
             myTeamID = myPurpose.teamID as Int
+            myNote = myPurpose.note
         }
         
         // Load the Members
@@ -97,15 +114,27 @@ class purposeAndCoreValue: NSObject // 50k Level
         
         for myVis in myVisionList
         {
-            let myNewVision = gvision()
-            myNewVision.load(myVis.visionID as Int)
+            let myNewVision = gvision(inVisionID: myVis.visionID as Int)
             myVision.append(myNewVision)
         }
     }
     
+    override init()
+    {
+        super.init()
+        
+        let currentNumberofEntries = myDatabaseConnection.getPurposeCount()
+        
+        let nextID = currentNumberofEntries + 1
+        
+        myPurposeID = nextID
+        
+        save()
+    }
+    
     func save()
     {
-        myDatabaseConnection.savePurpose(myPurposeID, inTitle: myTitle, inStatus: myStatus, inTeamID: myTeamID)
+        myDatabaseConnection.savePurpose(myPurposeID, inTitle: myTitle, inStatus: myStatus, inTeamID: myTeamID, inNote: myNote)
     }
     
     func addVision(inVisionID: Int)
@@ -117,8 +146,7 @@ class purposeAndCoreValue: NSObject // 50k Level
         
         for myVis in myVisionList
         {
-            let myNewVision = gvision()
-            myNewVision.load(myVis.visionID as Int)
+            let myNewVision = gvision(inVisionID: myVis.visionID as Int)
             myVision.append(myNewVision)
         }
     }
@@ -132,8 +160,7 @@ class purposeAndCoreValue: NSObject // 50k Level
         
         for myVis in myVisionList
         {
-            let myNewVision = gvision()
-            myNewVision.load(myVis.visionID as Int)
+            let myNewVision = gvision(inVisionID: myVis.visionID as Int)
             myVision.append(myNewVision)
         }
     }
@@ -147,6 +174,7 @@ class gvision: NSObject // (3-5 year goals) 40k Level
     private var myStatus: String = ""
     private var myGoals: [goalAndObjective] = Array()
     private var myTeamID: Int = 0
+    private var myNote: String = ""
     
     var visionID: Int
     {
@@ -208,8 +236,23 @@ class gvision: NSObject // (3-5 year goals) 40k Level
         }
     }
     
-    func load(inVisionID: Int)
+    var note: String
     {
+        get
+        {
+            return myNote
+        }
+        set
+        {
+            myNote = newValue
+            save()
+        }
+    }
+    
+    init(inVisionID: Int)
+    {
+        super.init()
+        
         // Load the details
         
         let myVisions = myDatabaseConnection.getVisions(inVisionID, inTeamID: myTeamID)
@@ -221,6 +264,7 @@ class gvision: NSObject // (3-5 year goals) 40k Level
             myTitle = myVision.title
             myStatus = myVision.status
             myTeamID = myVision.teamID as Int
+            myNote = myVision.note
         }
         
         // Load the Members
@@ -229,15 +273,27 @@ class gvision: NSObject // (3-5 year goals) 40k Level
         
         for myGoal in myGoalList
         {
-            let myNewGoal = goalAndObjective()
-            myNewGoal.load(myGoal.goalID as Int)
+            let myNewGoal = goalAndObjective(inGoalID: myGoal.goalID as Int)
             myGoals.append(myNewGoal)
         }
     }
     
+    override init()
+    {
+        super.init()
+        
+        let currentNumberofEntries = myDatabaseConnection.getVisionCount()
+        
+        let nextID = currentNumberofEntries + 1
+        
+        myVisionID = nextID
+        
+        save()
+    }
+    
     func save()
     {
-        myDatabaseConnection.saveVision(myVisionID, inPurposeID: myPurposeID, inTitle: myTitle, inStatus: myStatus, inTeamID: myTeamID)
+        myDatabaseConnection.saveVision(myVisionID, inPurposeID: myPurposeID, inTitle: myTitle, inStatus: myStatus, inTeamID: myTeamID, inNote: myNote)
     }
     
     func addGoal(inGoalID: Int)
@@ -249,8 +305,7 @@ class gvision: NSObject // (3-5 year goals) 40k Level
         
         for myGoal in myGoalList
         {
-            let myNewGoal = goalAndObjective()
-            myNewGoal.load(myGoal.goalID as Int)
+            let myNewGoal = goalAndObjective(inGoalID: myGoal.goalID as Int)
             myGoals.append(myNewGoal)
         }
     }
@@ -264,8 +319,7 @@ class gvision: NSObject // (3-5 year goals) 40k Level
         
         for myGoal in myGoalList
         {
-            let myNewGoal = goalAndObjective()
-            myNewGoal.load(myGoal.goalID as Int)
+            let myNewGoal = goalAndObjective(inGoalID: myGoal.goalID as Int)
             myGoals.append(myNewGoal)
         }
     }
@@ -279,6 +333,7 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
     private var myStatus: String = ""
     private var myAreas: [areaOfResponsibility] = Array()
     private var myTeamID: Int = 0
+    private var myNote: String = ""
     
     var goalID: Int
     {
@@ -340,8 +395,23 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
         }
     }
     
-    func load(inGoalID: Int)
+    var note: String
     {
+        get
+        {
+            return myNote
+        }
+        set
+        {
+            myNote = newValue
+            save()
+        }
+    }
+    
+    init(inGoalID: Int)
+    {
+        super.init()
+        
         // Load the details
         
         let myGoals = myDatabaseConnection.getGoals(inGoalID, inTeamID: myTeamID)
@@ -353,6 +423,7 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
             myTitle = myGoal.title
             myStatus = myGoal.status
             myTeamID = myGoal.teamID as Int
+            myNote = myGoal.note
         }
         
         // Load the Members
@@ -361,15 +432,27 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
         
         for myArea in myAreaList
         {
-            let myNewArea = areaOfResponsibility()
-            myNewArea.load(myArea.areaID as Int)
+            let myNewArea = areaOfResponsibility(inAreaID: myArea.areaID as Int)
             myAreas.append(myNewArea)
         }
     }
     
+    override init()
+    {
+        super.init()
+        
+        let currentNumberofEntries = myDatabaseConnection.getGoalCount()
+        
+        let nextID = currentNumberofEntries + 1
+        
+        myGoalID = nextID
+        
+        save()
+    }
+    
     func save()
     {
-        myDatabaseConnection.saveGoal(myGoalID, inVisionID: myVisionID, inTitle: myTitle, inStatus: myStatus, inTeamID: myTeamID)
+        myDatabaseConnection.saveGoal(myGoalID, inVisionID: myVisionID, inTitle: myTitle, inStatus: myStatus, inTeamID: myTeamID, inNote: myNote)
     }
     
     func addArea(inAreaID: Int)
@@ -381,8 +464,7 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
         
         for myArea in myAreaList
         {
-            let myNewArea = areaOfResponsibility()
-            myNewArea.load(myArea.areaID as Int)
+            let myNewArea = areaOfResponsibility(inAreaID: myArea.areaID as Int)
             myAreas.append(myNewArea)
         }
     }
@@ -396,14 +478,13 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
         
         for myArea in myAreaList
         {
-            let myNewArea = areaOfResponsibility()
-            myNewArea.load(myArea.areaID as Int)
+            let myNewArea = areaOfResponsibility(inAreaID: myArea.areaID as Int)
             myAreas.append(myNewArea)
         }
     }
 }
 
-class areaOfResponsibility // 20k Level
+class areaOfResponsibility: NSObject // 20k Level
 {
     private var myAreaID: Int = 0
     private var myGoalID: Int = 0
@@ -411,6 +492,7 @@ class areaOfResponsibility // 20k Level
     private var myStatus: String = ""
     private var myProjects: [project] = Array()
     private var myTeamID: Int = 0
+    private var myNote: String = ""
     
     var areaID: Int
     {
@@ -472,8 +554,23 @@ class areaOfResponsibility // 20k Level
         }
     }
     
-    func load(inAreaID: Int)
+    var note: String
     {
+        get
+        {
+            return myNote
+        }
+        set
+        {
+            myNote = newValue
+            save()
+        }
+    }
+
+    init(inAreaID: Int)
+    {
+        super.init()
+        
         // Load the details
         
         let myAreas = myDatabaseConnection.getAreaOfResponsibility(inAreaID, inTeamID: myTeamID)
@@ -485,6 +582,7 @@ class areaOfResponsibility // 20k Level
             myTitle = myArea.title
             myStatus = myArea.status
             myTeamID = myArea.teamID as Int
+            myNote = myArea.note
         }
         
         // Load the Members
@@ -498,10 +596,23 @@ class areaOfResponsibility // 20k Level
             myProjects.append(myNewProject)
         }
     }
+    
+    override init()
+    {
+        super.init()
+        
+        let currentNumberofEntries = myDatabaseConnection.getAreaCount()
+        
+        let nextID = currentNumberofEntries + 1
+        
+        myAreaID = nextID
+        
+        save()
+    }
 
     func save()
     {
-        myDatabaseConnection.saveAreaOfResponsibility(myAreaID, inGoalID: myGoalID, inTitle: myTitle, inStatus: myStatus, inTeamID: myTeamID)
+        myDatabaseConnection.saveAreaOfResponsibility(myAreaID, inGoalID: myGoalID, inTitle: myTitle, inStatus: myStatus, inTeamID: myTeamID, inNote: myNote)
     }
     
     func addProject(inProjectID: Int)
@@ -635,6 +746,7 @@ class project: NSObject // 10k level
     private var myRepeatType: String = ""
     private var myRepeatBase: String = ""
     private var myTeamID: Int = 0
+    private var myNote: String = ""
 
     var projectEndDate: NSDate
     {
@@ -855,6 +967,19 @@ class project: NSObject // 10k level
         }
     }
     
+    var note: String
+    {
+        get
+        {
+            return myNote
+        }
+        set
+        {
+            myNote = newValue
+            save()
+        }
+    }
+
     override init()
     {
         super.init()
@@ -905,6 +1030,22 @@ class project: NSObject // 10k level
             {
                 let myNewTask = task(inTaskID: myProjectTask.taskID as Int)
                 myTasks.append(myNewTask)
+            }
+            
+            // Get project Note
+            
+            let myNotes = myDatabaseConnection.getProjectNote(myProjectID)
+            
+            if myNotes.count == 0
+            {
+                myNote = ""
+            }
+            else
+            {
+                for myItem in myNotes
+                {
+                    myNote = myItem.note
+                }
             }
         }
     }
@@ -990,6 +1131,10 @@ class project: NSObject // 10k level
         {
             myProjectTask.save()
         }
+        
+        // save note
+        
+        myDatabaseConnection.saveProjectNote(myProjectID, inNote: myNote)
     }
     
     func getDefaultDate() -> NSDate

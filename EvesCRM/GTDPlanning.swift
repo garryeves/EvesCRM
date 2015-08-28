@@ -8,18 +8,27 @@
 
 import Foundation
 
-class MaintainGTDPlanningViewController: UIViewController
+
+enum AdaptiveMode
 {
+    case Default
+    case LandscapePopover
+    case AlwaysPopover
+}
+
+class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate, UITextViewDelegate, UIPopoverPresentationControllerDelegate
+{
+    
+    @IBInspectable var popoverOniPhone:Bool = false
+    @IBInspectable var popoverOniPhoneLandscape:Bool = true
+    
     private var passedGTD: GTDModel!
     
-    // Textexpander
+    @IBOutlet weak var lblHeader: UILabel!
+    @IBOutlet weak var scrollDisplay: UIScrollView!
     
-    private var snippetExpanded: Bool = false
-    
-    let myImageWidth = 200
-    let myImageHeight = 100
-    
-    var textExpander: SMTEDelegateController!
+    private var containerView: UIView!
+    private var myDisplayArray: [AnyObject] = Array()
     
     override func viewDidLoad()
     {
@@ -35,36 +44,7 @@ class MaintainGTDPlanningViewController: UIViewController
         hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
         self.view.addGestureRecognizer(hideGestureRecognizer)
         
-        
-        // TextExpander
-        textExpander = SMTEDelegateController()
- //       projectNameText.delegate = textExpander
-        textExpander.clientAppName = "EvesCRM"
-        textExpander.fillCompletionScheme = "EvesCRM-fill-xc"
-        textExpander.fillDelegate = self
-        textExpander.nextDelegate = self
-        myCurrentViewController = MaintainProjectViewController()
-        myCurrentViewController = self
-        
-        var myX: Int = 0
-        var myY: Int = 20
-        var tempTextView: UITextView!
-        
-        tempTextView = displayEntry("My Life", xPos: myX, yPos: myY, rectWidth: myImageWidth, rectHeight: myImageHeight)
-        
-        myX += myImageWidth + 40
-        
-        tempTextView = displayEntry("Another life", xPos: myX, yPos: myY, rectWidth: myImageWidth, rectHeight: myImageHeight)
-        
-        myX += myImageWidth + 40
-        
-        tempTextView = displayEntry("A longer piece of text to see what happens to it when it is too long.  A longer piece of text to see what happens to it when it is too long.", xPos: myX, yPos: myY, rectWidth: myImageWidth, rectHeight: myImageHeight)
-        
-        myX += myImageWidth + 40
-        
-        tempTextView = displayEntry("fred", xPos: myX, yPos: myY, rectWidth: myImageWidth, rectHeight: myImageHeight)
-        
-        
+        buildTopLevel()
     }
     
     override func didReceiveMemoryWarning()
@@ -75,7 +55,7 @@ class MaintainGTDPlanningViewController: UIViewController
     
     override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent)
     {
- //       projectNameText.endEditing(true)
+        //       projectNameText.endEditing(true)
     }
     
     func handleSwipe(recognizer:UISwipeGestureRecognizer)
@@ -90,279 +70,201 @@ class MaintainGTDPlanningViewController: UIViewController
         }
     }
     
-    func displayEntry(inString: String, xPos: Int, yPos: Int, rectWidth: Int, rectHeight: Int) -> UITextView
+    func buildTopLevel()
     {
-        var txtField: UITextView = UITextView(frame: CGRect(x: xPos, y: yPos, width: rectWidth, height: rectHeight))
+        lblHeader.text = "My Teams"
         
-        txtField.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
+        myDisplayArray.removeAll()
+        let myTeams = myDatabaseConnection.getAllTeams()
         
-        txtField.text = inString
-        txtField.layer.borderColor = UIColor.blackColor().CGColor
-        txtField.layer.borderWidth = 0.5
-        txtField.textAlignment = NSTextAlignment.Center
- 
- //       txtField.contentVerticalAlignment = UIControlContentVerticalAlignment.Center
-     //   txtField.verticalAlignment = UIControlContentVerticalAlignment.Center
-        
-   //     let size = txtField.sizeThatFits(CGSizeMake(CGRectGetWidth(txtField.bounds), CGFloat(MAXFLOAT)))
-        
-   //     var topoffset = txtField.bounds.size.height - size.height
-   //     topoffset = topoffset < 0.0 ? 0.0 : topoffset / 2
-        
-   //     txtField.contentOffset = CGPointMake(0, -topoffset)
-        
-        
- //       var topCorrect : CGFloat = (txtField.frame.height - txtField.contentSize.height);
-  //      topCorrect = topCorrect < 0.0 ? 0.0 : topCorrect / 2
-  //      txtField.contentOffset = CGPoint(x: 0, y: -topCorrect)
-        
-        self.view.addSubview(txtField)
-        
-        return txtField
-    }
+        for myTeamID in myTeams
+        {
+            let myTeam = team(inTeamID: myTeamID.teamID as Int)
+            myDisplayArray.append(myTeam)
+        }
 
-    //---------------------------------------------------------------
-    // These three methods implement the SMTEFillDelegate protocol to support fill-ins
-    
-    /* When an abbreviation for a snippet that looks like a fill-in snippet has been
-    * typed, SMTEDelegateController will call your fill delegate's implementation of
-    * this method.
-    * Provide some kind of identifier for the given UITextView/UITextField/UISearchBar/UIWebView
-    * The ID doesn't have to be fancy, "maintext" or "searchbar" will do.
-    * Return nil to avoid the fill-in app-switching process (the snippet will be expanded
-    * with "(field name)" where the fill fields are).
-    *
-    * Note that in the case of a UIWebView, the uiTextObject passed will actually be
-    * an NSDictionary with two of these keys:
-    *     - SMTEkWebView          The UIWebView object (key always present)
-    *     - SMTEkElementID        The HTML element's id attribute (if found, preferred over Name)
-    *     - SMTEkElementName      The HTML element's name attribute (if id not found and name found)
-    * (If no id or name attribute is found, fill-in's cannot be supported, as there is
-    * no way for TE to insert the filled-in text.)
-    * Unless there is only one editable area in your web view, this implies that the returned
-    * identifier string needs to include element id/name information. Eg. "webview-field2".
-    */
-    
-    func identifierForTextArea(uiTextObject: AnyObject) -> String
-    {
-        var result: String = ""
+        containerView = UIView()
         
-        if uiTextObject.isKindOfClass(UITextField)
-        {
-            if uiTextObject.tag == 1
-            {
-                result = "projectNameText"
-            }
-        }
+        let contentHeight = buildDisplay(myDisplayArray, 200, 100, 40, 0, 0, containerView, self)
+
+        // Set up the container view to hold your custom view hierarchy
+        let containerSize = CGSizeMake(UIScreen.mainScreen().bounds.width, contentHeight)
         
-        if uiTextObject.isKindOfClass(UITextView)
-        {
-            if uiTextObject.tag == 1
-            {
-                result = "unused"
-            }
-        }
+        containerView.frame = CGRect(origin: CGPointMake(0.0, 0.0), size:containerSize)
+        scrollDisplay.addSubview(containerView)
+
         
-        if uiTextObject.isKindOfClass(UISearchBar)
-        {
-            result =  "mySearchBar"
-        }
+        // Tell the scroll view the size of the contents
+        scrollDisplay.contentSize = containerSize;
         
-        return result
+        // Set up the minimum & maximum zoom scale
+        let scrollViewFrame = scrollDisplay.frame
+        let scaleWidth = scrollViewFrame.size.width / scrollDisplay.contentSize.width
+        let scaleHeight = scrollViewFrame.size.height / scrollDisplay.contentSize.height
+        let minScale = min(scaleWidth, scaleHeight)
+        
+        scrollDisplay.minimumZoomScale = minScale
+        scrollDisplay.maximumZoomScale = 1.0
+        scrollDisplay.zoomScale = 1.0
+        
+        centerScrollViewContents()
+        
     }
     
-    /* Usually called milliseconds after identifierForTextArea:, SMTEDelegateController is
-    * about to call [[UIApplication sharedApplication] openURL: "tetouch-xc: *x-callback-url/fillin?..."]
-    * In other words, the TEtouch is about to be activated. Your app should save state
-    * and make any other preparations.
-    *
-    * Return NO to cancel the process.
-    */
-    
-    func prepareForFillSwitch(textIdentifier: String) -> Bool
+    func centerScrollViewContents()
     {
-        // At this point the app should save state since TextExpander touch is about
-        // to activate.
-        // It especially needs to save the contents of the textview/textfield!
+        let boundsSize = scrollDisplay.bounds.size
+        var contentsFrame = containerView.frame
         
-        return true
-    }
-    
-    /* Restore active typing location and insertion cursor position to a text item
-    * based on the identifier the fill delegate provided earlier.
-    * (This call is made from handleFillCompletionURL: )
-    *
-    * In the case of a UIWebView, this method should build and return an NSDictionary
-    * like the one sent to the fill delegate in identifierForTextArea: when the snippet
-    * was triggered.
-    * That is, you should make the UIWebView become first responder, then return an
-    * NSDictionary with two of these keys:
-    *     - SMTEkWebView          The UIWebView object (key must be present)
-    *     - SMTEkElementID        The HTML element's id attribute (preferred over Name)
-    *     - SMTEkElementName      The HTML element's name attribute (only if no id)
-    * TE will use the same Javascripts that it uses to expand normal snippets to focus the appropriate
-    * element and insert the filled text.
-    *
-    * Note 1: If your app is still loaded after returning from TEtouch's fill window,
-    * probably no work needs to be done (the text item will still be the first
-    * responder, and the insertion cursor position will still be the same).
-    * Note 2: If the requested insertionPointLocation cannot be honored (ie. text has
-    * been reset because of the app switching), then update it to whatever is reasonable.
-    *
-    * Return nil to cancel insertion of the fill-in text. Users will not expect a cancel
-    * at this point unless userCanceledFill is set. Even in the cancel case, they will likely
-    * expect the identified text object to become the first responder.
-    */
-    
-    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: Int) -> AnyObject
-    {
-        snippetExpanded = true
-        
-        if "projectNameText" == textIdentifier
+        if contentsFrame.size.width < boundsSize.width
         {
- //           projectNameText.becomeFirstResponder()
- //           let theLoc = projectNameText.positionFromPosition(projectNameText.beginningOfDocument, offset: ioInsertionPointLocation)
- //           if theLoc != nil
- //           {
- //               projectNameText.selectedTextRange = projectNameText.textRangeFromPosition(theLoc, toPosition: theLoc)
- //           }
- //           return projectNameText
-            return ""
+            contentsFrame.origin.x = (boundsSize.width - contentsFrame.size.width) / 2.0
         }
-            //        else if "mySearchBar" == textIdentifier
-            //        {
-            //            searchBar.becomeFirstResponder()
-            // Note: UISearchBar does not support cursor positioning.
-            // Since we don't save search bar text as part of our state, if our app was unloaded while TE was
-            // presenting the fill-in window, the search bar might now be empty to we should return
-            // insertionPointLocation of 0.
-            //            let searchTextLen = searchBar.text.length
-            //            if searchTextLen < ioInsertionPointLocation
-            //            {
-            //                ioInsertionPointLocation = searchTextLen
-            //            }
-            //            return searchBar
-            //        }
         else
         {
-            
-            //return nil
-            
-            return ""
+            contentsFrame.origin.x = 0.0
         }
-    }
-    
-    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool
-    {
-        if (textExpander.isAttemptingToExpandText)
+        
+        if contentsFrame.size.height < boundsSize.height
         {
-            snippetExpanded = true
+            contentsFrame.origin.y = (boundsSize.height - contentsFrame.size.height) / 2.0
         }
-        return true
+        else
+        {
+            contentsFrame.origin.y = 0.0
+        }
+        
+        containerView.frame = contentsFrame
     }
     
-    // Workaround for what appears to be an iOS 7 bug which affects expansion of snippets
-    // whose content is greater than one line. The UITextView fails to update its display
-    // to show the full content. Try commenting this out and expanding "sig1" to see the issue.
-    //
-    // Given other oddities of UITextView on iOS 7, we had assumed this would be fixed along the way.
-    // Instead, we'll have to work up an isolated case and file a bug. We don't want to bake this kind
-    // of workaround into the SDK, so instead we provide an example here.
-    // If you have a better workaround suggestion, we'd love to hear it.
-    
-    func twiddleText(textView: UITextView)
+    func viewForZoomingInScrollView(scrollView: UIScrollView) -> UIView?
     {
-        let SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO = UIDevice.currentDevice().systemVersion
-        if SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO >= "7.0"
-        {
-            textView.textStorage.edited(NSTextStorageEditActions.EditedCharacters,range:NSMakeRange(0, textView.textStorage.length),changeInLength:0)
-        }
+        return containerView
     }
     
-    func textViewDidChange(textView: UITextView)
+    func scrollViewDidZoom(scrollView: UIScrollView)
     {
-        if snippetExpanded
+        centerScrollViewContents()
+    }
+
+    
+    // MARK: - UIPopoverPresentationControllerDelegate
+    func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle
+    {
+        return .FullScreen
+    }
+    
+    func presentationController(controller: UIPresentationController, viewControllerForAdaptivePresentationStyle style: UIModalPresentationStyle) -> UIViewController?
+    {
+        return UINavigationController(rootViewController: controller.presentedViewController)
+    }
+    
+    func popoverPresentationControllerDidDismissPopover(popoverPresentationController: UIPopoverPresentationController)
+    {
+        //do som stuff from the popover
+println("popoverPresentationControllerDidDismissPopover")
+    }
+    
+    func handleSingleTap(sender: textViewTapGestureRecognizer)
+    {
+        if sender.targetObject.isKindOfClass(team)
         {
-            usleep(10000)
-            twiddleText(textView)
+   println("Name = \(sender.targetObject.name)")
             
-            // performSelector(twiddleText:, withObject: textView, afterDelay:0.01)
-            snippetExpanded = false
-        }
-    }
-    
-    
-    
-    /*
-    // The following are the UITextViewDelegate methods; they simply write to the console log for demonstration purposes
-    
-    func textViewDidBeginEditing(textView: UITextView)
-    {
-    println("nextDelegate textViewDidBeginEditing")
-    }
-    func textViewShouldBeginEditing(textView: UITextView) -> Bool
-    {
-    println("nextDelegate textViewShouldBeginEditing")
-    return true
-    }
-    
-    func textViewShouldEndEditing(textView: UITextView) -> Bool
-    {
-    println("nextDelegate textViewShouldEndEditing")
-    return true
-    }
-    
-    func textViewDidEndEditing(textView: UITextView)
-    {
-    println("nextDelegate textViewDidEndEditing")
-    }
-    
-    func textViewDidChangeSelection(textView: UITextView)
-    {
-    println("nextDelegate textViewDidChangeSelection")
-    }
-    
-    // The following are the UITextFieldDelegate methods; they simply write to the console log for demonstration purposes
-    
-    func textFieldShouldBeginEditing(textField: UITextField) -> Bool
-    {
-    println("nextDelegate textFieldShouldBeginEditing")
-    return true
-    }
-    
-    func textFieldDidBeginEditing(textField: UITextField)
-    {
-    println("nextDelegate textFieldDidBeginEditing")
-    }
-    
-    func textFieldShouldEndEditing(textField: UITextField) -> Bool
-    {
-    println("nextDelegate textFieldShouldEndEditing")
-    return true
-    }
-    
-    func textFieldDidEndEditing(textField: UITextField)
-    {
-    println("nextDelegate textFieldDidEndEditing")
-    }
-    
-    func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool
-    {
-    println("nextDelegate textField:shouldChangeCharactersInRange: \(NSStringFromRange(range)) Original=\(textField.text), replacement = \(string)")
-    return true
-    }
-    
-    func textFieldShouldClear(textField: UITextField) -> Bool
-    {
-    println("nextDelegate textFieldShouldClear")
-    return true
-    }
-    
-    func textFieldShouldReturn(textField: UITextField) -> Bool
-    {
-    println("nextDelegate textFieldShouldReturn")
-    return true
-    }
+      /*      let vc = purposeViewController()
+            vc.modalPresentationStyle = .Popover
+            let popRect = CGRect(x: 100, y: 100, width: 400, height: 600)
+            let aPopover =  UIPopoverController(contentViewController: vc)
+            aPopover.presentPopoverFromRect(popRect, inView: view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
+      */
+            
+ 
+
+            
+            let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("purposeController") as! purposeViewController
+            popoverContent.modalPresentationStyle = .Popover
+            var popover = popoverContent.popoverPresentationController
+            
+      //      popoverContent.popoverPresentationController!.sourceView = sender.myView
+       //     popoverContent.popoverPresentationController!.preferredContentSize = CGSizeMake(500,400)
+            popover!.delegate = self
+            popover!.sourceView = sender.myView
+            popoverContent.preferredContentSize = CGSizeMake(500,400)
+            //popover!.sourceRect = CGRectMake(100,100,0,0)
+            
+      //      var nav = UINavigationController(rootViewController: popoverContent)
+  //          popoverContent.modalPresentationStyle = UIModalPresentationStyle.Popover
+  //          var popover = popoverContent.popoverPresentationController
+  //          popoverContent.preferredContentSize = CGSizeMake(300,400)
+  //          popover!.delegate = self
+  //          popover!.sourceView = self.view
+  //          popover!.sourceRect = CGRectMake(100,100,0,0)
+            
+            self.presentViewController(popoverContent, animated: true, completion: nil)
+
+
+            
+  //          let popoverVC = self.storyboard!.instantiateViewControllerWithIdentifier("MaintainPanes") as! MaintainPanesViewController
+  //          popoverVC.modalPresentationStyle = .Popover
+  //          let popoverController = popoverVC.popoverPresentationController
+  //          popoverController!.sourceView = self.view
+    //        popoverVC.delegate = self
+            
+       //     self.presentViewController(popoverVC, animated: true, completion: nil)
+         
+ //            performSegueWithIdentifier("purpose", sender: self)
+            
+            
+          //  let popoverVC = storyboard?.instantiateViewControllerWithIdentifier("purposeController") as! purposeViewController
+ //           popoverVC.modalPresentationStyle = .Popover
+       
+            
+//            let popoverController = popoverVC.popoverPresentationController
+           // popoverController!.sourceView = self.view
+           
+//            popoverController!.sourceView = fromView
+//            popoverController!.sourceRect = CGRect(x: 100, y: 100, width: 400, height: 600)
+//            popoverController!.permittedArrowDirections = .Any
+//            popoverController!.delegate = self
+            
+            
+            
+//            presentViewController(popoverVC, animated: true, completion: nil)
+            
+
+            
+            
+            
+            
+   /*
+            var popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("purposeController") as! purposeController
+            var nav = UINavigationController(rootViewController: popoverContent)
+            nav.modalPresentationStyle = UIModalPresentationStyle.Popover
+            var popover = nav.popoverPresentationController
+            popoverContent.preferredContentSize = CGSizeMake(500,600)
+        //    popover!.delegate = self
+            popover!.sourceView = self.view
+            popover!.sourceRect = CGRectMake(100,100,0,0)
+       //     nav.popoverPresentationController!.delegate = implOfUIAPCDelegate
+            
+            self.presentViewController(nav, animated: true, completion: nil)
+            
+  */          
+            
+    /*        var myPurposeViewController: purposeViewController = storyboard!.instantiateViewControllerWithIdentifier("purposeController") as! purposeViewController
+            
+            myPurposeViewController.modalPresentationStyle = .Popover
+            myPurposeViewController.preferredContentSize = CGSizeMake(400, 600)
+            
+            let popoverMenuViewController = myPurposeViewController.popoverPresentationController
+            popoverMenuViewController?.permittedArrowDirections = .Any
+            popoverMenuViewController?.delegate = self
+            popoverMenuViewController?.sourceView = self.view
+            popoverMenuViewController?.sourceRect = CGRect(x: 100, y: 100, width: 400, height: 600)
+            
+            presentViewController(myPurposeViewController, animated: true, completion: nil)
     */
+        }
+    }
     
 }

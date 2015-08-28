@@ -2250,6 +2250,14 @@ println("Nothing found")
             
             populateStages()
         }
+        
+        if myDatabaseConnection.getTeamsCount() == 0
+        {
+            let myTeam = team()
+            myTeam.name = "My Life"
+            myTeam.type = "private"
+            myTeam.status = "Open"
+        }
     }
     
     func displayScreen()

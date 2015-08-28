@@ -1882,7 +1882,7 @@ class coreDatabase: NSObject
         return fetchResults!
     }
 
-    func saveAreaOfResponsibility(inAreaID: Int, inGoalID: Int, inTitle: String, inStatus: String, inTeamID: Int)
+    func saveAreaOfResponsibility(inAreaID: Int, inGoalID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String)
     {
         var error: NSError?
         var myArea: AreaOfResponsibility!
@@ -1899,6 +1899,7 @@ class coreDatabase: NSObject
             myArea.updateTime = NSDate()
             myArea.updateType = "Add"
             myArea.teamID = inTeamID
+            myArea.note = inNote
         }
         else
         { // Update
@@ -1912,6 +1913,7 @@ class coreDatabase: NSObject
                 myArea.updateType = "Update"
             }
             myArea.teamID = inTeamID
+            myArea.note = inNote
         }
         
         if(!managedObjectContext!.save(&error) )
@@ -1935,6 +1937,16 @@ class coreDatabase: NSObject
         let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [AreaOfResponsibility]
         
         return fetchResults!
+    }
+ 
+    func getAreaCount() -> Int
+    {
+        let fetchRequest = NSFetchRequest(entityName: "AreaOfResponsibility")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [AreaOfResponsibility]
+        
+        return fetchResults!.count
     }
     
     func getOpenAreasForGoal(inGoalID: Int, inTeamID: Int)->[AreaOfResponsibility]
@@ -2027,7 +2039,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func saveGoal(inGoalID: Int, inVisionID: Int, inTitle: String, inStatus: String, inTeamID: Int)
+    func saveGoal(inGoalID: Int, inVisionID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String)
     {
         var error: NSError?
         var myGoal: GoalAndObjective!
@@ -2044,6 +2056,7 @@ class coreDatabase: NSObject
             myGoal.updateTime = NSDate()
             myGoal.updateType = "Add"
             myGoal.teamID = inTeamID
+            myGoal.note = inNote
         }
         else
         { // Update
@@ -2057,6 +2070,7 @@ class coreDatabase: NSObject
                 myGoal.updateType = "Update"
             }
             myGoal.teamID = inTeamID
+            myGoal.note = inNote
         }
         
         if(!managedObjectContext!.save(&error) )
@@ -2080,6 +2094,16 @@ class coreDatabase: NSObject
         let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [GoalAndObjective]
         
         return fetchResults!
+    }
+    
+    func getGoalCount() -> Int
+    {
+        let fetchRequest = NSFetchRequest(entityName: "GoalAndObjective")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [GoalAndObjective]
+        
+        return fetchResults!.count
     }
     
     func getOpenGoalsForVision(inVisionID: Int, inTeamID: Int)->[GoalAndObjective]
@@ -2155,7 +2179,7 @@ class coreDatabase: NSObject
         }
     }
 
-    func saveVision(inVisionID: Int, inPurposeID: Int, inTitle: String, inStatus: String, inTeamID: Int)
+    func saveVision(inVisionID: Int, inPurposeID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String)
     {
         var error: NSError?
         var myVision: Vision!
@@ -2172,6 +2196,7 @@ class coreDatabase: NSObject
             myVision.updateTime = NSDate()
             myVision.updateType = "Add"
             myVision.teamID = inTeamID
+            myVision.note = inNote
         }
         else
         { // Update
@@ -2185,6 +2210,7 @@ class coreDatabase: NSObject
                 myVision.updateType = "Update"
             }
             myVision.teamID = inTeamID
+            myVision.note = inNote
         }
         
         if(!managedObjectContext!.save(&error) )
@@ -2208,6 +2234,16 @@ class coreDatabase: NSObject
         let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Vision]
         
         return fetchResults!
+    }
+    
+    func getVisionCount() -> Int
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Vision")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Vision]
+        
+        return fetchResults!.count
     }
     
     func getOpenVisionsForPurpose(inPurposeID: Int, inTeamID: Int)->[Vision]
@@ -2284,7 +2320,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func savePurpose(inPurposeID: Int, inTitle: String, inStatus: String, inTeamID: Int)
+    func savePurpose(inPurposeID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String)
     {
         var error: NSError?
         var myPurpose: PurposeAndCoreValue!
@@ -2300,6 +2336,7 @@ class coreDatabase: NSObject
             myPurpose.updateTime = NSDate()
             myPurpose.updateType = "Add"
             myPurpose.teamID = inTeamID
+            myPurpose.note = inNote
         }
         else
         { // Update
@@ -2312,6 +2349,7 @@ class coreDatabase: NSObject
                 myPurpose.updateType = "Update"
             }
             myPurpose.teamID = inTeamID
+            myPurpose.note = inNote
         }
         
         if(!managedObjectContext!.save(&error) )
@@ -2335,6 +2373,17 @@ class coreDatabase: NSObject
         let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [PurposeAndCoreValue]
         
         return fetchResults!
+    }
+    
+    func getPurposeCount()-> Int
+    {
+        let fetchRequest = NSFetchRequest(entityName: "PurposeAndCoreValue")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [PurposeAndCoreValue]
+        
+        return fetchResults!.count
     }
     
     func savePurposeVision(inPurposeID: Int, inVisionID: Int, inTeamID: Int)
@@ -3265,6 +3314,38 @@ class coreDatabase: NSObject
         {
             println(error?.localizedDescription)
         }
+        
+        let fetchRequest22 = NSFetchRequest(entityName: "Team")
+        
+        // Set the predicate on the fetch request
+        fetchRequest22.predicate = predicate
+        let fetchResults22 = managedObjectContext!.executeFetchRequest(fetchRequest22, error: nil) as? [Team]
+        
+        for myItem22 in fetchResults22!
+        {
+            managedObjectContext!.deleteObject(myItem22 as NSManagedObject)
+        }
+        
+        if(!managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+
+        let fetchRequest23 = NSFetchRequest(entityName: "ProjectNote")
+        
+        // Set the predicate on the fetch request
+        fetchRequest23.predicate = predicate
+        let fetchResults23 = managedObjectContext!.executeFetchRequest(fetchRequest23, error: nil) as? [ProjectNote]
+        
+        for myItem23 in fetchResults23!
+        {
+            managedObjectContext!.deleteObject(myItem23 as NSManagedObject)
+        }
+        
+        if(!managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
     }
 
     func clearSyncedItems()
@@ -3650,5 +3731,175 @@ class coreDatabase: NSObject
                 println(error?.localizedDescription)
             }
         }
+        
+        let fetchRequest22 = NSFetchRequest(entityName: "Team")
+        // Set the predicate on the fetch request
+        fetchRequest22.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults22 = managedObjectContext!.executeFetchRequest(fetchRequest22, error: nil) as? [Team]
+        
+        for myItem22 in fetchResults22!
+        {
+            myItem22.updateType = ""
+            
+            if(!managedObjectContext!.save(&error) )
+            {
+                println(error?.localizedDescription)
+            }
+        }
+
+        let fetchRequest23 = NSFetchRequest(entityName: "ProjectNote")
+        // Set the predicate on the fetch request
+        fetchRequest23.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults23 = managedObjectContext!.executeFetchRequest(fetchRequest23, error: nil) as? [ProjectNote]
+        
+        for myItem23 in fetchResults23!
+        {
+            myItem23.updateType = ""
+            
+            if(!managedObjectContext!.save(&error) )
+            {
+                println(error?.localizedDescription)
+            }
+        }
     }
+    
+    func saveTeam(inTeamID: Int, inName: String, inStatus: String, inNote: String, inType: String)
+    {
+        var error: NSError?
+        var myTeam: Team!
+        
+        let myTeams = getTeam(inTeamID)
+        
+        if myTeams.count == 0
+        { // Add
+            myTeam = NSEntityDescription.insertNewObjectForEntityForName("Team", inManagedObjectContext: self.managedObjectContext!) as! Team
+            myTeam.teamID = inTeamID
+            myTeam.name = inName
+            myTeam.status = inStatus
+            myTeam.note = inNote
+            myTeam.type = inType
+            myTeam.updateTime = NSDate()
+            myTeam.updateType = "Add"
+        }
+        else
+        { // Update
+            myTeam = myTeams[0]
+            myTeam.name = inName
+            myTeam.status = inStatus
+            myTeam.note = inNote
+            myTeam.type = inType
+            
+            if myTeam.updateType != "Add"
+            {
+                myTeam.updateType = "Update"
+            }
+            myTeam.updateTime = NSDate()
+        }
+        
+        if(!managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+    
+    func getTeam(inTeamID: Int)->[Team]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Team")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(inTeamID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Team]
+        
+        return fetchResults!
+    }
+    
+    func getAllTeams()->[Team]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Team")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Team]
+    
+        return fetchResults!
+    }
+    
+    func getTeamsCount() -> Int
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Team")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Team]
+        
+        return fetchResults!.count
+    }
+
+    
+    func saveProjectNote(inProjectID: Int, inNote: String)
+    {
+        var error: NSError?
+        var myProjectNote: ProjectNote!
+        
+        let myTeams = getProjectNote(inProjectID)
+        
+        if myTeams.count == 0
+        { // Add
+            myProjectNote = NSEntityDescription.insertNewObjectForEntityForName("ProjectNote", inManagedObjectContext: self.managedObjectContext!) as! ProjectNote
+            myProjectNote.projectID = inProjectID
+            myProjectNote.note = inNote
+            myProjectNote.updateTime = NSDate()
+            myProjectNote.updateType = "Add"
+        }
+        else
+        { // Update
+            myProjectNote = myTeams[0]
+            myProjectNote.note = inNote
+            
+            if myProjectNote.updateType != "Add"
+            {
+                myProjectNote.updateType = "Update"
+            }
+            myProjectNote.updateTime = NSDate()
+        }
+        
+        if(!managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+    
+    func getProjectNote(inProjectID: Int)->[ProjectNote]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "ProjectNote")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(updateType != \"Delete\") && (projectID == \(inProjectID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [ProjectNote]
+        
+        return fetchResults!
+    }
+
 }
