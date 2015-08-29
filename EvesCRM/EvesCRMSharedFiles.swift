@@ -631,99 +631,13 @@ class textViewTapGestureRecognizer:UITapGestureRecognizer
     var tag: Int = 0
     var targetObject: AnyObject!
     var myView: UIView!
+    var myType: String = ""
 }
 
-private func displayEntry(inString: String, xPos: CGFloat, yPos: CGFloat, rectWidth: CGFloat, rectHeight: CGFloat, inRowID: Int, inView: UIView, inViewController: UIViewController, inTargetObject: AnyObject) -> UITextView
+class textLongPressGestureRecognizer:UILongPressGestureRecognizer
 {
-    var txtView: UITextView = UITextView(frame: CGRect(x: xPos, y: yPos, width: rectWidth, height: rectHeight))
-    
-    txtView.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
-    
-    txtView.text = inString
-    txtView.layer.borderColor = UIColor.blackColor().CGColor
-    txtView.layer.borderWidth = 0.5
-    
-    txtView.layer.cornerRadius = 5.0
-    txtView.clipsToBounds = true
-    
-    txtView.textAlignment = NSTextAlignment.Center
-    txtView.tag = inRowID
- 
-    var singleTap: textViewTapGestureRecognizer = textViewTapGestureRecognizer(target: inViewController, action: "handleSingleTap:")
-    singleTap.numberOfTapsRequired = 1
-    singleTap.tag = inRowID
-    singleTap.targetObject = inTargetObject
-    singleTap.myView = txtView
-    txtView.addGestureRecognizer(singleTap)
-    
-    inView.addSubview(txtView)
-    
-    return txtView
-}
-
-func buildDisplay(inDisplayArray: [AnyObject], inWidth: CGFloat, inHeight: CGFloat, inSpacing: CGFloat, inStartX: CGFloat, inStartY: CGFloat, inView: UIView, inViewController: UIViewController) -> CGFloat
-{
-    var myX: CGFloat = inStartX
-    var myY: CGFloat = inStartY
-    var myRowID: Int = 0
-    var tempTextView: UITextView!
-    
-    // Work out the position of the first box.  This is calulated using screen width and the number of entries
-    
-    let screenSize: CGRect = UIScreen.mainScreen().bounds
-    
-    let midpoint = screenSize.width / 2
-    let halfWidth = inWidth / 2
-    let halfSpace = inSpacing / 2
-    let displayMultiplier: CGFloat = CGFloat(inDisplayArray.count - 1)
-    
-    if inDisplayArray.count == 1
-    {
-        myX = midpoint - halfWidth
-    }
-    else
-    {
-        if CGFloat(inDisplayArray.count) * (inWidth + inSpacing) < screenSize.width
-        {  // number of items fits on the screen Ok
-            myX = midpoint - halfWidth - (displayMultiplier * (halfWidth + halfSpace))
-        }
-        else
-        {  // Number of items will exceed screen space
-            // what is max items we can display
-            
-            let myMaxItemsPerRow = screenSize.width / (inWidth + inSpacing)
-            
-            let maxInt = Int(myMaxItemsPerRow)
-            
-            myX = midpoint - halfWidth - (CGFloat(maxInt - 1) * (halfWidth + halfSpace))
-        }
-    }
-    
-    let myStartingX = myX
-    
-    for myItem in inDisplayArray
-    {
-        if myItem.isKindOfClass(team)
-        {
-            tempTextView = displayEntry(myItem.name, myX, myY, inWidth, inHeight, myRowID, inView, inViewController, myItem)
-        }
-        else if myItem is String
-        {
-            tempTextView = displayEntry(myItem as! String, myX, myY, inWidth, inHeight, myRowID, inView, inViewController, myItem)
-        }
-        
-        myRowID++
-        
-        if myX + (inWidth * 2) + inSpacing > screenSize.width  // Doing inwidth * 2 + space because myX is start position, so need to make sure can have both boxes and space
-        {
-            myX = myStartingX
-            myY += inHeight + inSpacing
-        }
-        else
-        {
-            myX += inWidth + inSpacing
-        }
-    }
-    
-    return myY + inHeight
+    var tag: Int = 0
+    var targetObject: AnyObject!
+    var myView: UIView!
+    var myType: String = ""
 }
