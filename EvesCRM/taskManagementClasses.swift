@@ -12,11 +12,15 @@ import AddressBook
 class purposeAndCoreValue: NSObject // 50k Level
 {
     private var myPurposeID: Int = 0
-    private var myTitle: String = ""
+    private var myTitle: String = "New purpose"
     private var myStatus: String = ""
     private var myVision: [gvision] = Array()
     private var myTeamID: Int = 0
     private var myNote: String = ""
+    private var myLastReviewDate: NSDate!
+    private var myReviewFrequency: Int = 0
+    private var myReviewPeriod: String = ""
+    private var myPredecessor: Int = 0
    
     var purposeID: Int
     {
@@ -91,21 +95,94 @@ class purposeAndCoreValue: NSObject // 50k Level
         }
     }
     
+    var lastReviewDate: NSDate
+    {
+        get
+        {
+            return myLastReviewDate
+        }
+        set
+        {
+            myLastReviewDate = newValue
+            save()
+        }
+    }
+    
+    var displayLastReviewDate: String
+    {
+        get
+        {
+            if myLastReviewDate == getDefaultDate()
+            {
+                return ""
+            }
+            else
+            {
+                var myDateFormatter = NSDateFormatter()
+                myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
+                return myDateFormatter.stringFromDate(myLastReviewDate)
+            }
+        }
+    }
+
+    var reviewFrequency: Int
+    {
+        get
+        {
+            return myReviewFrequency
+        }
+        set
+        {
+            myReviewFrequency = newValue
+            save()
+        }
+    }
+    
+    var reviewPeriod: String
+    {
+        get
+        {
+            return myReviewPeriod
+        }
+        set
+        {
+            myReviewPeriod = newValue
+            save()
+        }
+    }
+    
+    var predecessor: Int
+    {
+        get
+        {
+            return myPredecessor
+        }
+        set
+        {
+            myPredecessor = newValue
+            save()
+        }
+    }
+    
     init(inPurposeID: Int)
     {
         super.init()
         
         // Load the details
         
-        let myVisions = myDatabaseConnection.getVisions(inPurposeID, inTeamID: myTeamID)
+        let myPurposeDetail = myDatabaseConnection.getPurpose(inPurposeID, inTeamID: myTeamID)
         
-        for myPurpose in myVisions
+        for myPurpose in myPurposeDetail
         {
             myPurposeID = myPurpose.purposeID as Int
             myTitle = myPurpose.title
             myStatus = myPurpose.status
             myTeamID = myPurpose.teamID as Int
             myNote = myPurpose.note
+            myLastReviewDate = myPurpose.lastReviewDate
+            myReviewFrequency = myPurpose.reviewFrequency as Int
+            myReviewPeriod = myPurpose.reviewPeriod
+            myPredecessor = myPurpose.predecessor as Int
         }
         
         // Load the Members
@@ -119,22 +196,25 @@ class purposeAndCoreValue: NSObject // 50k Level
         }
     }
     
-    override init()
+    init(inTeamID: Int)
     {
         super.init()
         
-        let currentNumberofEntries = myDatabaseConnection.getPurposeCount()
-        
-        let nextID = currentNumberofEntries + 1
-        
-        myPurposeID = nextID
+        myPurposeID = myDatabaseConnection.getNextID("PurposeAndCoreValue")
+        myLastReviewDate = getDefaultDate()
+        myTeamID = inTeamID
         
         save()
     }
     
     func save()
     {
-        myDatabaseConnection.savePurpose(myPurposeID, inTitle: myTitle, inStatus: myStatus, inTeamID: myTeamID, inNote: myNote)
+        if myTeamID == 0
+        {
+            println("purpose - incorrect teamID")
+        }
+
+        myDatabaseConnection.savePurpose(myPurposeID, inTitle: myTitle, inStatus: myStatus, inTeamID: myTeamID, inNote: myNote, inLastReviewDate: myLastReviewDate, inReviewFrequency: myReviewFrequency, inReviewPeriod: myReviewPeriod, inPredecessor: myPredecessor)
     }
     
     func addVision(inVisionID: Int)
@@ -170,11 +250,15 @@ class gvision: NSObject // (3-5 year goals) 40k Level
 {
     private var myVisionID: Int = 0
     private var myPurposeID: Int = 0
-    private var myTitle: String = ""
+    private var myTitle: String = "New vision"
     private var myStatus: String = ""
     private var myGoals: [goalAndObjective] = Array()
     private var myTeamID: Int = 0
     private var myNote: String = ""
+    private var myLastReviewDate: NSDate!
+    private var myReviewFrequency: Int = 0
+    private var myReviewPeriod: String = ""
+    private var myPredecessor: Int = 0
     
     var visionID: Int
     {
@@ -224,7 +308,7 @@ class gvision: NSObject // (3-5 year goals) 40k Level
     }
     
     var teamID: Int
-        {
+    {
         get
         {
             return myTeamID
@@ -249,6 +333,75 @@ class gvision: NSObject // (3-5 year goals) 40k Level
         }
     }
     
+    var lastReviewDate: NSDate
+    {
+        get
+        {
+            return myLastReviewDate
+        }
+        set
+        {
+            myLastReviewDate = newValue
+            save()
+        }
+    }
+    
+    var displayLastReviewDate: String
+    {
+        get
+        {
+            if myLastReviewDate == getDefaultDate()
+            {
+                return ""
+            }
+            else
+            {
+                var myDateFormatter = NSDateFormatter()
+                myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
+                return myDateFormatter.stringFromDate(myLastReviewDate)
+            }
+        }
+    }
+    
+    var reviewFrequency: Int
+    {
+        get
+        {
+            return myReviewFrequency
+        }
+        set
+        {
+            myReviewFrequency = newValue
+            save()
+        }
+    }
+    
+    var reviewPeriod: String
+    {
+        get
+        {
+            return myReviewPeriod
+        }
+        set
+        {
+            myReviewPeriod = newValue
+            save()
+        }
+    }
+    
+    var predecessor: Int
+    {
+        get
+        {
+            return myPredecessor
+        }
+        set
+        {
+            myPredecessor = newValue
+            save()
+        }
+    }
+
     init(inVisionID: Int)
     {
         super.init()
@@ -265,6 +418,10 @@ class gvision: NSObject // (3-5 year goals) 40k Level
             myStatus = myVision.status
             myTeamID = myVision.teamID as Int
             myNote = myVision.note
+            myLastReviewDate = myVision.lastReviewDate
+            myReviewFrequency = myVision.reviewFrequency as Int
+            myReviewPeriod = myVision.reviewPeriod
+            myPredecessor = myVision.predecessor as Int
         }
         
         // Load the Members
@@ -278,22 +435,25 @@ class gvision: NSObject // (3-5 year goals) 40k Level
         }
     }
     
-    override init()
+    init(inTeamID: Int)
     {
         super.init()
         
-        let currentNumberofEntries = myDatabaseConnection.getVisionCount()
-        
-        let nextID = currentNumberofEntries + 1
-        
-        myVisionID = nextID
+        myVisionID = myDatabaseConnection.getNextID("Vision")
+        myLastReviewDate = getDefaultDate()
+        myTeamID = inTeamID
         
         save()
     }
     
     func save()
     {
-        myDatabaseConnection.saveVision(myVisionID, inPurposeID: myPurposeID, inTitle: myTitle, inStatus: myStatus, inTeamID: myTeamID, inNote: myNote)
+        if teamID == 0
+        {
+            println("vision - incorrect teamID")
+        }
+
+        myDatabaseConnection.saveVision(myVisionID, inPurposeID: myPurposeID, inTitle: myTitle, inStatus: myStatus, inTeamID: myTeamID, inNote: myNote, inLastReviewDate: myLastReviewDate, inReviewFrequency: myReviewFrequency, inReviewPeriod: myReviewPeriod, inPredecessor: myPredecessor)
     }
     
     func addGoal(inGoalID: Int)
@@ -329,11 +489,15 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
 {
     private var myGoalID: Int = 0
     private var myVisionID: Int = 0
-    private var myTitle: String = ""
+    private var myTitle: String = "New goals"
     private var myStatus: String = ""
     private var myAreas: [areaOfResponsibility] = Array()
     private var myTeamID: Int = 0
     private var myNote: String = ""
+    private var myLastReviewDate: NSDate!
+    private var myReviewFrequency: Int = 0
+    private var myReviewPeriod: String = ""
+    private var myPredecessor: Int = 0
     
     var goalID: Int
     {
@@ -408,6 +572,75 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
         }
     }
     
+    var lastReviewDate: NSDate
+    {
+        get
+        {
+            return myLastReviewDate
+        }
+        set
+        {
+            myLastReviewDate = newValue
+            save()
+        }
+    }
+    
+    var displayLastReviewDate: String
+    {
+        get
+        {
+            if myLastReviewDate == getDefaultDate()
+            {
+                return ""
+            }
+            else
+            {
+                var myDateFormatter = NSDateFormatter()
+                myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
+                return myDateFormatter.stringFromDate(myLastReviewDate)
+            }
+        }
+    }
+    
+    var reviewFrequency: Int
+    {
+        get
+        {
+            return myReviewFrequency
+        }
+        set
+        {
+            myReviewFrequency = newValue
+            save()
+        }
+    }
+    
+    var reviewPeriod: String
+    {
+        get
+        {
+            return myReviewPeriod
+        }
+        set
+        {
+            myReviewPeriod = newValue
+            save()
+        }
+    }
+    
+    var predecessor: Int
+    {
+        get
+        {
+            return myPredecessor
+        }
+        set
+        {
+            myPredecessor = newValue
+            save()
+        }
+    }
+
     init(inGoalID: Int)
     {
         super.init()
@@ -424,6 +657,10 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
             myStatus = myGoal.status
             myTeamID = myGoal.teamID as Int
             myNote = myGoal.note
+            myLastReviewDate = myGoal.lastReviewDate
+            myReviewFrequency = myGoal.reviewFrequency as Int
+            myReviewPeriod = myGoal.reviewPeriod
+            myPredecessor = myGoal.predecessor as Int
         }
         
         // Load the Members
@@ -437,22 +674,24 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
         }
     }
     
-    override init()
+    init(inTeamID: Int)
     {
         super.init()
         
-        let currentNumberofEntries = myDatabaseConnection.getGoalCount()
-        
-        let nextID = currentNumberofEntries + 1
-        
-        myGoalID = nextID
+        myGoalID = myDatabaseConnection.getNextID("GoalAndObjective")
+        myLastReviewDate = getDefaultDate()
+        myTeamID = inTeamID
         
         save()
     }
     
     func save()
     {
-        myDatabaseConnection.saveGoal(myGoalID, inVisionID: myVisionID, inTitle: myTitle, inStatus: myStatus, inTeamID: myTeamID, inNote: myNote)
+if teamID == 0
+{
+println("Goal - incorrect teamID")
+}
+        myDatabaseConnection.saveGoal(myGoalID, inVisionID: myVisionID, inTitle: myTitle, inStatus: myStatus, inTeamID: myTeamID, inNote: myNote, inLastReviewDate: myLastReviewDate, inReviewFrequency: myReviewFrequency, inReviewPeriod: myReviewPeriod, inPredecessor: myPredecessor)
     }
     
     func addArea(inAreaID: Int)
@@ -488,11 +727,15 @@ class areaOfResponsibility: NSObject // 20k Level
 {
     private var myAreaID: Int = 0
     private var myGoalID: Int = 0
-    private var myTitle: String = ""
+    private var myTitle: String = "New area"
     private var myStatus: String = ""
     private var myProjects: [project] = Array()
     private var myTeamID: Int = 0
     private var myNote: String = ""
+    private var myLastReviewDate: NSDate!
+    private var myReviewFrequency: Int = 0
+    private var myReviewPeriod: String = ""
+    private var myPredecessor: Int = 0
     
     var areaID: Int
     {
@@ -566,6 +809,75 @@ class areaOfResponsibility: NSObject // 20k Level
             save()
         }
     }
+    
+    var lastReviewDate: NSDate
+    {
+        get
+        {
+            return myLastReviewDate
+        }
+        set
+        {
+            myLastReviewDate = newValue
+            save()
+        }
+    }
+    
+    var displayLastReviewDate: String
+    {
+        get
+        {
+            if myLastReviewDate == getDefaultDate()
+            {
+                return ""
+            }
+            else
+            {
+                var myDateFormatter = NSDateFormatter()
+                myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
+                return myDateFormatter.stringFromDate(myLastReviewDate)
+            }
+        }
+    }
+    
+    var reviewFrequency: Int
+    {
+        get
+        {
+            return myReviewFrequency
+        }
+        set
+        {
+            myReviewFrequency = newValue
+            save()
+        }
+    }
+    
+    var reviewPeriod: String
+    {
+        get
+        {
+            return myReviewPeriod
+        }
+        set
+        {
+            myReviewPeriod = newValue
+            save()
+        }
+    }
+    
+    var predecessor: Int
+    {
+        get
+        {
+            return myPredecessor
+        }
+        set
+        {
+            myPredecessor = newValue
+            save()
+        }
+    }
 
     init(inAreaID: Int)
     {
@@ -583,6 +895,10 @@ class areaOfResponsibility: NSObject // 20k Level
             myStatus = myArea.status
             myTeamID = myArea.teamID as Int
             myNote = myArea.note
+            myLastReviewDate = myArea.lastReviewDate
+            myReviewFrequency = myArea.reviewFrequency as Int
+            myReviewPeriod = myArea.reviewPeriod
+            myPredecessor = myArea.predecessor as Int
         }
         
         // Load the Members
@@ -591,28 +907,30 @@ class areaOfResponsibility: NSObject // 20k Level
         
         for myProject in myProjectList
         {
-            let myNewProject = project()
-            myNewProject.load(myProject.projectID as Int)
+            let myNewProject = project(inProjectID: myProject.projectID as Int)
             myProjects.append(myNewProject)
         }
     }
     
-    override init()
+    init(inTeamID: Int)
     {
         super.init()
         
-        let currentNumberofEntries = myDatabaseConnection.getAreaCount()
-        
-        let nextID = currentNumberofEntries + 1
-        
-        myAreaID = nextID
+        myAreaID = myDatabaseConnection.getNextID("AreaOfResponsibility")
+        myLastReviewDate = getDefaultDate()
+        myTeamID = inTeamID
         
         save()
     }
 
     func save()
     {
-        myDatabaseConnection.saveAreaOfResponsibility(myAreaID, inGoalID: myGoalID, inTitle: myTitle, inStatus: myStatus, inTeamID: myTeamID, inNote: myNote)
+        if teamID == 0
+        {
+            println("area - incorrect teamID")
+        }
+
+        myDatabaseConnection.saveAreaOfResponsibility(myAreaID, inGoalID: myGoalID, inTitle: myTitle, inStatus: myStatus, inTeamID: myTeamID, inNote: myNote, inLastReviewDate: myLastReviewDate, inReviewFrequency: myReviewFrequency, inReviewPeriod: myReviewPeriod, inPredecessor: myPredecessor)
     }
     
     func addProject(inProjectID: Int)
@@ -624,8 +942,7 @@ class areaOfResponsibility: NSObject // 20k Level
         
         for myProject in myProjectList
         {
-            let myNewProject = project()
-            myNewProject.load(myProject.projectID as Int)
+            let myNewProject = project(inProjectID: myProject.projectID as Int)
             myProjects.append(myNewProject)
         }
     }
@@ -639,8 +956,7 @@ class areaOfResponsibility: NSObject // 20k Level
         
         for myProject in myProjectList
         {
-            let myNewProject = project()
-            myNewProject.load(myProject.projectID as Int)
+            let myNewProject = project(inProjectID: myProject.projectID as Int)
             myProjects.append(myNewProject)
         }
     }
@@ -734,7 +1050,7 @@ class project: NSObject // 10k level
 {
     private var myProjectEndDate: NSDate!
     private var myProjectID: Int = 0
-    private var myProjectName: String = ""
+    private var myProjectName: String = "New project"
     private var myProjectStartDate: NSDate!
     private var myProjectStatus: String = ""
     private var myReviewFrequency: Int = 0
@@ -747,6 +1063,8 @@ class project: NSObject // 10k level
     private var myRepeatBase: String = ""
     private var myTeamID: Int = 0
     private var myNote: String = ""
+    private var myReviewPeriod: String = ""
+    private var myPredecessor: Int = 0
 
     var projectEndDate: NSDate
     {
@@ -902,6 +1220,19 @@ class project: NSObject // 10k level
         }
     }
     
+    var reviewPeriod: String
+    {
+        get
+        {
+            return myReviewPeriod
+        }
+        set
+        {
+            myReviewPeriod = newValue
+            save()
+        }
+    }
+    
     var areaID: Int
     {
         get
@@ -979,25 +1310,38 @@ class project: NSObject // 10k level
             save()
         }
     }
+    
+    var predecessor: Int
+    {
+        get
+        {
+            return myPredecessor
+        }
+        set
+        {
+            myPredecessor = newValue
+            save()
+        }
+    }
 
-    override init()
+    init(inTeamID: Int)
     {
         super.init()
  
-        let currentNumberofEntries = myDatabaseConnection.getProjectCount()
-        let nextProjectID = currentNumberofEntries + 1
-        
-        myProjectID = nextProjectID
+        myProjectID = myDatabaseConnection.getNextID("Projects")
         
         // Set dates to a really daft value so that it stores into the database
         
         myProjectEndDate = getDefaultDate()
         myProjectStartDate = getDefaultDate()
         myLastReviewDate = getDefaultDate()
+        myTeamID = inTeamID
     }
     
-    func load(inProjectID: Int)
+    init(inProjectID: Int)
     {
+        super.init()
+        
  // GRE whatever calls projects should check to make sure it is not marked as "Archived", as we are not deleting Projects, only marking them as archived
         let myProjects = myDatabaseConnection.getProjectDetails(inProjectID, inTeamID: myTeamID)
         
@@ -1039,12 +1383,16 @@ class project: NSObject // 10k level
             if myNotes.count == 0
             {
                 myNote = ""
+                myReviewPeriod = ""
+                myPredecessor = 0
             }
             else
             {
                 for myItem in myNotes
                 {
                     myNote = myItem.note
+                    myReviewPeriod = myItem.reviewPeriod
+                    myPredecessor = myItem.predecessor as Int
                 }
             }
         }
@@ -1078,7 +1426,7 @@ class project: NSObject // 10k level
         }
     }
         
-    func addTaskToProject(inTaskID: Int)
+    func addTask(inTaskID: Int)
     {            
         let myTempTask = task(inTaskID: inTaskID)
         myTempTask.projectID = myProjectID
@@ -1095,7 +1443,7 @@ class project: NSObject // 10k level
         }
     }
         
-    func removeTaskFromProject(inTaskID: Int)
+    func removeTask(inTaskID: Int)
     {
         let myTempTask = task(inTaskID: inTaskID)
         myTempTask.projectID = 0
@@ -1115,6 +1463,10 @@ class project: NSObject // 10k level
     func save()
     {
         // Save Project
+        if teamID == 0
+        {
+            println("project - incorrect teamID")
+        }
         
         myDatabaseConnection.saveProject(myProjectID, inProjectEndDate: myProjectEndDate, inProjectName: myProjectName, inProjectStartDate: myProjectStartDate, inProjectStatus: myProjectStatus, inReviewFrequency: myReviewFrequency, inLastReviewDate: myLastReviewDate, inAreaID: myAreaID, inRepeatInterval: myRepeatInterval, inRepeatType: myRepeatType, inRepeatBase: myRepeatBase, inTeamID: myTeamID)
         
@@ -1134,16 +1486,9 @@ class project: NSObject // 10k level
         
         // save note
         
-        myDatabaseConnection.saveProjectNote(myProjectID, inNote: myNote)
+        myDatabaseConnection.saveProjectNote(myProjectID, inNote: myNote, inReviewPeriod: myReviewPeriod, inPredecessor: myPredecessor)
     }
     
-    func getDefaultDate() -> NSDate
-    {
-        let dateStringFormatter = NSDateFormatter()
-        dateStringFormatter.dateFormat = "yyyy-MM-dd"
-        return dateStringFormatter.dateFromString("9999-12-31")!
-    }
-
    //  There is no delete in this class, as I do not want to delete projects, instead they will be marked as archived and not displayed
 }
 
@@ -1186,7 +1531,7 @@ class taskPredecessor: NSObject
 class task: NSObject
 {
     private var myTaskID: Int = 0
-    private var myTitle: String = ""
+    private var myTitle: String = "New task"
     private var myDetails: String = ""
     private var myDueDate: NSDate!
     private var myStartDate: NSDate!
@@ -1522,11 +1867,11 @@ class task: NSObject
         }
     }
     
-    override init()
+    init(inTeamID: Int)
     {
         super.init()
-        let currentNumberofEntries = myDatabaseConnection.getTaskCount()
-        myTaskID = currentNumberofEntries + 1
+        
+        myTaskID = myDatabaseConnection.getNextID("Task")
         
         myDueDate = getDefaultDate()
         myStartDate = getDefaultDate()
@@ -1534,6 +1879,7 @@ class task: NSObject
         myStatus = "Open"
         
         myTitle = "New Task"
+        myTeamID = inTeamID
     
         save()
     }
@@ -1588,6 +1934,11 @@ class task: NSObject
     
     func save()
     {
+        if teamID == 0
+        {
+            println("task - incorrect teamID")
+        }
+
         myDatabaseConnection.saveTask(myTaskID, inTitle: myTitle, inDetails: myDetails, inDueDate: myDueDate, inStartDate: myStartDate, inStatus: myStatus, inPriority: myPriority, inEnergyLevel: myEnergyLevel, inEstimatedTime: myEstimatedTime, inEstimatedTimeType: myEstimatedTimeType, inProjectID: myProjectID, inCompletionDate: myCompletionDate!, inRepeatInterval: myRepeatInterval, inRepeatType: myRepeatType, inRepeatBase: myRepeatBase, inFlagged: myFlagged, inUrgency: myUrgency, inTeamID: myTeamID)
         
         // Save context link
@@ -1598,7 +1949,7 @@ class task: NSObject
         }
     }
     
-    func addContextToTask(inContextID: Int)
+    func addContext(inContextID: Int)
     {
         var itemFound: Bool = false
         
@@ -1635,7 +1986,7 @@ class task: NSObject
         }
     }
     
-    func removeContextFromTask(inContextID: Int)
+    func removeContext(inContextID: Int)
     {
         myDatabaseConnection.deleteTaskContext(inContextID, inTaskID: myTaskID)
         
@@ -2026,13 +2377,14 @@ class contexts: NSObject
 class context: NSObject
 {
     private var myContextID: Int = 0
-    private var myName: String = ""
+    private var myName: String = "New context"
     private var myEmail: String = ""
     private var myAutoEmail: String = ""
     private var myParentContext: Int = 0
     private var myStatus: String = ""
     private var myPersonID: Int32 = 0
     private var myTeamID: Int = 0
+    private var myPredecessor: Int = 0
     
     var contextID: Int
     {
@@ -2161,9 +2513,33 @@ class context: NSObject
         }
     }
     
+    var predecessor: Int
+    {
+        get
+        {
+            return myPredecessor
+        }
+        set
+        {
+            myPredecessor = newValue
+            save()
+        }
+    }
+    
     func removeWhitespace(string: String) -> String {
         let components = string.componentsSeparatedByCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()).filter({!isEmpty($0)})
         return join(" ", components)
+    }
+    
+    
+    init(inTeamID: Int)
+    {
+        super.init()
+        
+        myContextID = myDatabaseConnection.getNextID("Context")
+        myTeamID = inTeamID
+        
+        save()
     }
     
     init(inContextName: String)
@@ -2193,6 +2569,9 @@ class context: NSObject
                 myTeamID = myContext.teamID
 
                 matchFound = true
+                
+                getContext1_1()
+                
                 break
             }
         }
@@ -2236,6 +2615,7 @@ class context: NSObject
     
     init(inContextID: Int)
     {
+        super.init()
         let myContexts = myDatabaseConnection.getContextDetails(inContextID, inTeamID: myTeamID)
         
         for myContext in myContexts
@@ -2248,11 +2628,14 @@ class context: NSObject
             myStatus = myContext.status
             myPersonID = myContext.personID.intValue
             myTeamID = myContext.teamID as Int
+            
+            getContext1_1()
         }
     }
     
     init(inContext: Context)
     {
+        super.init()
         myContextID = inContext.contextID as Int
         myName = inContext.name
         myEmail = inContext.email
@@ -2261,10 +2644,38 @@ class context: NSObject
         myStatus = inContext.status
         myPersonID = inContext.personID.intValue
         myTeamID = inContext.teamID as Int
+        
+        getContext1_1()
+    }
+    
+    
+    private func getContext1_1()
+    {
+        // Get context1_1
+        
+        let myNotes = myDatabaseConnection.getContext1_1(myContextID)
+        
+        if myNotes.count == 0
+        {
+            myPredecessor = 0
+        }
+        else
+        {
+            for myItem in myNotes
+            {
+                myPredecessor = myItem.predecessor as Int
+            }
+        }
+
     }
     
     func save()
     {
+        if teamID == 0
+        {
+            println("context - incorrect teamID")
+        }
+
         myDatabaseConnection.saveContext(myContextID, inName: myName, inEmail: myEmail, inAutoEmail: myAutoEmail, inParentContext: myParentContext, inStatus: myStatus, inPersonID: myPersonID, inTeamID: myTeamID)
     }
 }
@@ -2398,6 +2809,7 @@ class TaskModel: NSObject
 class GTDModel: NSObject
 {
     private var myDelegate: MyMaintainProjectDelegate!
+    private var myActionSource: String = ""
     
     var delegate: MyMaintainProjectDelegate
     {
@@ -2408,6 +2820,18 @@ class GTDModel: NSObject
         set
         {
             myDelegate = newValue
+        }
+    }
+    
+    var actionSource: String
+    {
+        get
+        {
+            return myActionSource
+        }
+        set
+        {
+            myActionSource = newValue
         }
     }
 }

@@ -320,12 +320,12 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
             projectNameText.text = myProjects[indexPath.row].projectName
            // statusPicker.currentText = myProjects[indexPath.row].projectStatus
             
-            if myProjects[indexPath.row].projectStartDate.compare(myProjects[indexPath.row].getDefaultDate()) != NSComparisonResult.OrderedSame
+            if myProjects[indexPath.row].projectStartDate.compare(getDefaultDate()) != NSComparisonResult.OrderedSame
             {
                 startDatePicker.date = myProjects[indexPath.row].projectStartDate
             }
             
-            if myProjects[indexPath.row].projectEndDate.compare(myProjects[indexPath.row].getDefaultDate()) != NSComparisonResult.OrderedSame
+            if myProjects[indexPath.row].projectEndDate.compare(getDefaultDate()) != NSComparisonResult.OrderedSame
             {
                 endDatePicker.date = myProjects[indexPath.row].projectEndDate
             }
@@ -495,7 +495,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         {
             if myActionType == "Add"
             {
-                mySelectedProject = project()
+                mySelectedProject = project(inTeamID: myTeamID)
                 mySelectedProject.projectName = projectNameText.text
             }
             else
@@ -576,8 +576,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         
         for myProjectRecord in myProjectList
         {
-            let myNewProject = project()
-            myNewProject.load(myProjectRecord.projectID as Int)
+            let myNewProject = project(inProjectID: myProjectRecord.projectID as Int)
             myProjects.append(myNewProject)
         }
     }

@@ -15,6 +15,8 @@ class team: NSObject
     private var myNote: String = ""
     private var myStatus: String = ""
     private var myType: String = ""
+    private var myPredecessor: Int = 0
+    private var myExternalID: Int = 0
     
     var teamID: Int
     {
@@ -68,6 +70,32 @@ class team: NSObject
         }
     }
     
+    var predecessor: Int
+    {
+        get
+        {
+            return myPredecessor
+        }
+        set
+        {
+            myPredecessor = newValue
+            save()
+        }
+    }
+    
+    var externalID: Int
+    {
+        get
+        {
+            return myExternalID
+        }
+        set
+        {
+            myExternalID = newValue
+            save()
+        }
+    }
+    
     var type: String
     { // Type should be either "private" or "shared"
         get
@@ -96,6 +124,8 @@ class team: NSObject
             myStatus = myItem.status
             myType = myItem.type
             myNote = myItem.note
+            myPredecessor = myItem.predecessor as Int
+            myExternalID = myItem.externalID as Int
         }
     }
 
@@ -114,6 +144,6 @@ class team: NSObject
     
     func save()
     {
-        myDatabaseConnection.saveTeam(myTeamID, inName: myName, inStatus: myStatus, inNote: myNote, inType: myType)
+        myDatabaseConnection.saveTeam(myTeamID, inName: myName, inStatus: myStatus, inNote: myNote, inType: myType, inPredecessor: myPredecessor, inExternalID: myExternalID)
     }
 }

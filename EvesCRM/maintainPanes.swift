@@ -322,7 +322,7 @@ class MaintainPanesViewController: UIViewController
     {
         // this is to allow cleaning of panes if needed
         
-        myDatabaseConnection.deleteAllPanes(myTeamID)
+        myDatabaseConnection.deleteAllPanes()
         
         // End delete phase
         

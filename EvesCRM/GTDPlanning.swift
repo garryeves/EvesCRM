@@ -33,6 +33,7 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
     private var containerViewBody: UIView!
 
     private var myDisplayArray: [AnyObject] = Array()
+    private var myDisplayBodyArray: [AnyObject] = Array()
     
     override func viewDidLoad()
     {
@@ -48,7 +49,18 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
         hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
         self.view.addGestureRecognizer(hideGestureRecognizer)
         
-        buildTopLevel()
+        if passedGTD.actionSource == "Project"
+        {
+            buildTopLevel()
+        }
+        else if passedGTD.actionSource == "Context"
+        {
+println("Put in initial context code here")
+        }
+        else
+        {
+            println("No action sent")
+        }
     }
     
     override func didReceiveMemoryWarning()
@@ -67,6 +79,13 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
         let containerSize = CGSizeMake(contentWidth, 120)
         
         containerViewHead.frame = CGRect(origin: CGPointMake(0.0, 0.0), size:containerSize)
+        
+        let contentHeight = buildDisplayBody(myDisplayBodyArray, inWidth: 200, inHeight: 100, inSpacing: 40, inStartX: 0, inStartY: 0)
+        
+        // Set up the container view to hold your custom view hierarchy
+        let containerSize2 = CGSizeMake(UIScreen.mainScreen().bounds.width, contentHeight)
+        
+        containerViewBody.frame = CGRect(origin: CGPointMake(0.0, 0.0), size:containerSize2)
     }
     
     override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent)
@@ -134,9 +153,19 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
         
         // Setup up child records
         
+        
+        myDisplayBodyArray.removeAll()
+        let myPurposes = myDatabaseConnection.getAllPurpose(1)
+        
+        for myPurposeItem in myPurposes
+        {
+            let myPurpose = purposeAndCoreValue(inPurposeID: myPurposeItem.purposeID as Int)
+            myDisplayBodyArray.append(myPurpose)
+        }
+    
         containerViewBody = UIView()
         
-        let contentHeight = buildDisplayBody(myDisplayArray, inWidth: 200, inHeight: 100, inSpacing: 40, inStartX: 0, inStartY: 0)
+        let contentHeight = buildDisplayBody(myDisplayBodyArray, inWidth: 200, inHeight: 100, inSpacing: 40, inStartX: 0, inStartY: 0)
         
         // Set up the container view to hold your custom view hierarchy
         let containerSize2 = CGSizeMake(UIScreen.mainScreen().bounds.width, contentHeight)
@@ -244,54 +273,272 @@ println("popoverPresentationControllerDidDismissPopover")
     
     func handleSingleTap(sender: textViewTapGestureRecognizer)
     {
-        if sender.targetObject.isKindOfClass(team)
-        {
-   println("Name = \(sender.targetObject.name)")
-            
-            let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("purposeController") as! purposeViewController
-            popoverContent.modalPresentationStyle = .Popover
-            var popover = popoverContent.popoverPresentationController
-            popover!.delegate = self
-            popover!.sourceView = sender.myView
-            popoverContent.preferredContentSize = CGSizeMake(500,400)
-            self.presentViewController(popoverContent, animated: true, completion: nil)
-        }
+        //Code in here fort zoom
     }
     
     func handleLongPress(sender:textLongPressGestureRecognizer)
     {
+        var myHeader: String = ""
+        var myMessage: String = ""
+        
         if sender.state == .Ended
         {
-            if sender.targetObject.isKindOfClass(team)
+            switch sender.type
             {
-                if sender.myType == "head"
-                {
-                    let teamOption: UIAlertController = UIAlertController(title: "Team Options", message: "Select action to take", preferredStyle: .ActionSheet)
-            
-                    let purposeAdd = UIAlertAction(title: "Add Purpose/Core Value", style: .Default, handler: { (action: UIAlertAction!) -> () in
-                        let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("purposeController") as! purposeViewController
-                        popoverContent.modalPresentationStyle = .Popover
-                        var popover = popoverContent.popoverPresentationController
-                        popover!.delegate = self
-                        popover!.sourceView = sender.myView
-                        popoverContent.preferredContentSize = CGSizeMake(500,400)
-                        self.presentViewController(popoverContent, animated: true, completion: nil)
-                    })
-            
-                    teamOption.addAction(purposeAdd)
-                    teamOption.popoverPresentationController?.sourceView = sender.myView
+                case "team" :
+                    myHeader = "Team Options"
                     
-                    self.presentViewController(teamOption, animated: true, completion: nil)
+                    if sender.headBody == "head"
+                    {
+                        myMessage = "Add Purpose/Core Value"
+                    }
+                    else
+                    {
+                        myMessage = "Edit Team"
+                    }
+                
+                case "purposeAndCoreValue" :
+                    myHeader = "Purpose/Core Value Options"
+                    
+                    if sender.headBody == "head"
+                    {
+                        myMessage = "Add Vision"
+                    }
+                    else
+                    {
+                        myMessage = "Edit Purpose/Core Value"
+                    }
+                
+                case "gvision" :
+                    myHeader = "Vision Options"
+                    
+                    if sender.headBody == "head"
+                    {
+                        myMessage = "Add Goal and Objective"
+                    }
+                    else
+                    {
+                        myMessage = "Edit Vision"
+                    }
+                
+                case "goalAndObjective" :
+                    myHeader = "Goal and Objective Options"
+                    
+                    if sender.headBody == "head"
+                    {
+                        myMessage = "Add Area of Responsibility"
+                    }
+                    else
+                    {
+                        myMessage = "Edit Goal and Objective"
+                    }
+                
+                case "areaOfResponsibility" :
+                    myHeader = "Area of Responsibility Options"
+                    
+                    if sender.headBody == "head"
+                    {
+                        myMessage = "Add Project"
+                    }
+                    else
+                    {
+                        myMessage = "Edit Area of Responsibility"
+                    }
+                
+                case "project" :
+                    myHeader = "Project Options"
+                    
+                    if sender.headBody == "head"
+                    {
+                        myMessage = "Add Task"
+           //             workingObject = task()
+                    }
+                    else
+                    {
+                        myMessage = "Edit Project"
+              //          workingObject = sender.targetObject
+                    }
+                
+                case "task" :
+                    myHeader = "Task Options"
+                    
+                    if sender.headBody == "head"
+                    {
+                        myMessage = "Add Task"
+           //             workingObject = task()
+                    }
+                    else
+                    {
+                        myMessage = "Edit Task"
+            //            workingObject = sender.targetObject
+                    }
+                
+                case "context" :
+                    myHeader = "Context Options"
+                    
+                    if sender.headBody == "head"
+                    {
+                        myMessage = "Add Sub-Context"
+        //                workingObject = context()
+                    }
+                    else
+                    {
+                        myMessage = "Edit Context"
+          //              workingObject = sender.targetObject
+                    }
+                
+                default :
+                    println("Handle long press hit default")
+            }
+
+            let myOptions: UIAlertController = UIAlertController(title: myHeader, message: "Select action to take", preferredStyle: .ActionSheet)
+
+            if sender.type == "team" && sender.headBody == "head"
+            {
+                let myOption1 = UIAlertAction(title: myMessage, style: .Default, handler: { (action: UIAlertAction!) -> () in
+                    let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("GTDEditController") as! GTDEditViewController
+                    popoverContent.modalPresentationStyle = .Popover
+                    var popover = popoverContent.popoverPresentationController
+                    popover!.delegate = self
+                    popover!.sourceView = sender.displayView
+                    
+                    if sender.headBody == "head"
+                    {
+                        let parentObject = sender.targetObject as! team
+                        popoverContent.inPurposeObject = purposeAndCoreValue(inTeamID: parentObject.teamID as Int)
+                        popoverContent.objectType = "purpose"
+                        
+                    }
+                    else
+                    {
+  //                      popoverContent.workingObject = sender.targetObject
+                    }
+                    popoverContent.preferredContentSize = CGSizeMake(500,400)
+                    self.presentViewController(popoverContent, animated: true, completion: nil)
+                })
+                
+                myOptions.addAction(myOption1)
+            }
+            else if sender.type == "areaOfResponsibility" && sender.headBody == "head"
+            {  // put in code here to add a new project
+             //   popoverContent.workingObject = project()
+                /*
+                let myOption1 = UIAlertAction(title: myMessage, style: .Default, handler: { (action: UIAlertAction!) -> () in
+                let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("GTDEditController") as! GTDEditViewController
+                popoverContent.modalPresentationStyle = .Popover
+                var popover = popoverContent.popoverPresentationController
+                popover!.delegate = self
+                popover!.sourceView = sender.displayView
+                if sender.headBody == "head"
+                {
+                popoverContent.workingObject = purposeAndCoreValue()
                 }
                 else
-                {  // Selected in body
-                    // not used in this release
+                {
+                popoverContent.workingObject = sender.targetObject
                 }
+                popoverContent.preferredContentSize = CGSizeMake(500,400)
+                self.presentViewController(popoverContent, animated: true, completion: nil)
+                })
+                
+                myOptions.addAction(myOption1)
+                */
             }
+            else if sender.type == "purposeAndCoreValue" || sender.type ==  "gvision" || sender.type ==  "goalAndObjective" || sender.type ==  "areaOfResponsibility"
+            {
+                let myOption1 = UIAlertAction(title: myMessage, style: .Default, handler: { (action: UIAlertAction!) -> () in
+                    let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("GTDEditController") as! GTDEditViewController
+                    popoverContent.modalPresentationStyle = .Popover
+                    var popover = popoverContent.popoverPresentationController
+                    popover!.delegate = self
+                    popover!.sourceView = sender.displayView
+
+                    switch sender.type
+                    {
+                        case "purposeAndCoreValue" :
+                            if sender.headBody == "head"
+                            {
+                                let parentObject = sender.targetObject as! purposeAndCoreValue
+                                let workingObject = gvision(inTeamID: parentObject.teamID as Int)
+                                parentObject.addVision(workingObject.visionID)
+                                popoverContent.inVisionObject = workingObject
+                                popoverContent.objectType = "vision"
+                            }
+                            else
+                            {
+                                popoverContent.inPurposeObject = sender.targetObject as! purposeAndCoreValue
+                                popoverContent.objectType = "purpose"
+                            }
+                    
+                        case "gvision" :
+                            if sender.headBody == "head"
+                            {
+                                let parentObject = sender.targetObject as! gvision
+                                let workingObject = goalAndObjective(inTeamID: parentObject.teamID as Int)
+                                parentObject.addGoal(workingObject.goalID)
+                                popoverContent.inGoalObject = workingObject
+                                popoverContent.objectType = "goal"
+                            }
+                            else
+                            {
+                                popoverContent.inVisionObject = sender.targetObject as! gvision
+                                popoverContent.objectType = "vision"
+                            }
+                    
+                        case "goalAndObjective" :
+                            if sender.headBody == "head"
+                            {
+                                let parentObject = sender.targetObject as! goalAndObjective
+                                let workingObject = areaOfResponsibility(inTeamID: parentObject.teamID as Int)
+                                parentObject.addArea(workingObject.areaID)
+                                popoverContent.inAreaObject = workingObject
+                                popoverContent.objectType = "area"
+                            }
+                            else
+                            {
+                                popoverContent.inGoalObject = sender.targetObject as! goalAndObjective
+                                popoverContent.objectType = "goal"
+                            }
+                    
+                        case "areaOfResponsibility" :
+                            if sender.headBody != "head"
+                            {
+                                popoverContent.inAreaObject = sender.targetObject as! areaOfResponsibility
+                                popoverContent.objectType = "area"
+                            }
+            
+                    default:
+                        println("")
+                    }
+
+                    popoverContent.preferredContentSize = CGSizeMake(500,400)
+                    self.presentViewController(popoverContent, animated: true, completion: nil)
+                })
+            
+                myOptions.addAction(myOption1)
+            }
+            else
+            {  // Selected in body
+                // code
+            }
+            
+            myOptions.popoverPresentationController?.sourceView = sender.displayView
+            
+            self.presentViewController(myOptions, animated: true, completion: nil)
         }
     }
     
-    private func displayEntry(inString: String, xPos: CGFloat, yPos: CGFloat, rectWidth: CGFloat, rectHeight: CGFloat, inRowID: Int, inTargetObject: AnyObject, inView: UIView, inType: String) -> UITextView
+ //not tested for dragging around screen
+//    func detectPan(sender:UIPanGestureRecognizer) {
+ //       self.view.bringSubviewToFront(sender.view!)
+ //       var translation = sender.translationInView(self.view)
+//        sender.view!.center = CGPointMake(sender.view!.center.x + translation.x, sender.view!.center.y + translation.y)
+//        sender.setTranslation(CGPointZero, inView: self.view)
+///}
+    
+    
+    
+    private func displayEntry(inString: String, xPos: CGFloat, yPos: CGFloat, rectWidth: CGFloat, rectHeight: CGFloat, inRowID: Int, inTargetObject: AnyObject, inView: UIView, inHeadBody: String) -> UITextView
     {
         var txtView: UITextView = UITextView(frame: CGRect(x: xPos, y: yPos, width: rectWidth, height: rectHeight))
         
@@ -313,17 +560,22 @@ println("popoverPresentationControllerDidDismissPopover")
         singleTap.numberOfTapsRequired = 1
         singleTap.tag = inRowID
         singleTap.targetObject = inTargetObject
-        singleTap.myView = txtView
-        singleTap.myType = inType
+        singleTap.displayView = txtView
+        singleTap.headBody = inHeadBody
+        
         txtView.addGestureRecognizer(singleTap)
         
         var lpgr = textLongPressGestureRecognizer(target: self, action: "handleLongPress:")
         lpgr.tag = inRowID
         lpgr.targetObject = inTargetObject
-        lpgr.myView = txtView
-        lpgr.myType = inType
+        lpgr.displayView = txtView
+        lpgr.headBody = inHeadBody
         
         txtView.addGestureRecognizer(lpgr)
+        
+        // not tested, need to have the stuff loaded first
+  //      var panRecognizer = UIPanGestureRecognizer(target:self, action:"detectPan:")
+  //      txtView.addGestureRecognizer(panRecognizer)
         
         inView.addSubview(txtView)
         
@@ -379,11 +631,11 @@ println("popoverPresentationControllerDidDismissPopover")
         {
             if myItem.isKindOfClass(team)
             {
-                tempTextView = displayEntry(myItem.name, xPos: myX, yPos: myY, rectWidth: inWidth, rectHeight: inHeight, inRowID: myRowID, inTargetObject: myItem, inView: containerViewHead, inType: "head")
+                tempTextView = displayEntry(myItem.name, xPos: myX, yPos: myY, rectWidth: inWidth, rectHeight: inHeight, inRowID: myRowID, inTargetObject: myItem, inView: containerViewHead, inHeadBody: "head")
             }
             else if myItem is String
             {
-                tempTextView = displayEntry(myItem as! String, xPos: myX, yPos: myY, rectWidth: inWidth, rectHeight: inHeight, inRowID: myRowID, inTargetObject: myItem, inView: containerViewHead, inType: "head")
+                tempTextView = displayEntry(myItem as! String, xPos: myX, yPos: myY, rectWidth: inWidth, rectHeight: inHeight, inRowID: myRowID, inTargetObject: myItem, inView: containerViewHead, inHeadBody: "head")
             }
             
             myRowID++
@@ -446,11 +698,31 @@ println("popoverPresentationControllerDidDismissPopover")
         {
             if myItem.isKindOfClass(team)
             {
-                tempTextView = displayEntry(myItem.name, xPos: myX, yPos: myY, rectWidth: inWidth, rectHeight: inHeight, inRowID: myRowID, inTargetObject: myItem, inView: containerViewBody, inType: "body")
+                tempTextView = displayEntry(myItem.name, xPos: myX, yPos: myY, rectWidth: inWidth, rectHeight: inHeight, inRowID: myRowID, inTargetObject: myItem, inView: containerViewBody, inHeadBody: "body")
             }
+            else if myItem.isKindOfClass(purposeAndCoreValue)
+            {
+                let tempObject = myItem as! purposeAndCoreValue
+                tempTextView = displayEntry(tempObject.title, xPos: myX, yPos: myY, rectWidth: inWidth, rectHeight: inHeight, inRowID: myRowID, inTargetObject: myItem, inView: containerViewBody, inHeadBody: "body")
+            }
+            else if myItem.isKindOfClass(gvision)
+            {
+                let tempObject = myItem as! gvision
+                tempTextView = displayEntry(tempObject.title, xPos: myX, yPos: myY, rectWidth: inWidth, rectHeight: inHeight, inRowID: myRowID, inTargetObject: myItem, inView: containerViewBody, inHeadBody: "body")
+            }
+            else if myItem.isKindOfClass(goalAndObjective)
+            {
+                let tempObject = myItem as! goalAndObjective
+                tempTextView = displayEntry(tempObject.title, xPos: myX, yPos: myY, rectWidth: inWidth, rectHeight: inHeight, inRowID: myRowID, inTargetObject: myItem, inView: containerViewBody, inHeadBody: "body")
+            }
+            else if myItem.isKindOfClass(areaOfResponsibility)
+            {
+                let tempObject = myItem as! areaOfResponsibility
+                tempTextView = displayEntry(tempObject.title, xPos: myX, yPos: myY, rectWidth: inWidth, rectHeight: inHeight, inRowID: myRowID, inTargetObject: myItem, inView: containerViewBody, inHeadBody: "body")
+            }                
             else if myItem is String
             {
-                tempTextView = displayEntry(myItem as! String, xPos: myX, yPos: myY, rectWidth: inWidth, rectHeight: inHeight, inRowID: myRowID, inTargetObject: myItem, inView: containerViewBody, inType: "body")
+                tempTextView = displayEntry(myItem as! String, xPos: myX, yPos: myY, rectWidth: inWidth, rectHeight: inHeight, inRowID: myRowID, inTargetObject: myItem, inView: containerViewBody, inHeadBody: "body")
             }
             
             myRowID++

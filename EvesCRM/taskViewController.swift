@@ -780,7 +780,7 @@ class taskViewController: UIViewController,  UITextViewDelegate
     
     func setContext(inContextID: Int)
     {
-        passedTask.currentTask.addContextToTask(inContextID)
+        passedTask.currentTask.addContext(inContextID)
         
         // Reload the collection data
         
@@ -791,7 +791,7 @@ class taskViewController: UIViewController,  UITextViewDelegate
     {
         let contextToRemove = notification.userInfo!["itemNo"] as! Int
         
-        passedTask.currentTask.removeContextFromTask(contextToRemove)
+        passedTask.currentTask.removeContext(contextToRemove)
         
         // Reload the collection data
         

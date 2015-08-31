@@ -1957,7 +1957,7 @@ println("Nothing found")
                         
                         // Work out the comparision date we need to use, so we can flag items not updated in last 2 weeks
                         
-                        let myLastUpdateString = myDatabaseConnection.getDecodeValue("Tasks - Days since last update", inTeamID: myTeamID)
+                        let myLastUpdateString = myDatabaseConnection.getDecodeValue("Tasks - Days since last update")
                         // This is string value, and is also positive, so need to convert to integer
                         
                         let myLastUpdateValue = 0 - (myLastUpdateString as NSString).integerValue
@@ -2034,7 +2034,7 @@ println("Nothing found")
                         myDisplayString += "\nDue: \(splitText[4])"
                         
                         // Work out the comparision dat we need to use, so we can see if the due date is in the next 7 days
-                        let myDueDateString = myDatabaseConnection.getDecodeValue("Tasks - Days before due date", inTeamID: myTeamID)
+                        let myDueDateString = myDatabaseConnection.getDecodeValue("Tasks - Days before due date")
                         // This is string value so need to convert to integer
                         
                         let myDueDateValue = (myDueDateString as NSString).integerValue
@@ -2051,7 +2051,7 @@ println("Nothing found")
                         }
                         
                         // Work out the comparision dat we need to use, so we can see if the due date is in the next 7 days
-                        let myOverdueDateString = myDatabaseConnection.getDecodeValue("Tasks - Days after due date", inTeamID: myTeamID)
+                        let myOverdueDateString = myDatabaseConnection.getDecodeValue("Tasks - Days after due date")
                         // This is string value so need to convert to integer
                         
                         let myOverdueDateValue = (myOverdueDateString as NSString).integerValue
@@ -2201,40 +2201,57 @@ println("Nothing found")
     func initialPopulationOfTables()
     {
         var decodeString: String = ""
-
-        decodeString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date", inTeamID: myTeamID)
         
-        if decodeString == ""
-        {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("Calendar - Weeks before current date", inCodeValue: "1", inCodeType: "stepper", inTeamID: myTeamID)
+        if myDatabaseConnection.getTeamsCount() == 0
+        {
+            let myTeam = team()
+            myTeam.name = "My Life"
+            myTeam.type = "private"
+            myTeam.status = "Open"
+            
+            // Need to update existing tables to use the newly created team
+            
+            myDatabaseConnection.initialiseTeamForContext(myTeam.teamID)
+            myDatabaseConnection.initialiseTeamForMeetingAgenda(myTeam.teamID)
+            myDatabaseConnection.initialiseTeamForProject(myTeam.teamID)
+            myDatabaseConnection.initialiseTeamForRoles(myTeam.teamID)
+            myDatabaseConnection.initialiseTeamForStages(myTeam.teamID)
+            myDatabaseConnection.initialiseTeamForTask(myTeam.teamID)
         }
 
-        decodeString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date", inTeamID: myTeamID)
+        decodeString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date")
         
         if decodeString == ""
         {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("Calendar - Weeks after current date", inCodeValue: "4", inCodeType: "stepper", inTeamID: myTeamID)
+            myDatabaseConnection.updateDecodeValue("Calendar - Weeks before current date", inCodeValue: "1", inCodeType: "stepper")
+        }
+
+        decodeString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date")
+        
+        if decodeString == ""
+        {  // Nothing found so go and create
+            myDatabaseConnection.updateDecodeValue("Calendar - Weeks after current date", inCodeValue: "4", inCodeType: "stepper")
         }
         
-        decodeString = myDatabaseConnection.getDecodeValue("Tasks - Days after due date", inTeamID: myTeamID)
+        decodeString = myDatabaseConnection.getDecodeValue("Tasks - Days after due date")
         
         if decodeString == ""
         {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("Tasks - Days after due date", inCodeValue: "0", inCodeType: "stepper", inTeamID: myTeamID)
+            myDatabaseConnection.updateDecodeValue("Tasks - Days after due date", inCodeValue: "0", inCodeType: "stepper")
         }
         
-        decodeString = myDatabaseConnection.getDecodeValue("Tasks - Days before due date", inTeamID: myTeamID)
+        decodeString = myDatabaseConnection.getDecodeValue("Tasks - Days before due date")
         
         if decodeString == ""
         {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("Tasks - Days before due date", inCodeValue: "7", inCodeType: "stepper", inTeamID: myTeamID)
+            myDatabaseConnection.updateDecodeValue("Tasks - Days before due date", inCodeValue: "7", inCodeType: "stepper")
         }
         
-        decodeString = myDatabaseConnection.getDecodeValue("Tasks - Days since last update", inTeamID: myTeamID)
+        decodeString = myDatabaseConnection.getDecodeValue("Tasks - Days since last update")
         
         if decodeString == ""
         {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("Tasks - Days since last update", inCodeValue: "14", inCodeType: "stepper", inTeamID: myTeamID)
+            myDatabaseConnection.updateDecodeValue("Tasks - Days since last update", inCodeValue: "14", inCodeType: "stepper")
         }
         
         if myDatabaseConnection.getRoles(myTeamID).count == 0
@@ -2249,14 +2266,6 @@ println("Nothing found")
             // There are no roles defined so we need to go in and create them
             
             populateStages()
-        }
-        
-        if myDatabaseConnection.getTeamsCount() == 0
-        {
-            let myTeam = team()
-            myTeam.name = "My Life"
-            myTeam.type = "private"
-            myTeam.status = "Open"
         }
     }
     
@@ -2759,10 +2768,23 @@ println("Nothing found")
                         var myPassedGTD = GTDModel()
                         
                         myPassedGTD.delegate = self
+                        myPassedGTD.actionSource = "Project"
                         
                         projectViewControl.myPassedGTD = myPassedGTD
                         
                         self.presentViewController(projectViewControl, animated: true, completion: nil)
+                    
+                case "Context":
+                    let projectViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("planningTab") as! GTDPlanningTabViewController
+                    
+                    var myPassedGTD = GTDModel()
+                    
+                    myPassedGTD.delegate = self
+                    myPassedGTD.actionSource = "Context"
+                    
+                    projectViewControl.myPassedGTD = myPassedGTD
+                    
+                    self.presentViewController(projectViewControl, animated: true, completion: nil)
                     
                     default: println("sideBarDidSelectButtonAtIndex - Action selector: Hit default")
                 }
@@ -2861,8 +2883,7 @@ println("Nothing found")
         StartLabel.hidden = true
         
         myDisplayType = "Project"
-        mySelectedProject = project()
-        mySelectedProject.load(inProjectID)
+        mySelectedProject = project(inProjectID: inProjectID)
         
         displayScreen()
         

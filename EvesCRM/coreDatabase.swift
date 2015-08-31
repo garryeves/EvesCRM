@@ -173,7 +173,9 @@ class coreDatabase: NSObject
         var error : NSError?
         
         mySelectedRole = NSEntityDescription.insertNewObjectForEntityForName("Roles", inManagedObjectContext: managedObjectContext!) as! Roles
-        mySelectedRole.roleID = getMaxRoleID()
+        
+        // Get the role number
+        mySelectedRole.roleID = getNextID("Roles")
         mySelectedRole.roleDescription = inRoleName
         mySelectedRole.teamID = inTeamID
         mySelectedRole.updateTime = NSDate()
@@ -379,10 +381,10 @@ class coreDatabase: NSObject
         }
     }
     
-    func getDecodeValue(inCodeKey: String, inTeamID: Int) -> String
+    func getDecodeValue(inCodeKey: String) -> String
     {
         let fetchRequest = NSFetchRequest(entityName: "Decodes")
-        let predicate = NSPredicate(format: "(decode_name == \"\(inCodeKey)\") && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(decode_name == \"\(inCodeKey)\") && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -400,11 +402,11 @@ class coreDatabase: NSObject
         }
     }
     
-    func getVisibleDecodes(inTeamID: Int) -> [Decodes]
+    func getVisibleDecodes() -> [Decodes]
     {
         let fetchRequest = NSFetchRequest(entityName: "Decodes")
         
-        let predicate = NSPredicate(format: "(decodeType != \"hidden\") && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(decodeType != \"hidden\") && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         
@@ -415,14 +417,14 @@ class coreDatabase: NSObject
         return fetchResults!
     }
     
-    func updateDecodeValue(inCodeKey: String, inCodeValue: String, inCodeType: String, inTeamID: Int)
+    func updateDecodeValue(inCodeKey: String, inCodeValue: String, inCodeType: String)
     {
         // first check to see if decode exists, if not we create
         
         var error: NSError?
         var myDecode: Decodes!
         
-        if getDecodeValue(inCodeKey, inTeamID: inTeamID) == ""
+        if getDecodeValue(inCodeKey) == ""
         { // Add
             myDecode = NSEntityDescription.insertNewObjectForEntityForName("Decodes", inManagedObjectContext: managedObjectContext!) as! Decodes
             
@@ -431,12 +433,11 @@ class coreDatabase: NSObject
             myDecode.decodeType = inCodeType
             myDecode.updateTime = NSDate()
             myDecode.updateType = "Add"
-            myDecode.teamID = inTeamID
         }
         else
         { // Update
             let fetchRequest = NSFetchRequest(entityName: "Decodes")
-            let predicate = NSPredicate(format: "(decode_name == \"\(inCodeKey)\") && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+            let predicate = NSPredicate(format: "(decode_name == \"\(inCodeKey)\") && (updateType != \"Delete\")")
             
             // Set the predicate on the fetch request
             fetchRequest.predicate = predicate
@@ -459,7 +460,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func deleteDecodeValue(inTeamID: Int)
+/*    func deleteDecodeValue(inTeamID: Int)   commented out as does not seem to be correct
     {
         var error : NSError?
 
@@ -484,7 +485,7 @@ class coreDatabase: NSObject
            // managedObjectContext!.deleteObject(myDecode as NSManagedObject)
         }
     }
-    
+*/
     func getStages(inTeamID: Int)->[Stages]
     {
         let fetchRequest = NSFetchRequest(entityName: "Stages")
@@ -1696,7 +1697,8 @@ class coreDatabase: NSObject
             //   println(error?.localizedDescription)
         }
     }
-        
+    
+    
     func getContexts(inTeamID: Int)->[Context]
     {
         let fetchRequest = NSFetchRequest(entityName: "Context")
@@ -1882,7 +1884,7 @@ class coreDatabase: NSObject
         return fetchResults!
     }
 
-    func saveAreaOfResponsibility(inAreaID: Int, inGoalID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String)
+    func saveAreaOfResponsibility(inAreaID: Int, inGoalID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String, inLastReviewDate: NSDate, inReviewFrequency: Int, inReviewPeriod: String, inPredecessor: Int)
     {
         var error: NSError?
         var myArea: AreaOfResponsibility!
@@ -1900,6 +1902,10 @@ class coreDatabase: NSObject
             myArea.updateType = "Add"
             myArea.teamID = inTeamID
             myArea.note = inNote
+            myArea.lastReviewDate = inLastReviewDate
+            myArea.reviewFrequency = inReviewFrequency
+            myArea.reviewPeriod = inReviewPeriod
+            myArea.predecessor = inPredecessor
         }
         else
         { // Update
@@ -1914,6 +1920,10 @@ class coreDatabase: NSObject
             }
             myArea.teamID = inTeamID
             myArea.note = inNote
+            myArea.lastReviewDate = inLastReviewDate
+            myArea.reviewFrequency = inReviewFrequency
+            myArea.reviewPeriod = inReviewPeriod
+            myArea.predecessor = inPredecessor
         }
         
         if(!managedObjectContext!.save(&error) )
@@ -2039,7 +2049,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func saveGoal(inGoalID: Int, inVisionID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String)
+    func saveGoal(inGoalID: Int, inVisionID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String, inLastReviewDate: NSDate, inReviewFrequency: Int, inReviewPeriod: String, inPredecessor: Int)
     {
         var error: NSError?
         var myGoal: GoalAndObjective!
@@ -2057,6 +2067,10 @@ class coreDatabase: NSObject
             myGoal.updateType = "Add"
             myGoal.teamID = inTeamID
             myGoal.note = inNote
+            myGoal.lastReviewDate = inLastReviewDate
+            myGoal.reviewFrequency = inReviewFrequency
+            myGoal.reviewPeriod = inReviewPeriod
+            myGoal.predecessor = inPredecessor
         }
         else
         { // Update
@@ -2071,6 +2085,10 @@ class coreDatabase: NSObject
             }
             myGoal.teamID = inTeamID
             myGoal.note = inNote
+            myGoal.lastReviewDate = inLastReviewDate
+            myGoal.reviewFrequency = inReviewFrequency
+            myGoal.reviewPeriod = inReviewPeriod
+            myGoal.predecessor = inPredecessor
         }
         
         if(!managedObjectContext!.save(&error) )
@@ -2179,7 +2197,7 @@ class coreDatabase: NSObject
         }
     }
 
-    func saveVision(inVisionID: Int, inPurposeID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String)
+    func saveVision(inVisionID: Int, inPurposeID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String, inLastReviewDate: NSDate, inReviewFrequency: Int, inReviewPeriod: String, inPredecessor: Int)
     {
         var error: NSError?
         var myVision: Vision!
@@ -2197,6 +2215,10 @@ class coreDatabase: NSObject
             myVision.updateType = "Add"
             myVision.teamID = inTeamID
             myVision.note = inNote
+            myVision.lastReviewDate = inLastReviewDate
+            myVision.reviewFrequency = inReviewFrequency
+            myVision.reviewPeriod = inReviewPeriod
+            myVision.predecessor = inPredecessor
         }
         else
         { // Update
@@ -2211,6 +2233,10 @@ class coreDatabase: NSObject
             }
             myVision.teamID = inTeamID
             myVision.note = inNote
+            myVision.lastReviewDate = inLastReviewDate
+            myVision.reviewFrequency = inReviewFrequency
+            myVision.reviewPeriod = inReviewPeriod
+            myVision.predecessor = inPredecessor
         }
         
         if(!managedObjectContext!.save(&error) )
@@ -2320,7 +2346,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func savePurpose(inPurposeID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String)
+    func savePurpose(inPurposeID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String, inLastReviewDate: NSDate, inReviewFrequency: Int, inReviewPeriod: String, inPredecessor: Int)
     {
         var error: NSError?
         var myPurpose: PurposeAndCoreValue!
@@ -2337,6 +2363,10 @@ class coreDatabase: NSObject
             myPurpose.updateType = "Add"
             myPurpose.teamID = inTeamID
             myPurpose.note = inNote
+            myPurpose.lastReviewDate = inLastReviewDate
+            myPurpose.reviewFrequency = inReviewFrequency
+            myPurpose.reviewPeriod = inReviewPeriod
+            myPurpose.predecessor = inPredecessor
         }
         else
         { // Update
@@ -2350,6 +2380,10 @@ class coreDatabase: NSObject
             }
             myPurpose.teamID = inTeamID
             myPurpose.note = inNote
+            myPurpose.lastReviewDate = inLastReviewDate
+            myPurpose.reviewFrequency = inReviewFrequency
+            myPurpose.reviewPeriod = inReviewPeriod
+            myPurpose.predecessor = inPredecessor
         }
         
         if(!managedObjectContext!.save(&error) )
@@ -2374,6 +2408,24 @@ class coreDatabase: NSObject
         
         return fetchResults!
     }
+    
+    func getAllPurpose(inTeamID: Int)->[PurposeAndCoreValue]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "PurposeAndCoreValue")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(inTeamID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [PurposeAndCoreValue]
+        
+        return fetchResults!
+    }
+
     
     func getPurposeCount()-> Int
     {
@@ -2480,15 +2532,12 @@ class coreDatabase: NSObject
 
     }
     
-    func deleteAllPanes(inTeamID: Int)
+    func deleteAllPanes()
     {  // This is used to allow for testing of pane creation, so can delete all the panes if needed
         var error : NSError?
         
         let fetchRequest = NSFetchRequest(entityName: "Panes")
-        let predicate = NSPredicate(format: "(teamID == \(inTeamID))")
-        
-        // Set the predicate on the fetch request
-        fetchRequest.predicate = predicate
+
         // Execute the fetch request, and cast the results to an array of  objects
         let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Panes]
         for myPane in fetchResults!
@@ -2504,7 +2553,7 @@ class coreDatabase: NSObject
         }
     }
 
-    func getPanes(inTeamID: Int) -> [Panes]
+    func getPanes() -> [Panes]
     {
         let fetchRequest = NSFetchRequest(entityName: "Panes")
         
@@ -2516,7 +2565,7 @@ class coreDatabase: NSObject
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(pane_available == true) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(pane_available == true) && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -2529,13 +2578,13 @@ class coreDatabase: NSObject
         return fetchResults!
     }
 
-    func getPane(paneName:String, inTeamID: Int) -> [Panes]
+    func getPane(paneName:String) -> [Panes]
     {
         let fetchRequest = NSFetchRequest(entityName: "Panes")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(pane_name == \"\(paneName)\") && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(pane_name == \"\(paneName)\") && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -2552,13 +2601,13 @@ class coreDatabase: NSObject
         return fetchResults!
     }
     
-    func togglePaneVisible(paneName: String, inTeamID: Int)
+    func togglePaneVisible(paneName: String)
     {
         var error : NSError?
         
         let fetchRequest = NSFetchRequest(entityName: "Panes")
         
-        let predicate = NSPredicate(format: "(pane_name == \"\(paneName)\") && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(pane_name == \"\(paneName)\") && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -2589,13 +2638,13 @@ class coreDatabase: NSObject
         }
     }
 
-    func setPaneOrder(paneName: String, paneOrder: Int, inTeamID: Int)
+    func setPaneOrder(paneName: String, paneOrder: Int)
     {
         var error : NSError?
         
         let fetchRequest = NSFetchRequest(entityName: "Panes")
         
-        let predicate = NSPredicate(format: "(pane_name == \"\(paneName)\") && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(pane_name == \"\(paneName)\") && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -2618,7 +2667,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func savePane(inPaneName:String, inPaneAvailable: Bool, inPaneVisible: Bool, inPaneOrder: Int, inTeamID: Int)
+    func savePane(inPaneName:String, inPaneAvailable: Bool, inPaneVisible: Bool, inPaneOrder: Int)
     {
         // Save the details of this pane to the database
         var error: NSError?
@@ -2630,7 +2679,6 @@ class coreDatabase: NSObject
         myPane.pane_order = inPaneOrder
         myPane.updateTime = NSDate()
         myPane.updateType = "Add"
-        myPane.teamID = inTeamID
         
         if !managedObjectContext!.save(&error)
         {
@@ -3346,6 +3394,23 @@ class coreDatabase: NSObject
         {
             println(error?.localizedDescription)
         }
+        
+        let fetchRequest24 = NSFetchRequest(entityName: "Context1_1")
+        
+        // Set the predicate on the fetch request
+        fetchRequest24.predicate = predicate
+        let fetchResults24 = managedObjectContext!.executeFetchRequest(fetchRequest24, error: nil) as? [Context1_1]
+        
+        for myItem24 in fetchResults24!
+        {
+            managedObjectContext!.deleteObject(myItem24 as NSManagedObject)
+        }
+        
+        if(!managedObjectContext!.save(&error) )
+        {
+            println(error?.localizedDescription)
+        }
+
     }
 
     func clearSyncedItems()
@@ -3765,9 +3830,26 @@ class coreDatabase: NSObject
                 println(error?.localizedDescription)
             }
         }
+        
+        let fetchRequest24 = NSFetchRequest(entityName: "Context1_1")
+        // Set the predicate on the fetch request
+        fetchRequest24.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults24 = managedObjectContext!.executeFetchRequest(fetchRequest24, error: nil) as? [Context1_1]
+        
+        for myItem24 in fetchResults24!
+        {
+            myItem24.updateType = ""
+            
+            if(!managedObjectContext!.save(&error) )
+            {
+                println(error?.localizedDescription)
+            }
+        }
     }
     
-    func saveTeam(inTeamID: Int, inName: String, inStatus: String, inNote: String, inType: String)
+    func saveTeam(inTeamID: Int, inName: String, inStatus: String, inNote: String, inType: String, inPredecessor: Int, inExternalID: Int)
     {
         var error: NSError?
         var myTeam: Team!
@@ -3784,6 +3866,8 @@ class coreDatabase: NSObject
             myTeam.type = inType
             myTeam.updateTime = NSDate()
             myTeam.updateType = "Add"
+            myTeam.predecessor = inPredecessor
+            myTeam.externalID = inExternalID
         }
         else
         { // Update
@@ -3798,6 +3882,8 @@ class coreDatabase: NSObject
                 myTeam.updateType = "Update"
             }
             myTeam.updateTime = NSDate()
+            myTeam.predecessor = inPredecessor
+            myTeam.externalID = inExternalID
         }
         
         if(!managedObjectContext!.save(&error) )
@@ -3852,7 +3938,7 @@ class coreDatabase: NSObject
     }
 
     
-    func saveProjectNote(inProjectID: Int, inNote: String)
+    func saveProjectNote(inProjectID: Int, inNote: String, inReviewPeriod: String, inPredecessor: Int)
     {
         var error: NSError?
         var myProjectNote: ProjectNote!
@@ -3866,6 +3952,8 @@ class coreDatabase: NSObject
             myProjectNote.note = inNote
             myProjectNote.updateTime = NSDate()
             myProjectNote.updateType = "Add"
+            myProjectNote.reviewPeriod = inReviewPeriod
+            myProjectNote.predecessor = inPredecessor
         }
         else
         { // Update
@@ -3877,6 +3965,8 @@ class coreDatabase: NSObject
                 myProjectNote.updateType = "Update"
             }
             myProjectNote.updateTime = NSDate()
+            myProjectNote.reviewPeriod = inReviewPeriod
+            myProjectNote.predecessor = inPredecessor
         }
         
         if(!managedObjectContext!.save(&error) )
@@ -3902,4 +3992,275 @@ class coreDatabase: NSObject
         return fetchResults!
     }
 
+    func getNextID(inTableName: String, inInitialValue: Int = 1) -> Int
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Decodes")
+        let predicate = NSPredicate(format: "(decode_name == \"\(inTableName)\") && (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Decodes]
+        
+        if fetchResults!.count == 0
+        {
+            // Create table entry
+            let storeKey = "\(inInitialValue)"
+            updateDecodeValue(inTableName, inCodeValue: storeKey, inCodeType: "hidden")
+println("key = \(inTableName)  value = \(storeKey)")
+            return inInitialValue
+        }
+        else
+        {
+            // Increment table value by 1 and save back to database
+            let storeint = fetchResults![0].decode_value.toInt()! + 1
+            
+            let storeKey = "\(storeint)"
+            updateDecodeValue(inTableName, inCodeValue: storeKey, inCodeType: "hidden")
+    println("key = \(inTableName)  value = \(storeKey)")
+            return storeint
+        }
+    }
+    
+    func initialiseTeamForMeetingAgenda(inTeamID: Int)
+    {
+        var error: NSError?
+        
+        let fetchRequest = NSFetchRequest(entityName: "MeetingAgenda")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [MeetingAgenda]
+        
+        if fetchResults!.count > 0
+        {
+            for myItem in fetchResults!
+            {
+                myItem.teamID = inTeamID
+            }
+            
+            if(!managedObjectContext!.save(&error) )
+            {
+                //   println(error?.localizedDescription)
+            }
+        }
+    }
+
+    func initialiseTeamForContext(inTeamID: Int)
+    {
+        var error: NSError?
+        
+        var maxID: Int = 1
+        
+        let fetchRequest = NSFetchRequest(entityName: "Context")
+        
+        let sortDescriptor = NSSortDescriptor(key: "contextID", ascending: true)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Context]
+        
+        if fetchResults!.count > 0
+        {
+            for myItem in fetchResults!
+            {
+                myItem.teamID = inTeamID
+                maxID = myItem.contextID as Int
+            }
+        
+            if(!managedObjectContext!.save(&error) )
+            {
+                //   println(error?.localizedDescription)
+            }
+        }
+        
+        // Now go and populate the Decode for this
+        
+        let tempInt = "\(maxID)"
+        updateDecodeValue("Context", inCodeValue: tempInt, inCodeType: "hidden")
+    }
+
+    func initialiseTeamForProject(inTeamID: Int)
+    {
+        var error: NSError?
+        
+        var maxID: Int = 1
+        
+        let fetchRequest = NSFetchRequest(entityName: "Projects")
+        
+        let sortDescriptor = NSSortDescriptor(key: "projectID", ascending: true)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Projects]
+        
+        if fetchResults!.count > 0
+        {
+            for myItem in fetchResults!
+            {
+                myItem.teamID = inTeamID
+                maxID = myItem.projectID as Int
+            }
+            
+            if(!managedObjectContext!.save(&error) )
+            {
+                //   println(error?.localizedDescription)
+            }
+        }
+        
+        // Now go and populate the Decode for this
+        
+        let tempInt = "\(maxID)"
+        updateDecodeValue("Projects", inCodeValue: tempInt, inCodeType: "hidden")
+    }
+
+    func initialiseTeamForRoles(inTeamID: Int)
+    {
+        var error: NSError?
+        
+        var maxID: Int = 1
+        
+        let fetchRequest = NSFetchRequest(entityName: "Roles")
+        
+        let sortDescriptor = NSSortDescriptor(key: "roleID", ascending: true)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Roles]
+        
+        if fetchResults!.count > 0
+        {
+            for myItem in fetchResults!
+            {
+                myItem.teamID = inTeamID
+                maxID = myItem.roleID as Int
+            }
+            
+            if(!managedObjectContext!.save(&error) )
+            {
+                //   println(error?.localizedDescription)
+            }
+        }
+        
+        // Now go and populate the Decode for this
+        
+        let tempInt = "\(maxID)"
+        updateDecodeValue("Roles", inCodeValue: tempInt, inCodeType: "hidden")
+    }
+
+    func initialiseTeamForStages(inTeamID: Int)
+    {
+        var error: NSError?
+        
+        let fetchRequest = NSFetchRequest(entityName: "Stages")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Stages]
+        
+        if fetchResults!.count > 0
+        {
+            for myItem in fetchResults!
+            {
+                myItem.teamID = inTeamID
+            }
+            
+            if(!managedObjectContext!.save(&error) )
+            {
+                //   println(error?.localizedDescription)
+            }
+        }
+    }
+
+    func initialiseTeamForTask(inTeamID: Int)
+    {
+        var error: NSError?
+        
+        var maxID: Int = 1
+        
+        let fetchRequest = NSFetchRequest(entityName: "Task")
+        
+        let sortDescriptor = NSSortDescriptor(key: "taskID", ascending: true)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Task]
+        
+        if fetchResults!.count > 0
+        {
+            for myItem in fetchResults!
+            {
+                myItem.teamID = inTeamID
+                maxID = myItem.taskID as Int
+            }
+            
+            if(!managedObjectContext!.save(&error) )
+            {
+                //   println(error?.localizedDescription)
+            }
+        }
+        
+        // Now go and populate the Decode for this
+        
+        let tempInt = "\(maxID)"
+        updateDecodeValue("Task", inCodeValue: tempInt, inCodeType: "hidden")
+    }
+
+    func saveContext1_1(inContextID: Int, inPredecessor: Int)
+    {
+        var error: NSError?
+        var myContext: Context1_1!
+        
+        let myContexts = getContext1_1(inContextID)
+        
+        if myContexts.count == 0
+        { // Add
+            myContext = NSEntityDescription.insertNewObjectForEntityForName("Context", inManagedObjectContext: self.managedObjectContext!) as! Context1_1
+            myContext.contextID = inContextID
+            myContext.predecessor = inPredecessor
+            myContext.updateTime = NSDate()
+            myContext.updateType = "Add"
+        }
+        else
+        {
+            myContext = myContexts[0]
+            myContext.predecessor = inPredecessor
+            myContext.updateTime = NSDate()
+            if myContext.updateType != "Add"
+            {
+                myContext.updateType = "Update"
+            }
+        }
+        
+        if(!managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+    
+    func getContext1_1(inContextID: Int)->[Context1_1]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Context1_1")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(updateType != \"Delete\") && (contextID == \(inContextID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        let sortDescriptor = NSSortDescriptor(key: "contextID", ascending: true)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [Context1_1]
+        
+        return fetchResults!
+    }
+    
+    
 }

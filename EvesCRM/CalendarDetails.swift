@@ -2315,7 +2315,7 @@ class iOSCalendar
         /* The event starts date */
         //Calculate - Days * hours * mins * secs
         
-        let myStartDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date", inTeamID: myTeamID)
+        let myStartDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date")
         // This is string value so need to convert to integer, and subtract from 0 to get a negative
         
         let myStartDateValue:NSTimeInterval = 0 - ((((myStartDateString as NSString).doubleValue * 7) + 1) * 24 * 60 * 60)
@@ -2325,7 +2325,7 @@ class iOSCalendar
         /* The end date */
         //Calculate - Days * hours * mins * secs
         
-        let myEndDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date", inTeamID: myTeamID)
+        let myEndDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date")
         // This is string value so need to convert to integer
         
         let myEndDateValue:NSTimeInterval = (myEndDateString as NSString).doubleValue * 7 * 24 * 60 * 60
@@ -2359,7 +2359,7 @@ class iOSCalendar
         /* The event starts date */
         //Calculate - Days * hours * mins * secs
         
-        let myStartDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date", inTeamID: myTeamID)
+        let myStartDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date")
         // This is string value so need to convert to integer, and subtract from 0 to get a negative
         
         let myStartDateValue:NSTimeInterval = 0 - ((((myStartDateString as NSString).doubleValue * 7) + 1) * 24 * 60 * 60)
@@ -2369,7 +2369,7 @@ class iOSCalendar
         /* The end date */
         //Calculate - Days * hours * mins * secs
         
-        let myEndDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date", inTeamID: myTeamID)
+        let myEndDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date")
         // This is string value so need to convert to integer
         
         let myEndDateValue:NSTimeInterval = (myEndDateString as NSString).doubleValue * 7 * 24 * 60 * 60

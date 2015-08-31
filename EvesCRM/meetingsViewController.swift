@@ -892,7 +892,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
         
         let startDate = passedMeeting.event.startDate
         
-        let myEndDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date", inTeamID: myTeamID)
+        let myEndDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date")
         // This is string value so need to convert to integer
         
         let myEndDateValue:NSTimeInterval = (myEndDateString as NSString).doubleValue * 7 * 24 * 60 * 60

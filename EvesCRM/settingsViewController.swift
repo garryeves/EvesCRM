@@ -56,7 +56,7 @@ class settingsViewController: UIViewController
         myStages = myDatabaseConnection.getVisibleStages(myTeamID)
         
         // Load the decodes
-        myDecodes = myDatabaseConnection.getVisibleDecodes(myTeamID)
+        myDecodes = myDatabaseConnection.getVisibleDecodes()
         
         if evernoteSession.isAuthenticated
         {
@@ -403,7 +403,7 @@ class settingsViewController: UIViewController
         }
         else
         {
-            myDecodes = myDatabaseConnection.getVisibleDecodes(myTeamID)
+            myDecodes = myDatabaseConnection.getVisibleDecodes()
             colDecodes.reloadData()
         }
     }
@@ -714,7 +714,7 @@ class mySettingStepper: UICollectionViewCell
     
     @IBAction func myStepper(sender: UIStepper)
     {
-        myDatabaseConnection.updateDecodeValue(lblKey.text!, inCodeValue: "\(Int(myStepper.value))", inCodeType: lookupKey, inTeamID: myTeamID)
+        myDatabaseConnection.updateDecodeValue(lblKey.text!, inCodeValue: "\(Int(myStepper.value))", inCodeType: lookupKey)
         lblValue.text = "\(myStepper.value)"
         NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeSettings", object: nil, userInfo:["setting":"Decode"])
     }
@@ -740,7 +740,7 @@ class mySettingString: UICollectionViewCell
         }
         else
         {
-            myDatabaseConnection.updateDecodeValue(lblKey.text!, inCodeValue: txtValue.text, inCodeType: lookupKey, inTeamID: myTeamID)
+            myDatabaseConnection.updateDecodeValue(lblKey.text!, inCodeValue: txtValue.text, inCodeType: lookupKey)
             NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeSettings", object: nil, userInfo:["setting":"Decode"])
         }
     }
@@ -766,7 +766,7 @@ class mySettingNumber: UICollectionViewCell
         }
         else
         {
-            myDatabaseConnection.updateDecodeValue(lblKey.text!, inCodeValue: txtValue.text, inCodeType: lookupKey, inTeamID: myTeamID)
+            myDatabaseConnection.updateDecodeValue(lblKey.text!, inCodeValue: txtValue.text, inCodeType: lookupKey)
             NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeSettings", object: nil, userInfo:["setting":"Decode"])
         }
 
