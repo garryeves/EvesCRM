@@ -69,7 +69,7 @@ class taskListViewController: UIViewController, MyTaskDelegate, UITextViewDelega
             
             for myItem in myData
             {
-                let newTask = task(inTaskID: myItem.taskID as Int)
+                let newTask = task(inTaskID: myItem.taskID as Int, inTeamID: myTeamID)
                 myTaskList.append(newTask)
             }
         }

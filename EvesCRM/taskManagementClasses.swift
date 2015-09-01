@@ -112,7 +112,13 @@ class purposeAndCoreValue: NSObject // 50k Level
     {
         get
         {
-            if myLastReviewDate == getDefaultDate()
+            if myLastReviewDate == nil
+            {
+                myLastReviewDate = getDefaultDate()
+                save()
+                return ""
+            }
+            else if myLastReviewDate == getDefaultDate()
             {
                 return ""
             }
@@ -164,13 +170,13 @@ class purposeAndCoreValue: NSObject // 50k Level
         }
     }
     
-    init(inPurposeID: Int)
+    init(inPurposeID: Int, inTeamID: Int)
     {
         super.init()
         
         // Load the details
         
-        let myPurposeDetail = myDatabaseConnection.getPurpose(inPurposeID, inTeamID: myTeamID)
+        let myPurposeDetail = myDatabaseConnection.getPurpose(inPurposeID, inTeamID: inTeamID)
         
         for myPurpose in myPurposeDetail
         {
@@ -191,7 +197,7 @@ class purposeAndCoreValue: NSObject // 50k Level
         
         for myVis in myVisionList
         {
-            let myNewVision = gvision(inVisionID: myVis.visionID as Int)
+            let myNewVision = gvision(inVisionID: myVis.visionID as Int, inTeamID: myTeamID)
             myVision.append(myNewVision)
         }
     }
@@ -226,7 +232,7 @@ class purposeAndCoreValue: NSObject // 50k Level
         
         for myVis in myVisionList
         {
-            let myNewVision = gvision(inVisionID: myVis.visionID as Int)
+            let myNewVision = gvision(inVisionID: myVis.visionID as Int, inTeamID: myTeamID)
             myVision.append(myNewVision)
         }
     }
@@ -240,8 +246,21 @@ class purposeAndCoreValue: NSObject // 50k Level
         
         for myVis in myVisionList
         {
-            let myNewVision = gvision(inVisionID: myVis.visionID as Int)
+            let myNewVision = gvision(inVisionID: myVis.visionID as Int, inTeamID: myTeamID)
             myVision.append(myNewVision)
+        }
+    }
+    
+    func delete() -> Bool
+    {
+        if myVision.count > 0
+        {
+            return false
+        }
+        else
+        {
+            myDatabaseConnection.deletePurpose(myPurposeID, inTeamID: myTeamID)
+            return true
         }
     }
 }
@@ -350,7 +369,13 @@ class gvision: NSObject // (3-5 year goals) 40k Level
     {
         get
         {
-            if myLastReviewDate == getDefaultDate()
+            if myLastReviewDate == nil
+            {
+                myLastReviewDate = getDefaultDate()
+                save()
+                return ""
+            }
+            else if myLastReviewDate == getDefaultDate()
             {
                 return ""
             }
@@ -402,13 +427,13 @@ class gvision: NSObject // (3-5 year goals) 40k Level
         }
     }
 
-    init(inVisionID: Int)
+    init(inVisionID: Int, inTeamID: Int)
     {
         super.init()
         
         // Load the details
         
-        let myVisions = myDatabaseConnection.getVisions(inVisionID, inTeamID: myTeamID)
+        let myVisions = myDatabaseConnection.getVisions(inVisionID, inTeamID: inTeamID)
         
         for myVision in myVisions
         {
@@ -430,7 +455,7 @@ class gvision: NSObject // (3-5 year goals) 40k Level
         
         for myGoal in myGoalList
         {
-            let myNewGoal = goalAndObjective(inGoalID: myGoal.goalID as Int)
+            let myNewGoal = goalAndObjective(inGoalID: myGoal.goalID as Int, inTeamID: myTeamID)
             myGoals.append(myNewGoal)
         }
     }
@@ -465,7 +490,7 @@ class gvision: NSObject // (3-5 year goals) 40k Level
         
         for myGoal in myGoalList
         {
-            let myNewGoal = goalAndObjective(inGoalID: myGoal.goalID as Int)
+            let myNewGoal = goalAndObjective(inGoalID: myGoal.goalID as Int, inTeamID: myTeamID)
             myGoals.append(myNewGoal)
         }
     }
@@ -479,8 +504,21 @@ class gvision: NSObject // (3-5 year goals) 40k Level
         
         for myGoal in myGoalList
         {
-            let myNewGoal = goalAndObjective(inGoalID: myGoal.goalID as Int)
+            let myNewGoal = goalAndObjective(inGoalID: myGoal.goalID as Int, inTeamID: myTeamID)
             myGoals.append(myNewGoal)
+        }
+    }
+    
+    func delete() -> Bool
+    {
+        if myGoals.count > 0
+        {
+            return false
+        }
+        else
+        {
+            myDatabaseConnection.deleteVision(myPurposeID, inTeamID: myTeamID)
+            return true
         }
     }
 }
@@ -589,7 +627,13 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
     {
         get
         {
-            if myLastReviewDate == getDefaultDate()
+            if myLastReviewDate == nil
+            {
+                myLastReviewDate = getDefaultDate()
+                save()
+                return ""
+            }
+            else if myLastReviewDate == getDefaultDate()
             {
                 return ""
             }
@@ -641,13 +685,13 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
         }
     }
 
-    init(inGoalID: Int)
+    init(inGoalID: Int, inTeamID: Int)
     {
         super.init()
         
         // Load the details
         
-        let myGoals = myDatabaseConnection.getGoals(inGoalID, inTeamID: myTeamID)
+        let myGoals = myDatabaseConnection.getGoals(inGoalID, inTeamID: inTeamID)
         
         for myGoal in myGoals
         {
@@ -669,7 +713,7 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
         
         for myArea in myAreaList
         {
-            let myNewArea = areaOfResponsibility(inAreaID: myArea.areaID as Int)
+            let myNewArea = areaOfResponsibility(inAreaID: myArea.areaID as Int, inTeamID: myTeamID)
             myAreas.append(myNewArea)
         }
     }
@@ -687,10 +731,6 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
     
     func save()
     {
-if teamID == 0
-{
-println("Goal - incorrect teamID")
-}
         myDatabaseConnection.saveGoal(myGoalID, inVisionID: myVisionID, inTitle: myTitle, inStatus: myStatus, inTeamID: myTeamID, inNote: myNote, inLastReviewDate: myLastReviewDate, inReviewFrequency: myReviewFrequency, inReviewPeriod: myReviewPeriod, inPredecessor: myPredecessor)
     }
     
@@ -703,7 +743,7 @@ println("Goal - incorrect teamID")
         
         for myArea in myAreaList
         {
-            let myNewArea = areaOfResponsibility(inAreaID: myArea.areaID as Int)
+            let myNewArea = areaOfResponsibility(inAreaID: myArea.areaID as Int, inTeamID: myTeamID)
             myAreas.append(myNewArea)
         }
     }
@@ -717,8 +757,21 @@ println("Goal - incorrect teamID")
         
         for myArea in myAreaList
         {
-            let myNewArea = areaOfResponsibility(inAreaID: myArea.areaID as Int)
+            let myNewArea = areaOfResponsibility(inAreaID: myArea.areaID as Int, inTeamID: myTeamID)
             myAreas.append(myNewArea)
+        }
+    }
+    
+    func delete() -> Bool
+    {
+        if myAreas.count > 0
+        {
+            return false
+        }
+        else
+        {
+            myDatabaseConnection.deleteGoal(myGoalID, inTeamID: myTeamID)
+            return true
         }
     }
 }
@@ -827,7 +880,13 @@ class areaOfResponsibility: NSObject // 20k Level
     {
         get
         {
-            if myLastReviewDate == getDefaultDate()
+            if myLastReviewDate == nil
+            {
+                myLastReviewDate = getDefaultDate()
+                save()
+                return ""
+            }
+            else if myLastReviewDate == getDefaultDate()
             {
                 return ""
             }
@@ -879,13 +938,13 @@ class areaOfResponsibility: NSObject // 20k Level
         }
     }
 
-    init(inAreaID: Int)
+    init(inAreaID: Int, inTeamID: Int)
     {
         super.init()
         
         // Load the details
         
-        let myAreas = myDatabaseConnection.getAreaOfResponsibility(inAreaID, inTeamID: myTeamID)
+        let myAreas = myDatabaseConnection.getAreaOfResponsibility(inAreaID, inTeamID: inTeamID)
         
         for myArea in myAreas
         {
@@ -907,7 +966,7 @@ class areaOfResponsibility: NSObject // 20k Level
         
         for myProject in myProjectList
         {
-            let myNewProject = project(inProjectID: myProject.projectID as Int)
+            let myNewProject = project(inProjectID: myProject.projectID as Int, inTeamID: myTeamID)
             myProjects.append(myNewProject)
         }
     }
@@ -942,7 +1001,7 @@ class areaOfResponsibility: NSObject // 20k Level
         
         for myProject in myProjectList
         {
-            let myNewProject = project(inProjectID: myProject.projectID as Int)
+            let myNewProject = project(inProjectID: myProject.projectID as Int, inTeamID: myTeamID)
             myProjects.append(myNewProject)
         }
     }
@@ -956,8 +1015,21 @@ class areaOfResponsibility: NSObject // 20k Level
         
         for myProject in myProjectList
         {
-            let myNewProject = project(inProjectID: myProject.projectID as Int)
+            let myNewProject = project(inProjectID: myProject.projectID as Int, inTeamID: myTeamID)
             myProjects.append(myNewProject)
+        }
+    }
+    
+    func delete() -> Bool
+    {
+        if myProjects.count > 0
+        {
+            return false
+        }
+        else
+        {
+            myDatabaseConnection.deleteAreaOfResponsibility(myAreaID, inTeamID: myTeamID)
+            return true
         }
     }
 }
@@ -1084,7 +1156,13 @@ class project: NSObject // 10k level
     {
         get
         {
-            if myProjectEndDate == getDefaultDate()
+            if myProjectEndDate == nil
+            {
+                myProjectEndDate = getDefaultDate()
+                save()
+                return ""
+            }
+            else if myProjectEndDate == getDefaultDate()
             {
                 return ""
             }
@@ -1151,7 +1229,13 @@ class project: NSObject // 10k level
     {
         get
         {
-            if myProjectStartDate == getDefaultDate()
+            if myProjectStartDate == nil
+            {
+                myProjectStartDate = getDefaultDate()
+                save()
+                return ""
+            }
+            else if myProjectStartDate == getDefaultDate()
             {
                 return ""
             }
@@ -1207,7 +1291,13 @@ class project: NSObject // 10k level
     {
         get
         {
-            if myProjectStartDate == getDefaultDate()
+            if myProjectStartDate == nil
+            {
+                myProjectStartDate = getDefaultDate()
+                save()
+                return ""
+            }
+            else if myProjectStartDate == getDefaultDate()
             {
                 return ""
             }
@@ -1338,12 +1428,12 @@ class project: NSObject // 10k level
         myTeamID = inTeamID
     }
     
-    init(inProjectID: Int)
+    init(inProjectID: Int, inTeamID: Int)
     {
         super.init()
         
  // GRE whatever calls projects should check to make sure it is not marked as "Archived", as we are not deleting Projects, only marking them as archived
-        let myProjects = myDatabaseConnection.getProjectDetails(inProjectID, inTeamID: myTeamID)
+        let myProjects = myDatabaseConnection.getProjectDetails(inProjectID, inTeamID: inTeamID)
         
         for myProject in myProjects
         {
@@ -1372,7 +1462,7 @@ class project: NSObject // 10k level
             
             for myProjectTask in myProjectTasks
             {
-                let myNewTask = task(inTaskID: myProjectTask.taskID as Int)
+                let myNewTask = task(inTaskID: myProjectTask.taskID as Int, inTeamID: myTeamID)
                 myTasks.append(myNewTask)
             }
             
@@ -1428,7 +1518,7 @@ class project: NSObject // 10k level
         
     func addTask(inTaskID: Int)
     {            
-        let myTempTask = task(inTaskID: inTaskID)
+        let myTempTask = task(inTaskID: inTaskID, inTeamID: myTeamID)
         myTempTask.projectID = myProjectID
         myTempTask.save()
             
@@ -1438,14 +1528,14 @@ class project: NSObject // 10k level
             
         for myProjectTask in myProjectTasks
         {
-            let myNewTask = task(inTaskID: myProjectTask.taskID as Int)
+            let myNewTask = task(inTaskID: myProjectTask.taskID as Int, inTeamID: myTeamID)
             myTasks.append(myNewTask)
         }
     }
         
     func removeTask(inTaskID: Int)
     {
-        let myTempTask = task(inTaskID: inTaskID)
+        let myTempTask = task(inTaskID: inTaskID, inTeamID: myTeamID)
         myTempTask.projectID = 0
         myTempTask.save()
             
@@ -1455,7 +1545,7 @@ class project: NSObject // 10k level
             
         for myProjectTask in myProjectTasks
         {
-            let myNewTask = task(inTaskID: myProjectTask.taskID as Int)
+            let myNewTask = task(inTaskID: myProjectTask.taskID as Int, inTeamID: myTeamID)
             myTasks.append(myNewTask)
         }
     }
@@ -1602,7 +1692,13 @@ class task: NSObject
     {
         get
         {
-            if myDueDate == getDefaultDate()
+            if myDueDate == nil
+            {
+                myDueDate = getDefaultDate()
+                save()
+                return ""
+            }
+            else if myDueDate == getDefaultDate()
             {
                 return ""
             }
@@ -1632,7 +1728,13 @@ class task: NSObject
     {
         get
         {
-            if myStartDate == getDefaultDate()
+            if myStartDate == nil
+            {
+                myStartDate = getDefaultDate()
+                save()
+                return ""
+            }
+            else if myStartDate == getDefaultDate()
             {
                 return ""
             }
@@ -1768,7 +1870,13 @@ class task: NSObject
     {
         get
         {
-            if myCompletionDate == getDefaultDate()
+            if myCompletionDate == nil
+            {
+                myCompletionDate = getDefaultDate()
+                save()
+                return ""
+            }
+            else if myCompletionDate == getDefaultDate()
             {
                 return ""
             }
@@ -1884,9 +1992,9 @@ class task: NSObject
         save()
     }
     
-    init(inTaskID: Int)
+    init(inTaskID: Int, inTeamID: Int)
     {
-        let myTaskData = myDatabaseConnection.getTask(inTaskID, inTeamID: myTeamID)
+        let myTaskData = myDatabaseConnection.getTask(inTaskID, inTeamID: inTeamID)
         
         for myTask in myTaskData
         {
@@ -1916,7 +2024,7 @@ class task: NSObject
             
             for myContextItem in myContextList
             {
-                let myNewContext = context(inContextID: myContextItem.contextID as Int)
+                let myNewContext = context(inContextID: myContextItem.contextID as Int, inTeamID: myTeamID)
                 myContexts.append(myNewContext)
             }
             
@@ -1957,13 +2065,13 @@ class task: NSObject
         
         // Get the context name
         
-        let myContext = context(inContextID: inContextID)
+        let myContext = context(inContextID: inContextID, inTeamID: myTeamID)
         
         let myCheck = myDatabaseConnection.getContextsForTask(myTaskID)
         
         for myItem in myCheck
         {
-            let myRetrievedContext = context(inContextID: myItem.contextID as Int)
+            let myRetrievedContext = context(inContextID: myItem.contextID as Int, inTeamID: myTeamID)
             if myRetrievedContext.name.lowercaseString == myContext.name.lowercaseString
             {
                 itemFound = true
@@ -1980,7 +2088,7 @@ class task: NSObject
         
             for myContextItem in myContextList
             {
-                let myNewContext = context(inContextID: myContextItem.contextID as Int)
+                let myNewContext = context(inContextID: myContextItem.contextID as Int, inTeamID: myTeamID)
                 myContexts.append(myNewContext)
             }
         }
@@ -1995,15 +2103,17 @@ class task: NSObject
         
         for myContextItem in myContextList
         {
-            let myNewContext = context(inContextID: myContextItem.contextID as Int)
+            let myNewContext = context(inContextID: myContextItem.contextID as Int, inTeamID: myTeamID)
             myContexts.append(myNewContext)
         }
     }
     
-    func delete()
+    func delete() -> Bool
     {
         myDatabaseConnection.deleteTask(myTaskID)
+        return true
     }
+
     
     func addHistoryRecord(inHistoryDetails: String, inHistorySource: String)
     {
@@ -2028,13 +2138,6 @@ class task: NSObject
     func changePredecessor(inPredecessorID: Int, inPredecessorType: String)
     {
         myDatabaseConnection.updatePredecessorTaskType(myTaskID, inPredecessorID: inPredecessorID, inPredecessorType: inPredecessorType)
-    }
-
-    func getDefaultDate() -> NSDate
-    {
-        let dateStringFormatter = NSDateFormatter()
-        dateStringFormatter.dateFormat = "yyyy-MM-dd"
-        return dateStringFormatter.dateFromString("9999-12-31")!
     }
     
     func markComplete()
@@ -2479,7 +2582,7 @@ class context: NSObject
             }
             else
             { // Navigate to parent
-                let theParent = context(inContextID: myParentContext)
+                let theParent = context(inContextID: myParentContext, inTeamID: myTeamID)
                 retString = "\(theParent.contextHierarchy) - \(myName)"
             }
         
@@ -2613,10 +2716,10 @@ class context: NSObject
         }
     }
     
-    init(inContextID: Int)
+    init(inContextID: Int, inTeamID: Int)
     {
         super.init()
-        let myContexts = myDatabaseConnection.getContextDetails(inContextID, inTeamID: myTeamID)
+        let myContexts = myDatabaseConnection.getContextDetails(inContextID, inTeamID: inTeamID)
         
         for myContext in myContexts
         {
@@ -2677,6 +2780,19 @@ class context: NSObject
         }
 
         myDatabaseConnection.saveContext(myContextID, inName: myName, inEmail: myEmail, inAutoEmail: myAutoEmail, inParentContext: myParentContext, inStatus: myStatus, inPersonID: myPersonID, inTeamID: myTeamID)
+    }
+    
+    func delete() -> Bool
+    {
+        if allTasks.count > 0
+        {
+            return false
+        }
+        else
+        {
+            myDatabaseConnection.deleteContext(myContextID, inTeamID: myTeamID)
+            return true
+        }
     }
 }
 

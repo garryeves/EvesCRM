@@ -1614,6 +1614,42 @@ class coreDatabase: NSObject
         }
     }
  
+    func deleteProject(inProjectID: Int, inTeamID: Int)
+    {
+        var error: NSError?
+        var myProject: Projects!
+        
+        let myProjects = getProjectDetails(inProjectID, inTeamID: inTeamID)
+        
+        if myProjects.count > 0
+        { // Update
+            myProject = myProjects[0]
+            myProject.updateTime = NSDate()
+            myProject.updateType = "Delete"
+        }
+        
+        if(!managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+        
+        var myProjectNote: ProjectNote!
+        
+        let myTeams = getProjectNote(inProjectID)
+        
+        if myTeams.count > 0
+        { // Update
+            myProjectNote = myTeams[0]
+            myProjectNote.updateType = "Delete"
+            myProjectNote.updateTime = NSDate()
+        }
+        
+        if(!managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+    
     func saveTaskUpdate(inTaskID: Int, inDetails: String, inSource: String)
     {
         var error: NSError?
@@ -1698,6 +1734,39 @@ class coreDatabase: NSObject
         }
     }
     
+    func deleteContext(inContextID: Int, inTeamID: Int)
+    {
+        var error: NSError?
+        
+        let myContexts = getContextDetails(inContextID, inTeamID: inTeamID)
+        
+        if myContexts.count > 0
+       {
+            let myContext = myContexts[0]
+            myContext.updateTime = NSDate()
+            myContext.updateType = "Delete"
+        }
+        
+        if(!managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+        
+        let myContexts2 = getContext1_1(inContextID)
+        
+        if myContexts2.count > 0
+        {
+            let myContext = myContexts[0]
+            myContext.updateTime = NSDate()
+            myContext.updateType = "Delete"
+        }
+        
+        if(!managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+
+    }
     
     func getContexts(inTeamID: Int)->[Context]
     {
@@ -1932,6 +2001,26 @@ class coreDatabase: NSObject
         }
     }
     
+    func deleteAreaOfResponsibility(inAreaID: Int, inTeamID: Int)
+    {
+        var error: NSError?
+        var myArea: AreaOfResponsibility!
+        
+        let myAreas = checkAreaOfResponsibility(inAreaID, inTeamID: inTeamID)
+        
+        if myAreas.count > 0
+        { // Update
+            myArea = myAreas[0]
+            myArea.updateTime = NSDate()
+            myArea.updateType = "Delete"
+        }
+        
+        if(!managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+    
     func getAreaOfResponsibility(inAreaID: Int, inTeamID: Int)->[AreaOfResponsibility]
     {
         let fetchRequest = NSFetchRequest(entityName: "AreaOfResponsibility")
@@ -2097,6 +2186,26 @@ class coreDatabase: NSObject
         }
     }
     
+    func deleteGoal(inGoalID: Int, inTeamID: Int)
+    {
+        var error: NSError?
+        var myGoal: GoalAndObjective!
+        
+        let myGoals = getGoals(inGoalID, inTeamID: inTeamID)
+        
+        if myGoals.count > 0
+        { // Update
+            myGoal = myGoals[0]
+            myGoal.updateTime = NSDate()
+            myGoal.updateType = "Delete"
+        }
+        
+        if(!managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+    
     func getGoals(inGoalID: Int, inTeamID: Int)->[GoalAndObjective]
     {
         let fetchRequest = NSFetchRequest(entityName: "GoalAndObjective")
@@ -2245,6 +2354,26 @@ class coreDatabase: NSObject
         }
     }
     
+    func deleteVision(inVisionID: Int, inTeamID: Int)
+    {
+        var error: NSError?
+        var myVision: Vision!
+        
+        let myVisions = getVisions(inVisionID, inTeamID: inTeamID)
+        
+        if myVisions.count > 0
+        { // Update
+            myVision = myVisions[0]
+            myVision.updateTime = NSDate()
+            myVision.updateType = "Delete"
+        }
+        
+        if(!managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+    
     func getVisions(inVisionID: Int, inTeamID: Int)->[Vision]
     {
         let fetchRequest = NSFetchRequest(entityName: "Vision")
@@ -2384,6 +2513,26 @@ class coreDatabase: NSObject
             myPurpose.reviewFrequency = inReviewFrequency
             myPurpose.reviewPeriod = inReviewPeriod
             myPurpose.predecessor = inPredecessor
+        }
+        
+        if(!managedObjectContext!.save(&error) )
+        {
+            //   println(error?.localizedDescription)
+        }
+    }
+    
+    func deletePurpose(inPurposeID: Int, inTeamID: Int)
+    {
+        var error: NSError?
+        var myPurpose: PurposeAndCoreValue!
+        
+        let myPurposes = getPurpose(inPurposeID, inTeamID: inTeamID)
+        
+        if myPurposes.count > 0
+        { // Update
+            myPurpose = myPurposes[0]
+            myPurpose.updateTime = NSDate()
+            myPurpose.updateType = "Delete"
         }
         
         if(!managedObjectContext!.save(&error) )

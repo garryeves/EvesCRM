@@ -235,7 +235,7 @@ class meetingAgendaItem
         
         for myAgendaTask in myAgendaTasks
         {
-            let myNewTask = task(inTaskID: myAgendaTask.taskID as Int)
+            let myNewTask = task(inTaskID: myAgendaTask.taskID as Int, inTeamID: myTeamID)
             myTasks.append(myNewTask)
         }
     }
@@ -1270,7 +1270,7 @@ class myCalendarItem
                 
                 for myItem2 in myData2
                 {
-                    let newTask = task(inTaskID: myItem2.taskID as Int)
+                    let newTask = task(inTaskID: myItem2.taskID as Int, inTeamID: myTeamID)
                     myTaskList.append(newTask)
                 }
                 
@@ -1706,7 +1706,7 @@ class myCalendarItem
                 
                 for myItem2 in myData2
                 {
-                    let newTask = task(inTaskID: myItem2.taskID as Int)
+                    let newTask = task(inTaskID: myItem2.taskID as Int, inTeamID: myTeamID)
                     myTaskList.append(newTask)
                 }
                 
@@ -2673,7 +2673,7 @@ func parsePastMeeting(inMeetingID: String) -> [task]
             
             for myItem2 in myData2
             {
-                let newTask = task(inTaskID: myItem2.taskID as Int)
+                let newTask = task(inTaskID: myItem2.taskID as Int, inTeamID: myTeamID)
                 if newTask.status != "Closed"
                 {
                     myArray.append(newTask)

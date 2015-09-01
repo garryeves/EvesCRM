@@ -847,7 +847,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             
             for myItem in myReturnedData
             {
-                let myTempTask = task(inTaskID: myItem.taskID as Int)
+                let myTempTask = task(inTaskID: myItem.taskID as Int, inTeamID: myTeamID)
                 
                 myTaskItems.append(myTempTask)
             }
@@ -2883,7 +2883,7 @@ println("Nothing found")
         StartLabel.hidden = true
         
         myDisplayType = "Project"
-        mySelectedProject = project(inProjectID: inProjectID)
+        mySelectedProject = project(inProjectID: inProjectID, inTeamID: myTeamID)
         
         displayScreen()
         

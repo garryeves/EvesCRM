@@ -576,7 +576,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         
         for myProjectRecord in myProjectList
         {
-            let myNewProject = project(inProjectID: myProjectRecord.projectID as Int)
+            let myNewProject = project(inProjectID: myProjectRecord.projectID as Int, inTeamID: myTeamID)
             myProjects.append(myNewProject)
         }
     }

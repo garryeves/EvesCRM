@@ -1871,7 +1871,9 @@
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tff-zF-uLW" userLabel="scrollHead">
                                 <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="120" id="eGU-IK-uol"/>
+                                    <constraint firstAttribute="height" constant="120" id="eGU-IK-uol">
+                                        <variation key="heightClass=regular-widthClass=regular" constant="150"/>
+                                    </constraint>
                                 </constraints>
                                 <variation key="default">
                                     <mask key="constraints">
@@ -1906,7 +1908,7 @@
                                 <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
                             </constraint>
                             <constraint firstItem="iOr-ft-ADI" firstAttribute="top" secondItem="Nuu-m3-yLJ" secondAttribute="bottom" constant="16" id="7XR-1Z-bpG">
-                                <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
+                                <variation key="heightClass=regular-widthClass=regular" constant="10"/>
                             </constraint>
                             <constraint firstItem="qzL-jd-Cyf" firstAttribute="top" secondItem="iOr-ft-ADI" secondAttribute="bottom" constant="326" id="A1T-gq-ZVb">
                                 <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
@@ -1915,7 +1917,7 @@
                                 <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
                             </constraint>
                             <constraint firstItem="Nuu-m3-yLJ" firstAttribute="top" secondItem="tff-zF-uLW" secondAttribute="bottom" constant="17" id="MbW-3r-UEf">
-                                <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
+                                <variation key="heightClass=regular-widthClass=regular" constant="10"/>
                             </constraint>
                             <constraint firstItem="tff-zF-uLW" firstAttribute="leading" secondItem="YCc-Eh-Jin" secondAttribute="leadingMargin" constant="114" id="Q9Q-3y-NJ4">
                                 <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
@@ -1924,7 +1926,7 @@
                                 <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
                             </constraint>
                             <constraint firstItem="tff-zF-uLW" firstAttribute="top" secondItem="aky-dd-ewN" secondAttribute="bottom" constant="25" id="h1q-I1-nk8">
-                                <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
+                                <variation key="heightClass=regular-widthClass=regular" constant="10"/>
                             </constraint>
                             <constraint firstAttribute="trailingMargin" secondItem="aky-dd-ewN" secondAttribute="trailing" constant="454" id="iB4-c8-VN6">
                                 <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
@@ -2058,7 +2060,7 @@
                             <textField opaque="NO" clipsSubviews="YES" tag="1" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="3l2-gW-gOo" userLabel="txtTitle">
                                 <rect key="frame" x="0.0" y="-30" width="97" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                 <connections>
                                     <action selector="txtTitle:" destination="fOQ-2y-D7L" eventType="editingDidEnd" id="PFx-Li-d0x"/>
                                 </connections>
