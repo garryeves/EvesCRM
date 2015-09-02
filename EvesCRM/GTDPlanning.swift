@@ -22,12 +22,13 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
     @IBInspectable var popoverOniPhone:Bool = false
     @IBInspectable var popoverOniPhoneLandscape:Bool = true
     
-    private var passedGTD: GTDModel!
+    var passedGTD: GTDModel!
     
     @IBOutlet weak var lblHeader: UILabel!
     @IBOutlet weak var scrollDisplay: UIScrollView!
     @IBOutlet weak var lblDetail: UILabel!
     @IBOutlet weak var scrollHead: UIScrollView!
+    @IBOutlet weak var btnUp: UIButton!
     
     private var containerViewHead: UIView!
     private var containerViewBody: UIView!
@@ -42,7 +43,7 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
     {
         super.viewDidLoad()
         
-        passedGTD = (tabBarController as! GTDPlanningTabViewController).myPassedGTD
+   //     passedGTD = (tabBarController as! GTDPlanningTabViewController).myPassedGTD
         
         let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
         showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
@@ -112,6 +113,106 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
         }
     }
     
+    @IBAction func btnUp(sender: UIButton)
+    {
+        switch myParentType
+        {
+            case "purposeAndCoreValue":
+                myDisplayHeadArray.removeAll()
+                
+                let myTeamArray = myDatabaseConnection.getAllTeams()
+                for myTeamItem in myTeamArray
+                {
+                    let myTeam = team(inTeamID: myTeamItem.teamID as Int)
+                    myDisplayHeadArray.append(myTeam)
+                }
+                
+                highlightID = myTeamID
+                buildHead("team", inHighlightedID: myTeamID)
+            
+            case "gvision":
+                myDisplayHeadArray.removeAll()
+                
+                let myObject = myParentObject as! gvision
+                let myArray = myDatabaseConnection.getAllPurpose(myObject.teamID as Int)
+                for myItem in myArray
+                {
+                    let myClass = purposeAndCoreValue(inPurposeID: myItem.purposeID as Int, inTeamID: myObject.teamID as Int)
+                    myDisplayHeadArray.append(myClass)
+                }
+
+                highlightID = myObject.purposeID
+                buildHead("purposeAndCoreValue", inHighlightedID: myObject.purposeID)
+            
+            case "goalAndObjective":
+                myDisplayHeadArray.removeAll()
+                
+                let myObject = myParentObject as! goalAndObjective  // this is the current head record
+                let myObject2 = gvision(inVisionID: myObject.visionID, inTeamID: myObject.teamID)  // This is the parent of that
+                let myObject3 = purposeAndCoreValue(inPurposeID: myObject2.purposeID, inTeamID: myObject2.teamID)
+                
+                // Now get all the child visions
+
+                for myItem in myObject3.vision
+                {
+                    myDisplayHeadArray.append(myItem)
+                }
+                
+                highlightID = myObject.visionID
+                buildHead("gvision", inHighlightedID: myObject.visionID)
+ 
+            case "areaOfResponsibility":
+                myDisplayHeadArray.removeAll()
+            
+                let myObject = myParentObject as! areaOfResponsibility  // this is the current head record
+                let myObject2 = goalAndObjective(inGoalID: myObject.goalID, inTeamID: myObject.teamID)  // This is the parent of that
+                let myObject3 = gvision(inVisionID: myObject2.visionID, inTeamID: myObject.teamID)
+
+                for myItem in myObject3.goals
+                {
+                    myDisplayHeadArray.append(myItem)
+                }
+            
+                highlightID = myObject.goalID
+                buildHead("goalAndObjective", inHighlightedID: myObject.goalID)
+
+            case "project":
+                myDisplayHeadArray.removeAll()
+            
+                let myObject = myParentObject as! project  // this is the current head record
+                let myObject2 = areaOfResponsibility(inAreaID: myObject.areaID, inTeamID: myObject.teamID)  // This is the parent of that
+                let myObject3 = goalAndObjective(inGoalID: myObject2.goalID, inTeamID: myObject.teamID)
+            
+                for myItem in myObject3.areas
+                {
+                    myDisplayHeadArray.append(myItem)
+                }
+            
+                highlightID = myObject.areaID
+                buildHead("areaOfResponsibility", inHighlightedID: myObject.areaID)
+
+            case "task":
+                myDisplayHeadArray.removeAll()
+            
+                let myObject = myParentObject as! task  // this is the current head record
+                let myObject2 = project(inProjectID: myObject.projectID, inTeamID: myObject.teamID)  // This is the parent of that
+                let myObject3 = areaOfResponsibility(inAreaID: myObject2.areaID, inTeamID: myObject.teamID)
+            
+                for myItem in myObject3.projects
+                {
+                    myDisplayHeadArray.append(myItem)
+                }
+            
+                highlightID = myObject.projectID
+                buildHead("project", inHighlightedID: myObject.projectID)
+            
+     //   case "context":
+
+            default:
+                println("Func btnUp hit default")
+        }
+    }
+    
     override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent)
     {
         //       projectNameText.endEditing(true)
@@ -138,6 +239,7 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
             case "team":
                 lblHeader.text = "My Teams"
                 lblDetail.text = "My Purpose/Core Values"
+                btnUp.hidden = true
                 
                 for myItem in myDisplayHeadArray
                 {
@@ -152,6 +254,8 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
         
             case "purposeAndCoreValue":
                 lblHeader.text = "My Purpose/Core Values"
+                btnUp.hidden = false
+                btnUp.setTitle("Up to Team", forState: .Normal)
             
                 for myItem in myDisplayHeadArray
                 {
@@ -166,6 +270,8 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
         
             case "gvision":
                 lblHeader.text = "My Visions"
+                btnUp.hidden = false
+                btnUp.setTitle("Up to Purpose", forState: .Normal)
         
                 for myItem in myDisplayHeadArray
                 {
@@ -180,6 +286,8 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
 
             case "goalAndObjective":
                 lblHeader.text = "My Goal and Objectives"
+                btnUp.hidden = false
+                btnUp.setTitle("Up to Vision", forState: .Normal)
             
                 for myItem in myDisplayHeadArray
                 {
@@ -194,6 +302,8 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
         
             case "areaOfResponsibility":
                 lblHeader.text = "My Area of Responsibilitys"
+                btnUp.hidden = false
+                btnUp.setTitle("Up to Goals", forState: .Normal)
             
                 for myItem in myDisplayHeadArray
                 {
@@ -208,6 +318,8 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
         
             case "project":
                 lblHeader.text = "My Projects"
+                btnUp.hidden = false
+                btnUp.setTitle("Up to Area of Responsibility", forState: .Normal)
             
                 for myItem in myDisplayHeadArray
                 {
@@ -222,9 +334,13 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
         
             case "task":
                 lblHeader.text = "My Tasks"
+                btnUp.hidden = false
+                btnUp.setTitle("Up to Project", forState: .Normal)
         
             case "context":
                 lblHeader.text = "My Contexts"
+                btnUp.hidden = false
+                btnUp.setTitle("Up to Team", forState: .Normal)
         
             default :
                 println("buildHead: hit default")
@@ -261,8 +377,6 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
     
     func buildBody(inObjectType: String, inParentObject: AnyObject)
     {
-        lblDetail.text = "Purpose & Core Values"
-        
         myDisplayBodyArray.removeAll()
         
         switch inObjectType
@@ -271,37 +385,58 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                 lblDetail.text = "My Purpose/Core Values"
                 
                 let myObject = inParentObject as! team
-                let myPurposeArray = myDatabaseConnection.getAllPurpose(myObject.teamID as Int)
-                for myPurposeItem in myPurposeArray
+                let myArray = myDatabaseConnection.getAllPurpose(myObject.teamID as Int)
+                for myItem in myArray
                 {
-                    let myPurpose = purposeAndCoreValue(inPurposeID: myPurposeItem.purposeID as Int, inTeamID: myObject.teamID as Int)
-                    myDisplayBodyArray.append(myPurpose)
+                    let myClass = purposeAndCoreValue(inPurposeID: myItem.purposeID as Int, inTeamID: myObject.teamID as Int)
+                    myDisplayBodyArray.append(myClass)
                 }
             
             case "gvision":
                 lblDetail.text = "My Visions"
-            
+                
                 let myObject = inParentObject as! purposeAndCoreValue
+                
+                for myItem in myObject.vision
+                {
+                    myDisplayBodyArray.append(myItem)
+                }
             
             case "goalAndObjective":
                 lblDetail.text = "My Goal and Objectives"
             
                 let myObject = inParentObject as! gvision
+                for myItem in myObject.goals
+                {
+                    myDisplayBodyArray.append(myItem)
+                }
             
             case "areaOfResponsibility":
                 lblDetail.text = "My Area of Responsibilitys"
             
                 let myObject = inParentObject as! goalAndObjective
+                for myItem in myObject.areas
+                {
+                    myDisplayBodyArray.append(myItem)
+                }
             
             case "project":
                 lblDetail.text = "My Projects"
             
                 let myObject = inParentObject as! areaOfResponsibility
+                for myItem in myObject.projects
+                {
+                    myDisplayBodyArray.append(myItem)
+                }
             
             case "task":
                 lblDetail.text = "My Tasks"
             
                 let myObject = inParentObject as! project
+                for myItem in myObject.tasks
+                {
+                    myDisplayBodyArray.append(myItem)
+                }
             
             case "context":
                 lblDetail.text = "My Contexts"
@@ -414,13 +549,16 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
     
     func popoverPresentationControllerDidDismissPopover(popoverPresentationController: UIPopoverPresentationController)
     {
+        
+        
+        
+        
         refreshBody()
     }
     
     func handleSingleTap(sender: textViewTapGestureRecognizer)
     {
         //Code in here fort zoom
- println("tapped")
         if sender.headBody == "head"
         {
             switch sender.type
@@ -454,6 +592,27 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                     highlightID = myObject.areaID as Int
                     buildHead("areaOfResponsibility", inHighlightedID: highlightID)
                     buildBody("project", inParentObject: sender.targetObject)
+                
+                case "project":
+                    let myObject = sender.targetObject as! project
+                    highlightID = myObject.projectID as Int
+                    buildHead("project", inHighlightedID: highlightID)
+                    buildBody("task", inParentObject: sender.targetObject)
+
+                
+                case "task":
+                    let myObject = sender.targetObject as! task
+                    highlightID = myObject.taskID as Int
+                    buildHead("task", inHighlightedID: highlightID)
+                    //buildBody("project", inParentObject: sender.targetObject)
+
+                
+                case "context":
+                    let myObject = sender.targetObject as! context
+                    highlightID = myObject.contextID as Int
+                    buildHead("context", inHighlightedID: highlightID)
+                //buildBody("project", inParentObject: sender.targetObject)
+
             
                 default:
                     println("handleSingleTap: hit default")
@@ -469,7 +628,7 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                     highlightID = myObject.purposeID as Int
                     buildHead("purposeAndCoreValue", inHighlightedID: highlightID)
                 
-                    buildBody("",inParentObject: "")
+                    buildBody("gvision",inParentObject: myObject)
                     lblDetail.text = "My Visions"
                 
                 case "gvision":
@@ -478,7 +637,7 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                     highlightID = myObject.visionID as Int
                     buildHead("gvision", inHighlightedID: highlightID)
 
-                    buildBody("",inParentObject: "")
+                    buildBody("goalAndObjective",inParentObject: myObject)
                     lblDetail.text = "My Goal and Objectives"
                 
                 case "goalAndObjective":
@@ -487,7 +646,7 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                     highlightID = myObject.goalID as Int
                     buildHead("goalAndObjective", inHighlightedID: highlightID)
 
-                    buildBody("",inParentObject: "")
+                    buildBody("areaOfResponsibility",inParentObject: myObject)
                     lblDetail.text = "My Area of Responsibilitys"
                 
                 case "areaOfResponsibility":
@@ -496,8 +655,36 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                     highlightID = myObject.areaID as Int
                     buildHead("areaOfResponsibility", inHighlightedID: highlightID)
 
-                    buildBody("",inParentObject: "")
+                    buildBody("project",inParentObject: myObject)
                     lblDetail.text = "My Projects"
+                
+                case "project":
+                    myDisplayHeadArray = myDisplayBodyArray
+                    let myObject = sender.targetObject as! project
+                    highlightID = myObject.projectID as Int
+                    buildHead("project", inHighlightedID: highlightID)
+                
+                    buildBody("task",inParentObject: myObject)
+                    lblDetail.text = "My Tasks"
+
+                case "task":
+                    myDisplayHeadArray = myDisplayBodyArray
+                    let myObject = sender.targetObject as! task
+                    highlightID = myObject.taskID as Int
+                    buildHead("task", inHighlightedID: highlightID)
+                
+             //   buildBody("task",inParentObject: myObject)
+              //  lblDetail.text = "My Projects"
+
+                case "context":
+                    myDisplayHeadArray = myDisplayBodyArray
+                    let myObject = sender.targetObject as! context
+                    highlightID = myObject.contextID as Int
+                    buildHead("context", inHighlightedID: highlightID)
+                
+                 //   buildBody("task",inParentObject: myObject)
+                 //   lblDetail.text = "My Tasks"
+
                 
                 default:
                     println("handleSingleTap: hit default")
@@ -586,12 +773,10 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                     if sender.headBody == "head"
                     {
                         myMessage = "Add Task"
-           //             workingObject = task()
                     }
                     else
                     {
                         myMessage = "Edit Project"
-              //          workingObject = sender.targetObject
                     }
                     myDeleteMessage = "Delete Project"
                 
@@ -601,12 +786,10 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                     if sender.headBody == "head"
                     {
                         myMessage = "Add Task"
-           //             workingObject = task()
                     }
                     else
                     {
                         myMessage = "Edit Task"
-            //            workingObject = sender.targetObject
                     }
                     myDeleteMessage = "Delete Task"
                 
@@ -616,12 +799,10 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                     if sender.headBody == "head"
                     {
                         myMessage = "Add Sub-Context"
-        //                workingObject = context()
                     }
                     else
                     {
                         myMessage = "Edit Context"
-          //              workingObject = sender.targetObject
                     }
                     myDeleteMessage = "Delete Context"
                 
@@ -660,27 +841,29 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
             else if sender.type == "areaOfResponsibility" && sender.headBody == "head"
             {  // put in code here to add a new project
              //   popoverContent.workingObject = project()
-                /*
+                
                 let myOption1 = UIAlertAction(title: myMessage, style: .Default, handler: { (action: UIAlertAction!) -> () in
-                let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("GTDEditController") as! GTDEditViewController
+                let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("MaintainProject") as! MaintainProjectViewController
                 popoverContent.modalPresentationStyle = .Popover
                 var popover = popoverContent.popoverPresentationController
                 popover!.delegate = self
                 popover!.sourceView = sender.displayView
+                
+                let parentObject = sender.targetObject as! areaOfResponsibility
                 if sender.headBody == "head"
                 {
-                popoverContent.workingObject = purposeAndCoreValue()
+                    let workingObject = project(inTeamID: parentObject.teamID as Int)
+                    parentObject.addProject(workingObject)
+                    popoverContent.inProjectObject = workingObject
+                    popoverContent.myActionType = "Add"
                 }
-                else
-                {
-                popoverContent.workingObject = sender.targetObject
-                }
-                popoverContent.preferredContentSize = CGSizeMake(500,400)
+
+                popoverContent.preferredContentSize = CGSizeMake(700,700)
                 self.presentViewController(popoverContent, animated: true, completion: nil)
                 })
                 
                 myOptions.addAction(myOption1)
-                */
+                
             }
             else if sender.type == "purposeAndCoreValue" || sender.type ==  "gvision" || sender.type ==  "goalAndObjective" || sender.type ==  "areaOfResponsibility"
             {
@@ -698,7 +881,7 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                             if sender.headBody == "head"
                             {
                                 let workingObject = gvision(inTeamID: parentObject.teamID as Int)
-                                parentObject.addVision(workingObject.visionID)
+                                parentObject.addVision(workingObject)
                                 popoverContent.inVisionObject = workingObject
                                 popoverContent.objectType = "vision"
                             }
@@ -713,7 +896,7 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                             if sender.headBody == "head"
                             {
                                 let workingObject = goalAndObjective(inTeamID: parentObject.teamID as Int)
-                                parentObject.addGoal(workingObject.goalID)
+                                parentObject.addGoal(workingObject)
                                 popoverContent.inGoalObject = workingObject
                                 popoverContent.objectType = "goal"
                             }
@@ -728,7 +911,7 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                             if sender.headBody == "head"
                             {
                                 let workingObject = areaOfResponsibility(inTeamID: parentObject.teamID as Int)
-                                parentObject.addArea(workingObject.areaID)
+                                parentObject.addArea(workingObject)
                                 popoverContent.inAreaObject = workingObject
                                 popoverContent.objectType = "area"
                             }
@@ -823,6 +1006,29 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                 myOptions.addAction(myOption1)
                 myOptions.addAction(myOption2)
             }
+            else if sender.type == "project"
+            {
+                let myOption1 = UIAlertAction(title: myMessage, style: .Default, handler: { (action: UIAlertAction!) -> () in
+                    let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("MaintainProject") as! MaintainProjectViewController
+                    popoverContent.modalPresentationStyle = .Popover
+                    var popover = popoverContent.popoverPresentationController
+                    popover!.delegate = self
+                    popover!.sourceView = sender.displayView
+                    
+                    let parentObject = sender.targetObject as! project
+                    if sender.headBody == "body"
+                    {
+                        popoverContent.inProjectObject = parentObject
+                        popoverContent.myActionType = "Edit"
+                    }
+                    
+                    popoverContent.preferredContentSize = CGSizeMake(700,700)
+                    self.presentViewController(popoverContent, animated: true, completion: nil)
+                })
+                
+                myOptions.addAction(myOption1)
+
+            }
             else
             {  // Selected in body
                 // code
@@ -852,18 +1058,22 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
             
         case "purposeAndCoreValue":
             let myObject = myParentObject as! purposeAndCoreValue
+            myObject.loadVision()
             buildBody("gvision", inParentObject: myObject)
             
         case "gvision":
             let myObject = myParentObject as! gvision
+            myObject.loadGoals()
             buildBody("goalAndObjective", inParentObject: myObject)
             
         case "goalAndObjective":
             let myObject = myParentObject as! goalAndObjective
+            myObject.loadAreas()
             buildBody("areaOfResponsibility", inParentObject: myObject)
             
         case "areaOfResponsibility":
             let myObject = myParentObject as! areaOfResponsibility
+            myObject.loadProjects()
             buildBody("project", inParentObject: myObject)
             
         default:
@@ -1020,7 +1230,6 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
             else if myItem.isKindOfClass(purposeAndCoreValue)
             {
                 let tempObject = myItem as! purposeAndCoreValue
-                var boolHighlight: Bool = false
                 if tempObject.purposeID == inHighlightID
                 {
                     boolHighlight = true
@@ -1034,7 +1243,6 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
             else if myItem.isKindOfClass(gvision)
             {
                 let tempObject = myItem as! gvision
-                var boolHighlight: Bool = false
                 if tempObject.visionID == inHighlightID
                 {
                     boolHighlight = true
@@ -1048,7 +1256,6 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
             else if myItem.isKindOfClass(goalAndObjective)
             {
                 let tempObject = myItem as! goalAndObjective
-                var boolHighlight: Bool = false
                 if tempObject.goalID == inHighlightID
                 {
                     boolHighlight = true
@@ -1062,7 +1269,6 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
             else if myItem.isKindOfClass(areaOfResponsibility)
             {
                 let tempObject = myItem as! areaOfResponsibility
-                var boolHighlight: Bool = false
                 if tempObject.areaID == inHighlightID
                 {
                     boolHighlight = true
@@ -1072,6 +1278,45 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                 
                 displayString = tempObject.title
                 myChildRecords = tempObject.projects.count
+            }
+            else if myItem.isKindOfClass(project)
+            {
+                let tempObject = myItem as! project
+                if tempObject.projectID == inHighlightID
+                {
+                    boolHighlight = true
+                    myParentObject = tempObject
+                    myParentType = "project"
+                }
+                
+                displayString = tempObject.projectName
+                myChildRecords = tempObject.tasks.count
+            }
+            else if myItem.isKindOfClass(task)
+            {
+                let tempObject = myItem as! task
+                if tempObject.taskID == inHighlightID
+                {
+                    boolHighlight = true
+                    myParentObject = tempObject
+                    myParentType = "task"
+                }
+                
+                displayString = tempObject.title
+                myChildRecords = 0
+            }
+            else if myItem.isKindOfClass(context)
+            {
+                let tempObject = myItem as! context
+                if tempObject.contextID == inHighlightID
+                {
+                    boolHighlight = true
+                    myParentObject = tempObject
+                    myParentType = "context"
+                }
+                
+                displayString = tempObject.name
+                myChildRecords = 0
             }
             else if myItem is String
             {
@@ -1170,7 +1415,25 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                 let tempObject = myItem as! areaOfResponsibility
                 displayString = tempObject.title
                 myChildRecords = tempObject.projects.count
-            }                
+            }
+            else if myItem.isKindOfClass(project)
+            {
+                let tempObject = myItem as! project
+                displayString = tempObject.projectName
+                myChildRecords = tempObject.tasks.count
+            }
+            else if myItem.isKindOfClass(task)
+            {
+                let tempObject = myItem as! task
+                displayString = tempObject.title
+                myChildRecords = 0
+            }
+            else if myItem.isKindOfClass(context)
+            {
+                let tempObject = myItem as! context
+                displayString = tempObject.name
+                myChildRecords = 0
+            }
             else if myItem is String
             {
                 displayString = myItem as! String

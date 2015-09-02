@@ -2054,7 +2054,7 @@ class coreDatabase: NSObject
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(goalID == \(inGoalID)) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(goalID == \(inGoalID)) && (updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Closed\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -2082,62 +2082,6 @@ class coreDatabase: NSObject
         return fetchResults!
     }
 
-    func saveAreaProject(inProjectID: Int, inAreaID: Int, inTeamID: Int)
-    {
-        var error: NSError?
-        var myProject: Projects!
-        
-        let myProjects = getProjectDetails(inProjectID, inTeamID: inTeamID)
-        
-        if myProjects.count == 0
-        { // Add
-            // do nothing
-        }
-        else
-        { // Update
-            myProject = myProjects[0]
-            myProject.areaID = inAreaID
-            myProject.updateTime = NSDate()
-            if myProject.updateType != "Add"
-            {
-                myProject.updateType = "Update"
-            }
-        }
-        
-        if(!managedObjectContext!.save(&error) )
-        {
-            //   println(error?.localizedDescription)
-        }
-    }
-
-    func deleteAreaProject(inProjectID: Int, inTeamID: Int)
-    {
-        var error: NSError?
-        var myProject: Projects!
-        
-        let myProjects = getProjectDetails(inProjectID, inTeamID: inTeamID)
-        
-        if myProjects.count == 0
-        { // Add
-            // do nothing
-        }
-        else
-        { // Update
-            myProject = myProjects[0]
-            myProject.areaID = 0
-            myProject.updateTime = NSDate()
-            if myProject.updateType != "Add"
-            {
-                myProject.updateType = "Update"
-            }
-        }
-        
-        if(!managedObjectContext!.save(&error) )
-        {
-            //   println(error?.localizedDescription)
-        }
-    }
-    
     func saveGoal(inGoalID: Int, inVisionID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String, inLastReviewDate: NSDate, inReviewFrequency: Int, inReviewPeriod: String, inPredecessor: Int)
     {
         var error: NSError?
@@ -2239,7 +2183,7 @@ class coreDatabase: NSObject
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(visionID == \(inVisionID)) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(visionID == \(inVisionID)) && (updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Closed\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -2250,62 +2194,6 @@ class coreDatabase: NSObject
         return fetchResults!
     }
     
-    func saveGoalArea(inGoalID: Int, inAreaID: Int, inTeamID: Int)
-    {
-        var error: NSError?
-        var myArea: AreaOfResponsibility!
-        
-        let myAreas = getAreaOfResponsibility(inAreaID, inTeamID: inTeamID)
-        
-        if myAreas.count == 0
-        { // Add
-            // do nothing
-        }
-        else
-        { // Update
-            myArea = myAreas[0]
-            myArea.goalID = inGoalID
-            myArea.updateTime = NSDate()
-            if myArea.updateType != "Add"
-            {
-                myArea.updateType = "Update"
-            }
-        }
-        
-        if(!managedObjectContext!.save(&error) )
-        {
-            //   println(error?.localizedDescription)
-        }
-    }
-    
-    func deleteGoalArea(inAreaID: Int, inTeamID: Int)
-    {
-        var error: NSError?
-        var myArea: AreaOfResponsibility!
-        
-        let myAreas = getAreaOfResponsibility(inAreaID, inTeamID: inTeamID)
-        
-        if myAreas.count == 0
-        { // Add
-            // do nothing
-        }
-        else
-        { // Update
-            myArea = myAreas[0]
-            myArea.goalID = 0
-            myArea.updateTime = NSDate()
-            if myArea.updateType != "Add"
-            {
-                myArea.updateType = "Update"
-            }
-        }
-        
-        if(!managedObjectContext!.save(&error) )
-        {
-            //   println(error?.localizedDescription)
-        }
-    }
-
     func saveVision(inVisionID: Int, inPurposeID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String, inLastReviewDate: NSDate, inReviewFrequency: Int, inReviewPeriod: String, inPredecessor: Int)
     {
         var error: NSError?
@@ -2407,7 +2295,7 @@ class coreDatabase: NSObject
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(purposeID == \(inPurposeID)) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(purposeID == \(inPurposeID)) && (updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Closed\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -2418,63 +2306,6 @@ class coreDatabase: NSObject
         return fetchResults!
     }
 
-    
-    func saveVisionGoal(inVisionID: Int, inGoalID: Int, inTeamID: Int)
-    {
-        var error: NSError?
-        var myGoal: GoalAndObjective!
-        
-        let myGoals = getGoals(inGoalID, inTeamID: inTeamID)
-        
-        if myGoals.count == 0
-        { // Add
-            // do nothing
-        }
-        else
-        { // Update
-            myGoal = myGoals[0]
-            myGoal.visionID = inVisionID
-            myGoal.updateTime = NSDate()
-            if myGoal.updateType != "Add"
-            {
-                myGoal.updateType = "Update"
-            }
-        }
-        
-        if(!managedObjectContext!.save(&error) )
-        {
-            //   println(error?.localizedDescription)
-        }
-    }
-    
-    func deleteVisionGoal(inGoalID: Int, inTeamID: Int)
-    {
-        var error: NSError?
-        var myGoal: GoalAndObjective!
-        
-        let myGoals = getGoals(inGoalID, inTeamID: inTeamID)
-        
-        if myGoals.count == 0
-        { // Add
-            // do nothing
-        }
-        else
-        { // Update
-            myGoal = myGoals[0]
-            myGoal.visionID = 0
-            myGoal.updateTime = NSDate()
-            if myGoal.updateType != "Add"
-            {
-                myGoal.updateType = "Update"
-            }
-        }
-        
-        if(!managedObjectContext!.save(&error) )
-        {
-            //   println(error?.localizedDescription)
-        }
-    }
-    
     func savePurpose(inPurposeID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String, inLastReviewDate: NSDate, inReviewFrequency: Int, inReviewPeriod: String, inPredecessor: Int)
     {
         var error: NSError?
@@ -2564,7 +2395,7 @@ class coreDatabase: NSObject
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Closed\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -2585,62 +2416,6 @@ class coreDatabase: NSObject
         let fetchResults = managedObjectContext!.executeFetchRequest(fetchRequest, error: nil) as? [PurposeAndCoreValue]
         
         return fetchResults!.count
-    }
-    
-    func savePurposeVision(inPurposeID: Int, inVisionID: Int, inTeamID: Int)
-    {
-        var error: NSError?
-        var myVision: Vision!
-        
-        let myVisions = getVisions(inVisionID, inTeamID: inTeamID)
-        
-        if myVisions.count == 0
-        { // Add
-            // do nothing
-        }
-        else
-        { // Update
-            myVision = myVisions[0]
-            myVision.purposeID = inPurposeID
-            myVision.updateTime = NSDate()
-            if myVision.updateType != "Add"
-            {
-                myVision.updateType = "Update"
-            }
-        }
-        
-        if(!managedObjectContext!.save(&error) )
-        {
-            //   println(error?.localizedDescription)
-        }
-    }
-    
-    func deletePurposeVision(inVisionID: Int, inTeamID: Int)
-    {
-        var error: NSError?
-        var myVision: Vision!
-        
-        let myVisions = getVisions(inVisionID, inTeamID: inTeamID)
-        
-        if myVisions.count == 0
-        { // Add
-            // do nothing
-        }
-        else
-        { // Update
-            myVision = myVisions[0]
-            myVision.purposeID = 0
-            myVision.updateTime = NSDate()
-            if myVision.updateType != "Add"
-            {
-                myVision.updateType = "Update"
-            }
-        }
-        
-        if(!managedObjectContext!.save(&error) )
-        {
-            //   println(error?.localizedDescription)
-        }
     }
 
     func resetprojects()
@@ -4086,7 +3861,6 @@ class coreDatabase: NSObject
         return fetchResults!.count
     }
 
-    
     func saveProjectNote(inProjectID: Int, inNote: String, inReviewPeriod: String, inPredecessor: Int)
     {
         var error: NSError?
@@ -4157,7 +3931,7 @@ class coreDatabase: NSObject
             // Create table entry
             let storeKey = "\(inInitialValue)"
             updateDecodeValue(inTableName, inCodeValue: storeKey, inCodeType: "hidden")
-println("key = \(inTableName)  value = \(storeKey)")
+
             return inInitialValue
         }
         else
@@ -4167,7 +3941,7 @@ println("key = \(inTableName)  value = \(storeKey)")
             
             let storeKey = "\(storeint)"
             updateDecodeValue(inTableName, inCodeValue: storeKey, inCodeType: "hidden")
-    println("key = \(inTableName)  value = \(storeKey)")
+
             return storeint
         }
     }

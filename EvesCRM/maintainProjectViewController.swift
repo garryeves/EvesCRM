@@ -20,31 +20,33 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
 {
    private var passedGTD: GTDModel!
     
-    @IBOutlet weak var projectList: UITableView!
-    @IBOutlet weak var teamMembersTable: UITableView!
     @IBOutlet weak var projectNameLabel: UILabel!
     @IBOutlet weak var startDateLabel: UILabel!
     @IBOutlet weak var endDateLabel: UILabel!
     @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var teamMembersLabel: UILabel!
-    @IBOutlet weak var projectNameText: UITextField!
     @IBOutlet weak var startDatePicker: UIDatePicker!
-    @IBOutlet weak var endDatePicker: UIDatePicker!
     @IBOutlet weak var statusPicker: UIPickerView!
     @IBOutlet weak var buttonAddTeamMember: UIButton!
     @IBOutlet weak var labelTeamMemberName: UILabel!
-    @IBOutlet weak var pickerPersonRole: UIPickerView!
     @IBOutlet weak var buttonConfirmTeamMember: UIButton!
     @IBOutlet weak var buttonDeleteTeamMember: UIButton!
-    
-    @IBOutlet weak var switchArchive: UISwitch!
-    @IBOutlet weak var labelSwitchArchive: UILabel!
-    @IBOutlet weak var lableNoProjects: UILabel!
+    @IBOutlet weak var btnStartDate: UIButton!
+    @IBOutlet weak var btnEndDate: UIButton!
+    @IBOutlet weak var btnProjectStage: UIButton!
+    @IBOutlet weak var btnPersonRole: UIButton!
+    @IBOutlet weak var btnSelectPicker: UIButton!
+    @IBOutlet weak var colTeamMembers: UICollectionView!
+    @IBOutlet weak var lblNotes: UILabel!
+    @IBOutlet weak var txtNotes: UITextView!
+    @IBOutlet weak var txtTitle: UITextField!
+
  //   var delegate: MyMaintainProjectDelegate?
     
     private var statusOptions: [Stages]!
     
     var myActionType: String = "Add"
+    var inProjectObject: project!
     private var statusSelected: String = ""
     private var roleSelected: Int = 0
     private var myProjects: [project] = Array()
@@ -66,48 +68,18 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     override func viewDidLoad()
     {
         super.viewDidLoad()
-       
-        passedGTD = (tabBarController as! GTDPlanningTabViewController).myPassedGTD
-        
-        self.projectList.registerClass(UITableViewCell.self, forCellReuseIdentifier: reuseIdentifierProject)
-        self.teamMembersTable.registerClass(UITableViewCell.self, forCellReuseIdentifier: reuseIdentifierTeam)
 
-        getProjects()
-        
         myRoles = myDatabaseConnection.getRoles(myTeamID)
         
         statusOptions = myDatabaseConnection.getStages(myTeamID)
         
-        if myProjects.count > 0
-        {
-            // Populate the collection view
-            projectList.hidden = false
-            lableNoProjects.hidden = true
-            switchArchive.hidden = false
-            labelSwitchArchive.hidden = false
-            switchArchive.setOn(false, animated: true)
-        }
-        else
-        {
-            // Hide the collection view as there is nothing to display
-            projectList.hidden = true
-            lableNoProjects.hidden = false
-            switchArchive.hidden = true
-            labelSwitchArchive.hidden = true
-        }
-        
         buttonAddTeamMember.hidden = false
         
         statusSelected = statusOptions[0].stageDescription
-        teamMembersTable.hidden = false
         teamMembersLabel.hidden = false
         labelTeamMemberName.hidden = true
-        pickerPersonRole.hidden = true
         buttonConfirmTeamMember.hidden = true
         buttonDeleteTeamMember.hidden = true
-        
-        teamMembersTable.tableFooterView = UIView(frame:CGRectZero)
-        projectList.tableFooterView = UIView(frame:CGRectZero)
         
         let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
         showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
@@ -119,9 +91,55 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
 
         hideFields()
         
+        // Set the initial values
+        
+
+        startDatePicker.hidden = true
+        btnSelectPicker.hidden = true
+        statusPicker.hidden = true
+        
+        btnPersonRole.hidden = true
+        
+        if inProjectObject.displayProjectStartDate == ""
+        {
+            btnStartDate.setTitle("Set Start Date", forState: UIControlState.Normal)
+        }
+        else
+        {
+            btnStartDate.setTitle(inProjectObject.displayProjectStartDate, forState: UIControlState.Normal)
+        }
+        
+        if inProjectObject.displayProjectEndDate == ""
+        {
+            btnEndDate.setTitle("Set Start Date", forState: UIControlState.Normal)
+        }
+        else
+        {
+            btnEndDate.setTitle(inProjectObject.displayProjectEndDate, forState: UIControlState.Normal)
+        }
+        
+        if inProjectObject.projectStatus == ""
+        {
+            btnProjectStage.setTitle("Set Start Date", forState: UIControlState.Normal)
+        }
+        else
+        {
+            btnProjectStage.setTitle(inProjectObject.projectStatus, forState: UIControlState.Normal)
+        }
+        
+        txtNotes.text = inProjectObject.note
+        txtTitle.text = inProjectObject.projectName
+        
+        colTeamMembers.hidden = false
+
+        
+        
+        
+        
         // TextExpander
         textExpander = SMTEDelegateController()
-        projectNameText.delegate = textExpander
+        txtTitle.delegate = textExpander
+        txtNotes.delegate = textExpander
         textExpander.clientAppName = "EvesCRM"
         textExpander.fillCompletionScheme = "EvesCRM-fill-xc"
         textExpander.fillDelegate = self
@@ -136,8 +154,9 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         // Dispose of any resources that can be recreated.
     }
  
-    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent) {
-        projectNameText.endEditing(true)
+    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent)
+    {
+        txtTitle.endEditing(true)
     }
     
     func handleSwipe(recognizer:UISwipeGestureRecognizer)
@@ -159,40 +178,42 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     
     func pickerView(inPicker: UIPickerView, numberOfRowsInComponent component: Int) -> Int
     {
-        if inPicker == statusPicker
-        {
-            return statusOptions.count
-        }
-        else if inPicker == pickerPersonRole
-        {
-            return myRoles.count
-        }
-        else
-        {
-            return 0
-        }
+ //       if inPicker == statusPicker
+ //       {
+ //           return statusOptions.count
+ //       }
+ //       else if inPicker == pickerPersonRole
+ //       {
+  //          return myRoles.count
+  //      }
+  //      else
+  //      {
+  //          return 0
+  //      }
+        
+        return 0
     }
     
     func pickerView(inPicker: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String!
     {
-        if inPicker == statusPicker
-        {
-            return statusOptions[row].stageDescription
-        }
-        else if inPicker == pickerPersonRole
-        {
-            return myRoles[row].roleDescription
-        }
-        else
-        {
+   //     if inPicker == statusPicker
+   //     {
+   //         return statusOptions[row].stageDescription
+   //     }
+   //     else if inPicker == pickerPersonRole
+   //     {
+   //         return myRoles[row].roleDescription
+   //     }
+   //     else
+   //     {
             return "Empty"
-        }
+    //    }
     }
     
     func pickerView(inPicker: UIPickerView, didSelectRow row: Int, inComponent component: Int)
     {
         // actionSelection()
-        if projectNameText.text == ""
+        if txtTitle.text == ""
         {
             var alert = UIAlertController(title: "Project Maintenance", message:
                 "You need to provide a Project Name", preferredStyle: UIAlertControllerStyle.Alert)
@@ -202,7 +223,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
             alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
                 handler: nil))
             
-            projectNameText.becomeFirstResponder()
+            txtTitle.becomeFirstResponder()
         }
         else
         {
@@ -211,13 +232,13 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
                 statusSelected = statusOptions[row].stageDescription
                 mySelectedProject.projectStatus = statusSelected
             }
-            else if inPicker == pickerPersonRole
-            {
-                roleSelected = myRoles[row].roleID as Int
-            }
+ //           else if inPicker == pickerPersonRole
+ //           {
+ //               roleSelected = myRoles[row].roleID as Int
+ //           }
         }
     }
-    
+ /*
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
     {
         var retVal: CGFloat = 0.0
@@ -380,24 +401,36 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         }
     }
     
+
+*/
+    
+    
+    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
+    {
+       // return 1
+        return 0
+    }
+    
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
+    {
+     //   return agendaItem.tasks.count
+        return 0
+    }
+  
+    
+    
+    
+    
     @IBAction func buttonAddTeamMember(sender: UIButton)
     {
         buttonAddTeamMember.hidden = true
         // Save current changes
         myActionType = "Edit"
-        if switchArchive.on
-        {
-            getProjects(inArchiveFlag: true)
-        }
-        else
-        {
-            getProjects()
-        }
-        projectList.reloadData()
+        
         teamMemberAction = "Add"
         buttonConfirmTeamMember.setTitle("Add to Project Team Members", forState: UIControlState.Normal)
         
-        pickerPersonRole.selectRow(0, inComponent: 0, animated: true)
+  //      pickerPersonRole.selectRow(0, inComponent: 0, animated: true)
         roleSelected = 1
         
         let picker = ABPeoplePickerNavigationController()
@@ -429,14 +462,12 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         
         mySelectedProject.loadTeamMembers()
         mySelectedRoles = mySelectedProject.teamMembers
-        teamMembersTable.reloadData()
+        colTeamMembers.reloadData()
 
         labelTeamMemberName.hidden = true
-        pickerPersonRole.hidden = true
         buttonConfirmTeamMember.hidden = true
         buttonDeleteTeamMember.hidden = true
         buttonAddTeamMember.hidden = false
-        teamMembersTable.hidden = false
     }
     
     // Peoplepicker code
@@ -450,10 +481,8 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         labelTeamMemberName.text = myFullName
         
         labelTeamMemberName.hidden = false
-        pickerPersonRole.hidden = false
         buttonConfirmTeamMember.hidden = false
         buttonAddTeamMember.hidden = true
-        teamMembersTable.hidden = true
     }
     
     func peoplePickerNavigationControllerDidCancel(peoplePicker: ABPeoplePickerNavigationController!)
@@ -467,19 +496,19 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         
         mySelectedProject.loadTeamMembers()
         mySelectedRoles = mySelectedProject.teamMembers
-        teamMembersTable.reloadData()
+        colTeamMembers.reloadData()
         
         labelTeamMemberName.hidden = true
-        pickerPersonRole.hidden = true
+
         buttonConfirmTeamMember.hidden = true
         buttonDeleteTeamMember.hidden = true
         buttonAddTeamMember.hidden = false
-        teamMembersTable.hidden = false
+        colTeamMembers.hidden = false
     }
     
     @IBAction func txtProjectName(sender: UITextField)
     {
-        if projectNameText.text == ""
+        if txtTitle.text == ""
         {
             var alert = UIAlertController(title: "Project Maintenance", message:
                 "You need to provide a Project Name", preferredStyle: UIAlertControllerStyle.Alert)
@@ -489,18 +518,18 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
             alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
                 handler: nil))
             
-            projectNameText.becomeFirstResponder()
+            txtTitle.becomeFirstResponder()
         }
         else
         {
             if myActionType == "Add"
             {
                 mySelectedProject = project(inTeamID: myTeamID)
-                mySelectedProject.projectName = projectNameText.text
+                mySelectedProject.projectName = txtTitle.text
             }
             else
             {
-                mySelectedProject.projectName = projectNameText.text
+                mySelectedProject.projectName = txtTitle.text
             }
             showFields()
         }
@@ -508,7 +537,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     
     @IBAction func dteStart(sender: UIDatePicker)
     {
-        if projectNameText.text == ""
+        if txtTitle.text == ""
         {
             var alert = UIAlertController(title: "Project Maintenance", message:
                 "You need to provide a Project Name", preferredStyle: UIAlertControllerStyle.Alert)
@@ -518,7 +547,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
             alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
                 handler: nil))
             
-            projectNameText.becomeFirstResponder()
+            txtTitle.becomeFirstResponder()
         }
         else
         {
@@ -528,7 +557,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     
     @IBAction func dteEnd(sender: UIDatePicker)
     {
-        if projectNameText.text == ""
+        if txtTitle.text == ""
         {
             var alert = UIAlertController(title: "Project Maintenance", message:
                 "You need to provide a Project Name", preferredStyle: UIAlertControllerStyle.Alert)
@@ -538,26 +567,12 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
             alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
                 handler: nil))
             
-            projectNameText.becomeFirstResponder()
+            txtTitle.becomeFirstResponder()
         }
         else
         {
-            mySelectedProject.projectEndDate = endDatePicker.date
+      //      mySelectedProject.projectEndDate = endDatePicker.date
         }
-    }
-    
-    @IBAction func switchArchive(sender: UISwitch)
-    {
-        if switchArchive.on
-        {
-            getProjects(inArchiveFlag: true)
-        }
-        else
-        {
-            getProjects()
-        }
-
-        projectList.reloadData()
     }
     
     func getProjects(inArchiveFlag: Bool = false)
@@ -583,28 +598,40 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     
     func hideFields()
     {
-        teamMembersTable.hidden = true
         startDateLabel.hidden = true
         endDateLabel.hidden = true
         statusLabel.hidden = true
         teamMembersLabel.hidden = true
         startDatePicker.hidden = true
-        endDatePicker.hidden = true
         statusPicker.hidden = true
         buttonAddTeamMember.hidden = true
+        btnStartDate.hidden = true
+        btnEndDate.hidden = true
+        btnProjectStage.hidden = true
+        btnPersonRole.hidden = true
+        colTeamMembers.hidden = true
+        lblNotes.hidden = true
+        txtNotes.hidden = true
+        txtTitle.hidden = true
     }
     
     func showFields()
     {
-        teamMembersTable.hidden = false
         startDateLabel.hidden = false
         endDateLabel.hidden = false
         statusLabel.hidden = false
         teamMembersLabel.hidden = false
         startDatePicker.hidden = false
-        endDatePicker.hidden = false
         statusPicker.hidden = false
         buttonAddTeamMember.hidden = false
+        btnStartDate.hidden = false
+        btnEndDate.hidden = false
+        btnProjectStage.hidden = false
+        btnPersonRole.hidden = false
+        colTeamMembers.hidden = false
+        lblNotes.hidden = false
+        txtNotes.hidden = false
+        txtTitle.hidden = false
     }
     
     func myGTDPlanningDidFinish(controller:MaintainGTDPlanningViewController)
@@ -647,7 +674,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         {
             if uiTextObject.tag == 1
             {
-                result = "projectNameText"
+                result = "txtTitle"
             }
         }
         
@@ -655,7 +682,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         {
             if uiTextObject.tag == 1
             {
-                result = "unused"
+                result = "txtNotes"
             }
         }
         
@@ -714,15 +741,25 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     {
         snippetExpanded = true
 
-        if "projectNameText" == textIdentifier
+        if "txtTitle" == textIdentifier
         {
-            projectNameText.becomeFirstResponder()
-            let theLoc = projectNameText.positionFromPosition(projectNameText.beginningOfDocument, offset: ioInsertionPointLocation)
+            txtTitle.becomeFirstResponder()
+            let theLoc = txtTitle.positionFromPosition(txtTitle.beginningOfDocument, offset: ioInsertionPointLocation)
             if theLoc != nil
             {
-                projectNameText.selectedTextRange = projectNameText.textRangeFromPosition(theLoc, toPosition: theLoc)
+                txtTitle.selectedTextRange = txtTitle.textRangeFromPosition(theLoc, toPosition: theLoc)
             }
-            return projectNameText
+            return txtTitle
+        }
+        else if "txtNotes" == textIdentifier
+        {
+            txtNotes.becomeFirstResponder()
+            let theLoc = txtNotes.positionFromPosition(txtNotes.beginningOfDocument, offset: ioInsertionPointLocation)
+            if theLoc != nil
+            {
+                txtNotes.selectedTextRange = txtNotes.textRangeFromPosition(theLoc, toPosition: theLoc)
+            }
+            return txtNotes
         }
             //        else if "mySearchBar" == textIdentifier
             //        {

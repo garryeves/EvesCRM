@@ -2763,26 +2763,26 @@ println("Nothing found")
                      //   self.presentViewController(MaintainProjectViewControl, animated: true, completion: nil)
                     
                     
-                        let projectViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("planningTab") as! GTDPlanningTabViewController
+                        let projectViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("GTDPlanning") as! MaintainGTDPlanningViewController
                         
                         var myPassedGTD = GTDModel()
                         
                         myPassedGTD.delegate = self
                         myPassedGTD.actionSource = "Project"
                         
-                        projectViewControl.myPassedGTD = myPassedGTD
+                        projectViewControl.passedGTD = myPassedGTD
                         
                         self.presentViewController(projectViewControl, animated: true, completion: nil)
                     
                 case "Context":
-                    let projectViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("planningTab") as! GTDPlanningTabViewController
+                    let projectViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("GTDPlanning") as! MaintainGTDPlanningViewController
                     
                     var myPassedGTD = GTDModel()
                     
                     myPassedGTD.delegate = self
                     myPassedGTD.actionSource = "Context"
                     
-                    projectViewControl.myPassedGTD = myPassedGTD
+                    projectViewControl.passedGTD = myPassedGTD
                     
                     self.presentViewController(projectViewControl, animated: true, completion: nil)
                     

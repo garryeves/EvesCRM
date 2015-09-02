@@ -36,6 +36,7 @@ class GTDEditViewController: UIViewController, UITextViewDelegate
     
     private var pickerOptions: [String] = Array()
     private var pickerTarget: String = ""
+    private var selectedRow: Int = 0
     
     // Textexpander
     
@@ -43,7 +44,6 @@ class GTDEditViewController: UIViewController, UITextViewDelegate
     
     var textExpander: SMTEDelegateController!
 
-    
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -211,6 +211,33 @@ class GTDEditViewController: UIViewController, UITextViewDelegate
         // Dispose of any resources that can be recreated.
     }
     
+ /*
+    override func viewWillDisappear(animated: Bool)
+    {
+        super.viewWillDisappear(animated)
+        
+        // Which item is the current first responder, as will need to save it if it is a text field
+        
+        switch objectType
+        {
+        case "purpose":
+            inPurposeObject.save()
+            
+        case "vision":
+            inVisionObject.save()
+            
+        case "goal":
+            inGoalObject.save()
+            
+        case "area":
+            inAreaObject.save()
+            
+        default:
+            println("GTDEditViewController: viewWillDisappear:  No objectType found")
+        }
+
+    }
+*/    
     func numberOfComponentsInPickerView(TableTypeSelection1: UIPickerView) -> Int
     {
         return 1
@@ -228,51 +255,7 @@ class GTDEditViewController: UIViewController, UITextViewDelegate
     
     func pickerView(TableTypeSelection1: UIPickerView, didSelectRow row: Int, inComponent component: Int)
     {
-        if pickerTarget == "Status"
-        {
-            btnStatus.setTitle(pickerOptions[row], forState: .Normal)
-            
-            switch objectType
-            {
-                case "purpose":
-                    inPurposeObject.status = pickerOptions[row]
-                
-                case "vision":
-                    inVisionObject.status = pickerOptions[row]
-                
-                case "goal":
-                    inGoalObject.status = pickerOptions[row]
-                
-                case "area":
-                    inAreaObject.status = pickerOptions[row]
-                
-                default:
-                    println("GTDEditViewController: pickerView: Status:  No objectType found")
-            }
-        }
-        
-        if pickerTarget == "Period"
-        {
-            btnPeriod.setTitle(pickerOptions[row], forState: .Normal)
-            
-            switch objectType
-            {
-                case "purpose":
-                    inPurposeObject.reviewPeriod = pickerOptions[row]
-                
-                case "vision":
-                    inVisionObject.reviewPeriod = pickerOptions[row]
-                
-                case "goal":
-                    inGoalObject.reviewPeriod = pickerOptions[row]
-                
-                case "area":
-                    inAreaObject.reviewPeriod = pickerOptions[row]
-                
-                default:
-                    println("GTDEditViewController: pickerView: Period:  No objectType found")
-            }
-        }
+        selectedRow = row
     }
     
     @IBAction func txtFrequency(sender: UITextField)
@@ -377,6 +360,53 @@ class GTDEditViewController: UIViewController, UITextViewDelegate
             }
         }
         
+        if pickerTarget == "Status"
+        {
+            btnStatus.setTitle(pickerOptions[selectedRow], forState: .Normal)
+            
+            switch objectType
+            {
+            case "purpose":
+                inPurposeObject.status = pickerOptions[selectedRow]
+                
+            case "vision":
+                inVisionObject.status = pickerOptions[selectedRow]
+                
+            case "goal":
+                inGoalObject.status = pickerOptions[selectedRow]
+                
+            case "area":
+                inAreaObject.status = pickerOptions[selectedRow]
+                
+            default:
+                println("GTDEditViewController: pickerView: Status:  No objectType found")
+            }
+        }
+        
+        if pickerTarget == "Period"
+        {
+            btnPeriod.setTitle(pickerOptions[selectedRow], forState: .Normal)
+            
+            switch objectType
+            {
+            case "purpose":
+                inPurposeObject.reviewPeriod = pickerOptions[selectedRow]
+                
+            case "vision":
+                inVisionObject.reviewPeriod = pickerOptions[selectedRow]
+                
+            case "goal":
+                inGoalObject.reviewPeriod = pickerOptions[selectedRow]
+                
+            case "area":
+                inAreaObject.reviewPeriod = pickerOptions[selectedRow]
+                
+            default:
+                println("GTDEditViewController: pickerView: Period:  No objectType found")
+            }
+        }
+
+        myPicker.hidden = true
         myDatePicker.hidden = true
         btnTargetDate.hidden = true
         
@@ -385,6 +415,9 @@ class GTDEditViewController: UIViewController, UITextViewDelegate
     
     @IBAction func btnPeriod(sender: UIButton)
     {
+        btnTargetDate.setTitle("Set Review period", forState: .Normal)
+        btnTargetDate.hidden = false
+        
         pickerOptions.removeAll(keepCapacity: false)
         pickerOptions.append("")
         pickerOptions.append("Days")
@@ -400,6 +433,9 @@ class GTDEditViewController: UIViewController, UITextViewDelegate
     
     @IBAction func btnStatus(sender: UIButton)
     {
+        btnTargetDate.setTitle("Set Status", forState: .Normal)
+        btnTargetDate.hidden = false
+        
         pickerOptions.removeAll(keepCapacity: false)
         pickerOptions.append("")
         pickerOptions.append("Open")
