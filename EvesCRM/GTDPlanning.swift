@@ -1103,7 +1103,7 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
         txtView.selectable = false
         if inHighlightObject
         {
-            txtView.backgroundColor = UIColor.lightGrayColor()
+            txtView.backgroundColor = myRowColour
         }
         
         let singleTap: textViewTapGestureRecognizer = textViewTapGestureRecognizer(target: self, action: "handleSingleTap:")

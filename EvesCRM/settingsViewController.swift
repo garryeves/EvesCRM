@@ -370,7 +370,7 @@ class settingsViewController: UIViewController, SMTEFillDelegate
     @IBAction func buttonResetRolesClick(sender: UIButton)
     {
         myDatabaseConnection.deleteAllRoles(myTeamID)
-        populateRoles()
+        populateRoles(myTeamID)
         
         myRoles = myDatabaseConnection.getRoles(myTeamID)
         colRoles.reloadData()
@@ -380,7 +380,7 @@ class settingsViewController: UIViewController, SMTEFillDelegate
     @IBAction func buttonResetStagesClick(sender: UIButton)
     {
         myDatabaseConnection.deleteAllStages(myTeamID)
-        populateStages()
+        populateStages(myTeamID)
         
         myStages = myDatabaseConnection.getVisibleStages(myTeamID)
         colStages.reloadData()

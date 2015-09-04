@@ -1021,6 +1021,7 @@ class projectTeamMember: NSObject
     private var myProjectMemberNotes: String = ""
     private var myRoleID: Int = 0
     private var myTeamMember: String = ""
+    private var myTeamID: Int = 0
 
     var projectID: Int
     {
@@ -1061,6 +1062,14 @@ class projectTeamMember: NSObject
         }
     }
 
+    var roleName: String
+        {
+        get
+        {
+            return myDatabaseConnection.getRoleDescription(myRoleID as Int, inTeamID: myTeamID)
+        }
+    }
+
     var teamMember: String
     {
         get
@@ -1074,12 +1083,13 @@ class projectTeamMember: NSObject
         }
     }
     
-    init(inProjectID: Int, inTeamMember: String, inRoleID: Int)
+    init(inProjectID: Int, inTeamMember: String, inRoleID: Int, inTeamID: Int)
     {
         super.init()
         myProjectID = inProjectID
         myTeamMember = inTeamMember
         myRoleID = inRoleID
+        myTeamID = inTeamID
         save()
     }
     
@@ -1469,7 +1479,7 @@ class project: NSObject // 10k level
             
         for myTeamMember in myProjectTeamMembers
         {
-            let myMember = projectTeamMember(inProjectID: myTeamMember.projectID as Int, inTeamMember: myTeamMember.teamMember, inRoleID: myTeamMember.roleID as Int )
+            let myMember = projectTeamMember(inProjectID: myTeamMember.projectID as Int, inTeamMember: myTeamMember.teamMember, inRoleID: myTeamMember.roleID as Int, inTeamID: myTeamID )
             
             myMember.projectMemberNotes = myTeamMember.projectMemberNotes
             

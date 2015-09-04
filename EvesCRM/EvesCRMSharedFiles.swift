@@ -228,7 +228,7 @@ func stringByChangingChars(inString: String, inOldChar: String, inNewChar: Strin
     return myString
 }
 
-func populateRoles()
+func populateRoles(inTeamID: Int)
 {
     let initialRoles = ["Project Manager",
                         "Project Executive",
@@ -241,7 +241,7 @@ func populateRoles()
     
     for initialRole in initialRoles
     {
-        myDatabaseConnection.createRole(initialRole, inTeamID: myTeamID)
+        myDatabaseConnection.createRole(initialRole, inTeamID: inTeamID)
     }
 }
 
@@ -410,15 +410,15 @@ class StreamReader  {
 }
 
 
-func populateStages()
+func populateStages(inTeamID: Int)
 {
     let loadSet = ["Pre-Planning", "Planning", "Planned", "Scheduled", "In-progress", "Delayed", "Completed", "Archived"]
     
     for myItem in loadSet
     {
-        if !myDatabaseConnection.stageExists(myItem, inTeamID: myTeamID)
+        if !myDatabaseConnection.stageExists(myItem, inTeamID: inTeamID)
         {
-            myDatabaseConnection.createStage(myItem, inTeamID: myTeamID)
+            myDatabaseConnection.createStage(myItem, inTeamID: inTeamID)
         }
     }
 }

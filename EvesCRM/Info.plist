@@ -102,6 +102,8 @@
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>tetouch</string>
+		<string>onenote</string>
+		<string>evernote</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
