@@ -209,11 +209,11 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
      //   case "context":
 
             default:
-                println("Func btnUp hit default")
+                print("Func btnUp hit default")
         }
     }
     
-    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent)
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?)
     {
         //       projectNameText.endEditing(true)
     }
@@ -343,7 +343,7 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                 btnUp.setTitle("Up to Team", forState: .Normal)
         
             default :
-                println("buildHead: hit default")
+                print("buildHead: hit default")
         }
         
         var contentWidth = buildDisplayHead(myDisplayHeadArray, inWidth: 200, inHeight: 100, inSpacing: 40, inStartX: 0, inStartY: 0, inHighlightID: inHighlightedID)
@@ -442,9 +442,10 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                 lblDetail.text = "My Contexts"
             
                 let myObject = inParentObject as! context
+            NSLog("\(myObject.name)")
             
             default :
-                println("buildBody: hit default")
+                print("buildBody: hit default")
         }
 
         let contentHeight = buildDisplayBody(myDisplayBodyArray, inWidth: 200, inHeight: 100, inSpacing: 40, inStartX: 0, inStartY: 0)
@@ -615,7 +616,7 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
 
             
                 default:
-                    println("handleSingleTap: hit default")
+                    print("handleSingleTap: hit default")
             }
         }
         else
@@ -687,7 +688,7 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
 
                 
                 default:
-                    println("handleSingleTap: hit default")
+                    print("handleSingleTap: hit default")
             }
         }
     }
@@ -807,17 +808,17 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                     myDeleteMessage = "Delete Context"
                 
                 default :
-                    println("Handle long press hit default")
+                    print("Handle long press hit default")
             }
 
             let myOptions: UIAlertController = UIAlertController(title: myHeader, message: "Select action to take", preferredStyle: .ActionSheet)
 
             if sender.type == "team" && sender.headBody == "head"
             {
-                let myOption1 = UIAlertAction(title: myMessage, style: .Default, handler: { (action: UIAlertAction!) -> () in
+                let myOption1 = UIAlertAction(title: myMessage, style: .Default, handler: { (action: UIAlertAction) -> () in
                     let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("GTDEditController") as! GTDEditViewController
                     popoverContent.modalPresentationStyle = .Popover
-                    var popover = popoverContent.popoverPresentationController
+                    let popover = popoverContent.popoverPresentationController
                     popover!.delegate = self
                     popover!.sourceView = sender.displayView
                     
@@ -842,10 +843,10 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
             {  // put in code here to add a new project
              //   popoverContent.workingObject = project()
                 
-                let myOption1 = UIAlertAction(title: myMessage, style: .Default, handler: { (action: UIAlertAction!) -> () in
+                let myOption1 = UIAlertAction(title: myMessage, style: .Default, handler: { (action: UIAlertAction) -> () in
                 let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("MaintainProject") as! MaintainProjectViewController
                 popoverContent.modalPresentationStyle = .Popover
-                var popover = popoverContent.popoverPresentationController
+                let popover = popoverContent.popoverPresentationController
                 popover!.delegate = self
                 popover!.sourceView = sender.displayView
                 
@@ -867,10 +868,10 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
             }
             else if sender.type == "purposeAndCoreValue" || sender.type ==  "gvision" || sender.type ==  "goalAndObjective" || sender.type ==  "areaOfResponsibility"
             {
-                let myOption1 = UIAlertAction(title: myMessage, style: .Default, handler: { (action: UIAlertAction!) -> () in
+                let myOption1 = UIAlertAction(title: myMessage, style: .Default, handler: { (action: UIAlertAction) -> () in
                     let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("GTDEditController") as! GTDEditViewController
                     popoverContent.modalPresentationStyle = .Popover
-                    var popover = popoverContent.popoverPresentationController
+                    let popover = popoverContent.popoverPresentationController
                     popover!.delegate = self
                     popover!.sourceView = sender.displayView
 
@@ -930,14 +931,14 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                             }
             
                     default:
-                        println("")
+                        print("")
                     }
 
                     popoverContent.preferredContentSize = CGSizeMake(500,400)
                     self.presentViewController(popoverContent, animated: true, completion: nil)
                 })
 
-                let myOption2 = UIAlertAction(title: myDeleteMessage, style: .Default, handler: { (action: UIAlertAction!) -> () in
+                let myOption2 = UIAlertAction(title: myDeleteMessage, style: .Default, handler: { (action: UIAlertAction) -> () in
                     switch sender.type
                     {
                         case "purposeAndCoreValue" :
@@ -946,7 +947,7 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                             {
                                 if !parentObject.delete()
                                 {
-                                    var alert = UIAlertController(title: "Delete Purpose", message:
+                                    let alert = UIAlertController(title: "Delete Purpose", message:
                                         "Unable to delete Purpose.  Check that there are not child records", preferredStyle: UIAlertControllerStyle.Alert)
                                     
                                     alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
@@ -960,7 +961,7 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                         {
                             if !parentObject.delete()
                             {
-                                var alert = UIAlertController(title: "Delete Vision", message:
+                                let alert = UIAlertController(title: "Delete Vision", message:
                                     "Unable to delete Vision.  Check that there are not child records", preferredStyle: UIAlertControllerStyle.Alert)
                                 
                                 alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
@@ -974,7 +975,7 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                         {
                             if !parentObject.delete()
                             {
-                                var alert = UIAlertController(title: "Delete Goal", message:
+                                let alert = UIAlertController(title: "Delete Goal", message:
                                     "Unable to delete Goal.  Check that there are not child records", preferredStyle: UIAlertControllerStyle.Alert)
                                 
                                 alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
@@ -988,7 +989,7 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                         {
                             if !parentObject.delete()
                             {
-                                var alert = UIAlertController(title: "Delete Area of Responsibility", message:
+                                let alert = UIAlertController(title: "Delete Area of Responsibility", message:
                                     "Unable to delete Area of Responsibility.  Check that there are not child records", preferredStyle: UIAlertControllerStyle.Alert)
                                 
                                 alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
@@ -997,7 +998,7 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                         }
                         
                     default:
-                        println("")
+                        print("")
                     }
                     
                     self.refreshBody()
@@ -1008,10 +1009,10 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
             }
             else if sender.type == "project"
             {
-                let myOption1 = UIAlertAction(title: myMessage, style: .Default, handler: { (action: UIAlertAction!) -> () in
+                let myOption1 = UIAlertAction(title: myMessage, style: .Default, handler: { (action: UIAlertAction) -> () in
                     let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("MaintainProject") as! MaintainProjectViewController
                     popoverContent.modalPresentationStyle = .Popover
-                    var popover = popoverContent.popoverPresentationController
+                    let popover = popoverContent.popoverPresentationController
                     popover!.delegate = self
                     popover!.sourceView = sender.displayView
                     
@@ -1077,15 +1078,15 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
             buildBody("project", inParentObject: myObject)
             
         default:
-            println("popoverPresentationControllerDidDismissPopover: hit default")
+            print("popoverPresentationControllerDidDismissPopover: hit default")
         }
     }
     
     private func displayEntry(inString: String, xPos: CGFloat, yPos: CGFloat, rectWidth: CGFloat, rectHeight: CGFloat, inRowID: Int, inTargetObject: AnyObject, inView: UIView, inHeadBody: String, inChildRecords: Int, inHighlightObject: Bool = false)
     {
-        var myView: UIView = UIView()
+     //   var myView: UIView = UIView()
         
-        var txtView: UITextView = UITextView(frame: CGRect(x: xPos, y: yPos, width: rectWidth, height: rectHeight))
+        let txtView: UITextView = UITextView(frame: CGRect(x: xPos, y: yPos, width: rectWidth, height: rectHeight))
         
         txtView.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
         
@@ -1105,7 +1106,7 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
             txtView.backgroundColor = UIColor.lightGrayColor()
         }
         
-        var singleTap: textViewTapGestureRecognizer = textViewTapGestureRecognizer(target: self, action: "handleSingleTap:")
+        let singleTap: textViewTapGestureRecognizer = textViewTapGestureRecognizer(target: self, action: "handleSingleTap:")
         singleTap.numberOfTapsRequired = 1
         singleTap.tag = inRowID
         singleTap.targetObject = inTargetObject
@@ -1116,7 +1117,7 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
   //      myView.addGestureRecognizer(singleTap)
         txtView.addGestureRecognizer(singleTap)
         
-        var lpgr = textLongPressGestureRecognizer(target: self, action: "handleLongPress:")
+        let lpgr = textLongPressGestureRecognizer(target: self, action: "handleLongPress:")
         lpgr.tag = inRowID
         lpgr.targetObject = inTargetObject
         lpgr.displayView = txtView
@@ -1141,7 +1142,7 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
         
         if inChildRecords > 0
         {
-            var txtfield: UILabel = UILabel(frame: CGRect(x: xPos, y: yPos + rectHeight, width: rectWidth, height: 30))
+            let txtfield: UILabel = UILabel(frame: CGRect(x: xPos, y: yPos + rectHeight, width: rectWidth, height: 30))
         
             txtfield.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
         
@@ -1164,7 +1165,7 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
     func buildDisplayHead(inDisplayArray: [AnyObject], inWidth: CGFloat, inHeight: CGFloat, inSpacing: CGFloat, inStartX: CGFloat, inStartY: CGFloat, inHighlightID: Int) -> CGFloat
     {
         var myX: CGFloat = inStartX
-        var myY: CGFloat = inStartY
+        let myY: CGFloat = inStartY
         var myRowID: Int = 0
         var boolHighlight: Bool = false
         var displayString: String = ""
@@ -1205,8 +1206,6 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                 myX = midpoint - halfWidth - (CGFloat(maxInt - 1) * (halfWidth + halfSpace))
             }
         }
-        
-        let myStartingX = myX
         
         for myItem in inDisplayArray
         {

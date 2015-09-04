@@ -51,10 +51,10 @@ class EvernoteDetails
     {
     
         var searchText: ENNoteSearch!
-        var searchNotebook: ENNotebook!
-        var searchScope = (ENSessionSearchScope.Personal | ENSessionSearchScope.PersonalLinked | ENSessionSearchScope.Business)
-        var searchOrder = ENSessionSortOrder.RecentlyUpdated
-        var searchMaxResults: UInt = 100
+        let searchNotebook: ENNotebook = ENNotebook()
+        let searchScope: ENSessionSearchScope = ([ENSessionSearchScope.Personal, ENSessionSearchScope.PersonalLinked, ENSessionSearchScope.Business])
+        let searchOrder = ENSessionSortOrder.RecentlyUpdated
+        let searchMaxResults: UInt = 100
     
         var myDisplayStrings: [String] = Array()
 
@@ -64,8 +64,8 @@ class EvernoteDetails
         
         if !isConnected
         {
-            var myString = "Unable to connect to Evernote Service"
-            writeRowToArray(myString, &tableContents)
+            let myString = "Unable to connect to Evernote Service"
+            writeRowToArray(myString, inTable: &tableContents)
         }
         else
         {
@@ -93,10 +93,10 @@ class EvernoteDetails
                         
                         // Seup Date format for display
                         
-                        var startDateFormatter = NSDateFormatter()
-                        var endDateFormatter = NSDateFormatter()
-                        var dateFormat = NSDateFormatterStyle.MediumStyle
-                        var timeFormat = NSDateFormatterStyle.ShortStyle
+                        let startDateFormatter = NSDateFormatter()
+                        let endDateFormatter = NSDateFormatter()
+                        let dateFormat = NSDateFormatterStyle.MediumStyle
+                        let timeFormat = NSDateFormatterStyle.ShortStyle
                         startDateFormatter.dateStyle = dateFormat
                         startDateFormatter.timeStyle = timeFormat
                         endDateFormatter.timeStyle = timeFormat
@@ -112,18 +112,18 @@ class EvernoteDetails
                     }
                     for displayString in myDisplayStrings
                     {
-                        writeRowToArray(displayString, &self.tableContents)
+                        writeRowToArray(displayString, inTable: &self.tableContents)
                     }
                     NSNotificationCenter.defaultCenter().postNotificationName("NotificationEvernoteComplete", object: nil)
                 }
                 else
                 {
-                    writeRowToArray("No Notes found", &self.tableContents)
+                    writeRowToArray("No Notes found", inTable: &self.tableContents)
                     NSNotificationCenter.defaultCenter().postNotificationName("NotificationEvernoteComplete", object: nil)
                 }
                 if findNotesError != nil
                 {
-                    writeRowToArray("No Notes found - error", &self.tableContents)
+                    writeRowToArray("No Notes found - error", inTable: &self.tableContents)
                     NSNotificationCenter.defaultCenter().postNotificationName("NotificationEvernoteComplete", object: nil)
                 }
             })

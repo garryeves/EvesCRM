@@ -14,7 +14,7 @@ protocol MyReminderDelegate{
 }
 
 
-class reminderViewController: UIViewController, UITextViewDelegate
+class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDelegate
 {
     private var reminderStore = EKEventStore()
     private var targetReminderCal: EKCalendar!
@@ -57,10 +57,11 @@ class reminderViewController: UIViewController, UITextViewDelegate
         
         // Setup the calendar store to give access to Reminders
         
-        reminderStore.requestAccessToEntityType(EKEntityTypeReminder,
-            completion: {(granted: Bool, error:NSError!) in
-                if !granted {
-                    println("Access to store not granted")
+        reminderStore.requestAccessToEntityType(EKEntityType.Reminder,
+            completion: {(granted: Bool, error:NSError?) -> Void in
+                if !granted
+                {
+                    print("Access to store not granted")
                 }
         })
         
@@ -71,7 +72,7 @@ class reminderViewController: UIViewController, UITextViewDelegate
             
             if myReminder != nil
             {
-                descriptionText.text = myReminder.title!
+                descriptionText.text = myReminder.title
                 
                 if myReminder.hasNotes
                 {
@@ -82,7 +83,12 @@ class reminderViewController: UIViewController, UITextViewDelegate
                 if myReminder.hasAlarms
                 {
                     showDueDateSwitch.setOn(true, animated: false)
-                    dueDatePicker.date = myReminder.alarms[0].absoluteDate
+                    for tempAlarm in myReminder.alarms!
+                    {
+                        dueDatePicker.date = tempAlarm.absoluteDate!
+                        break
+                    }
+                    
                     iniitialSwitchState = "On"
                     dueDatePicker.hidden = false
                 }
@@ -133,13 +139,13 @@ class reminderViewController: UIViewController, UITextViewDelegate
         }
         
         // Set the earliest date for a Due date to be "tomorrow", ie no due dates can be set for today or the past
-        var components = NSDateComponents()
-        components.setValue(1, forComponent: NSCalendarUnit.CalendarUnitDay);
+        let components = NSDateComponents()
+        components.setValue(1, forComponent: NSCalendarUnit.Day);
         let currDate: NSDate = NSDate()
-        var earliestDate = NSCalendar.currentCalendar().dateByAddingComponents(components, toDate: currDate, options: NSCalendarOptions(0))
+        let earliestDate = NSCalendar.currentCalendar().dateByAddingComponents(components, toDate: currDate, options: NSCalendarOptions(rawValue: 0))
         dueDatePicker.minimumDate = earliestDate
         
-        var borderColor : UIColor = UIColor(red: 0.85, green: 0.85, blue: 0.85, alpha: 1.0)
+        let borderColor : UIColor = UIColor(red: 0.85, green: 0.85, blue: 0.85, alpha: 1.0)
         notesText.layer.borderWidth = 0.5
         notesText.layer.borderColor = borderColor.CGColor
         notesText.layer.cornerRadius = 5.0
@@ -170,7 +176,7 @@ class reminderViewController: UIViewController, UITextViewDelegate
         myCurrentViewController = self
     }
  
-    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent)
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?)
     {
         descriptionText.endEditing(true)
         notesText.endEditing(true)
@@ -218,11 +224,15 @@ class reminderViewController: UIViewController, UITextViewDelegate
         
         var myError : NSError? = nil
         
-        reminderStore.saveReminder(myReminder, commit: true, error: &myError)
+        do {
+            try reminderStore.saveReminder(myReminder, commit: true)
+        } catch let error as NSError {
+            myError = error
+        }
         
         if myError != nil
         {
-            println("Saving event to Calendar failed with error: \(myError!)")
+            print("Saving event to Calendar failed with error: \(myError!)")
         }
         delegate?.myReminderDidFinish(self, actionType: "Changed")
     }
@@ -244,7 +254,7 @@ class reminderViewController: UIViewController, UITextViewDelegate
     {
         if descriptionText.text == ""
         {
-            var alert = UIAlertController(title: "Reminders", message:
+            let alert = UIAlertController(title: "Reminders", message:
                 "You have not entered any text for the Reminder", preferredStyle: UIAlertControllerStyle.Alert)
             
             self.presentViewController(alert, animated: false, completion: nil)
@@ -284,7 +294,7 @@ class reminderViewController: UIViewController, UITextViewDelegate
         {
             // First need to check to see if the Reminder list exists.  if it does not then we need to create it
             
-            let myCalendars = reminderStore.calendarsForEntityType(EKEntityTypeReminder) as! [EKCalendar]
+            let myCalendars = reminderStore.calendarsForEntityType(EKEntityType.Reminder) 
             var calExists = false
             for calendar in myCalendars
             {
@@ -298,26 +308,33 @@ class reminderViewController: UIViewController, UITextViewDelegate
             myError = nil
             if !calExists
             {
-                myCalendar = EKCalendar(forEntityType:EKEntityTypeReminder, eventStore:reminderStore)
+                myCalendar = EKCalendar(forEntityType:EKEntityType.Reminder, eventStore:reminderStore)
                 myCalendar.title=inCalendarName
                 
                 
                 // What are the source options
                 
-                for cal in reminderStore.sources()
+                for cal in reminderStore.sources
                 {
-                    if cal.title! == "iCloud"
+                    if cal.title == "iCloud"
                     {
-                        myCalendar.source = cal as! EKSource
+                        myCalendar.source = cal
                         break
                     }
                 }
                 
-                let ok = reminderStore.saveCalendar(myCalendar, commit:true, error:&myError)
+                do
+                {
+                    try reminderStore.saveCalendar(myCalendar, commit:true)
+                }
+                catch let error as NSError
+                {
+                    myError = error
+                }
                 
                 if myError != nil
                 {
-                    println("Saving Calendar failed with error: \(myError!)")
+                    print("Saving Calendar failed with error: \(myError!)")
                 }
             }
             
@@ -327,7 +344,7 @@ class reminderViewController: UIViewController, UITextViewDelegate
             myReminder.calendar = myCalendar
         }
         
-        myReminder.title = descriptionText.text
+        myReminder.title = descriptionText.text!
         
         myReminder.notes = notesText.text
         
@@ -337,7 +354,11 @@ class reminderViewController: UIViewController, UITextViewDelegate
             // Due date set
             if myReminder.hasAlarms
             {
-                myReminder.removeAlarm(myReminder.alarms[0] as! EKAlarm)
+                for tempAlarm in myReminder.alarms!
+                {
+                    myReminder.removeAlarm(tempAlarm)
+                    break
+                }
             }
             let myAlarm = EKAlarm(absoluteDate: dueDatePicker.date)
             
@@ -350,7 +371,14 @@ class reminderViewController: UIViewController, UITextViewDelegate
             if iniitialSwitchState == "On"
             {
                 // We had a due date at the start so need to "unset" the date
-                myReminder.removeAlarm(myReminder.alarms[0] as! EKAlarm)
+                if myReminder.hasAlarms
+                {
+                    for tempAlarm in myReminder.alarms!
+                    {
+                        myReminder.removeAlarm(tempAlarm)
+                        break
+                    }
+                }
             }
         }
         
@@ -367,11 +395,15 @@ class reminderViewController: UIViewController, UITextViewDelegate
         
         myError = nil
         
-        reminderStore.saveReminder(myReminder, commit: true, error: &myError)
+        do {
+            try reminderStore.saveReminder(myReminder, commit: true)
+        } catch let error as NSError {
+            myError = error
+        }
         
         if myError != nil
         {
-            println("Saving event to Calendar failed with error: \(myError!)")
+            print("Saving event to Calendar failed with error: \(myError!)")
         }
     }
     
@@ -468,27 +500,29 @@ class reminderViewController: UIViewController, UITextViewDelegate
     * expect the identified text object to become the first responder.
     */
     
-    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: Int) -> AnyObject
+    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>) -> AnyObject
     {
         snippetExpanded = true
+        
+        let intIoInsertionPointLocation:Int = ioInsertionPointLocation.memory
         
         if "descriptionText" == textIdentifier
         {
             descriptionText.becomeFirstResponder()
-            let theLoc = descriptionText.positionFromPosition(descriptionText.beginningOfDocument, offset: ioInsertionPointLocation)
+            let theLoc = descriptionText.positionFromPosition(descriptionText.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                descriptionText.selectedTextRange = descriptionText.textRangeFromPosition(theLoc, toPosition: theLoc)
+                descriptionText.selectedTextRange = descriptionText.textRangeFromPosition(theLoc!, toPosition: theLoc!)
             }
             return descriptionText
         }
         else if "notesText" == textIdentifier
         {
             notesText.becomeFirstResponder()
-            let theLoc = notesText.positionFromPosition(notesText.beginningOfDocument, offset: ioInsertionPointLocation)
+            let theLoc = notesText.positionFromPosition(notesText.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                notesText.selectedTextRange = notesText.textRangeFromPosition(theLoc, toPosition: theLoc)
+                notesText.selectedTextRange = notesText.textRangeFromPosition(theLoc!, toPosition: theLoc!)
             }
             return notesText
         }

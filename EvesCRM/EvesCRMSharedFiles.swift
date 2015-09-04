@@ -204,7 +204,7 @@ func writeRowToArray(inDisplayText: String, inout inTable: [TableData], inDispla
 func getFirstPartofString(inText: String) -> String
 {
     let start = inText.startIndex
-    let end = find(inText, ":")
+    let end = inText.characters.indexOf(":")
     
     var selectedType: String = ""
     
@@ -222,17 +222,15 @@ func getFirstPartofString(inText: String) -> String
 
 func stringByChangingChars(inString: String, inOldChar: String, inNewChar: String) -> String
 {
-    var error:NSError?
-    
-    let regex = NSRegularExpression(pattern:inOldChar, options:.CaseInsensitive, error:&error)!
-    let myString = regex.stringByReplacingMatchesInString(inString, options:  NSMatchingOptions.allZeros, range: NSMakeRange(0, count(inString)), withTemplate:inNewChar)
+    let regex = try! NSRegularExpression(pattern:inOldChar, options:.CaseInsensitive)
+    let myString = regex.stringByReplacingMatchesInString(inString, options:  NSMatchingOptions(), range: NSMakeRange(0, inString.characters.count), withTemplate:inNewChar)
     
     return myString
 }
 
 func populateRoles()
 {
-    var initialRoles = ["Project Manager",
+    let initialRoles = ["Project Manager",
                         "Project Executive",
                         "Project Sponsor",
                         "Technical Stakeholder",
@@ -251,9 +249,9 @@ func parseProjectDetails(myProject: project)->[TableData]
 {
     var tableContents:[TableData] = [TableData]()
         
-    writeRowToArray("Start Date = \(myProject.displayProjectStartDate)", &tableContents)
-    writeRowToArray("End Date = \(myProject.displayProjectEndDate)", &tableContents)
-    writeRowToArray("Status = \(myProject.projectStatus)", &tableContents)
+    writeRowToArray("Start Date = \(myProject.displayProjectStartDate)", inTable: &tableContents)
+    writeRowToArray("End Date = \(myProject.displayProjectEndDate)", inTable: &tableContents)
+    writeRowToArray("Status = \(myProject.projectStatus)", inTable: &tableContents)
     
     return tableContents
 }
@@ -276,7 +274,7 @@ func displayTeamMembers(inProject: project, inout lookupArray: [String])->[Table
         
         lookupArray.append(myTeamMember.teamMember)
         
-        writeRowToArray(titleText, &tableContents)
+        writeRowToArray(titleText, inTable: &tableContents)
     }
     
     return tableContents
@@ -293,7 +291,7 @@ func displayProjectsForPerson(inPerson: String, inout lookupArray: [String]) -> 
     
     if myProjects.count == 0
     {
-        writeRowToArray("Not a member of any Project", &tableContents)
+        writeRowToArray("Not a member of any Project", inTable: &tableContents)
     }
     else
     {
@@ -309,7 +307,7 @@ func displayProjectsForPerson(inPerson: String, inout lookupArray: [String]) -> 
                 
                 lookupArray.append(myProject.projectID.stringValue)
                 
-                writeRowToArray(titleText, &tableContents)
+                writeRowToArray(titleText, inTable: &tableContents)
                 //writeRowToArray(myDetails[0].projectName, &tableContents)
             }
         }
@@ -368,9 +366,9 @@ class StreamReader  {
         }
         
         // Read data chunks from file until a line delimiter is found:
-        var range = buffer.rangeOfData(delimData, options: nil, range: NSMakeRange(0, buffer.length))
+        var range = buffer.rangeOfData(delimData, options: [], range: NSMakeRange(0, buffer.length))
         while range.location == NSNotFound {
-            var tmpData = fileHandle.readDataOfLength(chunkSize)
+            let tmpData = fileHandle.readDataOfLength(chunkSize)
             if tmpData.length == 0 {
                 // EOF or read error.
                 atEof = true
@@ -385,7 +383,7 @@ class StreamReader  {
                 return nil
             }
             buffer.appendData(tmpData)
-            range = buffer.rangeOfData(delimData, options: nil, range: NSMakeRange(0, buffer.length))
+            range = buffer.rangeOfData(delimData, options: [], range: NSMakeRange(0, buffer.length))
         }
         
         // Convert complete line (excluding the delimiter) to a string:
@@ -414,7 +412,7 @@ class StreamReader  {
 
 func populateStages()
 {
-    var loadSet = ["Pre-Planning", "Planning", "Planned", "Scheduled", "In-progress", "Delayed", "Completed", "Archived"]
+    let loadSet = ["Pre-Planning", "Planning", "Planned", "Scheduled", "In-progress", "Delayed", "Completed", "Archived"]
     
     for myItem in loadSet
     {
@@ -521,7 +519,7 @@ func returnSearchStringToNormal(inString: String) -> String
 func characterAtIndex(inString: String, index: Int) -> Character {
     var cur = 0
     var retVal: Character!
-    for char in inString {
+    for char in inString.characters {
         if cur == index {
             retVal = char
         }
@@ -534,7 +532,7 @@ class MyDisplayCollectionViewCell: UICollectionViewCell
 {
     @IBOutlet var Label: UILabel! = UILabel()
     
-    required init(coder aDecoder: NSCoder)
+    required init?(coder aDecoder: NSCoder)
     {
         super.init(coder: aDecoder)
         Label.text = ""
@@ -590,7 +588,8 @@ class menuObject: NSObject
     }
 }
 
-class SharingActivityProvider: UIActivityItemProvider, UIActivityItemSource
+//class SharingActivityProvider: UIActivityItemProvider, UIActivityItemSource
+class SharingActivityProvider: UIActivityItemProvider
 {
     var HTMLString : String!
     var plainString : String!
@@ -618,7 +617,6 @@ class SharingActivityProvider: UIActivityItemProvider, UIActivityItemSource
     {
         return "";
     }
-    
     
     override func activityViewController(activityViewController: UIActivityViewController, subjectForActivityType activityType: String?) -> String
     {

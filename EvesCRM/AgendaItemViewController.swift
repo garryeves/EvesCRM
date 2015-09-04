@@ -13,7 +13,7 @@ protocol MyAgendaItemDelegate
     func myAgendaItemDidFinish(controller:agendaItemViewController, actionType: String)
 }
 
-class agendaItemViewController: UIViewController, MyTaskDelegate, UITextViewDelegate
+class agendaItemViewController: UIViewController, MyTaskDelegate, UITextViewDelegate, SMTEFillDelegate
 {
     var delegate: MyAgendaItemDelegate?
 
@@ -190,7 +190,7 @@ class agendaItemViewController: UIViewController, MyTaskDelegate, UITextViewDele
         var headerView:UICollectionReusableView!
         if kind == UICollectionElementKindSectionHeader
         {
-            headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: "taskItemHeader", forIndexPath: indexPath) as! UICollectionReusableView
+            headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: "taskItemHeader", forIndexPath: indexPath) 
         }
 
         return headerView
@@ -200,7 +200,7 @@ class agendaItemViewController: UIViewController, MyTaskDelegate, UITextViewDele
     {
         let taskViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("taskTab") as! tasksTabViewController
         
-        var myPassedTask = TaskModel()
+        let myPassedTask = TaskModel()
         myPassedTask.taskType = "minutes"
         myPassedTask.currentTask = agendaItem.tasks[indexPath.row]
         myPassedTask.delegate = self
@@ -255,7 +255,7 @@ class agendaItemViewController: UIViewController, MyTaskDelegate, UITextViewDele
     {
         let taskViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("taskTab") as! tasksTabViewController
         
-        var myPassedTask = TaskModel()
+        let myPassedTask = TaskModel()
         myPassedTask.taskType = "minutes"
         let workingTask = task(inTeamID: myTeamID)
         myPassedTask.currentTask = workingTask
@@ -297,13 +297,13 @@ class agendaItemViewController: UIViewController, MyTaskDelegate, UITextViewDele
     {
         if txtTitle.text != ""
         {
-            agendaItem.title = txtTitle.text
+            agendaItem.title = txtTitle.text!
         }
     }
     
     @IBAction func txtTimeAllocation(sender: UITextField)
     {
-        agendaItem.timeAllocation = txtTimeAllocation.text.toInt()!
+        agendaItem.timeAllocation = Int(txtTimeAllocation.text!)!
     }
     
     func textViewDidEndEditing(textView: UITextView)
@@ -445,7 +445,7 @@ class agendaItemViewController: UIViewController, MyTaskDelegate, UITextViewDele
     // to activate.
     // It especially needs to save the contents of the textview/textfield!
         
-        agendaItem.title = txtTitle.text
+        agendaItem.title = txtTitle.text!
         agendaItem.discussionNotes = txtDiscussionNotes.text
         agendaItem.decisionMade = txtDecisionMade.text
         
@@ -478,37 +478,39 @@ class agendaItemViewController: UIViewController, MyTaskDelegate, UITextViewDele
     * expect the identified text object to become the first responder.
     */
  
-    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: Int) -> AnyObject
+    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>) -> AnyObject
     {
         snippetExpanded = true
 
+        let intIoInsertionPointLocation:Int = ioInsertionPointLocation.memory
+        
         if "txtDiscussionNotes" == textIdentifier
         {
             txtDiscussionNotes.becomeFirstResponder()
-            let theLoc = txtDiscussionNotes.positionFromPosition(txtDiscussionNotes.beginningOfDocument, offset: ioInsertionPointLocation)
+            let theLoc = txtDiscussionNotes.positionFromPosition(txtDiscussionNotes.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtDiscussionNotes.selectedTextRange = txtDiscussionNotes.textRangeFromPosition(theLoc, toPosition: theLoc)
+                txtDiscussionNotes.selectedTextRange = txtDiscussionNotes.textRangeFromPosition(theLoc!, toPosition: theLoc!)
             }
             return txtDiscussionNotes
         }
         else if "txtDecisionMade" == textIdentifier
         {
             txtDecisionMade.becomeFirstResponder()
-            let theLoc = txtDecisionMade.positionFromPosition(txtDecisionMade.beginningOfDocument, offset: ioInsertionPointLocation)
+            let theLoc = txtDecisionMade.positionFromPosition(txtDecisionMade.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtDecisionMade.selectedTextRange = txtDecisionMade.textRangeFromPosition(theLoc, toPosition: theLoc)
+                txtDecisionMade.selectedTextRange = txtDecisionMade.textRangeFromPosition(theLoc!, toPosition: theLoc!)
             }
             return txtDecisionMade
         }
         else if "txtTitle" == textIdentifier
         {
             txtTitle.becomeFirstResponder()
-            let theLoc = txtTitle.positionFromPosition(txtTitle.beginningOfDocument, offset: ioInsertionPointLocation)
+            let theLoc = txtTitle.positionFromPosition(txtTitle.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtTitle.selectedTextRange = txtTitle.textRangeFromPosition(theLoc, toPosition: theLoc)
+                txtTitle.selectedTextRange = txtTitle.textRangeFromPosition(theLoc!, toPosition: theLoc!)
             }
             return txtTitle
         }

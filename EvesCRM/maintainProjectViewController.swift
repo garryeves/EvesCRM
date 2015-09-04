@@ -16,7 +16,7 @@ protocol MyMaintainProjectDelegate{
     func myGTDPlanningDidFinish(controller:MaintainGTDPlanningViewController)
 }
 
-class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate
+class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, SMTEFillDelegate
 {
    private var passedGTD: GTDModel!
     
@@ -154,7 +154,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         // Dispose of any resources that can be recreated.
     }
  
-    override func touchesBegan(touches: Set<NSObject>, withEvent event: UIEvent)
+    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?)
     {
         txtTitle.endEditing(true)
     }
@@ -215,7 +215,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         // actionSelection()
         if txtTitle.text == ""
         {
-            var alert = UIAlertController(title: "Project Maintenance", message:
+            let alert = UIAlertController(title: "Project Maintenance", message:
                 "You need to provide a Project Name", preferredStyle: UIAlertControllerStyle.Alert)
             
             self.presentViewController(alert, animated: false, completion: nil)
@@ -443,11 +443,9 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     {
         // We are now going to add in the team member and redisplay the team member grid
 
-        var myProjectTeam: projectTeamMember
-        
         if teamMemberAction == "Add"
         {
-            myProjectTeam = projectTeamMember(inProjectID: mySelectedProject.projectID, inTeamMember: labelTeamMemberName.text!, inRoleID: roleSelected)
+            _ = projectTeamMember(inProjectID: mySelectedProject.projectID, inTeamMember: labelTeamMemberName.text!, inRoleID: roleSelected)
         }
         else
         {
@@ -472,11 +470,11 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     
     // Peoplepicker code
     
-    func peoplePickerNavigationController(peoplePicker: ABPeoplePickerNavigationController!, didSelectPerson person: ABRecordRef!)
+    func peoplePickerNavigationController(peoplePicker: ABPeoplePickerNavigationController, didSelectPerson person: ABRecordRef)
     {
         personSelected = person as ABRecord
      
-        let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as? String) ?? ""
+        let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as String) ?? ""
         
         labelTeamMemberName.text = myFullName
         
@@ -485,7 +483,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         buttonAddTeamMember.hidden = true
     }
     
-    func peoplePickerNavigationControllerDidCancel(peoplePicker: ABPeoplePickerNavigationController!)
+    func peoplePickerNavigationControllerDidCancel(peoplePicker: ABPeoplePickerNavigationController)
     {
         peoplePicker.dismissViewControllerAnimated(true, completion: nil)
     }
@@ -510,7 +508,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     {
         if txtTitle.text == ""
         {
-            var alert = UIAlertController(title: "Project Maintenance", message:
+            let alert = UIAlertController(title: "Project Maintenance", message:
                 "You need to provide a Project Name", preferredStyle: UIAlertControllerStyle.Alert)
             
             self.presentViewController(alert, animated: false, completion: nil)
@@ -525,11 +523,11 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
             if myActionType == "Add"
             {
                 mySelectedProject = project(inTeamID: myTeamID)
-                mySelectedProject.projectName = txtTitle.text
+                mySelectedProject.projectName = txtTitle.text!
             }
             else
             {
-                mySelectedProject.projectName = txtTitle.text
+                mySelectedProject.projectName = txtTitle.text!
             }
             showFields()
         }
@@ -539,7 +537,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     {
         if txtTitle.text == ""
         {
-            var alert = UIAlertController(title: "Project Maintenance", message:
+            let alert = UIAlertController(title: "Project Maintenance", message:
                 "You need to provide a Project Name", preferredStyle: UIAlertControllerStyle.Alert)
             
             self.presentViewController(alert, animated: false, completion: nil)
@@ -559,7 +557,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     {
         if txtTitle.text == ""
         {
-            var alert = UIAlertController(title: "Project Maintenance", message:
+            let alert = UIAlertController(title: "Project Maintenance", message:
                 "You need to provide a Project Name", preferredStyle: UIAlertControllerStyle.Alert)
             
             self.presentViewController(alert, animated: false, completion: nil)
@@ -737,27 +735,29 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     * expect the identified text object to become the first responder.
     */
     
-    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: Int) -> AnyObject
+    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>) -> AnyObject
     {
         snippetExpanded = true
 
+        let intIoInsertionPointLocation:Int = ioInsertionPointLocation.memory
+        
         if "txtTitle" == textIdentifier
         {
             txtTitle.becomeFirstResponder()
-            let theLoc = txtTitle.positionFromPosition(txtTitle.beginningOfDocument, offset: ioInsertionPointLocation)
+            let theLoc = txtTitle.positionFromPosition(txtTitle.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtTitle.selectedTextRange = txtTitle.textRangeFromPosition(theLoc, toPosition: theLoc)
+                txtTitle.selectedTextRange = txtTitle.textRangeFromPosition(theLoc!, toPosition: theLoc!)
             }
             return txtTitle
         }
         else if "txtNotes" == textIdentifier
         {
             txtNotes.becomeFirstResponder()
-            let theLoc = txtNotes.positionFromPosition(txtNotes.beginningOfDocument, offset: ioInsertionPointLocation)
+            let theLoc = txtNotes.positionFromPosition(txtNotes.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtNotes.selectedTextRange = txtNotes.textRangeFromPosition(theLoc, toPosition: theLoc)
+                txtNotes.selectedTextRange = txtNotes.textRangeFromPosition(theLoc!, toPosition: theLoc!)
             }
             return txtNotes
         }

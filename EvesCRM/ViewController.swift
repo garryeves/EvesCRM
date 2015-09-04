@@ -146,23 +146,23 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         
         eventStore = EKEventStore()
         
-        switch EKEventStore.authorizationStatusForEntityType(EKEntityTypeEvent) {
+        switch EKEventStore.authorizationStatusForEntityType(EKEntityType.Event) {
         case .Authorized:
-            println("Calendar Access granted")
+            print("Calendar Access granted")
         case .Denied:
-            println("Calendar Access denied")
+            print("Calendar Access denied")
         case .NotDetermined:
             // 3
-            eventStore.requestAccessToEntityType(EKEntityTypeEvent, completion:
-                {[weak self] (granted: Bool, error: NSError!) -> Void in
+            eventStore.requestAccessToEntityType(EKEntityType.Event, completion:
+                {(granted: Bool, error: NSError?) -> Void in
                     if granted {
-                        println("Calendar Access granted")
+                        print("Calendar Access granted")
                     } else {
-                        println("Calendar Access denied")
+                        print("Calendar Access denied")
                     }
                 })
         default:
-            println("Calendar Case Default")
+            print("Calendar Case Default")
         }
 
         // Now we will try and open Evernote
@@ -216,9 +216,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         //   code to reset contexts if needed for testing
     //         myDatabaseConnection.resetContexts()
         
-        // Work out if a project has been added to the data store, so we can then select it
-        let myProjects = myDatabaseConnection.getProjects(myTeamID)
-                
         dataTable1.estimatedRowHeight = 12.0
         dataTable1.rowHeight = UITableViewAutomaticDimension
         dataTable2.estimatedRowHeight = 12.0
@@ -272,7 +269,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 textExpander.clientAppName = "EvesCRM"
                 textExpander.getSnippetsScheme = "EvesCRM-get-snippets-xc"
                 textExpander.fillCompletionScheme = "EvesCRM-fill-xc"
-                textExpander.fillDelegate = self
+   //             textExpander.fillDelegate = self
             }
         }
     }
@@ -335,9 +332,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         buttonAdd3.hidden = true
         buttonAdd4.hidden = true
         
-        let startString = getFirstPartofString(sender.currentTitle!)
-
-        let myIndex = find(TableOptions, getFirstPartofString(sender.currentTitle!))
+        let myIndex = TableOptions.indexOf(getFirstPartofString(sender.currentTitle!))
 
         TableTypeSelection1.selectRow(myIndex!, inComponent: 0, animated: true)
     }
@@ -416,7 +411,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         let myAdbk : ABAddressBook? = ABAddressBookCreateWithOptions(nil, &err).takeRetainedValue()
         if myAdbk == nil
         {
-            println(err)
+            print(err)
             adbk = nil
             return false
         }
@@ -495,35 +490,35 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     {
         if (tableView == dataTable1)
         {
-            let cell = dataTable1.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
+            let cell = dataTable1.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER)! 
             cell.textLabel!.text = table1Contents[indexPath.row].displayText
-            return setCellFormatting(cell,table1Contents[indexPath.row].displaySpecialFormat)
+            return setCellFormatting(cell,inDisplayFormat: table1Contents[indexPath.row].displaySpecialFormat)
 
         }
         else if (tableView == dataTable2)
         {
-            let cell = dataTable2.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
+            let cell = dataTable2.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER)!
             cell.textLabel!.text = table2Contents[indexPath.row].displayText
-            return setCellFormatting(cell, table2Contents[indexPath.row].displaySpecialFormat)
+            return setCellFormatting(cell, inDisplayFormat: table2Contents[indexPath.row].displaySpecialFormat)
         }
         else if (tableView == dataTable3)
         {
-            let cell = dataTable3.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
+            let cell = dataTable3.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER)!
             cell.textLabel!.text = table3Contents[indexPath.row].displayText
-            return setCellFormatting(cell,table3Contents[indexPath.row].displaySpecialFormat)
+            return setCellFormatting(cell,inDisplayFormat: table3Contents[indexPath.row].displaySpecialFormat)
 
         }
         else if (tableView == dataTable4)
         {
-            let cell = dataTable4.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
+            let cell = dataTable4.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER)!
             cell.textLabel!.text = table4Contents[indexPath.row].displayText
-            return setCellFormatting(cell,table4Contents[indexPath.row].displaySpecialFormat)
+            return setCellFormatting(cell,inDisplayFormat: table4Contents[indexPath.row].displaySpecialFormat)
 
         }
         else
         {
             // Dummy statements to allow use of else
-            let cell = dataTable3.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER) as! UITableViewCell
+            let cell = dataTable3.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER)!
             return cell
         }
     }
@@ -596,7 +591,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             }
             
         default:
-            println("populateArraysForTables: hit default for some reason")
+            print("populateArraysForTables: hit default for some reason")
             
         }
     }
@@ -623,7 +618,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 dataType = TableTypeButton4.currentTitle!
 
             default:
-                println("populateArrayDetails: inTable hit default for some reason")
+                print("populateArrayDetails: inTable hit default for some reason")
             
         }
         
@@ -640,7 +635,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             labelName.text = personContact.fullName
         }
                 
-        var selectedType: String = getFirstPartofString(dataType)
+        let selectedType: String = getFirstPartofString(dataType)
         
         // This is where we have the logic to work out which type of data we are goign to populate with
         switch selectedType
@@ -652,7 +647,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 }
                 else if myDisplayType == "Context"
                 {
-                    writeRowToArray("Context = \(myContextName)", &workArray)
+                    writeRowToArray("Context = \(myContextName)", inTable: &workArray)
                 }
                 else
                 {
@@ -667,7 +662,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 }
                 else if myDisplayType == "Context"
                 {
-                    writeRowToArray("No calendar entries found", &workArray)
+                    writeRowToArray("No calendar entries found", inTable: &workArray)
                 }
                 else
                 {
@@ -677,7 +672,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 
                 if workArray.count == 0
                 {
-                    writeRowToArray("No calendar entries found", &workArray)
+                    writeRowToArray("No calendar entries found", inTable: &workArray)
                 }
             case "Reminders":
                 reminderDetails = iOSReminder()
@@ -701,7 +696,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 workArray = reminderDetails.displayReminder()
             
             case "Evernote":
-                writeRowToArray("Loading Evernote data.  Pane will refresh when finished", &workArray)
+                writeRowToArray("Loading Evernote data.  Pane will refresh when finished", inTable: &workArray)
                 if myDisplayType == "Project"
                 {
                     myEvernote.findEvernoteNotes(mySelectedProject.projectName)
@@ -725,7 +720,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 // Project team membership details
                 if myDisplayType == "Project"
                 {
-                    workArray = displayTeamMembers(mySelectedProject, &projectMemberArray)
+                    workArray = displayTeamMembers(mySelectedProject, lookupArray: &projectMemberArray)
                 }
                 else
                 {
@@ -738,18 +733,18 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     {
                         searchString = personContact.fullName
                     }
-                    workArray = displayProjectsForPerson(searchString, &projectMemberArray)
+                    workArray = displayProjectsForPerson(searchString, lookupArray: &projectMemberArray)
                 }
 
             case "Omnifocus":
-                writeRowToArray("Loading Omnifocus data.  Pane will refresh when finished", &workArray)
+                writeRowToArray("Loading Omnifocus data.  Pane will refresh when finished", inTable: &workArray)
             
                 omniTableToRefresh = inTable
                 
                 openOmnifocusDropbox()
 
             case "OneNote":
-                writeRowToArray("Loading OneNote data.  Pane will refresh when finished", &workArray)
+                writeRowToArray("Loading OneNote data.  Pane will refresh when finished", inTable: &workArray)
             
                 oneNoteTableToRefresh = inTable
             
@@ -763,7 +758,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 }
             
             case "GMail":
-                writeRowToArray("Loading GMail messages.  Pane will refresh when finished", &workArray)
+                writeRowToArray("Loading GMail messages.  Pane will refresh when finished", inTable: &workArray)
                 
                 gmailTableToRefresh = inTable
                 
@@ -781,7 +776,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 }
             
         case "Hangouts":
-            writeRowToArray("Loading Hangout messages.  Pane will refresh when finished", &workArray)
+            writeRowToArray("Loading Hangout messages.  Pane will refresh when finished", inTable: &workArray)
             
             hangoutsTableToRefresh = inTable
             
@@ -841,7 +836,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             }
             
             // Sort workarray by dueDate, with oldest first
-            myReturnedData.sort({$0.dueDate.timeIntervalSinceNow < $1.dueDate.timeIntervalSinceNow})
+            myReturnedData.sortInPlace({$0.dueDate.timeIntervalSinceNow < $1.dueDate.timeIntervalSinceNow})
             
             // Load calendar items array based on return array
             
@@ -856,7 +851,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             
             if workArray.count == 0
             {
-                writeRowToArray("No tasks found", &workArray)
+                writeRowToArray("No tasks found", inTable: &workArray)
             }
             
             
@@ -976,7 +971,7 @@ println("facebook ID = \(myFacebookID)")
             
             
             default:
-                println("populateArrayDetails: dataType hit default for some reason : \(selectedType)")
+                print("populateArrayDetails: dataType hit default for some reason : \(selectedType)")
         }
         return workArray
     }
@@ -1010,11 +1005,11 @@ println("facebook ID = \(myFacebookID)")
                 myRowContents = table4Contents[rowID].displayText
 
             default:
-                println("dataCellClicked: inTable hit default for some reason")
+                print("dataCellClicked: inTable hit default for some reason")
             
         }
   
-        var selectedType: String = getFirstPartofString(dataType)
+        let selectedType: String = getFirstPartofString(dataType)
 
         switch selectedType
         {
@@ -1045,8 +1040,8 @@ println("facebook ID = \(myFacebookID)")
                     
                     var myEvernoteDataArray = myEvernote.getEvernoteDataArray()
                     
-                    var myGuid = myEvernoteDataArray[rowID].identifier
-                    var myNoteRef = myEvernoteDataArray[rowID].NoteRef
+                    let myGuid = myEvernoteDataArray[rowID].identifier
+                    let myNoteRef = myEvernoteDataArray[rowID].NoteRef
 
                     openEvernoteEditView(myGuid, inNoteRef: myNoteRef)
                 }
@@ -1054,7 +1049,7 @@ println("facebook ID = \(myFacebookID)")
             case "Omnifocus":
                 let myOmniUrlPath = omniLinkArray[rowID]
                
-                var myOmniUrl: NSURL = NSURL(string: myOmniUrlPath)!
+                let myOmniUrl: NSURL = NSURL(string: myOmniUrlPath)!
                 
                 if UIApplication.sharedApplication().canOpenURL(myOmniUrl) == true
                 {
@@ -1065,7 +1060,7 @@ println("facebook ID = \(myFacebookID)")
                 
                 let calendarOption: UIAlertController = UIAlertController(title: "Calendar Options", message: "Select action to take", preferredStyle: .ActionSheet)
 
-                let edit = UIAlertAction(title: "Edit Meeting", style: .Default, handler: { (action: UIAlertAction!) -> () in
+                let edit = UIAlertAction(title: "Edit Meeting", style: .Default, handler: { (action: UIAlertAction) -> () in
                     // doing something for "product page
                     let evc = EKEventEditViewController()
                     evc.eventStore = eventStore
@@ -1074,18 +1069,18 @@ println("facebook ID = \(myFacebookID)")
                     self.presentViewController(evc, animated: true, completion: nil)
                 })
                 
-                let agenda = UIAlertAction(title: "Agenda", style: .Default, handler: { (action: UIAlertAction!) -> () in
+                let agenda = UIAlertAction(title: "Agenda", style: .Default, handler: { (action: UIAlertAction) -> () in
                     // doing something for "product page"
                     self.openMeetings("Agenda", workingTask: self.eventDetails.calendarItems[rowID])
                 })
                 
-                let minutes = UIAlertAction(title: "Minutes", style: .Default, handler: { (action: UIAlertAction!) -> () in
+                let minutes = UIAlertAction(title: "Minutes", style: .Default, handler: { (action: UIAlertAction) -> () in
                     // doing something for "product page"
                     self.openMeetings("Minutes", workingTask: self.eventDetails.calendarItems[rowID])
 
                 })
                 
-                let personNotes = UIAlertAction(title: "Personal Notes", style: .Default, handler: { (action: UIAlertAction!) -> () in
+                let personNotes = UIAlertAction(title: "Personal Notes", style: .Default, handler: { (action: UIAlertAction) -> () in
                     // doing something for "product page"
                     self.openMeetings("Personal Notes", workingTask: self.eventDetails.calendarItems[rowID])
 
@@ -1128,14 +1123,14 @@ println("facebook ID = \(myFacebookID)")
                 }
                 else
                 {
-                    loadProject(projectMemberArray[rowID].toInt()!)
+                    loadProject(Int(projectMemberArray[rowID])!)
                 }
             
         case "OneNote":
             let myOneNoteUrlPath = myOneNoteNotebooks.pages[rowID].urlCallback
   
           //  let myEnUrlPath = stringByChangingChars(myTempPath, " ", "%20")
-            var myOneNoteUrl: NSURL = NSURL(string: myOneNoteUrlPath)!
+            let myOneNoteUrl: NSURL = NSURL(string: myOneNoteUrlPath)!
             
             if UIApplication.sharedApplication().canOpenURL(myOneNoteUrl) == true
             {
@@ -1174,7 +1169,7 @@ println("facebook ID = \(myFacebookID)")
             
             let taskViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("taskTab") as! tasksTabViewController
             
-            var myPassedTask = TaskModel()
+            let myPassedTask = TaskModel()
             myPassedTask.taskType = ""
             myPassedTask.currentTask = myTaskItems[rowID]
             myPassedTask.delegate = self
@@ -1184,7 +1179,7 @@ println("facebook ID = \(myFacebookID)")
 
             
             default:
-                let a = 1
+                NSLog("Do nothing")
         }
     }
     
@@ -1194,7 +1189,7 @@ println("facebook ID = \(myFacebookID)")
         
         let dataType = inButton.currentTitle!
         
-        var selectedType: String = getFirstPartofString(dataType)
+        let selectedType: String = getFirstPartofString(dataType)
         
         // This is where we have the logic to work out which type of data we are goign to populate with
         switch selectedType
@@ -1308,11 +1303,11 @@ println("facebook ID = \(myFacebookID)")
             reBuildTableName = "Table4"
             
         default:
-            println("btnAddClicked: tag hit default for some reason")
+            print("btnAddClicked: tag hit default for some reason")
             
         }
         
-        var selectedType: String = getFirstPartofString(dataType)
+        let selectedType: String = getFirstPartofString(dataType)
         
         switch selectedType
         {
@@ -1371,9 +1366,9 @@ println("facebook ID = \(myFacebookID)")
                     myOmniUrlPath = "omnifocus:///add?name=Set Context to '\(myFullName)'"
                 }
 
-                var escapedURL = myOmniUrlPath.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
+                let escapedURL = myOmniUrlPath.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())
                 
-                var myOmniUrl: NSURL = NSURL(string: escapedURL!)!
+                let myOmniUrl: NSURL = NSURL(string: escapedURL!)!
                 
                 if UIApplication.sharedApplication().canOpenURL(myOmniUrl) == true
                 {
@@ -1394,7 +1389,7 @@ println("facebook ID = \(myFacebookID)")
             
                 if myDisplayType == "Project"
                 {
-                    var alert = UIAlertController(title: "OneNote", message:
+                    let alert = UIAlertController(title: "OneNote", message:
                         "Creating OneNote Notebook for this Project.  OneNote will open when complete.", preferredStyle: UIAlertControllerStyle.Alert)
                     
                     self.presentViewController(alert, animated: false, completion: nil)
@@ -1405,7 +1400,7 @@ println("facebook ID = \(myFacebookID)")
                     myItemFound = myOneNoteNotebooks.checkExistenceOfNotebook(mySelectedProject.projectName)
                     if myItemFound
                     {
-                        var alert = UIAlertController(title: "OneNote", message:
+                        let alert = UIAlertController(title: "OneNote", message:
                             "Notebook already exists for this Project", preferredStyle: UIAlertControllerStyle.Alert)
                     
                         self.presentViewController(alert, animated: false, completion: nil)
@@ -1431,7 +1426,7 @@ println("facebook ID = \(myFacebookID)")
                     
                     if myFullName != ""
                     {
-                        var alert = UIAlertController(title: "OneNote", message:
+                        let alert = UIAlertController(title: "OneNote", message:
                             "Creating OneNote Section for this Person.  OneNote will open when complete.", preferredStyle: UIAlertControllerStyle.Alert)
                         
                         self.presentViewController(alert, animated: false, completion: nil)
@@ -1441,7 +1436,7 @@ println("facebook ID = \(myFacebookID)")
                         myItemFound = myOneNoteNotebooks.checkExistenceOfPerson(myFullName)
                         if myItemFound
                         {
-                            var alert = UIAlertController(title: "OneNote", message:
+                            let alert = UIAlertController(title: "OneNote", message:
                                 "Entry already exists for this Person", preferredStyle: UIAlertControllerStyle.Alert)
                         
                             self.presentViewController(alert, animated: false, completion: nil)
@@ -1459,7 +1454,7 @@ println("facebook ID = \(myFacebookID)")
             
                 let myOneNoteUrlPath = myStartPage
             
-                var myOneNoteUrl: NSURL = NSURL(string: myOneNoteUrlPath)!
+                let myOneNoteUrl: NSURL = NSURL(string: myOneNoteUrlPath)!
             
                 if UIApplication.sharedApplication().canOpenURL(myOneNoteUrl) == true
                 {
@@ -1467,7 +1462,7 @@ println("facebook ID = \(myFacebookID)")
                 }
             
             default:
-                let a = 1
+                NSLog("Do nothing")
         }
 
     }
@@ -1591,14 +1586,14 @@ println("facebook ID = \(myFacebookID)")
         }
     }
     
-    func peoplePickerNavigationController(peoplePicker: ABPeoplePickerNavigationController!, didSelectPerson person: ABRecordRef!)
+    func peoplePickerNavigationController(peoplePicker: ABPeoplePickerNavigationController, didSelectPerson person: ABRecordRef)
     {
         peoplePicker.dismissViewControllerAnimated(true, completion: nil)
         
         loadPerson(person)
     }
 
-    func peoplePickerNavigationControllerDidCancel(peoplePicker: ABPeoplePickerNavigationController!)
+    func peoplePickerNavigationControllerDidCancel(peoplePicker: ABPeoplePickerNavigationController)
     {
         peoplePicker.dismissViewControllerAnimated(true, completion: nil)
     }
@@ -1628,7 +1623,7 @@ println("facebook ID = \(myFacebookID)")
             dataTable4.reloadData()
             
         default:
-            println("EvernoteComplete has incorrect table")
+            print("EvernoteComplete has incorrect table")
         }
     }
     
@@ -1638,7 +1633,7 @@ println("facebook ID = \(myFacebookID)")
         {
             let myEnUrlPath = "evernote:///view/\(myEvernoteUserID)/\(myEvernoteShard)/\(inGUID)/\(inGUID)/"
 
-            var myEnUrl: NSURL = NSURL(string: myEnUrlPath)!
+            let myEnUrl: NSURL = NSURL(string: myEnUrlPath)!
             
             if UIApplication.sharedApplication().canOpenURL(myEnUrl) == true
             {
@@ -1647,7 +1642,7 @@ println("facebook ID = \(myFacebookID)")
         }
         else
         {
-            var alert = UIAlertController(title: "Evernote", message:
+            let alert = UIAlertController(title: "Evernote", message:
                 "Unable to load Evernote for this Note", preferredStyle: UIAlertControllerStyle.Alert)
             
             self.presentViewController(alert, animated: false, completion: nil)
@@ -1660,10 +1655,10 @@ println("facebook ID = \(myFacebookID)")
     func openEvernoteAddView(inFullName: String)
     {
         // Lets build the date string
-        var myDateFormatter = NSDateFormatter()
+        let myDateFormatter = NSDateFormatter()
         
-        var dateFormat = NSDateFormatterStyle.MediumStyle
-        var timeFormat = NSDateFormatterStyle.ShortStyle
+        let dateFormat = NSDateFormatterStyle.MediumStyle
+        let timeFormat = NSDateFormatterStyle.ShortStyle
         myDateFormatter.dateStyle = dateFormat
         myDateFormatter.timeStyle = timeFormat
         
@@ -1673,9 +1668,9 @@ println("facebook ID = \(myFacebookID)")
         
         let myTempPath = "evernote://x-callback-url/new-note?type=text&title=\(inFullName) : \(myDate)"
   
-        let myEnUrlPath = stringByChangingChars(myTempPath, " ", "%20")
+        let myEnUrlPath = stringByChangingChars(myTempPath, inOldChar: " ", inNewChar: "%20")
 
-        var myEnUrl: NSURL = NSURL(string: myEnUrlPath)!
+        let myEnUrl: NSURL = NSURL(string: myEnUrlPath)!
         
         if UIApplication.sharedApplication().canOpenURL(myEnUrl) == true
         {
@@ -1685,7 +1680,7 @@ println("facebook ID = \(myFacebookID)")
         
     func myEvernoteUserDidFinish()
     {
-        println("Evernote user authenticated")
+        print("Evernote user authenticated")
     }
     
     func openOmnifocusDropbox()
@@ -1694,7 +1689,7 @@ println("facebook ID = \(myFacebookID)")
         
         let fileName = "OmniOutput.txt"
         
-        let dirPaths:[String]? = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.AllDomainsMask, true) as? [String]
+        let dirPaths:[String]? = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.AllDomainsMask, true) as [String]
         
         let directories:[String] = dirPaths!
         let docsDir = directories[0]
@@ -1713,7 +1708,7 @@ println("facebook ID = \(myFacebookID)")
     
     func myDropboxFileLoadFailed(error:NSError)
     {
-        var alert = UIAlertController(title: "Dropbox", message:
+        let alert = UIAlertController(title: "Dropbox", message:
             "Unable to load Dropbox file.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
         
         self.presentViewController(alert, animated: false, completion: nil)
@@ -1724,7 +1719,7 @@ println("facebook ID = \(myFacebookID)")
     
     func myDropboxFileProgress(fileName: String, progress:CGFloat)
     {
-println("Dropbox status = \(progress)")
+print("Dropbox status = \(progress)")
     }
     
     func myDropboxMetadataLoaded(metadata:DBMetadata)
@@ -1733,18 +1728,18 @@ println("Dropbox status = \(progress)")
         {
                 for myEntry in metadata.contents
                 {
-        println("Entry = \(myEntry.filename)")
+        print("Entry = \(myEntry.filename)")
                 }
         }
         else
         {
-println("Nothing found")
+print("Nothing found")
         }
     }
     
     func myDropboxMetadataFailed(error:NSError)
     {
-        var alert = UIAlertController(title: "Dropbox", message:
+        let alert = UIAlertController(title: "Dropbox", message:
             "Unable to load Dropbox directory list.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
         
         self.presentViewController(alert, animated: false, completion: nil)
@@ -1755,12 +1750,12 @@ println("Nothing found")
     
     func myDropboxLoadAccountInfo(info:DBAccountInfo)
     {
-        println("Dropbox Account Info = \(info)")
+        print("Dropbox Account Info = \(info)")
     }
 
     func myDropboxLoadAccountInfoFailed(error:NSError)
     {
-        var alert = UIAlertController(title: "Dropbox", message:
+        let alert = UIAlertController(title: "Dropbox", message:
             "Unable to load Dropbox account info.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
         
         self.presentViewController(alert, animated: false, completion: nil)
@@ -1771,12 +1766,12 @@ println("Nothing found")
 
     func myDropboxFileDidUpload(destPath:String, srcPath:String, metadata:DBMetadata)
     {
-        println("Dropbox Upload = \(destPath), \(srcPath)")
+        print("Dropbox Upload = \(destPath), \(srcPath)")
     }
 
     func myDropboxFileUploadFailed(error:NSError)
     {
-        var alert = UIAlertController(title: "Dropbox", message:
+        let alert = UIAlertController(title: "Dropbox", message:
             "Unable to upload file to Dropbox.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
         
         self.presentViewController(alert, animated: false, completion: nil)
@@ -1787,17 +1782,17 @@ println("Nothing found")
 
     func myDropboxUploadProgress(progress:CGFloat, destPath:String, srcPath:String)
     {
-        println("Dropbox upload status = \(progress)")
+        print("Dropbox upload status = \(progress)")
     }
 
     func myDropboxFileLoadRevisions(revisions:NSArray, path:String)
     {
-        println("Dropbox File revision = \(path)")
+        print("Dropbox File revision = \(path)")
     }
 
     func myDropboxFileLoadRevisionsFailed(error:NSError)
     {
-        var alert = UIAlertController(title: "Dropbox", message:
+        let alert = UIAlertController(title: "Dropbox", message:
             "Unable to load Dropbox file revisions.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
         
         self.presentViewController(alert, animated: false, completion: nil)
@@ -1808,12 +1803,12 @@ println("Nothing found")
 
     func myDropboxCreateFolder(folder:DBMetadata)
     {
-        println("Dropbox Create folder")
+        print("Dropbox Create folder")
     }
 
     func myDropboxCreateFolderFailed(error:NSError)
     {
-        var alert = UIAlertController(title: "Dropbox", message:
+        let alert = UIAlertController(title: "Dropbox", message:
             "Unable to load create Dropbox folder.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
         
         self.presentViewController(alert, animated: false, completion: nil)
@@ -1824,12 +1819,12 @@ println("Nothing found")
 
     func myDropboxFileDeleted(path:String)
     {
-        println("Dropbox File Deleted = \(path)")
+        print("Dropbox File Deleted = \(path)")
     }
 
     func myDropboxFileDeleteFailed(error:NSError)
     {
-        var alert = UIAlertController(title: "Dropbox", message:
+        let alert = UIAlertController(title: "Dropbox", message:
             "Unable to delete Dropbox file.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
         
         self.presentViewController(alert, animated: false, completion: nil)
@@ -1840,12 +1835,12 @@ println("Nothing found")
 
     func myDropboxFileCopiedLoad(fromPath:String, toPath:DBMetadata)
     {
-        println("Dropbox file copied = \(fromPath)")
+        print("Dropbox file copied = \(fromPath)")
     }
 
     func myDropboxFileCopyFailed(error:NSError)
     {
-        var alert = UIAlertController(title: "Dropbox", message:
+        let alert = UIAlertController(title: "Dropbox", message:
             "Unable to copy Dropbox file.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
         
         self.presentViewController(alert, animated: false, completion: nil)
@@ -1856,12 +1851,12 @@ println("Nothing found")
 
     func myDropboxFileMoved(fromPath:String, toPath:DBMetadata)
     {
-        println("Dropbox file moved = \(fromPath)")
+        print("Dropbox file moved = \(fromPath)")
     }
 
     func myDropboxFileMoveFailed(error:NSError)
     {
-        var alert = UIAlertController(title: "Dropbox", message:
+        let alert = UIAlertController(title: "Dropbox", message:
             "Unable to move Dropbox file.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
         
         self.presentViewController(alert, animated: false, completion: nil)
@@ -1872,12 +1867,12 @@ println("Nothing found")
 
     func myDropboxFileDidLoadSearch(results:NSArray, path:String, keyword:String)
     {
-        println("Dropbox search = \(path), \(keyword)")
+        print("Dropbox search = \(path), \(keyword)")
     }
 
     func myDropboxFileLoadSearchFailed(error:NSError)
     {
-        var alert = UIAlertController(title: "Dropbox", message:
+        let alert = UIAlertController(title: "Dropbox", message:
             "Unable to search Dropbox.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
         
         self.presentViewController(alert, animated: false, completion: nil)
@@ -1929,15 +1924,15 @@ println("Nothing found")
                     myDisplayString += "Project: \(splitText[1])"
                     myDisplayString += "    Context: \(splitText[2])"
               
-                    var myDateFormatter = NSDateFormatter()
+                    let myDateFormatter = NSDateFormatter()
                     
                     if splitText[6] != ""  // Modification date
                     {
                         if splitText[6].lowercaseString.rangeOfString(" at ") == nil
                         {
                             // Date does not contain at
-                            var dateFormat = NSDateFormatterStyle.FullStyle
-                            var timeFormat = NSDateFormatterStyle.MediumStyle
+                            let dateFormat = NSDateFormatterStyle.FullStyle
+                            let timeFormat = NSDateFormatterStyle.MediumStyle
                             myDateFormatter.dateStyle = dateFormat
                             myDateFormatter.timeStyle = timeFormat
                             
@@ -1963,10 +1958,10 @@ println("Nothing found")
                         let myLastUpdateValue = 0 - (myLastUpdateString as NSString).integerValue
  
                         let myComparisonDate = myCalendar.dateByAddingUnit(
-                            .CalendarUnitDay,
+                            .Day,
                             value: myLastUpdateValue,
                             toDate: NSDate(),
-                            options: nil)!
+                            options: [])!
                         
                         if myModDate.compare(myComparisonDate) == NSComparisonResult.OrderedAscending
                         {
@@ -1982,8 +1977,8 @@ println("Nothing found")
                         {
                             // Date does not contain at
 
-                            var dateFormat = NSDateFormatterStyle.FullStyle
-                            var timeFormat = NSDateFormatterStyle.MediumStyle
+                            let dateFormat = NSDateFormatterStyle.FullStyle
+                            let timeFormat = NSDateFormatterStyle.MediumStyle
                             myDateFormatter.dateStyle = dateFormat
                             myDateFormatter.timeStyle = timeFormat
                             
@@ -2012,8 +2007,8 @@ println("Nothing found")
                         if splitText[4].lowercaseString.rangeOfString(" at ") == nil
                         {
                             // Date does not contain at
-                            var dateFormat = NSDateFormatterStyle.FullStyle
-                            var timeFormat = NSDateFormatterStyle.MediumStyle
+                            let dateFormat = NSDateFormatterStyle.FullStyle
+                            let timeFormat = NSDateFormatterStyle.MediumStyle
                             myDateFormatter.dateStyle = dateFormat
                             myDateFormatter.timeStyle = timeFormat
                             
@@ -2040,10 +2035,10 @@ println("Nothing found")
                         let myDueDateValue = (myDueDateString as NSString).integerValue
                        
                         let myComparisonDate = myCalendar.dateByAddingUnit(
-                            .CalendarUnitDay,
+                            .Day,
                             value: myDueDateValue,
                             toDate: NSDate(),
-                            options: nil)!
+                            options: [])!
                         
                         if myEndDate.compare(myComparisonDate) == NSComparisonResult.OrderedAscending
                         {
@@ -2057,10 +2052,10 @@ println("Nothing found")
                         let myOverdueDateValue = (myOverdueDateString as NSString).integerValue
                        
                         let myComparisonDateRed = myCalendar.dateByAddingUnit(
-                            .CalendarUnitDay,
+                            .Day,
                             value: myOverdueDateValue,
                             toDate: NSDate(),
-                            options: nil)!
+                            options: [])!
                         
                         if myEndDate.compare(myComparisonDateRed) == NSComparisonResult.OrderedAscending
                         {
@@ -2071,12 +2066,12 @@ println("Nothing found")
                     
                     if myFormatString == ""
                     {
-                        writeRowToArray(myDisplayString, &workArray)
+                        writeRowToArray(myDisplayString, inTable: &workArray)
                     }
                     else
                     {
                         myDisplayString += "\nLast updated: \(splitText[6])"
-                        writeRowToArray(myDisplayString, &workArray, inDisplayFormat: myFormatString)
+                        writeRowToArray(myDisplayString, inTable: &workArray, inDisplayFormat: myFormatString)
                         myFormatString = ""
                     }
                 }
@@ -2088,7 +2083,7 @@ println("Nothing found")
         
         if !myEntryFound
         {
-            writeRowToArray("No Omnifocus tasks found", &workArray)
+            writeRowToArray("No Omnifocus tasks found", inTable: &workArray)
         }
         
         switch omniTableToRefresh
@@ -2110,7 +2105,7 @@ println("Nothing found")
                 dataTable4.reloadData()
             
             default:
-                println("populateArrayDetails: inTable hit default for some reason")
+                print("populateArrayDetails: inTable hit default for some reason")
             
         }
     }
@@ -2139,7 +2134,7 @@ println("Nothing found")
     {
         let meetingViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("MeetingsTab") as! meetingTabViewController
         
-        var myPassedMeeting = MeetingModel()
+        let myPassedMeeting = MeetingModel()
         myPassedMeeting.actionType = inType
      //   let workingTask = eventDetails.calendarItems[myRowClicked]
         myPassedMeeting.event = workingTask
@@ -2170,7 +2165,7 @@ println("Nothing found")
             dataTable4.reloadData()
             
         default:
-            println("myMeetingsDidFinish: myMeetingsDidFinish hit default for some reason")
+            print("myMeetingsDidFinish: myMeetingsDidFinish hit default for some reason")
         }
     }
 
@@ -2194,7 +2189,7 @@ println("Nothing found")
             dataTable4.reloadData()
             
         default:
-            println("myMeetingsDidFinish: myMeetingsDidFinish hit default for some reason")
+            print("myMeetingsDidFinish: myMeetingsDidFinish hit default for some reason")
         }
     }
 
@@ -2336,7 +2331,7 @@ println("Nothing found")
             }
             , failure: {
                 (findNotesError) in
-                println("Failure")
+                print("Failure")
                 self.EvernoteUserDone = true
                 self.myEvernoteShard = ""
                 self.myEvernoteUserID = 0
@@ -2384,7 +2379,7 @@ println("Nothing found")
         self.dismissViewControllerAnimated(true, completion: nil)
     }
     
-    func eventEditViewControllerDefaultCalendarForNewEvents(controller: EKEventEditViewController) -> EKCalendar!
+    func eventEditViewControllerDefaultCalendarForNewEvents(controller: EKEventEditViewController) -> EKCalendar
     {
 
         return eventStore.defaultCalendarForNewEvents
@@ -2418,10 +2413,7 @@ println("Nothing found")
 
     func OneNoteNotebookGetSections()
     {
-        var myDisplay: [TableData] = Array()
-        var myString: String = ""
-        
-        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
+        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.rawValue), 0))
             { // 1
                /* Disabling this code in order to use the OneNote search API instead
                 if self.myDisplayType == "Project"
@@ -2441,7 +2433,7 @@ println("Nothing found")
     {
         var myDisplay: [TableData] = Array()
         
-        writeRowToArray("No matching OneNote Notebook found", &myDisplay)
+        writeRowToArray("No matching OneNote Notebook found", inTable: &myDisplay)
         
         switch oneNoteTableToRefresh
         {
@@ -2462,7 +2454,7 @@ println("Nothing found")
             dataTable4.reloadData()
             
         default:
-            println("OneNoteNotebookGetSections: oneNoteTableToRefresh hit default for some reason")
+            print("OneNoteNotebookGetSections: oneNoteTableToRefresh hit default for some reason")
         }
     }
     
@@ -2472,9 +2464,9 @@ println("Nothing found")
 
         for myPage in myOneNoteNotebooks.pages
         {
-            var dateFormat = NSDateFormatterStyle.MediumStyle
-            var timeFormat = NSDateFormatterStyle.ShortStyle
-            var myDateFormatter = NSDateFormatter()
+            let dateFormat = NSDateFormatterStyle.MediumStyle
+            let timeFormat = NSDateFormatterStyle.ShortStyle
+            let myDateFormatter = NSDateFormatter()
             myDateFormatter.dateStyle = dateFormat
             myDateFormatter.timeStyle = timeFormat
             
@@ -2484,12 +2476,12 @@ println("Nothing found")
             
             myString = "\(myPage.title)\n"
             myString += "Last modified : \(myDate)"
-            writeRowToArray(myString, &myDisplay)
+            writeRowToArray(myString, inTable: &myDisplay)
         }
         
         if myDisplay.count == 0
         {
-            writeRowToArray("No matching OneNote pages found", &myDisplay)
+            writeRowToArray("No matching OneNote pages found", inTable: &myDisplay)
         }
         
         switch oneNoteTableToRefresh
@@ -2524,7 +2516,7 @@ println("Nothing found")
                 }
             
             default:
-                println("OneNoteNotebookGetSections: oneNoteTableToRefresh hit default for some reason")
+                print("OneNoteNotebookGetSections: oneNoteTableToRefresh hit default for some reason")
         }
     }
     
@@ -2534,7 +2526,7 @@ println("Nothing found")
         
         if myGmailMessages.messages.count == 0
         {
-            writeRowToArray("No matching GMail Messages found", &myDisplay)
+            writeRowToArray("No matching GMail Messages found", inTable: &myDisplay)
         }
         
         for myMessage in myGmailMessages.messages
@@ -2547,12 +2539,12 @@ println("Nothing found")
             myString += myMessage.snippet
 //println("ID = \(myMessage.id)")
 //println(myString)
-            writeRowToArray(myString, &myDisplay)
+            writeRowToArray(myString, inTable: &myDisplay)
         }
         
         if myDisplay.count == 0
         {
-            writeRowToArray("No matching Gmail Messages found", &myDisplay)
+            writeRowToArray("No matching Gmail Messages found", inTable: &myDisplay)
         }
 
         switch gmailTableToRefresh
@@ -2587,7 +2579,7 @@ println("Nothing found")
             }
             
         default:
-            println("myGmailDidFinish: myGmailDidFinish hit default for some reason")
+            print("myGmailDidFinish: myGmailDidFinish hit default for some reason")
         }
         
         gmailTableToRefresh = ""
@@ -2599,7 +2591,7 @@ println("Nothing found")
         
         if myHangoutsMessages.messages.count == 0
         {
-            writeRowToArray("No matching Hangout Messages found", &myDisplay)
+            writeRowToArray("No matching Hangout Messages found", inTable: &myDisplay)
         }
         
         for myMessage in myHangoutsMessages.messages
@@ -2608,12 +2600,12 @@ println("Nothing found")
             
             myString += "From: \(myMessage.from)\n"
             myString += myMessage.snippet
-            writeRowToArray(myString, &myDisplay)
+            writeRowToArray(myString, inTable: &myDisplay)
         }
         
         if myDisplay.count == 0
         {
-            writeRowToArray("No matching Hangout Messages found", &myDisplay)
+            writeRowToArray("No matching Hangout Messages found", inTable: &myDisplay)
         }
         
         switch hangoutsTableToRefresh
@@ -2648,7 +2640,7 @@ println("Nothing found")
             }
             
         default:
-            println("myHangoutsDidFinish: myHangoutsDidFinish hit default for some reason")
+            print("myHangoutsDidFinish: myHangoutsDidFinish hit default for some reason")
         }
         hangoutsTableToRefresh = ""
     }
@@ -2692,7 +2684,7 @@ println("Nothing found")
         
         if myDisplayType == "Project"
         {
-            dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
+            dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.rawValue), 0))
             {
                 self.myGmailMessages.getProjectMessages(self.mySelectedProject.projectName, inMessageType: "Mail")
             }
@@ -2708,7 +2700,7 @@ println("Nothing found")
             {
                 searchString = personContact.fullName
             }
-            dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
+            dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.rawValue), 0))
             {
                 self.myGmailMessages.getPersonMessages(searchString, emailAddresses: self.personContact.emailAddresses, inMessageType: "Mail")
             }
@@ -2724,7 +2716,7 @@ println("Nothing found")
         
         if myDisplayType == "Project"
         {
-            dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
+            dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.rawValue), 0))
             {
                     self.myHangoutsMessages.getProjectMessages(self.mySelectedProject.projectName, inMessageType: "Hangouts")
             }
@@ -2740,7 +2732,7 @@ println("Nothing found")
             {
                 searchString = personContact.fullName
             }
-            dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
+            dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.rawValue), 0))
             {
                     self.myHangoutsMessages.getPersonMessages(searchString, emailAddresses: self.personContact.emailAddresses, inMessageType: "Hangouts")
             }
@@ -2765,7 +2757,7 @@ println("Nothing found")
                     
                         let projectViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("GTDPlanning") as! MaintainGTDPlanningViewController
                         
-                        var myPassedGTD = GTDModel()
+                        let myPassedGTD = GTDModel()
                         
                         myPassedGTD.delegate = self
                         myPassedGTD.actionSource = "Project"
@@ -2777,7 +2769,7 @@ println("Nothing found")
                 case "Context":
                     let projectViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("GTDPlanning") as! MaintainGTDPlanningViewController
                     
-                    var myPassedGTD = GTDModel()
+                    let myPassedGTD = GTDModel()
                     
                     myPassedGTD.delegate = self
                     myPassedGTD.actionSource = "Context"
@@ -2786,7 +2778,7 @@ println("Nothing found")
                     
                     self.presentViewController(projectViewControl, animated: true, completion: nil)
                     
-                    default: println("sideBarDidSelectButtonAtIndex - Action selector: Hit default")
+                    default: print("sideBarDidSelectButtonAtIndex - Action selector: Hit default")
                 }
 
             
@@ -2849,17 +2841,17 @@ println("Nothing found")
                                 textExpander.clientAppName = "EvesCRM"
                                 textExpander.getSnippetsScheme = "EvesCRM-get-snippets-xc"
                                 textExpander.fillCompletionScheme = "EvesCRM-fill-xc"
-                                textExpander.fillDelegate = self
+                            //    textExpander.fillDelegate = self
                             }
                             textExpander.getSnippets()
                         }
                     
-                    default: println("sideBarDidSelectButtonAtIndex - Action selector: Hit default")
+                    default: print("sideBarDidSelectButtonAtIndex - Action selector: Hit default")
                     
                 }
             
             default:
-                println("sideBarDidSelectButtonAtIndex: Hit default")
+                print("sideBarDidSelectButtonAtIndex: Hit default")
         }
     }
     
@@ -2892,20 +2884,20 @@ println("Nothing found")
         table3Contents = Array()
         table4Contents = Array()
         
-        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
+        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.rawValue), 0))
         {
             self.populateArraysForTables("Table1")
         }
-        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
+        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.rawValue), 0))
         {
             self.populateArraysForTables("Table2")
         }
-        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
+        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.rawValue), 0))
         {
             self.populateArraysForTables("Table3")
         }
         
-        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.value), 0))
+        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.rawValue), 0))
         {
             self.populateArraysForTables("Table4")
         }
@@ -3026,11 +3018,11 @@ println("Nothing found")
             if event.startDate.compare(NSDate()) == NSComparisonResult.OrderedAscending
             {
                 // Event is in the past
-                writeRowToArray(myString, &tableContents, inDisplayFormat: "Gray")
+                writeRowToArray(myString, inTable: &tableContents, inDisplayFormat: "Gray")
             }
             else
             {
-                writeRowToArray(myString, &tableContents)
+                writeRowToArray(myString, inTable: &tableContents)
             }
         }
         return tableContents
@@ -3068,7 +3060,7 @@ println("Nothing found")
             {
                 myString += myTask.displayDueDate
             }
-            writeRowToArray(myString, &tableContents)
+            writeRowToArray(myString, inTable: &tableContents)
         }
         return tableContents
     }

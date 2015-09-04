@@ -9,7 +9,7 @@
 import Foundation
 
 
-class GTDEditViewController: UIViewController, UITextViewDelegate
+class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDelegate
 {
     @IBOutlet weak var txtTitle: UITextField!
     @IBOutlet weak var lblStatus: UILabel!
@@ -188,7 +188,7 @@ class GTDEditViewController: UIViewController, UITextViewDelegate
                 }
 
             default:
-                println("GTDEditViewController: viewDidLoad: No objectType found")
+                print("GTDEditViewController: viewDidLoad: No objectType found")
         }
         
         // TextExpander
@@ -263,19 +263,19 @@ class GTDEditViewController: UIViewController, UITextViewDelegate
         switch objectType
         {
             case "purpose":
-                inPurposeObject.reviewFrequency = txtFrequency.text.toInt()!
+                inPurposeObject.reviewFrequency = Int(txtFrequency.text!)!
             
             case "vision":
-                inVisionObject.reviewFrequency = txtFrequency.text.toInt()!
+                inVisionObject.reviewFrequency = Int(txtFrequency.text!)!
             
             case "goal":
-                inGoalObject.reviewFrequency = txtFrequency.text.toInt()!
+                inGoalObject.reviewFrequency = Int(txtFrequency.text!)!
             
             case "area":
-                inAreaObject.reviewFrequency = txtFrequency.text.toInt()!
+                inAreaObject.reviewFrequency = Int(txtFrequency.text!)!
             
             default:
-                println("GTDEditViewController: txtFrequency:  No objectType found")
+                print("GTDEditViewController: txtFrequency:  No objectType found")
         }
     }
     
@@ -284,19 +284,19 @@ class GTDEditViewController: UIViewController, UITextViewDelegate
         switch objectType
         {
             case "purpose":
-                inPurposeObject.title = txtTitle.text
+                inPurposeObject.title = txtTitle.text!
             
             case "vision":
-                inVisionObject.title = txtTitle.text
+                inVisionObject.title = txtTitle.text!
             
             case "goal":
-                inGoalObject.title = txtTitle.text
+                inGoalObject.title = txtTitle.text!
             
             case "area":
-                inAreaObject.title = txtTitle.text
+                inAreaObject.title = txtTitle.text!
             
             default:
-                println("GTDEditViewController: txtTitle:  No objectType found")
+                print("GTDEditViewController: txtTitle:  No objectType found")
         }
     }
     
@@ -318,7 +318,7 @@ class GTDEditViewController: UIViewController, UITextViewDelegate
                 inAreaObject.note = textView.text
             
             default:
-                println("GTDEditViewController: textViewDidEndEditing:  No objectType found")
+                print("GTDEditViewController: textViewDidEndEditing:  No objectType found")
         }
     }
     
@@ -334,7 +334,7 @@ class GTDEditViewController: UIViewController, UITextViewDelegate
     
     @IBAction func btnTargetDate(sender: UIButton)
     {
-        var dateFormatter = NSDateFormatter()
+        let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "dd MMM yyyy"
         
         if pickerTarget == "ReviewDate"
@@ -356,7 +356,7 @@ class GTDEditViewController: UIViewController, UITextViewDelegate
                     inAreaObject.lastReviewDate = myDatePicker.date
                 
                 default:
-                    println("GTDEditViewController: btnTargetDate:  No objectType found")
+                    print("GTDEditViewController: btnTargetDate:  No objectType found")
             }
         }
         
@@ -379,7 +379,7 @@ class GTDEditViewController: UIViewController, UITextViewDelegate
                 inAreaObject.status = pickerOptions[selectedRow]
                 
             default:
-                println("GTDEditViewController: pickerView: Status:  No objectType found")
+                print("GTDEditViewController: pickerView: Status:  No objectType found")
             }
         }
         
@@ -402,7 +402,7 @@ class GTDEditViewController: UIViewController, UITextViewDelegate
                 inAreaObject.reviewPeriod = pickerOptions[selectedRow]
                 
             default:
-                println("GTDEditViewController: pickerView: Period:  No objectType found")
+                print("GTDEditViewController: pickerView: Period:  No objectType found")
             }
         }
 
@@ -547,26 +547,26 @@ class GTDEditViewController: UIViewController, UITextViewDelegate
         {
             case "purpose":
                 inPurposeObject.note = txtNotes.text
-                inPurposeObject.title = txtTitle.text
-                inPurposeObject.reviewFrequency = txtFrequency.text.toInt()!
+                inPurposeObject.title = txtTitle.text!
+                inPurposeObject.reviewFrequency = Int(txtFrequency.text!)!
             
             case "vision":
                 inVisionObject.note = txtNotes.text
-                inVisionObject.title = txtTitle.text
-                inVisionObject.reviewFrequency = txtFrequency.text.toInt()!
+                inVisionObject.title = txtTitle.text!
+                inVisionObject.reviewFrequency = Int(txtFrequency.text!)!
             
             case "goal":
                 inGoalObject.note = txtNotes.text
-                inGoalObject.title = txtTitle.text
-                inGoalObject.reviewFrequency = txtFrequency.text.toInt()!
+                inGoalObject.title = txtTitle.text!
+                inGoalObject.reviewFrequency = Int(txtFrequency.text!)!
             
             case "area":
                 inGoalObject.note = txtNotes.text
-                inGoalObject.title = txtTitle.text
-                inGoalObject.reviewFrequency = txtFrequency.text.toInt()!
+                inGoalObject.title = txtTitle.text!
+                inGoalObject.reviewFrequency = Int(txtFrequency.text!)!
             
             default:
-                println("GTDEditViewController: prepareForFillSwitch:  No objectType found")
+                print("GTDEditViewController: prepareForFillSwitch:  No objectType found")
         }
         
         return true
@@ -598,27 +598,29 @@ class GTDEditViewController: UIViewController, UITextViewDelegate
     * expect the identified text object to become the first responder.
     */
     
-    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: Int) -> AnyObject
+    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>) -> AnyObject
     {
         snippetExpanded = true
+        
+        let intIoInsertionPointLocation:Int = ioInsertionPointLocation.memory // grab the data and cast it to a Swift Int8
         
         if "txtNotes" == textIdentifier
         {
             txtNotes.becomeFirstResponder()
-            let theLoc = txtNotes.positionFromPosition(txtNotes.beginningOfDocument, offset: ioInsertionPointLocation)
+            let theLoc = txtNotes.positionFromPosition(txtNotes.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtNotes.selectedTextRange = txtNotes.textRangeFromPosition(theLoc, toPosition: theLoc)
+                txtNotes.selectedTextRange = txtNotes.textRangeFromPosition(theLoc!, toPosition: theLoc!)
             }
             return txtNotes
         }
         else if "txtTitle" == textIdentifier
         {
             txtTitle.becomeFirstResponder()
-            let theLoc = txtTitle.positionFromPosition(txtTitle.beginningOfDocument, offset: ioInsertionPointLocation)
+            let theLoc = txtTitle.positionFromPosition(txtTitle.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtTitle.selectedTextRange = txtTitle.textRangeFromPosition(theLoc, toPosition: theLoc)
+                txtTitle.selectedTextRange = txtTitle.textRangeFromPosition(theLoc!, toPosition: theLoc!)
             }
             return txtTitle
         }

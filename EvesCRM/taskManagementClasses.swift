@@ -124,7 +124,7 @@ class purposeAndCoreValue: NSObject // 50k Level
             }
             else
             {
-                var myDateFormatter = NSDateFormatter()
+                let myDateFormatter = NSDateFormatter()
                 myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
                 return myDateFormatter.stringFromDate(myLastReviewDate)
             }
@@ -365,7 +365,7 @@ class gvision: NSObject // (3-5 year goals) 40k Level
             }
             else
             {
-                var myDateFormatter = NSDateFormatter()
+                let myDateFormatter = NSDateFormatter()
                 myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
                 return myDateFormatter.stringFromDate(myLastReviewDate)
             }
@@ -621,7 +621,7 @@ class goalAndObjective: NSObject  // (1-2 year goals) 30k Level
             }
             else
             {
-                var myDateFormatter = NSDateFormatter()
+                let myDateFormatter = NSDateFormatter()
                 myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
                 return myDateFormatter.stringFromDate(myLastReviewDate)
             }
@@ -876,7 +876,7 @@ class areaOfResponsibility: NSObject // 20k Level
             }
             else
             {
-                var myDateFormatter = NSDateFormatter()
+                let myDateFormatter = NSDateFormatter()
                 myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
                 return myDateFormatter.stringFromDate(myLastReviewDate)
             }
@@ -1149,7 +1149,7 @@ class project: NSObject // 10k level
             }
             else
             {
-                var myDateFormatter = NSDateFormatter()
+                let myDateFormatter = NSDateFormatter()
                 myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
                 return myDateFormatter.stringFromDate(myProjectEndDate)
             }
@@ -1222,7 +1222,7 @@ class project: NSObject // 10k level
             }
             else
             {
-                var myDateFormatter = NSDateFormatter()
+                let myDateFormatter = NSDateFormatter()
                 myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
                 return myDateFormatter.stringFromDate(myProjectStartDate)
             }
@@ -1284,7 +1284,7 @@ class project: NSObject // 10k level
             }
             else
             {
-                var myDateFormatter = NSDateFormatter()
+                let myDateFormatter = NSDateFormatter()
                 myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
                 return myDateFormatter.stringFromDate(myLastReviewDate)
             }
@@ -1665,7 +1665,7 @@ class task: NSObject
             }
             else
             {
-                var myDateFormatter = NSDateFormatter()
+                let myDateFormatter = NSDateFormatter()
                 myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
                 return myDateFormatter.stringFromDate(myDueDate)
             }
@@ -1701,7 +1701,7 @@ class task: NSObject
             }
             else
             {
-                var myDateFormatter = NSDateFormatter()
+                let myDateFormatter = NSDateFormatter()
                 myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
                 return myDateFormatter.stringFromDate(myStartDate)
             }
@@ -1843,7 +1843,7 @@ class task: NSObject
             }
             else
             {
-                var myDateFormatter = NSDateFormatter()
+                let myDateFormatter = NSDateFormatter()
                 myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
                 return myDateFormatter.stringFromDate(myCompletionDate)
             }
@@ -2113,7 +2113,7 @@ class task: NSObject
     {
         var myString = inTargetString
         
-        if count(inTargetString) > 0
+        if inTargetString.characters.count > 0
         {
             myString += "\n"
         }
@@ -2127,7 +2127,6 @@ class task: NSObject
     {
         var myExportString: String = ""
         var myLine: String = ""
-        var myContextTable: String = ""
         
         myLine = "                \(myTitle)"
         myExportString = writeLine(myExportString, inLineString: myLine)
@@ -2176,8 +2175,6 @@ class task: NSObject
         {
             myLine = "Contexts"
             myExportString = writeLine(myExportString, inLineString: myLine)
-            
-            myContextTable = ""
             
             for myContext in myContexts
             {
@@ -2231,7 +2228,7 @@ class task: NSObject
     {
         var myString = inTargetString
         
-        if count(inTargetString) > 0
+        if inTargetString.characters.count > 0
         {
             myString += "<p>"
         }
@@ -2386,7 +2383,7 @@ class contexts: NSObject
             
             workingArray = myContexts
             
-            workingArray.sorted { $0.contextHierarchy < $1.contextHierarchy }
+            workingArray.sortInPlace { $0.contextHierarchy < $1.contextHierarchy }
             
             return workingArray
         }
@@ -2406,7 +2403,7 @@ class contexts: NSObject
                 }
             }
             
-            workingArray.sorted { $0.contextHierarchy < $1.contextHierarchy }
+            workingArray.sortInPlace { $0.contextHierarchy < $1.contextHierarchy }
             
             return workingArray
         }
@@ -2426,7 +2423,7 @@ class contexts: NSObject
                 }
             }
             
-            workingArray.sorted { $0.contextHierarchy < $1.contextHierarchy }
+            workingArray.sortInPlace { $0.contextHierarchy < $1.contextHierarchy }
             
             return workingArray
         }
@@ -2586,8 +2583,8 @@ class context: NSObject
     }
     
     func removeWhitespace(string: String) -> String {
-        let components = string.componentsSeparatedByCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()).filter({!isEmpty($0)})
-        return join(" ", components)
+        let components = string.componentsSeparatedByCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()).filter({!$0.characters.isEmpty})
+        return components.joinWithSeparator(" ")
     }
     
     
@@ -2766,7 +2763,7 @@ class taskUpdates: NSObject
     {
         get
         {
-            var myDateFormatter = NSDateFormatter()
+            let myDateFormatter = NSDateFormatter()
             myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
             myDateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
             return myDateFormatter.stringFromDate(myUpdateDate)

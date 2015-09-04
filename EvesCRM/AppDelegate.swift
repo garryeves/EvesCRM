@@ -46,7 +46,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         var configureErr: NSError?
         GGLContext.sharedInstance().configureWithError(&configureErr)
         if configureErr != nil {
-            println("Error configuring the Google context: \(configureErr)")
+            print("Error configuring the Google context: \(configureErr)")
         }
         
         GIDSignIn.sharedInstance().delegate = self
@@ -58,9 +58,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
     func application(application: UIApplication, handleOpenURL url: NSURL) -> Bool
     {
         
-println("appdelegate application - handleOpenURL = \(url.scheme)")
-        var error: NSError?
-        
+print("appdelegate application - handleOpenURL = \(url.scheme)")
         var retVal: Bool = false
   
    /*
@@ -129,9 +127,9 @@ println("appdelegate application - handleOpenURL = \(url.scheme)")
         return retVal
     }
     
-    func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject?) -> Bool {
-println("appdelegate application - source Application = \(sourceApplication)")
-println("appdelegate application - source Application URL = \(url.scheme)")
+    func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
+print("appdelegate application - source Application = \(sourceApplication)")
+print("appdelegate application - source Application URL = \(url.scheme)")
         
         var error: NSError?
         var textExpander: SMTEDelegateController!
@@ -206,7 +204,7 @@ println("appdelegate application - source Application URL = \(url.scheme)")
             }
             else
             {
-                println("failed")
+                print("failed")
             }
         }
         else if "EvesCRM-get-snippets-xc" == url.scheme
@@ -223,7 +221,7 @@ println("appdelegate application - source Application URL = \(url.scheme)")
                 if cancel
                 {
                     NSLog("User cancelled get snippets");
-                    var standardUserDefaults: NSUserDefaults = NSUserDefaults()
+                    let standardUserDefaults: NSUserDefaults = NSUserDefaults()
                     standardUserDefaults.setBool(false, forKey:SMTEExpansionEnabled)
                 }
                 else if error != nil
@@ -282,7 +280,7 @@ println("appdelegate application - source Application URL = \(url.scheme)")
     lazy var applicationDocumentsDirectory: NSURL = {
         // The directory the application uses to store the Core Data store file. This code uses a directory named "com.garryeves.EvesCRM" in the application's documents Application Support directory.
         let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
-        return urls[urls.count-1] as! NSURL
+        return urls[urls.count-1] 
     }()
 
     lazy var managedObjectModel: NSManagedObjectModel = {
@@ -310,28 +308,33 @@ println("appdelegate application - source Application URL = \(url.scheme)")
     //        NSPersistentStoreRebuildFromUbiquitousContentOption: true,
             NSPersistentStoreUbiquitousContentNameKey : "EvesCRMStore"]
       
-        //_persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
-       // if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error]) {
+  //_persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
+  // if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error]) {
 
-        
+  
   //       self.registerCoordinatorForStoreNotifications (coordinator!)
-        
+
   // GRE end add section
-        
-       // if coordinator!.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: url, options: nil, error: &error) == nil {
-        if coordinator!.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: url, options: mOptions, error: &error) == nil {
-            coordinator = nil
-            // Report any error we got.
-            var dict = [String: AnyObject]()
-            dict[NSLocalizedDescriptionKey] = "Failed to initialize the application's saved data"
-            dict[NSLocalizedFailureReasonErrorKey] = failureReason
-            dict[NSUnderlyingErrorKey] = error
-            error = NSError(domain: "YOUR_ERROR_DOMAIN", code: 9999, userInfo: dict)
-            // Replace this with code to handle the error appropriately.
-            // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            NSLog("Unresolved error \(error), \(error!.userInfo)")
-            abort()
-        }
+
+  // if coordinator!.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: url, options: nil, error: &error) == nil {
+  do {
+      try coordinator!.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: url, options: mOptions)
+  } catch var error1 as NSError {
+      error = error1
+      coordinator = nil
+      // Report any error we got.
+      var dict = [String: AnyObject]()
+      dict[NSLocalizedDescriptionKey] = "Failed to initialize the application's saved data"
+      dict[NSLocalizedFailureReasonErrorKey] = failureReason
+      dict[NSUnderlyingErrorKey] = error
+      error = NSError(domain: "YOUR_ERROR_DOMAIN", code: 9999, userInfo: dict)
+      // Replace this with code to handle the error appropriately.
+      // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+      NSLog("Unresolved error \(error), \(error!.userInfo)")
+      abort()
+  } catch {
+      fatalError()
+  }
         self.registerCoordinatorForStoreNotifications (coordinator!)
         return coordinator
     }()
@@ -357,11 +360,16 @@ println("appdelegate application - source Application URL = \(url.scheme)")
     func saveContext () {
         if let moc = self.managedObjectContext {
             var error: NSError? = nil
-            if moc.hasChanges && !moc.save(&error) {
-                // Replace this implementation with code to handle the error appropriately.
-                // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                NSLog("Unresolved error \(error), \(error!.userInfo)")
-                abort()
+            if moc.hasChanges {
+                do {
+                    try moc.save()
+                } catch let error1 as NSError {
+                    error = error1
+                    // Replace this implementation with code to handle the error appropriately.
+                    // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+                    NSLog("Unresolved error \(error), \(error!.userInfo)")
+                    abort()
+                }
             }
         }
     }
@@ -399,7 +407,7 @@ println("appdelegate application - source Application URL = \(url.scheme)")
                 // ...
                 
             } else {
-                println("\(error.localizedDescription)")
+                print("\(error.localizedDescription)")
             }
             NSNotificationCenter.defaultCenter().postNotificationName("NotificationGmailSignedIn", object: nil)
     }
@@ -416,14 +424,30 @@ println("appdelegate application - source Application URL = \(url.scheme)")
     // most likely to be called if the user enables / disables iCloud
     // (either globally, or just for your app) or if the user changes
     // iCloud accounts.
-    func storesWillChange(notification: NSNotification) {
+    func storesWillChange(notification: NSNotification)
+    {
         NSLog("storesWillChange notif:\(notification)");
-        if let moc = self.managedObjectContext {
-            moc.performBlockAndWait {
-                var error: NSError? = nil;
-                if moc.hasChanges && !moc.save(&error) {
+        if let moc = self.managedObjectContext
+        {
+            moc.performBlockAndWait
+            {
+                let error: NSError? = nil;
+                if moc.hasChanges
+                {
+                    do
+                    {
+                        try moc.save()
+                    }
+                    catch let error as NSError
+                    {
+                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+                        
+                        print("Failure in appDelegate: storesWillChange: \(error)")
+                    }
                     NSLog("Save error: \(error)");
-                } else {
+                }
+                else
+                {
                     // drop any managed objects
                 }
                 

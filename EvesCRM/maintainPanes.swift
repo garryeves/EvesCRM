@@ -140,7 +140,7 @@ class MaintainPanesViewController: UIViewController
     
     func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int)
     {
-        var myUpdatePanes = displayPanes()
+        let myUpdatePanes = displayPanes()
         
         if pickerView == Table1Picker
         {
@@ -275,7 +275,7 @@ class MaintainPanesViewController: UIViewController
                 
                 case 4: myIndex4 = loopCount
                 
-                default:   var a = 1
+                default:   NSLog("Do nothing")
             }
             
             loopCount++
@@ -354,7 +354,7 @@ class myPaneItem: UICollectionViewCell
     {
         // Lets update the table
         
-        var myUpdatePanes = displayPanes()
+        let myUpdatePanes = displayPanes()
         
         myUpdatePanes.toogleVisibleStatus(lblPaneName.text!)
         

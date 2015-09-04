@@ -13,7 +13,7 @@ protocol MySettingsDelegate{
     func mySettingsDidFinish(controller:settingsViewController)
 }
 
-class settingsViewController: UIViewController
+class settingsViewController: UIViewController, SMTEFillDelegate
 {
     @IBOutlet weak var textRole: UITextField!
     @IBOutlet weak var textStage: UITextField!
@@ -268,7 +268,7 @@ class settingsViewController: UIViewController
     {
         if textRole.text == ""
         {
-            var alert = UIAlertController(title: "Add Role", message:
+            let alert = UIAlertController(title: "Add Role", message:
                 "You need to enter a role name before you can add it", preferredStyle: UIAlertControllerStyle.Alert)
             
             self.presentViewController(alert, animated: false, completion: nil)
@@ -282,7 +282,7 @@ class settingsViewController: UIViewController
         {
             // Add the new role
             
-            myDatabaseConnection.createRole(textRole.text, inTeamID: myTeamID)
+            myDatabaseConnection.createRole(textRole.text!, inTeamID: myTeamID)
             myRoles = myDatabaseConnection.getRoles(myTeamID)
             colRoles.reloadData()
             textRole.text = ""
@@ -293,7 +293,7 @@ class settingsViewController: UIViewController
     {
         if textStage.text == ""
         {
-            var alert = UIAlertController(title: "Add Stage", message:
+            let alert = UIAlertController(title: "Add Stage", message:
                 "You need to enter a stage name before you can add it", preferredStyle: UIAlertControllerStyle.Alert)
             
             self.presentViewController(alert, animated: false, completion: nil)
@@ -307,7 +307,7 @@ class settingsViewController: UIViewController
         {
             // Add the new role
             
-            myDatabaseConnection.createStage(textStage.text, inTeamID: myTeamID)
+            myDatabaseConnection.createStage(textStage.text!, inTeamID: myTeamID)
             myStages = myDatabaseConnection.getStages(myTeamID)
             colStages.reloadData()
             textStage.text = ""
@@ -356,7 +356,7 @@ class settingsViewController: UIViewController
     
     func myEvernoteAuthenticationDidFinish()
     {
-        println("Evernote authenticated")
+        print("Evernote authenticated")
     }
     
     func connectToDropbox()
@@ -504,27 +504,29 @@ class settingsViewController: UIViewController
     * expect the identified text object to become the first responder.
     */
     
-    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: Int) -> AnyObject
+    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>) -> AnyObject
     {
         snippetExpanded = true
+        
+        let intIoInsertionPointLocation:Int = ioInsertionPointLocation.memory
         
         if "textRole" == textIdentifier
         {
             textRole.becomeFirstResponder()
-            let theLoc = textRole.positionFromPosition(textRole.beginningOfDocument, offset: ioInsertionPointLocation)
+            let theLoc = textRole.positionFromPosition(textRole.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                textRole.selectedTextRange = textRole.textRangeFromPosition(theLoc, toPosition: theLoc)
+                textRole.selectedTextRange = textRole.textRangeFromPosition(theLoc!, toPosition: theLoc!)
             }
             return textRole
         }
         else if "textStage" == textIdentifier
         {
             textStage.becomeFirstResponder()
-            let theLoc = textStage.positionFromPosition(textStage.beginningOfDocument, offset: ioInsertionPointLocation)
+            let theLoc = textStage.positionFromPosition(textStage.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                textStage.selectedTextRange = textStage.textRangeFromPosition(theLoc, toPosition: theLoc)
+                textStage.selectedTextRange = textStage.textRangeFromPosition(theLoc!, toPosition: theLoc!)
             }
             return textStage
         }
@@ -740,7 +742,7 @@ class mySettingString: UICollectionViewCell
         }
         else
         {
-            myDatabaseConnection.updateDecodeValue(lblKey.text!, inCodeValue: txtValue.text, inCodeType: lookupKey)
+            myDatabaseConnection.updateDecodeValue(lblKey.text!, inCodeValue: txtValue.text!, inCodeType: lookupKey)
             NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeSettings", object: nil, userInfo:["setting":"Decode"])
         }
     }
@@ -766,7 +768,7 @@ class mySettingNumber: UICollectionViewCell
         }
         else
         {
-            myDatabaseConnection.updateDecodeValue(lblKey.text!, inCodeValue: txtValue.text, inCodeType: lookupKey)
+            myDatabaseConnection.updateDecodeValue(lblKey.text!, inCodeValue: txtValue.text!, inCodeType: lookupKey)
             NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeSettings", object: nil, userInfo:["setting":"Decode"])
         }
 

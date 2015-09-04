@@ -13,7 +13,7 @@ import Foundation
 //    func myTaskDidFinish(controller:taskViewController, actionType: String, currentTask: task)
 //}
 
-class taskUpdatesViewController: UIViewController
+class taskUpdatesViewController: UIViewController, SMTEFillDelegate
 {
     private var passedTask: TaskModel!
     
@@ -145,7 +145,7 @@ class taskUpdatesViewController: UIViewController
         var headerView:UICollectionReusableView!
         if kind == UICollectionElementKindSectionHeader
         {
-            headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: "taskItemHeader", forIndexPath: indexPath) as! UICollectionReusableView
+            headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: "taskItemHeader", forIndexPath: indexPath) 
         }
         
         return headerView
@@ -164,16 +164,16 @@ class taskUpdatesViewController: UIViewController
     
     @IBAction func btnAddUpdate(sender: UIButton)
     {
-        if count(txtUpdateDetails.text) > 0 && count(txtUpdateSource.text) > 0
+        if txtUpdateDetails.text.characters.count > 0 && txtUpdateSource.text!.characters.count > 0
         {
-            passedTask.currentTask.addHistoryRecord(txtUpdateDetails.text, inHistorySource: txtUpdateSource.text)
+            passedTask.currentTask.addHistoryRecord(txtUpdateDetails.text, inHistorySource: txtUpdateSource.text!)
             txtUpdateDetails.text = ""
             txtUpdateSource.text = ""
             colHistory.reloadData()
         }
         else
         {
-            var alert = UIAlertController(title: "Add Task Update", message:
+            let alert = UIAlertController(title: "Add Task Update", message:
                 "You need to enter update details and source", preferredStyle: UIAlertControllerStyle.Alert)
             
             self.presentViewController(alert, animated: false, completion: nil)
@@ -276,27 +276,29 @@ class taskUpdatesViewController: UIViewController
     * expect the identified text object to become the first responder.
     */
     
-    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: Int) -> AnyObject
+    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>) -> AnyObject
     {
         snippetExpanded = true
+        
+        let intIoInsertionPointLocation:Int = ioInsertionPointLocation.memory
         
         if "txtUpdateSource" == textIdentifier
         {
             txtUpdateSource.becomeFirstResponder()
-            let theLoc = txtUpdateSource.positionFromPosition(txtUpdateSource.beginningOfDocument, offset: ioInsertionPointLocation)
+            let theLoc = txtUpdateSource.positionFromPosition(txtUpdateSource.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtUpdateSource.selectedTextRange = txtUpdateSource.textRangeFromPosition(theLoc, toPosition: theLoc)
+                txtUpdateSource.selectedTextRange = txtUpdateSource.textRangeFromPosition(theLoc!, toPosition: theLoc!)
             }
             return txtUpdateSource
         }
         else if "txtUpdateDetails" == textIdentifier
         {
             txtUpdateDetails.becomeFirstResponder()
-            let theLoc = txtUpdateDetails.positionFromPosition(txtUpdateDetails.beginningOfDocument, offset: ioInsertionPointLocation)
+            let theLoc = txtUpdateDetails.positionFromPosition(txtUpdateDetails.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtUpdateDetails.selectedTextRange = txtUpdateDetails.textRangeFromPosition(theLoc, toPosition: theLoc)
+                txtUpdateDetails.selectedTextRange = txtUpdateDetails.textRangeFromPosition(theLoc!, toPosition: theLoc!)
             }
             return txtUpdateDetails
         }

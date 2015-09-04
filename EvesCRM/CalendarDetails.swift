@@ -369,25 +369,25 @@ class myCalendarItem
         myTitle = inEvent.title
         myStartDate = inEvent.startDate
         myEndDate = inEvent.endDate
-        myLocation = inEvent.location
+        myLocation = inEvent.location!
         
         if inEvent.recurrenceRules != nil
         {
             // This is a recurring event
-            var myWorkingRecur: NSArray = inEvent.recurrenceRules
+            let myWorkingRecur: NSArray = inEvent.recurrenceRules!
             
             for myItem in myWorkingRecur
             {
                 myRecurrenceFrequency = myItem.interval
-                var testFrequency: EKRecurrenceFrequency = myItem.frequency
-                myRecurrence = Int(testFrequency.value)
+                let testFrequency: EKRecurrenceFrequency = myItem.frequency
+                myRecurrence = Int(testFrequency.rawValue)
             }
         }
         // Need to validate this works when displaying by person and also by project
         if inAttendee != nil
         {
-            myStatus = Int(inAttendee!.participantStatus.value)
-            myType = Int(inAttendee!.participantType.value)
+            myStatus = Int(inAttendee!.participantStatus.rawValue)
+            myType = Int(inAttendee!.participantType.rawValue)
         }
     }
     
@@ -828,19 +828,19 @@ class myCalendarItem
     {
         // Use this for the initial population of the attendees
         
-        for attendee in event!.attendees as! [EKParticipant]
+        for attendee in event!.attendees!
         {
-            var emailText: String = "\(attendee.URL)"
-            var emailStartPos = find(emailText,":")
-            var nextPlace = emailStartPos?.successor()
+            let emailText: String = "\(attendee.URL)"
+            let emailStartPos = emailText.characters.indexOf(":")
+            let nextPlace = emailStartPos?.successor()
             var emailAddress: String = ""
             if nextPlace != nil
             {
-                var emailEndPos = emailText.endIndex.predecessor()
+                let emailEndPos = emailText.endIndex.predecessor()
                 emailAddress = emailText[nextPlace!...emailEndPos]
             }
             
-            addAttendee(attendee.name, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
+            addAttendee(attendee.name!, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
         }
     }
     
@@ -862,13 +862,16 @@ class myCalendarItem
                 { // Not found
                     if myEvent!.hasNotes
                     {
-                        myEvent!.notes = myEvent!.notes + "."
+                        myEvent!.notes = myEvent!.notes! + "."
                     }
                     else
                     {
                         myEvent!.notes = "."
                     }
-                    eventStore.saveEvent(myEvent,span: EKSpanThisEvent, commit: true,  error: nil)
+                    do {
+                        try eventStore.saveEvent(myEvent!,span: .ThisEvent, commit: true)
+                    } catch _ {
+                    }
                 
                     myEventID = myEvent!.eventIdentifier
                 }
@@ -968,7 +971,7 @@ class myCalendarItem
                     
                         if myEvent!.hasAttendees
                         {
-                            for invitee in myEvent!.attendees as! [EKParticipant]
+                            for invitee in myEvent!.attendees!
                             {
                                 // Check to see if any "Invited" people are no longer on calendar invite, and if so remove from Agenda.
                 
@@ -976,17 +979,17 @@ class myCalendarItem
                                 {
                                     // Invitee found
                     
-                                    var emailText: String = "\(invitee.URL)"
-                                    var emailStartPos = find(emailText,":")
-                                    var nextPlace = emailStartPos?.successor()
+                                    let emailText: String = "\(invitee.URL)"
+                                    let emailStartPos = emailText.characters.indexOf(":")
+                                    let nextPlace = emailStartPos?.successor()
                                     var emailAddress: String = ""
                                     if nextPlace != nil
                                     {
-                                        var emailEndPos = emailText.endIndex.predecessor()
+                                        let emailEndPos = emailText.endIndex.predecessor()
                                         emailAddress = emailText[nextPlace!...emailEndPos]
                                     }
                     
-                                    initaliseAttendee(invitee.name, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
+                                    initaliseAttendee(invitee.name!, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
              
                                     inviteeFound = true
                     
@@ -1042,7 +1045,7 @@ class myCalendarItem
             
                     if myEvent!.hasAttendees
                     {
-                        for invitee in myEvent!.attendees as! [EKParticipant]
+                        for invitee in myEvent!.attendees!
                         {
                             // Check to see if any "Invited" people are no longer on calendar invite, and if so remove from Agenda.
                 
@@ -1062,17 +1065,17 @@ class myCalendarItem
                             {
                                 // New invitee so add into table
                 
-                                var emailText: String = "\(invitee.URL)"
-                                var emailStartPos = find(emailText,":")
-                                var nextPlace = emailStartPos?.successor()
+                                let emailText: String = "\(invitee.URL)"
+                                let emailStartPos = emailText.characters.indexOf(":")
+                                let nextPlace = emailStartPos?.successor()
                                 var emailAddress: String = ""
                                 if nextPlace != nil
                                 {
-                                    var emailEndPos = emailText.endIndex.predecessor()
+                                    let emailEndPos = emailText.endIndex.predecessor()
                                     emailAddress = emailText[nextPlace!...emailEndPos]
                                 }
                 
-                                addAttendee(invitee.name, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
+                                addAttendee(invitee.name!, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
                             }
                         }
                     }
@@ -1081,19 +1084,19 @@ class myCalendarItem
                 {
                     if myEvent!.hasAttendees
                     {
-                        for invitee in myEvent!.attendees as! [EKParticipant]
+                        for invitee in myEvent!.attendees!
                         {
-                            var emailText: String = "\(invitee.URL)"
-                            var emailStartPos = find(emailText,":")
-                            var nextPlace = emailStartPos?.successor()
+                            let emailText: String = "\(invitee.URL)"
+                            let emailStartPos = emailText.characters.indexOf(":")
+                            let nextPlace = emailStartPos?.successor()
                             var emailAddress: String = ""
                             if nextPlace != nil
                             {
-                                var emailEndPos = emailText.endIndex.predecessor()
+                                let emailEndPos = emailText.endIndex.predecessor()
                                 emailAddress = emailText[nextPlace!...emailEndPos]
                             }
                     
-                            addAttendee(invitee.name, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
+                            addAttendee(invitee.name!, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
                         }
                     }
                 }
@@ -1164,7 +1167,7 @@ class myCalendarItem
     {
         var myString = inTargetString
         
-        if count(inTargetString) > 0
+        if inTargetString.characters.count > 0
         {
             myString += "\n"
         }
@@ -1179,7 +1182,7 @@ class myCalendarItem
     {
         var myExportString: String = ""
         var myLine: String = ""
-        var myDateFormatter = NSDateFormatter()
+        let myDateFormatter = NSDateFormatter()
         myDateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
         
         let myCalendar = NSCalendar.currentCalendar()
@@ -1237,7 +1240,7 @@ class myCalendarItem
             
             for myItem in myItems
             {
-                var startDateFormatter = NSDateFormatter()
+                let startDateFormatter = NSDateFormatter()
                 startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
                 let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
                 
@@ -1544,10 +1547,10 @@ class myCalendarItem
                     myExportString = writeLine(myExportString, inLineString: myLine)
                     
                     myWorkingTime = myCalendar.dateByAddingUnit(
-                        .CalendarUnitMinute,
+                        .Minute,
                         value: 10,
                         toDate: myWorkingTime,
-                        options: nil)!
+                        options: [])!
                 }
             }
             
@@ -1561,10 +1564,10 @@ class myCalendarItem
                 myExportString = writeLine(myExportString, inLineString: myLine)
                 
                 myWorkingTime = myCalendar.dateByAddingUnit(
-                    .CalendarUnitMinute,
+                    .Minute,
                     value: myItem.timeAllocation,
                     toDate: myWorkingTime,
-                    options: nil)!
+                    options: [])!
                 
             }
             
@@ -1583,7 +1586,7 @@ class myCalendarItem
             
             for myItem in myItems
             {
-                var startDateFormatter = NSDateFormatter()
+                let startDateFormatter = NSDateFormatter()
                 startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
                 let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
                 
@@ -1604,7 +1607,7 @@ class myCalendarItem
     {
         var myString = inTargetString
         
-        if count(inTargetString) > 0
+        if inTargetString.characters.count > 0
         {
             myString += "<p>"
         }
@@ -1619,7 +1622,7 @@ class myCalendarItem
         var myExportString: String = ""
         var myLine: String = ""
         var myTaskTable: String = ""
-        var myDateFormatter = NSDateFormatter()
+        let myDateFormatter = NSDateFormatter()
         myDateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
         
         let myCalendar = NSCalendar.currentCalendar()
@@ -1677,7 +1680,7 @@ class myCalendarItem
             
             for myItem in myItems
             {
-                var startDateFormatter = NSDateFormatter()
+                let startDateFormatter = NSDateFormatter()
                 startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
                 let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
                 
@@ -1989,10 +1992,10 @@ class myCalendarItem
                     myTaskTable += "</tr>"
                     
                     myWorkingTime = myCalendar.dateByAddingUnit(
-                        .CalendarUnitMinute,
+                        .Minute,
                         value: 10,
                         toDate: myWorkingTime,
-                        options: nil)!
+                        options: [])!
                 }
             }
             
@@ -2005,10 +2008,10 @@ class myCalendarItem
                 myTaskTable += "</tr>"
                 
                 myWorkingTime = myCalendar.dateByAddingUnit(
-                    .CalendarUnitMinute,
+                    .Minute,
                     value: myItem.timeAllocation,
                     toDate: myWorkingTime,
-                    options: nil)!
+                    options: [])!
                 
             }
             
@@ -2029,7 +2032,7 @@ class myCalendarItem
             
             for myItem in myItems
             {
-                var startDateFormatter = NSDateFormatter()
+                let startDateFormatter = NSDateFormatter()
                 startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
                 let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
                 
@@ -2106,7 +2109,7 @@ class iOSCalendar
         
         // Now sort the array into date order
         
-         eventDetails.sort({$0.startDate.timeIntervalSinceNow < $1.startDate.timeIntervalSinceNow})
+         eventDetails.sortInPlace({$0.startDate.timeIntervalSinceNow < $1.startDate.timeIntervalSinceNow})
     }
     
     func loadCalendarForEvent(inEventID: String, inStartDate: NSDate)
@@ -2126,22 +2129,19 @@ class iOSCalendar
         
         /* Fetch all the events that fall between the starting and the ending dates */
         
-        if eventStore.sources().count > 0
+        if eventStore.sources.count > 0
         {
-            if eventStore.eventsMatchingPredicate(searchPredicate) != nil
-            {
-                let events = eventStore.eventsMatchingPredicate(searchPredicate) as! [EKEvent]
+            let events = eventStore.eventsMatchingPredicate(searchPredicate)
             
-                for event in events
+            for event in events
+            {
+                if event.eventIdentifier == inEventID
                 {
-                    if event.eventIdentifier == inEventID
-                    {
-                        eventRecords.append(event)
-                        let calendarEntry = myCalendarItem(inEventStore: eventStore, inEvent: event, inAttendee: nil)
+                    eventRecords.append(event)
+                    let calendarEntry = myCalendarItem(inEventStore: eventStore, inEvent: event, inAttendee: nil)
                     
-                        eventDetails.append(calendarEntry)
-                        eventRecords.append(event)
-                    }
+                    eventDetails.append(calendarEntry)
+                    eventRecords.append(event)
                 }
             }
         }
@@ -2155,7 +2155,7 @@ class iOSCalendar
         
         // now sort the array into date order
         
-        eventDetails.sort({$0.startDate.timeIntervalSinceNow < $1.startDate.timeIntervalSinceNow})
+        eventDetails.sortInPlace({$0.startDate.timeIntervalSinceNow < $1.startDate.timeIntervalSinceNow})
     }
 
     private func loadMeetingsForContext(inSearchString: String)
@@ -2262,17 +2262,17 @@ class iOSCalendar
             {
                 if event.attendees != nil
                 {
-                    if event.attendees.count > 0
+                    if event.attendees!.count > 0
                     {
-                        for attendee in event.attendees as! [EKParticipant]
+                        for attendee in event.attendees!
                         {
-                            var emailText: String = "\(attendee.URL)"
-                            var emailStartPos = find(emailText,":")
-                            var nextPlace = emailStartPos?.successor()
+                            let emailText: String = "\(attendee.URL)"
+                            let emailStartPos = emailText.characters.indexOf(":")
+                            let nextPlace = emailStartPos?.successor()
                             var emailAddress: String = ""
                             if nextPlace != nil
                             {
-                                var emailEndPos = emailText.endIndex.predecessor()
+                                let emailEndPos = emailText.endIndex.predecessor()
                                 emailAddress = emailText[nextPlace!...emailEndPos]
                             }
                                     
@@ -2296,7 +2296,7 @@ class iOSCalendar
             // Go through all the events and print them to the console
             for event in events
             {
-                var myTitle = event.title
+                let myTitle = event.title
                         
                 if myTitle.lowercaseString.rangeOfString(inProject.lowercaseString) != nil
                 {
@@ -2340,20 +2340,15 @@ class iOSCalendar
         
         /* Fetch all the events that fall between the starting and the ending dates */
         
-        if eventStore.sources().count > 0
+        if eventStore.sources.count > 0
         {
-            if eventStore.eventsMatchingPredicate(searchPredicate) != nil
-            {
-                events = eventStore.eventsMatchingPredicate(searchPredicate) as! [EKEvent]
-            }
+            events = eventStore.eventsMatchingPredicate(searchPredicate)
         }
         return events
     }
 
     private func getMeetingsForDateRange() -> [MeetingAgenda]
     {
-        var meetings: [MeetingAgenda] = Array()
-        
         let baseDate = NSDate()
         
         /* The event starts date */
@@ -2377,7 +2372,7 @@ class iOSCalendar
         let endDate = baseDate.dateByAddingTimeInterval(myEndDateValue)
         
         /* Create the predicate that we can later pass to the event store in order to fetch the events */
-        let searchPredicate = eventStore.predicateForEventsWithStartDate(
+        _ = eventStore.predicateForEventsWithStartDate(
             startDate,
             endDate: endDate,
             calendars: nil)
@@ -2424,11 +2419,11 @@ class iOSCalendar
             if event.startDate.compare(NSDate()) == NSComparisonResult.OrderedAscending
             {
                 // Event is in the past
-                writeRowToArray(myString, &tableContents, inDisplayFormat: "Gray")
+                writeRowToArray(myString, inTable: &tableContents, inDisplayFormat: "Gray")
             }
             else
             {
-                writeRowToArray(myString, &tableContents)
+                writeRowToArray(myString, inTable: &tableContents)
             }
         }
         return tableContents
@@ -2517,10 +2512,10 @@ class iOSReminder
     init()
     {
         reminderStore = EKEventStore()
-        reminderStore.requestAccessToEntityType(EKEntityTypeReminder,
-            completion: {(granted: Bool, error:NSError!) in
+        reminderStore.requestAccessToEntityType(EKEntityType.Reminder,
+            completion: {(granted: Bool, error:NSError?) in
                 if !granted {
-                    println("Access to reminder store not granted")
+                    print("Access to reminder store not granted")
                 }
         })
     }
@@ -2535,7 +2530,7 @@ class iOSReminder
     
     func parseReminderDetails (inSearch: String)
     {
-        var cals = reminderStore.calendarsForEntityType(EKEntityTypeReminder) as! [EKCalendar]
+        let cals = reminderStore.calendarsForEntityType(EKEntityType.Reminder)
         var myCalFound = false
     
         for cal in cals
@@ -2549,23 +2544,23 @@ class iOSReminder
     
         if myCalFound
         {
-            var predicate = reminderStore.predicateForIncompleteRemindersWithDueDateStarting(nil, ending: nil, calendars: [targetReminderCal])
+            let predicate = reminderStore.predicateForIncompleteRemindersWithDueDateStarting(nil, ending: nil, calendars: [targetReminderCal])
 
             var asyncDone = false
         
             reminderStore.fetchRemindersMatchingPredicate(predicate, completion: {reminders in
-                for reminder in reminders
+                for reminder in reminders!
                 {
-                    var workingString: ReminderData = ReminderData(reminderText: reminder.title!!, reminderCalendar: reminder.calendar)
+                    let workingString: ReminderData = ReminderData(reminderText: reminder.title, reminderCalendar: reminder.calendar)
  
-                    if reminder.notes! != nil
+                    if reminder.notes != nil
                     {
                         workingString.notes = reminder.notes!
                     }
                     workingString.priority = reminder.priority
                     workingString.calendarItemIdentifier = reminder.calendarItemIdentifier
                     self.reminderDetails.append(workingString)
-                    self.reminderRecords.append(reminder as! EKReminder)
+                    self.reminderRecords.append(reminder)
                 }
                 asyncDone = true
             })
@@ -2587,21 +2582,21 @@ class iOSReminder
         
         if reminderDetails.count == 0
         {
-            writeRowToArray("No reminders list found", &tableContents)
+            writeRowToArray("No reminders list found", inTable: &tableContents)
         }
         else
         {
             for myReminder in reminderDetails
             {
-                var myString = "\(myReminder.reminderText)"
+                let myString = "\(myReminder.reminderText)"
                 
                 switch myReminder.priority
                 {
-                    case 1: writeRowToArray(myString, &tableContents, inDisplayFormat: "Red")  //  High priority
+                    case 1: writeRowToArray(myString, inTable: &tableContents, inDisplayFormat: "Red")  //  High priority
                     
-                    case 5: writeRowToArray(myString , &tableContents, inDisplayFormat: "Orange") // Medium priority
+                    case 5: writeRowToArray(myString , inTable: &tableContents, inDisplayFormat: "Orange") // Medium priority
                     
-                    default: writeRowToArray(myString , &tableContents)
+                    default: writeRowToArray(myString , inTable: &tableContents)
                 }
             }
    

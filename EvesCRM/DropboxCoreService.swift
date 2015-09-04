@@ -61,7 +61,7 @@ Note that a DBSession can be linked with more than one Dropbox, for example you 
     {
         var retVal: Bool = false
         
-        let account = DBSession.sharedSession().handleOpenURL(url)
+        _ = DBSession.sharedSession().handleOpenURL(url)
         
         if DBSession.sharedSession().isLinked()
         {
@@ -108,7 +108,7 @@ Note that a DBSession can be linked with more than one Dropbox, for example you 
             dbRestClient!.delegate = self
         }
         
-        let testFile = "\(toPath)/\(inFile)"
+        _ = "\(toPath)/\(inFile)"
         
         
         // This is to insert a new file

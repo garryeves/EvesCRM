@@ -98,7 +98,7 @@ class iOSContact
         addToContactDetailTable ("Birthday", rowType: kABPersonBirthdayProperty)
         addToContactDetailTable ("Nickname", rowType: kABPersonNicknameProperty)
         
-        myFullName = (ABRecordCopyCompositeName(myContactRecord).takeRetainedValue() as? String) ?? ""
+        myFullName = (ABRecordCopyCompositeName(myContactRecord).takeRetainedValue() as String) ?? ""
     }
 
     private func addToContactDetailTable (rowDescription: String, rowType: ABPropertyID)
@@ -136,7 +136,7 @@ class iOSContact
                         line4 = decode[kABPersonAddressZIPKey as String] as! String
                     }
                     
-                    writeRowToArray("Address : \(line1)\n\(line2)\n\(line3)\n\(line4)", &tableContents)
+                    writeRowToArray("Address : \(line1)\n\(line2)\n\(line3)\n\(line4)", inTable: &tableContents)
                 }
             }
             
@@ -145,9 +145,7 @@ class iOSContact
             
             if ABMultiValueGetCount(decodeProperty) > 0
             {
-                let decode: NSDate = ABMultiValueCopyValueAtIndex(decodeProperty,0).takeRetainedValue() as! NSDate
                 let recordCount = ABMultiValueGetCount(decodeProperty)
-                
                 
                 if recordCount > 0
                 {
@@ -155,22 +153,22 @@ class iOSContact
                     {
                         let initialDate: NSDate = ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! NSDate
                         
-                        var dateFormatter = NSDateFormatter()
+                        let dateFormatter = NSDateFormatter()
                         
-                        var dateFormat = NSDateFormatterStyle.ShortStyle
+                        let dateFormat = NSDateFormatterStyle.ShortStyle
                         
                         dateFormatter.dateStyle = dateFormat
                         
-                        var dateString = dateFormatter.stringFromDate(initialDate)
+                        let dateString = dateFormatter.stringFromDate(initialDate)
                         
                         switch loopCount
                         {
                         case 0:
                             
-                            writeRowToArray("Anniversary = " + dateString, &tableContents)
+                            writeRowToArray("Anniversary = " + dateString, inTable: &tableContents)
                             
                         default:  // Do nothing
-                            writeRowToArray("Unknown date = " + dateString, &tableContents)
+                            writeRowToArray("Unknown date = " + dateString, inTable: &tableContents)
                         }
                     }
                 }
@@ -238,7 +236,7 @@ class iOSContact
                 
                 myString += ABMultiValueCopyValueAtIndex(phonesNums, index).takeRetainedValue() as! String
                 
-                writeRowToArray(myString, &tableContents)
+                writeRowToArray(myString, inTable: &tableContents)
             }
             
         case kABPersonEmailProperty:
@@ -285,7 +283,7 @@ class iOSContact
                     
                     myEmailAddresses.append(ABMultiValueCopyValueAtIndex(emailAddrs, loopCount).takeRetainedValue() as! String)
                     
-                    writeRowToArray(myString, &tableContents)
+                    writeRowToArray(myString, inTable: &tableContents)
                 }
             }
             
@@ -305,52 +303,52 @@ class iOSContact
                     if decode[kABPersonInstantMessageServiceYahoo as String]?.length > 0
                     {
                         strHolder = decode[kABPersonInstantMessageServiceYahoo as String]! as! String
-                        writeRowToArray("Yahoo : " + strHolder, &tableContents)
+                        writeRowToArray("Yahoo : " + strHolder, inTable: &tableContents)
                     }
                     if decode[kABPersonInstantMessageServiceJabber as String]?.length > 0
                     {
                         strHolder = decode[kABPersonInstantMessageServiceJabber as  String]! as! String
-                        writeRowToArray("Jabber : " + strHolder, &tableContents )
+                        writeRowToArray("Jabber : " + strHolder, inTable: &tableContents )
                     }
                     if decode[kABPersonInstantMessageServiceMSN as String]?.length > 0
                     {
                         strHolder = decode[kABPersonInstantMessageServiceMSN as String]! as! String
-                        writeRowToArray("MSN : " + strHolder, &tableContents)
+                        writeRowToArray("MSN : " + strHolder, inTable: &tableContents)
                     }
                     if decode[kABPersonInstantMessageServiceICQ as String]?.length > 0
                     {
                         strHolder = decode[kABPersonInstantMessageServiceICQ as String]! as! String
-                        writeRowToArray("ICQ : " + strHolder, &tableContents)
+                        writeRowToArray("ICQ : " + strHolder, inTable: &tableContents)
                     }
                     if decode[kABPersonInstantMessageServiceAIM as String]?.length > 0
                     {
                         strHolder = decode[kABPersonInstantMessageServiceAIM as String]! as! String
-                        writeRowToArray("AIM : " + strHolder, &tableContents)
+                        writeRowToArray("AIM : " + strHolder, inTable: &tableContents)
                     }
                     if decode[kABPersonInstantMessageServiceQQ as String]?.length > 0
                     {
                         strHolder = decode[kABPersonInstantMessageServiceQQ as String]! as! String
-                        writeRowToArray("QQ : " + strHolder, &tableContents)
+                        writeRowToArray("QQ : " + strHolder, inTable: &tableContents)
                     }
                     if decode[kABPersonInstantMessageServiceGoogleTalk as String]?.length > 0
                     {
                         strHolder = decode[kABPersonInstantMessageServiceGoogleTalk as String]! as! String
-                        writeRowToArray("Google Talk : " + strHolder, &tableContents)
+                        writeRowToArray("Google Talk : " + strHolder, inTable: &tableContents)
                     }
                     if decode[kABPersonInstantMessageServiceSkype as String]?.length > 0
                     {
                         strHolder = decode[kABPersonInstantMessageServiceSkype as String]! as! String
-                        writeRowToArray("Skype : " + strHolder, &tableContents)
+                        writeRowToArray("Skype : " + strHolder, inTable: &tableContents)
                     }
                     if decode[kABPersonInstantMessageServiceFacebook as String]?.length > 0
                     {
                         strHolder = decode[kABPersonInstantMessageServiceFacebook as String]! as! String
-                        writeRowToArray("Facebook IM : " + strHolder, &tableContents )
+                        writeRowToArray("Facebook IM : " + strHolder, inTable: &tableContents )
                     }
                     if decode[kABPersonInstantMessageServiceGaduGadu as String]?.length > 0
                     {
                         strHolder = decode[kABPersonInstantMessageServiceGaduGadu as String]! as! String
-                        writeRowToArray("GaduGadu : " + strHolder, &tableContents)
+                        writeRowToArray("GaduGadu : " + strHolder, inTable: &tableContents)
                     }
                 }
             }
@@ -431,7 +429,7 @@ class iOSContact
                         strHolder = myDecode[kABPersonSocialProfileURLKey as String]! as! String
                     }
 
-                    writeRowToArray(tempStr + strHolder, &tableContents)
+                    writeRowToArray(tempStr + strHolder, inTable: &tableContents)
                 }
                 
                 loopcount++
@@ -449,11 +447,11 @@ class iOSContact
                 {
                     switch loopCount
                     {
-                    case 0: writeRowToArray("Home Page = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String), &tableContents)
+                    case 0: writeRowToArray("Home Page = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String), inTable: &tableContents)
                         
                         
                     default:  // Do nothing
-                        writeRowToArray("Unknown home page = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String), &tableContents)
+                        writeRowToArray("Unknown home page = " + (ABMultiValueCopyValueAtIndex(decodeProperty,loopCount).takeRetainedValue() as! String), inTable: &tableContents)
                     }
                 }
             }
@@ -470,15 +468,15 @@ class iOSContact
                 
                 let initialDate: NSDate = decodeProperty as NSDate
                 
-                var dateFormatter = NSDateFormatter()
+                let dateFormatter = NSDateFormatter()
                 
-                var dateFormat = NSDateFormatterStyle.ShortStyle
+                let dateFormat = NSDateFormatterStyle.ShortStyle
                 
                 dateFormatter.dateStyle = dateFormat
                 
-                var dateString = dateFormatter.stringFromDate(initialDate)
+                let dateString = dateFormatter.stringFromDate(initialDate)
                 
-                writeRowToArray("Birthday = " + dateString, &tableContents)
+                writeRowToArray("Birthday = " + dateString, inTable: &tableContents)
             }
             
         case kABPersonFirstNameProperty:
@@ -527,7 +525,7 @@ class iOSContact
                 fullname += suffix.takeRetainedValue() as! String
             }
             
-            writeRowToArray(rowDescription + ": " + fullname, &tableContents)
+            writeRowToArray(rowDescription + ": " + fullname, inTable: &tableContents)
             
             
         default:        if  ABRecordCopyValue(contactRecord, rowType) == nil
@@ -541,7 +539,7 @@ class iOSContact
             
             let fn = (firstName.takeRetainedValue() as? String) ?? ""
             
-            writeRowToArray(rowDescription + ": " + fn, &tableContents)
+            writeRowToArray(rowDescription + ": " + fn, inTable: &tableContents)
             
             }
         }
@@ -558,12 +556,12 @@ func findPersonRecord(inName: String) -> ABRecord!
     //  there may be a better way to do this, but it works.
     var person: ABRecord!
 
-    var contactList: NSArray = ABAddressBookCopyArrayOfAllPeople(adbk).takeRetainedValue()
+    let contactList: NSArray = ABAddressBookCopyArrayOfAllPeople(adbk).takeRetainedValue()
     
     for record:ABRecordRef in contactList
     {
-        var contactPerson: ABRecordRef = record
-        var contactName: String = ABRecordCopyCompositeName(contactPerson).takeRetainedValue() as String
+        let contactPerson: ABRecordRef = record
+        let contactName: String = ABRecordCopyCompositeName(contactPerson).takeRetainedValue() as String
 
         if contactName == inName
         {
@@ -581,12 +579,11 @@ func findPersonbyEmail(inEmail: String) -> ABRecord!
     //  there may be a better way to do this, but it works.
     var person: ABRecord!
     var recordFound: Bool = false
-    var contactList: NSArray = ABAddressBookCopyArrayOfAllPeople(adbk).takeRetainedValue()
+    let contactList: NSArray = ABAddressBookCopyArrayOfAllPeople(adbk).takeRetainedValue()
     
     for record:ABRecordRef in contactList
     {
-        var contactPerson: ABRecordRef = record
-        var contactName: String = ABRecordCopyCompositeName(contactPerson).takeRetainedValue() as String
+        let contactPerson: ABRecordRef = record
         
         let decodeProperty = ABRecordCopyValue(contactPerson, kABPersonEmailProperty)
         let emailAddrs: ABMultiValueRef = Unmanaged.fromOpaque(decodeProperty.toOpaque()).takeUnretainedValue() as NSObject as ABMultiValueRef

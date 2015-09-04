@@ -15,7 +15,7 @@ protocol MyTaskDelegate
     func myTaskUpdateDidFinish(controller:taskUpdatesViewController, actionType: String, currentTask: task)
 }
 
-class taskViewController: UIViewController,  UITextViewDelegate
+class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegate
 {
     private var passedTask: TaskModel!
     
@@ -92,10 +92,10 @@ class taskViewController: UIViewController,  UITextViewDelegate
 
         toolbar.translucent = false
         
-        var spacer = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace,
+        let spacer = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace,
             target: self, action: nil)
         
-        var share = UIBarButtonItem(barButtonSystemItem: .Action, target: self, action: "share:")
+        let share = UIBarButtonItem(barButtonSystemItem: .Action, target: self, action: "share:")
         
         self.toolbar.items=[spacer, share]
         
@@ -333,7 +333,7 @@ class taskViewController: UIViewController,  UITextViewDelegate
     {
         if txtTaskTitle.text == ""
         {
-            var alert = UIAlertController(title: "Add Task", message:
+            let alert = UIAlertController(title: "Add Task", message:
                 "You must provide a description for the Task before you can add a Context to it", preferredStyle: UIAlertControllerStyle.Alert)
             alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
             
@@ -418,7 +418,7 @@ class taskViewController: UIViewController,  UITextViewDelegate
     
     @IBAction func btnSetTargetDate(sender: UIButton)
     {
-        var dateFormatter = NSDateFormatter()
+        let dateFormatter = NSDateFormatter()
         dateFormatter.dateFormat = "dd MMM yyyy"
         
         if pickerTarget == "TargetDate"
@@ -507,11 +507,9 @@ class taskViewController: UIViewController,  UITextViewDelegate
     
     @IBAction func btnNewContext(sender: UIButton)
     {
-        var matchFound: Bool = false
-        
         if txtNewContext.text == ""
         {
-            var alert = UIAlertController(title: "Add Context", message:
+            let alert = UIAlertController(title: "Add Context", message:
                 "You must provide a description for the Context before you can Add it", preferredStyle: UIAlertControllerStyle.Alert)
             alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
             
@@ -545,7 +543,7 @@ class taskViewController: UIViewController,  UITextViewDelegate
             }
 */
             
-            let myNewContext = context(inContextName: txtNewContext.text)
+            let myNewContext = context(inContextName: txtNewContext.text!)
             
             setContext(myNewContext.contextID)
             lblNewContext.hidden = true
@@ -602,13 +600,13 @@ class taskViewController: UIViewController,  UITextViewDelegate
     {
         if txtTaskTitle.text != ""
         {
-            passedTask.currentTask.title = txtTaskTitle.text
+            passedTask.currentTask.title = txtTaskTitle.text!
         }
     }
     
     @IBAction func txtEstTime(sender: UITextField)
     {
-        passedTask.currentTask.estimatedTime = txtEstTime.text.toInt()!
+        passedTask.currentTask.estimatedTime = Int(txtEstTime.text!)!
     }
     
     @IBAction func btnSelect(sender: UIButton)
@@ -802,7 +800,8 @@ class taskViewController: UIViewController,  UITextViewDelegate
     {
         // Build up the details we want to share
         
-        var sharingActivityProvider: SharingActivityProvider = SharingActivityProvider()
+        let inString: String = ""
+        let sharingActivityProvider: SharingActivityProvider = SharingActivityProvider(placeholderItem: inString)
         
         let myTmp1 = passedTask.currentTask.buildShareHTMLString().stringByReplacingOccurrencesOfString("\n", withString: "<p>")
         sharingActivityProvider.HTMLString = myTmp1
@@ -810,9 +809,9 @@ class taskViewController: UIViewController,  UITextViewDelegate
         
         sharingActivityProvider.messageSubject = "Task: \(passedTask.currentTask.title)"
         
-        var activityItems : Array = [sharingActivityProvider];
+        let activityItems : Array = [sharingActivityProvider];
         
-        var activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+        let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
         
         // you can specify these if you'd like.
         activityViewController.excludedActivityTypes =  [
@@ -856,7 +855,7 @@ class taskViewController: UIViewController,  UITextViewDelegate
                     permittedArrowDirections:.Any,
                     animated:true)
             } else {
-                var b = sender as! UIButton
+                let b = sender as! UIButton
                 self.activityPopover.presentPopoverFromRect(b.frame,
                     inView: self.view,
                     permittedArrowDirections:.Any,
@@ -937,7 +936,7 @@ class taskViewController: UIViewController,  UITextViewDelegate
         // to activate.
         // It especially needs to save the contents of the textview/textfield!
         
-        passedTask.currentTask.title = txtTaskTitle.text
+        passedTask.currentTask.title = txtTaskTitle.text!
         passedTask.currentTask.details = txtTaskDescription.text
         
         return true
@@ -969,37 +968,39 @@ class taskViewController: UIViewController,  UITextViewDelegate
     * expect the identified text object to become the first responder.
     */
     
-    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: Int) -> AnyObject
+    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>) -> AnyObject
     {
         snippetExpanded = true
+        
+        let intIoInsertionPointLocation:Int = ioInsertionPointLocation.memory // grab the data and cast it to a Swift Int8
         
         if "txtTaskDescription" == textIdentifier
         {
             txtTaskDescription.becomeFirstResponder()
-            let theLoc = txtTaskDescription.positionFromPosition(txtTaskDescription.beginningOfDocument, offset: ioInsertionPointLocation)
+            let theLoc = txtTaskDescription.positionFromPosition(txtTaskDescription.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtTaskDescription.selectedTextRange = txtTaskDescription.textRangeFromPosition(theLoc, toPosition: theLoc)
+                txtTaskDescription.selectedTextRange = txtTaskDescription.textRangeFromPosition(theLoc!, toPosition: theLoc!)
             }
             return txtTaskDescription
         }
         else if "txtTaskTitle" == textIdentifier
         {
             txtTaskTitle.becomeFirstResponder()
-            let theLoc = txtTaskTitle.positionFromPosition(txtTaskTitle.beginningOfDocument, offset: ioInsertionPointLocation)
+            let theLoc = txtTaskTitle.positionFromPosition(txtTaskTitle.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtTaskTitle.selectedTextRange = txtTaskTitle.textRangeFromPosition(theLoc, toPosition: theLoc)
+                txtTaskTitle.selectedTextRange = txtTaskTitle.textRangeFromPosition(theLoc!, toPosition: theLoc!)
             }
             return txtTaskTitle
         }
         else if "txtNewContext" == textIdentifier
         {
             txtNewContext.becomeFirstResponder()
-            let theLoc = txtNewContext.positionFromPosition(txtNewContext.beginningOfDocument, offset: ioInsertionPointLocation)
+            let theLoc = txtNewContext.positionFromPosition(txtNewContext.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtNewContext.selectedTextRange = txtNewContext.textRangeFromPosition(theLoc, toPosition: theLoc)
+                txtNewContext.selectedTextRange = txtNewContext.textRangeFromPosition(theLoc!, toPosition: theLoc!)
             }
             return txtNewContext
         }

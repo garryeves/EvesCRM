@@ -200,7 +200,7 @@ class taskListViewController: UIViewController, MyTaskDelegate, UITextViewDelega
         var headerView:UICollectionReusableView!
         if kind == UICollectionElementKindSectionHeader
         {
-            headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: "taskItemHeader", forIndexPath: indexPath) as! UICollectionReusableView
+            headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: "taskItemHeader", forIndexPath: indexPath) 
         }
         
         return headerView
@@ -210,7 +210,7 @@ class taskListViewController: UIViewController, MyTaskDelegate, UITextViewDelega
     {
         let taskViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("taskTab") as! tasksTabViewController
         
-        var myPassedTask = TaskModel()
+        let myPassedTask = TaskModel()
         if myTaskListType == "Meeting"
         {
             myPassedTask.taskType = "minutes"

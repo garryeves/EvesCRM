@@ -16,7 +16,7 @@ protocol MyMeetingsDelegate
 
 }
 
-class meetingsViewController: UIViewController, MyMeetingsDelegate
+class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDelegate
 {
     private var passedMeeting: MeetingModel!
     
@@ -82,15 +82,15 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
         
         toolbar.translucent = false
         
-        var spacer = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace,
+        let spacer = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace,
             target: self, action: nil)
         
-        var share = UIBarButtonItem(barButtonSystemItem: .Action, target: self, action: "share:")
+        let share = UIBarButtonItem(barButtonSystemItem: .Action, target: self, action: "share:")
         
-        var pageHead = UIBarButtonItem(title: passedMeeting.actionType, style: UIBarButtonItemStyle.Plain, target: self, action: "doNothing")
+        let pageHead = UIBarButtonItem(title: passedMeeting.actionType, style: UIBarButtonItemStyle.Plain, target: self, action: "doNothing")
         pageHead.tintColor = UIColor.blackColor()
         
-        var spacer2 = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace,
+        let spacer2 = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace,
             target: self, action: nil)
         self.toolbar.items=[spacer,pageHead, spacer2, share]
         
@@ -120,7 +120,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
            
             for myItem in myItems
             {
-                var startDateFormatter = NSDateFormatter()
+                let startDateFormatter = NSDateFormatter()
                 startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
                 let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
             
@@ -138,7 +138,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
             
             for myItem in myItems
             {
-                var startDateFormatter = NSDateFormatter()
+                let startDateFormatter = NSDateFormatter()
                 startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
                 let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
                 
@@ -280,7 +280,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
         var headerView:UICollectionReusableView!
         if kind == UICollectionElementKindSectionHeader
         {
-            headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: "attendeeHeader", forIndexPath: indexPath) as! UICollectionReusableView
+            headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: "attendeeHeader", forIndexPath: indexPath) 
         }
         
         return headerView
@@ -325,7 +325,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
     {
         if txtAttendeeName.text == ""
         {
-            var alert = UIAlertController(title: "Agenda", message:
+            let alert = UIAlertController(title: "Agenda", message:
                 "You need to enter the name of the attendee", preferredStyle: UIAlertControllerStyle.Alert)
             
             self.presentViewController(alert, animated: false, completion: nil)
@@ -334,7 +334,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
         }
         else
         {
-            passedMeeting.event.addAttendee(txtAttendeeName.text, inEmailAddress: txtAttendeeEmail.text, inType: "Participant" , inStatus: "Added")
+            passedMeeting.event.addAttendee(txtAttendeeName.text!, inEmailAddress: txtAttendeeEmail.text!, inType: "Participant" , inStatus: "Added")
             colAttendees.reloadData()
         
             txtAttendeeName.text = ""
@@ -378,13 +378,13 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
                 { // Existing meeting found
                     for myItem in myItems
                     {
-                        var startDateFormatter = NSDateFormatter()
+                        let startDateFormatter = NSDateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
                         let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
                     
                         let calendarOption: UIAlertController = UIAlertController(title: "Existing meeting found", message: "A meeting \(myItem.name) - \(myDisplayDate) has this set as previous meeting.  Do you want to continue, which will clear the previous meeting from the original meeting?  ", preferredStyle: .ActionSheet)
                     
-                        let myYes = UIAlertAction(title: "Yes, update the details", style: .Default, handler: { (action: UIAlertAction!) -> () in
+                        let myYes = UIAlertAction(title: "Yes, update the details", style: .Default, handler: { (action: UIAlertAction) -> () in
                             // go and update the previous meeting
                         
                             myDatabaseConnection.updatePreviousAgendaID("", inMeetingID: myItem.meetingID, inTeamID: myTeamID)
@@ -399,7 +399,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
                             
                                 for myDisplayItem in myDisplayItems
                                 {
-                                    var startDateFormatter = NSDateFormatter()
+                                    let startDateFormatter = NSDateFormatter()
                                     startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
                                     let myDisplayDate = startDateFormatter.stringFromDate(myDisplayItem.startTime)
                                 
@@ -411,7 +411,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
                             }
                         })
                     
-                        let myNo = UIAlertAction(title: "No, leave the existing details", style: .Default, handler: { (action: UIAlertAction!) -> () in
+                        let myNo = UIAlertAction(title: "No, leave the existing details", style: .Default, handler: { (action: UIAlertAction) -> () in
                             // do nothing
                         })
                     
@@ -436,7 +436,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
                     
                         for myDisplayItem in myDisplayItems
                         {
-                            var startDateFormatter = NSDateFormatter()
+                            let startDateFormatter = NSDateFormatter()
                             startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
                             let myDisplayDate = startDateFormatter.stringFromDate(myDisplayItem.startTime)
                         
@@ -463,13 +463,13 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
                     {
                         if myItem.previousMeetingID != ""
                         {
-                            var startDateFormatter = NSDateFormatter()
+                            let startDateFormatter = NSDateFormatter()
                             startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
                             let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
                         
                             let calendarOption: UIAlertController = UIAlertController(title: "Existing meeting found", message: "A meeting \(myItem.name) - \(myDisplayDate) has this set as next meeting.  Do you want to continue, which will clear the next meeting from the original meeting?  ", preferredStyle: .ActionSheet)
                         
-                            let myYes = UIAlertAction(title: "Yes, update the details", style: .Default, handler: { (action: UIAlertAction!) -> () in
+                            let myYes = UIAlertAction(title: "Yes, update the details", style: .Default, handler: { (action: UIAlertAction) -> () in
                             // go and update the previous meeting
                             
                                 let myOriginalNextMeeting = self.passedMeeting.event.nextMeeting
@@ -503,7 +503,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
                                     
                                     for myItem in myItems
                                     {
-                                        var startDateFormatter = NSDateFormatter()
+                                        let startDateFormatter = NSDateFormatter()
                                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
                                         let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
                                     
@@ -521,7 +521,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
                                 }
                             })
                         
-                            let myNo = UIAlertAction(title: "No, leave the existing details", style: .Default, handler: { (action: UIAlertAction!) -> () in
+                            let myNo = UIAlertAction(title: "No, leave the existing details", style: .Default, handler: { (action: UIAlertAction) -> () in
                                 // do nothing
                             })
                         
@@ -566,7 +566,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
                             
                                 for myItem in myItems
                                 {
-                                    var startDateFormatter = NSDateFormatter()
+                                    let startDateFormatter = NSDateFormatter()
                                     startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
                                     let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
                                 
@@ -616,7 +616,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
                     
                         for myItem in myItems
                         {
-                            var startDateFormatter = NSDateFormatter()
+                            let startDateFormatter = NSDateFormatter()
                             startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
                             let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
                         
@@ -642,14 +642,14 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
     {
         let meetingViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("MeetingsTab") as! meetingTabViewController
         
-        var targetPassedMeeting = MeetingModel()
+        let targetPassedMeeting = MeetingModel()
         targetPassedMeeting.actionType = passedMeeting.actionType
         
         let myItems = myDatabaseConnection.loadAgenda(passedMeeting.event.previousMinutes, inTeamID: myTeamID)
         
         if myItems.count == 0
         {
-            var alert = UIAlertController(title: "Meeting", message:
+            let alert = UIAlertController(title: "Meeting", message:
                 "Can not retrieve details for previous meeting", preferredStyle: UIAlertControllerStyle.Alert)
             
             self.presentViewController(alert, animated: false, completion: nil)
@@ -658,7 +658,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
         }
         else
         {
-            for myItem in myItems
+            for _ in myItems
             {
                 let tempMeeting = myCalendarItem(inEventStore: eventStore, inMeetingID: passedMeeting.event.previousMinutes)
                 tempMeeting.loadAgenda()
@@ -676,14 +676,14 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
     {
         let meetingViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("MeetingsTab") as! meetingTabViewController
         
-        var targetPassedMeeting = MeetingModel()
+        let targetPassedMeeting = MeetingModel()
         targetPassedMeeting.actionType = passedMeeting.actionType
  
         let myItems = myDatabaseConnection.loadAgenda(passedMeeting.event.nextMeeting, inTeamID: myTeamID)
         
         if myItems.count == 0
         {
-            var alert = UIAlertController(title: "Meeting", message:
+            let alert = UIAlertController(title: "Meeting", message:
                 "Can not retrieve details for next meeting", preferredStyle: UIAlertControllerStyle.Alert)
             
             self.presentViewController(alert, animated: false, completion: nil)
@@ -692,7 +692,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
         }
         else
         {
-            for myItem in myItems
+            for _ in myItems
             {
                 let tempMeeting = myCalendarItem(inEventStore: eventStore, inMeetingID: passedMeeting.event.nextMeeting)
                 tempMeeting.loadAgenda()
@@ -809,7 +809,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
                 {
                     if myItem.meetingID != passedMeeting.event.event!.eventIdentifier
                     { // Not this meeting meeting
-                        var startDateFormatter = NSDateFormatter()
+                        let startDateFormatter = NSDateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
                         let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
                         
@@ -830,7 +830,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
                 {
                     if myItem.meetingID != passedMeeting.event.event!.eventIdentifier
                     { // Not this meeting meeting
-                        var startDateFormatter = NSDateFormatter()
+                        let startDateFormatter = NSDateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
                         let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
                         
@@ -857,7 +857,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
                 {
                     if myItem.meetingID != passedMeeting.event.event!.eventIdentifier
                     { // Not this meeting meeting
-                        var startDateFormatter = NSDateFormatter()
+                        let startDateFormatter = NSDateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
                         let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
                         
@@ -907,12 +907,9 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
         
         /* Fetch all the events that fall between the starting and the ending dates */
         
-        if eventStore.sources().count > 0
+        if eventStore.sources.count > 0
         {
-            if eventStore.eventsMatchingPredicate(searchPredicate) != nil
-            {
-                events = eventStore.eventsMatchingPredicate(searchPredicate) as! [EKEvent]
-            }
+            events = eventStore.eventsMatchingPredicate(searchPredicate)
         }
         
         if events.count >  0
@@ -922,9 +919,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
             {
                 if passedMeeting.event.eventID != event.eventIdentifier
                 {
-                    var myDisplayString = event.title
-                
-                    var startDateFormatter = NSDateFormatter()
+                    let startDateFormatter = NSDateFormatter()
                     startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
                     let myDisplayDate = startDateFormatter.stringFromDate(event.startDate)
                 
@@ -960,7 +955,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
                 {
                     if myItem.meetingID != passedMeeting.event.event!.eventIdentifier
                     { // Not this meeting meeting
-                        var startDateFormatter = NSDateFormatter()
+                        let startDateFormatter = NSDateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
                         let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
                         
@@ -986,8 +981,8 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
     func createActivityController() -> UIActivityViewController
     {
         // Build up the details we want to share
-
-        var sharingActivityProvider: SharingActivityProvider = SharingActivityProvider();
+        let inString: String = ""
+        let sharingActivityProvider: SharingActivityProvider = SharingActivityProvider(placeholderItem: inString)
         
         let myTmp1 = passedMeeting.event.buildShareHTMLString().stringByReplacingOccurrencesOfString("\n", withString: "<p>")
         sharingActivityProvider.HTMLString = myTmp1
@@ -1002,9 +997,9 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
             sharingActivityProvider.messageSubject = "Agenda for meeting: \(passedMeeting.event.title)"
         }
         
-        var activityItems : Array = [sharingActivityProvider];
+        let activityItems : Array = [sharingActivityProvider];
         
-        var activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+        let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
         
             // you can specify these if you'd like.
         activityViewController.excludedActivityTypes =  [
@@ -1048,7 +1043,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
                     permittedArrowDirections:.Any,
                     animated:true)
             } else {
-                var b = sender as! UIButton
+                let b = sender as! UIButton
                 self.activityPopover.presentPopoverFromRect(b.frame,
                     inView: self.view,
                     permittedArrowDirections:.Any,
@@ -1167,27 +1162,29 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate
     * expect the identified text object to become the first responder.
     */
     
-    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: Int) -> AnyObject
+    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>) -> AnyObject
     {
         snippetExpanded = true   
+        
+        let intIoInsertionPointLocation:Int = ioInsertionPointLocation.memory
         
         if "txtAttendeeName" == textIdentifier
         {
             txtAttendeeName.becomeFirstResponder()
-            let theLoc = txtAttendeeName.positionFromPosition(txtAttendeeName.beginningOfDocument, offset: ioInsertionPointLocation)
+            let theLoc = txtAttendeeName.positionFromPosition(txtAttendeeName.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtAttendeeName.selectedTextRange = txtAttendeeName.textRangeFromPosition(theLoc, toPosition: theLoc)
+                txtAttendeeName.selectedTextRange = txtAttendeeName.textRangeFromPosition(theLoc!, toPosition: theLoc!)
             }
             return txtAttendeeName
         }
         else if "txtAttendeeEmail" == textIdentifier
         {
             txtAttendeeEmail.becomeFirstResponder()
-            let theLoc = txtAttendeeEmail.positionFromPosition(txtAttendeeEmail.beginningOfDocument, offset: ioInsertionPointLocation)
+            let theLoc = txtAttendeeEmail.positionFromPosition(txtAttendeeEmail.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtAttendeeEmail.selectedTextRange = txtAttendeeEmail.textRangeFromPosition(theLoc, toPosition: theLoc)
+                txtAttendeeEmail.selectedTextRange = txtAttendeeEmail.textRangeFromPosition(theLoc!, toPosition: theLoc!)
             }
             return txtAttendeeEmail
         }

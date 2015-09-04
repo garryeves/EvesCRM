@@ -8,7 +8,7 @@
 
 import Foundation
 
-class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTaskListDelegate
+class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTaskListDelegate, SMTEFillDelegate
 {
     
     private var passedMeeting: MeetingModel!
@@ -60,15 +60,15 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
         
         toolbar.translucent = false
         
-        var spacer = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace,
+        let spacer = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace,
             target: self, action: nil)
         
-        var share = UIBarButtonItem(barButtonSystemItem: .Action, target: self, action: "share:")
+        let share = UIBarButtonItem(barButtonSystemItem: .Action, target: self, action: "share:")
         
-        var pageHead = UIBarButtonItem(title: passedMeeting.actionType, style: UIBarButtonItemStyle.Plain, target: self, action: "doNothing")
+        let pageHead = UIBarButtonItem(title: passedMeeting.actionType, style: UIBarButtonItemStyle.Plain, target: self, action: "doNothing")
         pageHead.tintColor = UIColor.blackColor()
         
-        var spacer2 = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace,
+        let spacer2 = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace,
             target: self, action: nil)
         self.toolbar.items=[spacer,pageHead, spacer2, share]
         
@@ -155,10 +155,10 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
         cell.lblOwner.text = myAgendaList[indexPath.row].owner
 
         myWorkingTime = myCalendar.dateByAddingUnit(
-            .CalendarUnitMinute,
+            .Minute,
             value: myAgendaList[indexPath.row].timeAllocation,
             toDate: myWorkingTime,
-            options: nil)!
+            options: [])!
         
         if (indexPath.row % 2 == 0)  // was .row
         {
@@ -207,7 +207,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
 
         if kind == UICollectionElementKindSectionHeader
         {
-        headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: "agendaItemHeader", forIndexPath: indexPath) as! UICollectionReusableView
+        headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: "agendaItemHeader", forIndexPath: indexPath) 
         }
         return headerView
     }
@@ -241,7 +241,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
     {
         if txtDescription.text == ""
         {
-            var alert = UIAlertController(title: "Add Agenda Item", message:
+            let alert = UIAlertController(title: "Add Agenda Item", message:
         "You must provide a description for the Agenda Item before you can Add it", preferredStyle: UIAlertControllerStyle.Alert)
             alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
     
@@ -259,14 +259,14 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
             }
             else
             {
-                agendaItem.timeAllocation = txtTimeAllocation.text.toInt()!
+                agendaItem.timeAllocation = Int(txtTimeAllocation.text!)!
             }
             if btnOwner.currentTitle != "Select Owner"
             {
                 agendaItem.owner = btnOwner.currentTitle!
             }
         
-            agendaItem.title = txtDescription.text
+            agendaItem.title = txtDescription.text!
         
             agendaItem.save()
 
@@ -373,8 +373,8 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
     func createActivityController() -> UIActivityViewController
     {
         // Build up the details we want to share
-        
-        var sharingActivityProvider: SharingActivityProvider = SharingActivityProvider()
+        let inString: String = ""
+        let sharingActivityProvider: SharingActivityProvider = SharingActivityProvider(placeholderItem: inString)
         
         let myTmp1 = passedMeeting.event.buildShareHTMLString().stringByReplacingOccurrencesOfString("\n", withString: "<p>")
         sharingActivityProvider.HTMLString = myTmp1
@@ -389,9 +389,9 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
             sharingActivityProvider.messageSubject = "Agenda for meeting: \(passedMeeting.event.title)"
         }
         
-        var activityItems : Array = [sharingActivityProvider];
+        let activityItems : Array = [sharingActivityProvider];
         
-        var activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+        let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
         
         // you can specify these if you'd like.
         activityViewController.excludedActivityTypes =  [
@@ -435,7 +435,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
                     permittedArrowDirections:.Any,
                     animated:true)
             } else {
-                var b = sender as! UIButton
+                let b = sender as! UIButton
                 self.activityPopover.presentPopoverFromRect(b.frame,
                     inView: self.view,
                     permittedArrowDirections:.Any,
@@ -539,17 +539,19 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
     * expect the identified text object to become the first responder.
     */
     
-    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: Int) -> AnyObject
+    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>) -> AnyObject
     {
         snippetExpanded = true
 
+        let intIoInsertionPointLocation:Int = ioInsertionPointLocation.memory
+        
         if "txtDescription" == textIdentifier
         {
             txtDescription.becomeFirstResponder()
-            let theLoc = txtDescription.positionFromPosition(txtDescription.beginningOfDocument, offset: ioInsertionPointLocation)
+            let theLoc = txtDescription.positionFromPosition(txtDescription.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtDescription.selectedTextRange = txtDescription.textRangeFromPosition(theLoc, toPosition: theLoc)
+                txtDescription.selectedTextRange = txtDescription.textRangeFromPosition(theLoc!, toPosition: theLoc!)
             }
             return txtDescription
         }

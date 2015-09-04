@@ -192,7 +192,7 @@ class oneNoteSection: NSObject
     
     func getPages(inSectionName: String)
     {
-        var myPagesEndPoint: String = "https://www.onenote.com/api/v1.0/sections/\(myId)/pages"
+        let myPagesEndPoint: String = "https://www.onenote.com/api/v1.0/sections/\(myId)/pages"
         gettingData = true
         
         myOneNoteData.QueryType = "Pages"
@@ -206,9 +206,6 @@ class oneNoteSection: NSObject
     private func splitString(inString: String, inSectionName: String)
     {
         var processedFileHeader: Bool = false
-        var oneNoteDataType: String = ""
-        var firstItem2: Bool = true
-        var inFooter:Bool = false
 
         // need to do a "dirty" change here, as we need to put insomething to split on, but ther eis no easy identifier.  title is the first field in the return string so am going to do something to that in order to provide an artificial test to split
         
@@ -226,21 +223,12 @@ class oneNoteSection: NSObject
         {
             if !processedFileHeader
             {
-                if myItem.lowercaseString.rangeOfString("http") != nil
-                {
-                    if myItem.lowercaseString.rangeOfString("pages") != nil
-                    {
-                        oneNoteDataType = "pages"
-                    }
-                }
                 processedFileHeader = true
             }
             else
             {
                 // need to further split the items into its component parts
                 let split2 = myItem.componentsSeparatedByString(",")
-                firstItem2 = true
-                inFooter = false
                 let myPage = oneNotePage()
                 myPage.sectionName = inSectionName
                 for myItem2 in split2
@@ -249,8 +237,8 @@ class oneNoteSection: NSObject
                     {
                         let split3 = myItem2.componentsSeparatedByString(":")
                     
-                        var keyString = split3[0].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-                        var valueString = split3[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                        let keyString = split3[0].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                        let valueString = split3[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
 
                         switch keyString
                         {
@@ -272,7 +260,7 @@ class oneNoteSection: NSObject
                                 var myTempString: String = ""
                                 let str1 = returnSearchStringToNormal(valueString)
                                 let start = str1.startIndex
-                                let end = find(str1, ".")
+                                let end = str1.characters.indexOf(".")
          
                                 if end != nil
                                 {
@@ -284,7 +272,7 @@ class oneNoteSection: NSObject
                                     myTempString = str1
                                 }
          
-                                var myDateFormatter = NSDateFormatter()
+                                let myDateFormatter = NSDateFormatter()
                                 myDateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
          
                                 let myDate = myDateFormatter.dateFromString(myTempString)
@@ -298,7 +286,7 @@ class oneNoteSection: NSObject
                                 myPage.urlCallback = returnSearchStringToNormal(valueString)
                                 
                             default:
-                                let a = 1
+                                NSLog("Do nothing")
                         }
                     }
                 }
@@ -315,12 +303,12 @@ class oneNoteSection: NSObject
     {
         for myPage in myPages
         {
-            println("title - \(myPage.title)")
-            println("contentUrl - \(myPage.pageUrl)")
-            println("lastModifiedTime - \(myPage.lastModifiedTime)")
-            println("id - \(myPage.id)")
-            println("urlCallback - \(myPage.urlCallback)")
-            println("\n\n")
+            print("title - \(myPage.title)")
+            print("contentUrl - \(myPage.pageUrl)")
+            print("lastModifiedTime - \(myPage.lastModifiedTime)")
+            print("id - \(myPage.id)")
+            print("urlCallback - \(myPage.urlCallback)")
+            print("\n\n")
         }
     }
 
@@ -465,7 +453,7 @@ class oneNoteNotebook: NSObject
     
     func getSections()
     {
-        var mySectionEndPoint: String = "https://www.onenote.com/api/v1.0/notebooks/\(myId)/sections"
+        let mySectionEndPoint: String = "https://www.onenote.com/api/v1.0/notebooks/\(myId)/sections"
         
         gettingData = true
         
@@ -508,8 +496,6 @@ class oneNoteNotebook: NSObject
     
     private func performSplit(inString: String) -> oneNoteSection
     {
-        var mySection: oneNoteSection
-        
         if !processedFileHeader
         {
             if inString.lowercaseString.rangeOfString("http") != nil
@@ -548,8 +534,8 @@ class oneNoteNotebook: NSObject
                     
                     if firstItem2
                     {  // strip out characters upto and including the first comma
-                        let end = advance(myItem2.endIndex, -1)
-                        let start = find(myItem2, ",")
+                        let end = myItem2.endIndex.advancedBy(-1)
+                        let start = myItem2.characters.indexOf(",")
                         
                         var selectedString: String = ""
                         
@@ -590,7 +576,7 @@ class oneNoteNotebook: NSObject
                             mySection.urlCallback = returnSearchStringToNormal(split3[1])
                             
                         default:
-                            let a = 1
+                            NSLog("Do nothing")
                         }
                     }
                 }
@@ -606,12 +592,12 @@ class oneNoteNotebook: NSObject
     {
         for mySection in mySections
         {
-            println("name - \(mySection.name)")
-            println("sectionsUrl - \(mySection.pagesUrl)")
-            println("lastModifiedTime - \(mySection.lastModifiedTime)")
-            println("id - \(mySection.id)")
-            println("urlCallback - \(mySection.urlCallback)")
-            println("\n\n")
+            print("name - \(mySection.name)")
+            print("sectionsUrl - \(mySection.pagesUrl)")
+            print("lastModifiedTime - \(mySection.lastModifiedTime)")
+            print("id - \(mySection.id)")
+            print("urlCallback - \(mySection.urlCallback)")
+            print("\n\n")
         }
     }
 
@@ -663,7 +649,6 @@ class oneNoteNotebooks: NSObject
     private func splitString(inString: String)
     {
         var processedFileHeader: Bool = false
-        var oneNoteDataType: String = ""
         var firstItem2: Bool = true
         
         // we need to do a bit of "dodgy" working, I want to be able to split strings based on :, but : is natural in dates and URTLs. so need to change it to seomthign esle,
@@ -679,13 +664,6 @@ class oneNoteNotebooks: NSObject
         {
             if !processedFileHeader
             {
-                if myItem.lowercaseString.rangeOfString("http") != nil
-                {
-                    if myItem.lowercaseString.rangeOfString("notebooks") != nil
-                    {
-                        oneNoteDataType = "notebooks"
-                    }
-                }
                 processedFileHeader = true
             }
             else
@@ -700,8 +678,8 @@ class oneNoteNotebooks: NSObject
                     
                     if firstItem2
                     {  // strip out characters upto and including the first comma
-                        let end = advance(myItem2.endIndex, -1)
-                        let start = find(myItem2, ",")
+                        let end = myItem2.endIndex.advancedBy(-1)
+                        let start = myItem2.characters.indexOf(",")
                         
                         var selectedString: String = ""
                         
@@ -746,7 +724,7 @@ class oneNoteNotebooks: NSObject
                         myNotebook.urlCallback = returnSearchStringToNormal(split3[1])
                         
                     default:
-                        let a = 1
+                        NSLog("Do nothing")
                     }
                 }
                 myNotebooks.append(myNotebook)
@@ -758,19 +736,18 @@ class oneNoteNotebooks: NSObject
     {
         for myNotebook in myNotebooks
         {
-            println("name - \(myNotebook.name)")
-            println("sectionsUrl - \(myNotebook.sectionsUrl)")
-            println("sectionsGroupsUrl - \(myNotebook.sectionsGroupsUrl)")
-            println("lastModifiedTime - \(myNotebook.lastModifiedTime)")
-            println("id - \(myNotebook.id)")
-            println("urlCallback - \(myNotebook.urlCallback)")
-            println("\n\n")
+            print("name - \(myNotebook.name)")
+            print("sectionsUrl - \(myNotebook.sectionsUrl)")
+            print("sectionsGroupsUrl - \(myNotebook.sectionsGroupsUrl)")
+            print("lastModifiedTime - \(myNotebook.lastModifiedTime)")
+            print("id - \(myNotebook.id)")
+            print("urlCallback - \(myNotebook.urlCallback)")
+            print("\n\n")
         }
     }
     
     func getNotesForProject(inProject: String)
     {
-        var notebookFound: Bool = false
         var myWorkingArray: [oneNotePage] = []
         var myNotebookFound: Bool = false
         
@@ -787,7 +764,6 @@ class oneNoteNotebooks: NSObject
                 {
                     myNotebook.OneNoteData = myOneNoteData
                     myNotebook.getSections()
-                    notebookFound = true
                 }
                     // Need to get a single array containing all of the pages
                 
@@ -799,7 +775,7 @@ class oneNoteNotebooks: NSObject
                     }
                 }
                 
-                myWorkingArray.sort({ $0.lastModifiedTime.compare($1.lastModifiedTime) == NSComparisonResult.OrderedDescending })
+                myWorkingArray.sortInPlace({ $0.lastModifiedTime.compare($1.lastModifiedTime) == NSComparisonResult.OrderedDescending })
           
                 myPages = myWorkingArray
             }
@@ -817,7 +793,6 @@ class oneNoteNotebooks: NSObject
 
     func getNotesForPerson(inPerson: String)
     {
-        var notebookFound: Bool = false
         var myWorkingArray: [oneNotePage] = []
         
         for myNotebook in myNotebooks
@@ -829,7 +804,6 @@ class oneNoteNotebooks: NSObject
                 {
                     myNotebook.OneNoteData = myOneNoteData
                     myNotebook.getSections()
-                    notebookFound = true
                 }
                 
                 // Need to get a single array containing all of the pages
@@ -845,7 +819,7 @@ class oneNoteNotebooks: NSObject
                     }
                 }
                 
-                myWorkingArray.sort({ $0.lastModifiedTime.compare($1.lastModifiedTime) == NSComparisonResult.OrderedDescending })
+                myWorkingArray.sortInPlace({ $0.lastModifiedTime.compare($1.lastModifiedTime) == NSComparisonResult.OrderedDescending })
                 
                 myPages = myWorkingArray
             }
@@ -902,7 +876,6 @@ class oneNoteNotebooks: NSObject
     {
         var ret_val: String = ""
         var targetString: String = ""
-        var ignoreString: String = ""
         
         // issue the command to create the notebook
         
@@ -912,13 +885,13 @@ class oneNoteNotebooks: NSObject
         
         // Issue the commands to create the Sections and get the ID for the "Background" section
         
-        ignoreString = myOneNoteData.createOneNoteObject("Thoughts", inType: "Section", inParent: myNotebookID)
-        ignoreString = myOneNoteData.createOneNoteObject("Reference", inType: "Section", inParent: myNotebookID)
-        ignoreString = myOneNoteData.createOneNoteObject("Dependencies", inType: "Section", inParent: myNotebookID)
-        ignoreString = myOneNoteData.createOneNoteObject("Issues", inType: "Section", inParent: myNotebookID)
-        ignoreString = myOneNoteData.createOneNoteObject("Risks", inType: "Section", inParent: myNotebookID)
-        ignoreString = myOneNoteData.createOneNoteObject("Status Updates", inType: "Section", inParent: myNotebookID)
-        ignoreString = myOneNoteData.createOneNoteObject("Meetings", inType: "Section", inParent: myNotebookID)
+        _ = myOneNoteData.createOneNoteObject("Thoughts", inType: "Section", inParent: myNotebookID)
+        _ = myOneNoteData.createOneNoteObject("Reference", inType: "Section", inParent: myNotebookID)
+        _ = myOneNoteData.createOneNoteObject("Dependencies", inType: "Section", inParent: myNotebookID)
+        _ = myOneNoteData.createOneNoteObject("Issues", inType: "Section", inParent: myNotebookID)
+        _ = myOneNoteData.createOneNoteObject("Risks", inType: "Section", inParent: myNotebookID)
+        _ = myOneNoteData.createOneNoteObject("Status Updates", inType: "Section", inParent: myNotebookID)
+        _ = myOneNoteData.createOneNoteObject("Meetings", inType: "Section", inParent: myNotebookID)
         targetString = myOneNoteData.createOneNoteObject("Background", inType: "Section", inParent: myNotebookID)
         
         //  Create empty page in the first section
@@ -933,7 +906,6 @@ class oneNoteNotebooks: NSObject
     {
         var ret_val: String = ""
         var targetString: String = ""
-        var ignoreString: String = ""
         var myNotebookID: String = ""
         
         // Get the ID for the People Notebook
@@ -962,8 +934,8 @@ class oneNoteNotebooks: NSObject
     
     func searchOneNote(inSearchString: String)
     {
-        var mySearchTerm: String = "https://www.onenote.com/api/v1.0/pages?search=\(inSearchString)&orderby=lastModifiedTime desc"
-        var escapedAddress = mySearchTerm.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
+        let mySearchTerm: String = "https://www.onenote.com/api/v1.0/pages?search=\(inSearchString)&orderby=lastModifiedTime desc"
+        let escapedAddress = mySearchTerm.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())
 
         let myReturnString = myOneNoteData.getData(escapedAddress!)
         splitSearchString(myReturnString)
@@ -974,7 +946,6 @@ class oneNoteNotebooks: NSObject
     private func splitSearchString(inString: String)
     {
         var processedFileHeader: Bool = false
-        var oneNoteDataType: String = ""
         var firstItem2: Bool = true
         
         // we need to do a bit of "dodgy" working, I want to be able to split strings based on :, but : is natural in dates and URLs. so need to change it to seomthign esle,
@@ -1016,8 +987,8 @@ class oneNoteNotebooks: NSObject
                             split3 = myItem2.componentsSeparatedByString(":")
                         }
                         
-                        var keyString = split3[0].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-                        var valueString = split3[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                        let keyString = split3[0].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                        let valueString = split3[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
                     
                         // now split each of these into value pairs - how to store?  Maybe in a Collection??
 
@@ -1041,7 +1012,7 @@ class oneNoteNotebooks: NSObject
                                 var myTempString: String = ""
                                 let str1 = returnSearchStringToNormal(valueString)
                                 let start = str1.startIndex
-                                let end = find(str1, ".")
+                                let end = str1.characters.indexOf(".")
                             
                                 if end != nil
                                 {
@@ -1053,7 +1024,7 @@ class oneNoteNotebooks: NSObject
                                     myTempString = str1
                                 }
                             
-                                var myDateFormatter = NSDateFormatter()
+                                let myDateFormatter = NSDateFormatter()
                                 myDateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
                             
                                 let myDate = myDateFormatter.dateFromString(myTempString)
@@ -1067,7 +1038,7 @@ class oneNoteNotebooks: NSObject
                                 myPage.urlCallback = returnSearchStringToNormal(valueString)
                         
                             default:
-                                let a = 1
+                                NSLog("Do nothing")
                         }
                     }
                 }
@@ -1147,7 +1118,6 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
     {
         var ret_val: String = ""
         var response: NSURLResponse?
-        var error: NSError?
         
         var myCommand: String = ""
         var myBody: String = ""
@@ -1172,13 +1142,13 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
                     myCommand = "https://www.onenote.com/api/v1.0/notebooks/\(inParent)/sections"
                     myBody = "{ name: \"\(inName)\" }"
                 
-                default: println("createOneNoteObject: invalid type passed in")
+                default: print("createOneNoteObject: invalid type passed in")
             }
 
             let presentation = myBody.dataUsingEncoding(NSUTF8StringEncoding)
             
             myOneNoteFinished = false
-            var url: NSURL = NSURL(string: myCommand)!
+            let url: NSURL = NSURL(string: myCommand)!
             let request = NSMutableURLRequest(URL: url)
             request.HTTPMethod = "POST"
             request.HTTPBody = presentation
@@ -1191,7 +1161,16 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
                 
                 // Send the HTTP request
                 
-                let result = NSURLConnection.sendSynchronousRequest(request, returningResponse:&response, error:&error)
+            let result: NSData?
+                do
+                {
+                    result = try NSURLConnection.sendSynchronousRequest(request, returningResponse:&response)
+                }
+                catch let error1 as NSError
+                {
+                    NSLog("createOneNoteObject\(error1)")
+                    result = nil
+                }
                 
                 let httpResponse = response as? NSHTTPURLResponse
                 
@@ -1209,12 +1188,12 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
                         case "Section" :
                             ret_val = processNotebookCreateReturn(myReturnString)
 
-                        default: println("createOneNoteObject: invalid type passed in")
+                        default: print("createOneNoteObject: invalid type passed in")
                     }
                 }
                 else
                 {
-                    println("oneNoteData: createOneNoteObject: There was an error accessing the OneNote data. Response code: \(status)")
+                    print("oneNoteData: createOneNoteObject: There was an error accessing the OneNote data. Response code: \(status)")
                 }
             }
 
@@ -1227,7 +1206,6 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
     {
         var ret_val: String = ""
         var response: NSURLResponse?
-        var error: NSError?
         
         var myCommand: String = ""
         var myBody: String = ""
@@ -1255,7 +1233,7 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
             let presentation = myBody.dataUsingEncoding(NSUTF8StringEncoding)
             
             myOneNoteFinished = false
-            var url: NSURL = NSURL(string: myCommand)!
+            let url: NSURL = NSURL(string: myCommand)!
             let request = NSMutableURLRequest(URL: url)
             request.HTTPMethod = "POST"
             request.HTTPBody = presentation
@@ -1268,7 +1246,16 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
                 
                 // Send the HTTP request
                 
-                let result = NSURLConnection.sendSynchronousRequest(request, returningResponse:&response, error:&error)
+            let result: NSData?
+                do
+                {
+                    result = try NSURLConnection.sendSynchronousRequest(request, returningResponse:&response)
+                }
+                catch let error1 as NSError
+                {
+                    NSLog("createOneNotePage\(error1)")
+                    result = nil
+                }
                 
                 let httpResponse = response as? NSHTTPURLResponse
                 
@@ -1282,7 +1269,7 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
                 }
                 else
                 {
-                    println("oneNoteData: createOneNotePage: There was an error accessing the OneNote data. Response code: \(status)")
+                    print("oneNoteData: createOneNotePage: There was an error accessing the OneNote data. Response code: \(status)")
                 }
             }
             
@@ -1296,7 +1283,6 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
         var ret_val: String = ""
         
         var processedFileHeader: Bool = false
-        var oneNoteDataType: String = ""
         var firstItem2: Bool = true
         
         // we need to do a bit of "dodgy" working, I want to be able to split strings based on :, but : is natural in dates and URTLs. so need to change it to seomthign esle,
@@ -1324,8 +1310,8 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
                     
                     if firstItem2
                     {  // strip out characters upto and including the first comma
-                        let end = advance(myItem2.endIndex, -1)
-                        let start = find(myItem2, ",")
+                        let end = myItem2.endIndex.advancedBy(-1)
+                        let start = myItem2.characters.indexOf(",")
                         
                         var selectedString: String = ""
                         
@@ -1349,8 +1335,8 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
                     
                     // now split each of these into value pairs - how to store?  Maybe in a Collection??
                     
-                    var keyString = split3[0].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-                    var valueString = split3[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                    let keyString = split3[0].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                    let valueString = split3[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
 
                     if keyString == "id"
                     {
@@ -1366,10 +1352,6 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
     {
         var ret_val: String = ""
         
-        var processedFileHeader: Bool = false
-        var oneNoteDataType: String = ""
-        var firstItem2: Bool = true
-        
         // we need to do a bit of "dodgy" working, I want to be able to split strings based on :, but : is natural in dates and URTLs. so need to change it to seomthign esle,
         //string out the : data and then change back
         
@@ -1382,8 +1364,8 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
 
             // now split each of these into value pairs - how to store?  Maybe in a Collection??
             
-            var keyString = split3[0].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-            var valueString = split3[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+            let keyString = split3[0].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+            let valueString = split3[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
                     
             if keyString == "oneNoteClientUrl"
             {
@@ -1416,11 +1398,10 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
     private func performGetData(inURLString: String) -> String
     {
         var response: NSURLResponse?
-        var error: NSError?
         var myReturnString: String = ""
         
         myOneNoteFinished = false
-        var url: NSURL = NSURL(string: inURLString)!
+        let url: NSURL = NSURL(string: inURLString)!
         let request = NSMutableURLRequest(URL: url)
         request.HTTPMethod = "GET"
         request.cachePolicy = NSURLRequestCachePolicy.ReloadIgnoringLocalCacheData
@@ -1430,7 +1411,16 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
             request.setValue("Bearer \(liveClient.session.accessToken)", forHTTPHeaderField: "Authorization")
             // Send the HTTP request
 
-            let result = NSURLConnection.sendSynchronousRequest(request, returningResponse:&response, error:&error)
+        let result: NSData?
+            do
+            {
+                result = try NSURLConnection.sendSynchronousRequest(request, returningResponse:&response)
+            }
+            catch let error1 as NSError
+            {
+                NSLog("performGetData\(error1)")
+                result = nil
+            }
             
             let httpResponse = response as? NSHTTPURLResponse
           
@@ -1443,11 +1433,11 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
             }
             else if status == 201
             {
-                println("oneNoteData: Page created!")
+                print("oneNoteData: Page created!")
             }
             else
             {
-                println("oneNoteData: connectionDidFinishLoading: There was an error accessing the OneNote data. Response code: \(status)")
+                print("oneNoteData: connectionDidFinishLoading: There was an error accessing the OneNote data. Response code: \(status)")
             }
         }
         return myReturnString
