@@ -1024,6 +1024,7 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                     }
                     
                     popoverContent.preferredContentSize = CGSizeMake(700,700)
+                    popover!.sourceRect = CGRectMake(100,100,0,0)
                     self.presentViewController(popoverContent, animated: true, completion: nil)
                 })
                 

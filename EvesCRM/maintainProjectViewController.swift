@@ -16,7 +16,7 @@ protocol MyMaintainProjectDelegate{
     func myGTDPlanningDidFinish(controller:MaintainGTDPlanningViewController)
 }
 
-class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, SMTEFillDelegate
+class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, SMTEFillDelegate, UITextViewDelegate
 {
    private var passedGTD: GTDModel!
     
@@ -35,7 +35,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     @IBOutlet weak var lblNotes: UILabel!
     @IBOutlet weak var txtNotes: UITextView!
     @IBOutlet weak var txtTitle: UITextField!
-
+    
  //   var delegate: MyMaintainProjectDelegate?
     
     private var statusOptions: [Stages]!
@@ -49,6 +49,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     private let reuseIdentifierProject = "ProjectCell"
     private let reuseIdentifierTeam = "TeamMemberCell"
     private var myRoles: [Roles]!
+    private var myStages: [Stages]!
     private var mySelectedRoles: [projectTeamMember] = Array()
     private var mySelectedTeamMember: projectTeamMember!
     private var personSelected: ABRecord!
@@ -82,6 +83,11 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
         self.view.addGestureRecognizer(hideGestureRecognizer)
 
+        txtNotes.layer.borderColor = UIColor.lightGrayColor().CGColor
+        txtNotes.layer.borderWidth = 0.5
+        txtNotes.layer.cornerRadius = 5.0
+        txtNotes.layer.masksToBounds = true
+        
         showFields()
         
         // Set the initial values
@@ -101,7 +107,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         
         if inProjectObject.displayProjectEndDate == ""
         {
-            btnEndDate.setTitle("Set Start Date", forState: UIControlState.Normal)
+            btnEndDate.setTitle("Set End Date", forState: UIControlState.Normal)
         }
         else
         {
@@ -110,7 +116,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         
         if inProjectObject.projectStatus == ""
         {
-            btnProjectStage.setTitle("Set Start Date", forState: UIControlState.Normal)
+            btnProjectStage.setTitle("Set Project Stage", forState: UIControlState.Normal)
         }
         else
         {
@@ -138,7 +144,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "addTeamMember:", name:"NotificationAddTeamMember", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "changeRole:", name:"NotificationChangeRole", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "performDeleteTeamMember:", name:"NotificationPerformDelete", object: nil)
-        
+
     }
     
     override func didReceiveMemoryWarning()
@@ -183,88 +189,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     {
         mySelectedRow = row
     }
- /*
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
-    {
-        var retVal: CGFloat = 0.0
-        
 
-        if (tableView == teamMembersTable)
-        {
-            let cell = teamMembersTable.dequeueReusableCellWithIdentifier(reuseIdentifierTeam) as! UITableViewCell
-            var titleText: String = ""
-            titleText = mySelectedRoles[indexPath.row].teamMember
-            titleText += " : "
-            titleText += myDatabaseConnection.getRoleDescription(mySelectedRoles[indexPath.row].roleID, inTeamID: myTeamID)
-            let titleRect = titleText.boundingRectWithSize(CGSizeMake(self.view.frame.size.width - 64, 128), options: NSStringDrawingOptions.UsesLineFragmentOrigin, attributes: nil, context: nil)
-            
-            retVal = titleRect.height
-        }
-        return retVal + 24.0
-    }
-    
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
-    {
-        
-        var retVal: Int = 0
-        
-        if (tableView == teamMembersTable)
-        {
-            if mySelectedRoles != nil
-            {
-                retVal = self.mySelectedRoles.count ?? 0
-            }
-        }
-        return retVal
-    }
-
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
-    {
-       if (tableView == teamMembersTable)
-        {
-            let cell = teamMembersTable.dequeueReusableCellWithIdentifier(reuseIdentifierTeam) as! UITableViewCell
-            var titleText: String = ""
-            if mySelectedRoles != nil
-            {
-                titleText = mySelectedRoles[indexPath.row].teamMember
-                titleText += " : "
-                titleText += myDatabaseConnection.getRoleDescription(mySelectedRoles[indexPath.row].roleID, inTeamID: myTeamID)
-            }
-           
-            cell.textLabel!.text = titleText
-            return cell
-        }
-        else
-        {
-            // Dummy statements to allow use of else
-            let cell = projectList.dequeueReusableCellWithIdentifier(reuseIdentifierProject) as! UITableViewCell
-            return cell
-        }
-    }
-    
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        
-        if tableView == teamMembersTable
-        {
-            buttonDeleteTeamMember.hidden = false
-            buttonConfirmTeamMember.hidden = false
-            labelTeamMemberName.hidden = false
-            teamMembersTable.hidden = true
-            pickerPersonRole.hidden = false
-            mySelectedTeamMember = mySelectedRoles[indexPath.row]
-            labelTeamMemberName.text = mySelectedRoles[indexPath.row].teamMember
-            let myRoleRow = mySelectedRoles[indexPath.row].roleID - 1
-            pickerPersonRole.selectRow(myRoleRow, inComponent: 0, animated: true)
-            teamMemberAction = "Edit"
-            buttonAddTeamMember.hidden = true
-            buttonConfirmTeamMember.setTitle("Update Project Team Member", forState: UIControlState.Normal)
-        }
-    }
-    
-
-*/
-    
-    
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
     {
         return 1
@@ -329,7 +254,6 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         }
     }
 
-
     func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
     {
         return CGSize(width: colTeamMembers.bounds.size.width, height: 39)
@@ -386,16 +310,6 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         colTeamMembers.reloadData()
     }
 
-/*
-    @IBAction func buttonConfirmTeamMember(sender: UIButton)
-    {
-
-        labelTeamMemberName.hidden = true
-        buttonConfirmTeamMember.hidden = true
-        buttonDeleteTeamMember.hidden = true
-        buttonAddTeamMember.hidden = false
-    }
- */
     // Peoplepicker code
     
     func peoplePickerNavigationController(peoplePicker: ABPeoplePickerNavigationController, didSelectPerson person: ABRecordRef)
@@ -416,18 +330,14 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         peoplePicker.dismissViewControllerAnimated(true, completion: nil)
     }
     
-    /*
-    @IBAction func buttonDeleteTeamMember(sender: UIButton)
+    @IBAction func txtTitle(sender: UITextField)
     {
-        mySelectedTeamMember.delete()
-        
-        mySelectedProject.loadTeamMembers()
-        mySelectedRoles = mySelectedProject.teamMembers
-        colTeamMembers.reloadData()
-        
-        colTeamMembers.hidden = false
+        if txtTitle.text != ""
+        {
+            inProjectObject.projectName = txtTitle.text!
+        }
     }
-    */
+    
     
     @IBAction func txtProjectName(sender: UITextField)
     {
@@ -450,7 +360,28 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         }
     }
     
-    @IBAction func dteStart(sender: UIDatePicker)
+    @IBAction func btnProjectStage(sender: UIButton)
+    {
+        myActionType = "Edit"
+        myStages = myDatabaseConnection.getStages(myTeamID)
+        pickerDisplayArray.removeAll()
+        pickerDisplayArray.append("")
+        for myItem in myStages
+        {
+            pickerDisplayArray.append(myItem.stageDescription)
+        }
+        
+        btnSelectPicker.setTitle("Select Stage", forState: .Normal)
+        pickerTarget = "Stage"
+        statusPicker.reloadAllComponents()
+        btnSelectPicker.hidden = false
+        statusPicker.hidden = false
+        mySelectedRow = -1
+        hideFields()
+
+    }
+    
+    @IBAction func btnStartDate(sender: UIButton)
     {
         if txtTitle.text == ""
         {
@@ -466,11 +397,24 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         }
         else
         {
-            inProjectObject.projectStartDate = startDatePicker.date
+            pickerTarget = "StartDate"
+            btnSelectPicker.setTitle("Set Start Date", forState: .Normal)
+            startDatePicker.datePickerMode = UIDatePickerMode.Date
+            if inProjectObject.displayProjectStartDate != ""
+            {
+                startDatePicker.date = inProjectObject.projectStartDate
+            }
+            else
+            {
+                startDatePicker.date = NSDate()
+            }
+            startDatePicker.hidden = false
+            btnSelectPicker.hidden = false
+            hideFields()
         }
     }
     
-    @IBAction func dteEnd(sender: UIDatePicker)
+    @IBAction func btnEndDate(sender: UIButton)
     {
         if txtTitle.text == ""
         {
@@ -486,7 +430,20 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         }
         else
         {
-      //      mySelectedProject.projectEndDate = endDatePicker.date
+            pickerTarget = "EndDate"
+            btnSelectPicker.setTitle("Set End Date", forState: .Normal)
+            startDatePicker.datePickerMode = UIDatePickerMode.Date
+            if inProjectObject.displayProjectEndDate != ""
+            {
+                startDatePicker.date = inProjectObject.projectEndDate
+            }
+            else
+            {
+                startDatePicker.date = NSDate()
+            }
+            startDatePicker.hidden = false
+            btnSelectPicker.hidden = false
+            hideFields()
         }
     }
     
@@ -502,9 +459,29 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
                 
                 inProjectObject.loadTeamMembers()
                 mySelectedRoles = inProjectObject.teamMembers
+                colTeamMembers.reloadData()
+            }
+            
+            if pickerTarget == "Stage"
+            {
+                inProjectObject.projectStatus = myStages[mySelectedRow - 1].stageDescription
+                btnProjectStage.setTitle(inProjectObject.projectStatus, forState: UIControlState.Normal)
             }
         }
-        colTeamMembers.reloadData()
+        
+        if pickerTarget == "StartDate"
+        {
+            inProjectObject.projectStartDate = startDatePicker.date
+            btnStartDate.setTitle(inProjectObject.displayProjectStartDate, forState: UIControlState.Normal)
+        }
+        
+        if pickerTarget == "EndDate"
+        {
+            inProjectObject.projectEndDate = startDatePicker.date
+            btnEndDate.setTitle(inProjectObject.displayProjectEndDate, forState: UIControlState.Normal)
+        }
+        
+        startDatePicker.hidden = true
         statusPicker.hidden = true
         btnSelectPicker.hidden = true
         showFields()
@@ -517,7 +494,6 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         endDateLabel.hidden = true
         statusLabel.hidden = true
         teamMembersLabel.hidden = true
-        startDatePicker.hidden = true
         btnStartDate.hidden = true
         btnEndDate.hidden = true
         btnProjectStage.hidden = true
@@ -534,7 +510,6 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         endDateLabel.hidden = false
         statusLabel.hidden = false
         teamMembersLabel.hidden = false
-        startDatePicker.hidden = false
         btnStartDate.hidden = false
         btnEndDate.hidden = false
         btnProjectStage.hidden = false
@@ -542,6 +517,14 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         lblNotes.hidden = false
         txtNotes.hidden = false
         txtTitle.hidden = false
+    }
+    
+    func textViewDidEndEditing(textView: UITextView)
+    { //Handle the text changes here
+        if textView == txtNotes
+        {
+            inProjectObject.note = textView.text
+        }
     }
     
     func myGTDPlanningDidFinish(controller:MaintainGTDPlanningViewController)

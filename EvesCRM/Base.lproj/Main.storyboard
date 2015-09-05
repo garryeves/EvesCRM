@@ -6564,9 +6564,6 @@
                                         <include reference="g7r-b8-cPy"/>
                                     </mask>
                                 </variation>
-                                <connections>
-                                    <action selector="dteStart:" destination="u8R-XC-T7E" eventType="valueChanged" id="seV-vM-WAT"/>
-                                </connections>
                             </datePicker>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="End Date" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WfF-sn-Soz">
                                 <rect key="frame" x="218" y="68" width="70" height="30"/>
@@ -6611,6 +6608,9 @@
                                         <include reference="t0E-A7-GoM"/>
                                     </mask>
                                 </variation>
+                                <connections>
+                                    <action selector="btnStartDate:" destination="u8R-XC-T7E" eventType="touchUpInside" id="Zy8-Qd-WvK"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WNd-dO-L6V" userLabel="btnEndDate">
                                 <rect key="frame" x="298" y="68" width="100" height="30"/>
@@ -6627,6 +6627,9 @@
                                         <include reference="VLD-uB-2vw"/>
                                     </mask>
                                 </variation>
+                                <connections>
+                                    <action selector="btnEndDate:" destination="u8R-XC-T7E" eventType="touchUpInside" id="BdL-ki-5Bx"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SIn-JS-PlQ" userLabel="btnProjectStage">
                                 <rect key="frame" x="522" y="68" width="158" height="30"/>
@@ -6641,6 +6644,9 @@
                                         <include reference="1Qa-bf-Kve"/>
                                     </mask>
                                 </variation>
+                                <connections>
+                                    <action selector="btnProjectStage:" destination="u8R-XC-T7E" eventType="touchUpInside" id="m1C-ER-lX4"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SPW-1F-FNQ" userLabel="btnSelectPicker">
                                 <rect key="frame" x="327" y="465" width="46" height="30"/>
@@ -6673,7 +6679,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NkE-iG-I5H" userLabel="txtNotes">
-                                <rect key="frame" x="20" y="439" width="660" height="261"/>
+                                <rect key="frame" x="20" y="439" width="660" height="253"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -6705,6 +6711,9 @@
                                         <include reference="NSc-Gm-DGp"/>
                                     </mask>
                                 </variation>
+                                <connections>
+                                    <action selector="txtTitle:" destination="u8R-XC-T7E" eventType="editingDidEnd" id="6YQ-Yg-uFg"/>
+                                </connections>
                             </textField>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Ohu-hU-hxf" userLabel="colTeamMember">
                                 <rect key="frame" x="20" y="148" width="660" height="250"/>
@@ -6828,8 +6837,8 @@
                             <constraint firstItem="qs7-Za-Lhk" firstAttribute="leading" secondItem="J73-3j-h3y" secondAttribute="leadingMargin" id="Uhb-s9-JIX">
                                 <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
                             </constraint>
-                            <constraint firstItem="yf8-CL-zab" firstAttribute="top" secondItem="NkE-iG-I5H" secondAttribute="bottom" id="VJI-Eg-jCb">
-                                <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
+                            <constraint firstItem="yf8-CL-zab" firstAttribute="top" secondItem="NkE-iG-I5H" secondAttribute="bottom" constant="8" id="VJI-Eg-jCb">
+                                <variation key="heightClass=regular-widthClass=regular" constant="8"/>
                             </constraint>
                             <constraint firstItem="tc6-9t-Va2" firstAttribute="top" secondItem="hqr-BP-WUP" secondAttribute="bottom" constant="10" id="VVh-HX-EIP">
                                 <variation key="heightClass=regular-widthClass=regular" constant="10"/>
