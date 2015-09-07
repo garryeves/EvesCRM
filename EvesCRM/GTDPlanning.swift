@@ -65,8 +65,8 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
             myDisplayHeadArray.append(myTeam)
         }
         
-        highlightID = myTeamID
-        buildHead("team", inHighlightedID: myTeamID)
+        highlightID = myCurrentTeam.teamID
+        buildHead("team", inHighlightedID: myCurrentTeam.teamID)
         
    //     if passedGTD.actionSource == "Project"
    //     {
@@ -127,8 +127,8 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                     myDisplayHeadArray.append(myTeam)
                 }
                 
-                highlightID = myTeamID
-                buildHead("team", inHighlightedID: myTeamID)
+                highlightID = myCurrentTeam.teamID
+                buildHead("team", inHighlightedID: myCurrentTeam.teamID)
             
             case "gvision":
                 myDisplayHeadArray.removeAll()
@@ -238,6 +238,11 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
         {
             case "team":
                 lblHeader.text = "My Teams"
+        for myItem in myCurrentTeam.GTDLevels
+        {
+            NSLog("GtD level : \(myItem.title) Level : \(myItem.GTDLevel)")
+        }
+                
                 lblDetail.text = "My Purpose/Core Values"
                 btnUp.hidden = true
                 
@@ -837,7 +842,29 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                     self.presentViewController(popoverContent, animated: true, completion: nil)
                 })
                 
+                let myOption2 = UIAlertAction(title: "Edit Team", style: .Default, handler: { (action: UIAlertAction) -> () in
+                    let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("TeamMaintenance") as! teamMaintenanceViewController
+                    popoverContent.modalPresentationStyle = .Popover
+                    let popover = popoverContent.popoverPresentationController
+                    popover!.delegate = self
+                    popover!.sourceView = sender.displayView
+                    
+                    if sender.headBody == "head"
+                    {
+                        let parentObject = sender.targetObject as! team
+                        popoverContent.myWorkingTeam = parentObject
+                    }
+                    else
+                    {
+                        //                      popoverContent.workingObject = sender.targetObject
+                    }
+                    popoverContent.preferredContentSize = CGSizeMake(700,700)
+                    self.presentViewController(popoverContent, animated: true, completion: nil)
+                })
+
+                
                 myOptions.addAction(myOption1)
+                myOptions.addAction(myOption2)
             }
             else if sender.type == "areaOfResponsibility" && sender.headBody == "head"
             {  // put in code here to add a new project

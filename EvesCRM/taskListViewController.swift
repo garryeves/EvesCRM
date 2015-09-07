@@ -41,7 +41,7 @@ class taskListViewController: UIViewController, MyTaskDelegate, UITextViewDelega
             
             // Parse through All of the previous meetings that led to this meeting looking for tasks that are not yet closed, as need to display them for completeness
             
-            let myMeetingRecords = myDatabaseConnection.loadAgenda(myMeetingID, inTeamID: myTeamID)
+            let myMeetingRecords = myDatabaseConnection.loadAgenda(myMeetingID, inTeamID: myCurrentTeam.teamID)
             
             if myMeetingRecords.count == 0
             {
@@ -69,7 +69,7 @@ class taskListViewController: UIViewController, MyTaskDelegate, UITextViewDelega
             
             for myItem in myData
             {
-                let newTask = task(inTaskID: myItem.taskID as Int, inTeamID: myTeamID)
+                let newTask = task(inTaskID: myItem.taskID as Int, inTeamID: myCurrentTeam.teamID)
                 myTaskList.append(newTask)
             }
         }
@@ -148,7 +148,7 @@ class taskListViewController: UIViewController, MyTaskDelegate, UITextViewDelega
             
             // Get the project name to display
             
-            let myData = myDatabaseConnection.getProjectDetails(myTaskList[indexPath.row].projectID, inTeamID: myTeamID)
+            let myData = myDatabaseConnection.getProjectDetails(myTaskList[indexPath.row].projectID, inTeamID: myCurrentTeam.teamID)
             
             if myData.count == 0
             {

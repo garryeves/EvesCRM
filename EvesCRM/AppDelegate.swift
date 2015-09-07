@@ -160,12 +160,6 @@ print("appdelegate application - source Application URL = \(url.scheme)")
                 tempController = myCurrentViewController as! taskViewController
                 textExpander = tempController.textExpander
             }
-            else if myCurrentViewController.isKindOfClass(settingsViewController)
-            {
-                var tempController: settingsViewController!
-                tempController = myCurrentViewController as! settingsViewController
-                textExpander = tempController.textExpander
-            }
             else if myCurrentViewController.isKindOfClass(meetingsViewController)
             {
                 var tempController: meetingsViewController!

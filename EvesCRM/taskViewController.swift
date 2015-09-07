@@ -562,7 +562,7 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         
         pickerOptions.append("")
         
-        let myProjects = myDatabaseConnection.getAllOpenProjects(myTeamID)
+        let myProjects = myDatabaseConnection.getAllOpenProjects(myCurrentTeam.teamID)
         
         for myProject in myProjects
         {
@@ -761,7 +761,7 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
     
     func setProjectName(inProjectID: Int)
     {
-        let myProjects = myDatabaseConnection.getProjectDetails(inProjectID, inTeamID: myTeamID)
+        let myProjects = myDatabaseConnection.getProjectDetails(inProjectID, inTeamID: myCurrentTeam.teamID)
         
         if myProjects.count == 0
         {

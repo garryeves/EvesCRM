@@ -235,7 +235,7 @@ class meetingAgendaItem
         
         for myAgendaTask in myAgendaTasks
         {
-            let myNewTask = task(inTaskID: myAgendaTask.taskID as Int, inTeamID: myTeamID)
+            let myNewTask = task(inTaskID: myAgendaTask.taskID as Int, inTeamID: myCurrentTeam.teamID)
             myTasks.append(myNewTask)
         }
     }
@@ -2379,7 +2379,7 @@ class iOSCalendar
         
         /* Fetch all the meetings that fall between the starting and the ending dates */
         
-        return myDatabaseConnection.getAgendaForDateRange(startDate, inEndDate: endDate, inTeamID: myTeamID)
+        return myDatabaseConnection.getAgendaForDateRange(startDate, inEndDate: endDate, inTeamID: myCurrentTeam.teamID)
     }
     
     private func storeEvent(inEvent: EKEvent, inAttendee: EKParticipant?)
@@ -2653,7 +2653,7 @@ func parsePastMeeting(inMeetingID: String) -> [task]
     // Get the the details for the meeting, in order to determine the previous task ID
     var myReturnArray: [task] = Array()
     
-    let myData = myDatabaseConnection.loadAgenda(inMeetingID, inTeamID: myTeamID)
+    let myData = myDatabaseConnection.loadAgenda(inMeetingID, inTeamID: myCurrentTeam.teamID)
     
     if myData.count == 0
     {
@@ -2668,7 +2668,7 @@ func parsePastMeeting(inMeetingID: String) -> [task]
             
             for myItem2 in myData2
             {
-                let newTask = task(inTaskID: myItem2.taskID as Int, inTeamID: myTeamID)
+                let newTask = task(inTaskID: myItem2.taskID as Int, inTeamID: myCurrentTeam.teamID)
                 if newTask.status != "Closed"
                 {
                     myArray.append(newTask)

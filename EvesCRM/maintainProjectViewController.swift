@@ -69,7 +69,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     {
         super.viewDidLoad()
         
-        statusOptions = myDatabaseConnection.getStages(myTeamID)
+        statusOptions = myCurrentTeam.stages
         
         statusSelected = statusOptions[0].stageDescription
         teamMembersLabel.hidden = false
@@ -278,7 +278,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         mySelectedTeamMember = workingObject
         
         myActionType = "Edit"
-        myRoles = myDatabaseConnection.getRoles(myTeamID)
+        myRoles = myCurrentTeam.roles
         pickerDisplayArray.removeAll()
         pickerDisplayArray.append("")
         for myItem in myRoles
@@ -318,7 +318,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
      
         let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as String) ?? ""
         
-        _ = projectTeamMember(inProjectID: inProjectObject.projectID, inTeamMember: myFullName, inRoleID: 0, inTeamID: myTeamID)
+        _ = projectTeamMember(inProjectID: inProjectObject.projectID, inTeamMember: myFullName, inRoleID: 0, inTeamID: myCurrentTeam.teamID)
         
         inProjectObject.loadTeamMembers()
         mySelectedRoles = inProjectObject.teamMembers
@@ -363,7 +363,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     @IBAction func btnProjectStage(sender: UIButton)
     {
         myActionType = "Edit"
-        myStages = myDatabaseConnection.getStages(myTeamID)
+        myStages = myCurrentTeam.stages
         pickerDisplayArray.removeAll()
         pickerDisplayArray.append("")
         for myItem in myStages

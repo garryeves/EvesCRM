@@ -9,6 +9,363 @@
 import Foundation
 import AddressBook
 
+class workingGTDLevel: NSObject
+{
+    private var myTitle: String = "New"
+    private var myTeamID: Int = 0
+    private var myGTDLevel: Int = 0
+    
+    var GTDLevel: Int
+    {
+        get
+        {
+            return myGTDLevel
+        }
+    }
+    
+    var title: String
+    {
+        get
+        {
+            return myTitle
+        }
+        set
+        {
+            myTitle = newValue
+            save()
+        }
+    }
+    
+    var teamID: Int
+    {
+        get
+        {
+            return myTeamID
+        }
+    }
+    
+    init(inGTDLevel: Int, inTeamID: Int)
+    {
+        super.init()
+        
+        // Load the details
+        
+        let myGTDDetail = myDatabaseConnection.getGTDLevel(inGTDLevel, inTeamID: inTeamID)
+        
+        for myItem in myGTDDetail
+        {
+            myTitle = myItem.levelName!
+            myTeamID = myItem.teamID as! Int
+            myGTDLevel = inGTDLevel
+        }
+    }
+    
+    init(inGTDLevel: Int, inLevelName: String, inTeamID: Int)
+    {
+        super.init()
+        
+        myGTDLevel = inGTDLevel
+        myTitle = inLevelName
+        myTeamID = inTeamID
+        
+        save()
+    }
+    
+    func save()
+    {
+        myDatabaseConnection.saveGTDLevel(myGTDLevel, inLevelName: myTitle, inTeamID: myTeamID)
+    }
+}
+
+
+class workingGTDItem: NSObject
+{
+    private var myGTDItemID: Int = 0
+    private var myGTDParentID: Int = 0
+    private var myTitle: String = "New"
+    private var myStatus: String = ""
+    private var myChildren: [workingGTDItem] = Array()
+    private var myTeamID: Int = 0
+    private var myNote: String = ""
+    private var myLastReviewDate: NSDate!
+    private var myReviewFrequency: Int = 0
+    private var myReviewPeriod: String = ""
+    private var myPredecessor: Int = 0
+    private var myGTDID: Int = 0
+    private var myGTDLevel: Int = 0
+    
+    var GTDItemID: Int
+    {
+        get
+        {
+            return myGTDItemID
+        }
+        set
+        {
+            myGTDItemID = newValue
+            save()
+        }
+    }
+ 
+    var GTDLevelID: Int
+    {
+        get
+        {
+            return myGTDID
+        }
+        set
+        {
+            myGTDID = newValue
+            save()
+        }
+    }
+    
+    var GTDParentID: Int
+    {
+        get
+        {
+            return myGTDParentID
+        }
+        set
+        {
+            myGTDParentID = newValue
+            save()
+        }
+    }
+    
+    var GTDLevel: Int
+    {
+        get
+        {
+            return myGTDLevel
+        }
+        set
+        {
+            myGTDLevel = newValue
+            save()
+        }
+    }
+    
+    var title: String
+    {
+        get
+        {
+            return myTitle
+        }
+        set
+        {
+            myTitle = newValue
+            save()
+        }
+    }
+    
+    var status: String
+    {
+        get
+        {
+            return myStatus
+        }
+        set
+        {
+            myStatus = newValue
+            save()
+        }
+    }
+    
+    var children: [workingGTDItem]
+    {
+        get
+        {
+            return myChildren
+        }
+    }
+    
+    var teamID: Int
+    {
+        get
+        {
+            return myTeamID
+        }
+        set
+        {
+            myTeamID = newValue
+            save()
+        }
+    }
+    
+    var note: String
+    {
+        get
+        {
+            return myNote
+        }
+        set
+        {
+            myNote = newValue
+            save()
+        }
+    }
+    
+    var lastReviewDate: NSDate
+    {
+        get
+        {
+            return myLastReviewDate
+        }
+        set
+        {
+            myLastReviewDate = newValue
+            save()
+        }
+    }
+    
+    var displayLastReviewDate: String
+    {
+        get
+        {
+            if myLastReviewDate == nil
+            {
+                myLastReviewDate = getDefaultDate()
+                save()
+                return ""
+            }
+            else if myLastReviewDate == getDefaultDate()
+            {
+                return ""
+            }
+            else
+            {
+                let myDateFormatter = NSDateFormatter()
+                myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
+                return myDateFormatter.stringFromDate(myLastReviewDate)
+            }
+        }
+    }
+    
+    var reviewFrequency: Int
+    {
+        get
+        {
+            return myReviewFrequency
+        }
+        set
+        {
+            myReviewFrequency = newValue
+            save()
+        }
+    }
+    
+    var reviewPeriod: String
+    {
+        get
+        {
+            return myReviewPeriod
+        }
+        set
+        {
+            myReviewPeriod = newValue
+            save()
+        }
+    }
+    
+    var predecessor: Int
+    {
+        get
+        {
+            return myPredecessor
+        }
+        set
+        {
+            myPredecessor = newValue
+            save()
+        }
+    }
+    
+    init(inGTDItemID: Int, inTeamID: Int)
+    {
+        super.init()
+        
+        // Load the details
+        
+        let myGTDDetail = myDatabaseConnection.getGTDItem(inGTDItemID, inTeamID: inTeamID)
+        
+        for myItem in myGTDDetail
+        {
+            myGTDItemID = myItem.gTDItemID as! Int
+            myTitle = myItem.title!
+            myStatus = myItem.status!
+            myTeamID = myItem.teamID as! Int
+            myNote = myItem.note!
+            myLastReviewDate = myItem.lastReviewDate
+            myReviewFrequency = myItem.reviewFrequency as! Int
+            myReviewPeriod = myItem.reviewPeriod!
+            myPredecessor = myItem.predecessor as! Int
+            myGTDLevel = myItem.gTDLevel as! Int
+            myGTDParentID = myItem.gTDParentID as! Int
+        }
+        
+        // Load the Members
+        loadChildren()
+    }
+    
+    init(inTeamID: Int, inParentID: Int)
+    {
+        super.init()
+        
+        myGTDItemID = myDatabaseConnection.getNextID("GTDItem")
+        myGTDParentID = inParentID
+        myLastReviewDate = getDefaultDate()
+        myTeamID = inTeamID
+        
+        save()
+    }
+    
+    func save()
+    {
+        myDatabaseConnection.saveGTDItem(myGTDItemID, inParentID: myGTDParentID, inTitle: myTitle, inStatus: myStatus, inTeamID: myTeamID, inNote: myNote, inLastReviewDate: myLastReviewDate, inReviewFrequency: myReviewFrequency, inReviewPeriod: myReviewPeriod, inPredecessor: myPredecessor, inGTDLevel: myGTDLevel)
+    }
+    
+    func addChild(inChild: workingGTDItem)
+    {
+        inChild.GTDParentID = myGTDItemID
+        loadChildren()
+    }
+    
+    func removeChild(inChild: workingGTDItem)
+    {
+        inChild.GTDParentID = 0
+        loadChildren()
+    }
+    
+    func loadChildren()
+    {
+        let myChildrenList = myDatabaseConnection.getOpenGTDChildItems(myGTDItemID, inTeamID: myTeamID)
+        myChildren.removeAll()
+        
+        for myItem in myChildrenList
+        {
+            let myNewChild = workingGTDItem(inGTDItemID: myItem.gTDItemID as! Int, inTeamID: myTeamID)
+            myChildren.append(myNewChild)
+        }
+    }
+    
+    func delete() -> Bool
+    {
+        if myChildren.count > 0
+        {
+            return false
+        }
+        else
+        {
+            myDatabaseConnection.deleteGTDItem(myGTDItemID, inTeamID: myTeamID)
+            return true
+        }
+    }
+}
+
+
+
+
 class purposeAndCoreValue: NSObject // 50k Level
 {
     private var myPurposeID: Int = 0
@@ -2368,7 +2725,7 @@ class contexts: NSObject
     
     override init()
     {
-        let myData = myDatabaseConnection.getContexts(myTeamID)
+        let myData = myDatabaseConnection.getContexts(myCurrentTeam.teamID)
         
         for myItem in myData
         {

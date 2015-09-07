@@ -15,7 +15,8 @@ var dropboxCoreService: DropboxCoreService = DropboxCoreService()
 var myDatabaseConnection: coreDatabase!
 var adbk : ABAddressBook!
 var eventStore: EKEventStore!
-var myTeamID: Int = 1
+
+var myCurrentTeam: team!
 
 var myCurrentViewController: AnyObject!
 
@@ -270,7 +271,7 @@ func displayTeamMembers(inProject: project, inout lookupArray: [String])->[Table
     {
         titleText = myTeamMember.teamMember
         titleText += " : "
-        titleText += myDatabaseConnection.getRoleDescription(myTeamMember.roleID, inTeamID: myTeamID)
+        titleText += myDatabaseConnection.getRoleDescription(myTeamMember.roleID, inTeamID: myCurrentTeam.teamID)
         
         lookupArray.append(myTeamMember.teamMember)
         
@@ -297,13 +298,13 @@ func displayProjectsForPerson(inPerson: String, inout lookupArray: [String]) -> 
     {
         for myProject in myProjects
         {
-            let myDetails = myDatabaseConnection.getProjectDetails(myProject.projectID as Int, inTeamID: myTeamID)
+            let myDetails = myDatabaseConnection.getProjectDetails(myProject.projectID as Int, inTeamID: myCurrentTeam.teamID)
         
             if myDetails[0].projectStatus != "Archived"
             {
                 titleText = myDetails[0].projectName
                 titleText += " : "
-                titleText += myDatabaseConnection.getRoleDescription(myProject.roleID, inTeamID: myTeamID)
+                titleText += myDatabaseConnection.getRoleDescription(myProject.roleID, inTeamID: myCurrentTeam.teamID)
                 
                 lookupArray.append(myProject.projectID.stringValue)
                 

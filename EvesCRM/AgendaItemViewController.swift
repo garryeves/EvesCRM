@@ -257,7 +257,7 @@ class agendaItemViewController: UIViewController, MyTaskDelegate, UITextViewDele
         
         let myPassedTask = TaskModel()
         myPassedTask.taskType = "minutes"
-        let workingTask = task(inTeamID: myTeamID)
+        let workingTask = task(inTeamID: myCurrentTeam.teamID)
         myPassedTask.currentTask = workingTask
         myPassedTask.delegate = self
         myPassedTask.event = event

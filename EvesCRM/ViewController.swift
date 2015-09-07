@@ -797,7 +797,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             var myReturnedData: [Task] = Array()
             if myDisplayType == "Project"
             {
-                myReturnedData = myDatabaseConnection.getTasksForProject(mySelectedProject.projectID, inTeamID: myTeamID)
+                myReturnedData = myDatabaseConnection.getTasksForProject(mySelectedProject.projectID, inTeamID: myCurrentTeam.teamID)
             }
             else
             {
@@ -812,7 +812,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     searchString = personContact.fullName
                 }
                 
-                let myContext = myDatabaseConnection.getContextByName(searchString, inTeamID: myTeamID)
+                let myContext = myDatabaseConnection.getContextByName(searchString, inTeamID: myCurrentTeam.teamID)
                 
                 if myContext.count != 0
                 {
@@ -825,7 +825,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     for myTaskContext in myTaskContextList
                     {
                         // Get the context details
-                        let myTaskList = myDatabaseConnection.getActiveTask(myTaskContext.taskID as Int, inTeamID: myTeamID)
+                        let myTaskList = myDatabaseConnection.getActiveTask(myTaskContext.taskID as Int, inTeamID: myCurrentTeam.teamID)
                     
                         for myTask in myTaskList
                         {  //append project details to work array
@@ -842,7 +842,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             
             for myItem in myReturnedData
             {
-                let myTempTask = task(inTaskID: myItem.taskID as Int, inTeamID: myTeamID)
+                let myTempTask = task(inTaskID: myItem.taskID as Int, inTeamID: myCurrentTeam.teamID)
                 
                 myTaskItems.append(myTempTask)
             }
@@ -2196,22 +2196,31 @@ print("Nothing found")
     func initialPopulationOfTables()
     {
         var decodeString: String = ""
+ 
+        //  For testing purposes, this will remove all the teams
+  //      myDatabaseConnection.deleteAllTeams()
         
         if myDatabaseConnection.getTeamsCount() == 0
         {
-            let myTeam = team()
-            myTeam.name = "My Life"
-            myTeam.type = "private"
-            myTeam.status = "Open"
+            let myNewTeam = team()
+            myNewTeam.name = "My Life"
+            myNewTeam.type = "private"
+            myNewTeam.status = "Open"
             
-            // Need to update existing tables to use the newly created team
+            // Store the ID for the default team
+            myDatabaseConnection.updateDecodeValue("Default Team", inCodeValue: "\(myNewTeam.teamID)", inCodeType: "hidden")
             
-            myDatabaseConnection.initialiseTeamForContext(myTeam.teamID)
-            myDatabaseConnection.initialiseTeamForMeetingAgenda(myTeam.teamID)
-            myDatabaseConnection.initialiseTeamForProject(myTeam.teamID)
-            myDatabaseConnection.initialiseTeamForRoles(myTeam.teamID)
-            myDatabaseConnection.initialiseTeamForStages(myTeam.teamID)
-            myDatabaseConnection.initialiseTeamForTask(myTeam.teamID)
+            myCurrentTeam = myNewTeam
+        }
+        else
+        {
+            // Load up the default team
+            
+            decodeString = myDatabaseConnection.getDecodeValue("Default Team")
+            
+            let tempId = Int(decodeString)
+            
+            myCurrentTeam = team(inTeamID: tempId!)
         }
 
         decodeString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date")
@@ -2247,20 +2256,6 @@ print("Nothing found")
         if decodeString == ""
         {  // Nothing found so go and create
             myDatabaseConnection.updateDecodeValue("Tasks - Days since last update", inCodeValue: "14", inCodeType: "stepper")
-        }
-        
-        if myDatabaseConnection.getRoles(myTeamID).count == 0
-        {
-            // There are no roles defined so we need to go in and create them
-            
-            populateRoles(myTeamID)
-        }
-        
-        if myDatabaseConnection.getStages(myTeamID).count == 0
-        {
-            // There are no roles defined so we need to go in and create them
-            
-            populateStages(myTeamID)
         }
     }
     
@@ -2875,7 +2870,7 @@ print("Nothing found")
         StartLabel.hidden = true
         
         myDisplayType = "Project"
-        mySelectedProject = project(inProjectID: inProjectID, inTeamID: myTeamID)
+        mySelectedProject = project(inProjectID: inProjectID, inTeamID: myCurrentTeam.teamID)
         
         displayScreen()
         
@@ -3040,7 +3035,7 @@ print("Nothing found")
             
             myString += "Project: "
             
-            let myData = myDatabaseConnection.getProjectDetails(myTask.projectID, inTeamID: myTeamID)
+            let myData = myDatabaseConnection.getProjectDetails(myTask.projectID, inTeamID: myCurrentTeam.teamID)
             
             if myData.count == 0
             {
