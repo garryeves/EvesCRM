@@ -2223,6 +2223,9 @@ print("Nothing found")
             myCurrentTeam = team(inTeamID: tempId!)
         }
 
+        //  For testing purposes, this will reset decodes
+        //      myDatabaseConnection.resetDecodes()
+
         decodeString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date")
         
         if decodeString == ""

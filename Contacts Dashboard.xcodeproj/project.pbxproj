@@ -18,6 +18,7 @@
 		340650841ADDF8FF00C90CBB /* EvesCRMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340650831ADDF8FF00C90CBB /* EvesCRMTests.swift */; };
 		3406508F1ADDF93600C90CBB /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3406508D1ADDF93600C90CBB /* AddressBook.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		340650901ADDF93600C90CBB /* AddressBookUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3406508E1ADDF93600C90CBB /* AddressBookUI.framework */; };
+		3406E6C11B9E772800A5F0F9 /* teamDecodesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406E6C01B9E772800A5F0F9 /* teamDecodesViewController.swift */; settings = {ASSET_TAGS = (); }; };
 		340C7CB71B900FE900ECC4FB /* Resource in Resources */ = {isa = PBXBuildFile; fileRef = 340C7CB61B900FE900ECC4FB /* Resource */; };
 		340C7CB81B900FE900ECC4FB /* Resource in Resources */ = {isa = PBXBuildFile; fileRef = 340C7CB61B900FE900ECC4FB /* Resource */; };
 		340F84A71B79BE220028439B /* taskListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340F84A61B79BE220028439B /* taskListViewController.swift */; };
@@ -288,6 +289,7 @@
 		340650831ADDF8FF00C90CBB /* EvesCRMTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvesCRMTests.swift; sourceTree = "<group>"; };
 		3406508D1ADDF93600C90CBB /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		3406508E1ADDF93600C90CBB /* AddressBookUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBookUI.framework; path = System/Library/Frameworks/AddressBookUI.framework; sourceTree = SDKROOT; };
+		3406E6C01B9E772800A5F0F9 /* teamDecodesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = teamDecodesViewController.swift; sourceTree = "<group>"; };
 		340C7CB61B900FE900ECC4FB /* Resource */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Resource; path = EvesCRM/Resource; sourceTree = "<group>"; };
 		340F84A61B79BE220028439B /* taskListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = taskListViewController.swift; sourceTree = "<group>"; };
 		3410561D1B589D92002B0ED9 /* AgendaItemViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AgendaItemViewController.swift; sourceTree = "<group>"; };
@@ -712,6 +714,7 @@
 				342A357B1B5F727200D6DB29 /* taskViewController.swift */,
 				34F35BD21B6B3F7000A19ACE /* taskUpdatesViewController.swift */,
 				34E92AE71B9D5B3400F158F3 /* teamMaintenanceViewController.swift */,
+				3406E6C01B9E772800A5F0F9 /* teamDecodesViewController.swift */,
 			);
 			name = "My ViewControllers";
 			sourceTree = "<group>";
@@ -1107,6 +1110,7 @@
 				34E92AE01B9D191900F158F3 /* GTDLevel+CoreDataProperties.swift in Sources */,
 				34C7E8071B5F625C005555B3 /* TaskUpdates.swift in Sources */,
 				34A183271B0EDBB400FC369D /* StreamReader.m in Sources */,
+				3406E6C11B9E772800A5F0F9 /* teamDecodesViewController.swift in Sources */,
 				347518D91AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift in Sources */,
 				346A2E591B66027100C6C63E /* Vision.swift in Sources */,
 				34BDECBE1B009C17008C9F3F /* Panes.swift in Sources */,

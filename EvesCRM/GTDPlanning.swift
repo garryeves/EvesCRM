@@ -858,13 +858,33 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                     {
                         //                      popoverContent.workingObject = sender.targetObject
                     }
-                    popoverContent.preferredContentSize = CGSizeMake(700,700)
+                    popoverContent.preferredContentSize = CGSizeMake(800,700)
                     self.presentViewController(popoverContent, animated: true, completion: nil)
                 })
 
+                let myOption3 = UIAlertAction(title: "Maintain Team Settings", style: .Default, handler: { (action: UIAlertAction) -> () in
+                    let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("MaintainTeamDecodes") as! teamDecodesViewController
+                    popoverContent.modalPresentationStyle = .Popover
+                    let popover = popoverContent.popoverPresentationController
+                    popover!.delegate = self
+                    popover!.sourceView = sender.displayView
+                    
+                    if sender.headBody == "head"
+                    {
+                        let parentObject = sender.targetObject as! team
+                        popoverContent.myWorkingTeam = parentObject
+                    }
+                    else
+                    {
+                        //                      popoverContent.workingObject = sender.targetObject
+                    }
+                    popoverContent.preferredContentSize = CGSizeMake(600,400)
+                    self.presentViewController(popoverContent, animated: true, completion: nil)
+                })
                 
                 myOptions.addAction(myOption1)
                 myOptions.addAction(myOption2)
+                myOptions.addAction(myOption3)
             }
             else if sender.type == "areaOfResponsibility" && sender.headBody == "head"
             {  // put in code here to add a new project

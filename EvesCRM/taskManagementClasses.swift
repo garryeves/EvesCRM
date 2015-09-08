@@ -21,6 +21,11 @@ class workingGTDLevel: NSObject
         {
             return myGTDLevel
         }
+        set
+        {
+            myGTDLevel = newValue
+            save()
+        }
     }
     
     var title: String
@@ -71,12 +76,48 @@ class workingGTDLevel: NSObject
         save()
     }
     
+    init(inLevelName: String, inTeamID: Int)
+    {
+        super.init()
+        
+        let myGTDDetail = myDatabaseConnection.getGTDLevels(inTeamID)
+        
+        myGTDLevel = myGTDDetail.count + 1
+        myTeamID = inTeamID
+        myTitle = inLevelName
+        
+        save()
+    }
+    
     func save()
     {
         myDatabaseConnection.saveGTDLevel(myGTDLevel, inLevelName: myTitle, inTeamID: myTeamID)
     }
+    
+    func delete()
+    { // Delete the current GTD Level and move the remaining ones up a level
+        myDatabaseConnection.deleteGTDLevel(myGTDLevel, inTeamID: myTeamID)
+        
+        var currentLevel = myGTDLevel
+        var boolLoop: Bool = true
+        
+        while boolLoop
+        {
+            let tempLevel = myDatabaseConnection.getGTDLevel(currentLevel + 1, inTeamID: myTeamID)
+            
+            if tempLevel.count == 0
+            {  // reached the end, so do nothing
+                boolLoop = false
+            }
+            else
+            {  // There is another level so need to decrement the level count
+                myDatabaseConnection.changeGTDLevel(currentLevel + 1, newGTDLevel: currentLevel, inTeamID: myTeamID)
+                
+                currentLevel++
+            }
+        }
+    }
 }
-
 
 class workingGTDItem: NSObject
 {

@@ -2274,6 +2274,62 @@ class coreDatabase: NSObject
         return fetchResults!
     }
     
+    func changeGTDLevel(oldGTDLevel: Int, newGTDLevel: Int, inTeamID: Int)
+    {
+        var myGTD: GTDLevel!
+        
+        let myGTDItems = getGTDLevel(oldGTDLevel, inTeamID: inTeamID)
+        
+        if myGTDItems.count > 0
+        { // Update
+            myGTD = myGTDItems[0]
+            myGTD.gTDLevel = newGTDLevel
+            myGTD.updateTime = NSDate()
+            if myGTD.updateType != "Add"
+            {
+                myGTD.updateType = "Update"
+            }
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+    }
+
+    
+    func deleteGTDLevel(inGTDLevel: Int, inTeamID: Int)
+    {
+        var myGTD: GTDLevel!
+        
+        let myGTDItems = getGTDLevel(inGTDLevel, inTeamID: inTeamID)
+        
+        if myGTDItems.count > 0
+        { // Update
+            myGTD = myGTDItems[0]
+            myGTD.updateTime = NSDate()
+            myGTD.updateType = "Delete"
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+    }
+
+    
     func getGTDLevels(inTeamID: Int)->[GTDLevel]
     {
         let fetchRequest = NSFetchRequest(entityName: "GTDLevel")
@@ -5182,5 +5238,36 @@ class coreDatabase: NSObject
         return fetchResults!
     }
     
+    func resetDecodes()
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Decodes")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(decodeType != \"hidden\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Decodes]
+        
+        for myItem in fetchResults!
+        {
+            managedObjectContext!.deleteObject(myItem as NSManagedObject)
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+    }
     
 }

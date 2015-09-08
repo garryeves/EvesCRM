@@ -1,38 +1,30 @@
 //
-//  teamMaintenanceViewController.swift
+//  teamDecodesViewController.swift
 //  Contacts Dashboard
 //
-//  Created by Garry Eves on 7/09/2015.
+//  Created by Garry Eves on 8/09/2015.
 //  Copyright © 2015 Garry Eves. All rights reserved.
 //
 
 import Foundation
 
-class teamMaintenanceViewController: UIViewController, SMTEFillDelegate
+class teamDecodesViewController: UIViewController, SMTEFillDelegate
 {
-    @IBOutlet weak var lblName: UILabel!
-    @IBOutlet weak var lblStatus: UILabel!
-    @IBOutlet weak var lblNotes: UILabel!
-    @IBOutlet weak var lblHierarchy: UILabel!
-    @IBOutlet weak var txtName: UITextField!
-    @IBOutlet weak var txtNotes: UITextView!
-    @IBOutlet weak var colHierarchy: UICollectionView!
-    @IBOutlet weak var txtHierarchy: UITextField!
-    @IBOutlet weak var btnHierarchy: UIButton!
-    @IBOutlet weak var btnSetStatus: UIButton!
-    @IBOutlet weak var myPickerView: UIPickerView!
-    @IBOutlet weak var btnStatus: UIButton!
-    @IBOutlet weak var lblContext: UILabel!
-    @IBOutlet weak var colContext: UICollectionView!
+    @IBOutlet weak var lblRoles: UILabel!
+    @IBOutlet weak var lblStages: UILabel!
+    @IBOutlet weak var colRoles: UICollectionView!
+    @IBOutlet weak var colStages: UICollectionView!
+    @IBOutlet weak var txtRoles: UITextField!
+    @IBOutlet weak var txtStage: UITextField!
+    @IBOutlet weak var btnRole: UIButton!
+    @IBOutlet weak var btnStage: UIButton!
+    @IBOutlet weak var btnResetRoles: UIButton!
+    @IBOutlet weak var btnResetStages: UIButton!
     
-    private var myGTDHierarchy: [workingGTDLevel] = Array()
-    private var myDisplayHierarchy: [String] = Array()
-    private var myContext: [context] = Array()
+    private var myRoles: [Roles]!
+    private var myStages: [Stages]!
     
     var myWorkingTeam: team!
-    
-    private var pickerDisplayArray: [String] = Array()
-    private var mySelectedRow: Int = -1
     
     // Textexpander
     
@@ -42,39 +34,22 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate
     
     override func viewDidLoad()
     {
-        super.viewDidLoad()// Load GTD
+        super.viewDidLoad()
         
-        loadContexts()
+        // Load the Roles
+        myRoles = myWorkingTeam.roles
         
-        loadHierarchy()
+        // Load the Stages
+        myStages = myWorkingTeam.stages
         
-        txtName.text = myWorkingTeam.name
+        // Load GTD
         
-        if myWorkingTeam.status == ""
-        {
-            btnStatus.setTitle("Select Status", forState: .Normal)
-        }
-        else
-        {
-            btnStatus.setTitle(myWorkingTeam.status, forState: .Normal)
-        }
-        txtNotes.text = myWorkingTeam.note
-        
-        myPickerView.hidden = true
-        btnSetStatus.hidden = true
-        
-        txtNotes.layer.borderColor = UIColor.lightGrayColor().CGColor
-        txtNotes.layer.borderWidth = 0.5
-        txtNotes.layer.cornerRadius = 5.0
-        txtNotes.layer.masksToBounds = true
-        
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "changeSettings:", name:"NotificationChangeSettings", object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "changeSettings:", name:"NotificationTeamDecodeChangeSettings", object: nil)
         
         // TextExpander
         textExpander = SMTEDelegateController()
-        txtName.delegate = textExpander
-        txtNotes.delegate = textExpander
-        txtHierarchy.delegate = textExpander
+        txtRoles.delegate = textExpander
+        txtStage.delegate = textExpander
         textExpander.clientAppName = "EvesCRM"
         textExpander.fillCompletionScheme = "EvesCRM-fill-xc"
         textExpander.fillDelegate = self
@@ -93,31 +68,11 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate
     {
         super.viewWillLayoutSubviews()
         
-        colContext.collectionViewLayout.invalidateLayout()
-        colContext.reloadData()
+        colRoles.collectionViewLayout.invalidateLayout()
+        colRoles.reloadData()
         
-        colHierarchy.collectionViewLayout.invalidateLayout()
-        colHierarchy.reloadData()
-    }
-    
-    func numberOfComponentsInPickerView(inPicker: UIPickerView) -> Int
-    {
-        return 1
-    }
-    
-    func pickerView(inPicker: UIPickerView, numberOfRowsInComponent component: Int) -> Int
-    {
-        return pickerDisplayArray.count
-    }
-    
-    func pickerView(inPicker: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String!
-    {
-        return pickerDisplayArray[row]
-    }
-    
-    func pickerView(inPicker: UIPickerView, didSelectRow row: Int, inComponent component: Int)
-    {
-        mySelectedRow = row
+        colStages.collectionViewLayout.invalidateLayout()
+        colStages.reloadData()
     }
     
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
@@ -127,22 +82,23 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
-        if collectionView == colContext
+        if collectionView == colRoles
         {
-            return myContext.count
+            return myRoles.count
         }
         else
         {
-            return myDisplayHierarchy.count
+            return myStages.count
         }
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
     {
-        if collectionView == colContext
+        if collectionView == colRoles
         {
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellContext", forIndexPath: indexPath) as! mySettingContext
-            cell.lblRole.text = myContext[indexPath.row].name
+            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellRoles", forIndexPath: indexPath) as! mySettingRoles
+            cell.lblRole.text = myRoles[indexPath.row].roleDescription
+            cell.teamID = myWorkingTeam.teamID
             
             if (indexPath.row % 2 == 0)  // was .row
             {
@@ -157,21 +113,10 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate
             return cell
         }
         else
-        {  // colHierarchy
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellHierarchy", forIndexPath: indexPath) as! mySettingHierarchy
-            cell.lblName.text  = myDisplayHierarchy[indexPath.row]
-            
-            if myDisplayHierarchy[indexPath.row] == "Projects" || myDisplayHierarchy[indexPath.row] == "Tasks"
-            {
-                cell.btnRemove.hidden = true
-                cell.btnRename.hidden = true
-            }
-            else
-            {
-                cell.btnRemove.hidden = false
-                cell.btnRename.hidden = false
-                cell.myGTDLevel = myGTDHierarchy[indexPath.row]
-            }
+        {
+            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellStages", forIndexPath: indexPath) as! mySettingStages
+            cell.lblRole.text  = myStages[indexPath.row].stageDescription
+            cell.teamID = myWorkingTeam.teamID
             
             if (indexPath.row % 2 == 0)  // was .row
             {
@@ -184,7 +129,6 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate
             
             cell.layoutSubviews()
             return cell
-
         }
     }
     
@@ -192,186 +136,134 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate
     {
         var retVal: CGSize!
         
-        if collectionView == colContext
+        if collectionView == colRoles
         {
-            retVal = CGSize(width: colContext.bounds.size.width, height: 39)
+            retVal = CGSize(width: colRoles.bounds.size.width, height: 39)
         }
-        else
+        else if collectionView == colStages
         {
-            retVal = CGSize(width: colHierarchy.bounds.size.width, height: 39)
+            retVal = CGSize(width: colStages.bounds.size.width, height: 39)
         }
         
         return retVal
-    } 
-    
-    @IBAction func txtName(sender: UITextField)
-    {
-        myWorkingTeam.name = txtName.text!
     }
     
-    @IBAction func btnStatus(sender: UIButton)
+    @IBAction func btnRole(sender: UIButton)
     {
-        pickerDisplayArray.removeAll()
-        pickerDisplayArray.append("")
-        pickerDisplayArray.append("Open")
-        pickerDisplayArray.append("Closed")
-
-        btnSetStatus.setTitle("Select Status", forState: .Normal)
-        myPickerView.reloadAllComponents()
-        myPickerView.hidden = false
-        btnSetStatus.hidden = false
-        mySelectedRow = -1
-        hideFields()
-    }
-    
-    @IBAction func btnSetStatus(sender: UIButton)
-    {
-        myWorkingTeam.status = pickerDisplayArray[mySelectedRow]
-        btnStatus.setTitle(myWorkingTeam.status, forState: UIControlState.Normal)
-
-        myPickerView.hidden = true
-        btnSetStatus.hidden = true
-        showFields()
-    }
-    
-    func textViewDidEndEditing(textView: UITextView)
-    { //Handle the text changes here
-        if textView == txtNotes
+        if txtRoles.text == ""
         {
-            myWorkingTeam.note = textView.text
-        }
-    }
-    
-    @IBAction func btnHierarchy(sender: UIButton)
-    {
-        if txtHierarchy.text == ""
-        {
-            let alert = UIAlertController(title: "Add Hierarchy", message:
-                "You need to enter a hierarchy name before you can add it", preferredStyle: UIAlertControllerStyle.Alert)
+            let alert = UIAlertController(title: "Add Role", message:
+                "You need to enter a role name before you can add it", preferredStyle: UIAlertControllerStyle.Alert)
             
             self.presentViewController(alert, animated: false, completion: nil)
             
             alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
                 handler: nil))
             
-            txtHierarchy.becomeFirstResponder()
+            txtRoles.becomeFirstResponder()
         }
         else
         {
-            _ = workingGTDLevel(inLevelName: txtHierarchy.text!, inTeamID: myWorkingTeam.teamID)
-            myWorkingTeam.loadGTDLevels()
-            loadHierarchy()
-            colHierarchy.reloadData()
-            txtHierarchy.text = ""
+            // Add the new role
+            
+            myDatabaseConnection.createRole(txtRoles.text!, inTeamID: myWorkingTeam.teamID)
+            myWorkingTeam.loadRoles()
+            myRoles = myWorkingTeam.roles
+            colRoles.reloadData()
+            txtRoles.text = ""
         }
     }
     
-    func loadContexts()
+    @IBAction func btnStage(sender: UIButton)
     {
-        myContext.removeAll()
-        for myItem in myDatabaseConnection.getContexts(myWorkingTeam.teamID)
+        if txtStage.text == ""
         {
-            let tempContext = context(inContext: myItem)
-            myContext.append(tempContext)
+            let alert = UIAlertController(title: "Add Stage", message:
+                "You need to enter a stage name before you can add it", preferredStyle: UIAlertControllerStyle.Alert)
+            
+            self.presentViewController(alert, animated: false, completion: nil)
+            
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+                handler: nil))
+            
+            txtStage.becomeFirstResponder()
+        }
+        else
+        {
+            // Add the new role
+            
+            myDatabaseConnection.createStage(txtStage.text!, inTeamID: myWorkingTeam.teamID)
+            myWorkingTeam.loadStages()
+            myStages = myWorkingTeam.stages
+            colStages.reloadData()
+            txtStage.text = ""
         }
     }
     
-    func loadHierarchy()
+    @IBAction func buttonResetRolesClick(sender: UIButton)
     {
-        myGTDHierarchy.removeAll()
-        myDisplayHierarchy.removeAll()
-        
-        for myItem in myWorkingTeam.GTDLevels
-        {
-            myGTDHierarchy.append(myItem)
-            myDisplayHierarchy.append(myItem.title)
-        }
-        myDisplayHierarchy.append("Projects")
-        myDisplayHierarchy.append("Tasks")
+        myDatabaseConnection.deleteAllRoles(myWorkingTeam.teamID)
+        populateRoles(myWorkingTeam.teamID)
+        myWorkingTeam.loadRoles()
+    
+        myRoles = myWorkingTeam.roles
+        colRoles.reloadData()
+        txtRoles.text = ""
+    }
+    
+    @IBAction func buttonResetStagesClick(sender: UIButton)
+    {
+        myDatabaseConnection.deleteAllStages(myWorkingTeam.teamID)
+        populateStages(myWorkingTeam.teamID)
+        myWorkingTeam.loadStages()
+        myStages = myWorkingTeam.stages
+        colStages.reloadData()
+        txtStage.text = ""
     }
     
     func showFields()
     {
-        lblName.hidden = false
-        lblStatus.hidden = false
-        lblNotes.hidden = false
-        lblHierarchy.hidden = false
-        txtName.hidden = false
-        txtNotes.hidden = false
-        colHierarchy.hidden = false
-        txtHierarchy.hidden = false
-        btnHierarchy.hidden = false
-        btnStatus.hidden = false
-        lblContext.hidden = false
-        colContext.hidden = false
+        lblRoles.hidden = false
+        lblStages.hidden = false
+        colRoles.hidden = false
+        colStages.hidden = false
+        txtRoles.hidden = false
+        txtStage.hidden = false
+        btnRole.hidden = false
+        btnStage.hidden = false
+        btnResetRoles.hidden = false
+        btnResetStages.hidden = false
     }
     
     func hideFields()
     {
-        lblName.hidden = true
-        lblStatus.hidden = true
-        lblNotes.hidden = true
-        lblHierarchy.hidden = true
-        txtName.hidden = true
-        txtNotes.hidden = true
-        colHierarchy.hidden = true
-        txtHierarchy.hidden = true
-        btnHierarchy.hidden = true
-        btnStatus.hidden = true
-        lblContext.hidden = true
-        colContext.hidden = true
+        lblRoles.hidden = true
+        lblStages.hidden = true
+        colRoles.hidden = true
+        colStages.hidden = true
+        txtRoles.hidden = true
+        txtStage.hidden = true
+        btnRole.hidden = true
+        btnStage.hidden = true
+        btnResetRoles.hidden = true
+        btnResetStages.hidden = true
     }
     
     func changeSettings(notification: NSNotification)
     {
         let settingChanged = notification.userInfo!["setting"] as! String
-        let workingItem = notification.userInfo!["Item"] as! workingGTDLevel
         
-        if settingChanged == "Context"
+        if settingChanged == "Role"
         {
-            loadContexts()
-            colContext.reloadData()
+            myWorkingTeam.loadRoles()
+            myRoles = myWorkingTeam.roles
+            colRoles.reloadData()
         }
-        else if settingChanged == "HierarchyDelete"
+        else if settingChanged == "Stage"
         {
-            let deleteAlert = UIAlertController(title: "Delete Hierarchy", message: "Please confirm, if you delete this then any items associated with it will be lost", preferredStyle: UIAlertControllerStyle.Alert)
-            
-            deleteAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { (action: UIAlertAction!) in
-                workingItem.delete()
-                self.myWorkingTeam.loadGTDLevels()
-                self.loadHierarchy()
-                self.colHierarchy.reloadData()
-
-            }))
-            
-            deleteAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: { (action: UIAlertAction!) in
-                NSLog("Do nothing")
-            }))
-            
-            presentViewController(deleteAlert, animated: true, completion: nil)
-        }
-        else
-        { // Hierarchy change
-            
-            //1. Create the alert controller.
-            let newNameAlert = UIAlertController(title: "Hierarchy Rename", message: "Enter new name for Hierarchy Level", preferredStyle: .Alert)
-            
-            //2. Add the text field. You can configure it however you need.
-            newNameAlert.addTextFieldWithConfigurationHandler({ (textField) -> Void in
-                textField.text = workingItem.title
-            })
-            
-            //3. Grab the value from the text field, and print it when the user clicks OK.
-            newNameAlert.addAction(UIAlertAction(title: "OK", style: .Default, handler: { (action) -> Void in
-                let textField = newNameAlert.textFields![0] as UITextField
-                workingItem.title = textField.text!
-                self.myWorkingTeam.loadGTDLevels()
-                self.loadHierarchy()
-                self.colHierarchy.reloadData()
-            }))
-            
-            // 4. Present the alert.
-            self.presentViewController(newNameAlert, animated: true, completion: nil)
+            myWorkingTeam.loadStages()
+            myStages = myWorkingTeam.stages
+            colStages.reloadData()
         }
     }
     //---------------------------------------------------------------
@@ -404,19 +296,11 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate
         {
             if uiTextObject.tag == 1
             {
-                result = "txtRole"
+                result = "txtRoles"
             }
             if uiTextObject.tag == 2
             {
                 result = "txtStage"
-            }
-        }
-        
-        if uiTextObject.isKindOfClass(UITextView)
-        {
-            if uiTextObject.tag == 1
-            {
-                result = "txtNotes"
             }
         }
         
@@ -477,16 +361,27 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate
         
         let intIoInsertionPointLocation:Int = ioInsertionPointLocation.memory
         
-        if "txtNotes" == textIdentifier
+        if "txtRoles" == textIdentifier
         {
-            txtNotes.becomeFirstResponder()
-            let theLoc = txtNotes.positionFromPosition(txtNotes.beginningOfDocument, offset: intIoInsertionPointLocation)
+            txtRoles.becomeFirstResponder()
+            let theLoc = txtRoles.positionFromPosition(txtRoles.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtNotes.selectedTextRange = txtNotes.textRangeFromPosition(theLoc!, toPosition: theLoc!)
+                txtRoles.selectedTextRange = txtRoles.textRangeFromPosition(theLoc!, toPosition: theLoc!)
             }
-            return txtNotes
+            return txtRoles
         }
+        else if "txtStage" == textIdentifier
+        {
+            txtStage.becomeFirstResponder()
+            let theLoc = txtStage.positionFromPosition(txtStage.beginningOfDocument, offset: intIoInsertionPointLocation)
+            if theLoc != nil
+            {
+                txtStage.selectedTextRange = txtStage.textRangeFromPosition(theLoc!, toPosition: theLoc!)
+            }
+            return txtStage
+        }
+
             //        else if "mySearchBar" == textIdentifier
             //        {
             //            searchBar.becomeFirstResponder()
@@ -620,31 +515,15 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate
     return true
     }
     */
-
+    
 }
 
-class mySettingContext: UICollectionViewCell
+class mySettingRoles: UICollectionViewCell
 {
     @IBOutlet weak var lblRole: UILabel!
-    
-    override func layoutSubviews()
-    {
-        contentView.frame = bounds
-        super.layoutSubviews()
-    }
-}
-
-class mySettingHierarchy: UICollectionViewCell
-{
-
-    @IBOutlet weak var lblName: UILabel!
     @IBOutlet weak var btnRemove: UIButton!
+    var teamID: Int = 0
     
-    @IBOutlet weak var btnRename: UIButton!
-    
-    var myGTDLevel: workingGTDLevel!
-    
-
     override func layoutSubviews()
     {
         contentView.frame = bounds
@@ -653,11 +532,26 @@ class mySettingHierarchy: UICollectionViewCell
     
     @IBAction func btnRemove(sender: UIButton)
     {
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeSettings", object: nil, userInfo:["setting":"HierarchyDelete", "Item": myGTDLevel])
+        myDatabaseConnection.deleteRoleEntry(lblRole.text!, inTeamID: teamID)
+        NSNotificationCenter.defaultCenter().postNotificationName("NotificationTeamDecodeChangeSettings", object: nil, userInfo:["setting":"Role"])
     }
+}
 
-    @IBAction func btnRename(sender: UIButton)
+class mySettingStages: UICollectionViewCell
+{
+    @IBOutlet weak var lblRole: UILabel!
+    @IBOutlet weak var btnRemove: UIButton!
+    var teamID: Int = 0
+    
+    override func layoutSubviews()
     {
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeSettings", object: nil, userInfo:["setting":"HierarchyUpdate", "Item": myGTDLevel])
+        contentView.frame = bounds
+        super.layoutSubviews()
+    }
+    
+    @IBAction func btnRemove(sender: UIButton)
+    {
+        myDatabaseConnection.deleteStageEntry(lblRole.text!, inTeamID: teamID)
+        NSNotificationCenter.defaultCenter().postNotificationName("NotificationTeamDecodeChangeSettings", object: nil, userInfo:["setting":"Stage"])
     }
 }
