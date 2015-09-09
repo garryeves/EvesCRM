@@ -16,7 +16,7 @@ enum AdaptiveMode
     case AlwaysPopover
 }
 
-class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate, UITextViewDelegate, UIPopoverPresentationControllerDelegate
+class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate, UITextViewDelegate, UIPopoverPresentationControllerDelegate, KDRearrangeableCollectionViewDelegate
 {
     
     @IBInspectable var popoverOniPhone:Bool = false
@@ -25,13 +25,12 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
     var passedGTD: GTDModel!
     
     @IBOutlet weak var lblHeader: UILabel!
-    @IBOutlet weak var scrollDisplay: UIScrollView!
     @IBOutlet weak var lblDetail: UILabel!
     @IBOutlet weak var scrollHead: UIScrollView!
     @IBOutlet weak var btnUp: UIButton!
+    @IBOutlet weak var colBody: UICollectionView!
     
     private var containerViewHead: UIView!
-    private var containerViewBody: UIView!
 
     private var myDisplayHeadArray: [AnyObject] = Array()
     private var myDisplayBodyArray: [AnyObject] = Array()
@@ -54,7 +53,6 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
         self.view.addGestureRecognizer(hideGestureRecognizer)
         
         containerViewHead = UIView()
-        containerViewBody = UIView()
         
         myDisplayHeadArray.removeAll()
         
@@ -104,14 +102,457 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
         
         if myDisplayBodyArray.count > 0
         {
-            let contentHeight = buildDisplayBody(myDisplayBodyArray, inWidth: 200, inHeight: 100, inSpacing: 40, inStartX: 0, inStartY: 0)
-        
-            // Set up the container view to hold your custom view hierarchy
-            let containerSize2 = CGSizeMake(UIScreen.mainScreen().bounds.width, contentHeight)
-        
-            containerViewBody.frame = CGRect(origin: CGPointMake(0.0, 0.0), size:containerSize2)
+            colBody.collectionViewLayout.invalidateLayout()
+            colBody.reloadData()
         }
     }
+    
+    
+    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
+    {
+        return 1
+    }
+    
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
+    {
+        if collectionView == colBody
+        {
+            return myDisplayBodyArray.count
+        }
+        else
+        {
+            return 0
+        }
+    }
+    
+    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
+    {
+   //     if collectionView == colBody
+   //     {
+            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellBody", forIndexPath: indexPath) as! myGTDDisplay
+
+            if myDisplayBodyArray[indexPath.row].isKindOfClass(team)
+            {
+                cell.lblName.text = myDisplayBodyArray[indexPath.row].name
+                cell.lblChildren.text = ""
+            }
+            else if myDisplayBodyArray[indexPath.row].isKindOfClass(purposeAndCoreValue)
+            {
+                let tempObject = myDisplayBodyArray[indexPath.row] as! purposeAndCoreValue
+                
+                cell.lblName.text = tempObject.title
+                
+                let myChildRecords = tempObject.vision.count
+                if myChildRecords == 0
+                {
+                    cell.lblChildren.text = ""
+                }
+                else if myChildRecords == 1
+                {
+                    cell.lblChildren.text = "1 child record"
+                }
+                else
+                {
+                    cell.lblChildren.text = "\(myChildRecords) child records"
+                }
+            }
+            else if myDisplayBodyArray[indexPath.row].isKindOfClass(gvision)
+            {
+                let tempObject = myDisplayBodyArray[indexPath.row] as! gvision
+                cell.lblName.text = tempObject.title
+                
+                let myChildRecords = tempObject.goals.count
+                if myChildRecords == 0
+                {
+                    cell.lblChildren.text = ""
+                }
+                else if myChildRecords == 1
+                {
+                    cell.lblChildren.text = "1 child record"
+                }
+                else
+                {
+                    cell.lblChildren.text = "\(myChildRecords) child records"
+                }
+
+            }
+            else if myDisplayBodyArray[indexPath.row].isKindOfClass(goalAndObjective)
+            {
+                let tempObject = myDisplayBodyArray[indexPath.row] as! goalAndObjective
+                cell.lblName.text = tempObject.title
+                
+                let myChildRecords = tempObject.areas.count
+                if myChildRecords == 0
+                {
+                    cell.lblChildren.text = ""
+                }
+                else if myChildRecords == 1
+                {
+                    cell.lblChildren.text = "1 child record"
+                }
+                else
+                {
+                    cell.lblChildren.text = "\(myChildRecords) child records"
+                }
+
+            }
+            else if myDisplayBodyArray[indexPath.row].isKindOfClass(areaOfResponsibility)
+            {
+                let tempObject = myDisplayBodyArray[indexPath.row] as! areaOfResponsibility
+                cell.lblName.text = tempObject.title
+                
+                let myChildRecords = tempObject.projects.count
+                if myChildRecords == 0
+                {
+                    cell.lblChildren.text = ""
+                }
+                else if myChildRecords == 1
+                {
+                    cell.lblChildren.text = "1 child record"
+                }
+                else
+                {
+                    cell.lblChildren.text = "\(myChildRecords) child records"
+                }
+            }
+            else if myDisplayBodyArray[indexPath.row].isKindOfClass(project)
+            {
+                let tempObject = myDisplayBodyArray[indexPath.row] as! project
+                cell.lblName.text = tempObject.projectName
+                
+                let myChildRecords = tempObject.tasks.count
+                if myChildRecords == 0
+                {
+                    cell.lblChildren.text = ""
+                }
+                else if myChildRecords == 1
+                {
+                    cell.lblChildren.text = "1 child record"
+                }
+                else
+                {
+                    cell.lblChildren.text = "\(myChildRecords) child records"
+                }
+            }
+            else if myDisplayBodyArray[indexPath.row].isKindOfClass(task)
+            {
+                let tempObject = myDisplayBodyArray[indexPath.row] as! task
+                cell.lblName.text = tempObject.title
+                cell.lblChildren.text = ""
+            }
+            else if myDisplayBodyArray[indexPath.row].isKindOfClass(context)
+            {
+                let tempObject = myDisplayBodyArray[indexPath.row] as! context
+                cell.lblName.text = tempObject.name
+                cell.lblChildren.text = ""
+            }
+            else if myDisplayBodyArray[indexPath.row] is String
+            {
+                cell.lblName.text = myDisplayBodyArray[indexPath.row] as? String
+                cell.lblChildren.text = ""
+            }
+            
+            cell.layer.borderColor = UIColor.lightGrayColor().CGColor
+            cell.layer.borderWidth = 0.5
+            cell.layer.cornerRadius = 5.0
+            cell.layer.masksToBounds = true
+
+            cell.layoutSubviews()
+            return cell
+     /*   }
+        else
+        {  // colHierarchy
+            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellHierarchy", forIndexPath: indexPath) as! mySettingHierarchy
+            cell.lblName.text  = myDisplayHierarchy[indexPath.row]
+            
+            if myDisplayHierarchy[indexPath.row] == "Projects" || myDisplayHierarchy[indexPath.row] == "Tasks"
+            {
+                cell.btnRemove.hidden = true
+                cell.btnRename.hidden = true
+            }
+            else
+            {
+                cell.btnRemove.hidden = false
+                cell.btnRename.hidden = false
+                cell.myGTDLevel = myGTDHierarchy[indexPath.row]
+            }
+            
+            if (indexPath.row % 2 == 0)  // was .row
+            {
+                cell.backgroundColor = myRowColour
+            }
+            else
+            {
+                cell.backgroundColor = UIColor.clearColor()
+            }
+            
+            cell.layoutSubviews()
+            return cell
+            
+        }
+*/
+    }
+    
+    func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
+    {
+        var retVal: CGSize!
+        
+        if collectionView == colBody
+        {
+            retVal = CGSize(width: 225, height: 125)
+        }
+    //    else
+     //   {
+     //       retVal = CGSize(width: colHierarchy.bounds.size.width, height: 100)
+     //   }
+        
+        return retVal
+    }
+    
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
+    {
+        var workingClassType: String = ""
+        if collectionView == colBody
+        {
+            var myOption0: UIAlertAction!
+            
+            let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .ActionSheet)
+            myOptions.popoverPresentationController!.sourceView = self.view;
+            myOptions.popoverPresentationController!.sourceRect = CGRectMake(self.view.bounds.size.width / 2.0, self.view.bounds.size.height / 2.0, 1.0, 1.0);
+            
+            if myDisplayBodyArray[indexPath.row].isKindOfClass(purposeAndCoreValue)
+            {
+                workingClassType = "purposeAndCoreValue"
+                myOption0 = UIAlertAction(title: "Zoom", style: .Default, handler: { (action: UIAlertAction) -> () in
+                    self.myDisplayHeadArray = self.myDisplayBodyArray
+                    let myObject = self.myDisplayBodyArray[indexPath.row] as! purposeAndCoreValue
+                    self.highlightID = myObject.purposeID as Int
+                    self.buildHead("purposeAndCoreValue", inHighlightedID: self.highlightID)
+                    
+                    self.buildBody("gvision",inParentObject: myObject)
+                    self.lblDetail.text = "My Visions"
+                })
+
+            }
+            if myDisplayBodyArray[indexPath.row].isKindOfClass(gvision)
+            {
+                workingClassType = "gvision"
+                myOption0 = UIAlertAction(title: "Zoom", style: .Default, handler: { (action: UIAlertAction) -> () in
+                    self.myDisplayHeadArray = self.myDisplayBodyArray
+                    let myObject = self.myDisplayBodyArray[indexPath.row] as! gvision
+                    self.highlightID = myObject.visionID as Int
+                    self.buildHead("gvision", inHighlightedID: self.highlightID)
+                    self.buildBody("goalAndObjective",inParentObject: myObject)
+                    self.lblDetail.text = "My Goal and Objectives"
+                })
+            }
+            if myDisplayBodyArray[indexPath.row].isKindOfClass(goalAndObjective)
+            {
+                workingClassType = "goalAndObjective"
+                myOption0 = UIAlertAction(title: "Zoom", style: .Default, handler: { (action: UIAlertAction) -> () in
+                    self.myDisplayHeadArray = self.myDisplayBodyArray
+                    let myObject = self.myDisplayBodyArray[indexPath.row] as! goalAndObjective
+                    self.highlightID = myObject.goalID as Int
+                    self.buildHead("goalAndObjective", inHighlightedID: self.highlightID)
+                    self.buildBody("areaOfResponsibility",inParentObject: myObject)
+                    self.lblDetail.text = "My Area of Responsibilitys"
+                })
+            }
+            if myDisplayBodyArray[indexPath.row].isKindOfClass(areaOfResponsibility)
+            {
+                workingClassType = "areaOfResponsibility"
+                myOption0 = UIAlertAction(title: "Zoom", style: .Default, handler: { (action: UIAlertAction) -> () in
+                    self.myDisplayHeadArray = self.myDisplayBodyArray
+                    let myObject = self.myDisplayBodyArray[indexPath.row] as! areaOfResponsibility
+                    self.highlightID = myObject.areaID as Int
+                    self.buildHead("areaOfResponsibility", inHighlightedID: self.highlightID)
+                    self.buildBody("project",inParentObject: myObject)
+                    self.lblDetail.text = "My Projects"
+                })
+            }
+            if myDisplayBodyArray[indexPath.row].isKindOfClass(project)
+            {
+                workingClassType = "project"
+                myOption0 = UIAlertAction(title: "Zoom", style: .Default, handler: { (action: UIAlertAction) -> () in
+                    self.myDisplayHeadArray = self.myDisplayBodyArray
+                    let myObject = self.myDisplayBodyArray[indexPath.row] as! project
+                    self.highlightID = myObject.projectID as Int
+                    self.buildHead("project", inHighlightedID: self.highlightID)
+                    self.buildBody("task",inParentObject: myObject)
+                    self.lblDetail.text = "My Tasks"
+                })
+            }
+            if myDisplayBodyArray[indexPath.row].isKindOfClass(task)
+            {
+                workingClassType = "task"
+                myOption0 = UIAlertAction(title: "Zoom", style: .Default, handler: { (action: UIAlertAction) -> () in
+                    self.myDisplayHeadArray = self.myDisplayBodyArray
+                    let myObject = self.myDisplayBodyArray[indexPath.row] as! task
+                    self.highlightID = myObject.taskID as Int
+                    self.buildHead("task", inHighlightedID: self.highlightID)
+                //    self.buildBody("task",inParentObject: myObject)
+                //    self.lblDetail.text = "My Tasks"
+                })
+            }
+            if myDisplayBodyArray[indexPath.row].isKindOfClass(context)
+            {
+                workingClassType = "context"
+                myOption0 = UIAlertAction(title: "Zoom", style: .Default, handler: { (action: UIAlertAction) -> () in
+                    self.myDisplayHeadArray = self.myDisplayBodyArray
+                    let myObject = self.myDisplayBodyArray[indexPath.row] as! context
+                    self.highlightID = myObject.contextID as Int
+                    self.buildHead("context", inHighlightedID: self.highlightID)
+                    //    self.buildBody("task",inParentObject: myObject)
+                    //    self.lblDetail.text = "My Tasks"
+                })
+            }
+            
+            if myDisplayBodyArray[indexPath.row].isKindOfClass(purposeAndCoreValue) ||
+               myDisplayBodyArray[indexPath.row].isKindOfClass(gvision) ||
+               myDisplayBodyArray[indexPath.row].isKindOfClass(goalAndObjective) ||
+               myDisplayBodyArray[indexPath.row].isKindOfClass(areaOfResponsibility)
+            {
+                let myOption1 = UIAlertAction(title: "Edit", style: .Default, handler: { (action: UIAlertAction) -> () in
+                    let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("GTDEditController") as! GTDEditViewController
+                    popoverContent.modalPresentationStyle = .Popover
+                    let popover = popoverContent.popoverPresentationController
+                    popover!.delegate = self
+                    popover!.sourceView = self.view
+                    popover!.sourceRect = CGRectMake(500,400,0,0)
+                    
+                switch workingClassType
+                {
+                case "purposeAndCoreValue" :
+                    let parentObject = self.myDisplayBodyArray[indexPath.row] as! purposeAndCoreValue
+                    popoverContent.inPurposeObject = parentObject
+                    popoverContent.objectType = "purpose"
+
+                    
+                case "gvision" :
+                    let parentObject = self.myDisplayBodyArray[indexPath.row] as! gvision
+                    popoverContent.inVisionObject = parentObject
+                    popoverContent.objectType = "vision"
+                    
+                case "goalAndObjective" :
+                    let parentObject = self.myDisplayBodyArray[indexPath.row] as! goalAndObjective
+                    popoverContent.inGoalObject = parentObject
+                    popoverContent.objectType = "goal"
+                    
+                case "areaOfResponsibility" :
+                    let parentObject = self.myDisplayBodyArray[indexPath.row] as! areaOfResponsibility
+                    popoverContent.inAreaObject = parentObject
+                    popoverContent.objectType = "area"
+                    
+                default:
+                    print("")
+                }
+                
+                popoverContent.preferredContentSize = CGSizeMake(500,400)
+                self.presentViewController(popoverContent, animated: true, completion: nil)
+                })
+            
+                let myOption2 = UIAlertAction(title: "Delete entry", style: .Default, handler: { (action: UIAlertAction) -> () in
+                    switch workingClassType
+                    {
+                    case "purposeAndCoreValue" :
+                        let parentObject = self.myDisplayBodyArray[indexPath.row] as! purposeAndCoreValue
+                        if !parentObject.delete()
+                        {
+                            let alert = UIAlertController(title: "Delete Purpose", message:
+                            "Unable to delete Purpose.  Check that there are not child records", preferredStyle: UIAlertControllerStyle.Alert)
+                            
+                            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+                            self.presentViewController(alert, animated: false, completion: nil)
+                        }
+                    
+                    case "gvision" :
+                        let parentObject = self.myDisplayBodyArray[indexPath.row] as! gvision
+                        if !parentObject.delete()
+                        {
+                            let alert = UIAlertController(title: "Delete Vision", message:
+                            "Unable to delete Vision.  Check that there are not child records", preferredStyle: UIAlertControllerStyle.Alert)
+                            
+                            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+                            self.presentViewController(alert, animated: false, completion: nil)
+                        }
+                    
+                    case "goalAndObjective" :
+                        let parentObject = self.myDisplayBodyArray[indexPath.row] as! goalAndObjective
+                        if !parentObject.delete()
+                        {
+                            let alert = UIAlertController(title: "Delete Goal", message:
+                            "Unable to delete Goal.  Check that there are not child records", preferredStyle: UIAlertControllerStyle.Alert)
+                            
+                            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+                            self.presentViewController(alert, animated: false, completion: nil)
+                        }
+                    
+                    case "areaOfResponsibility" :
+                        let parentObject = self.myDisplayBodyArray[indexPath.row] as! areaOfResponsibility
+                        if !parentObject.delete()
+                        {
+                            let alert = UIAlertController(title: "Delete Area of Responsibility", message:
+                            "Unable to delete Area of Responsibility.  Check that there are not child records", preferredStyle: UIAlertControllerStyle.Alert)
+                            
+                            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+                            self.presentViewController(alert, animated: false, completion: nil)
+                        }
+                    
+                    default:
+                        print("")
+                    }
+                })
+                
+                myOptions.addAction(myOption0)
+                myOptions.addAction(myOption1)
+                myOptions.addAction(myOption2)
+            }
+            self.presentViewController(myOptions, animated: true, completion: nil)
+        }
+    }
+    
+    // Start move
+    
+    func moveDataItem(fromIndexPath : NSIndexPath, toIndexPath: NSIndexPath) -> Void
+    {
+        NSLog("Action move")
+        /*
+        if fromIndexPath.item > myGTDHierarchy.count
+        {
+            NSLog("Do nothing, outside of rearrange")
+        }
+        else
+        {
+            //   let name = myDisplayHierarchy[fromIndexPath.item]
+            //    let myObject = myGTDHierarchy[fromIndexPath.item]
+        
+            // We now need to update the underlying database tables
+        
+            myGTDHierarchy[fromIndexPath.item].moveLevel(toIndexPath.item + 1)
+            
+            loadHierarchy()
+            for myItem in myGTDHierarchy
+            {
+                NSLog("Name = \(myItem.title) Level = \(myItem.GTDLevel)")
+            }
+            
+            colHierarchy.reloadData()
+            
+            //    myDisplayHierarchy.removeAtIndex(fromIndexPath.item)
+            //    myDisplayHierarchy.insert(name, atIndex: toIndexPath.item)
+            //    myGTDHierarchy.removeAtIndex(fromIndexPath.item)
+            //    myGTDHierarchy.insert(myObject, atIndex: toIndexPath.item)
+        }
+*/
+    }
+    
+    // End move
+    
+    
+    
+    
+    
+    
     
     @IBAction func btnUp(sender: UIButton)
     {
@@ -238,10 +679,6 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
         {
             case "team":
                 lblHeader.text = "My Teams"
-        for myItem in myCurrentTeam.GTDLevels
-        {
-            NSLog("GtD level : \(myItem.title) Level : \(myItem.GTDLevel)")
-        }
                 
                 lblDetail.text = "My Purpose/Core Values"
                 btnUp.hidden = true
@@ -453,6 +890,7 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                 print("buildBody: hit default")
         }
 
+        /*
         let contentHeight = buildDisplayBody(myDisplayBodyArray, inWidth: 200, inHeight: 100, inSpacing: 40, inStartX: 0, inStartY: 0)
         
         // Set up the container view to hold your custom view hierarchy
@@ -475,9 +913,10 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
         scrollDisplay.zoomScale = 1.0
         
         centerScrollViewContentsBody()
+*/
     }
     
-    func centerScrollViewContentsBody()
+/*    func centerScrollViewContentsBody()
     {
         let boundsSize = scrollDisplay.bounds.size
         var contentsFrame = containerViewBody.frame
@@ -501,7 +940,7 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
         }
         
         containerViewBody.frame = contentsFrame
-    }
+    }*/
     
     func centerScrollViewContentsHead()
     {
@@ -538,7 +977,7 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
     func scrollViewDidZoom(scrollView: UIScrollView)
     {
         centerScrollViewContentsHead()
-        centerScrollViewContentsBody()
+      //  centerScrollViewContentsBody()
     }
 
     
@@ -882,9 +1321,31 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                     self.presentViewController(popoverContent, animated: true, completion: nil)
                 })
                 
+                let myOption4 = UIAlertAction(title: "New Team", style: .Default, handler: { (action: UIAlertAction) -> () in
+                    let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("TeamMaintenance") as! teamMaintenanceViewController
+                    popoverContent.modalPresentationStyle = .Popover
+                    let popover = popoverContent.popoverPresentationController
+                    popover!.delegate = self
+                    popover!.sourceView = sender.displayView
+                    
+                    if sender.headBody == "head"
+                    {
+                        let parentObject = team()
+                        popoverContent.myWorkingTeam = parentObject
+                    }
+                    else
+                    {
+                        //                      popoverContent.workingObject = sender.targetObject
+                    }
+                    popoverContent.preferredContentSize = CGSizeMake(800,700)
+                    self.presentViewController(popoverContent, animated: true, completion: nil)
+                })
+
                 myOptions.addAction(myOption1)
                 myOptions.addAction(myOption2)
                 myOptions.addAction(myOption3)
+                myOptions.addAction(myOption4)
+
             }
             else if sender.type == "areaOfResponsibility" && sender.headBody == "head"
             {  // put in code here to add a new project
@@ -1394,10 +1855,10 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
         
         //        let screenSize: CGRect = UIScreen.mainScreen().bounds
         
-        for view in containerViewBody.subviews
-        {
-            view.removeFromSuperview()
-        }
+ //       for view in containerViewBody.subviews
+ //       {
+ //           view.removeFromSuperview()
+ //       }
         
         let screenSize: CGRect = UIScreen.mainScreen().bounds
         
@@ -1487,7 +1948,7 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
                 myChildRecords = 0
             }
             
-            displayEntry(displayString, xPos: myX, yPos: myY, rectWidth: inWidth, rectHeight: inHeight, inRowID: myRowID, inTargetObject: myItem, inView: containerViewBody, inHeadBody: "body", inChildRecords: myChildRecords)
+   //         displayEntry(displayString, xPos: myX, yPos: myY, rectWidth: inWidth, rectHeight: inHeight, inRowID: myRowID, inTargetObject: myItem, inView: containerViewBody, inHeadBody: "body", inChildRecords: myChildRecords)
             myRowID++
             
             if myX + (inWidth * 2) + inSpacing > screenSize.width  // Doing inwidth * 2 + space because myX is start position, so need to make sure can have both boxes and space
@@ -1502,5 +1963,63 @@ class MaintainGTDPlanningViewController: UIViewController,  UIScrollViewDelegate
         }
         
         return myY + inHeight
+    }
+}
+
+class KDRearrangeableGTDDisplayHierarchy: UICollectionViewCell
+{
+    
+    @IBOutlet weak var lblChildren: UILabel!
+    @IBOutlet weak var btnAdd: UIButton!
+    @IBOutlet weak var lblName: UILabel!
+    
+    override init(frame: CGRect)
+    {
+        super.init(frame: frame)
+    }
+    
+    required init?(coder aDecoder: NSCoder)
+    {
+        super.init(coder: aDecoder)
+    }
+    
+    
+    override func awakeFromNib()
+    {
+        super.awakeFromNib()
+    }
+    
+    var dragging : Bool = false
+        {
+        didSet
+        {
+            
+        }
+        
+    }
+    
+    override func layoutSubviews()
+    {
+        contentView.frame = bounds
+        super.layoutSubviews()
+    }
+    
+    
+    @IBAction func btnAdd(sender: UIButton)
+    {
+      //  NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeSettings", object: nil, userInfo:["setting":"HierarchyUpdate", "Item": myGTDLevel])
+        
+        NSLog("Add pressed")
+    }
+}
+
+class myGTDDisplay: KDRearrangeableGTDDisplayHierarchy
+{
+    override func awakeFromNib()
+    {
+        super.awakeFromNib()
+        
+        //  self.layer.cornerRadius = self.frame.size.width * 0.5
+        self.clipsToBounds = true
     }
 }

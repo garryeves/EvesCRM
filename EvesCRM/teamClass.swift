@@ -11,7 +11,7 @@ import Foundation
 class team: NSObject
 {
     private var myTeamID: Int = 0
-    private var myName: String = ""
+    private var myName: String = "New"
     private var myNote: String = ""
     private var myStatus: String = ""
     private var myType: String = ""
@@ -188,9 +188,7 @@ class team: NSObject
         
         let currentNumberofEntries = myDatabaseConnection.getTeamsCount()
         
-        let nextID = currentNumberofEntries + 1
-        
-        myTeamID = nextID
+        myTeamID = myDatabaseConnection.getNextID("Team")
         
         save()
         

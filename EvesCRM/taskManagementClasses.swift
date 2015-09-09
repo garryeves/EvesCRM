@@ -117,6 +117,47 @@ class workingGTDLevel: NSObject
             }
         }
     }
+    
+    func moveLevel(newLevel: Int)
+    {
+        if myGTDLevel > newLevel
+        {
+            // Move the existing entries first
+            var levelCount: Int = myGTDLevel - 1
+            // Dirty workaround.  Set the level for the one we are moving to a so weirdwe can reset it at the end
+            
+            myDatabaseConnection.changeGTDLevel(myGTDLevel, newGTDLevel: -99, inTeamID: myTeamID)
+            
+            while levelCount >= newLevel
+            {
+                NSLog("Move level \(levelCount)")
+                let nextLevel = levelCount + 1
+                myDatabaseConnection.changeGTDLevel(levelCount, newGTDLevel: nextLevel, inTeamID: myTeamID)
+                levelCount--
+            }
+            myDatabaseConnection.changeGTDLevel(-99, newGTDLevel: newLevel, inTeamID: myTeamID)
+        }
+        else
+        {
+            NSLog("Moving down from location = \(myGTDLevel) name \(myTitle) new location = \(newLevel)")
+            
+            // Move the existing entries first
+            var levelCount: Int = myGTDLevel + 1
+            // Dirty workaround.  Set the level for the one we are moving to a so weirdwe can reset it at the end
+            
+            myDatabaseConnection.changeGTDLevel(myGTDLevel, newGTDLevel: -99, inTeamID: myTeamID)
+            
+            while levelCount <= newLevel
+            {
+                NSLog("Move level \(levelCount)")
+                let nextLevel = levelCount - 1
+                myDatabaseConnection.changeGTDLevel(levelCount, newGTDLevel: nextLevel, inTeamID: myTeamID)
+                levelCount++
+            }
+            myDatabaseConnection.changeGTDLevel(-99, newGTDLevel: newLevel, inTeamID: myTeamID)
+
+        }
+    }
 }
 
 class workingGTDItem: NSObject

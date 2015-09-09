@@ -2278,12 +2278,23 @@ class coreDatabase: NSObject
     {
         var myGTD: GTDLevel!
         
-        let myGTDItems = getGTDLevel(oldGTDLevel, inTeamID: inTeamID)
+        let fetchRequest = NSFetchRequest(entityName: "GTDLevel")
         
-        if myGTDItems.count > 0
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(gTDLevel == \(oldGTDLevel)) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [GTDLevel]
+        
+        if fetchResults!.count > 0
         { // Update
-            myGTD = myGTDItems[0]
-            myGTD.gTDLevel = newGTDLevel
+            myGTD = fetchResults![0]
+         //   myGTD.gTDLevel = newGTDLevel
+            myGTD.setValue(newGTDLevel, forKey: "gTDLevel")
             myGTD.updateTime = NSDate()
             if myGTD.updateType != "Add"
             {
@@ -4839,17 +4850,9 @@ class coreDatabase: NSObject
         return fetchResults!.count
     }
     
-    func deleteAllTeams()->[Team]
+    func deleteAllTeams()
     {
         let fetchRequest = NSFetchRequest(entityName: "Team")
-        
-        // Create a new predicate that filters out any object that
-        // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(updateType != \"Delete\")")
-        
-        // Set the predicate on the fetch request
-        fetchRequest.predicate = predicate
-        
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Team]
@@ -4870,8 +4873,26 @@ class coreDatabase: NSObject
             print("Failure to save context: \(error)")
         }
 
+        let fetchRequest2 = NSFetchRequest(entityName: "GTDLevel")
         
-        return fetchResults!
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults2 = (try? managedObjectContext!.executeFetchRequest(fetchRequest2)) as? [GTDLevel]
+        
+        for myItem2 in fetchResults2!
+        {
+            managedObjectContext!.deleteObject(myItem2 as NSManagedObject)
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
     }
     
     func saveProjectNote(inProjectID: Int, inNote: String, inReviewPeriod: String, inPredecessor: Int)

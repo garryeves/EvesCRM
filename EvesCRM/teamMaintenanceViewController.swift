@@ -8,7 +8,7 @@
 
 import Foundation
 
-class teamMaintenanceViewController: UIViewController, SMTEFillDelegate
+class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearrangeableCollectionViewDelegate
 {
     @IBOutlet weak var lblName: UILabel!
     @IBOutlet weak var lblStatus: UILabel!
@@ -81,6 +81,7 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate
         textExpander.nextDelegate = self
         myCurrentViewController = settingsViewController()
         myCurrentViewController = self
+        
     }
     
     override func didReceiveMemoryWarning()
@@ -202,7 +203,41 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate
         }
         
         return retVal
-    } 
+    }
+    
+    // Start move
+    
+    func moveDataItem(fromIndexPath : NSIndexPath, toIndexPath: NSIndexPath) -> Void
+    {
+        if fromIndexPath.item > myGTDHierarchy.count
+        {
+            NSLog("Do nothing, outside of rearrange")
+        }
+        else
+        {
+         //   let name = myDisplayHierarchy[fromIndexPath.item]
+        //    let myObject = myGTDHierarchy[fromIndexPath.item]
+        
+            // We now need to update the underlying database tables
+
+            myGTDHierarchy[fromIndexPath.item].moveLevel(toIndexPath.item + 1)
+            
+            loadHierarchy()
+            for myItem in myGTDHierarchy
+            {
+                NSLog("Name = \(myItem.title) Level = \(myItem.GTDLevel)")
+            }
+            
+            colHierarchy.reloadData()
+            
+        //    myDisplayHierarchy.removeAtIndex(fromIndexPath.item)
+        //    myDisplayHierarchy.insert(name, atIndex: toIndexPath.item)
+        //    myGTDHierarchy.removeAtIndex(fromIndexPath.item)
+        //    myGTDHierarchy.insert(myObject, atIndex: toIndexPath.item)
+        }
+    }
+    
+    // End move
     
     @IBAction func txtName(sender: UITextField)
     {
@@ -281,6 +316,7 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate
         myGTDHierarchy.removeAll()
         myDisplayHierarchy.removeAll()
         
+        myWorkingTeam.loadGTDLevels()
         for myItem in myWorkingTeam.GTDLevels
         {
             myGTDHierarchy.append(myItem)
@@ -634,7 +670,7 @@ class mySettingContext: UICollectionViewCell
     }
 }
 
-class mySettingHierarchy: UICollectionViewCell
+class KDRearrangeableSettingHierarchy: UICollectionViewCell
 {
 
     @IBOutlet weak var lblName: UILabel!
@@ -643,8 +679,31 @@ class mySettingHierarchy: UICollectionViewCell
     @IBOutlet weak var btnRename: UIButton!
     
     var myGTDLevel: workingGTDLevel!
+    override init(frame: CGRect)
+    {
+        super.init(frame: frame)
+    }
     
-
+    required init?(coder aDecoder: NSCoder)
+    {
+        super.init(coder: aDecoder)
+    }
+    
+    
+    override func awakeFromNib()
+    {
+        super.awakeFromNib()
+    }
+    
+    var dragging : Bool = false
+    {
+        didSet
+        {
+            
+        }
+        
+    }
+    
     override func layoutSubviews()
     {
         contentView.frame = bounds
@@ -661,3 +720,15 @@ class mySettingHierarchy: UICollectionViewCell
         NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeSettings", object: nil, userInfo:["setting":"HierarchyUpdate", "Item": myGTDLevel])
     }
 }
+
+class mySettingHierarchy: KDRearrangeableSettingHierarchy
+{
+    override func awakeFromNib()
+    {
+        super.awakeFromNib()
+        
+        //  self.layer.cornerRadius = self.frame.size.width * 0.5
+        self.clipsToBounds = true
+    }
+}
+    

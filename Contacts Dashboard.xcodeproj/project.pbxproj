@@ -78,6 +78,13 @@
 		342CA6BE1B26CE6F006FEAED /* Source in Resources */ = {isa = PBXBuildFile; fileRef = 342CA6BC1B26CE6F006FEAED /* Source */; };
 		342CA6C01B26D0B3006FEAED /* gtm-oauth2-master in Resources */ = {isa = PBXBuildFile; fileRef = 342CA6BF1B26D0B3006FEAED /* gtm-oauth2-master */; };
 		342CA6C11B26D0B3006FEAED /* gtm-oauth2-master in Resources */ = {isa = PBXBuildFile; fileRef = 342CA6BF1B26D0B3006FEAED /* gtm-oauth2-master */; };
+		342F46D01B9FC804004BAC9D /* KDRearrangeableCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342F46CE1B9FC804004BAC9D /* KDRearrangeableCollectionViewCell.swift */; settings = {ASSET_TAGS = (); }; };
+		342F46D11B9FC804004BAC9D /* KDRearrangeableCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342F46CE1B9FC804004BAC9D /* KDRearrangeableCollectionViewCell.swift */; settings = {ASSET_TAGS = (); }; };
+		342F46D21B9FC804004BAC9D /* KDRearrangeableCollectionViewFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342F46CF1B9FC804004BAC9D /* KDRearrangeableCollectionViewFlowLayout.swift */; settings = {ASSET_TAGS = (); }; };
+		342F46D31B9FC804004BAC9D /* KDRearrangeableCollectionViewFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342F46CF1B9FC804004BAC9D /* KDRearrangeableCollectionViewFlowLayout.swift */; settings = {ASSET_TAGS = (); }; };
+		342F46D51B9FC817004BAC9D /* KDRearrangeableCollectionViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342F46D41B9FC817004BAC9D /* KDRearrangeableCollectionViewDelegate.swift */; settings = {ASSET_TAGS = (); }; };
+		342F46D61B9FC817004BAC9D /* KDRearrangeableCollectionViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342F46D41B9FC817004BAC9D /* KDRearrangeableCollectionViewDelegate.swift */; settings = {ASSET_TAGS = (); }; };
+		342F46D91B9FC826004BAC9D /* LICENCE.md in Sources */ = {isa = PBXBuildFile; fileRef = 342F46D71B9FC826004BAC9D /* LICENCE.md */; settings = {ASSET_TAGS = (); }; };
 		34349B521B92C26200C5EFF8 /* GTDEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34349B511B92C26200C5EFF8 /* GTDEditViewController.swift */; };
 		3436F9441B28113E0085C58A /* GTMOAuth2ViewTouch.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3436F9431B28113E0085C58A /* GTMOAuth2ViewTouch.xib */; };
 		3436F9451B28113E0085C58A /* GTMOAuth2ViewTouch.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3436F9431B28113E0085C58A /* GTMOAuth2ViewTouch.xib */; };
@@ -331,6 +338,10 @@
 		342CA69F1B26C79B006FEAED /* Utilities */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Utilities; sourceTree = "<group>"; };
 		342CA6BC1B26CE6F006FEAED /* Source */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Source; sourceTree = "<group>"; };
 		342CA6BF1B26D0B3006FEAED /* gtm-oauth2-master */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "gtm-oauth2-master"; sourceTree = "<group>"; };
+		342F46CE1B9FC804004BAC9D /* KDRearrangeableCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KDRearrangeableCollectionViewCell.swift; sourceTree = "<group>"; };
+		342F46CF1B9FC804004BAC9D /* KDRearrangeableCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KDRearrangeableCollectionViewFlowLayout.swift; sourceTree = "<group>"; };
+		342F46D41B9FC817004BAC9D /* KDRearrangeableCollectionViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KDRearrangeableCollectionViewDelegate.swift; sourceTree = "<group>"; };
+		342F46D71B9FC826004BAC9D /* LICENCE.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = LICENCE.md; sourceTree = "<group>"; };
 		34349B511B92C26200C5EFF8 /* GTDEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTDEditViewController.swift; sourceTree = "<group>"; };
 		3436F9431B28113E0085C58A /* GTMOAuth2ViewTouch.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GTMOAuth2ViewTouch.xib; sourceTree = "<group>"; };
 		343B3F181B82CA930053777B /* EvesCRM 16.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 16.xcdatamodel"; sourceTree = "<group>"; };
@@ -560,6 +571,7 @@
 		340650671ADDF8FF00C90CBB /* EvesCRM */ = {
 			isa = PBXGroup;
 			children = (
+				342F46CD1B9FC7D0004BAC9D /* KDRearrangeableCollectionViewFlowLayout */,
 				340650681ADDF8FF00C90CBB /* Supporting Files */,
 				34948C241B87029200C1F12D /* OneNote */,
 				34CCFC911B85953200BC1A34 /* TextExpander.framework */,
@@ -635,6 +647,17 @@
 				342CA6BB1B26C79B006FEAED /* DevelopmentTestTool */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		342F46CD1B9FC7D0004BAC9D /* KDRearrangeableCollectionViewFlowLayout */ = {
+			isa = PBXGroup;
+			children = (
+				342F46D71B9FC826004BAC9D /* LICENCE.md */,
+				342F46D41B9FC817004BAC9D /* KDRearrangeableCollectionViewDelegate.swift */,
+				342F46CE1B9FC804004BAC9D /* KDRearrangeableCollectionViewCell.swift */,
+				342F46CF1B9FC804004BAC9D /* KDRearrangeableCollectionViewFlowLayout.swift */,
+			);
+			name = KDRearrangeableCollectionViewFlowLayout;
 			sourceTree = "<group>";
 		};
 		34948C1D1B87018300C1F12D /* Database Tables */ = {
@@ -1088,6 +1111,7 @@
 				342A357C1B5F727200D6DB29 /* taskViewController.swift in Sources */,
 				347EE4231B8D6AC50044D569 /* GTDPlanningTabController.swift in Sources */,
 				34A183291B0EDBB400FC369D /* StringHelper.m in Sources */,
+				342F46D21B9FC804004BAC9D /* KDRearrangeableCollectionViewFlowLayout.swift in Sources */,
 				34B4C7E41B8191930098F6BC /* TaskAttachment.swift in Sources */,
 				340F84A71B79BE220028439B /* taskListViewController.swift in Sources */,
 				3410561E1B589D92002B0ED9 /* AgendaItemViewController.swift in Sources */,
@@ -1109,6 +1133,7 @@
 				34A182FA1B0EDB5C00FC369D /* LiveAuthDialog.m in Sources */,
 				34E92AE01B9D191900F158F3 /* GTDLevel+CoreDataProperties.swift in Sources */,
 				34C7E8071B5F625C005555B3 /* TaskUpdates.swift in Sources */,
+				342F46D01B9FC804004BAC9D /* KDRearrangeableCollectionViewCell.swift in Sources */,
 				34A183271B0EDBB400FC369D /* StreamReader.m in Sources */,
 				3406E6C11B9E772800A5F0F9 /* teamDecodesViewController.swift in Sources */,
 				347518D91AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift in Sources */,
@@ -1148,6 +1173,7 @@
 				342C0A1B1B4B7CED00A73CA5 /* MeetingAgendaItem.swift in Sources */,
 				34E92ADE1B9D191900F158F3 /* GTDItem.swift in Sources */,
 				34E92AE21B9D191900F158F3 /* GTDLevel.swift in Sources */,
+				342F46D51B9FC817004BAC9D /* KDRearrangeableCollectionViewDelegate.swift in Sources */,
 				342C0A1F1B4B7CED00A73CA5 /* MeetingAgenda.swift in Sources */,
 				342C0A1D1B4B7CED00A73CA5 /* MeetingAttendees.swift in Sources */,
 				341F23121AFC284400FC2883 /* DropboxCoreService.swift in Sources */,
@@ -1184,6 +1210,7 @@
 				34A183261B0EDBB400FC369D /* LiveConnectionHelper.m in Sources */,
 				342C0A201B4B7CED00A73CA5 /* MeetingAgenda.swift in Sources */,
 				341F230C1AFB2DD600FC2883 /* Dropbox.m in Sources */,
+				342F46D61B9FC817004BAC9D /* KDRearrangeableCollectionViewDelegate.swift in Sources */,
 				346B70DF1AF70B8F005E1BC2 /* maintainProjectViewController.swift in Sources */,
 				343B3F1F1B83045D0053777B /* DBSync.swift in Sources */,
 				34A182D91B0EDB3D00FC369D /* LiveOperation.m in Sources */,
@@ -1224,6 +1251,7 @@
 				344726621B54D6A800BEFF0B /* coreDatabase.swift in Sources */,
 				341F23131AFC284400FC2883 /* DropboxCoreService.swift in Sources */,
 				34BDECBF1B009C17008C9F3F /* Panes.swift in Sources */,
+				342F46D31B9FC804004BAC9D /* KDRearrangeableCollectionViewFlowLayout.swift in Sources */,
 				34A183281B0EDBB400FC369D /* StreamReader.m in Sources */,
 				34B5253A1B130F1C00093250 /* oneNote.swift in Sources */,
 				346B70F31AF75F47005E1BC2 /* EvesCRM.xcdatamodeld in Sources */,
@@ -1241,7 +1269,9 @@
 				34A183051B0EDB5C00FC369D /* LiveDownloadOperationCore.m in Sources */,
 				347518DC1AE3635100FF1C46 /* EvesCRMSharedFiles.swift in Sources */,
 				346A2E541B66027100C6C63E /* AreaOfResponsibility.swift in Sources */,
+				342F46D11B9FC804004BAC9D /* KDRearrangeableCollectionViewCell.swift in Sources */,
 				347FF2071B93FB6600133D62 /* Context1_1.swift in Sources */,
+				342F46D91B9FC826004BAC9D /* LICENCE.md in Sources */,
 				346A2E561B66027100C6C63E /* PurposeAndCoreValue.swift in Sources */,
 				34F35BDF1B6B549000A19ACE /* meetingTabViewController.swift in Sources */,
 				340650841ADDF8FF00C90CBB /* EvesCRMTests.swift in Sources */,

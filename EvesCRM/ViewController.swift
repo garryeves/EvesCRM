@@ -2197,8 +2197,8 @@ print("Nothing found")
     {
         var decodeString: String = ""
  
-        //  For testing purposes, this will remove all the teams
-  //      myDatabaseConnection.deleteAllTeams()
+        //  For testing purposes, this will remove all the teams and GTD levels
+      //  myDatabaseConnection.deleteAllTeams()
         
         if myDatabaseConnection.getTeamsCount() == 0
         {
