@@ -27,12 +27,7 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
     @IBOutlet weak var myDatePicker: UIDatePicker!
     @IBOutlet weak var btnTargetDate: UIButton!
     
-    var inAreaObject: areaOfResponsibility!
-    var inGoalObject: goalAndObjective!
-    var inPurposeObject: purposeAndCoreValue!
-    var inVisionObject: gvision!
-    
-    var objectType: String = ""
+    var inGTDObject: workingGTDItem!
     
     private var pickerOptions: [String] = Array()
     private var pickerTarget: String = ""
@@ -58,137 +53,35 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
         myDatePicker.hidden = true
         btnTargetDate.hidden = true
         
-        switch objectType
+        txtTitle.text = inGTDObject.title
+        txtNotes.text = inGTDObject.note
+        txtFrequency.text = "\(inGTDObject.reviewFrequency)"
+                
+        if inGTDObject.displayLastReviewDate == ""
         {
-            case "purpose":
-                txtTitle.text = inPurposeObject.title
-                txtNotes.text = inPurposeObject.note
-                txtFrequency.text = "\(inPurposeObject.reviewFrequency)"
+            btnLastReview.setTitle("Set", forState: .Normal)
+        }
+        else
+        {
+            btnLastReview.setTitle(inGTDObject.displayLastReviewDate, forState: .Normal)
+        }
                 
-                if inPurposeObject.displayLastReviewDate == ""
-                {
-                    btnLastReview.setTitle("Set", forState: .Normal)
-                }
-                else
-                {
-                    btnLastReview.setTitle(inPurposeObject.displayLastReviewDate, forState: .Normal)
-                }
+        if inGTDObject.reviewPeriod == ""
+        {
+            btnPeriod.setTitle("Set", forState: .Normal)
+        }
+        else
+        {
+            btnPeriod.setTitle(inGTDObject.reviewPeriod, forState: .Normal)
+        }
                 
-                if inPurposeObject.reviewPeriod == ""
-                {
-                    btnPeriod.setTitle("Set", forState: .Normal)
-                }
-                else
-                {
-                    btnPeriod.setTitle(inPurposeObject.reviewPeriod, forState: .Normal)
-                }
-                
-                if inPurposeObject.status == ""
-                {
-                    btnStatus.setTitle("Set", forState: .Normal)
-                }
-                else
-                {
-                    btnStatus.setTitle(inPurposeObject.status, forState: .Normal)
-                }
-                
-            case "vision":
-                txtTitle.text = inVisionObject.title
-                txtNotes.text = inVisionObject.note
-                txtFrequency.text = "\(inVisionObject.reviewFrequency)"
-                if inVisionObject.displayLastReviewDate == ""
-                {
-                    btnLastReview.setTitle("Set", forState: .Normal)
-                }
-                else
-                {
-                    btnLastReview.setTitle(inVisionObject.displayLastReviewDate, forState: .Normal)
-                }
-                
-                if inVisionObject.reviewPeriod == ""
-                {
-                    btnPeriod.setTitle("Set", forState: .Normal)
-                }
-                else
-                {
-                    btnPeriod.setTitle(inVisionObject.reviewPeriod, forState: .Normal)
-                }
-                
-                if inVisionObject.status == ""
-                {
-                    btnStatus.setTitle("Set", forState: .Normal)
-                }
-                else
-                {
-                    btnStatus.setTitle(inVisionObject.status, forState: .Normal)
-                }
-
-            
-            case "goal":
-                txtTitle.text = inGoalObject.title
-                txtNotes.text = inGoalObject.note
-                txtFrequency.text = "\(inGoalObject.reviewFrequency)"
-                if inGoalObject.displayLastReviewDate == ""
-                {
-                    btnLastReview.setTitle("Set", forState: .Normal)
-                }
-                else
-                {
-                    btnLastReview.setTitle(inGoalObject.displayLastReviewDate, forState: .Normal)
-                }
-                
-                if inGoalObject.reviewPeriod == ""
-                {
-                    btnPeriod.setTitle("Set", forState: .Normal)
-                }
-                else
-                {
-                    btnPeriod.setTitle(inGoalObject.reviewPeriod, forState: .Normal)
-                }
-                
-                if inGoalObject.status == ""
-                {
-                    btnStatus.setTitle("Set", forState: .Normal)
-                }
-                else
-                {
-                    btnStatus.setTitle(inGoalObject.status, forState: .Normal)
-                }
-
-            
-            case "area":
-                txtTitle.text = inAreaObject.title
-                txtNotes.text = inAreaObject.note
-                txtFrequency.text = "\(inAreaObject.reviewFrequency)"
-                if inAreaObject.displayLastReviewDate == ""
-                {
-                    btnLastReview.setTitle("Set", forState: .Normal)
-                }
-                else
-                {
-                    btnLastReview.setTitle(inAreaObject.displayLastReviewDate, forState: .Normal)
-                }
-                
-                if inAreaObject.reviewPeriod == ""
-                {
-                    btnPeriod.setTitle("Set", forState: .Normal)
-                }
-                else
-                {
-                    btnPeriod.setTitle(inAreaObject.reviewPeriod, forState: .Normal)
-                }
-                
-                if inAreaObject.status == ""
-                {
-                    btnStatus.setTitle("Set", forState: .Normal)
-                }
-                else
-                {
-                    btnStatus.setTitle(inAreaObject.status, forState: .Normal)
-                }
-
-            default:
-                print("GTDEditViewController: viewDidLoad: No objectType found")
+        if inGTDObject.status == ""
+        {
+            btnStatus.setTitle("Set", forState: .Normal)
+        }
+        else
+        {
+            btnStatus.setTitle(inGTDObject.status, forState: .Normal)
         }
         
         // TextExpander
@@ -211,33 +104,6 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
         // Dispose of any resources that can be recreated.
     }
     
- /*
-    override func viewWillDisappear(animated: Bool)
-    {
-        super.viewWillDisappear(animated)
-        
-        // Which item is the current first responder, as will need to save it if it is a text field
-        
-        switch objectType
-        {
-        case "purpose":
-            inPurposeObject.save()
-            
-        case "vision":
-            inVisionObject.save()
-            
-        case "goal":
-            inGoalObject.save()
-            
-        case "area":
-            inAreaObject.save()
-            
-        default:
-            println("GTDEditViewController: viewWillDisappear:  No objectType found")
-        }
-
-    }
-*/    
     func numberOfComponentsInPickerView(TableTypeSelection1: UIPickerView) -> Int
     {
         return 1
@@ -260,66 +126,17 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
     
     @IBAction func txtFrequency(sender: UITextField)
     {
-        switch objectType
-        {
-            case "purpose":
-                inPurposeObject.reviewFrequency = Int(txtFrequency.text!)!
-            
-            case "vision":
-                inVisionObject.reviewFrequency = Int(txtFrequency.text!)!
-            
-            case "goal":
-                inGoalObject.reviewFrequency = Int(txtFrequency.text!)!
-            
-            case "area":
-                inAreaObject.reviewFrequency = Int(txtFrequency.text!)!
-            
-            default:
-                print("GTDEditViewController: txtFrequency:  No objectType found")
-        }
+        inGTDObject.reviewFrequency = Int(txtFrequency.text!)!
     }
     
     @IBAction func txtTitle(sender: UITextField)
     {
-        switch objectType
-        {
-            case "purpose":
-                inPurposeObject.title = txtTitle.text!
-            
-            case "vision":
-                inVisionObject.title = txtTitle.text!
-            
-            case "goal":
-                inGoalObject.title = txtTitle.text!
-            
-            case "area":
-                inAreaObject.title = txtTitle.text!
-            
-            default:
-                print("GTDEditViewController: txtTitle:  No objectType found")
-        }
+        inGTDObject.title = txtTitle.text!
     }
     
     func textViewDidEndEditing(textView: UITextView)
     { //Handle the text changes here
-        
-        switch objectType
-        {
-            case "purpose":
-                inPurposeObject.note = textView.text
-            
-            case "vision":
-                inVisionObject.note = textView.text
-            
-            case "goal":
-                inGoalObject.note = textView.text
-            
-            case "area":
-                inAreaObject.note = textView.text
-            
-            default:
-                print("GTDEditViewController: textViewDidEndEditing:  No objectType found")
-        }
+        inGTDObject.note = textView.text
     }
     
     @IBAction func btnLastReview(sender: UIButton)
@@ -341,69 +158,21 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
         {
             btnLastReview.setTitle(dateFormatter.stringFromDate(myDatePicker.date), forState: .Normal)
             
-            switch objectType
-            {
-                case "purpose":
-                    inPurposeObject.lastReviewDate = myDatePicker.date
-                
-                case "vision":
-                    inVisionObject.lastReviewDate = myDatePicker.date
-                
-                case "goal":
-                    inGoalObject.lastReviewDate = myDatePicker.date
-                
-                case "area":
-                    inAreaObject.lastReviewDate = myDatePicker.date
-                
-                default:
-                    print("GTDEditViewController: btnTargetDate:  No objectType found")
-            }
+            inGTDObject.lastReviewDate = myDatePicker.date
         }
         
         if pickerTarget == "Status"
         {
             btnStatus.setTitle(pickerOptions[selectedRow], forState: .Normal)
             
-            switch objectType
-            {
-            case "purpose":
-                inPurposeObject.status = pickerOptions[selectedRow]
-                
-            case "vision":
-                inVisionObject.status = pickerOptions[selectedRow]
-                
-            case "goal":
-                inGoalObject.status = pickerOptions[selectedRow]
-                
-            case "area":
-                inAreaObject.status = pickerOptions[selectedRow]
-                
-            default:
-                print("GTDEditViewController: pickerView: Status:  No objectType found")
-            }
+            inGTDObject.status = pickerOptions[selectedRow]
         }
         
         if pickerTarget == "Period"
         {
             btnPeriod.setTitle(pickerOptions[selectedRow], forState: .Normal)
             
-            switch objectType
-            {
-            case "purpose":
-                inPurposeObject.reviewPeriod = pickerOptions[selectedRow]
-                
-            case "vision":
-                inVisionObject.reviewPeriod = pickerOptions[selectedRow]
-                
-            case "goal":
-                inGoalObject.reviewPeriod = pickerOptions[selectedRow]
-                
-            case "area":
-                inAreaObject.reviewPeriod = pickerOptions[selectedRow]
-                
-            default:
-                print("GTDEditViewController: pickerView: Period:  No objectType found")
-            }
+            inGTDObject.reviewPeriod = pickerOptions[selectedRow]
         }
 
         myPicker.hidden = true
@@ -543,32 +312,10 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
         // to activate.
         // It especially needs to save the contents of the textview/textfield!
         
-        switch objectType
-        {
-            case "purpose":
-                inPurposeObject.note = txtNotes.text
-                inPurposeObject.title = txtTitle.text!
-                inPurposeObject.reviewFrequency = Int(txtFrequency.text!)!
-            
-            case "vision":
-                inVisionObject.note = txtNotes.text
-                inVisionObject.title = txtTitle.text!
-                inVisionObject.reviewFrequency = Int(txtFrequency.text!)!
-            
-            case "goal":
-                inGoalObject.note = txtNotes.text
-                inGoalObject.title = txtTitle.text!
-                inGoalObject.reviewFrequency = Int(txtFrequency.text!)!
-            
-            case "area":
-                inGoalObject.note = txtNotes.text
-                inGoalObject.title = txtTitle.text!
-                inGoalObject.reviewFrequency = Int(txtFrequency.text!)!
-            
-            default:
-                print("GTDEditViewController: prepareForFillSwitch:  No objectType found")
-        }
-        
+        inGTDObject.note = txtNotes.text
+        inGTDObject.title = txtTitle.text!
+        inGTDObject.reviewFrequency = Int(txtFrequency.text!)!
+
         return true
     }
     

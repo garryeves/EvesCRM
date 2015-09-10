@@ -50,12 +50,19 @@ class KDRearrangeableCollectionViewFlowLayout: UICollectionViewFlowLayout, UIGes
     func setup() {
         
         if let collectionView = self.collectionView {
-
+/*
             let longPressGestureRecogniser = UILongPressGestureRecognizer(target: self, action: "handleGesture:")
         
             longPressGestureRecogniser.minimumPressDuration = 0.2
             longPressGestureRecogniser.delegate = self
 
+            collectionView.addGestureRecognizer(longPressGestureRecogniser)
+*/
+            let longPressGestureRecogniser = UIPanGestureRecognizer(target: self, action: "handleGesture:")
+            
+            longPressGestureRecogniser.minimumNumberOfTouches = 1
+            longPressGestureRecogniser.delegate = self
+            
             collectionView.addGestureRecognizer(longPressGestureRecogniser)
             
             if self.canvas == nil {
@@ -151,7 +158,8 @@ class KDRearrangeableCollectionViewFlowLayout: UICollectionViewFlowLayout, UIGes
     
     
     
-    func checkForDraggingAtTheEdgeAndAnimatePaging(gestureRecognizer: UILongPressGestureRecognizer) {
+//    func checkForDraggingAtTheEdgeAndAnimatePaging(gestureRecognizer: UILongPressGestureRecognizer) {
+        func checkForDraggingAtTheEdgeAndAnimatePaging(gestureRecognizer: UIPanGestureRecognizer) {
         
         if self.animating == true {
             return
@@ -249,7 +257,8 @@ class KDRearrangeableCollectionViewFlowLayout: UICollectionViewFlowLayout, UIGes
       
     }
     
-    func handleGesture(gesture: UILongPressGestureRecognizer) -> Void
+//    func handleGesture(gesture: UILongPressGestureRecognizer) -> Void
+    func handleGesture(gesture: UIPanGestureRecognizer) -> Void
     {
         if let bundle = self.bundle
         {

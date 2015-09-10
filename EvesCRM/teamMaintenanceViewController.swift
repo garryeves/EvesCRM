@@ -162,7 +162,7 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellHierarchy", forIndexPath: indexPath) as! mySettingHierarchy
             cell.lblName.text  = myDisplayHierarchy[indexPath.row]
             
-            if myDisplayHierarchy[indexPath.row] == "Projects" || myDisplayHierarchy[indexPath.row] == "Tasks"
+            if myDisplayHierarchy[indexPath.row] == "Activity" || myDisplayHierarchy[indexPath.row] == "Action"
             {
                 cell.btnRemove.hidden = true
                 cell.btnRename.hidden = true
@@ -322,8 +322,8 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
             myGTDHierarchy.append(myItem)
             myDisplayHierarchy.append(myItem.title)
         }
-        myDisplayHierarchy.append("Projects")
-        myDisplayHierarchy.append("Tasks")
+        myDisplayHierarchy.append("Activity")
+        myDisplayHierarchy.append("Action")
     }
     
     func showFields()

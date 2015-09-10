@@ -101,6 +101,8 @@
 	</array>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
+		<string>tetouch-xc</string>
+		<string>tetouch-settings</string>
 		<string>tetouch</string>
 		<string>onenote</string>
 		<string>evernote</string>

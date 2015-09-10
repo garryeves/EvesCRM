@@ -92,6 +92,8 @@
 		343B3F1F1B83045D0053777B /* DBSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 343B3F1D1B83045D0053777B /* DBSync.swift */; };
 		344726611B54D6A800BEFF0B /* coreDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344726601B54D6A800BEFF0B /* coreDatabase.swift */; };
 		344726621B54D6A800BEFF0B /* coreDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344726601B54D6A800BEFF0B /* coreDatabase.swift */; };
+		344DC1FA1BA1146600DBCE3D /* TextExpander.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 344DC1F91BA1146600DBCE3D /* TextExpander.framework */; settings = {ASSET_TAGS = (); }; };
+		344DC1FB1BA1146600DBCE3D /* TextExpander.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 344DC1F91BA1146600DBCE3D /* TextExpander.framework */; settings = {ASSET_TAGS = (); }; };
 		344F226B1AF1DC20002C373E /* ENSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 344F22691AF1DC20002C373E /* ENSDK.framework */; };
 		344F226C1AF1DC20002C373E /* ENSDKResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 344F226A1AF1DC20002C373E /* ENSDKResources.bundle */; };
 		344F226E1AF1DD04002C373E /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 344F226D1AF1DD04002C373E /* MobileCoreServices.framework */; };
@@ -209,8 +211,6 @@
 		34C899F81B8447340087DA8E /* TaskPredecessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C899F61B8447340087DA8E /* TaskPredecessor.swift */; };
 		34CC8C0D1B281E5200D6EB0D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 34CC8C0C1B281E5200D6EB0D /* GoogleService-Info.plist */; };
 		34CC8C0E1B281E5200D6EB0D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 34CC8C0C1B281E5200D6EB0D /* GoogleService-Info.plist */; };
-		34CCFC921B85953200BC1A34 /* TextExpander.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34CCFC911B85953200BC1A34 /* TextExpander.framework */; };
-		34CCFC931B85953200BC1A34 /* TextExpander.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34CCFC911B85953200BC1A34 /* TextExpander.framework */; };
 		34CCFC991B8595D600BC1A34 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34CCFC981B8595D600BC1A34 /* AudioToolbox.framework */; };
 		34CCFC9B1B8595E700BC1A34 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34CCFC9A1B8595E700BC1A34 /* CoreGraphics.framework */; };
 		34CCFC9D1B8595EE00BC1A34 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34CCFC9C1B8595EE00BC1A34 /* CoreText.framework */; };
@@ -348,6 +348,7 @@
 		343B3F1D1B83045D0053777B /* DBSync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DBSync.swift; sourceTree = "<group>"; };
 		3443A4A31B6F2F4400B0D63A /* EvesCRM 9.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 9.xcdatamodel"; sourceTree = "<group>"; };
 		344726601B54D6A800BEFF0B /* coreDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = coreDatabase.swift; sourceTree = "<group>"; };
+		344DC1F91BA1146600DBCE3D /* TextExpander.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = TextExpander.framework; sourceTree = "<group>"; };
 		344F22691AF1DC20002C373E /* ENSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ENSDK.framework; sourceTree = "<group>"; };
 		344F226A1AF1DC20002C373E /* ENSDKResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ENSDKResources.bundle; sourceTree = "<group>"; };
 		344F226D1AF1DD04002C373E /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
@@ -456,7 +457,6 @@
 		34C899F11B8446080087DA8E /* EvesCRM 17.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 17.xcdatamodel"; sourceTree = "<group>"; };
 		34C899F61B8447340087DA8E /* TaskPredecessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskPredecessor.swift; sourceTree = "<group>"; };
 		34CC8C0C1B281E5200D6EB0D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		34CCFC911B85953200BC1A34 /* TextExpander.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = TextExpander.framework; sourceTree = "<group>"; };
 		34CCFC981B8595D600BC1A34 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		34CCFC9A1B8595E700BC1A34 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		34CCFC9C1B8595EE00BC1A34 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
@@ -502,12 +502,12 @@
 				341F22FA1AFB29A500FC2883 /* Security.framework in Frameworks */,
 				341F22F81AFB299B00FC2883 /* CFNetwork.framework in Frameworks */,
 				34F199BF1AF6060200963ABF /* CoreData.framework in Frameworks */,
-				34CCFC921B85953200BC1A34 /* TextExpander.framework in Frameworks */,
 				344F22701AF1DD13002C373E /* libxml2.dylib in Frameworks */,
 				344F226E1AF1DD04002C373E /* MobileCoreServices.framework in Frameworks */,
 				344F226B1AF1DC20002C373E /* ENSDK.framework in Frameworks */,
 				345E02831AEF71CF00BE8D0A /* Accounts.framework in Frameworks */,
 				34F199C11AF6ECE900963ABF /* CloudKit.framework in Frameworks */,
+				344DC1FA1BA1146600DBCE3D /* TextExpander.framework in Frameworks */,
 				345E02811AEF715700BE8D0A /* MessageUI.framework in Frameworks */,
 				341F230F1AFB560200FC2883 /* DropboxSDK.framework in Frameworks */,
 				3406508F1ADDF93600C90CBB /* AddressBook.framework in Frameworks */,
@@ -520,7 +520,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				34CCFC931B85953200BC1A34 /* TextExpander.framework in Frameworks */,
+				344DC1FB1BA1146600DBCE3D /* TextExpander.framework in Frameworks */,
 				341F23101AFB560200FC2883 /* DropboxSDK.framework in Frameworks */,
 				2A77F31174CAA86D0C284939 /* Pods_EvesCRMTests.framework in Frameworks */,
 			);
@@ -574,7 +574,6 @@
 				342F46CD1B9FC7D0004BAC9D /* KDRearrangeableCollectionViewFlowLayout */,
 				340650681ADDF8FF00C90CBB /* Supporting Files */,
 				34948C241B87029200C1F12D /* OneNote */,
-				34CCFC911B85953200BC1A34 /* TextExpander.framework */,
 				34A182F31B0EDB5C00FC369D /* Resources_OneNote */,
 				341F230E1AFB560200FC2883 /* DropboxSDK.framework */,
 				342CA6931B26C761006FEAED /* Google */,
@@ -590,6 +589,7 @@
 		340650681ADDF8FF00C90CBB /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				344DC1F91BA1146600DBCE3D /* TextExpander.framework */,
 				34F199BB1AF6046A00963ABF /* EvesCRM.entitlements */,
 				340650741ADDF8FF00C90CBB /* Images.xcassets */,
 				340650761ADDF8FF00C90CBB /* LaunchScreen.xib */,

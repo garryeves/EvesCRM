@@ -625,6 +625,7 @@ class SharingActivityProvider: UIActivityItemProvider
     }
 }
 
+/*
 class textViewTapGestureRecognizer:UITapGestureRecognizer
 {
     private var myTag: Int = 0
@@ -722,7 +723,8 @@ class textViewTapGestureRecognizer:UITapGestureRecognizer
         }
     }
 }
-
+*/
+/*
 class textLongPressGestureRecognizer:UILongPressGestureRecognizer
 {
     private var myTag: Int = 0
@@ -821,6 +823,7 @@ class textLongPressGestureRecognizer:UILongPressGestureRecognizer
     }
 }
 
+*/
 func getDefaultDate() -> NSDate
 {
     let dateStringFormatter = NSDateFormatter()
