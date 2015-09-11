@@ -35,6 +35,17 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     @IBOutlet weak var lblNotes: UILabel!
     @IBOutlet weak var txtNotes: UITextView!
     @IBOutlet weak var txtTitle: UITextField!
+    @IBOutlet weak var lblRepeatEvery: UILabel!
+    @IBOutlet weak var lblReviewEvery: UILabel!
+    @IBOutlet weak var lblFromActivity: UILabel!
+    @IBOutlet weak var lblLastReviewed: UILabel!
+    @IBOutlet weak var lblLastReviewedDate: UILabel!
+    @IBOutlet weak var txtRepeatInterval: UITextField!
+    @IBOutlet weak var btnRepeatPeriod: UIButton!
+    @IBOutlet weak var btnRepeastBase: UIButton!
+    @IBOutlet weak var txtReviewFrquency: UITextField!
+    @IBOutlet weak var btnReviewPeriod: UIButton!
+    @IBOutlet weak var btnMarkReviewed: UIButton!
     
  //   var delegate: MyMaintainProjectDelegate?
     
@@ -126,6 +137,44 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         txtNotes.text = inProjectObject.note
         txtTitle.text = inProjectObject.projectName
         
+        if inProjectObject.displayLastReviewDate == ""
+        {
+            lblLastReviewedDate.text = "Never reviewed"
+        }
+        else
+        {
+            lblLastReviewedDate.text = inProjectObject.displayLastReviewDate
+        }
+        txtRepeatInterval.text = "\(inProjectObject.repeatInterval)"
+        txtReviewFrquency.text = "\(inProjectObject.reviewFrequency)"
+        
+        if inProjectObject.repeatType == ""
+        {
+            btnRepeatPeriod.setTitle("Set Period", forState: UIControlState.Normal)
+        }
+        else
+        {
+            btnRepeatPeriod.setTitle(inProjectObject.repeatType, forState: UIControlState.Normal)
+        }
+        
+        if inProjectObject.repeatBase == ""
+        {
+            btnRepeastBase.setTitle("Set Base", forState: UIControlState.Normal)
+        }
+        else
+        {
+            btnRepeastBase.setTitle(inProjectObject.repeatBase, forState: UIControlState.Normal)
+        }
+ 
+        if inProjectObject.reviewPeriod == ""
+        {
+            btnReviewPeriod.setTitle("Set Period", forState: UIControlState.Normal)
+        }
+        else
+        {
+            btnReviewPeriod.setTitle(inProjectObject.reviewPeriod, forState: UIControlState.Normal)
+        }
+
         mySelectedRoles = inProjectObject.teamMembers
         
         colTeamMembers.hidden = false
@@ -447,6 +496,76 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         }
     }
     
+    @IBAction func btnRepeatPeriod(sender: UIButton)
+    {
+        myActionType = "Edit"
+        pickerDisplayArray.removeAll()
+        
+        for myItem in myRepeatPeriods
+        {
+            pickerDisplayArray.append(myItem)
+        }
+        btnSelectPicker.setTitle("Select Repeating type", forState: .Normal)
+        pickerTarget = "RepeatPeriod"
+        statusPicker.reloadAllComponents()
+        btnSelectPicker.hidden = false
+        statusPicker.hidden = false
+        mySelectedRow = -1
+        hideFields()
+    }
+    
+    @IBAction func btnRepeatBase(sender: UIButton)
+    {
+        myActionType = "Edit"
+        pickerDisplayArray.removeAll()
+        
+        for myItem in myRepeatBases
+        {
+            pickerDisplayArray.append(myItem)
+        }
+        btnSelectPicker.setTitle("Select Repeating base", forState: .Normal)
+        pickerTarget = "RepeatBase"
+        statusPicker.reloadAllComponents()
+        btnSelectPicker.hidden = false
+        statusPicker.hidden = false
+        mySelectedRow = -1
+        hideFields()
+    }
+    
+    @IBAction func btnReviewPeriod(sender: UIButton)
+    {
+        myActionType = "Edit"
+        pickerDisplayArray.removeAll()
+        
+        for myItem in myRepeatPeriods
+        {
+            pickerDisplayArray.append(myItem)
+        }
+        btnSelectPicker.setTitle("Select Repeating type", forState: .Normal)
+        pickerTarget = "ReviewPeriod"
+        statusPicker.reloadAllComponents()
+        btnSelectPicker.hidden = false
+        statusPicker.hidden = false
+        mySelectedRow = -1
+        hideFields()
+    }
+    
+    @IBAction func btnMarkReviewed(sender: UIButton)
+    {
+        inProjectObject.lastReviewDate = NSDate()
+        lblLastReviewedDate.text = inProjectObject.displayLastReviewDate
+    }
+    
+    @IBAction func txtRepeatInterval(sender: UITextField)
+    {
+        inProjectObject.repeatInterval = Int(txtRepeatInterval.text!)!
+    }
+    
+    @IBAction func txtReviewFrequency(sender: UITextField)
+    {
+        inProjectObject.reviewFrequency = Int(txtReviewFrquency.text!)!
+    }
+    
     @IBAction func btnSelectPicker(sender: UIButton)
     {
         if mySelectedRow >= 0
@@ -466,6 +585,23 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
             {
                 inProjectObject.projectStatus = myStages[mySelectedRow - 1].stageDescription
                 btnProjectStage.setTitle(inProjectObject.projectStatus, forState: UIControlState.Normal)
+            }
+            
+            if pickerTarget == "RepeatPeriod"
+            {
+                inProjectObject.repeatType = myRepeatPeriods[mySelectedRow]
+                btnRepeatPeriod.setTitle(inProjectObject.repeatType, forState: UIControlState.Normal)
+            }
+            
+            if pickerTarget == "RepeatBase"
+            {
+                inProjectObject.repeatBase = myRepeatBases[mySelectedRow]
+                btnRepeastBase.setTitle(inProjectObject.repeatBase, forState: UIControlState.Normal)
+            }
+            if pickerTarget == "ReviewPeriod"
+            {
+                inProjectObject.reviewPeriod = myRepeatPeriods[mySelectedRow]
+                btnProjectStage.setTitle(inProjectObject.reviewPeriod, forState: UIControlState.Normal)
             }
         }
         
@@ -501,6 +637,17 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         lblNotes.hidden = true
         txtNotes.hidden = true
         txtTitle.hidden = true
+        lblRepeatEvery.hidden = true
+        lblReviewEvery.hidden = true
+        lblFromActivity.hidden = true
+        lblLastReviewed.hidden = true
+        lblLastReviewedDate.hidden = true
+        txtRepeatInterval.hidden = true
+        btnRepeatPeriod.hidden = true
+        btnRepeastBase.hidden = true
+        txtReviewFrquency.hidden = true
+        btnReviewPeriod.hidden = true
+        btnMarkReviewed.hidden = true
     }
     
     func showFields()
@@ -517,6 +664,17 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         lblNotes.hidden = false
         txtNotes.hidden = false
         txtTitle.hidden = false
+        lblRepeatEvery.hidden = false
+        lblReviewEvery.hidden = false
+        lblFromActivity.hidden = false
+        lblLastReviewed.hidden = false
+        lblLastReviewedDate.hidden = false
+        txtRepeatInterval.hidden = false
+        btnRepeatPeriod.hidden = false
+        btnRepeastBase.hidden = false
+        txtReviewFrquency.hidden = false
+        btnReviewPeriod.hidden = false
+        btnMarkReviewed.hidden = false
     }
     
     func textViewDidEndEditing(textView: UITextView)

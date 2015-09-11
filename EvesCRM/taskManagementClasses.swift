@@ -166,7 +166,7 @@ class workingGTDItem: NSObject
     private var myGTDParentID: Int = 0
     private var myTitle: String = "New"
     private var myStatus: String = ""
-    private var myChildren: [workingGTDItem] = Array()
+    private var myChildren: [AnyObject] = Array()
     private var myTeamID: Int = 0
     private var myNote: String = ""
     private var myLastReviewDate: NSDate!
@@ -175,6 +175,7 @@ class workingGTDItem: NSObject
     private var myPredecessor: Int = 0
     private var myGTDID: Int = 0
     private var myGTDLevel: Int = 0
+    private var myStoreGTDLevel: Int = 0
     
     var GTDItemID: Int
     {
@@ -254,7 +255,7 @@ class workingGTDItem: NSObject
         }
     }
     
-    var children: [workingGTDItem]
+    var children: [AnyObject]
     {
         get
         {
@@ -421,13 +422,35 @@ class workingGTDItem: NSObject
     
     func loadChildren()
     {
-        let myChildrenList = myDatabaseConnection.getOpenGTDChildItems(myGTDItemID, inTeamID: myTeamID)
-        myChildren.removeAll()
+        // check to see if this is the bottom of the GTD hierarchy
         
-        for myItem in myChildrenList
-        {
-            let myNewChild = workingGTDItem(inGTDItemID: myItem.gTDItemID as! Int, inTeamID: myTeamID)
-            myChildren.append(myNewChild)
+        if myStoreGTDLevel == 0
+        { // We only wantto do this once per instantiation of the object
+            let tempTeam = myDatabaseConnection.getGTDLevels(myTeamID)
+            
+            myStoreGTDLevel = tempTeam.count
+        }
+        
+        if myGTDLevel != myStoreGTDLevel
+        { // Not bottom of hierarchy so get GTDITem as children
+            let myChildrenList = myDatabaseConnection.getOpenGTDChildItems(myGTDItemID, inTeamID: myTeamID)
+            myChildren.removeAll()
+        
+            for myItem in myChildrenList
+            {
+                let myNewChild = workingGTDItem(inGTDItemID: myItem.gTDItemID as! Int, inTeamID: myTeamID)
+                myChildren.append(myNewChild)
+            }
+        }
+        else
+        {  // Bottom of GTD Hierarchy, so children are projects
+            let myChildrenList = myDatabaseConnection.getOpenProjectsForGTDItem(myGTDItemID, inTeamID: myTeamID)
+            
+            for myItem in myChildrenList
+            {
+                let myNewChild = project(inProjectID: myItem.projectID as Int, inTeamID: myTeamID)
+                myChildren.append(myNewChild)
+            }
         }
     }
     
@@ -439,7 +462,8 @@ class workingGTDItem: NSObject
         }
         else
         {
-            myDatabaseConnection.deleteGTDItem(myGTDItemID, inTeamID: myTeamID)
+            myStatus = "Deleted"
+            save()
             return true
         }
     }
@@ -847,6 +871,8 @@ class project: NSObject // 10k level
         myProjectStartDate = getDefaultDate()
         myLastReviewDate = getDefaultDate()
         myTeamID = inTeamID
+        
+        save()
     }
     
     init(inProjectID: Int, inTeamID: Int)
@@ -959,7 +985,7 @@ class project: NSObject // 10k level
     {
         // Save Project
         
-        myDatabaseConnection.saveProject(myProjectID, inProjectEndDate: myProjectEndDate, inProjectName: myProjectName, inProjectStartDate: myProjectStartDate, inProjectStatus: myProjectStatus, inReviewFrequency: myReviewFrequency, inLastReviewDate: myLastReviewDate, inAreaID: myGTDItemID, inRepeatInterval: myRepeatInterval, inRepeatType: myRepeatType, inRepeatBase: myRepeatBase, inTeamID: myTeamID)
+        myDatabaseConnection.saveProject(myProjectID, inProjectEndDate: myProjectEndDate, inProjectName: myProjectName, inProjectStartDate: myProjectStartDate, inProjectStatus: myProjectStatus, inReviewFrequency: myReviewFrequency, inLastReviewDate: myLastReviewDate, inGTDItemID: myGTDItemID, inRepeatInterval: myRepeatInterval, inRepeatType: myRepeatType, inRepeatBase: myRepeatBase, inTeamID: myTeamID)
         
         // Save Team Members
         
@@ -1506,7 +1532,8 @@ class task: NSObject
     
     func delete() -> Bool
     {
-        myDatabaseConnection.deleteTask(myTaskID)
+        myStatus = "Deleted"
+        save()
         return true
     }
 
@@ -2178,7 +2205,9 @@ class context: NSObject
         }
         else
         {
-            myDatabaseConnection.deleteContext(myContextID, inTeamID: myTeamID)
+            //myDatabaseConnection.deleteContext(myContextID, inTeamID: myTeamID)
+            myStatus = "Deleted"
+            save()
             return true
         }
     }

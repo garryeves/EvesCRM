@@ -22,6 +22,24 @@ var myCurrentViewController: AnyObject!
 
 let myRowColour = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
 
+let myRepeatPeriods = [ "",
+                        "Day",
+                        "Week",
+                        "Month",
+                        "Quarter",
+                        "Year"]
+
+let myRepeatBases = [   "Start Date",
+                        "End Date",
+                        "1st of month",
+                        "Monday",
+                        "Tuesday",
+                        "Wednesday",
+                        "Thursday",
+                        "Friday",
+                        "Saturday",
+                        "Sunday"]
+
 struct TableData
 {
     var displayText: String
@@ -724,7 +742,7 @@ class textViewTapGestureRecognizer:UITapGestureRecognizer
     }
 }
 */
-/*
+
 class textLongPressGestureRecognizer:UILongPressGestureRecognizer
 {
     private var myTag: Int = 0
@@ -759,21 +777,9 @@ class textLongPressGestureRecognizer:UILongPressGestureRecognizer
             {
                 myType = "team"
             }
-            else if newValue.isKindOfClass(purposeAndCoreValue)
+            else if newValue.isKindOfClass(workingGTDItem)
             {
-                myType = "purposeAndCoreValue"
-            }
-            else if newValue.isKindOfClass(gvision)
-            {
-                myType = "gvision"
-            }
-            else if newValue.isKindOfClass(goalAndObjective)
-            {
-                myType = "goalAndObjective"
-            }
-            else if newValue.isKindOfClass(areaOfResponsibility)
-            {
-                myType = "areaOfResponsibility"
+                myType = "workingGTDItem"
             }
             else if newValue.isKindOfClass(project)
             {
@@ -823,7 +829,7 @@ class textLongPressGestureRecognizer:UILongPressGestureRecognizer
     }
 }
 
-*/
+
 func getDefaultDate() -> NSDate
 {
     let dateStringFormatter = NSDateFormatter()

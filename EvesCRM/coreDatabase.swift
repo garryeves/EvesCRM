@@ -36,13 +36,13 @@ class coreDatabase: NSObject
         return fetchResults!
     }
     
-    func getOpenProjectsForArea(inAreaID: Int, inTeamID: Int)->[Projects]
+    func getOpenProjectsForGTDItem(inGTDItemID: Int, inTeamID: Int)->[Projects]
     {
         let fetchRequest = NSFetchRequest(entityName: "Projects")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (areaID != \(inAreaID)) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (areaID == \(inGTDItemID)) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -406,7 +406,8 @@ class coreDatabase: NSObject
     func getDecodeValue(inCodeKey: String) -> String
     {
         let fetchRequest = NSFetchRequest(entityName: "Decodes")
-        let predicate = NSPredicate(format: "(decode_name == \"\(inCodeKey)\") && (updateType != \"Delete\")")
+   //     let predicate = NSPredicate(format: "(decode_name == \"\(inCodeKey)\") && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(decode_name == \"\(inCodeKey)\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1340,7 +1341,7 @@ class coreDatabase: NSObject
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Deleted\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1361,7 +1362,7 @@ class coreDatabase: NSObject
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectID = \(inProjectID)) && (updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Closed\")")
+        let predicate = NSPredicate(format: "(projectID = \(inProjectID)) && (updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Closed\") && (status != \"Deleted\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1412,7 +1413,7 @@ class coreDatabase: NSObject
 
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectID == 0) && (updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Closed\")")
+        let predicate = NSPredicate(format: "(projectID == 0) && (updateType != \"Delete\") && (teamID == \(inTeamID))  && (status != \"Closed\") && (status != \"Deleted\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1445,7 +1446,7 @@ class coreDatabase: NSObject
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate2 = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Closed\")")
+        let predicate2 = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Closed\") && (status != \"Deleted\")")
         
         // Set the predicate on the fetch request
         fetchTask.predicate = predicate2
@@ -1484,7 +1485,7 @@ class coreDatabase: NSObject
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(taskID == \(inTaskID)) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(taskID == \(inTaskID)) && (updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Deleted\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1501,7 +1502,7 @@ class coreDatabase: NSObject
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(taskID == \(inTaskID))  && (status != \"Closed\") && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(taskID == \(inTaskID))  && (status != \"Closed\") && (updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Deleted\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1642,7 +1643,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func saveProject(inProjectID: Int, inProjectEndDate: NSDate, inProjectName: String, inProjectStartDate: NSDate, inProjectStatus: String, inReviewFrequency: Int, inLastReviewDate: NSDate, inAreaID: Int, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inTeamID: Int)
+    func saveProject(inProjectID: Int, inProjectEndDate: NSDate, inProjectName: String, inProjectStartDate: NSDate, inProjectStatus: String, inReviewFrequency: Int, inLastReviewDate: NSDate, inGTDItemID: Int, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inTeamID: Int)
     {
         var myProject: Projects!
         
@@ -1658,7 +1659,7 @@ class coreDatabase: NSObject
             myProject.projectStatus = inProjectStatus
             myProject.reviewFrequency = inReviewFrequency
             myProject.lastReviewDate = inLastReviewDate
-            myProject.areaID = inAreaID
+            myProject.areaID = inGTDItemID
             myProject.repeatInterval = inRepeatInterval
             myProject.repeatType = inRepeatType
             myProject.repeatBase = inRepeatBase
@@ -1675,7 +1676,7 @@ class coreDatabase: NSObject
             myProject.projectStatus = inProjectStatus
             myProject.reviewFrequency = inReviewFrequency
             myProject.lastReviewDate = inLastReviewDate
-            myProject.areaID = inAreaID
+            myProject.areaID = inGTDItemID
             myProject.repeatInterval = inRepeatInterval
             myProject.repeatType = inRepeatType
             myProject.repeatBase = inRepeatBase
@@ -1890,7 +1891,7 @@ class coreDatabase: NSObject
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(status != \"Archived\") && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(status != \"Archived\") && (updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Deleted\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1911,7 +1912,7 @@ class coreDatabase: NSObject
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(name = \"\(inContextName)\") && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(name = \"\(inContextName)\") && (updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Deleted\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1928,7 +1929,7 @@ class coreDatabase: NSObject
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(contextID == \(inContextID)) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(contextID == \(inContextID)) && (updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Deleted\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -2075,145 +2076,6 @@ class coreDatabase: NSObject
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [TaskContext]
-        
-        return fetchResults!
-    }
-
-    func saveAreaOfResponsibility(inAreaID: Int, inGoalID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String, inLastReviewDate: NSDate, inReviewFrequency: Int, inReviewPeriod: String, inPredecessor: Int)
-    {
-        var myArea: AreaOfResponsibility!
-        
-        let myAreas = checkAreaOfResponsibility(inAreaID, inTeamID: inTeamID)
-        
-        if myAreas.count == 0
-        { // Add
-            myArea = NSEntityDescription.insertNewObjectForEntityForName("AreaOfResponsibility", inManagedObjectContext: self.managedObjectContext!) as! AreaOfResponsibility
-            myArea.areaID = inAreaID
-            myArea.goalID = inGoalID
-            myArea.title = inTitle
-            myArea.status = inStatus
-            myArea.updateTime = NSDate()
-            myArea.updateType = "Add"
-            myArea.teamID = inTeamID
-            myArea.note = inNote
-            myArea.lastReviewDate = inLastReviewDate
-            myArea.reviewFrequency = inReviewFrequency
-            myArea.reviewPeriod = inReviewPeriod
-            myArea.predecessor = inPredecessor
-        }
-        else
-        { // Update
-            myArea = myAreas[0]
-            myArea.goalID = inGoalID
-            myArea.title = inTitle
-            myArea.status = inStatus
-            myArea.updateTime = NSDate()
-            if myArea.updateType != "Add"
-            {
-                myArea.updateType = "Update"
-            }
-            myArea.teamID = inTeamID
-            myArea.note = inNote
-            myArea.lastReviewDate = inLastReviewDate
-            myArea.reviewFrequency = inReviewFrequency
-            myArea.reviewPeriod = inReviewPeriod
-            myArea.predecessor = inPredecessor
-        }
-        
-        do
-        {
-            try managedObjectContext!.save()
-        }
-            catch let error as NSError
-            {
-                NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                
-                print("Failure to save context: \(error)")
-            }
-    }
-    
-    func deleteAreaOfResponsibility(inAreaID: Int, inTeamID: Int)
-    {
-        var myArea: AreaOfResponsibility!
-        
-        let myAreas = checkAreaOfResponsibility(inAreaID, inTeamID: inTeamID)
-        
-        if myAreas.count > 0
-        { // Update
-            myArea = myAreas[0]
-            myArea.updateTime = NSDate()
-            myArea.updateType = "Delete"
-        }
-        
-        do
-        {
-            try managedObjectContext!.save()
-        }
-            catch let error as NSError
-            {
-                NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                
-                print("Failure to save context: \(error)")
-            }
-    }
-    
-    func getAreaOfResponsibility(inAreaID: Int, inTeamID: Int)->[AreaOfResponsibility]
-    {
-        let fetchRequest = NSFetchRequest(entityName: "AreaOfResponsibility")
-        
-        // Create a new predicate that filters out any object that
-        // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(areaID == \(inAreaID)) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
-        
-        // Set the predicate on the fetch request
-        fetchRequest.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [AreaOfResponsibility]
-        
-        return fetchResults!
-    }
- 
-    func getAreaCount() -> Int
-    {
-        let fetchRequest = NSFetchRequest(entityName: "AreaOfResponsibility")
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [AreaOfResponsibility]
-        
-        return fetchResults!.count
-    }
-    
-    func getOpenAreasForGoal(inGoalID: Int, inTeamID: Int)->[AreaOfResponsibility]
-    {
-        let fetchRequest = NSFetchRequest(entityName: "AreaOfResponsibility")
-        
-        // Create a new predicate that filters out any object that
-        // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(goalID == \(inGoalID)) && (updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Closed\")")
-        
-        // Set the predicate on the fetch request
-        fetchRequest.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [AreaOfResponsibility]
-        
-        return fetchResults!
-    }
-
-    private func checkAreaOfResponsibility(inAreaID: Int, inTeamID: Int)->[AreaOfResponsibility]
-    {
-        let fetchRequest = NSFetchRequest(entityName: "AreaOfResponsibility")
-        
-        // Create a new predicate that filters out any object that
-        // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(areaID == \(inAreaID)) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
-        
-        // Set the predicate on the fetch request
-        fetchRequest.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [AreaOfResponsibility]
         
         return fetchResults!
     }
@@ -2450,7 +2312,7 @@ class coreDatabase: NSObject
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(gTDItemID == \(inGTDItemID)) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(gTDItemID == \(inGTDItemID)) && (updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Closed\") && (status != \"Deleted\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -2467,7 +2329,7 @@ class coreDatabase: NSObject
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(gTDLevel == \(inGTDLevel)) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(gTDLevel == \(inGTDLevel)) && (updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Closed\") && (status != \"Deleted\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -2494,7 +2356,7 @@ class coreDatabase: NSObject
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(gTDParentID == \(inGTDItemID)) && (updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Closed\")")
+        let predicate = NSPredicate(format: "(gTDParentID == \(inGTDItemID)) && (updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Closed\") && (status != \"Deleted\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -2522,372 +2384,6 @@ class coreDatabase: NSObject
         return fetchResults!
     }
     
-    func saveGoal(inGoalID: Int, inVisionID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String, inLastReviewDate: NSDate, inReviewFrequency: Int, inReviewPeriod: String, inPredecessor: Int)
-    {
-        var myGoal: GoalAndObjective!
-        
-        let myGoals = getGoals(inGoalID, inTeamID: inTeamID)
-        
-        if myGoals.count == 0
-        { // Add
-            myGoal = NSEntityDescription.insertNewObjectForEntityForName("GoalAndObjective", inManagedObjectContext: self.managedObjectContext!) as! GoalAndObjective
-            myGoal.goalID = inGoalID
-            myGoal.visionID = inVisionID
-            myGoal.title = inTitle
-            myGoal.status = inStatus
-            myGoal.updateTime = NSDate()
-            myGoal.updateType = "Add"
-            myGoal.teamID = inTeamID
-            myGoal.note = inNote
-            myGoal.lastReviewDate = inLastReviewDate
-            myGoal.reviewFrequency = inReviewFrequency
-            myGoal.reviewPeriod = inReviewPeriod
-            myGoal.predecessor = inPredecessor
-        }
-        else
-        { // Update
-            myGoal = myGoals[0]
-            myGoal.visionID = inVisionID
-            myGoal.title = inTitle
-            myGoal.status = inStatus
-            myGoal.updateTime = NSDate()
-            if myGoal.updateType != "Add"
-            {
-                myGoal.updateType = "Update"
-            }
-            myGoal.teamID = inTeamID
-            myGoal.note = inNote
-            myGoal.lastReviewDate = inLastReviewDate
-            myGoal.reviewFrequency = inReviewFrequency
-            myGoal.reviewPeriod = inReviewPeriod
-            myGoal.predecessor = inPredecessor
-        }
-        
-        do
-        {
-            try managedObjectContext!.save()
-        }
-            catch let error as NSError
-            {
-                NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                
-                print("Failure to save context: \(error)")
-            }
-    }
-    
-    func deleteGoal(inGoalID: Int, inTeamID: Int)
-    {
-        var myGoal: GoalAndObjective!
-        
-        let myGoals = getGoals(inGoalID, inTeamID: inTeamID)
-        
-        if myGoals.count > 0
-        { // Update
-            myGoal = myGoals[0]
-            myGoal.updateTime = NSDate()
-            myGoal.updateType = "Delete"
-        }
-        
-        do
-        {
-            try managedObjectContext!.save()
-        }
-            catch let error as NSError
-            {
-                NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                
-                print("Failure to save context: \(error)")
-            }
-    }
-    
-    func getGoals(inGoalID: Int, inTeamID: Int)->[GoalAndObjective]
-    {
-        let fetchRequest = NSFetchRequest(entityName: "GoalAndObjective")
-        
-        // Create a new predicate that filters out any object that
-        // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(goalID == \(inGoalID)) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
-        
-        // Set the predicate on the fetch request
-        fetchRequest.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [GoalAndObjective]
-        
-        return fetchResults!
-    }
-    
-    func getGoalCount() -> Int
-    {
-        let fetchRequest = NSFetchRequest(entityName: "GoalAndObjective")
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [GoalAndObjective]
-        
-        return fetchResults!.count
-    }
-    
-    func getOpenGoalsForVision(inVisionID: Int, inTeamID: Int)->[GoalAndObjective]
-    {
-        let fetchRequest = NSFetchRequest(entityName: "GoalAndObjective")
-        
-        // Create a new predicate that filters out any object that
-        // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(visionID == \(inVisionID)) && (updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Closed\")")
-        
-        // Set the predicate on the fetch request
-        fetchRequest.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [GoalAndObjective]
-        
-        return fetchResults!
-    }
-    
-    func saveVision(inVisionID: Int, inPurposeID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String, inLastReviewDate: NSDate, inReviewFrequency: Int, inReviewPeriod: String, inPredecessor: Int)
-    {
-        var myVision: Vision!
-        
-        let myVisions = getVisions(inVisionID, inTeamID: inTeamID)
-        
-        if myVisions.count == 0
-        { // Add
-            myVision = NSEntityDescription.insertNewObjectForEntityForName("Vision", inManagedObjectContext: self.managedObjectContext!) as! Vision
-            myVision.visionID = inVisionID
-            myVision.purposeID = inPurposeID
-            myVision.title = inTitle
-            myVision.status = inStatus
-            myVision.updateTime = NSDate()
-            myVision.updateType = "Add"
-            myVision.teamID = inTeamID
-            myVision.note = inNote
-            myVision.lastReviewDate = inLastReviewDate
-            myVision.reviewFrequency = inReviewFrequency
-            myVision.reviewPeriod = inReviewPeriod
-            myVision.predecessor = inPredecessor
-        }
-        else
-        { // Update
-            myVision = myVisions[0]
-            myVision.purposeID = inPurposeID
-            myVision.title = inTitle
-            myVision.status = inStatus
-            myVision.updateTime = NSDate()
-            if myVision.updateType != "Add"
-            {
-                myVision.updateType = "Update"
-            }
-            myVision.teamID = inTeamID
-            myVision.note = inNote
-            myVision.lastReviewDate = inLastReviewDate
-            myVision.reviewFrequency = inReviewFrequency
-            myVision.reviewPeriod = inReviewPeriod
-            myVision.predecessor = inPredecessor
-        }
-        
-        do
-        {
-            try managedObjectContext!.save()
-        }
-            catch let error as NSError
-            {
-                NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                
-                print("Failure to save context: \(error)")
-            }
-    }
-    
-    func deleteVision(inVisionID: Int, inTeamID: Int)
-    {
-        var myVision: Vision!
-        
-        let myVisions = getVisions(inVisionID, inTeamID: inTeamID)
-        
-        if myVisions.count > 0
-        { // Update
-            myVision = myVisions[0]
-            myVision.updateTime = NSDate()
-            myVision.updateType = "Delete"
-        }
-        
-        do
-        {
-            try managedObjectContext!.save()
-        }
-            catch let error as NSError
-            {
-                NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                
-                print("Failure to save context: \(error)")
-            }
-    }
-    
-    func getVisions(inVisionID: Int, inTeamID: Int)->[Vision]
-    {
-        let fetchRequest = NSFetchRequest(entityName: "Vision")
-        
-        // Create a new predicate that filters out any object that
-        // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(visionID == \(inVisionID)) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
-        
-        // Set the predicate on the fetch request
-        fetchRequest.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Vision]
-        
-        return fetchResults!
-    }
-    
-    func getVisionCount() -> Int
-    {
-        let fetchRequest = NSFetchRequest(entityName: "Vision")
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Vision]
-        
-        return fetchResults!.count
-    }
-    
-    func getOpenVisionsForPurpose(inPurposeID: Int, inTeamID: Int)->[Vision]
-    {
-        let fetchRequest = NSFetchRequest(entityName: "Vision")
-        
-        // Create a new predicate that filters out any object that
-        // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(purposeID == \(inPurposeID)) && (updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Closed\")")
-        
-        // Set the predicate on the fetch request
-        fetchRequest.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Vision]
-        
-        return fetchResults!
-    }
-
-    func savePurpose(inPurposeID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String, inLastReviewDate: NSDate, inReviewFrequency: Int, inReviewPeriod: String, inPredecessor: Int)
-    {
-        var myPurpose: PurposeAndCoreValue!
-        
-        let myPurposes = getPurpose(inPurposeID, inTeamID: inTeamID)
-        
-        if myPurposes.count == 0
-        { // Add
-            myPurpose = NSEntityDescription.insertNewObjectForEntityForName("PurposeAndCoreValue", inManagedObjectContext: self.managedObjectContext!) as! PurposeAndCoreValue
-            myPurpose.purposeID = inPurposeID
-            myPurpose.title = inTitle
-            myPurpose.status = inStatus
-            myPurpose.updateTime = NSDate()
-            myPurpose.updateType = "Add"
-            myPurpose.teamID = inTeamID
-            myPurpose.note = inNote
-            myPurpose.lastReviewDate = inLastReviewDate
-            myPurpose.reviewFrequency = inReviewFrequency
-            myPurpose.reviewPeriod = inReviewPeriod
-            myPurpose.predecessor = inPredecessor
-        }
-        else
-        { // Update
-            myPurpose = myPurposes[0]
-            myPurpose.title = inTitle
-            myPurpose.status = inStatus
-            myPurpose.updateTime = NSDate()
-            if myPurpose.updateType != "Add"
-            {
-                myPurpose.updateType = "Update"
-            }
-            myPurpose.teamID = inTeamID
-            myPurpose.note = inNote
-            myPurpose.lastReviewDate = inLastReviewDate
-            myPurpose.reviewFrequency = inReviewFrequency
-            myPurpose.reviewPeriod = inReviewPeriod
-            myPurpose.predecessor = inPredecessor
-        }
-        
-        do
-        {
-            try managedObjectContext!.save()
-        }
-            catch let error as NSError
-            {
-                NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                
-                print("Failure to save context: \(error)")
-            }
-    }
-    
-    func deletePurpose(inPurposeID: Int, inTeamID: Int)
-    {
-        var myPurpose: PurposeAndCoreValue!
-        
-        let myPurposes = getPurpose(inPurposeID, inTeamID: inTeamID)
-        
-        if myPurposes.count > 0
-        { // Update
-            myPurpose = myPurposes[0]
-            myPurpose.updateTime = NSDate()
-            myPurpose.updateType = "Delete"
-        }
-        
-        do
-        {
-            try managedObjectContext!.save()
-        }
-            catch let error as NSError
-            {
-                NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                
-                print("Failure to save context: \(error)")
-            }
-    }
-    
-    func getPurpose(inPurposeID: Int, inTeamID: Int)->[PurposeAndCoreValue]
-    {
-        let fetchRequest = NSFetchRequest(entityName: "PurposeAndCoreValue")
-        
-        // Create a new predicate that filters out any object that
-        // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(purposeID == \(inPurposeID)) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
-        
-        // Set the predicate on the fetch request
-        fetchRequest.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [PurposeAndCoreValue]
-        
-        return fetchResults!
-    }
-    
-    func getAllPurpose(inTeamID: Int)->[PurposeAndCoreValue]
-    {
-        let fetchRequest = NSFetchRequest(entityName: "PurposeAndCoreValue")
-        
-        // Create a new predicate that filters out any object that
-        // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Closed\")")
-        
-        // Set the predicate on the fetch request
-        fetchRequest.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [PurposeAndCoreValue]
-        
-        return fetchResults!
-    }
-
-    
-    func getPurposeCount()-> Int
-    {
-        let fetchRequest = NSFetchRequest(entityName: "PurposeAndCoreValue")
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [PurposeAndCoreValue]
-        
-        return fetchResults!.count
-    }
-
     func resetprojects()
     {
         let fetchRequest = NSFetchRequest(entityName: "ProjectTeamMembers")
@@ -3490,31 +2986,7 @@ class coreDatabase: NSObject
     
     func clearDeletedItems()
     {
-        let fetchRequest1 = NSFetchRequest(entityName: "AreaOfResponsibility")
-        
         let predicate = NSPredicate(format: "(updateType == \"Delete\")")
-        
-        // Set the predicate on the fetch request
-        fetchRequest1.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults1 = (try? managedObjectContext!.executeFetchRequest(fetchRequest1)) as? [AreaOfResponsibility]
-        
-        for myItem1 in fetchResults1!
-        {
-            managedObjectContext!.deleteObject(myItem1 as NSManagedObject)
-        }
-        
-        do
-        {
-            try managedObjectContext!.save()
-        }
-            catch let error as NSError
-            {
-                NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                
-                print("Failure to save context: \(error)")
-            }
 
         let fetchRequest2 = NSFetchRequest(entityName: "Context")
         
@@ -3551,30 +3023,6 @@ class coreDatabase: NSObject
         for myItem3 in fetchResults3!
         {
             managedObjectContext!.deleteObject(myItem3 as NSManagedObject)
-        }
-        
-        do
-        {
-            try managedObjectContext!.save()
-        }
-            catch let error as NSError
-            {
-                NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                
-                print("Failure to save context: \(error)")
-            }
-
-        let fetchRequest4 = NSFetchRequest(entityName: "GoalAndObjective")
-        
-        // Set the predicate on the fetch request
-        fetchRequest4.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults4 = (try? managedObjectContext!.executeFetchRequest(fetchRequest4)) as? [GoalAndObjective]
-        
-        for myItem4 in fetchResults4!
-        {
-            managedObjectContext!.deleteObject(myItem4 as NSManagedObject)
         }
         
         do
@@ -3780,30 +3228,6 @@ class coreDatabase: NSObject
                 print("Failure to save context: \(error)")
             }
 
-        let fetchRequest13 = NSFetchRequest(entityName: "PurposeAndCoreValue")
-        
-        // Set the predicate on the fetch request
-        fetchRequest13.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults13 = (try? managedObjectContext!.executeFetchRequest(fetchRequest13)) as? [PurposeAndCoreValue]
-        
-        for myItem13 in fetchResults13!
-        {
-            managedObjectContext!.deleteObject(myItem13 as NSManagedObject)
-        }
-        
-        do
-        {
-            try managedObjectContext!.save()
-        }
-            catch let error as NSError
-            {
-                NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                
-                print("Failure to save context: \(error)")
-            }
-
         let fetchRequest14 = NSFetchRequest(entityName: "Roles")
         
         // Set the predicate on the fetch request
@@ -3948,30 +3372,6 @@ class coreDatabase: NSObject
                 print("Failure to save context: \(error)")
             }
 
-        let fetchRequest20 = NSFetchRequest(entityName: "Vision")
-        
-        // Set the predicate on the fetch request
-        fetchRequest20.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults20 = (try? managedObjectContext!.executeFetchRequest(fetchRequest20)) as? [Vision]
-        
-        for myItem20 in fetchResults20!
-        {
-            managedObjectContext!.deleteObject(myItem20 as NSManagedObject)
-        }
-        
-        do
-        {
-            try managedObjectContext!.save()
-        }
-            catch let error as NSError
-            {
-                NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                
-                print("Failure to save context: \(error)")
-            }
-        
         let fetchRequest21 = NSFetchRequest(entityName: "TaskPredecessor")
         
         // Set the predicate on the fetch request
@@ -4108,32 +3508,7 @@ class coreDatabase: NSObject
 
     func clearSyncedItems()
     {
-        let fetchRequest1 = NSFetchRequest(entityName: "AreaOfResponsibility")
-        
         let predicate = NSPredicate(format: "(updateType != \"\")")
-        
-        // Set the predicate on the fetch request
-        fetchRequest1.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults1 = (try? managedObjectContext!.executeFetchRequest(fetchRequest1)) as? [AreaOfResponsibility]
-        
-        for myItem1 in fetchResults1!
-        {
-            myItem1.updateType = ""
-            
-            do
-            {
-                try managedObjectContext!.save()
-            }
-            catch let error as NSError
-            {
-                NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                
-                print("Failure to save context: \(error)")
-            }
-
-        }
         
         let fetchRequest2 = NSFetchRequest(entityName: "Context")
         
@@ -4171,31 +3546,6 @@ class coreDatabase: NSObject
         for myItem3 in fetchResults3!
         {
             myItem3.updateType = ""
-            
-            do
-            {
-                try managedObjectContext!.save()
-            }
-            catch let error as NSError
-            {
-                NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                
-                print("Failure to save context: \(error)")
-            }
-
-        }
-        
-        let fetchRequest4 = NSFetchRequest(entityName: "GoalAndObjective")
-        
-        // Set the predicate on the fetch request
-        fetchRequest4.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults4 = (try? managedObjectContext!.executeFetchRequest(fetchRequest4)) as? [GoalAndObjective]
-        
-        for myItem4 in fetchResults4!
-        {
-            myItem4.updateType = ""
             
             do
             {
@@ -4410,31 +3760,6 @@ class coreDatabase: NSObject
 
         }
         
-        let fetchRequest13 = NSFetchRequest(entityName: "PurposeAndCoreValue")
-        
-        // Set the predicate on the fetch request
-        fetchRequest13.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults13 = (try? managedObjectContext!.executeFetchRequest(fetchRequest13)) as? [PurposeAndCoreValue]
-        
-        for myItem13 in fetchResults13!
-        {
-            myItem13.updateType = ""
-            
-            do
-            {
-                try managedObjectContext!.save()
-            }
-            catch let error as NSError
-            {
-                NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                
-                print("Failure to save context: \(error)")
-            }
-
-        }
-
         let fetchRequest14 = NSFetchRequest(entityName: "Roles")
         
         // Set the predicate on the fetch request
@@ -4571,31 +3896,6 @@ class coreDatabase: NSObject
         for myItem19 in fetchResults19!
         {
             myItem19.updateType = ""
-            
-            do
-            {
-                try managedObjectContext!.save()
-            }
-            catch let error as NSError
-            {
-                NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                
-                print("Failure to save context: \(error)")
-            }
-
-        }
-        
-        let fetchRequest20 = NSFetchRequest(entityName: "Vision")
-        
-        // Set the predicate on the fetch request
-        fetchRequest20.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults20 = (try? managedObjectContext!.executeFetchRequest(fetchRequest20)) as? [Vision]
-        
-        for myItem20 in fetchResults20!
-        {
-            myItem20.updateType = ""
             
             do
             {
@@ -5291,4 +4591,48 @@ class coreDatabase: NSObject
         }
     }
     
+    
+    func performTidyDecodes(inString: String)
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Decodes")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: inString)
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Decodes]
+        
+        for myItem in fetchResults!
+        {
+            managedObjectContext!.deleteObject(myItem as NSManagedObject)
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+
+    }
+    
+    func tidyDecodes()
+    {
+        performTidyDecodes("(decode_name == \"Context\") && (decode_value == \"1\")")
+        performTidyDecodes("(decode_name == \"Projects\") && (decode_value == \"2\")")
+        performTidyDecodes("(decode_name == \"Roles\") && (decode_value == \"8\")")
+        performTidyDecodes("(decode_name == \"Vision\")")
+        performTidyDecodes("(decode_name == \"PurposeAndCoreValue\")")
+        performTidyDecodes("(decode_name == \"GoalAndObjective\")")
+        performTidyDecodes("(decode_name == \"AreaOfResponsibility\")")
+    }
 }

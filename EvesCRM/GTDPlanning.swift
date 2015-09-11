@@ -62,11 +62,11 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         mySelectedTeam = myCurrentTeam
         buildHead("Team", inHighlightedID: myCurrentTeam.teamID)
         
-        let lpgr = UILongPressGestureRecognizer(target: self, action: "handleLongPress:")
-        lpgr.minimumPressDuration = 0.5
-        lpgr.delaysTouchesBegan = true
-        lpgr.delegate = self
-        self.colBody.addGestureRecognizer(lpgr)
+  //      let lpgr = textLongPressGestureRecognizer(target: self, action: "handleLongPress:")
+  //      lpgr.minimumPressDuration = 0.5
+  //      lpgr.delaysTouchesBegan = true
+  //      lpgr.delegate = self
+  //      self.colBody.addGestureRecognizer(lpgr)
         
    //     if passedGTD.actionSource == "Project"
    //     {
@@ -248,6 +248,17 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             cell.layer.cornerRadius = 5.0
             cell.layer.masksToBounds = true
             
+            
+            let lpgr = textLongPressGestureRecognizer(target: self, action: "handleLongPress:")
+            lpgr.minimumPressDuration = 0.5
+            lpgr.delaysTouchesBegan = true
+            lpgr.delegate = self
+            lpgr.displayView = cell.contentView
+            self.colBody.addGestureRecognizer(lpgr)
+            
+            
+            
+            
             cell.layoutSubviews()
             return cell
         }
@@ -416,13 +427,68 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     as! GTDHeaderView
                 if indexPath.section == 0
                 {
-                    headerView.lblTitle.text = "My Teams"
+                    if myDisplayHeadArray[indexPath.row].isKindOfClass(team)
+                    {
+                        headerView.lblTitle.text = "My Teams"
+                    }
+                    else if myDisplayHeadArray[indexPath.row].isKindOfClass(project)
+                    {
+                        headerView.lblTitle.text = "My Activities"
+                    }
+                    else if myDisplayHeadArray[indexPath.row].isKindOfClass(task)
+                    {
+                        headerView.lblTitle.text = "My Actions"
+                    }
+                    else if myDisplayHeadArray[indexPath.row].isKindOfClass(context)
+                    {
+                        headerView.lblTitle.text = "My Contexts"
+                    }
+                    else
+                    {
+                        let tempObject = myDisplayHeadArray[indexPath.row] as! workingGTDItem
+                        
+                        let tempLevel = workingGTDLevel(inGTDLevel: tempObject.GTDLevel, inTeamID: tempObject.teamID)
+                        
+                        headerView.lblTitle.text = "My \(tempLevel.title)"
+                    }
                 }
                 else
                 {
-                    headerView.lblTitle.text = "level 1"
+                    if myDisplayBodyArray.count > 0
+                    {
+                        if myDisplayBodyArray[indexPath.row].isKindOfClass(team)
+                        {
+                            headerView.lblTitle.text = "My Teams"
+                        }
+                        else if myDisplayBodyArray[indexPath.row].isKindOfClass(project)
+                        {
+                            headerView.lblTitle.text = "My Activities"
+                        }
+                        else if myDisplayBodyArray[indexPath.row].isKindOfClass(task)
+                        {
+                            headerView.lblTitle.text = "My Actions"
+                        }
+                        else if myDisplayBodyArray[indexPath.row].isKindOfClass(context)
+                        {
+                            headerView.lblTitle.text = "My Contexts"
+                        }
+                        else
+                        {
+                            let tempObject = myDisplayBodyArray[indexPath.row] as! workingGTDItem
+                        
+                            let tempLevel = workingGTDLevel(inGTDLevel: tempObject.GTDLevel, inTeamID: tempObject.teamID)
+                        
+                            headerView.lblTitle.text = "My \(tempLevel.title)"
+                        }
+                    }
+                    else
+                    {
+                        headerView.lblTitle.text = ""
+                    }
                 }
+                
                 return headerView
+                
             default:
                 assert(false, "Unexpected element kind")
             }
@@ -460,37 +526,13 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             //    myGTDHierarchy.removeAtIndex(fromIndexPath.item)
             //    myGTDHierarchy.insert(myObject, atIndex: toIndexPath.item)
         }
-        else if sender.type == "project"
-        {
-        let myOption1 = UIAlertAction(title: myMessage, style: .Default, handler: { (action: UIAlertAction) -> () in
-        let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("MaintainProject") as! MaintainProjectViewController
-        popoverContent.modalPresentationStyle = .Popover
-        let popover = popoverContent.popoverPresentationController
-        popover!.delegate = self
-        popover!.sourceView = sender.displayView
-        
-        let parentObject = sender.targetObject as! project
-        if sender.headBody == "body"
-        {
-        popoverContent.inProjectObject = parentObject
-        popoverContent.myActionType = "Edit"
-        }
-        
-        popoverContent.preferredContentSize = CGSizeMake(700,700)
-        popover!.sourceRect = CGRectMake(100,100,0,0)
-        self.presentViewController(popoverContent, animated: true, completion: nil)
-        })
-        
-        myOptions.addAction(myOption1)
-        
-        }
-
+ 
 */
     }
     
     // End move
     
-    func handleLongPress(gestureReconizer: UILongPressGestureRecognizer)
+    func handleLongPress(gestureReconizer: textLongPressGestureRecognizer)
     {
         
         if gestureReconizer.state == .Ended
@@ -506,24 +548,24 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                 { // Head
                     if myDisplayHeadArray[index.row].isKindOfClass(team)
                     {
-                        let myOptions = displayTeamOptions(self.view, inTeam: myDisplayHeadArray[index.row] as! team)
+                        let myOptions = displayTeamOptions(gestureReconizer.displayView, inTeam: myDisplayHeadArray[index.row] as! team)
                         
-                        myOptions.popoverPresentationController!.sourceView = self.view;
-                        myOptions.popoverPresentationController!.sourceRect = CGRectMake(self.view.bounds.size.width / 2.0, self.view.bounds.size.height / 2.0, 1.0, 1.0);
+                        myOptions.popoverPresentationController!.sourceView = gestureReconizer.displayView
+                  //      myOptions.popoverPresentationController!.sourceRect = CGRectMake(self.view.bounds.size.width / 2.0, self.view.bounds.size.height / 2.0, 1.0, 1.0);
                         self.presentViewController(myOptions, animated: true, completion: nil)
                     }
                     else if myDisplayHeadArray[index.row].isKindOfClass(workingGTDItem)
                     {
-                        let myOptions = displayGTDOptions(self.view, inGTDItem: myDisplayHeadArray[index.row] as! workingGTDItem, inDisplayType: "Head")
-                        myOptions.popoverPresentationController!.sourceView = self.view;
-                        myOptions.popoverPresentationController!.sourceRect = CGRectMake(self.view.bounds.size.width / 2.0, self.view.bounds.size.height / 2.0, 1.0, 1.0);
+                        let myOptions = displayGTDOptions(gestureReconizer.displayView, inGTDItem: myDisplayHeadArray[index.row] as! workingGTDItem, inDisplayType: "Head")
+                        myOptions.popoverPresentationController!.sourceView = gestureReconizer.displayView
+                  //      myOptions.popoverPresentationController!.sourceRect = CGRectMake(self.view.bounds.size.width / 2.0, self.view.bounds.size.height / 2.0, 1.0, 1.0);
                         self.presentViewController(myOptions, animated: true, completion: nil)
                     }
                     else if myDisplayHeadArray[index.row].isKindOfClass(project)
                     {
-                        let myOptions = displayProjectOptions(self.view, inProjectItem: myDisplayHeadArray[index.row] as! project, inDisplayType: "Head")
-                        myOptions.popoverPresentationController!.sourceView = self.view;
-                        myOptions.popoverPresentationController!.sourceRect = CGRectMake(self.view.bounds.size.width / 2.0, self.view.bounds.size.height / 2.0, 1.0, 1.0);
+                        let myOptions = displayProjectOptions(gestureReconizer.displayView, inProjectItem: myDisplayHeadArray[index.row] as! project, inDisplayType: "Head")
+                        myOptions.popoverPresentationController!.sourceView = gestureReconizer.displayView
+                   //     myOptions.popoverPresentationController!.sourceRect = CGRectMake(self.view.bounds.size.width / 2.0, self.view.bounds.size.height / 2.0, 1.0, 1.0);
                         self.presentViewController(myOptions, animated: true, completion: nil)
                     }
                 }
@@ -531,16 +573,16 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                 { // Body
                     if myDisplayBodyArray[index.row].isKindOfClass(workingGTDItem)
                     {
-                        let myOptions = displayGTDOptions(self.view, inGTDItem: myDisplayBodyArray[index.row] as! workingGTDItem, inDisplayType: "Body")
-                        myOptions.popoverPresentationController!.sourceView = self.view;
-                        myOptions.popoverPresentationController!.sourceRect = CGRectMake(self.view.bounds.size.width / 2.0, self.view.bounds.size.height / 2.0, 1.0, 1.0);
+                        let myOptions = displayGTDOptions(gestureReconizer.displayView, inGTDItem: myDisplayBodyArray[index.row] as! workingGTDItem, inDisplayType: "Body")
+                        myOptions.popoverPresentationController!.sourceView = gestureReconizer.displayView
+                  //      myOptions.popoverPresentationController!.sourceRect = CGRectMake(self.view.bounds.size.width / 2.0, self.view.bounds.size.height / 2.0, 1.0, 1.0);
                         self.presentViewController(myOptions, animated: true, completion: nil)
                     }
                     else if myDisplayHeadArray[index.row].isKindOfClass(project)
                     {
-                        let myOptions = displayProjectOptions(self.view, inProjectItem: myDisplayBodyArray[index.row] as! project, inDisplayType: "Body")
-                        myOptions.popoverPresentationController!.sourceView = self.view;
-                        myOptions.popoverPresentationController!.sourceRect = CGRectMake(self.view.bounds.size.width / 2.0, self.view.bounds.size.height / 2.0, 1.0, 1.0);
+                        let myOptions = displayProjectOptions(gestureReconizer.displayView, inProjectItem: myDisplayBodyArray[index.row] as! project, inDisplayType: "Body")
+                        myOptions.popoverPresentationController!.sourceView = gestureReconizer.displayView
+                //        myOptions.popoverPresentationController!.sourceRect = CGRectMake(self.view.bounds.size.width / 2.0, self.view.bounds.size.height / 2.0, 1.0, 1.0);
                         self.presentViewController(myOptions, animated: true, completion: nil)
                     }
                 }
@@ -685,12 +727,35 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                 }
         
             case "GTDItem":
-                btnUp.hidden = false
-                btnUp.setTitle("Up to Team", forState: .Normal)
+                var upSet: Bool = false
             
                 for myItem in myDisplayHeadArray
                 {
                     let myObject = myItem as! workingGTDItem
+                    
+                    if !upSet
+                    {
+                        if myObject.GTDLevel == 1
+                        {
+                            btnUp.hidden = false
+                            btnUp.setTitle("Up to Team", forState: .Normal)
+                        }
+                        else
+                        {
+                            let tempGTD = workingGTDLevel(inGTDLevel: myObject.GTDLevel - 1, inTeamID: mySelectedTeam.teamID)
+                            
+                            if tempGTD.title == ""
+                            {
+                                btnUp.hidden = true
+                            }
+                            else
+                            {
+                                btnUp.hidden = false
+                                btnUp.setTitle("Up to \(tempGTD.title)", forState: .Normal)
+                            }
+                        }
+                        upSet = true
+                    }
                     
                     if myObject.GTDItemID == inHighlightedID
                     {
@@ -863,8 +928,19 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .ActionSheet)
         
         var myMessage: String = ""
+
+        // Need to get the name of the GTD Level
         
-        myMessage = "Add Child"
+        let tempGTD = workingGTDLevel(inGTDLevel: 1, inTeamID: inTeam.teamID)
+        
+        if tempGTD.title == ""
+        {
+            myMessage = "Add Child"
+        }
+        else
+        {
+            myMessage = "Add \(tempGTD.title)"
+        }
         
         let myOption1 = UIAlertAction(title: myMessage, style: .Default, handler: { (action: UIAlertAction) -> () in
             let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("GTDEditController") as! GTDEditViewController
@@ -933,9 +1009,47 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
     
     func displayGTDOptions(inSourceView: UIView, inGTDItem: workingGTDItem, inDisplayType: String) -> UIAlertController
     {
+        // Need to get the name of the GTD Level
+        
+        var myChildType: String = ""
+        var myLevelType: String = ""
+        var actionType: String = ""
+        
+        if inGTDItem.GTDLevel == mySelectedTeam.GTDLevels.count
+        {
+            myChildType = "Activity"
+            actionType = "project"
+        }
+        else
+        {
+            let tempGTD = workingGTDLevel(inGTDLevel: inGTDItem.GTDLevel + 1, inTeamID: mySelectedTeam.teamID)
+        
+            if tempGTD.title == ""
+            {
+                myChildType = ""
+            }
+            else
+            {
+                myChildType = "\(tempGTD.title)"
+            }
+            
+            let tempGTD2 = workingGTDLevel(inGTDLevel: inGTDItem.GTDLevel, inTeamID: mySelectedTeam.teamID)
+            
+            if tempGTD2.title == ""
+            {
+                myLevelType = ""
+            }
+            else
+            {
+                myLevelType = "\(tempGTD2.title)"
+            }
+            
+            actionType = "GTDItem"
+        }
+        
         let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .ActionSheet)
         
-        let myOption1 = UIAlertAction(title: "Edit", style: .Default, handler: { (action: UIAlertAction) -> () in
+        let myOption1 = UIAlertAction(title: "Edit \(myLevelType)", style: .Default, handler: { (action: UIAlertAction) -> () in
             let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("GTDEditController") as! GTDEditViewController
             popoverContent.modalPresentationStyle = .Popover
             let popover = popoverContent.popoverPresentationController
@@ -959,10 +1073,51 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                 self.presentViewController(alert, animated: false, completion: nil)
             }
             })
-            
-        if inDisplayType == "Body"
+        
+        var myOption0: UIAlertAction!
+        
+        if inDisplayType == "Head"
         {
-            let myOption0 = UIAlertAction(title: "Zoom", style: .Default, handler: { (action: UIAlertAction) -> () in
+            myOption0 = UIAlertAction(title: "Add \(myChildType)", style: .Default, handler: { (action: UIAlertAction) -> () in
+                if actionType == "GTDItem"
+                { // GTDItem
+                    let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("GTDEditController") as! GTDEditViewController
+                    popoverContent.modalPresentationStyle = .Popover
+                    let popover = popoverContent.popoverPresentationController
+                    popover!.delegate = self
+                    popover!.sourceView = inSourceView
+                
+                    let tempChild = workingGTDItem(inTeamID: self.mySelectedTeam.teamID, inParentID: inGTDItem.GTDItemID)
+                    tempChild.GTDLevel = inGTDItem.GTDLevel + 1
+                    popoverContent.inGTDObject = tempChild
+                
+                    popoverContent.preferredContentSize = CGSizeMake(500,400)
+                    self.presentViewController(popoverContent, animated: true, completion: nil)
+                }
+                else
+                {  // Project
+                    let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("MaintainProject") as! MaintainProjectViewController
+                    popoverContent.modalPresentationStyle = .Popover
+                    let popover = popoverContent.popoverPresentationController
+                    popover!.delegate = self
+                    popover!.sourceView = inSourceView
+                    popover!.sourceRect = CGRectMake(700,700,0,0)
+                    
+                    let tempProject = project(inTeamID: self.mySelectedTeam.teamID)
+                    tempProject.GTDItemID = inGTDItem.GTDItemID
+                    popoverContent.inProjectObject = tempProject
+                    popoverContent.myActionType = "Add"
+                        
+                    popoverContent.preferredContentSize = CGSizeMake(700,700)
+                        
+                    self.presentViewController(popoverContent, animated: true, completion: nil)
+                }
+            })
+            myOptions.addAction(myOption0)
+        }
+        else if inDisplayType == "Body"
+        {
+            myOption0 = UIAlertAction(title: "Zoom", style: .Default, handler: { (action: UIAlertAction) -> () in
                 self.myDisplayHeadArray = self.myDisplayBodyArray
                 self.highlightID = inGTDItem.GTDItemID as Int
                 self.buildHead("GTDItem", inHighlightedID: self.highlightID)
@@ -988,7 +1143,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
             popover!.sourceView = inSourceView
-            popover!.sourceRect = CGRectMake(500,400,0,0)
+            popover!.sourceRect = CGRectMake(700,700,0,0)
             
             popoverContent.inProjectObject = inProjectItem
             popoverContent.myActionType = "Edit"

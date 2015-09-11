@@ -2198,7 +2198,7 @@ print("Nothing found")
         var decodeString: String = ""
  
         //  For testing purposes, this will remove all the teams and GTD levels
-      //  myDatabaseConnection.deleteAllTeams()
+       // myDatabaseConnection.deleteAllTeams()
         
         if myDatabaseConnection.getTeamsCount() == 0
         {
@@ -2224,6 +2224,7 @@ print("Nothing found")
         }
 
         //  For testing purposes, this will reset decodes
+        // myDatabaseConnection.tidyDecodes()
         //      myDatabaseConnection.resetDecodes()
 
         decodeString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date")
