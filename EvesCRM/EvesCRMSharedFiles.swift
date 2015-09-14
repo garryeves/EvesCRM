@@ -22,24 +22,6 @@ var myCurrentViewController: AnyObject!
 
 let myRowColour = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
 
-let myRepeatPeriods = [ "",
-                        "Day",
-                        "Week",
-                        "Month",
-                        "Quarter",
-                        "Year"]
-
-let myRepeatBases = [   "Start Date",
-                        "End Date",
-                        "1st of month",
-                        "Monday",
-                        "Tuesday",
-                        "Wednesday",
-                        "Thursday",
-                        "Friday",
-                        "Saturday",
-                        "Sunday"]
-
 struct TableData
 {
     var displayText: String
@@ -837,3 +819,187 @@ func getDefaultDate() -> NSDate
     return dateStringFormatter.dateFromString("9999-12-31")!
 }
 
+let myRepeatPeriods = ["",
+    "Day",
+    "Week",
+    "Month",
+    "Quarter",
+    "Year"]
+
+let myRepeatBases = ["Completion Date",
+    "1st of month",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday"]
+
+func calculateNewDate(inOriginalDate: NSDate, inDateBase: String, inInterval: Int, inPeriod: String) -> NSDate
+{
+    var addCalendarUnit: NSCalendarUnit!
+    var tempInterval: Int = inInterval
+    var returnDate: NSDate = NSDate()
+    
+    let calendar = NSCalendar.currentCalendar()
+    
+    switch inPeriod
+    {
+        case "Day":
+            addCalendarUnit = .Day
+        
+        case "Week":
+            addCalendarUnit = .Day
+            tempInterval = inInterval * 7   // fudge a there is no easy week setting
+        
+        case "Month":
+            addCalendarUnit = .Month
+        
+        case "Quarter":
+            addCalendarUnit = .Month
+            tempInterval = inInterval * 3   // fudge a there is no easy quarter setting
+        
+        case "Year":
+            addCalendarUnit = .Year
+        
+    default:
+        NSLog("calculateNewDate inPeriod hit default")
+    }
+    
+    calendar.timeZone = NSTimeZone.systemTimeZone()
+    
+    switch inDateBase
+    {
+        case "Completion Date":
+            returnDate = calendar.dateByAddingUnit(
+                [addCalendarUnit],
+                value: tempInterval,
+                toDate: inOriginalDate,
+                options: [])!
+
+        case "1st of month":
+            // date math to get appropriate month
+            
+            let tempDate = calendar.dateByAddingUnit(
+                [addCalendarUnit],
+                value: tempInterval,
+                toDate: inOriginalDate,
+                options: [])!
+            
+            let currentDateComponents = calendar.components([NSCalendarUnit.Year, NSCalendarUnit.Month], fromDate: tempDate)
+            currentDateComponents.day = 1
+
+            currentDateComponents.timeZone = NSTimeZone(name: "UTC")
+
+            returnDate = calendar.dateFromComponents(currentDateComponents)!
+        
+        case "Monday":
+            let tempDate = calendar.dateByAddingUnit(
+                [addCalendarUnit],
+                value: tempInterval,
+                toDate: inOriginalDate,
+                options: [])!
+            
+            returnDate = calculateDateForWeekDay(tempDate, dayToFind: 2)
+        
+        case "Tuesday":
+            let tempDate = calendar.dateByAddingUnit(
+                [addCalendarUnit],
+                value: tempInterval,
+                toDate: inOriginalDate,
+                options: [])!
+            
+            returnDate = calculateDateForWeekDay(tempDate, dayToFind: 3)
+        
+        case "Wednesday":
+            let tempDate = calendar.dateByAddingUnit(
+                [addCalendarUnit],
+                value: tempInterval,
+                toDate: inOriginalDate,
+                options: [])!
+            
+            returnDate = calculateDateForWeekDay(tempDate, dayToFind: 4)
+        
+        case "Thursday":
+            let tempDate = calendar.dateByAddingUnit(
+                [addCalendarUnit],
+                value: tempInterval,
+                toDate: inOriginalDate,
+                options: [])!
+            
+            returnDate = calculateDateForWeekDay(tempDate, dayToFind: 5)
+        
+        case "Friday":
+            let tempDate = calendar.dateByAddingUnit(
+                [addCalendarUnit],
+                value: tempInterval,
+                toDate: inOriginalDate,
+                options: [])!
+            
+            returnDate = calculateDateForWeekDay(tempDate, dayToFind: 6)
+        
+        case "Saturday":
+            let tempDate = calendar.dateByAddingUnit(
+                [addCalendarUnit],
+                value: tempInterval,
+                toDate: inOriginalDate,
+                options: [])!
+            
+            returnDate = calculateDateForWeekDay(tempDate, dayToFind: 7)
+
+        case "Sunday":
+            let tempDate = calendar.dateByAddingUnit(
+                [addCalendarUnit],
+                value: tempInterval,
+                toDate: inOriginalDate,
+                options: [])!
+            
+            returnDate = calculateDateForWeekDay(tempDate, dayToFind: 1)
+
+        default:
+            NSLog("calculateNewDate Bases hit default")
+    }
+    
+    return returnDate
+}
+
+func calculateDateForWeekDay(inStartDate: NSDate, dayToFind: Int) -> NSDate
+{
+    var returnDate: NSDate!
+    var daysToAdd: Int = 0
+    
+    let calendar = NSCalendar.currentCalendar()
+    
+    let currentDateComponents = calendar.components([NSCalendarUnit.Year, NSCalendarUnit.Month, NSCalendarUnit.Day, NSCalendarUnit.Weekday], fromDate: inStartDate)
+    currentDateComponents.timeZone = NSTimeZone(name: "UTC")
+    
+    // Need to work out the days to add
+    
+    if dayToFind == currentDateComponents.weekday
+    {  // The date has hit the correct day of the week
+        returnDate = inStartDate
+        daysToAdd = 0
+    }
+    else if dayToFind > currentDateComponents.weekday
+    {
+        daysToAdd = dayToFind - currentDateComponents.weekday
+    }
+    else
+    {
+        daysToAdd = 7 - currentDateComponents.weekday + dayToFind
+    }
+    
+    if daysToAdd > 0
+    {
+        returnDate = calendar.dateByAddingUnit(
+            [.Day],
+            value: daysToAdd,
+            toDate: inStartDate,
+            options: [])!
+        
+  //      returnDate = calendar.dateFromComponents(currentDateComponents)!
+    }
+    
+    return returnDate
+}

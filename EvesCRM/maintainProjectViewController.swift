@@ -48,11 +48,10 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     @IBOutlet weak var btnMarkReviewed: UIButton!
     
  //   var delegate: MyMaintainProjectDelegate?
-    
-    private var statusOptions: [Stages]!
-    
+        
     var myActionType: String = "Add"
     var inProjectObject: project!
+    var mySelectedTeam: team!
     
     private var statusSelected: String = ""
     private var roleSelected: Int = 0
@@ -80,7 +79,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     {
         super.viewDidLoad()
         
-        statusOptions = myCurrentTeam.stages
+        let statusOptions = mySelectedTeam.stages
         
         statusSelected = statusOptions[0].stageDescription
         teamMembersLabel.hidden = false
@@ -327,7 +326,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         mySelectedTeamMember = workingObject
         
         myActionType = "Edit"
-        myRoles = myCurrentTeam.roles
+        myRoles = mySelectedTeam.roles
         pickerDisplayArray.removeAll()
         pickerDisplayArray.append("")
         for myItem in myRoles
@@ -367,7 +366,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
      
         let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as String) ?? ""
         
-        _ = projectTeamMember(inProjectID: inProjectObject.projectID, inTeamMember: myFullName, inRoleID: 0, inTeamID: myCurrentTeam.teamID)
+        _ = projectTeamMember(inProjectID: inProjectObject.projectID, inTeamMember: myFullName, inRoleID: 0, inTeamID: mySelectedTeam.teamID)
         
         inProjectObject.loadTeamMembers()
         mySelectedRoles = inProjectObject.teamMembers
@@ -412,9 +411,11 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     @IBAction func btnProjectStage(sender: UIButton)
     {
         myActionType = "Edit"
-        myStages = myCurrentTeam.stages
+        mySelectedTeam.loadStages()
+        myStages = mySelectedTeam.stages
         pickerDisplayArray.removeAll()
         pickerDisplayArray.append("")
+        
         for myItem in myStages
         {
             pickerDisplayArray.append(myItem.stageDescription)

@@ -1356,6 +1356,23 @@ class coreDatabase: NSObject
         return fetchResults!
     }
     
+    func getAllTasksForProject(inProjectID: Int, inTeamID: Int)->[Task]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Task")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(projectID = \(inProjectID)) && (updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Deleted\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Task]
+        
+        return fetchResults!
+    }
+    
     func getTasksForProject(inProjectID: Int, inTeamID: Int)->[Task]
     {
         let fetchRequest = NSFetchRequest(entityName: "Task")

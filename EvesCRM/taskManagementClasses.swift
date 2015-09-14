@@ -702,6 +702,11 @@ class project: NSObject // 10k level
         set
         {
             myProjectStatus = newValue
+            
+            if newValue == "Archived" || newValue == "Completed"
+            {
+                checkForRepeat()
+            }
             save()
         }
     }
@@ -1004,6 +1009,110 @@ class project: NSObject // 10k level
         // save note
         
         myDatabaseConnection.saveProjectNote(myProjectID, inNote: myNote, inReviewPeriod: myReviewPeriod, inPredecessor: myPredecessor)
+    }
+    
+    func checkForRepeat()
+    {
+        // Check to see if there is a repeat pattern
+        var tempStartDate: NSDate = getDefaultDate()
+        var tempEndDate: NSDate = getDefaultDate()
+        
+        if myRepeatInterval != 0
+        {
+            // Calculate new start and end dates, based on the repeat fields
+            
+            if myProjectStartDate == getDefaultDate() && myProjectEndDate == getDefaultDate()
+            {  // No dates have set, so we set the start date
+                tempStartDate = calculateNewDate(NSDate(), inDateBase:myRepeatBase, inInterval: myRepeatInterval, inPeriod: myRepeatType)
+            }
+            else
+            { // A date has been set in at least one of the fields, so we use that as the date to set
+                
+                // If both start and end dates are set then we want to make sure we keep interval between them the same, so we need to work out the time to add
+                
+                var daysToAdd: Int = 0
+                
+                if myProjectStartDate != getDefaultDate() && myProjectStartDate != getDefaultDate()
+                {
+                    let calendar = NSCalendar.currentCalendar()
+                
+                    let components = calendar.components([.Day], fromDate: myProjectStartDate, toDate: myProjectStartDate, options: [])
+                
+                    daysToAdd = components.day
+                }
+                
+                if myProjectStartDate != getDefaultDate()
+                {
+                    tempStartDate = calculateNewDate(NSDate(), inDateBase:myRepeatBase, inInterval: myRepeatInterval, inPeriod: myRepeatType)
+                }
+            
+                if myProjectEndDate != getDefaultDate()
+                {
+                    let calendar = NSCalendar.currentCalendar()
+                    
+                    let tempDate = calendar.dateByAddingUnit(
+                            [.Day],
+                            value: daysToAdd,
+                            toDate: NSDate(),
+                            options: [])!
+                    
+                    tempEndDate = calculateNewDate(tempDate, inDateBase:myRepeatBase, inInterval: myRepeatInterval, inPeriod: myRepeatType)
+                }
+            }
+            
+            // Create new Project
+            
+            let newProject = project(inTeamID: myTeamID)
+            newProject.projectEndDate = tempEndDate
+            newProject.projectName = myProjectName
+            newProject.projectStartDate = tempStartDate
+            newProject.GTDItemID = myGTDItemID
+            newProject.repeatInterval = myRepeatInterval
+            newProject.repeatType = myRepeatType
+            newProject.repeatBase = myRepeatBase
+            newProject.note = myNote
+            
+            // Populate team Members
+           
+            let myProjectTeamMembers = myDatabaseConnection.getTeamMembers(myProjectID)
+            
+            for myTeamMember in myProjectTeamMembers
+            {
+                let myMember = projectTeamMember(inProjectID: newProject.projectID as Int, inTeamMember: myTeamMember.teamMember, inRoleID: myTeamMember.roleID as Int, inTeamID: myTeamID )
+                
+                myMember.projectMemberNotes = myTeamMember.projectMemberNotes
+            }
+    
+            // Populate tasks, but have the marked as Open
+            
+            let myProjectTasks = myDatabaseConnection.getAllTasksForProject(myProjectID, inTeamID: myTeamID)
+            
+            for myProjectTask in myProjectTasks
+            {
+                let myNewTask = task(inTeamID: myTeamID)
+
+                myNewTask.title = myProjectTask.title
+                myNewTask.details = myProjectTask.details
+                myNewTask.status = "Open"
+                myNewTask.priority = myProjectTask.priority
+                myNewTask.energyLevel = myProjectTask.energyLevel
+                myNewTask.estimatedTime = myProjectTask.estimatedTime as Int
+                myNewTask.estimatedTimeType = myProjectTask.estimatedTimeType
+                myNewTask.projectID = newProject.projectID
+                myNewTask.repeatInterval = myProjectTask.repeatInterval as Int
+                myNewTask.repeatType = myProjectTask.repeatType
+                myNewTask.repeatBase = myProjectTask.repeatBase
+                myNewTask.flagged = myProjectTask.flagged as Bool
+                myNewTask.urgency = myProjectTask.urgency
+     
+                let myContextList = myDatabaseConnection.getContextsForTask(myProjectTask.taskID as Int)
+                
+                for myContextItem in myContextList
+                {
+                    myNewTask.addContext(myContextItem.contextID as Int)
+                }
+            }
+        }
     }
     
    //  There is no delete in this class, as I do not want to delete projects, instead they will be marked as archived and not displayed
