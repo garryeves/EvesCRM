@@ -282,6 +282,18 @@ print("appdelegate application - source Application URL = \(url.scheme)")
         let modelURL = NSBundle.mainBundle().URLForResource("EvesCRM", withExtension: "momd")!
         return NSManagedObjectModel(contentsOfURL: modelURL)!
     }()
+    
+    func cloudDirectory() -> NSURL
+    {
+        let fileManager: NSFileManager = NSFileManager.defaultManager()
+//        let teamID: String = "garry@eves.id.au"
+        let teamID: String = "iCloud"
+        let bundleID: String = NSBundle.mainBundle().bundleIdentifier!
+        let cloudRoot: String = "\(teamID).\(bundleID)"
+        let cloudRootURL: NSURL = fileManager.URLForUbiquityContainerIdentifier(cloudRoot)!
+        NSLog("cloudRootURL=%@", cloudRootURL)
+        return cloudRootURL
+    }
 
     lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator? = {
         // The persistent store coordinator for the application. This implementation creates and return a coordinator, having added the store for the application to it. This property is optional since there are legitimate error conditions that could cause the creation of the store to fail.
@@ -296,12 +308,16 @@ print("appdelegate application - source Application URL = \(url.scheme)")
      //   var options:NSMutableDictionary = NSMutableDictionary
     //    options.setValue(YES, forKey: "NSMigratePersistentStoresAutomaticallyOption")
     //    options.setValue(YES, forKey: "NSInferMappingModelAutomaticallyOption")
+        // commented out below to stop sync to icloud for coredata
+  /*      let mOptions = [NSMigratePersistentStoresAutomaticallyOption: true,
+            NSInferMappingModelAutomaticallyOption: true,
+       //     NSPersistentStoreRebuildFromUbiquitousContentOption: true,
+            NSPersistentStoreUbiquitousContentNameKey : "iCloud",
+            NSPersistentStoreUbiquitousContentURLKey : self.cloudDirectory()]  */
         
         let mOptions = [NSMigratePersistentStoresAutomaticallyOption: true,
-            NSInferMappingModelAutomaticallyOption: true,
-    //        NSPersistentStoreRebuildFromUbiquitousContentOption: true,
-            NSPersistentStoreUbiquitousContentNameKey : "EvesCRMStore"]
-      
+            NSInferMappingModelAutomaticallyOption: true]
+
   //_persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
   // if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error]) {
 
@@ -329,7 +345,9 @@ print("appdelegate application - source Application URL = \(url.scheme)")
   } catch {
       fatalError()
   }
+
         self.registerCoordinatorForStoreNotifications (coordinator!)
+
         return coordinator
     }()
 
@@ -466,6 +484,7 @@ print("appdelegate application - source Application URL = \(url.scheme)")
     }
     
     func postRefetchDatabaseNotification() {
+        NSLog("postRefetchDatabaseNotification posting notif")
         dispatch_async(dispatch_get_main_queue(), { () -> Void in
             NSNotificationCenter.defaultCenter().postNotificationName(
                 "kRefetchDatabaseNotification", // Replace with your constant of the refetch name, and add observer in the proper place - e.g. RootViewController
@@ -485,6 +504,7 @@ print("appdelegate application - source Application URL = \(url.scheme)")
     
     func persistentStoreDidImportUbiquitousContentChanges(notification: NSNotification) {
         self.mergeChanges(notification);
+        NSLog("persistentStoreDidImportUbiquitousContentChanges posting notif");
     }
 
     

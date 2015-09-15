@@ -132,6 +132,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         super.viewDidLoad()
 
         myDatabaseConnection = coreDatabase()
+        myCloudDB = CloudKitInteraction()
         
         // sync with the master database
         
@@ -2239,27 +2240,6 @@ print("Nothing found")
         if decodeString == ""
         {  // Nothing found so go and create
             myDatabaseConnection.updateDecodeValue("Calendar - Weeks after current date", inCodeValue: "4", inCodeType: "stepper")
-        }
-        
-        decodeString = myDatabaseConnection.getDecodeValue("Tasks - Days after due date")
-        
-        if decodeString == ""
-        {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("Tasks - Days after due date", inCodeValue: "0", inCodeType: "stepper")
-        }
-        
-        decodeString = myDatabaseConnection.getDecodeValue("Tasks - Days before due date")
-        
-        if decodeString == ""
-        {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("Tasks - Days before due date", inCodeValue: "7", inCodeType: "stepper")
-        }
-        
-        decodeString = myDatabaseConnection.getDecodeValue("Tasks - Days since last update")
-        
-        if decodeString == ""
-        {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("Tasks - Days since last update", inCodeValue: "14", inCodeType: "stepper")
         }
     }
     

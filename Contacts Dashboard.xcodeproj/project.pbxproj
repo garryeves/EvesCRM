@@ -92,6 +92,10 @@
 		343B3F1F1B83045D0053777B /* DBSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 343B3F1D1B83045D0053777B /* DBSync.swift */; };
 		344726611B54D6A800BEFF0B /* coreDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344726601B54D6A800BEFF0B /* coreDatabase.swift */; };
 		344726621B54D6A800BEFF0B /* coreDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344726601B54D6A800BEFF0B /* coreDatabase.swift */; };
+		344B6ACD1BA7B3B600A5377B /* CloudKitInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344B6ACC1BA7B3B600A5377B /* CloudKitInteraction.swift */; settings = {ASSET_TAGS = (); }; };
+		344B6ACE1BA7B3B600A5377B /* CloudKitInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344B6ACC1BA7B3B600A5377B /* CloudKitInteraction.swift */; settings = {ASSET_TAGS = (); }; };
+		344B6AD01BA7B47500A5377B /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344B6ACF1BA7B47500A5377B /* UserInfo.swift */; settings = {ASSET_TAGS = (); }; };
+		344B6AD11BA7B47500A5377B /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344B6ACF1BA7B47500A5377B /* UserInfo.swift */; settings = {ASSET_TAGS = (); }; };
 		344DC1FA1BA1146600DBCE3D /* TextExpander.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 344DC1F91BA1146600DBCE3D /* TextExpander.framework */; settings = {ASSET_TAGS = (); }; };
 		344DC1FB1BA1146600DBCE3D /* TextExpander.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 344DC1F91BA1146600DBCE3D /* TextExpander.framework */; settings = {ASSET_TAGS = (); }; };
 		344F226B1AF1DC20002C373E /* ENSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 344F22691AF1DC20002C373E /* ENSDK.framework */; };
@@ -341,6 +345,8 @@
 		343B3F1D1B83045D0053777B /* DBSync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DBSync.swift; sourceTree = "<group>"; };
 		3443A4A31B6F2F4400B0D63A /* EvesCRM 9.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 9.xcdatamodel"; sourceTree = "<group>"; };
 		344726601B54D6A800BEFF0B /* coreDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = coreDatabase.swift; sourceTree = "<group>"; };
+		344B6ACC1BA7B3B600A5377B /* CloudKitInteraction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudKitInteraction.swift; sourceTree = "<group>"; };
+		344B6ACF1BA7B47500A5377B /* UserInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		344DC1F91BA1146600DBCE3D /* TextExpander.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = TextExpander.framework; sourceTree = "<group>"; };
 		344F22691AF1DC20002C373E /* ENSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ENSDK.framework; sourceTree = "<group>"; };
 		344F226A1AF1DC20002C373E /* ENSDKResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ENSDKResources.bundle; sourceTree = "<group>"; };
@@ -653,6 +659,7 @@
 			isa = PBXGroup;
 			children = (
 				344726601B54D6A800BEFF0B /* coreDatabase.swift */,
+				344B6ACC1BA7B3B600A5377B /* CloudKitInteraction.swift */,
 				343B3F1D1B83045D0053777B /* DBSync.swift */,
 				34A578BC1B5F6110008D3D8E /* Context.swift */,
 				347FF2051B93FB6600133D62 /* Context1_1.swift */,
@@ -678,6 +685,7 @@
 				34C899F61B8447340087DA8E /* TaskPredecessor.swift */,
 				34C7E8061B5F625C005555B3 /* TaskUpdates.swift */,
 				3428522A1B8E9B30003D188F /* Team.swift */,
+				344B6ACF1BA7B47500A5377B /* UserInfo.swift */,
 			);
 			name = "Database Tables";
 			sourceTree = "<group>";
@@ -1096,6 +1104,7 @@
 				342A357C1B5F727200D6DB29 /* taskViewController.swift in Sources */,
 				347EE4231B8D6AC50044D569 /* GTDPlanningTabController.swift in Sources */,
 				34A183291B0EDBB400FC369D /* StringHelper.m in Sources */,
+				344B6AD01BA7B47500A5377B /* UserInfo.swift in Sources */,
 				342F46D21B9FC804004BAC9D /* KDRearrangeableCollectionViewFlowLayout.swift in Sources */,
 				34B4C7E41B8191930098F6BC /* TaskAttachment.swift in Sources */,
 				340F84A71B79BE220028439B /* taskListViewController.swift in Sources */,
@@ -1136,6 +1145,7 @@
 				342CA6A01B26C79B006FEAED /* GTLCommon_Sources.m in Sources */,
 				3428522C1B8E9B30003D188F /* Team.swift in Sources */,
 				348E6D4B1ADF74C800697268 /* ContactDetails.swift in Sources */,
+				344B6ACD1BA7B3B600A5377B /* CloudKitInteraction.swift in Sources */,
 				34A182FC1B0EDB5C00FC369D /* LiveAuthRefreshRequest.m in Sources */,
 				342CA6A21B26C79B006FEAED /* GTLNetworking_Sources.m in Sources */,
 				3406506B1ADDF8FF00C90CBB /* AppDelegate.swift in Sources */,
@@ -1206,6 +1216,7 @@
 				34A578BE1B5F6110008D3D8E /* Context.swift in Sources */,
 				34E92AE91B9D5B3400F158F3 /* teamMaintenanceViewController.swift in Sources */,
 				34A578BB1B5F6110008D3D8E /* TaskContext.swift in Sources */,
+				344B6AD11BA7B47500A5377B /* UserInfo.swift in Sources */,
 				34B4C7E51B8191930098F6BC /* TaskAttachment.swift in Sources */,
 				34A183221B0EDBB400FC369D /* LiveApiHelper.m in Sources */,
 				34F35BCD1B6B18AF00A19ACE /* tasksTabViewController.swift in Sources */,
@@ -1232,6 +1243,7 @@
 				34BDECBF1B009C17008C9F3F /* Panes.swift in Sources */,
 				342F46D31B9FC804004BAC9D /* KDRearrangeableCollectionViewFlowLayout.swift in Sources */,
 				34A183281B0EDBB400FC369D /* StreamReader.m in Sources */,
+				344B6ACE1BA7B3B600A5377B /* CloudKitInteraction.swift in Sources */,
 				34B5253A1B130F1C00093250 /* oneNote.swift in Sources */,
 				346B70F31AF75F47005E1BC2 /* EvesCRM.xcdatamodeld in Sources */,
 				34A1832C1B0EDBB400FC369D /* UrlHelper.m in Sources */,

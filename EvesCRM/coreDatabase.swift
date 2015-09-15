@@ -4652,4 +4652,334 @@ class coreDatabase: NSObject
         performTidyDecodes("(decode_name == \"GoalAndObjective\")")
         performTidyDecodes("(decode_name == \"AreaOfResponsibility\")")
     }
+    
+    func getContextsForSync(inLastSyncDate: NSDate) -> [Context]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Context")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Context]
+        
+        return fetchResults!
+    }
+
+    func getContexts1_1ForSync(inLastSyncDate: NSDate) -> [Context1_1]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Context1_1")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Context1_1]
+        
+        return fetchResults!
+    }
+
+    func getDecodesForSync(inLastSyncDate: NSDate) -> [Decodes]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Decodes")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Decodes]
+        
+        return fetchResults!
+    }
+
+    func getGTDItemsForSync(inLastSyncDate: NSDate) -> [GTDItem]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "GTDItem")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [GTDItem]
+        
+        return fetchResults!
+    }
+    
+    func getGTDLevelsForSync(inLastSyncDate: NSDate) -> [GTDLevel]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "GTDLevel")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [GTDLevel]
+        
+        return fetchResults!
+    }
+    
+    func getMeetingAgendasForSync(inLastSyncDate: NSDate) -> [MeetingAgenda]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "MeetingAgenda")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAgenda]
+        
+        return fetchResults!
+    }
+    
+    func getMeetingAgendaItemsForSync(inLastSyncDate: NSDate) -> [MeetingAgendaItem]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "MeetingAgendaItem")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAgendaItem]
+        
+        return fetchResults!
+    }
+    
+    func getMeetingAttendeesForSync(inLastSyncDate: NSDate) -> [MeetingAttendees]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "MeetingAttendees")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAttendees]
+        
+        return fetchResults!
+    }
+    
+    func getMeetingSupportingDocsForSync(inLastSyncDate: NSDate) -> [MeetingSupportingDocs]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "MeetingSupportingDocs")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingSupportingDocs]
+        
+        return fetchResults!
+    }
+    
+    func getMeetingTasksForSync(inLastSyncDate: NSDate) -> [MeetingTasks]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "MeetingTasks")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingTasks]
+        
+        return fetchResults!
+    }
+    
+    func getPanesForSync(inLastSyncDate: NSDate) -> [Panes]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Panes")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Panes]
+        
+        return fetchResults!
+    }
+    
+    func getProjectsForSync(inLastSyncDate: NSDate) -> [Projects]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Projects")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Projects]
+        
+        return fetchResults!
+    }
+    
+    func getProjectNotesForSync(inLastSyncDate: NSDate) -> [ProjectNote]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "ProjectNote")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [ProjectNote]
+        
+        return fetchResults!
+    }
+    
+    func getProjectTeamMembersForSync(inLastSyncDate: NSDate) -> [ProjectTeamMembers]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "ProjectTeamMembers")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [ProjectTeamMembers]
+        
+        return fetchResults!
+    }
+
+    func getRolesForSync(inLastSyncDate: NSDate) -> [Roles]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Roles")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Roles]
+        
+        return fetchResults!
+    }
+    
+    func getStagesForSync(inLastSyncDate: NSDate) -> [Stages]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Stages")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Stages]
+        
+        return fetchResults!
+    }
+
+    func getTaskForSync(inLastSyncDate: NSDate) -> [Task]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Task")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Task]
+        
+        return fetchResults!
+    }
+
+    func getTaskAttachmentsForSync(inLastSyncDate: NSDate) -> [TaskAttachment]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "TaskAttachment")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [TaskAttachment]
+        
+        return fetchResults!
+    }
+    
+    func getTaskContextsForSync(inLastSyncDate: NSDate) -> [TaskContext]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "TaskContext")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [TaskContext]
+        
+        return fetchResults!
+    }
+    
+    func getTaskPredecessorsForSync(inLastSyncDate: NSDate) -> [TaskPredecessor]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "TaskPredecessor")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [TaskPredecessor]
+        
+        return fetchResults!
+    }
+    
+    func getTaskUpdatesForSync(inLastSyncDate: NSDate) -> [TaskUpdates]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "TaskUpdates")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [TaskUpdates]
+        
+        return fetchResults!
+    }
+    
+    func getTeamsForSync(inLastSyncDate: NSDate) -> [Team]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Team")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Team]
+        
+        return fetchResults!
+    }
 }

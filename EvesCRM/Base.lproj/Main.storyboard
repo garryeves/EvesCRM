@@ -6371,7 +6371,7 @@
                                     <constraint firstAttribute="height" constant="30" id="NSc-Gm-DGp"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                 <variation key="heightClass=regular-widthClass=regular">
                                     <mask key="constraints">
                                         <include reference="NSc-Gm-DGp"/>

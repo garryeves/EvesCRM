@@ -13,8 +13,10 @@ import EventKit
 // Here I am definging my own struct to use in the Display array.  This is to allow passing of multiple different types of information
 var dropboxCoreService: DropboxCoreService = DropboxCoreService()
 var myDatabaseConnection: coreDatabase!
+var myCloudDB: CloudKitInteraction!
 var adbk : ABAddressBook!
 var eventStore: EKEventStore!
+var debugMessages: Bool = false
 
 var myCurrentTeam: team!
 
