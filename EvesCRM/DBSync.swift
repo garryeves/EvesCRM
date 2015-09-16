@@ -31,91 +31,16 @@ class DBSync: NSObject
             // Convert string to date
             
             let myDateFormatter = NSDateFormatter()
-            myDateFormatter.dateFormat = "yyyy-MM-dd hh:mm:ss ZZZZ"
-
+            myDateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZZ"
             
             syncDate = myDateFormatter.dateFromString(lastSyncDate)   
         }
 
         // Load
-        myCloudDB.saveContextToCloudKit(syncDate)
-        myCloudDB.saveDecodesToCloudKit(syncDate)
+
+        syncToCloudKit(syncDate)
         
-        myCloudDB.saveGTDItemToCloudKit(syncDate)
-        
-        myCloudDB.saveGTDLevelToCloudKit(syncDate)
-        
-        myCloudDB.saveMeetingAgendaToCloudKit(syncDate)
-        
-        myCloudDB.saveMeetingAgendaItemToCloudKit(syncDate)
-        
-        myCloudDB.saveMeetingAttendeesToCloudKit(syncDate)
-        
-        myCloudDB.saveMeetingSupportingDocsToCloudKit(syncDate)
-        
-        myCloudDB.saveMeetingTasksToCloudKit(syncDate)
-        
-        myCloudDB.savePanesToCloudKit(syncDate)
-        
-        myCloudDB.saveProjectsToCloudKit(syncDate)
-        
-        myCloudDB.saveProjectTeamMembersToCloudKit(syncDate)
-        
-        myCloudDB.saveRolesToCloudKit(syncDate)
-        
-        myCloudDB.saveStagesToCloudKit(syncDate)
-        
-        myCloudDB.saveTaskToCloudKit(syncDate)
-        
-        myCloudDB.saveTaskAttachmentToCloudKit(syncDate)
-        
-        myCloudDB.saveTaskContextToCloudKit(syncDate)
-        
-        myCloudDB.saveTaskPredecessorToCloudKit(syncDate)
-        
-        myCloudDB.saveTaskUpdatesToCloudKit(syncDate)
-        
-        myCloudDB.saveTeamToCloudKit(syncDate)
-        
-        myCloudDB.updateContextInCoreData(syncDate)
-        
-        myCloudDB.updateDecodesInCoreData(syncDate)
-        
-        myCloudDB.updateGTDItemInCoreData(syncDate)
-        
-        myCloudDB.updateGTDLevelInCoreData(syncDate)
-        
-        myCloudDB.updateMeetingAgendaInCoreData(syncDate)
-        
-        myCloudDB.updateMeetingAgendaItemInCoreData(syncDate)
-        
-        myCloudDB.updateMeetingAttendeesInCoreData(syncDate)
-        
-        myCloudDB.updateMeetingSupportingDocsInCoreData(syncDate)
-        
-        myCloudDB.updateMeetingTasksInCoreData(syncDate)
-        
-        myCloudDB.updateGPanesInCoreData(syncDate)
-       
-        myCloudDB.updateProjectsInCoreData(syncDate)
-        
-        myCloudDB.updateProjectTeamMembersInCoreData(syncDate)
-        
-        myCloudDB.updateRolesInCoreData(syncDate)
-        
-        myCloudDB.updateStagesInCoreData(syncDate)
-        
-        myCloudDB.updateTaskInCoreData(syncDate)
-        
-        myCloudDB.updateTaskAttachmentInCoreData(syncDate)
-       
-        myCloudDB.updateTaskContextInCoreData(syncDate)
-        
-        myCloudDB.updateTaskPredecessorInCoreData(syncDate)
-        
-        myCloudDB.updateTaskUpdatesInCoreData(syncDate)
-  
-        myCloudDB.updateTeamInCoreData(syncDate)
+        syncFromCloudKit(syncDate)
         
         // Update last sync date
         
@@ -125,5 +50,81 @@ class DBSync: NSObject
         
         myDatabaseConnection.clearDeletedItems()
         myDatabaseConnection.clearSyncedItems()
+    }
+    
+    func syncToCloudKit(inDate: NSDate)
+    {
+        myCloudDB.saveContextToCloudKit(inDate)
+        myCloudDB.saveDecodesToCloudKit(inDate)
+        myCloudDB.saveGTDItemToCloudKit(inDate)
+        myCloudDB.saveGTDLevelToCloudKit(inDate)
+        myCloudDB.saveMeetingAgendaToCloudKit(inDate)
+        myCloudDB.saveMeetingAgendaItemToCloudKit(inDate)
+        myCloudDB.saveMeetingAttendeesToCloudKit(inDate)
+        myCloudDB.saveMeetingSupportingDocsToCloudKit(inDate)
+        myCloudDB.saveMeetingTasksToCloudKit(inDate)
+        myCloudDB.savePanesToCloudKit(inDate)
+        myCloudDB.saveProjectsToCloudKit(inDate)
+        myCloudDB.saveProjectTeamMembersToCloudKit(inDate)
+        myCloudDB.saveRolesToCloudKit(inDate)
+        myCloudDB.saveStagesToCloudKit(inDate)
+        myCloudDB.saveTaskToCloudKit(inDate)
+        myCloudDB.saveTaskAttachmentToCloudKit(inDate)
+        myCloudDB.saveTaskContextToCloudKit(inDate)
+        myCloudDB.saveTaskPredecessorToCloudKit(inDate)
+        myCloudDB.saveTaskUpdatesToCloudKit(inDate)
+        myCloudDB.saveTeamToCloudKit(inDate)
+        
+        NSNotificationCenter.defaultCenter().postNotificationName("NotificationCloudSyncFinished", object: nil)
+    }
+    
+    func syncFromCloudKit(inDate: NSDate)
+    {
+        myCloudDB.updateContextInCoreData(inDate)
+        myCloudDB.updateDecodesInCoreData(inDate)
+        myCloudDB.updateGTDItemInCoreData(inDate)
+        myCloudDB.updateGTDLevelInCoreData(inDate)
+        myCloudDB.updateMeetingAgendaInCoreData(inDate)
+        myCloudDB.updateMeetingAgendaItemInCoreData(inDate)
+        myCloudDB.updateMeetingAttendeesInCoreData(inDate)
+        myCloudDB.updateMeetingSupportingDocsInCoreData(inDate)
+        myCloudDB.updateMeetingTasksInCoreData(inDate)
+        myCloudDB.updatePanesInCoreData(inDate)
+        myCloudDB.updateProjectsInCoreData(inDate)
+        myCloudDB.updateProjectTeamMembersInCoreData(inDate)
+        myCloudDB.updateRolesInCoreData(inDate)
+        myCloudDB.updateStagesInCoreData(inDate)
+        myCloudDB.updateTaskInCoreData(inDate)
+        myCloudDB.updateTaskAttachmentInCoreData(inDate)
+        myCloudDB.updateTaskContextInCoreData(inDate)
+        myCloudDB.updateTaskPredecessorInCoreData(inDate)
+        myCloudDB.updateTaskUpdatesInCoreData(inDate)
+        myCloudDB.updateTeamInCoreData(inDate)
+        
+        NSNotificationCenter.defaultCenter().postNotificationName("NotificationCloudSyncFinished", object: nil)
+    }
+    
+    func deleteAllFromCloudKit()
+    {
+        myCloudDB.deleteContext()
+        myCloudDB.deleteDecodes()
+        myCloudDB.deleteGTDItem()
+        myCloudDB.deleteGTDLevel()
+        myCloudDB.deleteMeetingAgenda()
+        myCloudDB.deleteMeetingAgendaItem()
+        myCloudDB.deleteMeetingAttendees()
+        myCloudDB.deleteMeetingSupportingDocs()
+        myCloudDB.deleteMeetingTasks()
+        myCloudDB.deletePanes()
+        myCloudDB.deleteProjects()
+        myCloudDB.deleteProjectTeamMembers()
+        myCloudDB.deleteRoles()
+        myCloudDB.deleteStages()
+        myCloudDB.deleteTask()
+        myCloudDB.deleteTaskAttachment()
+        myCloudDB.deleteTaskContext()
+        myCloudDB.deleteTaskPredecessor()
+        myCloudDB.deleteTaskUpdates()
+        myCloudDB.deleteTeam()
     }
 }

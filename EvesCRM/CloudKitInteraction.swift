@@ -171,7 +171,7 @@ class CloudKitInteraction
                         // Now you have grabbed your existing record from iCloud
                         // Apply whatever changes you want
                         record!.setValue(myItem.decode_value, forKey: "decode_value")
-                        record!.setValue(myItem.decode_value, forKey: "decode_value")
+                        record!.setValue(myItem.decodeType, forKey: "decodeType")
                         record!.setValue(myItem.updateTime, forKey: "updateTime")
                         record!.setValue(myItem.updateType, forKey: "updateType")
                         
@@ -194,7 +194,7 @@ class CloudKitInteraction
                     {  // Insert
                         let todoRecord = CKRecord(recordType: "Decodes")
                         todoRecord.setValue(myItem.decode_name, forKey: "decode_name")
-                        todoRecord.setValue(myItem.decode_value, forKey: "decode_value")
+                        todoRecord.setValue(myItem.decodeType, forKey: "decodeType")
                         todoRecord.setValue(myItem.decode_value, forKey: "decode_value")
                         todoRecord.setValue(myItem.updateTime, forKey: "updateTime")
                         todoRecord.setValue(myItem.updateType, forKey: "updateType")
@@ -584,6 +584,7 @@ class CloudKitInteraction
                     {  // Insert
                         let record = CKRecord(recordType: "MeetingAttendees")
                         record.setValue(myItem.meetingID, forKey: "meetingID")
+                        record.setValue(myItem.name, forKey: "name")
                         record.setValue(myItem.updateTime, forKey: "updateTime")
                         record.setValue(myItem.updateType, forKey: "updateType")
                         record.setValue(myItem.attendenceStatus, forKey: "attendenceStatus")
@@ -1608,99 +1609,988 @@ class CloudKitInteraction
     
     func updateContextInCoreData(inLastSyncDate: NSDate)
     {
-
+        let sem = dispatch_semaphore_create(0);
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let query: CKQuery = CKQuery(recordType: "Context", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let contextID = record.objectForKey("contextID") as! Int
+                let autoEmail = record.objectForKey("autoEmail") as! String
+                let email = record.objectForKey("email") as! String
+                let name = record.objectForKey("name") as! String
+                let parentContext = record.objectForKey("parentContext") as! Int
+                let personID = record.objectForKey("personID") as! Int32
+                let status = record.objectForKey("status") as! String
+                let teamID = record.objectForKey("teamID") as! Int
+                let predecessor = record.objectForKey("predecessor") as! Int
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                
+                myDatabaseConnection.saveContext(contextID, inName: name, inEmail: email, inAutoEmail: autoEmail, inParentContext: parentContext, inStatus: status, inPersonID: personID, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+                
+                
+                myDatabaseConnection.saveContext1_1(contextID, inPredecessor: predecessor, inUpdateTime: updateTime, inUpdateType: updateType)
+                
+            }
+            dispatch_semaphore_signal(sem)
+        })
     }
     
     func updateDecodesInCoreData(inLastSyncDate: NSDate)
     {
+        let sem = dispatch_semaphore_create(0);
+
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let query: CKQuery = CKQuery(recordType: "Decodes", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                
+                let decodeName = record.objectForKey("decode_name") as! String
+                let decodeValue = record.objectForKey("decode_value") as! String
+                let decodeType = record.objectForKey("decodeType") as! String
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                
+                myDatabaseConnection.updateDecodeValue(decodeName, inCodeValue: decodeValue, inCodeType: decodeType, inUpdateTime: updateTime, inUpdateType: updateType)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     }
     
     func updateGTDItemInCoreData(inLastSyncDate: NSDate)
     {
-
+        let sem = dispatch_semaphore_create(0);
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let query: CKQuery = CKQuery(recordType: "GTDItem", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let gTDItemID = record.objectForKey("gTDItemID") as! Int
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let gTDParentID = record.objectForKey("gTDParentID") as! Int
+                let lastReviewDate = record.objectForKey("lastReviewDate") as! NSDate
+                let note = record.objectForKey("note") as! String
+                let predecessor = record.objectForKey("predecessor") as! Int
+                let reviewFrequency = record.objectForKey("reviewFrequency") as! Int
+                let reviewPeriod = record.objectForKey("reviewPeriod") as! String
+                let status = record.objectForKey("status") as! String
+                let teamID = record.objectForKey("teamID") as! Int
+                let title = record.objectForKey("title") as! String
+                let gTDLevel = record.objectForKey("gTDLevel") as! Int
+                
+                myDatabaseConnection.saveGTDItem(gTDItemID, inParentID: gTDParentID, inTitle: title, inStatus: status, inTeamID: teamID, inNote: note, inLastReviewDate: lastReviewDate, inReviewFrequency: reviewFrequency, inReviewPeriod: reviewPeriod, inPredecessor: predecessor, inGTDLevel: gTDLevel, inUpdateTime: updateTime, inUpdateType: updateType)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     }
     
     func updateGTDLevelInCoreData(inLastSyncDate: NSDate)
     {
-
+        let sem = dispatch_semaphore_create(0);
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let query: CKQuery = CKQuery(recordType: "GTDLevel", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let gTDLevel = record.objectForKey("gTDLevel") as! Int
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey( "updateType") as! String
+                let teamID = record.objectForKey("teamID") as! Int
+                let levelName = record.objectForKey("levelName") as! String
+                
+                myDatabaseConnection.saveGTDLevel(gTDLevel, inLevelName: levelName, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     }
     
     func updateMeetingAgendaInCoreData(inLastSyncDate: NSDate)
     {
+        let sem = dispatch_semaphore_create(0);
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let query: CKQuery = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let meetingID = record.objectForKey("meetingID") as! String
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let chair = record.objectForKey("chair") as! String
+                let endTime = record.objectForKey("endTime") as! NSDate
+                let location = record.objectForKey("location") as! String
+                let minutes = record.objectForKey("minutes") as! String
+                let minutesType = record.objectForKey("minutesType") as! String
+                let name = record.objectForKey("name") as! String
+                let previousMeetingID = record.objectForKey("previousMeetingID") as! String
+                let startTime = record.objectForKey("startTime") as! NSDate
+                let teamID = record.objectForKey("teamID") as! Int
+                
+                myDatabaseConnection.saveAgenda(meetingID, inPreviousMeetingID : previousMeetingID, inName: name, inChair: chair, inMinutes: minutes, inLocation: location, inStartTime: startTime, inEndTime: endTime, inMinutesType: minutesType, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     }
     
     func updateMeetingAgendaItemInCoreData(inLastSyncDate: NSDate)
     {
+        let sem = dispatch_semaphore_create(0);
         
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let query: CKQuery = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let meetingID = record.objectForKey("meetingID") as! String
+                let agendaID = record.objectForKey("agendaID") as! Int
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let actualEndTime = record.objectForKey("actualEndTime") as! NSDate
+                let actualStartTime = record.objectForKey("actualStartTime") as! NSDate
+                let decisionMade = record.objectForKey("decisionMade") as! String
+                let discussionNotes = record.objectForKey("discussionNotes") as! String
+                let owner = record.objectForKey("owner") as! String
+                let status = record.objectForKey("status") as! String
+                let timeAllocation = record.objectForKey("timeAllocation") as! Int
+                let title = record.objectForKey("title") as! String
+                
+                
+                myDatabaseConnection.saveAgendaItem(meetingID, actualEndTime: actualEndTime, actualStartTime: actualStartTime, status: status, decisionMade: decisionMade, discussionNotes: discussionNotes, timeAllocation: timeAllocation, owner: owner, title: title, agendaID: agendaID, inUpdateTime: updateTime, inUpdateType: updateType)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     }
     
     func updateMeetingAttendeesInCoreData(inLastSyncDate: NSDate)
     {
+        let sem = dispatch_semaphore_create(0);
         
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let query: CKQuery = CKQuery(recordType: "MeetingAttendees", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let meetingID = record.objectForKey("meetingID") as! String
+                let name  = record.objectForKey("name") as! String
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let attendenceStatus = record.objectForKey("attendenceStatus") as! String
+                let email = record.objectForKey("email") as! String
+                let type = record.objectForKey("type") as! String
+                
+                myDatabaseConnection.saveAttendee(meetingID, name: name, email: email,  type: type, status: attendenceStatus, inUpdateTime: updateTime, inUpdateType: updateType)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     }
     
     func updateMeetingSupportingDocsInCoreData(inLastSyncDate: NSDate)
     {
+        let sem = dispatch_semaphore_create(0);
         
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let query: CKQuery = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+           // for record in results!
+            for _ in results!
+            {
+  //              let meetingID = record.objectForKey("meetingID") as! String
+  //              let agendaID = record.objectForKey("agendaID") as! Int
+  //              let updateTime = record.objectForKey("updateTime") as! NSDate
+  //              let updateType = record.objectForKey("updateType") as! String
+  //              let attachmentPath = record.objectForKey("attachmentPath") as! String
+  //              let title = record.objectForKey("title") as! String
+                
+                NSLog("updateMeetingSupportingDocsInCoreData - Need to have the save for this")
+                
+                // myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     }
     
     func updateMeetingTasksInCoreData(inLastSyncDate: NSDate)
     {
+        let sem = dispatch_semaphore_create(0);
         
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let query: CKQuery = CKQuery(recordType: "MeetingTasks", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let meetingID = record.objectForKey("meetingID") as! String
+                let agendaID = record.objectForKey("agendaID") as! Int
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let taskID = record.objectForKey("taskID") as! Int
+                
+                myDatabaseConnection.saveMeetingTask(agendaID, meetingID: meetingID, taskID: taskID, inUpdateTime: updateTime, inUpdateType: updateType)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     }
     
-    func updateGPanesInCoreData(inLastSyncDate: NSDate)
+    func updatePanesInCoreData(inLastSyncDate: NSDate)
     {
+        let sem = dispatch_semaphore_create(0);
         
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let query: CKQuery = CKQuery(recordType: "Panes", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                
+                let decodeName = record.objectForKey("decode_name")
+                let decodeValue = record.objectForKey("decode_value")
+                let decodeType = record.objectForKey("decodeType")
+                let updateTime = record.objectForKey("updateTime")
+                let updateType = record.objectForKey("updateType")
+                // myRecordList.append(record.recordID)
+                NSLog("decodeName = \(decodeName!)")
+                NSLog("decodeValue = \(decodeValue!)")
+                NSLog("decodeType = \(decodeType!)")
+                NSLog("updateTime = \(updateTime!)")
+                NSLog("updateType = \(updateType!)")
+                
+                myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     }
     
     func updateProjectsInCoreData(inLastSyncDate: NSDate)
     {
+        let sem = dispatch_semaphore_create(0);
         
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                
+                let decodeName = record.objectForKey("decode_name")
+                let decodeValue = record.objectForKey("decode_value")
+                let decodeType = record.objectForKey("decodeType")
+                let updateTime = record.objectForKey("updateTime")
+                let updateType = record.objectForKey("updateType")
+                // myRecordList.append(record.recordID)
+                NSLog("decodeName = \(decodeName!)")
+                NSLog("decodeValue = \(decodeValue!)")
+                NSLog("decodeType = \(decodeType!)")
+                NSLog("updateTime = \(updateTime!)")
+                NSLog("updateType = \(updateType!)")
+                
+                myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+                
+                myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     }
     
     func updateProjectTeamMembersInCoreData(inLastSyncDate: NSDate)
     {
+        let sem = dispatch_semaphore_create(0);
         
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let query: CKQuery = CKQuery(recordType: "ProjectTeamMembers", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                
+                let decodeName = record.objectForKey("decode_name")
+                let decodeValue = record.objectForKey("decode_value")
+                let decodeType = record.objectForKey("decodeType")
+                let updateTime = record.objectForKey("updateTime")
+                let updateType = record.objectForKey("updateType")
+                // myRecordList.append(record.recordID)
+                NSLog("decodeName = \(decodeName!)")
+                NSLog("decodeValue = \(decodeValue!)")
+                NSLog("decodeType = \(decodeType!)")
+                NSLog("updateTime = \(updateTime!)")
+                NSLog("updateType = \(updateType!)")
+                
+                myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     }
     
     func updateRolesInCoreData(inLastSyncDate: NSDate)
     {
+        let sem = dispatch_semaphore_create(0);
         
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let query: CKQuery = CKQuery(recordType: "Roles", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                
+                let decodeName = record.objectForKey("decode_name")
+                let decodeValue = record.objectForKey("decode_value")
+                let decodeType = record.objectForKey("decodeType")
+                let updateTime = record.objectForKey("updateTime")
+                let updateType = record.objectForKey("updateType")
+                // myRecordList.append(record.recordID)
+                NSLog("decodeName = \(decodeName!)")
+                NSLog("decodeValue = \(decodeValue!)")
+                NSLog("decodeType = \(decodeType!)")
+                NSLog("updateTime = \(updateTime!)")
+                NSLog("updateType = \(updateType!)")
+                
+                myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     }
     
     func updateStagesInCoreData(inLastSyncDate: NSDate)
     {
+        let sem = dispatch_semaphore_create(0);
         
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let query: CKQuery = CKQuery(recordType: "Stages", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                
+                let decodeName = record.objectForKey("decode_name")
+                let decodeValue = record.objectForKey("decode_value")
+                let decodeType = record.objectForKey("decodeType")
+                let updateTime = record.objectForKey("updateTime")
+                let updateType = record.objectForKey("updateType")
+                // myRecordList.append(record.recordID)
+                NSLog("decodeName = \(decodeName!)")
+                NSLog("decodeValue = \(decodeValue!)")
+                NSLog("decodeType = \(decodeType!)")
+                NSLog("updateTime = \(updateTime!)")
+                NSLog("updateType = \(updateType!)")
+                
+                myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     }
     
     func updateTaskInCoreData(inLastSyncDate: NSDate)
     {
+        let sem = dispatch_semaphore_create(0);
         
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let query: CKQuery = CKQuery(recordType: "Task", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                
+                let decodeName = record.objectForKey("decode_name")
+                let decodeValue = record.objectForKey("decode_value")
+                let decodeType = record.objectForKey("decodeType")
+                let updateTime = record.objectForKey("updateTime")
+                let updateType = record.objectForKey("updateType")
+                // myRecordList.append(record.recordID)
+                NSLog("decodeName = \(decodeName!)")
+                NSLog("decodeValue = \(decodeValue!)")
+                NSLog("decodeType = \(decodeType!)")
+                NSLog("updateTime = \(updateTime!)")
+                NSLog("updateType = \(updateType!)")
+                
+                myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     }
     
     func updateTaskAttachmentInCoreData(inLastSyncDate: NSDate)
     {
+        let sem = dispatch_semaphore_create(0);
         
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let query: CKQuery = CKQuery(recordType: "TaskAttachment", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                
+                let decodeName = record.objectForKey("decode_name")
+                let decodeValue = record.objectForKey("decode_value")
+                let decodeType = record.objectForKey("decodeType")
+                let updateTime = record.objectForKey("updateTime")
+                let updateType = record.objectForKey("updateType")
+                // myRecordList.append(record.recordID)
+                NSLog("decodeName = \(decodeName!)")
+                NSLog("decodeValue = \(decodeValue!)")
+                NSLog("decodeType = \(decodeType!)")
+                NSLog("updateTime = \(updateTime!)")
+                NSLog("updateType = \(updateType!)")
+                
+                myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     }
     
     func updateTaskContextInCoreData(inLastSyncDate: NSDate)
     {
+        let sem = dispatch_semaphore_create(0);
         
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let query: CKQuery = CKQuery(recordType: "TaskContext", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                
+                let decodeName = record.objectForKey("decode_name")
+                let decodeValue = record.objectForKey("decode_value")
+                let decodeType = record.objectForKey("decodeType")
+                let updateTime = record.objectForKey("updateTime")
+                let updateType = record.objectForKey("updateType")
+                // myRecordList.append(record.recordID)
+                NSLog("decodeName = \(decodeName!)")
+                NSLog("decodeValue = \(decodeValue!)")
+                NSLog("decodeType = \(decodeType!)")
+                NSLog("updateTime = \(updateTime!)")
+                NSLog("updateType = \(updateType!)")
+                
+                myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     }
     
     func updateTaskPredecessorInCoreData(inLastSyncDate: NSDate)
     {
+        let sem = dispatch_semaphore_create(0);
         
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let query: CKQuery = CKQuery(recordType: "TaskPredecessor", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                
+                let decodeName = record.objectForKey("decode_name")
+                let decodeValue = record.objectForKey("decode_value")
+                let decodeType = record.objectForKey("decodeType")
+                let updateTime = record.objectForKey("updateTime")
+                let updateType = record.objectForKey("updateType")
+                // myRecordList.append(record.recordID)
+                NSLog("decodeName = \(decodeName!)")
+                NSLog("decodeValue = \(decodeValue!)")
+                NSLog("decodeType = \(decodeType!)")
+                NSLog("updateTime = \(updateTime!)")
+                NSLog("updateType = \(updateType!)")
+                
+                myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     }
     
     func updateTaskUpdatesInCoreData(inLastSyncDate: NSDate)
     {
+        let sem = dispatch_semaphore_create(0);
         
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let query: CKQuery = CKQuery(recordType: "TaskUpdates", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                
+                let decodeName = record.objectForKey("decode_name")
+                let decodeValue = record.objectForKey("decode_value")
+                let decodeType = record.objectForKey("decodeType")
+                let updateTime = record.objectForKey("updateTime")
+                let updateType = record.objectForKey("updateType")
+                // myRecordList.append(record.recordID)
+                NSLog("decodeName = \(decodeName!)")
+                NSLog("decodeValue = \(decodeValue!)")
+                NSLog("decodeType = \(decodeType!)")
+                NSLog("updateTime = \(updateTime!)")
+                NSLog("updateType = \(updateType!)")
+                
+                myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     }
     
     func updateTeamInCoreData(inLastSyncDate: NSDate)
     {
+        let sem = dispatch_semaphore_create(0);
         
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let query: CKQuery = CKQuery(recordType: "Team", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                
+                let decodeName = record.objectForKey("decode_name")
+                let decodeValue = record.objectForKey("decode_value")
+                let decodeType = record.objectForKey("decodeType")
+                let updateTime = record.objectForKey("updateTime")
+                let updateType = record.objectForKey("updateType")
+                // myRecordList.append(record.recordID)
+                NSLog("decodeName = \(decodeName!)")
+                NSLog("decodeValue = \(decodeValue!)")
+                NSLog("decodeType = \(decodeType!)")
+                NSLog("updateTime = \(updateTime!)")
+                NSLog("updateType = \(updateType!)")
+                
+                myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func deleteContext()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "Context", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performDelete(myRecordList)
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        
+        var myRecordList2: [CKRecordID] = Array()
+        let predicate2: NSPredicate = NSPredicate(value: true)
+        let query2: CKQuery = CKQuery(recordType: "Context1_1", predicate: predicate2)
+        privateDB.performQuery(query2, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                myRecordList2.append(record.recordID)
+            }
+            self.performDelete(myRecordList2)
+            dispatch_semaphore_signal(sem)
+        })
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func deleteDecodes()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "Decodes", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performDelete(myRecordList)
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func deleteGTDItem()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "GTDItem", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performDelete(myRecordList)
+            dispatch_semaphore_signal(sem)
+        })
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func deleteGTDLevel()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "GTDLevel", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performDelete(myRecordList)
+            dispatch_semaphore_signal(sem)
+        })
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func deleteMeetingAgenda()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performDelete(myRecordList)
+            dispatch_semaphore_signal(sem)
+        })
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func deleteMeetingAgendaItem()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performDelete(myRecordList)
+            dispatch_semaphore_signal(sem)
+        })
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func deleteMeetingAttendees()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "MeetingAttendees", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performDelete(myRecordList)
+            dispatch_semaphore_signal(sem)
+        })
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func deleteMeetingSupportingDocs()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performDelete(myRecordList)
+            dispatch_semaphore_signal(sem)
+        })
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func deleteMeetingTasks()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "MeetingTasks", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performDelete(myRecordList)
+            dispatch_semaphore_signal(sem)
+        })
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func deletePanes()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "Panes", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performDelete(myRecordList)
+            dispatch_semaphore_signal(sem)
+        })
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func deleteProjects()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performDelete(myRecordList)
+            dispatch_semaphore_signal(sem)
+        })
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        
+        var myRecordList2: [CKRecordID] = Array()
+        let predicate2: NSPredicate = NSPredicate(value: true)
+        let query2: CKQuery = CKQuery(recordType: "ProjectNote", predicate: predicate2)
+        privateDB.performQuery(query2, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                myRecordList2.append(record.recordID)
+            }
+            self.performDelete(myRecordList2)
+            dispatch_semaphore_signal(sem)
+        })
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func deleteProjectTeamMembers()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "ProjectTeamMembers", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performDelete(myRecordList)
+            dispatch_semaphore_signal(sem)
+        })
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func deleteRoles()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "Roles", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performDelete(myRecordList)
+            dispatch_semaphore_signal(sem)
+        })
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func deleteStages()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "Stages", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performDelete(myRecordList)
+            dispatch_semaphore_signal(sem)
+        })
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func deleteTask()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "Task", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performDelete(myRecordList)
+            dispatch_semaphore_signal(sem)
+        })
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func deleteTaskAttachment()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "TaskAttachment", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performDelete(myRecordList)
+            dispatch_semaphore_signal(sem)
+        })
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func deleteTaskContext()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "TaskContext", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performDelete(myRecordList)
+            dispatch_semaphore_signal(sem)
+        })
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func deleteTaskPredecessor()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "TaskPredecessor", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performDelete(myRecordList)
+            dispatch_semaphore_signal(sem)
+        })
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func deleteTaskUpdates()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "TaskUpdates", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performDelete(myRecordList)
+            dispatch_semaphore_signal(sem)
+        })
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func deleteTeam()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "Team", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performDelete(myRecordList)
+            dispatch_semaphore_signal(sem)
+        })
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+
+    func performDelete(inRecordSet: [CKRecordID])
+    {
+        let operation = CKModifyRecordsOperation(recordsToSave: nil, recordIDsToDelete: inRecordSet)
+        operation.savePolicy = .AllKeys
+        operation.database = privateDB
+        operation.modifyRecordsCompletionBlock = { (added, deleted, error) in
+            if error != nil
+            {
+                NSLog(error!.localizedDescription) // print error if any
+            }
+            else
+            {
+                // no errors, all set!
+            }
+        }
+        
+        let queue = NSOperationQueue()
+        queue.addOperations([operation], waitUntilFinished: true)
+      //  privateDB.addOperation(operation, waitUntilFinished: true)
+        NSLog("finished delete")
     }
 }

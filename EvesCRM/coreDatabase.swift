@@ -441,7 +441,7 @@ class coreDatabase: NSObject
         return fetchResults!
     }
     
-    func updateDecodeValue(inCodeKey: String, inCodeValue: String, inCodeType: String)
+    func updateDecodeValue(inCodeKey: String, inCodeValue: String, inCodeType: String, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
         // first check to see if decode exists, if not we create
         var myDecode: Decodes!
@@ -453,8 +453,16 @@ class coreDatabase: NSObject
             myDecode.decode_name = inCodeKey
             myDecode.decode_value = inCodeValue
             myDecode.decodeType = inCodeType
-            myDecode.updateTime = NSDate()
-            myDecode.updateType = "Add"
+            if inUpdateType == "CODE"
+            {
+                myDecode.updateTime = NSDate()
+                myDecode.updateType = "Add"
+            }
+            else
+            {
+                myDecode.updateTime = inUpdateTime
+                myDecode.updateType = inUpdateType
+            }
         }
         else
         { // Update
@@ -469,10 +477,18 @@ class coreDatabase: NSObject
             myDecode = myDecodes![0]
             myDecode.decode_value = inCodeValue
             myDecode.decodeType = inCodeType
-            myDecode.updateTime = NSDate()
-            if myDecode.updateType != "Add"
+            if inUpdateType == "CODE"
             {
-                myDecode.updateType = "Update"
+                myDecode.updateTime = NSDate()
+                if myDecode.updateType != "Add"
+                {
+                    myDecode.updateType = "Update"
+                }
+            }
+            else
+            {
+                myDecode.updateTime = inUpdateTime
+                myDecode.updateType = inUpdateType
             }
         }
         
@@ -773,33 +789,78 @@ class coreDatabase: NSObject
     
     func createAgenda(inEvent: myCalendarItem)
     {
+        saveAgenda(inEvent.eventID, inPreviousMeetingID : inEvent.previousMinutes, inName: inEvent.title, inChair: inEvent.chair, inMinutes: inEvent.minutes, inLocation: inEvent.location, inStartTime: inEvent.startDate, inEndTime: inEvent.endDate, inMinutesType: inEvent.minutesType, inTeamID: inEvent.teamID)
+    }
+    
+    func saveAgenda(inMeetingID: String, inPreviousMeetingID : String, inName: String, inChair: String, inMinutes: String, inLocation: String, inStartTime: NSDate, inEndTime: NSDate, inMinutesType: String, inTeamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    {
         var myAgenda: MeetingAgenda
         
-        myAgenda = NSEntityDescription.insertNewObjectForEntityForName("MeetingAgenda", inManagedObjectContext: managedObjectContext!) as! MeetingAgenda
-        myAgenda.previousMeetingID = inEvent.previousMinutes
-        myAgenda.meetingID = inEvent.eventID
-        myAgenda.name = inEvent.title
-        myAgenda.chair = inEvent.chair
-        myAgenda.minutes = inEvent.minutes
-        myAgenda.location = inEvent.location
-        myAgenda.startTime = inEvent.startDate
-        myAgenda.endTime = inEvent.endDate
-        myAgenda.minutesType = inEvent.minutesType
-        myAgenda.teamID = inEvent.teamID
-        myAgenda.updateTime = NSDate()
-        myAgenda.updateType = "Add"
+        let myAgendas = loadAgenda(inMeetingID, inTeamID: inTeamID)
+        
+        if myAgendas.count == 0
+        {
+            myAgenda = NSEntityDescription.insertNewObjectForEntityForName("MeetingAgenda", inManagedObjectContext: managedObjectContext!) as! MeetingAgenda
+            myAgenda.meetingID = inMeetingID
+            myAgenda.previousMeetingID = inPreviousMeetingID
+            myAgenda.name = inName
+            myAgenda.chair = inChair
+            myAgenda.minutes = inMinutes
+            myAgenda.location = inLocation
+            myAgenda.startTime = inStartTime
+            myAgenda.endTime = inEndTime
+            myAgenda.minutesType = inMinutesType
+            myAgenda.teamID = inTeamID
+            if inUpdateType == "CODE"
+            {
+                myAgenda.updateTime = NSDate()
+                myAgenda.updateType = "Add"
+            }
+            else
+            {
+                myAgenda.updateTime = inUpdateTime
+                myAgenda.updateType = inUpdateType
+            }
+        }
+        else
+        {
+            let myAgenda = myAgendas[0]
+            myAgenda.previousMeetingID = inPreviousMeetingID
+            myAgenda.name = inName
+            myAgenda.chair = inChair
+            myAgenda.minutes = inMinutes
+            myAgenda.location = inLocation
+            myAgenda.startTime = inStartTime
+            myAgenda.endTime = inEndTime
+            myAgenda.minutesType = inMinutesType
+            myAgenda.teamID = inTeamID
+            if inUpdateType == "CODE"
+            {
+                myAgenda.updateTime = NSDate()
+                if myAgenda.updateType != "Add"
+                {
+                    myAgenda.updateType = "Update"
+                }
+            }
+            else
+            {
+                myAgenda.updateTime = inUpdateTime
+                myAgenda.updateType = inUpdateType
+            }
+        }
         
         do
         {
             try managedObjectContext!.save()
         }
-            catch let error as NSError
-            {
-                NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                
-                print("Failure to save context: \(error)")
-            }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
     }
+
     
     func loadPreviousAgenda(inMeetingID: String, inTeamID: Int)->[MeetingAgenda]
     {
@@ -839,35 +900,6 @@ class coreDatabase: NSObject
         let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAgenda]
         
         return fetchResults!
-    }
-
-    func updateAgenda(inEvent: myCalendarItem)
-    {
-        let myAgenda = loadAgenda(inEvent.eventID, inTeamID: inEvent.teamID)[0]
-        myAgenda.previousMeetingID = inEvent.previousMinutes
-        myAgenda.name = inEvent.title
-        myAgenda.chair = inEvent.chair
-        myAgenda.minutes = inEvent.minutes
-        myAgenda.location = inEvent.location
-        myAgenda.startTime = inEvent.startDate
-        myAgenda.endTime = inEvent.endDate
-        myAgenda.minutesType = inEvent.minutesType
-        myAgenda.updateTime = NSDate()
-        if myAgenda.updateType != "Add"
-        {
-            myAgenda.updateType = "Update"
-        }
-        
-        do
-        {
-            try managedObjectContext!.save()
-        }
-            catch let error as NSError
-            {
-                NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                
-                print("Failure to save context: \(error)")
-            }
     }
 
     func updatePreviousAgendaID(inPreviousMeetingID: String, inMeetingID: String, inTeamID: Int)
@@ -1020,6 +1052,86 @@ class coreDatabase: NSObject
 
         }
     }
+    
+    func checkMeetingsForAttendee(attendeeName: String, meetingID: String)->[MeetingAttendees]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "MeetingAttendees")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "(name == \"\(attendeeName)\") && (updateType != \"Delete\") && (meetingID == \"\(meetingID)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAttendees]
+        
+        return fetchResults!
+    }
+
+    
+    func saveAttendee(meetingID: String, name: String, email: String,  type: String, status: String, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    {
+        var myPerson: MeetingAttendees!
+        
+        let myMeeting = checkMeetingsForAttendee(name, meetingID: meetingID)
+        
+        if myMeeting.count == 0
+        {
+            myPerson = NSEntityDescription.insertNewObjectForEntityForName("MeetingAttendees", inManagedObjectContext: managedObjectContext!) as! MeetingAttendees
+            myPerson.meetingID = meetingID
+            myPerson.name = name
+            myPerson.attendenceStatus = status
+            myPerson.email = email
+            myPerson.type = type
+            if inUpdateType == "CODE"
+            {
+                myPerson.updateTime = NSDate()
+                myPerson.updateType = "Add"
+            }
+            else
+            {
+                myPerson.updateTime = inUpdateTime
+                myPerson.updateType = inUpdateType
+            }
+        }
+        else
+        {
+            myPerson = myMeeting[0]
+            myPerson.attendenceStatus = status
+            myPerson.email = email
+            myPerson.type = type
+            if inUpdateType == "CODE"
+            {
+                myPerson.updateTime = NSDate()
+                if myPerson.updateType != "Add"
+                {
+                    myPerson.updateType = "Update"
+                }
+            }
+            else
+            {
+                myPerson.updateTime = inUpdateTime
+                myPerson.updateType = inUpdateType
+            }
+        }
+            
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+                
+            print("Failure to save context: \(error)")
+        }
+    }
+
 
     func deleteAllAttendees(inMeetingID: String)
     {
@@ -1111,6 +1223,76 @@ class coreDatabase: NSObject
             }
 
     }
+    
+    func saveAgendaItem(meetingID: String, actualEndTime: NSDate, actualStartTime: NSDate, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int, owner: String, title: String, agendaID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    {
+        var mySavedItem: MeetingAgendaItem
+        
+        let myAgendaItem = loadSpecificAgendaItem(meetingID,inAgendaID: agendaID)
+        
+        if myAgendaItem.count == 0
+        {
+            mySavedItem = NSEntityDescription.insertNewObjectForEntityForName("MeetingAgendaItem", inManagedObjectContext: managedObjectContext!) as! MeetingAgendaItem
+            mySavedItem.meetingID = meetingID
+            mySavedItem.agendaID = agendaID
+            mySavedItem.actualEndTime = actualEndTime
+            mySavedItem.actualStartTime = actualStartTime
+            mySavedItem.status = status
+            mySavedItem.decisionMade = decisionMade
+            mySavedItem.discussionNotes = discussionNotes
+            mySavedItem.timeAllocation = timeAllocation
+            mySavedItem.owner = owner
+            mySavedItem.title = title
+            if inUpdateType == "CODE"
+            {
+                mySavedItem.updateTime = NSDate()
+                mySavedItem.updateType = "Add"
+            }
+            else
+            {
+                mySavedItem.updateTime = inUpdateTime
+                mySavedItem.updateType = inUpdateType
+            }
+        }
+        else
+        {
+            mySavedItem = myAgendaItem[0]
+            mySavedItem.actualEndTime = actualEndTime
+            mySavedItem.actualStartTime = actualStartTime
+            mySavedItem.status = status
+            mySavedItem.decisionMade = decisionMade
+            mySavedItem.discussionNotes = discussionNotes
+            mySavedItem.timeAllocation = timeAllocation
+            mySavedItem.owner = owner
+            mySavedItem.title = title
+            if inUpdateType == "CODE"
+            {
+                mySavedItem.updateTime = NSDate()
+                if mySavedItem.updateType != "Add"
+                {
+                    mySavedItem.updateType = "Update"
+                }
+            }
+            else
+            {
+                mySavedItem.updateTime = inUpdateTime
+                mySavedItem.updateType = inUpdateType
+            }
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+        
+    }
+    
     
     func loadSpecificAgendaItem(inMeetingID: String, inAgendaID: Int)->[MeetingAgendaItem]
     {
@@ -1809,7 +1991,7 @@ class coreDatabase: NSObject
         return fetchResults!
     }
 
-    func saveContext(inContextID: Int, inName: String, inEmail: String, inAutoEmail: String, inParentContext: Int, inStatus: String, inPersonID: Int32, inTeamID: Int)
+    func saveContext(inContextID: Int, inName: String, inEmail: String, inAutoEmail: String, inParentContext: Int, inStatus: String, inPersonID: Int32, inTeamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
         var myContext: Context!
         
@@ -1826,8 +2008,16 @@ class coreDatabase: NSObject
             myContext.status = inStatus
             myContext.personID = NSNumber(int: inPersonID)
             myContext.teamID = inTeamID
-            myContext.updateTime = NSDate()
-            myContext.updateType = "Add"
+            if inUpdateType == "CODE"
+            {
+                myContext.updateTime = NSDate()
+                myContext.updateType = "Add"
+            }
+            else
+            {
+                myContext.updateTime = inUpdateTime
+                myContext.updateType = inUpdateType
+            }
         }
         else
         {
@@ -1839,10 +2029,18 @@ class coreDatabase: NSObject
             myContext.status = inStatus
             myContext.personID = NSNumber(int: inPersonID)
             myContext.teamID = inTeamID
-            myContext.updateTime = NSDate()
-            if myContext.updateType != "Add"
+            if inUpdateType == "CODE"
             {
-                myContext.updateType = "Update"
+                myContext.updateTime = NSDate()
+                if myContext.updateType != "Add"
+                {
+                    myContext.updateType = "Update"
+                }
+            }
+            else
+            {
+                myContext.updateTime = inUpdateTime
+                myContext.updateType = inUpdateType
             }
         }
         
@@ -2097,7 +2295,7 @@ class coreDatabase: NSObject
         return fetchResults!
     }
 
-    func saveGTDLevel(inGTDLevel: Int, inLevelName: String, inTeamID: Int)
+    func saveGTDLevel(inGTDLevel: Int, inLevelName: String, inTeamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
         var myGTD: GTDLevel!
         
@@ -2109,17 +2307,33 @@ class coreDatabase: NSObject
             myGTD.gTDLevel = inGTDLevel
             myGTD.levelName = inLevelName
             myGTD.updateTime = NSDate()
-            myGTD.updateType = "Add"
-            myGTD.teamID = inTeamID
+            if inUpdateType == "CODE"
+            {
+                myGTD.updateType = "Add"
+                myGTD.teamID = inTeamID
+            }
+            else
+            {
+                myGTD.updateTime = inUpdateTime
+                myGTD.updateType = inUpdateType
+            }
         }
         else
         { // Update
             myGTD = myGTDItems[0]
             myGTD.levelName = inLevelName
-            myGTD.updateTime = NSDate()
-            if myGTD.updateType != "Add"
+            if inUpdateType == "CODE"
             {
-                myGTD.updateType = "Update"
+                myGTD.updateTime = NSDate()
+                if myGTD.updateType != "Add"
+                {
+                    myGTD.updateType = "Update"
+                }
+            }
+            else
+            {
+                myGTD.updateTime = inUpdateTime
+                myGTD.updateType = inUpdateType
             }
             myGTD.teamID = inTeamID
         }
@@ -2243,7 +2457,7 @@ class coreDatabase: NSObject
         return fetchResults!
     }
     
-    func saveGTDItem(inGTDItemID: Int, inParentID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String, inLastReviewDate: NSDate, inReviewFrequency: Int, inReviewPeriod: String, inPredecessor: Int, inGTDLevel: Int)
+    func saveGTDItem(inGTDItemID: Int, inParentID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String, inLastReviewDate: NSDate, inReviewFrequency: Int, inReviewPeriod: String, inPredecessor: Int, inGTDLevel: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
         var myGTD: GTDItem!
         
@@ -2256,8 +2470,6 @@ class coreDatabase: NSObject
             myGTD.gTDParentID = inParentID
             myGTD.title = inTitle
             myGTD.status = inStatus
-            myGTD.updateTime = NSDate()
-            myGTD.updateType = "Add"
             myGTD.teamID = inTeamID
             myGTD.note = inNote
             myGTD.lastReviewDate = inLastReviewDate
@@ -2265,6 +2477,16 @@ class coreDatabase: NSObject
             myGTD.reviewPeriod = inReviewPeriod
             myGTD.predecessor = inPredecessor
             myGTD.gTDLevel = inGTDLevel
+            if inUpdateType == "CODE"
+            {
+                myGTD.updateTime = NSDate()
+                myGTD.updateType = "Add"
+            }
+            else
+            {
+                myGTD.updateTime = inUpdateTime
+                myGTD.updateType = inUpdateType
+            }
         }
         else
         { // Update
@@ -2273,10 +2495,6 @@ class coreDatabase: NSObject
             myGTD.title = inTitle
             myGTD.status = inStatus
             myGTD.updateTime = NSDate()
-            if myGTD.updateType != "Add"
-            {
-                myGTD.updateType = "Update"
-            }
             myGTD.teamID = inTeamID
             myGTD.note = inNote
             myGTD.lastReviewDate = inLastReviewDate
@@ -2284,6 +2502,18 @@ class coreDatabase: NSObject
             myGTD.reviewPeriod = inReviewPeriod
             myGTD.predecessor = inPredecessor
             myGTD.gTDLevel = inGTDLevel
+            if inUpdateType == "CODE"
+            {
+                if myGTD.updateType != "Add"
+                {
+                    myGTD.updateType = "Update"
+                }
+            }
+            else
+            {
+                myGTD.updateTime = inUpdateTime
+                myGTD.updateType = inUpdateType
+            }
         }
         
         do
@@ -2901,6 +3131,78 @@ class coreDatabase: NSObject
             }
     }
 
+    func checkMeetingTask(meetingID: String, agendaID: Int, taskID: Int)->[MeetingTasks]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "MeetingTasks")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(agendaID == \(agendaID)) && (meetingID == \"\(meetingID)\") && (updateType != \"Delete\") && (taskID == \(taskID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingTasks]
+        
+        return fetchResults!
+    }
+
+    
+    func saveMeetingTask(agendaID: Int, meetingID: String, taskID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    {
+        var myTask: MeetingTasks
+        
+        let myTaskList = checkMeetingTask(meetingID, agendaID: agendaID, taskID: taskID)
+        
+        if myTaskList.count == 0
+        {
+            myTask = NSEntityDescription.insertNewObjectForEntityForName("MeetingTasks", inManagedObjectContext: managedObjectContext!) as! MeetingTasks
+            myTask.agendaID = agendaID
+            myTask.meetingID = meetingID
+            myTask.taskID = taskID
+            if inUpdateType == "CODE"
+            {
+                myTask.updateTime = NSDate()
+                myTask.updateType = "Add"
+            }
+            else
+            {
+                myTask.updateTime = inUpdateTime
+                myTask.updateType = inUpdateType
+            }
+        }
+        else
+        {
+            myTask = myTaskList[0]
+            if inUpdateType == "CODE"
+            {
+                myTask.updateTime = NSDate()
+                if myTask.updateType != "Add"
+                {
+                    myTask.updateType = "Update"
+                }
+            }
+            else
+            {
+                myTask.updateTime = inUpdateTime
+                myTask.updateType = inUpdateType
+            }
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+    }
+
+    
     func deleteAgendaTask(inAgendaID: Int, inMeetingID: String, inTaskID: Int)
     {
         let fetchRequest = NSFetchRequest(entityName: "MeetingTasks")
@@ -4518,7 +4820,7 @@ class coreDatabase: NSObject
         updateDecodeValue("Task", inCodeValue: tempInt, inCodeType: "hidden")
     }
 
-    func saveContext1_1(inContextID: Int, inPredecessor: Int)
+    func saveContext1_1(inContextID: Int, inPredecessor: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
         var myContext: Context1_1!
         
@@ -4529,17 +4831,33 @@ class coreDatabase: NSObject
             myContext = NSEntityDescription.insertNewObjectForEntityForName("Context", inManagedObjectContext: self.managedObjectContext!) as! Context1_1
             myContext.contextID = inContextID
             myContext.predecessor = inPredecessor
-            myContext.updateTime = NSDate()
-            myContext.updateType = "Add"
+            if inUpdateType == "CODE"
+            {
+                myContext.updateTime = NSDate()
+                myContext.updateType = "Add"
+            }
+            else
+            {
+                myContext.updateTime = inUpdateTime
+                myContext.updateType = inUpdateType
+            }
         }
         else
         {
             myContext = myContexts[0]
             myContext.predecessor = inPredecessor
-            myContext.updateTime = NSDate()
-            if myContext.updateType != "Add"
+            if inUpdateType == "CODE"
             {
-                myContext.updateType = "Update"
+                myContext.updateTime = NSDate()
+                if myContext.updateType != "Add"
+                {
+                    myContext.updateType = "Update"
+                }
+            }
+            else
+            {
+                myContext.updateTime = inUpdateTime
+                myContext.updateType = inUpdateType
             }
         }
         

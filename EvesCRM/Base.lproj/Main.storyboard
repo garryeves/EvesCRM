@@ -3028,7 +3028,7 @@
                                 </connections>
                             </button>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="HAV-Sv-r7A" userLabel="colDecodes">
-                                <rect key="frame" x="20" y="68" width="560" height="532"/>
+                                <rect key="frame" x="20" y="68" width="560" height="484"/>
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="JUz-rd-CE5">
@@ -3304,29 +3304,60 @@
                                     <outlet property="delegate" destination="IrM-yb-4SV" id="yqG-lB-zpc"/>
                                 </connections>
                             </collectionView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LGg-yl-bM5" userLabel="btnSyncFromCloud">
+                                <rect key="frame" x="20" y="562" width="222" height="30"/>
+                                <animations/>
+                                <state key="normal" title="Replace Device Data from Cloud"/>
+                                <connections>
+                                    <action selector="btnSyncFromCloud:" destination="IrM-yb-4SV" eventType="touchUpInside" id="nWa-B8-VQU"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IVj-ci-rZF" userLabel="btnSyncToCloud">
+                                <rect key="frame" x="252" y="562" width="219" height="30"/>
+                                <animations/>
+                                <state key="normal" title="Replace Cloud data from device"/>
+                                <connections>
+                                    <action selector="btnSyncToCloud:" destination="IrM-yb-4SV" eventType="touchUpInside" id="R7J-uT-XVg"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Refreshing data.  This will take a few minutes.  Please do not close app until completed" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Z17-rG-6JE" userLabel="lblRefreshMessage">
+                                <rect key="frame" x="50" y="280" width="500" height="41"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="500" id="duR-cb-GLb"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="Z17-rG-6JE" firstAttribute="centerY" secondItem="VDv-7e-f69" secondAttribute="centerY" id="32u-Kl-RD0"/>
                             <constraint firstItem="mnK-Hk-GdZ" firstAttribute="top" secondItem="gNB-gj-3RS" secondAttribute="bottom" constant="8" id="6XT-6H-mbo">
                                 <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
                             </constraint>
                             <constraint firstAttribute="trailingMargin" secondItem="HAV-Sv-r7A" secondAttribute="trailing" id="EG4-EC-Izj">
                                 <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
                             </constraint>
+                            <constraint firstItem="Z17-rG-6JE" firstAttribute="centerX" secondItem="VDv-7e-f69" secondAttribute="centerX" id="EaD-2Q-LAF"/>
+                            <constraint firstItem="XRp-vg-2lv" firstAttribute="top" secondItem="LGg-yl-bM5" secondAttribute="bottom" constant="8" id="Gxe-sW-LZx"/>
                             <constraint firstItem="mbn-fd-vJS" firstAttribute="leading" secondItem="mnK-Hk-GdZ" secondAttribute="trailing" constant="100" id="LVb-Rn-4Df">
                                 <variation key="heightClass=regular-widthClass=regular" constant="20"/>
                             </constraint>
-                            <constraint firstItem="XRp-vg-2lv" firstAttribute="top" secondItem="HAV-Sv-r7A" secondAttribute="bottom" id="OLQ-Bt-fdb">
-                                <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
-                            </constraint>
+                            <constraint firstItem="IVj-ci-rZF" firstAttribute="leading" secondItem="LGg-yl-bM5" secondAttribute="trailing" constant="10" id="UiI-Wy-ZBA"/>
+                            <constraint firstItem="LGg-yl-bM5" firstAttribute="leading" secondItem="VDv-7e-f69" secondAttribute="leadingMargin" id="bXm-6J-Pq4"/>
+                            <constraint firstItem="XRp-vg-2lv" firstAttribute="top" secondItem="IVj-ci-rZF" secondAttribute="bottom" constant="8" id="f57-4W-UG4"/>
                             <constraint firstItem="HAV-Sv-r7A" firstAttribute="leading" secondItem="VDv-7e-f69" secondAttribute="leadingMargin" id="o2S-ml-yIo">
                                 <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
                             </constraint>
+                            <constraint firstItem="LGg-yl-bM5" firstAttribute="top" secondItem="HAV-Sv-r7A" secondAttribute="bottom" constant="10" id="qIY-Xw-dMu"/>
                             <constraint firstItem="HAV-Sv-r7A" firstAttribute="top" secondItem="mbn-fd-vJS" secondAttribute="bottom" constant="10" id="tOu-PL-wPP"/>
                             <constraint firstItem="mnK-Hk-GdZ" firstAttribute="leading" secondItem="VDv-7e-f69" secondAttribute="leadingMargin" constant="100" id="xTJ-Wy-uMZ">
                                 <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
                             </constraint>
+                            <constraint firstItem="IVj-ci-rZF" firstAttribute="top" secondItem="HAV-Sv-r7A" secondAttribute="bottom" constant="10" id="xX3-Eg-5YQ"/>
                             <constraint firstItem="mbn-fd-vJS" firstAttribute="top" secondItem="gNB-gj-3RS" secondAttribute="bottom" constant="8" id="zFn-Z5-ySI">
                                 <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
                             </constraint>
@@ -3344,19 +3375,21 @@
                                 <include reference="xTJ-Wy-uMZ"/>
                                 <include reference="LVb-Rn-4Df"/>
                                 <include reference="zFn-Z5-ySI"/>
-                                <include reference="OLQ-Bt-fdb"/>
                             </mask>
                         </variation>
                     </view>
                     <connections>
                         <outlet property="ButtonConnectDropbox" destination="mnK-Hk-GdZ" id="2ca-yf-hP6"/>
+                        <outlet property="btnSyncFromCloud" destination="LGg-yl-bM5" id="QmK-2r-Wge"/>
+                        <outlet property="btnSyncToCloud" destination="IVj-ci-rZF" id="ugn-lO-k2z"/>
                         <outlet property="buttonConnectEvernote" destination="mbn-fd-vJS" id="YIW-Ms-VHY"/>
                         <outlet property="colDecodes" destination="HAV-Sv-r7A" id="Wqd-kn-K5e"/>
+                        <outlet property="lblRefreshMessage" destination="Z17-rG-6JE" id="sys-tO-C7W"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vHL-ae-F1X" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1597.5" y="1239"/>
+            <point key="canvasLocation" x="1597" y="1239"/>
         </scene>
         <!--MaintainPanes-->
         <scene sceneID="oWO-V6-TPw">

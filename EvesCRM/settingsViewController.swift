@@ -18,6 +18,9 @@ class settingsViewController: UIViewController
     @IBOutlet weak var buttonConnectEvernote: UIButton!
     @IBOutlet weak var ButtonConnectDropbox: UIButton!
     @IBOutlet weak var colDecodes: UICollectionView!
+    @IBOutlet weak var btnSyncFromCloud: UIButton!
+    @IBOutlet weak var btnSyncToCloud: UIButton!
+    @IBOutlet weak var lblRefreshMessage: UILabel!
     
     var delegate: MySettingsDelegate?
     
@@ -28,10 +31,24 @@ class settingsViewController: UIViewController
     var evernoteSession: ENSession!
     private var myEvernote: EvernoteDetails!
     var dropboxCoreService: DropboxCoreService!
+    
+    private var syncDate: NSDate!
+    private var syncStart: NSDate!
+    private var firstLoadflag: Bool = true
 
     override func viewDidLoad()
     {
         super.viewDidLoad()
+
+        if firstLoadflag
+        {
+            firstLoad()
+        }
+    }
+    
+    func firstLoad()
+    {
+        lblRefreshMessage.hidden = true
         
         // Load the decodes
         myDecodes = myDatabaseConnection.getVisibleDecodes()
@@ -53,10 +70,18 @@ class settingsViewController: UIViewController
         let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
         hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
         self.view.addGestureRecognizer(hideGestureRecognizer)
-
+        
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "myEvernoteAuthenticationDidFinish", name:"NotificationEvernoteAuthenticationDidFinish", object: nil)
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "changeSettings:", name:"NotificationChangeSettings", object: nil)
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "syncToCloud", name:"NotificationCloudSyncStart", object: nil)
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "syncToCloudDone", name:"NotificationCloudSyncFinished", object: nil)
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "syncFromCloud", name:"NotificationCloudReLoadStart", object: nil)
+        
+        firstLoadflag = false
     }
     
     override func didReceiveMemoryWarning()
@@ -224,6 +249,117 @@ class settingsViewController: UIViewController
         myDecodes = myDatabaseConnection.getVisibleDecodes()
         colDecodes.reloadData()
     }
+    
+    @IBAction func btnSyncFromCloud(sender: UIButton)
+    {
+        // Display message that may take some time
+        lblRefreshMessage.hidden = false
+        colDecodes.hidden = true
+        btnSyncFromCloud.hidden = true
+        btnSyncToCloud.hidden = true
+
+        lblRefreshMessage.hidden = true
+        colDecodes.hidden = false
+        btnSyncFromCloud.hidden = false
+        btnSyncToCloud.hidden = false
+        
+        NSNotificationCenter.defaultCenter().postNotificationName("NotificationCloudReLoadStart", object: nil)
+    }
+    
+    func syncFromCloud()
+    {
+        let qualityOfServiceClass = QOS_CLASS_USER_INITIATED
+        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+        dispatch_async(backgroundQueue, {
+            
+            self.syncStart = NSDate()
+// for testing I am using full logic here, it needs to be cutdown to perform refresh
+            // Get the last sync date
+            
+            let lastSyncDate = myDatabaseConnection.getDecodeValue("CloudKit Sync")
+            
+            if lastSyncDate == ""
+            {
+                let myDateFormatter = NSDateFormatter()
+                myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+                
+                self.syncDate = myDateFormatter.dateFromString("01/01/15")
+            }
+            else
+            {
+                // Convert string to date
+                
+                let myDateFormatter = NSDateFormatter()
+                myDateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZZ"
+                
+                self.syncDate = myDateFormatter.dateFromString(lastSyncDate)
+            }
+
+            // Delete the entries from the current tables
+            
+            let myDBSync = DBSync()
+            
+       //     myDBSync.deleteAllFromCloudKit()
+            
+            // Load
+            
+            myDBSync.syncFromCloudKit(self.syncDate)
+        })
+    }
+    
+    @IBAction func btnSyncToCloud(sender: UIButton)
+    {
+        // Display message that may take some time
+        
+        lblRefreshMessage.hidden = false
+        colDecodes.hidden = true
+        btnSyncFromCloud.hidden = true
+        btnSyncToCloud.hidden = true
+        
+        NSNotificationCenter.defaultCenter().postNotificationName("NotificationCloudSyncStart", object: nil)
+    }
+    
+    func syncToCloud()
+    {
+        let qualityOfServiceClass = QOS_CLASS_USER_INITIATED
+        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
+        dispatch_async(backgroundQueue, {
+        
+            self.syncStart = NSDate()
+        
+            // Get the last sync date
+        
+            let myDateFormatter = NSDateFormatter()
+            myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        
+            self.syncDate = myDateFormatter.dateFromString("01/01/15")
+
+            // Delete the entries from the current tables
+        
+            let myDBSync = DBSync()
+        
+            myDBSync.deleteAllFromCloudKit()
+        
+            // Load
+        
+            myDBSync.syncToCloudKit(self.syncDate)
+        })
+    }
+    
+    func syncToCloudDone()
+    {
+        // Update last sync date
+        
+        let dateString = "\(syncStart)"
+        
+        myDatabaseConnection.updateDecodeValue("CloudKit Sync", inCodeValue: dateString, inCodeType: "hidden")
+        
+        lblRefreshMessage.hidden = true
+        colDecodes.hidden = false
+        btnSyncFromCloud.hidden = false
+        btnSyncToCloud.hidden = false
+    }
+    
 }
 
 class mySettingStepper: UICollectionViewCell
