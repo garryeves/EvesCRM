@@ -42,7 +42,7 @@ class coreDatabase: NSObject
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (areaID == \(inGTDItemID)) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (areaID == \(inGTDItemID)) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -171,18 +171,49 @@ class coreDatabase: NSObject
         return retVal + 1
     }
     
-    func createRole(inRoleName: String, inTeamID: Int)
+    func saveRole(roleName: String, teamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE", roleID: Int = 0)
     {
         var mySelectedRole: Roles
         
-        mySelectedRole = NSEntityDescription.insertNewObjectForEntityForName("Roles", inManagedObjectContext: managedObjectContext!) as! Roles
+        let myRoles = getRole(roleID, teamID: teamID)
         
-        // Get the role number
-        mySelectedRole.roleID = getNextID("Roles")
-        mySelectedRole.roleDescription = inRoleName
-        mySelectedRole.teamID = inTeamID
-        mySelectedRole.updateTime = NSDate()
-        mySelectedRole.updateType = "Add"
+        if myRoles.count == 0
+        {
+            mySelectedRole = NSEntityDescription.insertNewObjectForEntityForName("Roles", inManagedObjectContext: managedObjectContext!) as! Roles
+        
+            // Get the role number
+            mySelectedRole.roleID = getNextID("Roles")
+            mySelectedRole.roleDescription = roleName
+            mySelectedRole.teamID = teamID
+            if inUpdateType == "CODE"
+            {
+                mySelectedRole.updateTime = NSDate()
+                mySelectedRole.updateType = "Add"
+            }
+            else
+            {
+                mySelectedRole.updateTime = inUpdateTime
+                mySelectedRole.updateType = inUpdateType
+            }
+        }
+        else
+        {
+            mySelectedRole = myRoles[0]
+            mySelectedRole.roleDescription = roleName
+            if inUpdateType == "CODE"
+            {
+                mySelectedRole.updateTime = NSDate()
+                if mySelectedRole.updateType != "Add"
+                {
+                    mySelectedRole.updateType = "Update"
+                }
+            }
+            else
+            {
+                mySelectedRole.updateTime = inUpdateTime
+                mySelectedRole.updateType = inUpdateType
+            }
+        }
 
         do
         {
@@ -194,6 +225,21 @@ class coreDatabase: NSObject
             
             print("Failure to save context: \(error)")
         }
+    }
+    
+    func getRole(roleID: Int, teamID: Int)->[Roles]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Roles")
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(teamID)) && (roleID == \(roleID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Roles]
+        
+        return fetchResults!
     }
     
     func deleteRoleEntry(inRoleName: String, inTeamID: Int)
@@ -226,7 +272,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func saveTeamMember(inProjectID: Int, inRoleID: Int, inPersonName: String, inNotes: String)
+    func saveTeamMember(inProjectID: Int, inRoleID: Int, inPersonName: String, inNotes: String, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
         var myProjectTeam: ProjectTeamMembers!
         
@@ -238,18 +284,34 @@ class coreDatabase: NSObject
             myProjectTeam.teamMember = inPersonName
             myProjectTeam.roleID = inRoleID
             myProjectTeam.projectMemberNotes = inNotes
-            myProjectTeam.updateTime = NSDate()
-            myProjectTeam.updateType = "Add"
+            if inUpdateType == "CODE"
+            {
+                myProjectTeam.updateTime = NSDate()
+                myProjectTeam.updateType = "Add"
+            }
+            else
+            {
+                myProjectTeam.updateTime = inUpdateTime
+                myProjectTeam.updateType = inUpdateType
+            }
         }
         else
         { // Update
             myProjectTeam = myProjectTeamRecords[0]
             myProjectTeam.roleID = inRoleID
             myProjectTeam.projectMemberNotes = inNotes
-            myProjectTeam.updateTime = NSDate()
-            if myProjectTeam.updateType != "Add"
+            if inUpdateType == "CODE"
             {
-                myProjectTeam.updateType = "Update"
+                myProjectTeam.updateTime = NSDate()
+                if myProjectTeam.updateType != "Add"
+                {
+                    myProjectTeam.updateType = "Update"
+                }
+            }
+            else
+            {
+                myProjectTeam.updateTime = inUpdateTime
+                myProjectTeam.updateType = inUpdateType
             }
         }
         
@@ -591,14 +653,63 @@ class coreDatabase: NSObject
         }
     }
     
-    func createStage(inStageDesc: String, inTeamID: Int)
+    func getStage(stageDesc:String, teamID: Int)->[Stages]
     {
-        let myStage = NSEntityDescription.insertNewObjectForEntityForName("Stages", inManagedObjectContext: managedObjectContext!) as! Stages
+        let fetchRequest = NSFetchRequest(entityName: "Stages")
         
-        myStage.stageDescription = inStageDesc
-        myStage.teamID = inTeamID
-        myStage.updateTime = NSDate()
-        myStage.updateType = "Add"
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(teamID)) && (stageDescription == \"\(stageDesc)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Stages]
+        
+        return fetchResults!
+    }
+    
+    func saveStage(stageDesc: String, teamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    {
+        var myStage: Stages!
+        
+        let myStages = getStage(stageDesc, teamID: teamID)
+        
+        if myStages.count == 0
+        {
+            myStage = NSEntityDescription.insertNewObjectForEntityForName("Stages", inManagedObjectContext: managedObjectContext!) as! Stages
+        
+            myStage.stageDescription = stageDesc
+            myStage.teamID = teamID
+            if inUpdateType == "CODE"
+            {
+                myStage.updateTime = NSDate()
+                myStage.updateType = "Add"
+            }
+            else
+            {
+                myStage.updateTime = inUpdateTime
+                myStage.updateType = inUpdateType
+            }
+        }
+        else
+        {
+            myStage = myStages[0]
+            if inUpdateType == "CODE"
+            {
+                myStage.updateTime = NSDate()
+                if myStage.updateType != "Add"
+                {
+                    myStage.updateType = "Update"
+                }
+            }
+            else
+            {
+                myStage.updateTime = inUpdateTime
+                myStage.updateType = inUpdateType
+            }
+        }
         
         do
         {
@@ -1417,7 +1528,7 @@ class coreDatabase: NSObject
         }
     }
 
-    func saveTask(inTaskID: Int, inTitle: String, inDetails: String, inDueDate: NSDate, inStartDate: NSDate, inStatus: String, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int, inEstimatedTimeType: String, inProjectID: Int, inCompletionDate: NSDate, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inFlagged: Bool, inUrgency: String, inTeamID: Int)
+    func saveTask(inTaskID: Int, inTitle: String, inDetails: String, inDueDate: NSDate, inStartDate: NSDate, inStatus: String, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int, inEstimatedTimeType: String, inProjectID: Int, inCompletionDate: NSDate, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inFlagged: Bool, inUrgency: String, inTeamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
         var myTask: Task!
         
@@ -1443,9 +1554,18 @@ class coreDatabase: NSObject
             myTask.repeatBase = inRepeatBase
             myTask.flagged = inFlagged
             myTask.urgency = inUrgency
-            myTask.updateTime = NSDate()
-            myTask.updateType = "Add"
             myTask.teamID = inTeamID
+            
+            if inUpdateType == "CODE"
+            {
+                myTask.updateTime = NSDate()
+                myTask.updateType = "Add"
+            }
+            else
+            {
+                myTask.updateTime = inUpdateTime
+                myTask.updateType = inUpdateType
+            }
         }
         else
         { // Update
@@ -1466,12 +1586,22 @@ class coreDatabase: NSObject
             myTask.repeatBase = inRepeatBase
             myTask.flagged = inFlagged
             myTask.urgency = inUrgency
-            myTask.updateTime = NSDate()
-            if myTask.updateType != "Add"
-            {
-                myTask.updateType = "Update"
-            }
             myTask.teamID = inTeamID
+            
+            if inUpdateType == "CODE"
+            {
+                myTask.updateTime = NSDate()
+                if myTask.updateType != "Add"
+                {
+                    myTask.updateType = "Update"
+                }
+            }
+            else
+            {
+                myTask.updateTime = inUpdateTime
+                myTask.updateType = inUpdateType
+            }
+            
         }
         
         do
@@ -1739,7 +1869,7 @@ class coreDatabase: NSObject
         return fetchResults!
     }
    
-    func savePredecessorTask(inTaskID: Int, inPredecessorID: Int, inPredecessorType: String)
+    func savePredecessorTask(inTaskID: Int, inPredecessorID: Int, inPredecessorType: String, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
         var myTask: TaskPredecessor!
         
@@ -1751,17 +1881,33 @@ class coreDatabase: NSObject
             myTask.taskID = inTaskID
             myTask.predecessorID = inPredecessorID
             myTask.predecessorType = inPredecessorType
-            myTask.updateTime = NSDate()
-            myTask.updateType = "Add"
+            if inUpdateType == "CODE"
+            {
+                myTask.updateTime = NSDate()
+                myTask.updateType = "Add"
+            }
+            else
+            {
+                myTask.updateTime = inUpdateTime
+                myTask.updateType = inUpdateType
+            }
         }
         else
         { // Update
             myTask.predecessorID = inPredecessorID
             myTask.predecessorType = inPredecessorType
-            myTask.updateTime = NSDate()
-            if myTask.updateType != "Add"
+            if inUpdateType == "CODE"
             {
-                myTask.updateType = "Update"
+                myTask.updateTime = NSDate()
+                if myTask.updateType != "Add"
+                {
+                    myTask.updateType = "Update"
+                }
+            }
+            else
+            {
+                myTask.updateTime = inUpdateTime
+                myTask.updateType = inUpdateType
             }
         }
 
@@ -1842,7 +1988,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func saveProject(inProjectID: Int, inProjectEndDate: NSDate, inProjectName: String, inProjectStartDate: NSDate, inProjectStatus: String, inReviewFrequency: Int, inLastReviewDate: NSDate, inGTDItemID: Int, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inTeamID: Int)
+    func saveProject(inProjectID: Int, inProjectEndDate: NSDate, inProjectName: String, inProjectStartDate: NSDate, inProjectStatus: String, inReviewFrequency: Int, inLastReviewDate: NSDate, inGTDItemID: Int, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inTeamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
         var myProject: Projects!
         
@@ -1863,8 +2009,16 @@ class coreDatabase: NSObject
             myProject.repeatType = inRepeatType
             myProject.repeatBase = inRepeatBase
             myProject.teamID = inTeamID
-            myProject.updateTime = NSDate()
-            myProject.updateType = "Add"
+            if inUpdateType == "CODE"
+            {
+                myProject.updateTime = NSDate()
+                myProject.updateType = "Add"
+            }
+            else
+            {
+                myProject.updateTime = inUpdateTime
+                myProject.updateType = inUpdateType
+            }
         }
         else
         { // Update
@@ -1880,10 +2034,18 @@ class coreDatabase: NSObject
             myProject.repeatType = inRepeatType
             myProject.repeatBase = inRepeatBase
             myProject.teamID = inTeamID
-            myProject.updateTime = NSDate()
-            if myProject.updateType != "Add"
+            if inUpdateType == "CODE"
             {
-                myProject.updateType = "Update"
+                myProject.updateTime = NSDate()
+                if myProject.updateType != "Add"
+                {
+                    myProject.updateType = "Update"
+                }
+            }
+            else
+            {
+                myProject.updateTime = inUpdateTime
+                myProject.updateType = inUpdateType
             }
         }
         
@@ -1946,30 +2108,62 @@ class coreDatabase: NSObject
             }
     }
     
-    func saveTaskUpdate(inTaskID: Int, inDetails: String, inSource: String)
+    func saveTaskUpdate(inTaskID: Int, inDetails: String, inSource: String, inUpdateDate: NSDate = NSDate(), inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
         var myTaskUpdate: TaskUpdates!
 
-        myTaskUpdate = NSEntityDescription.insertNewObjectForEntityForName("TaskUpdates", inManagedObjectContext: self.managedObjectContext!) as! TaskUpdates
-        myTaskUpdate.taskID = inTaskID
-        myTaskUpdate.updateDate = NSDate()
-        myTaskUpdate.details = inDetails
-        myTaskUpdate.source = inSource
-        myTaskUpdate.updateTime = NSDate()
-        myTaskUpdate.updateType = "Add"
-        
-        do
+        if getTaskUpdate(inTaskID, updateDate: inUpdateTime).count == 0
         {
-            try managedObjectContext!.save()
-        }
+            myTaskUpdate = NSEntityDescription.insertNewObjectForEntityForName("TaskUpdates", inManagedObjectContext: self.managedObjectContext!) as! TaskUpdates
+            myTaskUpdate.taskID = inTaskID
+            myTaskUpdate.updateDate = inUpdateDate
+            myTaskUpdate.details = inDetails
+            myTaskUpdate.source = inSource
+            if inUpdateType == "CODE"
+            {
+                myTaskUpdate.updateTime = NSDate()
+                myTaskUpdate.updateType = "Add"
+            }
+            else
+            {
+                myTaskUpdate.updateTime = inUpdateTime
+                myTaskUpdate.updateType = inUpdateType
+            }
+        
+            do
+            {
+                try managedObjectContext!.save()
+            }
             catch let error as NSError
             {
                 NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
                 
                 print("Failure to save context: \(error)")
             }
+        }
     }
 
+    func getTaskUpdate(taskID: Int, updateDate: NSDate)->[TaskUpdates]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "TaskUpdates")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(taskID == \(taskID)) && (updateType != \"Delete\") && (updateDate == %@)", updateDate)
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        let sortDescriptor = NSSortDescriptor(key: "updateDate", ascending: false)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [TaskUpdates]
+        
+        return fetchResults!
+    }
+    
     func getTaskUpdates(inTaskID: Int)->[TaskUpdates]
     {
         let fetchRequest = NSFetchRequest(entityName: "TaskUpdates")
@@ -2186,7 +2380,7 @@ class coreDatabase: NSObject
     }
 
     
-    func saveTaskContext(inContextID: Int, inTaskID: Int)
+    func saveTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
         var myContext: TaskContext!
         
@@ -2197,8 +2391,33 @@ class coreDatabase: NSObject
             myContext = NSEntityDescription.insertNewObjectForEntityForName("TaskContext", inManagedObjectContext: self.managedObjectContext!) as! TaskContext
             myContext.contextID = inContextID
             myContext.taskID = inTaskID
-            myContext.updateTime = NSDate()
-            myContext.updateType = "Add"
+            if inUpdateType == "CODE"
+            {
+                myContext.updateTime = NSDate()
+                myContext.updateType = "Add"
+            }
+            else
+            {
+                myContext.updateTime = inUpdateTime
+                myContext.updateType = inUpdateType
+            }
+        }
+        else
+        {
+            myContext = myContexts[0]
+            if inUpdateType == "CODE"
+            {
+                myContext.updateTime = NSDate()
+                if myContext.updateType != "Add"
+                {
+                    myContext.updateType = "Update"
+                }
+            }
+            else
+            {
+                myContext.updateTime = inUpdateTime
+                myContext.updateType = inUpdateType
+            }
         }
         
         do
@@ -2306,11 +2525,12 @@ class coreDatabase: NSObject
             myGTD = NSEntityDescription.insertNewObjectForEntityForName("GTDLevel", inManagedObjectContext: self.managedObjectContext!) as! GTDLevel
             myGTD.gTDLevel = inGTDLevel
             myGTD.levelName = inLevelName
-            myGTD.updateTime = NSDate()
+            myGTD.teamID = inTeamID
+            
             if inUpdateType == "CODE"
             {
                 myGTD.updateType = "Add"
-                myGTD.teamID = inTeamID
+                myGTD.updateTime = NSDate()
             }
             else
             {
@@ -2335,7 +2555,6 @@ class coreDatabase: NSObject
                 myGTD.updateTime = inUpdateTime
                 myGTD.updateType = inUpdateType
             }
-            myGTD.teamID = inTeamID
         }
         
         do
@@ -2831,17 +3050,52 @@ class coreDatabase: NSObject
         }
     }
     
-    func savePane(inPaneName:String, inPaneAvailable: Bool, inPaneVisible: Bool, inPaneOrder: Int)
+    func savePane(inPaneName:String, inPaneAvailable: Bool, inPaneVisible: Bool, inPaneOrder: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
-        // Save the details of this pane to the database
-        let myPane = NSEntityDescription.insertNewObjectForEntityForName("Panes", inManagedObjectContext: self.managedObjectContext!) as! Panes
+        var myPane: Panes!
         
-        myPane.pane_name = inPaneName
-        myPane.pane_available = inPaneAvailable
-        myPane.pane_visible = inPaneVisible
-        myPane.pane_order = inPaneOrder
-        myPane.updateTime = NSDate()
-        myPane.updateType = "Add"
+        let myPanes = getPane(inPaneName)
+        
+        if myPanes.count == 0
+        {
+            // Save the details of this pane to the database
+            myPane = NSEntityDescription.insertNewObjectForEntityForName("Panes", inManagedObjectContext: self.managedObjectContext!) as! Panes
+        
+            myPane.pane_name = inPaneName
+            myPane.pane_available = inPaneAvailable
+            myPane.pane_visible = inPaneVisible
+            myPane.pane_order = inPaneOrder
+            if inUpdateType == "CODE"
+            {
+                myPane.updateTime = NSDate()
+                myPane.updateType = "Add"
+            }
+            else
+            {
+                myPane.updateTime = inUpdateTime
+                myPane.updateType = inUpdateType
+            }
+        }
+        else
+        {
+            myPane = myPanes[0]
+            myPane.pane_available = inPaneAvailable
+            myPane.pane_visible = inPaneVisible
+            myPane.pane_order = inPaneOrder
+            if inUpdateType == "CODE"
+            {
+                myPane.updateTime = NSDate()
+                if myPane.updateType != "Add"
+                {
+                    myPane.updateType = "Update"
+                }
+            }
+            else
+            {
+                myPane.updateTime = inUpdateTime
+                myPane.updateType = inUpdateType
+            }
+        }
         
         do
         {
@@ -4376,7 +4630,7 @@ class coreDatabase: NSObject
 
     }
     
-    func saveTeam(inTeamID: Int, inName: String, inStatus: String, inNote: String, inType: String, inPredecessor: Int, inExternalID: Int)
+    func saveTeam(inTeamID: Int, inName: String, inStatus: String, inNote: String, inType: String, inPredecessor: Int, inExternalID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
         var myTeam: Team!
         
@@ -4390,10 +4644,18 @@ class coreDatabase: NSObject
             myTeam.status = inStatus
             myTeam.note = inNote
             myTeam.type = inType
-            myTeam.updateTime = NSDate()
-            myTeam.updateType = "Add"
             myTeam.predecessor = inPredecessor
             myTeam.externalID = inExternalID
+            if inUpdateType == "CODE"
+            {
+                myTeam.updateTime = NSDate()
+                myTeam.updateType = "Add"
+            }
+            else
+            {
+                myTeam.updateTime = inUpdateTime
+                myTeam.updateType = inUpdateType
+            }
         }
         else
         { // Update
@@ -4402,14 +4664,21 @@ class coreDatabase: NSObject
             myTeam.status = inStatus
             myTeam.note = inNote
             myTeam.type = inType
-            
-            if myTeam.updateType != "Add"
-            {
-                myTeam.updateType = "Update"
-            }
-            myTeam.updateTime = NSDate()
             myTeam.predecessor = inPredecessor
             myTeam.externalID = inExternalID
+            if inUpdateType == "CODE"
+            {
+                if myTeam.updateType != "Add"
+                {
+                    myTeam.updateType = "Update"
+                }
+                myTeam.updateTime = NSDate()
+            }
+            else
+            {
+                myTeam.updateTime = inUpdateTime
+                myTeam.updateType = inUpdateType
+            }
         }
         
         do
@@ -4514,7 +4783,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func saveProjectNote(inProjectID: Int, inNote: String, inReviewPeriod: String, inPredecessor: Int)
+    func saveProjectNote(inProjectID: Int, inNote: String, inReviewPeriod: String, inPredecessor: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
         var myProjectNote: ProjectNote!
         
@@ -4525,23 +4794,39 @@ class coreDatabase: NSObject
             myProjectNote = NSEntityDescription.insertNewObjectForEntityForName("ProjectNote", inManagedObjectContext: self.managedObjectContext!) as! ProjectNote
             myProjectNote.projectID = inProjectID
             myProjectNote.note = inNote
-            myProjectNote.updateTime = NSDate()
-            myProjectNote.updateType = "Add"
+
             myProjectNote.reviewPeriod = inReviewPeriod
             myProjectNote.predecessor = inPredecessor
+            if inUpdateType == "CODE"
+            {
+                myProjectNote.updateTime = NSDate()
+                myProjectNote.updateType = "Add"
+            }
+            else
+            {
+                myProjectNote.updateTime = inUpdateTime
+                myProjectNote.updateType = inUpdateType
+            }
         }
         else
         { // Update
             myProjectNote = myTeams[0]
             myProjectNote.note = inNote
-            
-            if myProjectNote.updateType != "Add"
-            {
-                myProjectNote.updateType = "Update"
-            }
-            myProjectNote.updateTime = NSDate()
             myProjectNote.reviewPeriod = inReviewPeriod
             myProjectNote.predecessor = inPredecessor
+            if inUpdateType == "CODE"
+            {
+                if myProjectNote.updateType != "Add"
+                {
+                    myProjectNote.updateType = "Update"
+                }
+                myProjectNote.updateTime = NSDate()
+            }
+            else
+            {
+                myProjectNote.updateTime = inUpdateTime
+                myProjectNote.updateType = inUpdateType
+            }
         }
         
         do
@@ -5300,4 +5585,465 @@ class coreDatabase: NSObject
         
         return fetchResults!
     }
+    
+    func deleteAllCoreData()
+    {
+        let fetchRequest2 = NSFetchRequest(entityName: "Context")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults2 = (try? managedObjectContext!.executeFetchRequest(fetchRequest2)) as? [Context]
+        
+        for myItem2 in fetchResults2!
+        {
+            managedObjectContext!.deleteObject(myItem2 as NSManagedObject)
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+        
+        let fetchRequest3 = NSFetchRequest(entityName: "Decodes")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults3 = (try? managedObjectContext!.executeFetchRequest(fetchRequest3)) as? [Decodes]
+        
+        for myItem3 in fetchResults3!
+        {
+            managedObjectContext!.deleteObject(myItem3 as NSManagedObject)
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+        
+        let fetchRequest5 = NSFetchRequest(entityName: "MeetingAgenda")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults5 = (try? managedObjectContext!.executeFetchRequest(fetchRequest5)) as? [MeetingAgenda]
+        
+        for myItem5 in fetchResults5!
+        {
+            managedObjectContext!.deleteObject(myItem5 as NSManagedObject)
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+        
+        let fetchRequest6 = NSFetchRequest(entityName: "MeetingAgendaItem")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults6 = (try? managedObjectContext!.executeFetchRequest(fetchRequest6)) as? [MeetingAgendaItem]
+        
+        for myItem6 in fetchResults6!
+        {
+            managedObjectContext!.deleteObject(myItem6 as NSManagedObject)
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+        
+        let fetchRequest7 = NSFetchRequest(entityName: "MeetingAttendees")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults7 = (try? managedObjectContext!.executeFetchRequest(fetchRequest7)) as? [MeetingAttendees]
+        
+        for myItem7 in fetchResults7!
+        {
+            managedObjectContext!.deleteObject(myItem7 as NSManagedObject)
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+        
+        let fetchRequest8 = NSFetchRequest(entityName: "MeetingSupportingDocs")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults8 = (try? managedObjectContext!.executeFetchRequest(fetchRequest8)) as? [MeetingSupportingDocs]
+        
+        for myItem8 in fetchResults8!
+        {
+            managedObjectContext!.deleteObject(myItem8 as NSManagedObject)
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+        
+        let fetchRequest9 = NSFetchRequest(entityName: "MeetingTasks")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults9 = (try? managedObjectContext!.executeFetchRequest(fetchRequest9)) as? [MeetingTasks]
+        
+        for myItem9 in fetchResults9!
+        {
+            managedObjectContext!.deleteObject(myItem9 as NSManagedObject)
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+        
+        let fetchRequest10 = NSFetchRequest(entityName: "Panes")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults10 = (try? managedObjectContext!.executeFetchRequest(fetchRequest10)) as? [Panes]
+        
+        for myItem10 in fetchResults10!
+        {
+            managedObjectContext!.deleteObject(myItem10 as NSManagedObject)
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+        
+        let fetchRequest11 = NSFetchRequest(entityName: "Projects")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults11 = (try? managedObjectContext!.executeFetchRequest(fetchRequest11)) as? [Projects]
+        
+        for myItem11 in fetchResults11!
+        {
+            managedObjectContext!.deleteObject(myItem11 as NSManagedObject)
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+        
+        let fetchRequest12 = NSFetchRequest(entityName: "ProjectTeamMembers")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults12 = (try? managedObjectContext!.executeFetchRequest(fetchRequest12)) as? [ProjectTeamMembers]
+        
+        for myItem12 in fetchResults12!
+        {
+            managedObjectContext!.deleteObject(myItem12 as NSManagedObject)
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+        
+        let fetchRequest14 = NSFetchRequest(entityName: "Roles")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults14 = (try? managedObjectContext!.executeFetchRequest(fetchRequest14)) as? [Roles]
+        
+        for myItem14 in fetchResults14!
+        {
+            managedObjectContext!.deleteObject(myItem14 as NSManagedObject)
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+        
+        let fetchRequest15 = NSFetchRequest(entityName: "Stages")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults15 = (try? managedObjectContext!.executeFetchRequest(fetchRequest15)) as? [Stages]
+        
+        for myItem15 in fetchResults15!
+        {
+            managedObjectContext!.deleteObject(myItem15 as NSManagedObject)
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+        
+        let fetchRequest16 = NSFetchRequest(entityName: "Task")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults16 = (try? managedObjectContext!.executeFetchRequest(fetchRequest16)) as? [Task]
+        
+        for myItem16 in fetchResults16!
+        {
+            managedObjectContext!.deleteObject(myItem16 as NSManagedObject)
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+        
+        let fetchRequest17 = NSFetchRequest(entityName: "TaskAttachment")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults17 = (try? managedObjectContext!.executeFetchRequest(fetchRequest17)) as? [TaskAttachment]
+        
+        for myItem17 in fetchResults17!
+        {
+            managedObjectContext!.deleteObject(myItem17 as NSManagedObject)
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+        
+        let fetchRequest18 = NSFetchRequest(entityName: "TaskContext")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults18 = (try? managedObjectContext!.executeFetchRequest(fetchRequest18)) as? [TaskContext]
+        
+        for myItem18 in fetchResults18!
+        {
+            managedObjectContext!.deleteObject(myItem18 as NSManagedObject)
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+        
+        let fetchRequest19 = NSFetchRequest(entityName: "TaskUpdates")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults19 = (try? managedObjectContext!.executeFetchRequest(fetchRequest19)) as? [TaskUpdates]
+        
+        for myItem19 in fetchResults19!
+        {
+            managedObjectContext!.deleteObject(myItem19 as NSManagedObject)
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+        
+        let fetchRequest21 = NSFetchRequest(entityName: "TaskPredecessor")
+        
+        let fetchResults21 = (try? managedObjectContext!.executeFetchRequest(fetchRequest21)) as? [TaskPredecessor]
+        
+        for myItem21 in fetchResults21!
+        {
+            managedObjectContext!.deleteObject(myItem21 as NSManagedObject)
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+        
+        let fetchRequest22 = NSFetchRequest(entityName: "Team")
+        
+        let fetchResults22 = (try? managedObjectContext!.executeFetchRequest(fetchRequest22)) as? [Team]
+        
+        for myItem22 in fetchResults22!
+        {
+            managedObjectContext!.deleteObject(myItem22 as NSManagedObject)
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+        
+        let fetchRequest23 = NSFetchRequest(entityName: "ProjectNote")
+        
+        let fetchResults23 = (try? managedObjectContext!.executeFetchRequest(fetchRequest23)) as? [ProjectNote]
+        
+        for myItem23 in fetchResults23!
+        {
+            managedObjectContext!.deleteObject(myItem23 as NSManagedObject)
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+        
+        let fetchRequest24 = NSFetchRequest(entityName: "Context1_1")
+        
+        let fetchResults24 = (try? managedObjectContext!.executeFetchRequest(fetchRequest24)) as? [Context1_1]
+        
+        for myItem24 in fetchResults24!
+        {
+            managedObjectContext!.deleteObject(myItem24 as NSManagedObject)
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+        
+        let fetchRequest25 = NSFetchRequest(entityName: "GTDItem")
+        
+        let fetchResults25 = (try? managedObjectContext!.executeFetchRequest(fetchRequest25)) as? [GTDItem]
+        
+        for myItem25 in fetchResults25!
+        {
+            managedObjectContext!.deleteObject(myItem25 as NSManagedObject)
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+        
+        let fetchRequest26 = NSFetchRequest(entityName: "GTDLevel")
+        
+        let fetchResults26 = (try? managedObjectContext!.executeFetchRequest(fetchRequest26)) as? [GTDLevel]
+        
+        for myItem26 in fetchResults26!
+        {
+            managedObjectContext!.deleteObject(myItem26 as NSManagedObject)
+        }
+        
+        do
+        {
+            try managedObjectContext!.save()
+        }
+        catch let error as NSError
+        {
+            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+            
+            print("Failure to save context: \(error)")
+        }
+        
+    }
+
 }

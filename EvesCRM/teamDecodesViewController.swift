@@ -166,7 +166,7 @@ class teamDecodesViewController: UIViewController, SMTEFillDelegate
         {
             // Add the new role
             
-            myDatabaseConnection.createRole(txtRoles.text!, inTeamID: myWorkingTeam.teamID)
+            myDatabaseConnection.saveRole(txtRoles.text!, teamID: myWorkingTeam.teamID)
             myWorkingTeam.loadRoles()
             myRoles = myWorkingTeam.roles
             colRoles.reloadData()
@@ -192,7 +192,7 @@ class teamDecodesViewController: UIViewController, SMTEFillDelegate
         {
             // Add the new role
             
-            myDatabaseConnection.createStage(txtStage.text!, inTeamID: myWorkingTeam.teamID)
+            myDatabaseConnection.saveStage(txtStage.text!, teamID: myWorkingTeam.teamID)
             myWorkingTeam.loadStages()
             myStages = myWorkingTeam.stages
             colStages.reloadData()

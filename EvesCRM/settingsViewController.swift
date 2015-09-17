@@ -257,11 +257,6 @@ class settingsViewController: UIViewController
         colDecodes.hidden = true
         btnSyncFromCloud.hidden = true
         btnSyncToCloud.hidden = true
-
-        lblRefreshMessage.hidden = true
-        colDecodes.hidden = false
-        btnSyncFromCloud.hidden = false
-        btnSyncToCloud.hidden = false
         
         NSNotificationCenter.defaultCenter().postNotificationName("NotificationCloudReLoadStart", object: nil)
     }
@@ -273,37 +268,21 @@ class settingsViewController: UIViewController
         dispatch_async(backgroundQueue, {
             
             self.syncStart = NSDate()
-// for testing I am using full logic here, it needs to be cutdown to perform refresh
-            // Get the last sync date
             
-            let lastSyncDate = myDatabaseConnection.getDecodeValue("CloudKit Sync")
+            let myDateFormatter = NSDateFormatter()
+            myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+                
+            self.syncDate = myDateFormatter.dateFromString("01/01/15")
             
-            if lastSyncDate == ""
-            {
-                let myDateFormatter = NSDateFormatter()
-                myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-                
-                self.syncDate = myDateFormatter.dateFromString("01/01/15")
-            }
-            else
-            {
-                // Convert string to date
-                
-                let myDateFormatter = NSDateFormatter()
-                myDateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZZ"
-                
-                self.syncDate = myDateFormatter.dateFromString(lastSyncDate)
-            }
-
+            myDBSync.refreshRunning = true
             // Delete the entries from the current tables
             
-            let myDBSync = DBSync()
-            
-       //     myDBSync.deleteAllFromCloudKit()
+            myDBSync.deleteAllFromCoreData()
             
             // Load
             
             myDBSync.syncFromCloudKit(self.syncDate)
+            myDBSync.refreshRunning = false
         })
     }
     
@@ -334,15 +313,15 @@ class settingsViewController: UIViewController
         
             self.syncDate = myDateFormatter.dateFromString("01/01/15")
 
+            myDBSync.refreshRunning = true
             // Delete the entries from the current tables
-        
-            let myDBSync = DBSync()
-        
+
             myDBSync.deleteAllFromCloudKit()
         
             // Load
         
             myDBSync.syncToCloudKit(self.syncDate)
+            myDBSync.refreshRunning = false
         })
     }
     

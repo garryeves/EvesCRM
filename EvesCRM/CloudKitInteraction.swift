@@ -27,7 +27,7 @@ class CloudKitInteraction
         publicDB = container.publicCloudDatabase // data saved here can be seen by all users
         privateDB = container.privateCloudDatabase // this is the one to use to save the data
         
-        userInfo = UserInfo(container: container)
+        userInfo = UserInfo(container: container)        
     }
     
     func saveContextToCloudKit(inLastSyncDate: NSDate)
@@ -35,7 +35,7 @@ class CloudKitInteraction
         NSLog("Syncing Contexts")
         for myItem in myDatabaseConnection.getContextsForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(contextID == \(myItem.contextID as Int))") // better be accurate to get only the record you need
+            let predicate = NSPredicate(format: "(contextID == \(myItem.contextID as Int)) && (teamID == \(myItem.teamID as Int))") // better be accurate to get only the record you need
             let query = CKQuery(recordType: "Context", predicate: predicate)
             privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -55,7 +55,6 @@ class CloudKitInteraction
                         record!.setValue(myItem.parentContext, forKey: "parentContext")
                         record!.setValue(myItem.personID, forKey: "personID")
                         record!.setValue(myItem.status, forKey: "status")
-                        record!.setValue(myItem.teamID, forKey: "teamID")
                         record!.setValue(myItem.updateTime, forKey: "updateTime")
                         record!.setValue(myItem.updateType, forKey: "updateType")
                         
@@ -225,7 +224,7 @@ class CloudKitInteraction
         NSLog("Syncing GTDItem")
         for myItem in myDatabaseConnection.getGTDItemsForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(gTDItemID == \(myItem.gTDItemID as! Int))")
+            let predicate = NSPredicate(format: "(gTDItemID == \(myItem.gTDItemID as! Int)) && (teamID == \(myItem.teamID as! Int))")
             let query = CKQuery(recordType: "GTDItem", predicate: predicate)
             privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -248,7 +247,6 @@ class CloudKitInteraction
                         record!.setValue(myItem.reviewFrequency, forKey: "reviewFrequency")
                         record!.setValue(myItem.reviewPeriod, forKey: "reviewPeriod")
                         record!.setValue(myItem.status, forKey: "status")
-                        record!.setValue(myItem.teamID, forKey: "teamID")
                         record!.setValue(myItem.title, forKey: "title")
                         record!.setValue(myItem.gTDLevel, forKey: "gTDLevel")
 
@@ -311,7 +309,7 @@ class CloudKitInteraction
         NSLog("Syncing GTDLevel")
         for myItem in myDatabaseConnection.getGTDLevelsForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(gTDLevel == \(myItem.gTDLevel as! Int))") // better be accurate to get only the record you need
+            let predicate = NSPredicate(format: "(gTDLevel == \(myItem.gTDLevel as! Int)) && (teamID == \(myItem.teamID as! Int))") // better be accurate to get only the record you need
             let query = CKQuery(recordType: "GTDLevel", predicate: predicate)
             privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -327,7 +325,6 @@ class CloudKitInteraction
                         // Apply whatever changes you want
                         record!.setValue(myItem.updateTime, forKey: "updateTime")
                         record!.setValue(myItem.updateType, forKey: "updateType")
-                        record!.setValue(myItem.teamID, forKey: "teamID")
                         record!.setValue(myItem.levelName, forKey: "levelName")
                         
                         // Save this record again
@@ -380,7 +377,7 @@ class CloudKitInteraction
         NSLog("Syncing Meeting Agenda")
         for myItem in myDatabaseConnection.getMeetingAgendasForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(meetingID == \"\(myItem.meetingID)\")") // better be accurate to get only the record you need
+            let predicate = NSPredicate(format: "(meetingID == \"\(myItem.meetingID)\") && (teamID == \(myItem.teamID as Int))") // better be accurate to get only the record you need
             let query = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
             privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -404,7 +401,6 @@ class CloudKitInteraction
                         record!.setValue(myItem.name, forKey: "name")
                         record!.setValue(myItem.previousMeetingID, forKey: "previousMeetingID")
                         record!.setValue(myItem.startTime, forKey: "startTime")
-                        record!.setValue(myItem.teamID, forKey: "teamID")
                         
                         // Save this record again
                         self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
@@ -827,7 +823,7 @@ class CloudKitInteraction
         NSLog("Syncing Projects")
         for myItem in myDatabaseConnection.getProjectsForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(projectID == \(myItem.projectID as Int))") // better be accurate to get only the record you need
+            let predicate = NSPredicate(format: "(projectID == \(myItem.projectID as Int)) && (teamID == \(myItem.teamID as Int))") // better be accurate to get only the record you need
             let query = CKQuery(recordType: "Projects", predicate: predicate)
             privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -853,7 +849,6 @@ class CloudKitInteraction
                         record!.setValue(myItem.repeatInterval, forKey: "repeatInterval")
                         record!.setValue(myItem.repeatType, forKey: "repeatType")
                         record!.setValue(myItem.reviewFrequency, forKey: "reviewFrequency")
-                        record!.setValue(myItem.teamID, forKey: "teamID")
                         
                         // Save this record again
                         self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
@@ -1027,7 +1022,7 @@ class CloudKitInteraction
         NSLog("Syncing Roles")
         for myItem in myDatabaseConnection.getRolesForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(roleID == \(myItem.roleID as Int))") // better be accurate to get only the record you need
+            let predicate = NSPredicate(format: "(roleID == \(myItem.roleID as Int)) && (teamID == \(myItem.teamID as Int))") // better be accurate to get only the record you need
             let query = CKQuery(recordType: "Roles", predicate: predicate)
             privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -1043,7 +1038,6 @@ class CloudKitInteraction
                         // Apply whatever changes you want
                         record!.setValue(myItem.updateTime, forKey: "updateTime")
                         record!.setValue(myItem.updateType, forKey: "updateType")
-                        record!.setValue(myItem.teamID, forKey: "teamID")
                         record!.setValue(myItem.roleDescription, forKey: "roleDescription")
                         
                         // Save this record again
@@ -1096,7 +1090,7 @@ class CloudKitInteraction
         NSLog("Syncing Stages")
         for myItem in myDatabaseConnection.getStagesForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(stageDescription == \"\(myItem.stageDescription)\")") // better be accurate to get only the record you need
+            let predicate = NSPredicate(format: "(stageDescription == \"\(myItem.stageDescription)\") && (teamID == \(myItem.teamID as Int))") // better be accurate to get only the record you need
             let query = CKQuery(recordType: "Stages", predicate: predicate)
             privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -1112,7 +1106,6 @@ class CloudKitInteraction
                         // Apply whatever changes you want
                         record!.setValue(myItem.updateTime, forKey: "updateTime")
                         record!.setValue(myItem.updateType, forKey: "updateType")
-                        record!.setValue(myItem.teamID, forKey: "teamID")
                         
                         // Save this record again
                         self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
@@ -1163,7 +1156,7 @@ class CloudKitInteraction
         NSLog("Syncing Task")
         for myItem in myDatabaseConnection.getTaskForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(taskID == \(myItem.taskID as Int))") // better be accurate to get only the record you need
+            let predicate = NSPredicate(format: "(taskID == \(myItem.taskID as Int)) && (teamID == \(myItem.teamID as Int))") // better be accurate to get only the record you need
             let query = CKQuery(recordType: "Task", predicate: predicate)
             privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -1192,9 +1185,9 @@ class CloudKitInteraction
                         record!.setValue(myItem.repeatType, forKey: "repeatType")
                         record!.setValue(myItem.startDate, forKey: "startDate")
                         record!.setValue(myItem.status, forKey: "status")
-                        record!.setValue(myItem.teamID, forKey: "teamID")
                         record!.setValue(myItem.title, forKey: "title")
                         record!.setValue(myItem.urgency, forKey: "urgency")
+                        record!.setValue(myItem.projectID, forKey: "projectID")
                         
                         // Save this record again
                         self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
@@ -1233,6 +1226,7 @@ class CloudKitInteraction
                         record.setValue(myItem.teamID, forKey: "teamID")
                         record.setValue(myItem.title, forKey: "title")
                         record.setValue(myItem.urgency, forKey: "urgency")
+                        record.setValue(myItem.projectID, forKey: "projectID")
                         
                         self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
@@ -1684,7 +1678,7 @@ class CloudKitInteraction
                 let teamID = record.objectForKey("teamID") as! Int
                 let title = record.objectForKey("title") as! String
                 let gTDLevel = record.objectForKey("gTDLevel") as! Int
-                
+
                 myDatabaseConnection.saveGTDItem(gTDItemID, inParentID: gTDParentID, inTitle: title, inStatus: status, inTeamID: teamID, inNote: note, inLastReviewDate: lastReviewDate, inReviewFrequency: reviewFrequency, inReviewPeriod: reviewPeriod, inPredecessor: predecessor, inGTDLevel: gTDLevel, inUpdateTime: updateTime, inUpdateType: updateType)
             }
             dispatch_semaphore_signal(sem)
@@ -1861,20 +1855,14 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
+                let pane_name = record.objectForKey("pane_name") as! String
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let pane_available = record.objectForKey("pane_available") as! Bool
+                let pane_order = record.objectForKey("pane_order") as! Int
+                let pane_visible = record.objectForKey("pane_visible") as! Bool
                 
-                let decodeName = record.objectForKey("decode_name")
-                let decodeValue = record.objectForKey("decode_value")
-                let decodeType = record.objectForKey("decodeType")
-                let updateTime = record.objectForKey("updateTime")
-                let updateType = record.objectForKey("updateType")
-                // myRecordList.append(record.recordID)
-                NSLog("decodeName = \(decodeName!)")
-                NSLog("decodeValue = \(decodeValue!)")
-                NSLog("decodeType = \(decodeType!)")
-                NSLog("updateTime = \(updateTime!)")
-                NSLog("updateType = \(updateType!)")
-                
-                myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+                myDatabaseConnection.savePane(pane_name, inPaneAvailable: pane_available, inPaneVisible: pane_visible, inPaneOrder: pane_order, inUpdateTime: updateTime, inUpdateType: updateType)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -1891,22 +1879,27 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
+                let projectID = record.objectForKey("projectID") as! Int
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let areaID = record.objectForKey("areaID") as! Int
+                let lastReviewDate = record.objectForKey("lastReviewDate") as! NSDate
+                let projectEndDate = record.objectForKey("projectEndDate") as! NSDate
+                let projectName = record.objectForKey("projectName") as! String
+                let projectStartDate = record.objectForKey("projectStartDate") as! NSDate
+                let projectStatus = record.objectForKey("projectStatus") as! String
+                let repeatBase = record.objectForKey("repeatBase") as! String
+                let repeatInterval = record.objectForKey("repeatInterval") as! Int
+                let repeatType = record.objectForKey("repeatType") as! String
+                let reviewFrequency = record.objectForKey("reviewFrequency") as! Int
+                let teamID = record.objectForKey("teamID") as! Int
+                let note = record.objectForKey("note") as! String
+                let reviewPeriod = record.objectForKey("reviewPeriod") as! String
+                let predecessor = record.objectForKey("predecessor") as! Int
                 
-                let decodeName = record.objectForKey("decode_name")
-                let decodeValue = record.objectForKey("decode_value")
-                let decodeType = record.objectForKey("decodeType")
-                let updateTime = record.objectForKey("updateTime")
-                let updateType = record.objectForKey("updateType")
-                // myRecordList.append(record.recordID)
-                NSLog("decodeName = \(decodeName!)")
-                NSLog("decodeValue = \(decodeValue!)")
-                NSLog("decodeType = \(decodeType!)")
-                NSLog("updateTime = \(updateTime!)")
-                NSLog("updateType = \(updateType!)")
+                myDatabaseConnection.saveProject(projectID, inProjectEndDate: projectEndDate, inProjectName: projectName, inProjectStartDate: projectStartDate, inProjectStatus: projectStatus, inReviewFrequency: reviewFrequency, inLastReviewDate: lastReviewDate, inGTDItemID: areaID, inRepeatInterval: repeatInterval, inRepeatType: repeatType, inRepeatBase: repeatBase, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
                 
-                myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
-                
-                myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+                myDatabaseConnection.saveProjectNote(projectID, inNote: note, inReviewPeriod: reviewPeriod, inPredecessor: predecessor, inUpdateTime: updateTime, inUpdateType: updateType)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -1923,20 +1916,14 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
+                let projectID = record.objectForKey("projectID") as! Int
+                let teamMember = record.objectForKey("teamMember") as! String
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let roleID = record.objectForKey("roleID") as! Int
+                let projectMemberNotes = record.objectForKey("projectMemberNotes") as! String
                 
-                let decodeName = record.objectForKey("decode_name")
-                let decodeValue = record.objectForKey("decode_value")
-                let decodeType = record.objectForKey("decodeType")
-                let updateTime = record.objectForKey("updateTime")
-                let updateType = record.objectForKey("updateType")
-                // myRecordList.append(record.recordID)
-                NSLog("decodeName = \(decodeName!)")
-                NSLog("decodeValue = \(decodeValue!)")
-                NSLog("decodeType = \(decodeType!)")
-                NSLog("updateTime = \(updateTime!)")
-                NSLog("updateType = \(updateType!)")
-                
-                myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+                myDatabaseConnection.saveTeamMember(projectID, inRoleID: roleID, inPersonName: teamMember, inNotes: projectMemberNotes, inUpdateTime: updateTime, inUpdateType: updateType)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -1953,20 +1940,13 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
+                let roleID = record.objectForKey("roleID") as! Int
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let teamID = record.objectForKey("teamID") as! Int
+                let roleDescription = record.objectForKey("roleDescription") as! String
                 
-                let decodeName = record.objectForKey("decode_name")
-                let decodeValue = record.objectForKey("decode_value")
-                let decodeType = record.objectForKey("decodeType")
-                let updateTime = record.objectForKey("updateTime")
-                let updateType = record.objectForKey("updateType")
-                // myRecordList.append(record.recordID)
-                NSLog("decodeName = \(decodeName!)")
-                NSLog("decodeValue = \(decodeValue!)")
-                NSLog("decodeType = \(decodeType!)")
-                NSLog("updateTime = \(updateTime!)")
-                NSLog("updateType = \(updateType!)")
-                
-                myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+                myDatabaseConnection.saveRole(roleDescription, teamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType, roleID: roleID)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -1983,20 +1963,12 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
+                let stageDescription = record.objectForKey("stageDescription") as! String
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let teamID = record.objectForKey("teamID") as! Int
                 
-                let decodeName = record.objectForKey("decode_name")
-                let decodeValue = record.objectForKey("decode_value")
-                let decodeType = record.objectForKey("decodeType")
-                let updateTime = record.objectForKey("updateTime")
-                let updateType = record.objectForKey("updateType")
-                // myRecordList.append(record.recordID)
-                NSLog("decodeName = \(decodeName!)")
-                NSLog("decodeValue = \(decodeValue!)")
-                NSLog("decodeType = \(decodeType!)")
-                NSLog("updateTime = \(updateTime!)")
-                NSLog("updateType = \(updateType!)")
-                
-                myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+                myDatabaseConnection.saveStage(stageDescription, teamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -2013,20 +1985,28 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
+                let taskID = record.objectForKey("taskID") as! Int
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let completionDate = record.objectForKey("completionDate") as! NSDate
+                let details = record.objectForKey("details") as! String
+                let dueDate = record.objectForKey("dueDate") as! NSDate
+                let energyLevel = record.objectForKey("energyLevel") as! String
+                let estimatedTime = record.objectForKey("estimatedTime") as! Int
+                let estimatedTimeType = record.objectForKey("estimatedTimeType") as! String
+                let flagged = record.objectForKey("flagged") as! Bool
+                let priority = record.objectForKey("priority") as! String
+                let repeatBase = record.objectForKey("repeatBase") as! String
+                let repeatInterval = record.objectForKey("repeatInterval") as! Int
+                let repeatType = record.objectForKey("repeatType") as! String
+                let startDate = record.objectForKey("startDate") as! NSDate
+                let status = record.objectForKey("status") as! String
+                let teamID = record.objectForKey("teamID") as! Int
+                let title = record.objectForKey("title") as! String
+                let urgency = record.objectForKey("urgency") as! String
+                let projectID = record.objectForKey("projectID") as! Int
                 
-                let decodeName = record.objectForKey("decode_name")
-                let decodeValue = record.objectForKey("decode_value")
-                let decodeType = record.objectForKey("decodeType")
-                let updateTime = record.objectForKey("updateTime")
-                let updateType = record.objectForKey("updateType")
-                // myRecordList.append(record.recordID)
-                NSLog("decodeName = \(decodeName!)")
-                NSLog("decodeValue = \(decodeValue!)")
-                NSLog("decodeType = \(decodeType!)")
-                NSLog("updateTime = \(updateTime!)")
-                NSLog("updateType = \(updateType!)")
-                
-                myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+                myDatabaseConnection.saveTask(taskID, inTitle: title, inDetails: details, inDueDate: dueDate, inStartDate: startDate, inStatus: status, inPriority: priority, inEnergyLevel: energyLevel, inEstimatedTime: estimatedTime, inEstimatedTimeType: estimatedTimeType, inProjectID: projectID, inCompletionDate: completionDate, inRepeatInterval: repeatInterval, inRepeatType: repeatType, inRepeatBase: repeatBase, inFlagged: flagged, inUrgency: urgency, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -2041,22 +2021,16 @@ class CloudKitInteraction
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
         let query: CKQuery = CKQuery(recordType: "TaskAttachment", predicate: predicate)
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
-            for record in results!
+         //   for record in results!
+            for _ in results!
             {
-                
-                let decodeName = record.objectForKey("decode_name")
-                let decodeValue = record.objectForKey("decode_value")
-                let decodeType = record.objectForKey("decodeType")
-                let updateTime = record.objectForKey("updateTime")
-                let updateType = record.objectForKey("updateType")
-                // myRecordList.append(record.recordID)
-                NSLog("decodeName = \(decodeName!)")
-                NSLog("decodeValue = \(decodeValue!)")
-                NSLog("decodeType = \(decodeType!)")
-                NSLog("updateTime = \(updateTime!)")
-                NSLog("updateType = \(updateType!)")
-                
-                myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+            //    let taskID = record.objectForKey("taskID") as! Int
+            //    let title = record.objectForKey("title") as! String
+            //    let updateTime = record.objectForKey("updateTime") as! NSDate
+            //    let updateType = record.objectForKey("updateType") as! String
+            //    let attachment = record.objectForKey("attachment") as! NSData
+               NSLog("updateTaskAttachmentInCoreData - Still to be coded")
+             //   myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -2073,20 +2047,12 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
+                let taskID = record.objectForKey("taskID") as! Int
+                let contextID = record.objectForKey("contextID") as! Int
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
                 
-                let decodeName = record.objectForKey("decode_name")
-                let decodeValue = record.objectForKey("decode_value")
-                let decodeType = record.objectForKey("decodeType")
-                let updateTime = record.objectForKey("updateTime")
-                let updateType = record.objectForKey("updateType")
-                // myRecordList.append(record.recordID)
-                NSLog("decodeName = \(decodeName!)")
-                NSLog("decodeValue = \(decodeValue!)")
-                NSLog("decodeType = \(decodeType!)")
-                NSLog("updateTime = \(updateTime!)")
-                NSLog("updateType = \(updateType!)")
-                
-                myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+                myDatabaseConnection.saveTaskContext(contextID, inTaskID: taskID, inUpdateTime: updateTime, inUpdateType: updateType)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -2103,20 +2069,13 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
+                let taskID = record.objectForKey("taskID") as! Int
+                let predecessorID = record.objectForKey("predecessorID") as! Int
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let predecessorType = record.objectForKey("predecessorType") as! String
                 
-                let decodeName = record.objectForKey("decode_name")
-                let decodeValue = record.objectForKey("decode_value")
-                let decodeType = record.objectForKey("decodeType")
-                let updateTime = record.objectForKey("updateTime")
-                let updateType = record.objectForKey("updateType")
-                // myRecordList.append(record.recordID)
-                NSLog("decodeName = \(decodeName!)")
-                NSLog("decodeValue = \(decodeValue!)")
-                NSLog("decodeType = \(decodeType!)")
-                NSLog("updateTime = \(updateTime!)")
-                NSLog("updateType = \(updateType!)")
-                
-                myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+                myDatabaseConnection.savePredecessorTask(taskID, inPredecessorID: predecessorID, inPredecessorType: predecessorType, inUpdateTime: updateTime, inUpdateType: updateType)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -2133,20 +2092,14 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
+                let taskID = record.objectForKey("taskID") as! Int
+                let updateDate = record.objectForKey("updateDate") as! NSDate
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let details = record.objectForKey("details") as! String
+                let source = record.objectForKey("source") as! String
                 
-                let decodeName = record.objectForKey("decode_name")
-                let decodeValue = record.objectForKey("decode_value")
-                let decodeType = record.objectForKey("decodeType")
-                let updateTime = record.objectForKey("updateTime")
-                let updateType = record.objectForKey("updateType")
-                // myRecordList.append(record.recordID)
-                NSLog("decodeName = \(decodeName!)")
-                NSLog("decodeValue = \(decodeValue!)")
-                NSLog("decodeType = \(decodeType!)")
-                NSLog("updateTime = \(updateTime!)")
-                NSLog("updateType = \(updateType!)")
-                
-                myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+                myDatabaseConnection.saveTaskUpdate(taskID, inDetails: details, inSource: source, inUpdateDate: updateDate, inUpdateTime: updateTime, inUpdateType: updateType)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -2163,20 +2116,17 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
+                let teamID = record.objectForKey("teamID") as! Int
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let name = record.objectForKey("name") as! String
+                let note = record.objectForKey("note") as! String
+                let status = record.objectForKey("status") as! String
+                let type = record.objectForKey("type") as! String
+                let predecessor = record.objectForKey("predecessor") as! Int
+                let externalID = record.objectForKey("externalID") as! Int
                 
-                let decodeName = record.objectForKey("decode_name")
-                let decodeValue = record.objectForKey("decode_value")
-                let decodeType = record.objectForKey("decodeType")
-                let updateTime = record.objectForKey("updateTime")
-                let updateType = record.objectForKey("updateType")
-                // myRecordList.append(record.recordID)
-                NSLog("decodeName = \(decodeName!)")
-                NSLog("decodeValue = \(decodeValue!)")
-                NSLog("decodeType = \(decodeType!)")
-                NSLog("updateTime = \(updateTime!)")
-                NSLog("updateType = \(updateType!)")
-                
-                myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+                myDatabaseConnection.saveTeam(teamID, inName: name, inStatus: status, inNote: note, inType: type, inPredecessor: predecessor, inExternalID: externalID, inUpdateTime: updateTime, inUpdateType: updateType)
             }
             dispatch_semaphore_signal(sem)
         })

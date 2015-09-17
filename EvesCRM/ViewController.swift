@@ -136,10 +136,11 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         
         // sync with the master database
         
-        let myDBSync = DBSync()
-        
         myDBSync.sync()
- 
+        myDBSync.startTimer()
+//        _ = NSTimer(timeInterval: 60, target: myDBSync, selector: "timerSync:", userInfo: nil, repeats: true)
+     //   let myTimer = NSTimer(timeInterval: 60, target: self, selector: "timerTest:", userInfo: nil, repeats: true)
+     //   NSTimer.scheduledTimerWithTimeInterval(60, target: self, selector: Selector("timerTest:"), userInfo: nil, repeats: true)
         //   code to reset decodes if needed for testing
  //       myDatabaseConnection.deleteDecodeValue()
         
@@ -168,8 +169,9 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
 
         // Now we will try and open Evernote
         
-        
+
         evernoteSession = ENSession.sharedSession()
+
 //        connectToEvernote()
         
        // Initial population of contact list
@@ -235,14 +237,14 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         TableTypeButton4.setTitle("Tasks", forState: .Normal)
        
         TableOptions = Array()
-        
+
         myEvernote = EvernoteDetails(inSession: self.evernoteSession)
         
         if evernoteSession.isAuthenticated
         {
             getEvernoteUserDetails()
         }
-        
+
         labelName.text = ""
     
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "OneNoteNotebookGetSections", name:"NotificationOneNoteNotebooksLoaded", object: nil)
@@ -260,7 +262,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         sideBar.delegate = self
 
         // Textexpander
-        
+
         if SMTEDelegateController.isTextExpanderTouchInstalled() == true
         {
             if textExpander == nil
@@ -275,6 +277,11 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         }
     }
 
+    func timerTest(timer:NSTimer)
+    {
+        NSLog("trigger")
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

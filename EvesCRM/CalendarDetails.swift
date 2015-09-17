@@ -883,7 +883,7 @@ class myCalendarItem
         // Save Agenda details
         if mySavedData
         {
-            myDatabaseConnection.updateAgenda(self)
+            myDatabaseConnection.createAgenda(self)
         }
         else
         {

@@ -33,10 +33,28 @@ class UserInfo {
     self.container = container;
   }
   
-  func loggedInToICloud(completion : (accountStatus : CKAccountStatus, error : NSError!) -> ()) {
+//  func loggedInToICloud(completion : (accountStatus : CKAccountStatus, error : NSError!) -> ()) {
     //replace this stub
-    completion(accountStatus: .CouldNotDetermine, error: nil)
-  }
+//    completion(accountStatus: .CouldNotDetermine, error: nil)
+//  }
+    
+    func loggedInToICloud() -> CKAccountStatus
+    {
+        var returnStatus: CKAccountStatus!
+        
+        let sem = dispatch_semaphore_create(0);
+        
+        container.accountStatusWithCompletionHandler({(accountStatus: CKAccountStatus, error: NSError? ) in
+            returnStatus = accountStatus
+            
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        
+        return returnStatus
+    }
+
   
   func userID(completion: (userRecordID: CKRecordID!, error: NSError!)->()) {
     if userRecordID != nil {

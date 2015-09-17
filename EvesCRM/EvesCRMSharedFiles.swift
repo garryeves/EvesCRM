@@ -14,6 +14,7 @@ import EventKit
 var dropboxCoreService: DropboxCoreService = DropboxCoreService()
 var myDatabaseConnection: coreDatabase!
 var myCloudDB: CloudKitInteraction!
+let myDBSync = DBSync()
 var adbk : ABAddressBook!
 var eventStore: EKEventStore!
 var debugMessages: Bool = false
@@ -244,7 +245,7 @@ func populateRoles(inTeamID: Int)
     
     for initialRole in initialRoles
     {
-        myDatabaseConnection.createRole(initialRole, inTeamID: inTeamID)
+        myDatabaseConnection.saveRole(initialRole, teamID: inTeamID)
     }
 }
 
@@ -421,7 +422,7 @@ func populateStages(inTeamID: Int)
     {
         if !myDatabaseConnection.stageExists(myItem, inTeamID: inTeamID)
         {
-            myDatabaseConnection.createStage(myItem, inTeamID: inTeamID)
+            myDatabaseConnection.saveStage(myItem, teamID: inTeamID)
         }
     }
 }

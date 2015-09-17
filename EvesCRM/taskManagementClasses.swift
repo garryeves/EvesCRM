@@ -448,8 +448,22 @@ class workingGTDItem: NSObject
             
             for myItem in myChildrenList
             {
-                let myNewChild = project(inProjectID: myItem.projectID as Int, inTeamID: myTeamID)
-                myChildren.append(myNewChild)
+                // Check to see if the start date is in the future
+                var boolAddProject: Bool = true
+                
+                if myItem.projectStartDate != getDefaultDate()
+                {
+                    if myItem.projectStartDate.compare(NSDate()) == NSComparisonResult.OrderedDescending
+                    {  // Start date is in future
+                        boolAddProject = false
+                    }
+                }
+                
+                if boolAddProject
+                {
+                    let myNewChild = project(inProjectID: myItem.projectID as Int, inTeamID: myTeamID)
+                    myChildren.append(myNewChild)
+                }
             }
         }
     }

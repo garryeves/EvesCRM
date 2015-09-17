@@ -10,48 +10,77 @@ import UIKit
 
 class DBSync: NSObject
 {
-    func sync()
+    var refreshRunning: Bool = false
+    
+    func startTimer()
     {
-        var syncDate: NSDate!
-        let syncStart = NSDate()
-        
-        // Get the last sync date
-        
-        let lastSyncDate = myDatabaseConnection.getDecodeValue("CloudKit Sync")
-        
-        if lastSyncDate == ""
-        {
-            let myDateFormatter = NSDateFormatter()
-            myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-            
-            syncDate = myDateFormatter.dateFromString("01/01/15")
-        }
-        else
-        {
-            // Convert string to date
-            
-            let myDateFormatter = NSDateFormatter()
-            myDateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZZ"
-            
-            syncDate = myDateFormatter.dateFromString(lastSyncDate)   
-        }
-
-        // Load
-
-        syncToCloudKit(syncDate)
-        
-        syncFromCloudKit(syncDate)
-        
-        // Update last sync date
-        
-        let dateString = "\(syncStart)"
-        
-        myDatabaseConnection.updateDecodeValue("CloudKit Sync", inCodeValue: dateString, inCodeType: "hidden")
-        
-        myDatabaseConnection.clearDeletedItems()
-        myDatabaseConnection.clearSyncedItems()
+       // _ = NSTimer(timeInterval: 300, target: self, selector: "timerSync:", userInfo: nil, repeats: true)
+         NSTimer.scheduledTimerWithTimeInterval(300, target: self, selector: Selector("timerSync:"), userInfo: nil, repeats: true)
     }
     
+    func timerSync(timer:NSTimer)
+    {
+        sync()
+    }
+    
+    func sync()
+    {
+        if !refreshRunning
+        {
+            let iCloudConnected = myCloudDB.userInfo.loggedInToICloud()
+        
+            if iCloudConnected == .Available
+            {
+                var syncDate: NSDate!
+                let syncStart = NSDate()
+        
+                // Get the last sync date
+        
+                let lastSyncDate = myDatabaseConnection.getDecodeValue("CloudKit Sync")
+        
+                if lastSyncDate == ""
+                {
+                    let myDateFormatter = NSDateFormatter()
+                    myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+            
+                    syncDate = myDateFormatter.dateFromString("01/01/15")
+                }
+                else
+                {
+                    // Convert string to date
+            
+                    let myDateFormatter = NSDateFormatter()
+                    myDateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZZ"
+            
+                    syncDate = myDateFormatter.dateFromString(lastSyncDate)
+                }
+
+                // Load
+
+                syncToCloudKit(syncDate)
+        
+                syncFromCloudKit(syncDate)
+        
+                // Update last sync date
+        
+                let dateString = "\(syncStart)"
+        
+                myDatabaseConnection.updateDecodeValue("CloudKit Sync", inCodeValue: dateString, inCodeType: "hidden")
+        
+                myDatabaseConnection.clearDeletedItems()
+                myDatabaseConnection.clearSyncedItems()
+            }
+            else if iCloudConnected == .CouldNotDetermine
+            {
+                NSLog("CouldNotDetermine")
+            }
+            else
+            {
+                NSLog("Other status")
+            }
+        }
+    }
+
     func syncToCloudKit(inDate: NSDate)
     {
         myCloudDB.saveContextToCloudKit(inDate)
@@ -126,5 +155,10 @@ class DBSync: NSObject
         myCloudDB.deleteTaskPredecessor()
         myCloudDB.deleteTaskUpdates()
         myCloudDB.deleteTeam()
+    }
+    
+    func deleteAllFromCoreData()
+    {
+        myDatabaseConnection.deleteAllCoreData()
     }
 }
