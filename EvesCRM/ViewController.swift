@@ -2732,7 +2732,7 @@ print("Nothing found")
             case "Header":
                 switch passedItem.displayString
                 {
-                    case "Projects":
+                    case "Planning":
                      //   let MaintainProjectViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("MaintainProject") as! MaintainProjectViewController
                     
                      //   MaintainProjectViewControl.delegate = self

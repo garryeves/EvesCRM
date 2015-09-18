@@ -327,7 +327,7 @@ class KDRearrangeableCollectionViewFlowLayout: UICollectionViewFlowLayout, UIGes
                         // If we have a collection view controller that implements the delegate we call the method first
                         if let delegate = self.collectionView!.delegate as? KDRearrangeableCollectionViewDelegate
                         {
-                            delegate.moveDataItem(bundle.currentIndexPath, toIndexPath: indexPath)
+                            delegate.moveDataItem(bundle.currentIndexPath, fromIndexPath: indexPath)
                         }
                             
                         self.collectionView!.moveItemAtIndexPath(bundle.currentIndexPath, toIndexPath: indexPath)

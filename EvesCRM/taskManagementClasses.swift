@@ -755,13 +755,13 @@ class project: NSObject // 10k level
     {
         get
         {
-            if myProjectStartDate == nil
+            if myLastReviewDate == nil
             {
-                myProjectStartDate = getDefaultDate()
+                myLastReviewDate = getDefaultDate()
                 save()
                 return ""
             }
-            else if myProjectStartDate == getDefaultDate()
+            else if myLastReviewDate == getDefaultDate()
             {
                 return ""
             }

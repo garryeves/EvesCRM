@@ -6419,7 +6419,7 @@
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="250" id="tGN-0f-MsU">
+                                    <constraint firstAttribute="height" priority="750" constant="250" id="tGN-0f-MsU">
                                         <variation key="heightClass=regular-widthClass=regular" constant="250"/>
                                     </constraint>
                                 </constraints>

@@ -396,116 +396,152 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
 
     func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView
     {
-            switch kind
+        let headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: "cellSectionHeader", forIndexPath: indexPath) as! GTDHeaderView
+        
+        if indexPath.section == 0
+        {
+            if myDisplayHeadArray[indexPath.row].isKindOfClass(team)
             {
-            case UICollectionElementKindSectionHeader:
-                let headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: "cellSectionHeader", forIndexPath: indexPath)
-                    as! GTDHeaderView
-                if indexPath.section == 0
+                headerView.lblTitle.text = "My Teams"
+            }
+            else if myDisplayHeadArray[indexPath.row].isKindOfClass(project)
+            {
+                headerView.lblTitle.text = "My Activities"
+            }
+            else if myDisplayHeadArray[indexPath.row].isKindOfClass(task)
+            {
+                headerView.lblTitle.text = "My Actions"
+            }
+            else if myDisplayHeadArray[indexPath.row].isKindOfClass(context)
+            {
+                headerView.lblTitle.text = "My Contexts"
+            }
+            else
+            {
+                let tempObject = myDisplayHeadArray[indexPath.row] as! workingGTDItem
+                        
+                let tempLevel = workingGTDLevel(inGTDLevel: tempObject.GTDLevel, inTeamID: tempObject.teamID)
+                        
+                headerView.lblTitle.text = "My \(tempLevel.title)"
+            }
+        }
+        else
+        {
+            if myDisplayBodyArray.count > 0
+            {
+                if myDisplayBodyArray[indexPath.row].isKindOfClass(team)
                 {
-                    if myDisplayHeadArray[indexPath.row].isKindOfClass(team)
-                    {
-                        headerView.lblTitle.text = "My Teams"
-                    }
-                    else if myDisplayHeadArray[indexPath.row].isKindOfClass(project)
-                    {
-                        headerView.lblTitle.text = "My Activities"
-                    }
-                    else if myDisplayHeadArray[indexPath.row].isKindOfClass(task)
-                    {
-                        headerView.lblTitle.text = "My Actions"
-                    }
-                    else if myDisplayHeadArray[indexPath.row].isKindOfClass(context)
-                    {
-                        headerView.lblTitle.text = "My Contexts"
-                    }
-                    else
-                    {
-                        let tempObject = myDisplayHeadArray[indexPath.row] as! workingGTDItem
-                        
-                        let tempLevel = workingGTDLevel(inGTDLevel: tempObject.GTDLevel, inTeamID: tempObject.teamID)
-                        
-                        headerView.lblTitle.text = "My \(tempLevel.title)"
-                    }
+                    headerView.lblTitle.text = "My Teams"
+                }
+                else if myDisplayBodyArray[indexPath.row].isKindOfClass(project)
+                {
+                    headerView.lblTitle.text = "My Activities"
+                }
+                else if myDisplayBodyArray[indexPath.row].isKindOfClass(task)
+                {
+                    headerView.lblTitle.text = "My Actions"
+                }
+                else if myDisplayBodyArray[indexPath.row].isKindOfClass(context)
+                {
+                    headerView.lblTitle.text = "My Contexts"
                 }
                 else
                 {
-                    if myDisplayBodyArray.count > 0
-                    {
-                        if myDisplayBodyArray[indexPath.row].isKindOfClass(team)
-                        {
-                            headerView.lblTitle.text = "My Teams"
-                        }
-                        else if myDisplayBodyArray[indexPath.row].isKindOfClass(project)
-                        {
-                            headerView.lblTitle.text = "My Activities"
-                        }
-                        else if myDisplayBodyArray[indexPath.row].isKindOfClass(task)
-                        {
-                            headerView.lblTitle.text = "My Actions"
-                        }
-                        else if myDisplayBodyArray[indexPath.row].isKindOfClass(context)
-                        {
-                            headerView.lblTitle.text = "My Contexts"
-                        }
-                        else
-                        {
-                            let tempObject = myDisplayBodyArray[indexPath.row] as! workingGTDItem
+                    let tempObject = myDisplayBodyArray[indexPath.row] as! workingGTDItem
                         
-                            let tempLevel = workingGTDLevel(inGTDLevel: tempObject.GTDLevel, inTeamID: tempObject.teamID)
+                    let tempLevel = workingGTDLevel(inGTDLevel: tempObject.GTDLevel, inTeamID: tempObject.teamID)
                         
-                            headerView.lblTitle.text = "My \(tempLevel.title)"
-                        }
-                    }
-                    else
-                    {
-                        headerView.lblTitle.text = ""
-                    }
+                    headerView.lblTitle.text = "My \(tempLevel.title)"
                 }
-                
-                return headerView
-                
-            default:
-                assert(false, "Unexpected element kind")
             }
+            else
+            {
+                headerView.lblTitle.text = ""
+            }
+        }
+                
+        return headerView
     }
 
     // Start move
 
-    func moveDataItem(fromIndexPath : NSIndexPath, toIndexPath: NSIndexPath) -> Void
+    func moveDataItem(toIndexPath : NSIndexPath, fromIndexPath: NSIndexPath) -> Void
     {
         NSLog("Action move")
-        /*
-        if fromIndexPath.item > myGTDHierarchy.count
+        
+        var fromID: Int = 0
+        var fromCurrentPredecessor: Int = 0
+        
+        if fromIndexPath.section == 0
         {
-            NSLog("Do nothing, outside of rearrange")
+            // Header Section
+            NSLog("header todo")
         }
         else
         {
-            //   let name = myDisplayHierarchy[fromIndexPath.item]
-            //    let myObject = myGTDHierarchy[fromIndexPath.item]
-
-            // We now need to update the underlying database tables
-
-            myGTDHierarchy[fromIndexPath.item].moveLevel(toIndexPath.item + 1)
-
-            loadHierarchy()
-            for myItem in myGTDHierarchy
+            if fromIndexPath.item > myDisplayBodyArray.count
             {
-                NSLog("Name = \(myItem.title) Level = \(myItem.GTDLevel)")
+                NSLog("Do nothing, outside of rearrange")
             }
+            else
+            {
+                
+                NSLog("From Index \(fromIndexPath.item)  to Index \(toIndexPath.item)")
+                
+                if fromIndexPath.item < toIndexPath.item
+                {
+                    if myDisplayBodyArray[fromIndexPath.item].isKindOfClass(project)
+                    {
+                        let fromItem = myDisplayBodyArray[fromIndexPath.item] as! project
 
-            colHierarchy.reloadData()
-            
-            //    myDisplayHierarchy.removeAtIndex(fromIndexPath.item)
-            //    myDisplayHierarchy.insert(name, atIndex: toIndexPath.item)
-            //    myGTDHierarchy.removeAtIndex(fromIndexPath.item)
-            //    myGTDHierarchy.insert(myObject, atIndex: toIndexPath.item)
+                        fromID = fromItem.projectID
+                     
+                        fromCurrentPredecessor = myDatabaseConnection.getProjectSuccessor(fromItem.projectID)
+                    }
+                    
+                    if myDisplayBodyArray[toIndexPath.item].isKindOfClass(project)
+                    {
+                        let toItem = myDisplayBodyArray[toIndexPath.item] as! project
+
+                        toItem.predecessor = fromID
+
+                        if fromCurrentPredecessor > 0
+                        {
+                            let tempSuccessor = project(inProjectID: fromCurrentPredecessor, inTeamID: toItem.teamID)
+                            tempSuccessor.predecessor = toItem.projectID
+                        }
+                    }
+                }
+                else
+                {
+                    if myDisplayBodyArray[fromIndexPath.item].isKindOfClass(project)
+                    {
+                        let fromItem = myDisplayBodyArray[fromIndexPath.item] as! project
+                        fromID = fromItem.projectID
+                        // Get any current success
+                    
+                        fromCurrentPredecessor = myDatabaseConnection.getProjectSuccessor(fromItem.projectID)
+                    }
+                
+                    if myDisplayBodyArray[toIndexPath.item].isKindOfClass(project)
+                    {
+                        let toItem = myDisplayBodyArray[toIndexPath.item] as! project
+                        toItem.predecessor = fromID
+                    
+                        if fromCurrentPredecessor > 0
+                        {
+                            let tempSuccessor = project(inProjectID: fromCurrentPredecessor, inTeamID: toItem.teamID)
+                            tempSuccessor.predecessor = toItem.projectID
+                        }
+                    }
+                }
+                
+                buildBody("project", inParentObject: mySavedParentObject)
+            }
         }
- 
-*/
+        colBody.reloadData()
     }
-    
+
     // End move
     
     func handleLongPress(gestureReconizer: textLongPressGestureRecognizer)
@@ -809,10 +845,51 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                 }
             
             case "project":
+                
                 let myObject = inParentObject as! workingGTDItem
+                var predecessorArray: [project] = Array()
+                
                 for myItem in myObject.children
                 {
-                    myDisplayBodyArray.append(myItem)
+                    let myWorkingItem = myItem as! project
+                    
+                    if myWorkingItem.predecessor == 0
+                    {
+                        myDisplayBodyArray.append(myWorkingItem)
+                    }
+                    else
+                    {
+                        predecessorArray.append(myWorkingItem)
+                    }
+                }
+            
+                predecessorArray.sortInPlace { $0.predecessor < $1.predecessor }
+                
+                for myItem in predecessorArray
+                {
+                    let myWorkingItem = myItem
+                    
+                    // Go through the array and find the "predecessor"
+                    var indexCount: Int = 0
+                    for mySort in myDisplayBodyArray
+                    {
+                        let myTempSort = mySort as! project
+                            
+                        if myTempSort.projectID == myWorkingItem.predecessor
+                        {
+                            
+                            if indexCount < myDisplayBodyArray.count
+                            {
+                                myDisplayBodyArray.insert(myItem, atIndex: indexCount + 1)
+                            }
+                            else
+                            {
+                                myDisplayBodyArray.append(myItem)
+                            }
+                            break
+                        }
+                        indexCount++
+                    }
                 }
             
             case "task":

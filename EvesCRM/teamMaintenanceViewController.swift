@@ -207,7 +207,7 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
     
     // Start move
     
-    func moveDataItem(fromIndexPath : NSIndexPath, toIndexPath: NSIndexPath) -> Void
+    func moveDataItem(toIndexPath : NSIndexPath, fromIndexPath: NSIndexPath) -> Void
     {
         if fromIndexPath.item > myGTDHierarchy.count
         {

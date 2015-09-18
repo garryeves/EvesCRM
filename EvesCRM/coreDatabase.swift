@@ -44,9 +44,13 @@ class coreDatabase: NSObject
         // doesn't have a title of "Best Language" exactly.
         let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (areaID == \(inGTDItemID)) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
         
+        let sortDescriptor = NSSortDescriptor(key: "projectID", ascending: true)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
-        
+
         // Execute the fetch request, and cast the results to an array of LogItem objects
         let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Projects]
         
@@ -74,6 +78,37 @@ class coreDatabase: NSObject
         return fetchResults!
     }
     
+    func getProjectSuccessor(projectID: Int)->Int
+    {
+        
+        let fetchRequest = NSFetchRequest(entityName: "ProjectNote")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(predecessor == \(projectID)) && (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Create a new fetch request using the entity
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [ProjectNote]
+        
+        var retVal: Int = 0
+        
+        if fetchResults!.count == 0
+        {
+            retVal = 0
+        }
+        else
+        {
+            retVal = fetchResults![0].predecessor as Int
+        }
+        
+        return retVal
+    }
+
     
     func getAllProjects(inTeamID: Int)->[Projects]
     {
@@ -2009,6 +2044,7 @@ class coreDatabase: NSObject
             myProject.repeatType = inRepeatType
             myProject.repeatBase = inRepeatBase
             myProject.teamID = inTeamID
+            
             if inUpdateType == "CODE"
             {
                 myProject.updateTime = NSDate()

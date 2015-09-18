@@ -71,15 +71,15 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>tetouch://</string>
+			<string>tetouch</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>tetouch://</string>
+				<string>tetouch</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>7</string>
+	<string>8</string>
 	<key>FacebookAppID</key>
 	<string>456682554489016</string>
 	<key>FacebookDisplayName</key>

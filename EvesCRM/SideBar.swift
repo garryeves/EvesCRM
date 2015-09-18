@@ -65,7 +65,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
         
         let myProjects = myDatabaseConnection.getAllOpenProjects(myCurrentTeam.teamID)
         
-        displayObject = createMenuItem("Projects", inType: "Header", inObject: "Projects")
+        displayObject = createMenuItem("Planning", inType: "Header", inObject: "Projects")
         menuDetails.append(displayObject)
         
         for myProject in myProjects
@@ -77,7 +77,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
         let myContextList = contexts()
         // Get list of People Contexts
         
-        displayObject = createMenuItem("Contexts", inType: "Header", inObject: "People")
+        displayObject = createMenuItem("People", inType: "Header", inObject: "People")
         menuDetails.append(displayObject)
         
         for myContext in myContextList.peopleContextsByHierarchy

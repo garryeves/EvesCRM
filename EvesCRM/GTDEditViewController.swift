@@ -184,36 +184,72 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
     
     @IBAction func btnPeriod(sender: UIButton)
     {
+        var selectedRow: Int = 0
+
         btnTargetDate.setTitle("Set Review period", forState: .Normal)
         btnTargetDate.hidden = false
         
         pickerOptions.removeAll(keepCapacity: false)
         pickerOptions.append("")
+        
+        if inGTDObject.reviewPeriod == "Days"
+        {
+            selectedRow = 1
+        }
         pickerOptions.append("Days")
+        
+        if inGTDObject.reviewPeriod == "Weeks"
+        {
+            selectedRow = 2
+        }
         pickerOptions.append("Weeks")
+        
+        if inGTDObject.reviewPeriod == "Months"
+        {
+            selectedRow = 3
+        }
         pickerOptions.append("Months")
+        
+        if inGTDObject.reviewPeriod == "Years"
+        {
+            selectedRow = 4
+        }
         pickerOptions.append("Years")
+        
         hideFields()
         myPicker.hidden = false
         myPicker.reloadAllComponents()
         pickerTarget = "Period"
-        myPicker.selectRow(0,inComponent: 0, animated: true)
+        myPicker.selectRow(selectedRow,inComponent: 0, animated: true)
     }
     
     @IBAction func btnStatus(sender: UIButton)
     {
+        var selectedRow: Int = 0
+
         btnTargetDate.setTitle("Set Status", forState: .Normal)
         btnTargetDate.hidden = false
         
         pickerOptions.removeAll(keepCapacity: false)
+        
         pickerOptions.append("")
+        if inGTDObject.status == "Open"
+        {
+            selectedRow = 1
+        }
         pickerOptions.append("Open")
+        
+        if inGTDObject.status == "Closed"
+        {
+            selectedRow = 2
+        }
         pickerOptions.append("Closed")
+        
         hideFields()
         myPicker.hidden = false
         myPicker.reloadAllComponents()
         pickerTarget = "Status"
-        myPicker.selectRow(0,inComponent: 0, animated: true)
+        myPicker.selectRow(selectedRow,inComponent: 0, animated: true)
     }
     
     func hideFields()

@@ -16,7 +16,7 @@ protocol MyMaintainProjectDelegate{
     func myGTDPlanningDidFinish(controller:MaintainGTDPlanningViewController)
 }
 
-class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, SMTEFillDelegate, UITextViewDelegate
+class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, SMTEFillDelegate, UITextViewDelegate, UITextFieldDelegate
 {
    private var passedGTD: GTDModel!
     
@@ -48,7 +48,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     @IBOutlet weak var btnMarkReviewed: UIButton!
     
  //   var delegate: MyMaintainProjectDelegate?
-        
+
     var myActionType: String = "Add"
     var inProjectObject: project!
     var mySelectedTeam: team!
@@ -68,6 +68,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     private var pickerTarget: String = ""
     private var pickerDisplayArray: [String] = Array()
     private var mySelectedRow: Int = -1
+    private var kbHeight: CGFloat!
     
     // Textexpander
     
@@ -178,6 +179,9 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         
         colTeamMembers.hidden = false
         
+        txtRepeatInterval.delegate = self
+        txtReviewFrquency.delegate = self
+        
         // TextExpander
         textExpander = SMTEDelegateController()
         txtTitle.delegate = textExpander
@@ -193,6 +197,21 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "changeRole:", name:"NotificationChangeRole", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "performDeleteTeamMember:", name:"NotificationPerformDelete", object: nil)
 
+    }
+    
+    override func viewWillAppear(animated:Bool)
+    {
+        super.viewWillAppear(animated)
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillShow:"), name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillHide:"), name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    override func viewWillDisappear(animated: Bool)
+    {
+        super.viewWillDisappear(animated)
+        
+        NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
     override func didReceiveMemoryWarning()
@@ -410,6 +429,8 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     
     @IBAction func btnProjectStage(sender: UIButton)
     {
+        var selectedRow: Int = 0
+        var rowCount: Int = 0
         myActionType = "Edit"
         mySelectedTeam.loadStages()
         myStages = mySelectedTeam.stages
@@ -419,6 +440,11 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         for myItem in myStages
         {
             pickerDisplayArray.append(myItem.stageDescription)
+            if myItem.stageDescription == inProjectObject.projectStatus
+            {
+                selectedRow = rowCount
+            }
+            rowCount++
         }
         
         btnSelectPicker.setTitle("Select Stage", forState: .Normal)
@@ -427,6 +453,14 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         btnSelectPicker.hidden = false
         statusPicker.hidden = false
         mySelectedRow = -1
+        if selectedRow > 0
+        {
+            statusPicker.selectRow(selectedRow + 1, inComponent: 0, animated: true)
+        }
+        else
+        {
+            statusPicker.selectRow(0, inComponent: 0, animated: true)
+        }
         hideFields()
 
     }
@@ -499,12 +533,19 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     
     @IBAction func btnRepeatPeriod(sender: UIButton)
     {
+        var selectedRow: Int = 0
+        var rowCount: Int = 0
         myActionType = "Edit"
         pickerDisplayArray.removeAll()
         
         for myItem in myRepeatPeriods
         {
             pickerDisplayArray.append(myItem)
+            if myItem == inProjectObject.repeatType
+            {
+                selectedRow = rowCount
+            }
+            rowCount++
         }
         btnSelectPicker.setTitle("Select Repeating type", forState: .Normal)
         pickerTarget = "RepeatPeriod"
@@ -512,17 +553,25 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         btnSelectPicker.hidden = false
         statusPicker.hidden = false
         mySelectedRow = -1
+        statusPicker.selectRow(selectedRow, inComponent: 0, animated: true)
         hideFields()
     }
     
     @IBAction func btnRepeatBase(sender: UIButton)
     {
+        var selectedRow: Int = 0
+        var rowCount: Int = 0
         myActionType = "Edit"
         pickerDisplayArray.removeAll()
         
         for myItem in myRepeatBases
         {
             pickerDisplayArray.append(myItem)
+            if myItem == inProjectObject.repeatBase
+            {
+                selectedRow = rowCount
+            }
+            rowCount++
         }
         btnSelectPicker.setTitle("Select Repeating base", forState: .Normal)
         pickerTarget = "RepeatBase"
@@ -530,24 +579,33 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
         btnSelectPicker.hidden = false
         statusPicker.hidden = false
         mySelectedRow = -1
+        statusPicker.selectRow(selectedRow, inComponent: 0, animated: true)
         hideFields()
     }
     
     @IBAction func btnReviewPeriod(sender: UIButton)
     {
+        var selectedRow: Int = 0
+        var rowCount: Int = 0
         myActionType = "Edit"
         pickerDisplayArray.removeAll()
         
         for myItem in myRepeatPeriods
         {
             pickerDisplayArray.append(myItem)
+            if myItem == inProjectObject.reviewPeriod
+            {
+                selectedRow = rowCount
+            }
+            rowCount++
         }
-        btnSelectPicker.setTitle("Select Repeating type", forState: .Normal)
+        btnSelectPicker.setTitle("Select Review Period", forState: .Normal)
         pickerTarget = "ReviewPeriod"
         statusPicker.reloadAllComponents()
         btnSelectPicker.hidden = false
         statusPicker.hidden = false
         mySelectedRow = -1
+        statusPicker.selectRow(selectedRow, inComponent: 0, animated: true)
         hideFields()
     }
     
@@ -602,8 +660,10 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
             if pickerTarget == "ReviewPeriod"
             {
                 inProjectObject.reviewPeriod = myRepeatPeriods[mySelectedRow]
-                btnProjectStage.setTitle(inProjectObject.reviewPeriod, forState: UIControlState.Normal)
+                btnReviewPeriod.setTitle(inProjectObject.reviewPeriod, forState: UIControlState.Normal)
             }
+            
+            statusPicker.selectRow(0, inComponent: 0, animated: true)
         }
         
         if pickerTarget == "StartDate"
@@ -694,6 +754,86 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     func myMaintainProjectDidFinish(controller:MaintainProjectViewController, actionType: String)
     {
         controller.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    
+ //   func textFieldShouldReturn(textField: UITextField) -> Bool
+ //   {
+ //       textField.resignFirstResponder()
+        
+ //       return true
+ //   }
+    
+    func keyboardWillShow(notification: NSNotification)
+    {
+        if let userInfo = notification.userInfo {
+            if let keyboardSize =  (userInfo[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
+                kbHeight = keyboardSize.height
+                self.animateTextField(true)
+            }
+        }
+    }
+    
+    func keyboardWillHide(notification: NSNotification)
+    {
+        self.animateTextField(false)
+    }
+    
+    func animateTextField(up: Bool)
+    {
+        var boolActionMove = false
+        let movement = (up ? -kbHeight : kbHeight)
+        
+        if txtTitle.isFirstResponder()
+        {
+            //  This is at the top, so we do not need to do anything
+            boolActionMove = false
+        }
+        else if txtRepeatInterval.isFirstResponder()
+        {
+            boolActionMove = true
+        }
+        else if txtReviewFrquency.isFirstResponder()
+        {
+            boolActionMove = true
+        }
+        else if txtNotes.isFirstResponder()
+        {
+            boolActionMove = true
+        }
+        
+        if boolActionMove
+        {
+            UIView.animateWithDuration(0.3, animations: {
+                self.view.frame = CGRectOffset(self.view.frame, 0, movement)
+
+            })
+
+            if up
+            {
+                for myItem in colTeamMembers.constraints
+                {
+                    if myItem.firstAttribute == NSLayoutAttribute.Height && myItem.firstItem.isKindOfClass(UICollectionView)
+                    {
+                        myItem.constant = 0
+                        colTeamMembers.layoutIfNeeded()
+                    }
+                }
+            }
+            else
+            {
+                for myItem in colTeamMembers.constraints
+                {
+                    if myItem.firstAttribute == NSLayoutAttribute.Height && myItem.firstItem.isKindOfClass(UICollectionView)
+                    {
+                        myItem.constant = 250
+                        colTeamMembers.layoutIfNeeded()
+                    }
+                }
+            }
+        
+
+        }
     }
     
     //---------------------------------------------------------------
