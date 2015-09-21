@@ -58,61 +58,113 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
     
     func loadMenuItems()
     {
-        var displayObject: menuObject!
-        // Get list of Projects
+        var numSections: Int = 1
         
+        // Get list of Projects
         menuDetails.removeAll(keepCapacity: false)
         
-        let myProjects = myDatabaseConnection.getAllOpenProjects(myCurrentTeam.teamID)
+        var headerArray: [menuObject] = Array()
+        var fullArray: [menuEntry] = Array()
         
-        displayObject = createMenuItem("Planning", inType: "Header", inObject: "Projects")
-        menuDetails.append(displayObject)
+        let planningObject = createMenuItem("Planning", inType: "Header", inObject: "Projects")
+        planningObject.section = "Header"
         
-        for myProject in myProjects
+        menuDetails.append(planningObject)
+        headerArray.append(planningObject)
+        
+        let doingObject = createMenuItem("Doing", inType: "Header-Disclosure", inObject: "Projects")
+        doingObject.type = "disclosure"
+        doingObject.section = "Header"
+        menuDetails.append(doingObject)
+        headerArray.append(doingObject)
+        
+        for myTeamItem in myDatabaseConnection.getAllTeams()
         {
-            displayObject = createMenuItem(myProject.projectName, inType: "Project", inObject: myProject)
-            menuDetails.append(displayObject)
+            numSections++
+            let myTeam = team(inTeamID: myTeamItem.teamID as Int)
+            let teamObject = createMenuItem(myTeam.name, inType: "Disclosure", inObject: "Projects")
+            teamObject.indentation = 1
+            teamObject.type = "disclosure"
+            teamObject.section = "Team"
+            menuDetails.append(teamObject)
+            
+            let myProjects = myDatabaseConnection.getProjects(myTeam.teamID)
+            for myProject in myProjects
+            {
+                let displayObject = createMenuItem(myProject.projectName, inType: "Project", inObject: myProject)
+                displayObject.indentation = 2
+                displayObject.section = "\(myTeam.teamID)"
+                menuDetails.append(displayObject)
+            }
         }
         
         let myContextList = contexts()
         // Get list of People Contexts
         
-        displayObject = createMenuItem("People", inType: "Header", inObject: "People")
-        menuDetails.append(displayObject)
+        let peopleObject = createMenuItem("People", inType: "Header-Disclosure", inObject: "People")
+        peopleObject.type = "disclosure"
+        peopleObject.section = "Header"
+        menuDetails.append(peopleObject)
+        headerArray.append(peopleObject)
         
         for myContext in myContextList.peopleContextsByHierarchy
         {
-            displayObject = createMenuItem(myContext.contextHierarchy, inType: "People", inObject: myContext)
+            numSections++
+            let displayObject = createMenuItem(myContext.contextHierarchy, inType: "People", inObject: myContext)
+            displayObject.indentation = 1
+            peopleObject.section = "People"
             menuDetails.append(displayObject)
         }
         
-        displayObject = createMenuItem("Address Book", inType: "People", inObject: "Address Book")
-        menuDetails.append(displayObject)
+        let addressObject = createMenuItem("Address Book", inType: "People", inObject: "Address Book")
+        addressObject.indentation = 1
+        addressObject.section = "People"
+        menuDetails.append(addressObject)
         
         // Get list of Non People Contexts
         
-        displayObject = createMenuItem("Contexts", inType: "Header", inObject: "Contexts")
-        menuDetails.append(displayObject)
+        let contextObject = createMenuItem("Contexts", inType: "Header-Disclosure", inObject: "Contexts")
+        contextObject.type = "disclosure"
+        contextObject.section = "Header"
+        menuDetails.append(contextObject)
+        headerArray.append(contextObject)
         
         for myContext in myContextList.nonPeopleContextsByHierarchy
         {
-            displayObject = createMenuItem(myContext.contextHierarchy, inType: "Context", inObject: myContext)
+            numSections++
+            let displayObject = createMenuItem(myContext.contextHierarchy, inType: "Context", inObject: myContext)
+            displayObject.indentation = 1
+            displayObject.section = "Context"
             menuDetails.append(displayObject)
         }
         
-        displayObject = createMenuItem("Actions", inType: "Header", inObject: "Action")
-        menuDetails.append(displayObject)
+        let actionsObject = createMenuItem("Actions", inType: "Header-Disclosure", inObject: "Action")
+        actionsObject.type = "disclosure"
+        actionsObject.section = "Header"
+        menuDetails.append(actionsObject)
+        headerArray.append(actionsObject)
         
-        displayObject = createMenuItem("Maintain Display Panes", inType: "Action", inObject: "Maintain Display Panes")
-        menuDetails.append(displayObject)
+        numSections++
+        let displayPanesObject = createMenuItem("Maintain Display Panes", inType: "Action", inObject: "Maintain Display Panes")
+        displayPanesObject.indentation = 1
+        displayPanesObject.section = "Action"
+        menuDetails.append(displayPanesObject)
        
-        displayObject = createMenuItem("Load TextExpander Snippets", inType: "Action", inObject: "Load TextExpander Snippets")
-        menuDetails.append(displayObject)
+        let textExpanderObject = createMenuItem("Load TextExpander Snippets", inType: "Action", inObject: "Load TextExpander Snippets")
+        textExpanderObject.indentation = 1
+        textExpanderObject.section = "Action"
+        menuDetails.append(textExpanderObject)
         
-        displayObject = createMenuItem("Settings", inType: "Action", inObject: "Settings")
-        menuDetails.append(displayObject)
+        let settingObject = createMenuItem("Settings", inType: "Action", inObject: "Settings")
+        settingObject.indentation = 1
+        settingObject.section = "Action"
+        menuDetails.append(settingObject)
+        
+        let headerEntry = menuEntry(menuType: "Header", menuEntries: headerArray)
+        fullArray.append(headerEntry)
         
         sideBarTableViewController.tableData = menuDetails
+        sideBarTableViewController.numberOfSections = numSections
         sideBarTableViewController.tableView.reloadData()
     }
     

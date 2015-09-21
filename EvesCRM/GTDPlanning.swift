@@ -31,7 +31,6 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
     private var highlightID: Int = 0
 //    private var myParentObject: AnyObject!
     private var mySelectedTeam: team!
-    private var myBodyObjectType: String = ""
     private var myHeadObjectType: String = ""
     private var mySavedParentObject: AnyObject!
     
@@ -58,7 +57,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         
         highlightID = myCurrentTeam.teamID
         mySelectedTeam = myCurrentTeam
-        buildHead("Team", inHighlightedID: myCurrentTeam.teamID)
+        buildHead(myCurrentTeam.teamID)
     }
     
     override func didReceiveMemoryWarning()
@@ -226,7 +225,6 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             cell.layer.cornerRadius = 5.0
             cell.layer.masksToBounds = true
             
-            
             let lpgr = textLongPressGestureRecognizer(target: self, action: "handleLongPress:")
             lpgr.minimumPressDuration = 0.5
             lpgr.delaysTouchesBegan = true
@@ -330,31 +328,31 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                 let tempObject = myDisplayHeadArray[indexPath.row] as! team
                 highlightID = tempObject.teamID
                 mySelectedTeam = tempObject
-                buildBody("Team", inParentObject: tempObject)
+                buildBody(tempObject)
             }
             else if myDisplayHeadArray[indexPath.row].isKindOfClass(workingGTDItem)
             {
                 let tempObject = myDisplayHeadArray[indexPath.row] as! workingGTDItem
                 highlightID = tempObject.GTDItemID
-                buildBody("GTDItem", inParentObject: tempObject)
+                buildBody(tempObject)
             }
             else if myDisplayHeadArray[indexPath.row].isKindOfClass(project)
             {
                 let tempObject = myDisplayHeadArray[indexPath.row] as! project
                 highlightID = tempObject.projectID
-                buildBody("task", inParentObject: tempObject)
+                buildBody(tempObject)
             }
             else if myDisplayHeadArray[indexPath.row].isKindOfClass(task)
             {
                 let tempObject = myDisplayHeadArray[indexPath.row] as! task
                 highlightID = tempObject.taskID
-                buildBody("task", inParentObject: tempObject)
+                buildBody(tempObject)
             }
             else if myDisplayHeadArray[indexPath.row].isKindOfClass(context)
             {
                 let tempObject = myDisplayHeadArray[indexPath.row] as! context
                 highlightID = tempObject.contextID
-                buildBody("context", inParentObject:tempObject)
+                buildBody(tempObject)
             }
             else
             {
@@ -372,13 +370,13 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                 
                 if myObject.GTDLevel < mySelectedTeam.GTDLevels.count
                 {
-                    buildHead("GTDItem", inHighlightedID: highlightID)
-                    buildBody("GTDItem",inParentObject: myObject)
+                    buildHead(highlightID)
+                    buildBody(myObject)
                 }
                 else
                 {
-                    buildHead("GTDItem", inHighlightedID: highlightID)
-                    buildBody("project",inParentObject: myObject)
+                    buildHead(highlightID)
+                    buildBody(myObject)
                 }
             }
             else if myDisplayBodyArray[indexPath.row].isKindOfClass(project)
@@ -388,8 +386,8 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                 let myObject = myDisplayBodyArray[indexPath.row] as! project
                 highlightID = myObject.projectID
                 
-                buildHead("project", inHighlightedID: highlightID)
-                buildBody("task",inParentObject: myObject)
+                buildHead(highlightID)
+                buildBody(myObject)
             }
         }
     }
@@ -467,8 +465,6 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
 
     func moveDataItem(toIndexPath : NSIndexPath, fromIndexPath: NSIndexPath) -> Void
     {
-        NSLog("Action move")
-        
         var fromID: Int = 0
         var fromCurrentPredecessor: Int = 0
         
@@ -485,11 +481,17 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             }
             else
             {
-                
-                NSLog("From Index \(fromIndexPath.item)  to Index \(toIndexPath.item)")
-                
                 if fromIndexPath.item < toIndexPath.item
                 {
+                    if myDisplayBodyArray[fromIndexPath.item].isKindOfClass(workingGTDItem)
+                    {
+                        let fromItem = myDisplayBodyArray[fromIndexPath.item] as! workingGTDItem
+                        
+                        fromID = fromItem.GTDItemID
+                        
+                        fromCurrentPredecessor = myDatabaseConnection.getGTDItemSuccessor(fromItem.GTDItemID)
+                    }
+
                     if myDisplayBodyArray[fromIndexPath.item].isKindOfClass(project)
                     {
                         let fromItem = myDisplayBodyArray[fromIndexPath.item] as! project
@@ -498,50 +500,173 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                      
                         fromCurrentPredecessor = myDatabaseConnection.getProjectSuccessor(fromItem.projectID)
                     }
-                    
+
+                    if myDisplayBodyArray[toIndexPath.item].isKindOfClass(workingGTDItem)
+                    {
+                        let toItem = myDisplayBodyArray[toIndexPath.item] as! workingGTDItem
+                        
+                        toItem.predecessor = fromID
+                        
+                        // check to make sure will not get circualr reference and then update if possible
+                        if !parseForCircularReference(myDisplayBodyArray, movingID: toItem.GTDItemID, predecessorID: fromID)
+                        {
+                            toItem.predecessor = fromID
+                            
+                            if fromCurrentPredecessor > 0
+                            {
+                                let tempSuccessor = workingGTDItem(inGTDItemID: fromCurrentPredecessor, inTeamID: toItem.teamID)
+                                tempSuccessor.predecessor = toItem.GTDItemID
+                            }
+                        }
+                        else
+                        {
+                            let alert = UIAlertController(title: "Move item", message:
+                                "Unable to move item as the item being moved is already in the predecessor chain", preferredStyle: UIAlertControllerStyle.Alert)
+                            
+                            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+                            self.presentViewController(alert, animated: false, completion: nil)
+                        }
+                    }
+
                     if myDisplayBodyArray[toIndexPath.item].isKindOfClass(project)
                     {
                         let toItem = myDisplayBodyArray[toIndexPath.item] as! project
 
                         toItem.predecessor = fromID
-
-                        if fromCurrentPredecessor > 0
+                        
+                        // check to make sure will not get circualr reference and then update if possible
+                        if !parseForCircularReference(myDisplayBodyArray, movingID: toItem.projectID, predecessorID: fromID)
                         {
-                            let tempSuccessor = project(inProjectID: fromCurrentPredecessor, inTeamID: toItem.teamID)
-                            tempSuccessor.predecessor = toItem.projectID
+                            toItem.predecessor = fromID
+                            
+                            if fromCurrentPredecessor > 0
+                            {
+                                let tempSuccessor = project(inProjectID: fromCurrentPredecessor, inTeamID: toItem.teamID)
+                                tempSuccessor.predecessor = toItem.projectID
+                            }
+                        }
+                        else
+                        {
+                            let alert = UIAlertController(title: "Move item", message:
+                                "Unable to move item as the item being moved is already in the predecessor chain", preferredStyle: UIAlertControllerStyle.Alert)
+                            
+                            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+                            self.presentViewController(alert, animated: false, completion: nil)
                         }
                     }
                 }
                 else
                 {
+                    if myDisplayBodyArray[fromIndexPath.item].isKindOfClass(workingGTDItem)
+                    {
+                        let fromItem = myDisplayBodyArray[fromIndexPath.item] as! workingGTDItem
+                        fromID = fromItem.GTDItemID
+                        
+                        // Get any current success
+                    
+                        fromCurrentPredecessor = myDatabaseConnection.getGTDItemSuccessor(fromItem.GTDItemID)
+                    }
+
                     if myDisplayBodyArray[fromIndexPath.item].isKindOfClass(project)
                     {
                         let fromItem = myDisplayBodyArray[fromIndexPath.item] as! project
                         fromID = fromItem.projectID
+                        
                         // Get any current success
-                    
+                        
                         fromCurrentPredecessor = myDatabaseConnection.getProjectSuccessor(fromItem.projectID)
                     }
-                
+                    
+                    if myDisplayBodyArray[toIndexPath.item].isKindOfClass(workingGTDItem)
+                    {
+                        let toItem = myDisplayBodyArray[toIndexPath.item] as! workingGTDItem
+                        
+                        // check to make sure will not get circualr reference and then update if possible
+                        if !parseForCircularReference(myDisplayBodyArray, movingID: toItem.GTDItemID, predecessorID: fromID)
+                        {
+                            toItem.predecessor = fromID
+                            
+                            if fromCurrentPredecessor > 0
+                            {
+                                let tempSuccessor = workingGTDItem(inGTDItemID: fromCurrentPredecessor, inTeamID: toItem.teamID)
+                                tempSuccessor.predecessor = toItem.GTDItemID
+                            }
+                        }
+                        else
+                        {
+                            let alert = UIAlertController(title: "Move item", message:
+                                "Unable to move item as the item being moved is already in the predecessor chain", preferredStyle: UIAlertControllerStyle.Alert)
+                            
+                            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+                            self.presentViewController(alert, animated: false, completion: nil)
+                        }
+                    }
+                    
                     if myDisplayBodyArray[toIndexPath.item].isKindOfClass(project)
                     {
                         let toItem = myDisplayBodyArray[toIndexPath.item] as! project
-                        toItem.predecessor = fromID
-                    
-                        if fromCurrentPredecessor > 0
+                        
+                        // check to make sure will not get circualr reference and then update if possible
+                        if !parseForCircularReference(myDisplayBodyArray, movingID: toItem.projectID, predecessorID: fromID)
                         {
-                            let tempSuccessor = project(inProjectID: fromCurrentPredecessor, inTeamID: toItem.teamID)
-                            tempSuccessor.predecessor = toItem.projectID
+                            toItem.predecessor = fromID
+
+                            if fromCurrentPredecessor > 0
+                            {
+                                let tempSuccessor = project(inProjectID: fromCurrentPredecessor, inTeamID: toItem.teamID)
+                                tempSuccessor.predecessor = toItem.projectID
+                            }
+                        }
+                        else
+                        {
+                            let alert = UIAlertController(title: "Move item", message:
+                                "Unable to move item as the item being moved is already in the predecessor chain", preferredStyle: UIAlertControllerStyle.Alert)
+                            
+                            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+                            self.presentViewController(alert, animated: false, completion: nil)
                         }
                     }
                 }
-                
-                buildBody("project", inParentObject: mySavedParentObject)
+
+                buildBody(mySavedParentObject)
             }
         }
-        colBody.reloadData()
+
+    //    colBody.reloadData()  this is called in buildbody
     }
 
+    func parseForCircularReference(referenceArray: [AnyObject], movingID: Int, predecessorID: Int) -> Bool
+    {
+        var foundCircularReference: Bool = false
+        var checkItemID: Int = 0
+        var checkItemPredecessor: Int = 0
+
+        for myItem in referenceArray
+        {
+            if myItem.isKindOfClass(project)
+            {
+                let tempProject = myItem as! project
+                checkItemID = tempProject.projectID
+                checkItemPredecessor = tempProject.predecessor
+            }
+            
+            if checkItemID == predecessorID
+            { // this is the record we are searching for
+                if checkItemPredecessor == movingID
+                { // we have founf a circular reference
+                    foundCircularReference = true
+                }
+                else if checkItemPredecessor > 0
+                {  // need to check next item down the line
+                    foundCircularReference = parseForCircularReference(referenceArray, movingID: movingID, predecessorID: checkItemPredecessor)
+                }
+                break
+            }
+        }
+        
+        return foundCircularReference
+    }
+    
     // End move
     
     func handleLongPress(gestureReconizer: textLongPressGestureRecognizer)
@@ -642,20 +767,22 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     }
                 
                     highlightID = tempObject.teamID
-                    buildHead("Team", inHighlightedID: tempObject.teamID)
+                    buildHead(tempObject.teamID)
                 }
                 else
                 { // parent is another GTD level
-                    myDisplayHeadArray.removeAll()
+                    var tempArray: [workingGTDItem] = Array()
+                    
                     let myArray = myDatabaseConnection.getGTDItemsForLevel(tempObject.GTDLevel - 1 as Int, inTeamID: tempObject.teamID)
                     for myItem in myArray
                     {
                         let myClass = workingGTDItem(inGTDItemID: myItem.gTDItemID as! Int, inTeamID: tempObject.teamID as Int)
-                        myDisplayHeadArray.append(myClass)
+                        tempArray.append(myClass)
                     }
                     
+                    myDisplayHeadArray = buildGTDItemArray(tempArray)
                     highlightID = tempObject.GTDParentID
-                    buildHead("GTDItem", inHighlightedID: highlightID)
+                    buildHead(highlightID)
                 }
             
             case "project":
@@ -678,19 +805,23 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     }
                     
                     highlightID = myCurrentTeam.teamID
-                    buildHead("Team", inHighlightedID: myCurrentTeam.teamID)
+                    buildHead(myCurrentTeam.teamID)
                 }
                 else
                 { // parent is another GTD level
+                    var tempArray: [workingGTDItem] = Array()
+                    
                     let myArray = myDatabaseConnection.getGTDItemsForLevel(myObject2.GTDLevel as Int, inTeamID: myObject2.teamID)
                     for myItem in myArray
                     {
                         let myClass = workingGTDItem(inGTDItemID: myItem.gTDItemID as! Int, inTeamID: myObject2.teamID as Int)
-                        myDisplayHeadArray.append(myClass)
+                        tempArray.append(myClass)
                     }
                     
+                    myDisplayHeadArray = buildGTDItemArray(tempArray)
+                    
                     highlightID = myObject2.GTDItemID
-                    buildHead("GTDItem", inHighlightedID: highlightID)
+                    buildHead(highlightID)
                 }
 
             case "task":
@@ -733,164 +864,168 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         }
     }
     
-    func buildHead(inObjectType: String, inHighlightedID: Int)
+    func buildHead(inHighlightedID: Int)
     {
-        // Populate Head
-        myHeadObjectType = inObjectType
+        var upSet: Bool = false
         
-        switch inObjectType
+        for myItem in myDisplayHeadArray
         {
-            case "Team":
+            if myItem.isKindOfClass(team)
+            {
+                myHeadObjectType = "Team"
                 btnUp.hidden = true
-                
-                for myItem in myDisplayHeadArray
-                {
-                    let myObject = myItem as! team
+                let myObject = myItem as! team
                     
-                    if myObject.teamID == inHighlightedID
-                    {
-                        highlightID = myObject.teamID as Int
-                        buildBody("Team", inParentObject: myObject)
-                    }
-                }
-        
-            case "GTDItem":
-                var upSet: Bool = false
-            
-                for myItem in myDisplayHeadArray
+                if myObject.teamID == inHighlightedID
                 {
-                    let myObject = myItem as! workingGTDItem
-                    
-                    if !upSet
-                    {
-                        if myObject.GTDLevel == 1
-                        {
-                            btnUp.hidden = false
-                            btnUp.setTitle("Up to Team", forState: .Normal)
-                        }
-                        else
-                        {
-                            let tempGTD = workingGTDLevel(inGTDLevel: myObject.GTDLevel - 1, inTeamID: mySelectedTeam.teamID)
-                            
-                            if tempGTD.title == ""
-                            {
-                                btnUp.hidden = true
-                            }
-                            else
-                            {
-                                btnUp.hidden = false
-                                btnUp.setTitle("Up to \(tempGTD.title)", forState: .Normal)
-                            }
-                        }
-                        upSet = true
-                    }
-
-                    if myObject.GTDItemID == inHighlightedID
-                    {
-                        highlightID = myObject.GTDItemID as Int
-                        buildBody("GTDItem", inParentObject: myObject)
-                    }
+                    highlightID = myObject.teamID as Int
+                    buildBody(myObject)
                 }
-        
-            case "project":
-                btnUp.hidden = false
-                btnUp.setTitle("Up to Area of Responsibility", forState: .Normal)
-            
-                for myItem in myDisplayHeadArray
-                {
-                    let myObject = myItem as! project
-                    
-                    if myObject.projectID == inHighlightedID
-                    {
-                        highlightID = myObject.projectID as Int
-                        buildBody("task", inParentObject: myObject)
-                    }
-                }
-        
-            case "task":
-                btnUp.hidden = false
-                btnUp.setTitle("Up to Activity", forState: .Normal)
-        
-            case "context":
-                btnUp.hidden = false
-                btnUp.setTitle("Up to Team", forState: .Normal)
-        
-            default :
-                print("buildHead: hit default")
-        }
-    }
-    
-    func buildBody(inObjectType: String, inParentObject: AnyObject)
-    {
-        myDisplayBodyArray.removeAll()
-        
-        myBodyObjectType = inObjectType
-        mySavedParentObject = inParentObject
-        
-        switch inObjectType
-        {
-            case "Team":
-                let myObject = inParentObject as! team
-                for myItem in myObject.GTDTopLevel
-                {
-                    myDisplayBodyArray.append(myItem)
-                }
-            
-            case "GTDItem":
-                let myObject = inParentObject as! workingGTDItem
+            }
+            else if myItem.isKindOfClass(workingGTDItem)
+            {
+                myHeadObjectType = "GTDItem"
                 
-                for myItem in myObject.children
-                {
-                    myDisplayBodyArray.append(myItem)
-                }
-            
-            case "project":
-                
-                let myObject = inParentObject as! workingGTDItem
-                var predecessorArray: [project] = Array()
-                
-                for myItem in myObject.children
-                {
-                    let myWorkingItem = myItem as! project
+                let myObject = myItem as! workingGTDItem
                     
-                    if myWorkingItem.predecessor == 0
+                if !upSet
+                {
+                    if myObject.GTDLevel == 1
                     {
-                        myDisplayBodyArray.append(myWorkingItem)
+                        btnUp.hidden = false
+                        btnUp.setTitle("Up to Team", forState: .Normal)
                     }
                     else
                     {
-                        predecessorArray.append(myWorkingItem)
-                    }
-                }
-            
-                predecessorArray.sortInPlace { $0.predecessor < $1.predecessor }
-                
-                for myItem in predecessorArray
-                {
-                    let myWorkingItem = myItem
-                    
-                    // Go through the array and find the "predecessor"
-                    var indexCount: Int = 0
-                    for mySort in myDisplayBodyArray
-                    {
-                        let myTempSort = mySort as! project
+                        let tempGTD = workingGTDLevel(inGTDLevel: myObject.GTDLevel - 1, inTeamID: mySelectedTeam.teamID)
                             
-                        if myTempSort.projectID == myWorkingItem.predecessor
+                        if tempGTD.title == ""
                         {
-                            
-                            if indexCount < myDisplayBodyArray.count
-                            {
-                                myDisplayBodyArray.insert(myItem, atIndex: indexCount + 1)
-                            }
-                            else
-                            {
-                                myDisplayBodyArray.append(myItem)
-                            }
-                            break
+                            btnUp.hidden = true
                         }
-                        indexCount++
+                        else
+                        {
+                            btnUp.hidden = false
+                            btnUp.setTitle("Up to \(tempGTD.title)", forState: .Normal)
+                        }
+                    }
+                    upSet = true
+
+                    
+                    if myObject.GTDItemID == inHighlightedID
+                    {
+                        highlightID = myObject.GTDItemID as Int
+                        buildBody(myObject)
                     }
                 }
+            }
+            else if myItem.isKindOfClass(project)
+            {
+                myHeadObjectType = "project"
+                
+                btnUp.hidden = false
+                btnUp.setTitle("Up to Area of Responsibility", forState: .Normal)
+                
+                let myObject = myItem as! project
+                    
+                if myObject.projectID == inHighlightedID
+                {
+                    highlightID = myObject.projectID as Int
+                    buildBody(myObject)
+                }
+                // todo
+            }
+            else if myItem.isKindOfClass(task)
+            {
+                myHeadObjectType = "task"
+                
+                btnUp.hidden = false
+                btnUp.setTitle("Up to Activity", forState: .Normal)
+                // todo
+            }
+            else if myItem.isKindOfClass(context)
+            {
+                myHeadObjectType = "context"
+                
+                btnUp.hidden = false
+                btnUp.setTitle("Up to Team", forState: .Normal)
+                
+                // todo, also should there be an option for a context as a child of team??
+            }
+            else
+            {
+               // Do nothing
+                myHeadObjectType = ""
+            }
+        }
+    }
+    
+    func buildBody(inParentObject: AnyObject)
+    {
+        var myBodyObjectType: String = ""
+        
+        var myWorkingArray: [AnyObject]!
+        
+        myDisplayBodyArray.removeAll()
+        
+        if inParentObject.isKindOfClass(team)
+        {
+            myBodyObjectType = "GTDItem"
+            
+            let myObject = inParentObject as! team
+            myObject.loadGTDTopLevel()
+            myWorkingArray = myObject.GTDTopLevel
+        }
+        else if inParentObject.isKindOfClass(workingGTDItem)
+        {
+            let myObject = inParentObject as! workingGTDItem
+            myObject.loadChildren()
+            myWorkingArray = myObject.children
+            
+            if myWorkingArray.count > 0
+            {
+                if myWorkingArray[0].isKindOfClass(workingGTDItem)
+                {
+                    myBodyObjectType = "GTDItem"
+                }
+                else
+                {
+                    myBodyObjectType = "project"
+                }
+            }
+        }
+        else if inParentObject.isKindOfClass(project)
+        {
+            myBodyObjectType = "task"
+            
+            // todo
+        }
+        else if inParentObject.isKindOfClass(task)
+        {
+            myBodyObjectType = "task"
+            
+            // todo
+        }
+        else if inParentObject.isKindOfClass(context)
+        {
+            myBodyObjectType = "context"
+            
+            // todo, also should there be an option for a context as a child of team??
+        }
+        else
+        {
+            myBodyObjectType = ""
+        }
+
+        mySavedParentObject = inParentObject
+        
+        switch myBodyObjectType
+        {
+            case "GTDItem":
+                myDisplayBodyArray = buildGTDItemArray(myWorkingArray)
+            
+            case "project":
+                myDisplayBodyArray = buildProjectArray(myWorkingArray)
             
             case "task":
                 NSLog("todo")
@@ -908,6 +1043,139 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                 print("buildBody: hit default")
         }
         colBody.reloadData()
+    }
+    
+    func buildGTDItemArray(myWorkingArray: [AnyObject]) -> [workingGTDItem]
+    {
+        var predecessorArray: [workingGTDItem] = Array()
+        var returnArray: [workingGTDItem] = Array()
+        
+        for myItem in myWorkingArray
+        {
+            let myWorkingItem = myItem as! workingGTDItem
+            
+            if myWorkingItem.predecessor == 0
+            {
+                returnArray.append(myWorkingItem)
+            }
+            else
+            {
+                predecessorArray.append(myWorkingItem)
+            }
+        }
+        
+        var tempArray = predecessorArray
+        
+        while tempArray.count > 0
+        {
+            let workingArray = tempArray
+            tempArray.removeAll()
+            
+            // need to loop nthrough the array until we have found predecessors for all the items
+            for myItem in workingArray
+            {
+                let myWorkingItem = myItem
+                
+                // Go through the array and find the "predecessor"
+                var indexCount: Int = 0
+                var itemFound: Bool = false
+                
+                for mySort in returnArray
+                {
+                    let myTempSort = mySort 
+                    
+                    if myTempSort.GTDItemID == myWorkingItem.predecessor
+                    {
+                        itemFound = true
+                        if indexCount < returnArray.count
+                        {
+                            
+                            returnArray.insert(myItem, atIndex: indexCount + 1)
+                        }
+                        else
+                        {
+                            
+                            returnArray.append(myItem)
+                        }
+                    }
+                    indexCount++
+                }
+                
+                // if we have gone through the array an not found a match for the precessor, then we need to store for another go round
+                if !itemFound
+                {
+                    tempArray.append(myItem)
+                }
+            }
+        }
+        return returnArray
+    }
+    
+    func buildProjectArray(myWorkingArray: [AnyObject]) -> [project]
+    {
+        var returnArray: [project] = Array()
+        var predecessorArray: [project] = Array()
+        
+        for myItem in myWorkingArray
+        {
+            let myWorkingItem = myItem as! project
+            
+            if myWorkingItem.predecessor == 0
+            {
+                returnArray.append(myWorkingItem)
+            }
+            else
+            {
+                predecessorArray.append(myWorkingItem)
+            }
+        }
+        
+        var tempArray = predecessorArray
+        
+        while tempArray.count > 0
+        {
+            let workingArray = tempArray
+            tempArray.removeAll()
+            
+            // need to loop nthrough the array until we have found predecessors for all the items
+            for myItem in workingArray
+            {
+                let myWorkingItem = myItem
+                
+                // Go through the array and find the "predecessor"
+                var indexCount: Int = 0
+                var itemFound: Bool = false
+                
+                for mySort in returnArray
+                {
+                    let myTempSort = mySort 
+                    
+                    if myTempSort.projectID == myWorkingItem.predecessor
+                    {
+                        itemFound = true
+                        if indexCount < returnArray.count
+                        {
+                            
+                            returnArray.insert(myItem, atIndex: indexCount + 1)
+                        }
+                        else
+                        {
+                            
+                            returnArray.append(myItem)
+                        }
+                    }
+                    indexCount++
+                }
+                
+                // if we have gone through the array an not found a match for the precessor, then we need to store for another go round
+                if !itemFound
+                {
+                    tempArray.append(myItem)
+                }
+            }
+        }
+
+        return returnArray
     }
 
     // MARK: - UIPopoverPresentationControllerDelegate
@@ -928,10 +1196,6 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
     
     func refreshBody()
     {
-        // Rebuild tables
-      //  myBodyObjectType = inObjectType
-      //  mySavedParentObject = inParentObject
-        
         switch myHeadObjectType
         {
             case "Team":
@@ -943,32 +1207,31 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     myDisplayHeadArray.append(myTeam)
                 }
 
-                buildHead("Team", inHighlightedID: highlightID)
+                buildHead(highlightID)
             
             case "GTDItem":
-                myDisplayHeadArray.removeAll()
                 let tempObject = mySavedParentObject as! workingGTDItem
+                var tempArray: [workingGTDItem] = Array()
             
                 let myArray = myDatabaseConnection.getGTDItemsForLevel(tempObject.GTDLevel as Int, inTeamID: tempObject.teamID)
                 for myItem in myArray
                 {
                     let myClass = workingGTDItem(inGTDItemID: myItem.gTDItemID as! Int, inTeamID: tempObject.teamID as Int)
-                    myDisplayHeadArray.append(myClass)
+                    tempArray.append(myClass)
                 }
                 
+                myDisplayHeadArray = buildGTDItemArray(tempArray)
                 highlightID = tempObject.GTDItemID
-                buildHead("GTDItem", inHighlightedID: highlightID)
+                buildHead(highlightID)
             
             case "project":
-                myDisplayHeadArray.removeAll()
-            
                 let myObject = mySavedParentObject as! project  // this is the current head record
                 let myObject2 = workingGTDItem(inGTDItemID: myObject.GTDItemID, inTeamID: myObject.teamID)  // This is the parent of that
             
-                myDisplayHeadArray = myObject2.children
+                myDisplayHeadArray = buildProjectArray(myObject2.children)
                 
                 highlightID = myObject2.GTDItemID
-                buildHead("project", inHighlightedID: highlightID)
+                buildHead(highlightID)
             
             case "task":
                 NSLog("task to do")
@@ -1137,10 +1400,15 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             if !inGTDItem.delete()
             {
                 let alert = UIAlertController(title: "Delete item", message:
-                    "Unable to delete item.  Check that there are not child records", preferredStyle: UIAlertControllerStyle.Alert)
+                    "Unable to delete item.  Check that there are no child records", preferredStyle: UIAlertControllerStyle.Alert)
                 
                 alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
                 self.presentViewController(alert, animated: false, completion: nil)
+            }
+            else
+            {
+                self.buildHead(self.highlightID)
+                self.buildBody(self.mySavedParentObject)
             }
             })
         
@@ -1192,9 +1460,9 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             myOption0 = UIAlertAction(title: "Zoom", style: .Default, handler: { (action: UIAlertAction) -> () in
                 self.myDisplayHeadArray = self.myDisplayBodyArray
                 self.highlightID = inGTDItem.GTDItemID as Int
-                self.buildHead("GTDItem", inHighlightedID: self.highlightID)
+                self.buildHead(self.highlightID)
                     
-                self.buildBody("GTDItem",inParentObject: inGTDItem)
+                self.buildBody(inGTDItem)
             })
             myOptions.addAction(myOption0)
         }
@@ -1232,11 +1500,28 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             let myOption0 = UIAlertAction(title: "Zoom", style: .Default, handler: { (action: UIAlertAction) -> () in
                 self.myDisplayHeadArray = self.myDisplayBodyArray
                 self.highlightID = inProjectItem.projectID as Int
-                self.buildHead("project", inHighlightedID: self.highlightID)
+                self.buildHead(self.highlightID)
                 
-                self.buildBody("task",inParentObject: inProjectItem)
+                self.buildBody(inProjectItem)
             })
             myOptions.addAction(myOption0)
+            
+            let myOption2 = UIAlertAction(title: "Delete Activity", style: .Default, handler: { (action: UIAlertAction) -> () in
+                if !inProjectItem.delete()
+                {
+                    let alert = UIAlertController(title: "Delete Activity", message:
+                        "Unable to delete Activity.  Check that there are no Actions", preferredStyle: UIAlertControllerStyle.Alert)
+                    
+                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+                    self.presentViewController(alert, animated: false, completion: nil)
+                }
+                else
+                {
+                    self.buildHead(self.highlightID)
+                    self.buildBody(self.mySavedParentObject)
+                }
+            })
+            myOptions.addAction(myOption2)
         }
         
         myOptions.addAction(myOption1)

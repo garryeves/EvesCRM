@@ -444,6 +444,9 @@ class workingGTDItem: NSObject
         }
         else
         {  // Bottom of GTD Hierarchy, so children are projects
+            
+            myChildren.removeAll()
+            
             let myChildrenList = myDatabaseConnection.getOpenProjectsForGTDItem(myGTDItemID, inTeamID: myTeamID)
             
             for myItem in myChildrenList
@@ -478,6 +481,19 @@ class workingGTDItem: NSObject
         {
             myStatus = "Deleted"
             save()
+            
+            // Need to see if this is in a predessor tree, if it is then we need to update so that this is skipped
+            
+            // Go and see if another item has set as its predecessor
+            
+            let fromCurrentPredecessor = myDatabaseConnection.getGTDItemSuccessor(myGTDItemID)
+            
+            if fromCurrentPredecessor > 0
+            {  // This item is a predecessor
+                let tempSuccessor = workingGTDItem(inGTDItemID: fromCurrentPredecessor, inTeamID: myTeamID)
+                tempSuccessor.predecessor = myPredecessor
+            }
+            
             return true
         }
     }
@@ -1129,7 +1145,31 @@ class project: NSObject // 10k level
         }
     }
     
-   //  There is no delete in this class, as I do not want to delete projects, instead they will be marked as archived and not displayed
+    func delete() -> Bool
+    {
+        if myTasks.count > 0
+        {
+            return false
+        }
+        else
+        {
+            myProjectStatus = "Deleted"
+            save()
+            
+            // Need to see if this is in a predessor tree, if it is then we need to update so that this is skipped
+            
+            // Go and see if another item has set as its predecessor
+            
+            let fromCurrentPredecessor = myDatabaseConnection.getProjectSuccessor(myProjectID)
+            
+            if fromCurrentPredecessor > 0
+            {  // This item is a predecessor
+                let tempSuccessor = project(inProjectID: fromCurrentPredecessor, inTeamID: myTeamID)
+                tempSuccessor.predecessor = myPredecessor
+            }
+            return true
+        }
+    }
 }
 
 class taskPredecessor: NSObject

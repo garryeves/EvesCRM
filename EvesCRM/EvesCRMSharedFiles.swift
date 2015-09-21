@@ -416,7 +416,7 @@ class StreamReader  {
 
 func populateStages(inTeamID: Int)
 {
-    let loadSet = ["Pre-Planning", "Planning", "Planned", "Scheduled", "In-progress", "Delayed", "Completed", "Archived"]
+    let loadSet = ["Definition", "Initiation", "Planning", "Execution", "Monitoring & Control", "Closure", "Completed", "Archived"]
     
     for myItem in loadSet
     {
@@ -554,6 +554,10 @@ class menuObject: NSObject
     private var myDisplayString: String = ""
     private var myDisplayType: String = ""
     private var myDisplayObject: NSObject!
+    private var myIndentation: Int = 0
+    private var myDisclosureExpanded: Bool = false
+    private var myType: String = "text"
+    private var mySection: String = ""
     
     var displayString: String
     {
@@ -590,6 +594,60 @@ class menuObject: NSObject
             myDisplayObject = newValue
         }
     }
+    
+    var indentation: Int
+    {
+        get
+        {
+            return myIndentation
+        }
+        set
+        {
+            myIndentation = newValue
+        }
+    }
+
+    var disclosureExpanded: Bool
+    {
+        get
+        {
+            return myDisclosureExpanded
+        }
+        set
+        {
+            myDisclosureExpanded = newValue
+        }
+    }
+    
+    var type: String
+    {
+        get
+        {
+            return myType
+        }
+        set
+        {
+            myType = newValue
+        }
+    }
+    
+    var section: String
+    {
+        get
+        {
+            return mySection
+        }
+        set
+        {
+            mySection = newValue
+        }
+    }
+}
+
+struct menuEntry
+{
+    var menuType: String = ""
+    var menuEntries: [menuObject]!
 }
 
 //class SharingActivityProvider: UIActivityItemProvider, UIActivityItemSource

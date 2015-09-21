@@ -21,7 +21,7 @@ class coreDatabase: NSObject
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(inTeamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -42,7 +42,7 @@ class coreDatabase: NSObject
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (areaID == \(inGTDItemID)) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (areaID == \(inGTDItemID)) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
         
         let sortDescriptor = NSSortDescriptor(key: "projectID", ascending: true)
         let sortDescriptors = [sortDescriptor]
@@ -103,13 +103,43 @@ class coreDatabase: NSObject
         }
         else
         {
-            retVal = fetchResults![0].predecessor as Int
+            retVal = fetchResults![0].projectID as Int
         }
         
         return retVal
     }
 
-    
+    func getGTDItemSuccessor(projectID: Int)->Int
+    {
+        
+        let fetchRequest = NSFetchRequest(entityName: "GTDItem")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(predecessor == \(projectID)) && (updateType != \"Delete\") && (status != \"Closed\") && (status != \"Deleted\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Create a new fetch request using the entity
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [GTDItem]
+        
+        var retVal: Int = 0
+        
+        if fetchResults!.count == 0
+        {
+            retVal = 0
+        }
+        else
+        {
+            retVal = fetchResults![0].gTDItemID as! Int
+        }
+        
+        return retVal
+    }
+  
     func getAllProjects(inTeamID: Int)->[Projects]
     {
         let fetchRequest = NSFetchRequest(entityName: "Projects")
@@ -437,7 +467,7 @@ class coreDatabase: NSObject
         {
             var predicate: NSPredicate
         
-            predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+            predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(inTeamID))")
         
             // Set the predicate on the fetch request
             fetchRequest.predicate = predicate

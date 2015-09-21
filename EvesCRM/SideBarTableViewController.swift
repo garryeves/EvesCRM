@@ -18,12 +18,14 @@ class SideBarTableViewController: UITableViewController
 {
     var delegate:SideBarTableViewControllerDelegate?
     var tableData: [menuObject] = Array()
+    var numberOfSections: Int = 0
     
     // MARK: - Table view data source
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int
     {
-        return 1
+        // return 1
+        return numberOfSections
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
@@ -52,11 +54,21 @@ class SideBarTableViewController: UITableViewController
         {
             cell!.textLabel?.font = UIFont.boldSystemFontOfSize(20.0)
         }
+        else if tableData[indexPath.row].displayType == "Header-Disclosure"
+        {
+            cell!.textLabel?.font = UIFont.boldSystemFontOfSize(20.0)
+            cell!.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
+        }
+        else if tableData[indexPath.row].displayType == "Disclosure"
+        {
+            cell!.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
+        }
+
         else
         {
             cell!.textLabel?.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
         }
-        
+        cell!.indentationLevel = tableData[indexPath.row].indentation
         cell!.textLabel!.text = tableData[indexPath.row].displayString
 
         return cell!
@@ -69,6 +81,7 @@ class SideBarTableViewController: UITableViewController
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
+NSLog("GRE- selected row = \(indexPath.row)")
         delegate?.sideBarControlDidSelectRow(tableData[indexPath.row])
     }
 }
