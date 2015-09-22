@@ -915,7 +915,7 @@ class project: NSObject // 10k level
         super.init()
         
  // GRE whatever calls projects should check to make sure it is not marked as "Archived", as we are not deleting Projects, only marking them as archived
-        let myProjects = myDatabaseConnection.getProjectDetails(inProjectID, inTeamID: inTeamID)
+        let myProjects = myDatabaseConnection.getProjectDetails(inProjectID)
         
         for myProject in myProjects
         {
@@ -1770,7 +1770,7 @@ class task: NSObject
         
         if myProjectID > 0
         {
-            let myData3 = myDatabaseConnection.getProjectDetails(myProjectID, inTeamID: myTeamID)
+            let myData3 = myDatabaseConnection.getProjectDetails(myProjectID)
             
             if myData3.count != 0
             {
@@ -1886,7 +1886,7 @@ class task: NSObject
         
         if myProjectID > 0
         {
-            let myData3 = myDatabaseConnection.getProjectDetails(myProjectID, inTeamID: myTeamID)
+            let myData3 = myDatabaseConnection.getProjectDetails(myProjectID)
             
             if myData3.count != 0
             {

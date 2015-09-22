@@ -274,7 +274,7 @@ func displayTeamMembers(inProject: project, inout lookupArray: [String])->[Table
     {
         titleText = myTeamMember.teamMember
         titleText += " : "
-        titleText += myDatabaseConnection.getRoleDescription(myTeamMember.roleID, inTeamID: myCurrentTeam.teamID)
+        titleText += myDatabaseConnection.getRoleDescription(myTeamMember.roleID, inTeamID: inProject.teamID)
         
         lookupArray.append(myTeamMember.teamMember)
         
@@ -301,13 +301,13 @@ func displayProjectsForPerson(inPerson: String, inout lookupArray: [String]) -> 
     {
         for myProject in myProjects
         {
-            let myDetails = myDatabaseConnection.getProjectDetails(myProject.projectID as Int, inTeamID: myCurrentTeam.teamID)
+            let myDetails = myDatabaseConnection.getProjectDetails(myProject.projectID as Int)
         
             if myDetails[0].projectStatus != "Archived"
             {
                 titleText = myDetails[0].projectName
                 titleText += " : "
-                titleText += myDatabaseConnection.getRoleDescription(myProject.roleID, inTeamID: myCurrentTeam.teamID)
+                titleText += myDatabaseConnection.getRoleDescription(myProject.roleID, inTeamID: myDetails[0].teamID as Int)
                 
                 lookupArray.append(myProject.projectID.stringValue)
                 
@@ -554,10 +554,11 @@ class menuObject: NSObject
     private var myDisplayString: String = ""
     private var myDisplayType: String = ""
     private var myDisplayObject: NSObject!
-    private var myIndentation: Int = 0
+    private var myDisclosure: Bool = false
     private var myDisclosureExpanded: Bool = false
     private var myType: String = "text"
     private var mySection: String = ""
+    private var myChildSection: String = ""
     
     var displayString: String
     {
@@ -594,18 +595,6 @@ class menuObject: NSObject
             myDisplayObject = newValue
         }
     }
-    
-    var indentation: Int
-    {
-        get
-        {
-            return myIndentation
-        }
-        set
-        {
-            myIndentation = newValue
-        }
-    }
 
     var disclosureExpanded: Bool
     {
@@ -640,6 +629,18 @@ class menuObject: NSObject
         set
         {
             mySection = newValue
+        }
+    }
+    
+    var childSection: String
+    {
+        get
+        {
+            return myChildSection
+        }
+        set
+        {
+            myChildSection = newValue
         }
     }
 }

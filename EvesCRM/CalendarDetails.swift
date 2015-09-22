@@ -1294,7 +1294,7 @@ class myCalendarItem
                     
                     // Get the project name to display
                     
-                    let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID, inTeamID: myTeamID)
+                    let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID)
                     
                     if myData3.count == 0
                     {
@@ -1370,7 +1370,7 @@ class myCalendarItem
                     
                     // Get the project name to display
                     
-                    let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID, inTeamID: myTeamID)
+                    let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID)
                     
                     if myData3.count == 0
                     {
@@ -1477,7 +1477,7 @@ class myCalendarItem
                         
                         // Get the project name to display
                         
-                        let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID, inTeamID: myTeamID)
+                        let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID)
                         
                         if myData3.count == 0
                         {
@@ -1732,7 +1732,7 @@ class myCalendarItem
                     
                     // Get the project name to display
                     
-                    let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID, inTeamID: myTeamID)
+                    let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID)
                     
                     if myData3.count == 0
                     {
@@ -1809,7 +1809,7 @@ class myCalendarItem
                         
                     // Get the project name to display
                         
-                    let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID, inTeamID: myTeamID)
+                    let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID)
                         
                     if myData3.count == 0
                     {
@@ -1917,7 +1917,7 @@ class myCalendarItem
                         
                         // Get the project name to display
                         
-                        let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID, inTeamID: myTeamID)
+                        let myData3 = myDatabaseConnection.getProjectDetails(myTask.projectID)
                         
                         if myData3.count == 0
                         {

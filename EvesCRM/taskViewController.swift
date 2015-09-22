@@ -17,7 +17,7 @@ protocol MyTaskDelegate
 
 class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegate
 {
-    private var passedTask: TaskModel!
+    var passedTask: TaskModel!
     
     @IBOutlet weak var lblTaskTitle: UILabel!
     @IBOutlet weak var lblTaskDescription: UILabel!
@@ -88,7 +88,7 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         txtTaskDescription.layer.cornerRadius = 5.0
         txtTaskDescription.layer.masksToBounds = true
         
-        passedTask = (tabBarController as! tasksTabViewController).myPassedTask
+   //     passedTask = (tabBarController as! tasksTabViewController).myPassedTask
 
         toolbar.translucent = false
         
@@ -761,7 +761,7 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
     
     func setProjectName(inProjectID: Int)
     {
-        let myProjects = myDatabaseConnection.getProjectDetails(inProjectID, inTeamID: myCurrentTeam.teamID)
+        let myProjects = myDatabaseConnection.getProjectDetails(inProjectID)
         
         if myProjects.count == 0
         {

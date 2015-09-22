@@ -17,20 +17,33 @@ protocol SideBarTableViewControllerDelegate
 class SideBarTableViewController: UITableViewController
 {
     var delegate:SideBarTableViewControllerDelegate?
-    var tableData: [menuObject] = Array()
-    var numberOfSections: Int = 0
+    var fullArray: [menuEntry] = Array()
+    var displayArray: [menuObject] = Array()
+    
+    var displayData: String = "Header"
+    var numRows: Int = 0
+
+    func initialise()
+    {
+        for myItem in fullArray
+        {
+            if myItem.menuType == "Header"
+            {
+                displayArray = myItem.menuEntries
+            }
+        }
+    }
     
     // MARK: - Table view data source
 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int
     {
-        // return 1
-        return numberOfSections
+        return 1
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        return tableData.count
+        return displayArray.count
     }
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
@@ -50,27 +63,17 @@ class SideBarTableViewController: UITableViewController
             cell!.selectedBackgroundView = selectedView
         }
 
-        if tableData[indexPath.row].displayType == "Header"
-        {
-            cell!.textLabel?.font = UIFont.boldSystemFontOfSize(20.0)
-        }
-        else if tableData[indexPath.row].displayType == "Header-Disclosure"
-        {
-            cell!.textLabel?.font = UIFont.boldSystemFontOfSize(20.0)
-            cell!.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
-        }
-        else if tableData[indexPath.row].displayType == "Disclosure"
+        cell!.textLabel!.text = displayArray[indexPath.row].displayString
+                
+        if displayArray[indexPath.row].type == "disclosure"
         {
             cell!.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
         }
-
         else
         {
-            cell!.textLabel?.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
+            cell!.accessoryType = UITableViewCellAccessoryType.None
         }
-        cell!.indentationLevel = tableData[indexPath.row].indentation
-        cell!.textLabel!.text = tableData[indexPath.row].displayString
-
+    
         return cell!
     }
     
@@ -81,7 +84,23 @@ class SideBarTableViewController: UITableViewController
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
-NSLog("GRE- selected row = \(indexPath.row)")
-        delegate?.sideBarControlDidSelectRow(tableData[indexPath.row])
+        if displayArray[indexPath.row].type != "disclosure"
+        {
+            delegate?.sideBarControlDidSelectRow(displayArray[indexPath.row])
+        }
+        else
+        {
+            for myItem in fullArray
+            {
+                if myItem.menuType == displayArray[indexPath.row].childSection
+                {
+                    displayData = displayArray[indexPath.row].childSection
+                    displayArray = myItem.menuEntries
+                    tableView.reloadData()
+
+                    break
+                }
+            }
+        }
     }
 }

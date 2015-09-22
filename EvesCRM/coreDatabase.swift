@@ -58,14 +58,14 @@ class coreDatabase: NSObject
     }
 
     
-    func getProjectDetails(myProjectID: Int, inTeamID: Int)->[Projects]
+    func getProjectDetails(projectID: Int)->[Projects]
     {
         
         let fetchRequest = NSFetchRequest(entityName: "Projects")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectID == \(myProjectID)) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(projectID == \(projectID)) && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -2057,7 +2057,7 @@ class coreDatabase: NSObject
     {
         var myProject: Projects!
         
-        let myProjects = getProjectDetails(inProjectID, inTeamID: inTeamID)
+        let myProjects = getProjectDetails(inProjectID)
         
         if myProjects.count == 0
         { // Add
@@ -2131,7 +2131,7 @@ class coreDatabase: NSObject
     {
         var myProject: Projects!
         
-        let myProjects = getProjectDetails(inProjectID, inTeamID: inTeamID)
+        let myProjects = getProjectDetails(inProjectID)
         
         if myProjects.count > 0
         { // Update

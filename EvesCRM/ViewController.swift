@@ -1131,7 +1131,7 @@ println("facebook ID = \(myFacebookID)")
                 }
                 else
                 {
-                    loadProject(Int(projectMemberArray[rowID])!)
+                    loadProject(Int(projectMemberArray[rowID])!, teamID: myCurrentTeam.teamID)
                 }
             
         case "OneNote":
@@ -2271,6 +2271,8 @@ print("Nothing found")
             myButtonName = mySelectedProject.projectName
         }
         
+        labelName.text = myButtonName
+        
         TableOptions.removeAll(keepCapacity: false)
         
         for myPane in myPanes.listVisiblePanes
@@ -2770,7 +2772,7 @@ print("Nothing found")
             
             case "Project" :
                 let myProject = passedItem.displayObject as! Projects
-                loadProject(myProject.projectID as Int)
+                loadProject(myProject.projectID as Int, teamID: myProject.teamID as Int)
             
         case "People":
             if passedItem.displayString == "Address Book"
@@ -2846,7 +2848,7 @@ print("Nothing found")
         self.view.bringSubviewToFront(target)
     }
     
-    func loadProject(inProjectID: Int)
+    func loadProject(projectID: Int, teamID: Int)
     {
         TableTypeSelection1.hidden = true
         setSelectionButton.hidden = true
@@ -2861,7 +2863,7 @@ print("Nothing found")
         StartLabel.hidden = true
         
         myDisplayType = "Project"
-        mySelectedProject = project(inProjectID: inProjectID, inTeamID: myCurrentTeam.teamID)
+        mySelectedProject = project(inProjectID: projectID, inTeamID: teamID)
         
         displayScreen()
         
@@ -3026,7 +3028,7 @@ print("Nothing found")
             
             myString += "Project: "
             
-            let myData = myDatabaseConnection.getProjectDetails(myTask.projectID, inTeamID: myCurrentTeam.teamID)
+            let myData = myDatabaseConnection.getProjectDetails(myTask.projectID)
             
             if myData.count == 0
             {

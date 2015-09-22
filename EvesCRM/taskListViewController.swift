@@ -148,7 +148,7 @@ class taskListViewController: UIViewController, MyTaskDelegate, UITextViewDelega
             
             // Get the project name to display
             
-            let myData = myDatabaseConnection.getProjectDetails(myTaskList[indexPath.row].projectID, inTeamID: myCurrentTeam.teamID)
+            let myData = myDatabaseConnection.getProjectDetails(myTaskList[indexPath.row].projectID)
             
             if myData.count == 0
             {

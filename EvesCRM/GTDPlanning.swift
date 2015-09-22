@@ -736,6 +736,18 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                 //        myOptions.popoverPresentationController!.sourceRect = CGRectMake(self.view.bounds.size.width / 2.0, self.view.bounds.size.height / 2.0, 1.0, 1.0);
                         self.presentViewController(myOptions, animated: true, completion: nil)
                     }
+                    else if myDisplayBodyArray[index.row].isKindOfClass(task)
+                    {
+                        let tempObject = myDisplayBodyArray[indexPath!.row] as! task
+                        highlightID = tempObject.taskID
+                        
+                        let myOptions = displayTaskOptions(gestureReconizer.displayView, workingTask: myDisplayBodyArray[index.row] as! task, displayType: "Body")
+                        myOptions.popoverPresentationController!.sourceView = gestureReconizer.displayView
+                        
+                        self.presentViewController(myOptions, animated: true, completion: nil)
+                    }
+                    
+                    
                 }
                 
             }
@@ -933,7 +945,6 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     highlightID = myObject.projectID as Int
                     buildBody(myObject)
                 }
-                // todo
             }
             else if myItem.isKindOfClass(task)
             {
@@ -998,6 +1009,10 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         {
             myBodyObjectType = "task"
             
+            let myObject = inParentObject as! project
+            myObject.loadTasks()
+            myWorkingArray = myObject.tasks
+            
             // todo
         }
         else if inParentObject.isKindOfClass(task)
@@ -1028,12 +1043,12 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                 myDisplayBodyArray = buildProjectArray(myWorkingArray)
             
             case "task":
-                NSLog("todo")
-  //              let myObject = inParentObject as! task
- //               for myItem in myObject.tasks
- //               {
- //                   myDisplayBodyArray.append(myItem)
- //               }
+                myDisplayBodyArray = buildTaskArray(myWorkingArray)
+ //               let myObject = inParentObject as! task
+//                for myItem in myObject.tasks
+//                {
+//                    myDisplayBodyArray.append(myItem)
+//                }
             
             case "context":
                 let myObject = inParentObject as! context
@@ -1175,6 +1190,74 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             }
         }
 
+        return returnArray
+    }
+    
+    func buildTaskArray(myWorkingArray: [AnyObject]) -> [task]
+    {
+        var returnArray: [task] = Array()
+        var predecessorArray: [task] = Array()
+
+        for myItem in myWorkingArray
+        {
+            let myWorkingItem = myItem as! task
+            
+            if myWorkingItem.predecessors.count == 0
+            {
+                returnArray.append(myWorkingItem)
+            }
+            else
+            {
+                predecessorArray.append(myWorkingItem)
+            }
+        }
+        
+        var tempArray = predecessorArray
+        
+        while tempArray.count > 0
+        {
+            let workingArray = tempArray
+            tempArray.removeAll()
+            
+            // need to loop nthrough the array until we have found predecessors for all the items
+            for myItem in workingArray
+            {
+                let myWorkingItem = myItem
+                
+                // Go through the array and find the "predecessor"
+                var indexCount: Int = 0
+                var itemFound: Bool = false
+                
+                for mySort in returnArray
+                {
+                    let myTempSort = mySort
+                    
+                    for myPredecessor in myWorkingItem.predecessors
+                    {
+                        if myTempSort.taskID == myPredecessor.predecessorID
+                        {
+                            itemFound = true
+                            if indexCount < returnArray.count
+                            {
+                                returnArray.insert(myItem, atIndex: indexCount + 1)
+                            }
+                            else
+                            {
+                                returnArray.append(myItem)
+                            }
+                        }
+                    }
+                    indexCount++
+                }
+                
+                // if we have gone through the array an not found a match for the precessor, then we need to store for another go round
+                if !itemFound
+                {
+                    tempArray.append(myItem)
+                }
+            }
+        }
+        
         return returnArray
     }
 
@@ -1524,11 +1607,89 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             myOptions.addAction(myOption2)
         }
         
+        let myOption3 = UIAlertAction(title: "Add Action", style: .Default, handler: { (action: UIAlertAction) -> () in
+            let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("tasks") as! taskViewController
+            popoverContent.modalPresentationStyle = .Popover
+            let popover = popoverContent.popoverPresentationController
+            popover!.delegate = self
+            popover!.sourceView = inSourceView
+            popover!.sourceRect = CGRectMake(700,700,0,0)
+            
+            let myPassedTask = TaskModel()
+            myPassedTask.taskType = ""
+            
+            myPassedTask.currentTask = task(inTeamID: self.mySelectedTeam.teamID)
+            myPassedTask.currentTask.projectID = inProjectItem.projectID
+            popoverContent.passedTask = myPassedTask
+            
+            popoverContent.preferredContentSize = CGSizeMake(700,700)
+            
+            self.presentViewController(popoverContent, animated: true, completion: nil)
+        })
+
+        myOptions.addAction(myOption1)
+        myOptions.addAction(myOption3)
+        
+        return myOptions
+    }
+    
+    func displayTaskOptions(sourceView: UIView, workingTask: task, displayType: String) -> UIAlertController
+    {
+        let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .ActionSheet)
+        
+        let myOption1 = UIAlertAction(title: "Edit Action", style: .Default, handler: { (action: UIAlertAction) -> () in
+            let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("tasks") as! taskViewController
+            popoverContent.modalPresentationStyle = .Popover
+            let popover = popoverContent.popoverPresentationController
+            popover!.delegate = self
+            popover!.sourceView = sourceView
+            popover!.sourceRect = CGRectMake(700,700,0,0)
+            
+            let myPassedTask = TaskModel()
+            myPassedTask.taskType = "Edit"
+            
+            myPassedTask.currentTask = workingTask
+            popoverContent.passedTask = myPassedTask
+            
+            popoverContent.preferredContentSize = CGSizeMake(700,700)
+            
+            self.presentViewController(popoverContent, animated: true, completion: nil)
+        })
+        
+/*
+        if inDisplayType == "Body"
+        {            let myOption0 = UIAlertAction(title: "Zoom", style: .Default, handler: { (action: UIAlertAction) -> () in
+                self.myDisplayHeadArray = self.myDisplayBodyArray
+                self.highlightID = inProjectItem.projectID as Int
+                self.buildHead(self.highlightID)
+                
+                self.buildBody(inProjectItem)
+            })
+            myOptions.addAction(myOption0)
+            
+            let myOption2 = UIAlertAction(title: "Delete Activity", style: .Default, handler: { (action: UIAlertAction) -> () in
+                if !inProjectItem.delete()
+                {
+                    let alert = UIAlertController(title: "Delete Activity", message:
+                        "Unable to delete Activity.  Check that there are no Actions", preferredStyle: UIAlertControllerStyle.Alert)
+                    
+                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+                    self.presentViewController(alert, animated: false, completion: nil)
+                }
+                else
+                {
+                    self.buildHead(self.highlightID)
+                    self.buildBody(self.mySavedParentObject)
+                }
+            })
+            myOptions.addAction(myOption2)
+        }
+ */
+        
         myOptions.addAction(myOption1)
         
         return myOptions
     }
-
 }
 
 class KDRearrangeableGTDDisplayHierarchy: UICollectionViewCell
