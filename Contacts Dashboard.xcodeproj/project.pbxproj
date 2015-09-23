@@ -225,8 +225,6 @@
 		34E92AE91B9D5B3400F158F3 /* teamMaintenanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E92AE71B9D5B3400F158F3 /* teamMaintenanceViewController.swift */; settings = {ASSET_TAGS = (); }; };
 		34F199BF1AF6060200963ABF /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34F199BE1AF6060200963ABF /* CoreData.framework */; };
 		34F199C11AF6ECE900963ABF /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34F199C01AF6ECE900963ABF /* CloudKit.framework */; };
-		34F35BCC1B6B18AF00A19ACE /* tasksTabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F35BCB1B6B18AF00A19ACE /* tasksTabViewController.swift */; };
-		34F35BCD1B6B18AF00A19ACE /* tasksTabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F35BCB1B6B18AF00A19ACE /* tasksTabViewController.swift */; };
 		34F35BD31B6B3F7000A19ACE /* taskUpdatesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F35BD21B6B3F7000A19ACE /* taskUpdatesViewController.swift */; };
 		34F35BD41B6B3F7000A19ACE /* taskUpdatesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F35BD21B6B3F7000A19ACE /* taskUpdatesViewController.swift */; };
 		34F35BDE1B6B549000A19ACE /* meetingTabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F35BDD1B6B549000A19ACE /* meetingTabViewController.swift */; };
@@ -467,7 +465,6 @@
 		34F199BB1AF6046A00963ABF /* EvesCRM.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = EvesCRM.entitlements; sourceTree = "<group>"; };
 		34F199BE1AF6060200963ABF /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		34F199C01AF6ECE900963ABF /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
-		34F35BCB1B6B18AF00A19ACE /* tasksTabViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = tasksTabViewController.swift; sourceTree = "<group>"; };
 		34F35BD21B6B3F7000A19ACE /* taskUpdatesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = taskUpdatesViewController.swift; sourceTree = "<group>"; };
 		34F35BDD1B6B549000A19ACE /* meetingTabViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = meetingTabViewController.swift; sourceTree = "<group>"; };
 		34F35BE41B6B54A200A19ACE /* meetingAgendaViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = meetingAgendaViewController.swift; sourceTree = "<group>"; };
@@ -726,7 +723,6 @@
 				341E08C61B01B1B90036202D /* settingsViewController.swift */,
 				349331C81B705756004AA569 /* SideBarTableViewController.swift */,
 				340F84A61B79BE220028439B /* taskListViewController.swift */,
-				34F35BCB1B6B18AF00A19ACE /* tasksTabViewController.swift */,
 				342A357B1B5F727200D6DB29 /* taskViewController.swift */,
 				34F35BD21B6B3F7000A19ACE /* taskUpdatesViewController.swift */,
 				34E92AE71B9D5B3400F158F3 /* teamMaintenanceViewController.swift */,
@@ -1154,7 +1150,6 @@
 				342C0A221B4B844D00A73CA5 /* meetingsViewController.swift in Sources */,
 				34C899F71B8447340087DA8E /* TaskPredecessor.swift in Sources */,
 				34A183081B0EDB5C00FC369D /* LiveUploadOperationCore.m in Sources */,
-				34F35BCC1B6B18AF00A19ACE /* tasksTabViewController.swift in Sources */,
 				341E08C71B01B1B90036202D /* settingsViewController.swift in Sources */,
 				34A182D61B0EDB3D00FC369D /* LiveDownloadOperation.m in Sources */,
 				343B3F1E1B83045D0053777B /* DBSync.swift in Sources */,
@@ -1219,7 +1214,6 @@
 				344B6AD11BA7B47500A5377B /* UserInfo.swift in Sources */,
 				34B4C7E51B8191930098F6BC /* TaskAttachment.swift in Sources */,
 				34A183221B0EDBB400FC369D /* LiveApiHelper.m in Sources */,
-				34F35BCD1B6B18AF00A19ACE /* tasksTabViewController.swift in Sources */,
 				346B70FA1AF75FF4005E1BC2 /* ProjectTeamMembers.swift in Sources */,
 				34E92ADD1B9D191900F158F3 /* GTDItem+CoreDataProperties.swift in Sources */,
 				34A183091B0EDB5C00FC369D /* LiveUploadOperationCore.m in Sources */,

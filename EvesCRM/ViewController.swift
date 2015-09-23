@@ -17,7 +17,7 @@ import Accounts
 //import "ENSDK/Headers/ENSDK.h"
 
 // PeoplePicker code
-class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate, MyMeetingsDelegate, SideBarDelegate, MyMaintainPanesDelegate, MyTaskDelegate
+class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate, MyMeetingsDelegate, SideBarDelegate, MyMaintainPanesDelegate, UIPopoverPresentationControllerDelegate
 {
     
     @IBOutlet weak var TableTypeSelection1: UIPickerView!
@@ -41,6 +41,8 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     @IBOutlet weak var labelName: UILabel!
     @IBOutlet weak var myWebView: UIWebView!
     @IBOutlet weak var btnCloseWindow: UIButton!
+    private var myCells: [cellDetails] = Array()
+    private var headerSize: CGFloat = 0.0
 
     let CONTACT_CELL_IDENTIFER = "contactNameCell"
     let dataTable1_CELL_IDENTIFER = "dataTable1Cell"
@@ -472,7 +474,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
 
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        
+        myCells.removeAll()
         var retVal: Int = 0
         
         if (tableView == dataTable1)
@@ -535,19 +537,19 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
 
         if tableView == dataTable1
         {
-            dataCellClicked(indexPath.row, inTable: "Table1", inRecord: table1Contents[indexPath.row])
+            dataCellClicked(indexPath.row, table: "Table1", viewClicked: tableView)
         }
         else if tableView == dataTable2
         {
-            dataCellClicked(indexPath.row, inTable: "Table2", inRecord: table2Contents[indexPath.row])
+            dataCellClicked(indexPath.row, table: "Table2", viewClicked: tableView)
         }
         else if tableView == dataTable3
         {
-            dataCellClicked(indexPath.row, inTable: "Table3", inRecord: table3Contents[indexPath.row])
+            dataCellClicked(indexPath.row, table: "Table3", viewClicked: tableView)
         }
         else if tableView == dataTable4
         {
-            dataCellClicked(indexPath.row, inTable: "Table4", inRecord: table4Contents[indexPath.row])
+            dataCellClicked(indexPath.row, table: "Table4", viewClicked: tableView)
         }
         
     }
@@ -984,7 +986,7 @@ println("facebook ID = \(myFacebookID)")
         return workArray
     }
     
-    func dataCellClicked(rowID: Int, inTable: String, inRecord: TableData)
+    func dataCellClicked(rowID: Int, table: String, viewClicked: UITableView)
     {
         var dataType: String = ""
         // First we need to work out the type of data in the table, we get this from the button
@@ -994,7 +996,7 @@ println("facebook ID = \(myFacebookID)")
         var myRowContents: String = "'"
         myRowClicked = rowID
         
-        switch inTable
+        switch table
         {
             case "Table1":
                 dataType = TableTypeButton1.currentTitle!
@@ -1024,7 +1026,7 @@ println("facebook ID = \(myFacebookID)")
             case "Reminders":
                 if myRowContents != "No reminders list found"
                 {
-                    reBuildTableName = inTable
+                    reBuildTableName = table
 
                     var myFullName: String
                     if myDisplayType == "Project"
@@ -1044,7 +1046,7 @@ println("facebook ID = \(myFacebookID)")
             case "Evernote":
                 if myRowContents != "No Notes found"
                 {
-                    reBuildTableName = inTable
+                    reBuildTableName = table
                     
                     var myEvernoteDataArray = myEvernote.getEvernoteDataArray()
                     
@@ -1120,7 +1122,7 @@ println("facebook ID = \(myFacebookID)")
 
                     self.presentViewController(calendarOption, animated: true, completion: nil)
                 }
-                calendarTable = inTable
+                calendarTable = table
 
             case "Project Membership":
                 // Project team membership details
@@ -1174,20 +1176,13 @@ println("facebook ID = \(myFacebookID)")
             myWebView.loadHTMLString(myHangoutsMessages.messages[rowID].body, baseURL: nil)
         
         case "Tasks":
+            let myOptions = displayTaskOptions(viewClicked, workingTask: myTaskItems[rowID])
+            myOptions.popoverPresentationController!.sourceView = viewClicked
             
-            let taskViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("taskTab") as! tasksTabViewController
+            self.presentViewController(myOptions, animated: true, completion: nil)
             
-            let myPassedTask = TaskModel()
-            myPassedTask.taskType = ""
-            myPassedTask.currentTask = myTaskItems[rowID]
-            myPassedTask.delegate = self
-            taskViewControl.myPassedTask = myPassedTask
-            
-            self.presentViewController(taskViewControl, animated: true, completion: nil)
-
-            
-            default:
-                NSLog("Do nothing")
+        default:
+            NSLog("Do nothing")
         }
     }
     
@@ -3052,23 +3047,50 @@ print("Nothing found")
         }
         return tableContents
     }
-
-    func myTaskDidFinish(controller:taskViewController, actionType: String, currentTask: task)
-    {
-        // reload the task Items collection view
-        
-        // Associate the task with the meeting
-        
-        controller.dismissViewControllerAnimated(true, completion: nil)
-    }
-    
-    func myTaskUpdateDidFinish(controller:taskUpdatesViewController, actionType: String, currentTask: task)
-    {
-        controller.dismissViewControllerAnimated(true, completion: nil)
-    }
     
     func myGTDPlanningDidFinish(controller:MaintainGTDPlanningViewController)
     {
         controller.dismissViewControllerAnimated(true, completion: nil)
     }
+    
+    func displayTaskOptions(sourceView: UIView, workingTask: task) -> UIAlertController
+    {
+        let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .ActionSheet)
+        
+        let myOption1 = UIAlertAction(title: "Edit Action", style: .Default, handler: { (action: UIAlertAction) -> () in
+            let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("tasks") as! taskViewController
+            popoverContent.modalPresentationStyle = .Popover
+            let popover = popoverContent.popoverPresentationController
+            popover!.delegate = self
+            popover!.sourceView = sourceView
+            popover!.sourceRect = CGRectMake(700,700,0,0)
+            
+            popoverContent.passedTask = workingTask
+            
+            popoverContent.preferredContentSize = CGSizeMake(700,700)
+            
+            self.presentViewController(popoverContent, animated: true, completion: nil)
+        })
+        
+        let myOption2 = UIAlertAction(title: "Action Updates", style: .Default, handler: { (action: UIAlertAction) -> () in
+            let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("taskUpdate") as! taskUpdatesViewController
+            popoverContent.modalPresentationStyle = .Popover
+            let popover = popoverContent.popoverPresentationController
+            popover!.delegate = self
+            popover!.sourceView = sourceView
+            popover!.sourceRect = CGRectMake(700,700,0,0)
+            
+            popoverContent.passedTask = workingTask
+            
+            popoverContent.preferredContentSize = CGSizeMake(700,700)
+            
+            self.presentViewController(popoverContent, animated: true, completion: nil)
+        })
+        
+        myOptions.addAction(myOption1)
+        myOptions.addAction(myOption2)
+        
+        return myOptions
+    }
+
 }

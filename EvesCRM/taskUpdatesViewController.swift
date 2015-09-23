@@ -15,7 +15,7 @@ import Foundation
 
 class taskUpdatesViewController: UIViewController, SMTEFillDelegate
 {
-    private var passedTask: TaskModel!
+    var passedTask: task!
     
     @IBOutlet weak var lblAddUpdate: UILabel!
     @IBOutlet weak var lblUpdateSource: UILabel!
@@ -24,8 +24,6 @@ class taskUpdatesViewController: UIViewController, SMTEFillDelegate
     @IBOutlet weak var txtUpdateSource: UITextField!
     @IBOutlet weak var txtUpdateDetails: UITextView!
     @IBOutlet weak var colHistory: UICollectionView!
-    
-    private let resuseID = "historyCell"
 
     // Textexpander
     
@@ -41,16 +39,6 @@ class taskUpdatesViewController: UIViewController, SMTEFillDelegate
         txtUpdateDetails.layer.borderWidth = 0.5
         txtUpdateDetails.layer.cornerRadius = 5.0
         txtUpdateDetails.layer.masksToBounds = true
-        
-        passedTask = (tabBarController as! tasksTabViewController).myPassedTask
-        
-        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
-        self.view.addGestureRecognizer(showGestureRecognizer)
-        
-        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
-        self.view.addGestureRecognizer(hideGestureRecognizer)
 
         // TextExpander
         textExpander = SMTEDelegateController()
@@ -75,22 +63,6 @@ class taskUpdatesViewController: UIViewController, SMTEFillDelegate
         colHistory.collectionViewLayout.invalidateLayout()
     }
     
-    func handleSwipe(recognizer:UISwipeGestureRecognizer)
-    {
-        if recognizer.direction == UISwipeGestureRecognizerDirection.Left
-        {
-            // Do nothing
-        }
-        else
-        {
-            // Move to previous item in tab hierarchy
-            
-            let myCurrentTab = self.tabBarController
-            
-            myCurrentTab!.selectedIndex = myCurrentTab!.selectedIndex - 1
-        }
-    }
-    
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
     {
         return 1
@@ -98,33 +70,24 @@ class taskUpdatesViewController: UIViewController, SMTEFillDelegate
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
-        return passedTask.currentTask.history.count
+        return passedTask.history.count
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
     {
-        var cell : myHistory!
-        cell = collectionView.dequeueReusableCellWithReuseIdentifier(resuseID, forIndexPath: indexPath) as! myHistory
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("myHistoryCell", forIndexPath: indexPath) as! myHistory
         
-        if passedTask.currentTask.history.count > 0
-        {
-            cell.lblDate.text = passedTask.currentTask.history[indexPath.row].displayUpdateDate
-            cell.lblSource.text = passedTask.currentTask.history[indexPath.row].source
-            cell.txtUpdate.text = passedTask.currentTask.history[indexPath.row].details
+        cell.lblDate.text = passedTask.history[indexPath.row].displayShortUpdateDate
+        cell.lblSource.text = passedTask.history[indexPath.row].source
+        cell.txtUpdate.text = passedTask.history[indexPath.row].details
+        cell.lblTime.text = passedTask.history[indexPath.row].displayShortUpdateTime
             
-            let fixedWidth = cell.txtUpdate.frame.size.width
-            cell.txtUpdate.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.max))
-            let newSize = cell.txtUpdate.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.max))
-            var newFrame = cell.txtUpdate.frame
-            newFrame.size = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
-            cell.txtUpdate.frame = newFrame;
-        }
-        else
-        {
-            cell.lblDate.text = ""
-            cell.txtUpdate.text = ""
-            cell.lblSource.text = ""
-        }
+        let fixedWidth = cell.txtUpdate.frame.size.width
+        cell.txtUpdate.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.max))
+        let newSize = cell.txtUpdate.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.max))
+        var newFrame = cell.txtUpdate.frame
+        newFrame.size = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
+        cell.txtUpdate.frame = newFrame;
         
         if (indexPath.row % 2 == 0)  // was .row
         {
@@ -166,7 +129,7 @@ class taskUpdatesViewController: UIViewController, SMTEFillDelegate
     {
         if txtUpdateDetails.text.characters.count > 0 && txtUpdateSource.text!.characters.count > 0
         {
-            passedTask.currentTask.addHistoryRecord(txtUpdateDetails.text, inHistorySource: txtUpdateSource.text!)
+            passedTask.addHistoryRecord(txtUpdateDetails.text, inHistorySource: txtUpdateSource.text!)
             txtUpdateDetails.text = ""
             txtUpdateSource.text = ""
             colHistory.reloadData()
@@ -442,4 +405,5 @@ class myHistory: UICollectionViewCell
     @IBOutlet weak var lblDate: UILabel!
     @IBOutlet weak var txtUpdate: UITextView!
     @IBOutlet weak var lblSource: UILabel!
+    @IBOutlet weak var lblTime: UILabel!
 }

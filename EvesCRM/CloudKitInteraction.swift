@@ -1458,7 +1458,7 @@ class CloudKitInteraction
         NSLog("Syncing TaskUpdates")
         for myItem in myDatabaseConnection.getTaskUpdatesForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(taskID == \(myItem.taskID as Int)) && (updateDate == \(myItem.updateDate))") // better be accurate to get only the record you need
+            let predicate = NSPredicate(format: "(taskID == \(myItem.taskID as Int)) && (updateDate == %@)", myItem.updateDate) // better be accurate to get only the record you need
             let query = CKQuery(recordType: "TaskUpdates", predicate: predicate)
             privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
                 if error != nil

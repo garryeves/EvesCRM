@@ -2402,6 +2402,26 @@ class taskUpdates: NSObject
         }
     }
     
+    var displayShortUpdateDate: String
+    {
+        get
+        {
+            let myDateFormatter = NSDateFormatter()
+            myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
+            return myDateFormatter.stringFromDate(myUpdateDate)
+        }
+    }
+    
+    var displayShortUpdateTime: String
+    {
+        get
+        {
+            let myDateFormatter = NSDateFormatter()
+            myDateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
+            return myDateFormatter.stringFromDate(myUpdateDate)
+        }
+    }
+    
     var details: String
         {
         get
@@ -2443,62 +2463,6 @@ class taskUpdates: NSObject
     func save()
     {
         myDatabaseConnection.saveTaskUpdate(myTaskID, inDetails: myDetails, inSource: mySource)
-    }
-}
-
-class TaskModel: NSObject
-{
-    private var myTaskType: String = ""
-    private var myTask: task!
-    private var myDelegate: MyTaskDelegate!
-    private var myEvent: myCalendarItem!
- 
-    var delegate: MyTaskDelegate
-    {
-        get
-        {
-            return myDelegate
-        }
-        set
-        {
-            myDelegate = newValue
-        }
-    }
-    
-    var taskType: String
-    {
-        get
-        {
-            return myTaskType
-        }
-        set
-        {
-            myTaskType = newValue
-        }
-    }
-    
-    var currentTask: task
-    {
-        get
-        {
-            return myTask
-        }
-        set
-        {
-            myTask = newValue
-        }
-    }
-    
-    var event: myCalendarItem
-    {
-        get
-        {
-            return myEvent
-        }
-        set
-        {
-            myEvent = newValue
-        }
     }
 }
 

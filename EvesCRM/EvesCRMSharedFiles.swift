@@ -794,6 +794,122 @@ class textLongPressGestureRecognizer:UILongPressGestureRecognizer
     private var myView: UIView!
     private var myHeadBody: String = ""
     private var myType: String = ""
+    private var myFrame: CGRect!
+    
+    var tag: Int
+    {
+        get
+        {
+            return myTag
+        }
+        set
+        {
+            myTag = newValue
+        }
+    }
+    
+    var targetObject: AnyObject
+    {
+        get
+        {
+            return myTargetObject
+        }
+        set
+        {
+            myTargetObject = newValue
+            
+            if newValue.isKindOfClass(team)
+            {
+                myType = "team"
+            }
+            else if newValue.isKindOfClass(workingGTDItem)
+            {
+                myType = "workingGTDItem"
+            }
+            else if newValue.isKindOfClass(project)
+            {
+                myType = "project"
+            }
+            else if newValue.isKindOfClass(task)
+            {
+                myType = "task"
+            }
+            else if newValue.isKindOfClass(context)
+            {
+                myType = "context"
+            }
+        }
+    }
+    
+    var displayView: UIView
+    {
+        get
+        {
+            return myView
+        }
+        set
+        {
+            myView = newValue
+        }
+    }
+    
+    var headBody: String
+    {
+        get
+        {
+            return myHeadBody
+        }
+        set
+        {
+            myHeadBody = newValue
+        }
+    }
+    
+    var type: String
+    {
+        get
+        {
+            return myType
+        }
+    }
+    
+    var displayX: CGFloat
+    {
+        get
+        {
+            return myFrame.origin.x
+        }
+    }
+    
+    var displayY: CGFloat
+    {
+        get
+        {
+            return myFrame.origin.y
+        }
+    }
+    
+    var frame: CGRect
+    {
+        get
+        {
+            return myFrame
+        }
+        set
+        {
+            myFrame = newValue
+        }
+    }
+}
+
+class cellDetails: NSObject
+{
+    private var myTag: Int = 0
+    private var myTargetObject: AnyObject!
+    private var myView: UIView!
+    private var myHeadBody: String = ""
+    private var myType: String = ""
+    private var myFrame: CGRect!
     
     var tag: Int
         {
@@ -871,8 +987,35 @@ class textLongPressGestureRecognizer:UILongPressGestureRecognizer
             return myType
         }
     }
+    
+    var displayX: CGFloat
+        {
+        get
+        {
+            return myFrame.origin.x
+        }
+    }
+    
+    var displayY: CGFloat
+        {
+        get
+        {
+            return myFrame.origin.y
+        }
+    }
+    
+    var frame: CGRect
+        {
+        get
+        {
+            return myFrame
+        }
+        set
+        {
+            myFrame = newValue
+        }
+    }
 }
-
 
 func getDefaultDate() -> NSDate
 {

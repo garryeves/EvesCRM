@@ -2178,7 +2178,7 @@ class coreDatabase: NSObject
     {
         var myTaskUpdate: TaskUpdates!
 
-        if getTaskUpdate(inTaskID, updateDate: inUpdateTime).count == 0
+        if getTaskUpdate(inTaskID, updateDate: inUpdateDate).count == 0
         {
             myTaskUpdate = NSEntityDescription.insertNewObjectForEntityForName("TaskUpdates", inManagedObjectContext: self.managedObjectContext!) as! TaskUpdates
             myTaskUpdate.taskID = inTaskID

@@ -13,7 +13,7 @@ protocol MyTaskListDelegate
     func myTaskListDidFinish(controller:taskListViewController)
 }
 
-class taskListViewController: UIViewController, MyTaskDelegate, UITextViewDelegate
+class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPresentationControllerDelegate
 {
     var delegate: MyTaskListDelegate?
     var myTaskListType: String = ""
@@ -24,6 +24,9 @@ class taskListViewController: UIViewController, MyTaskDelegate, UITextViewDelega
     private var myTaskList: [task] = Array()
     
     private let cellTaskName = "taskCell"
+    
+    private var myCells: [cellDetails] = Array()
+    private var headerSize: CGFloat = 0.0
     
     override func viewDidLoad()
     {
@@ -111,6 +114,7 @@ class taskListViewController: UIViewController, MyTaskDelegate, UITextViewDelega
 
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
     {
+        myCells.removeAll()
         return 1
     }
     
@@ -208,25 +212,10 @@ class taskListViewController: UIViewController, MyTaskDelegate, UITextViewDelega
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
     {
-        let taskViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("taskTab") as! tasksTabViewController
+        let myOptions = displayTaskOptions(collectionView, workingTask: myTaskList[indexPath.row])
+        myOptions.popoverPresentationController!.sourceView = collectionView
         
-        let myPassedTask = TaskModel()
-        if myTaskListType == "Meeting"
-        {
-            myPassedTask.taskType = "minutes"
-            let myWorkingItem = myCalendarItem(inEventStore: eventStore, inMeetingID: myMeetingID)
-            
-            myPassedTask.event = myWorkingItem
-        }
-        else
-        {
-            myPassedTask.taskType = ""
-        }
-        myPassedTask.currentTask = myTaskList[indexPath.row]
-        myPassedTask.delegate = self
-        taskViewControl.myPassedTask = myPassedTask
-        
-        self.presentViewController(taskViewControl, animated: true, completion: nil)
+        self.presentViewController(myOptions, animated: true, completion: nil)
     }
     
     
@@ -239,21 +228,54 @@ class taskListViewController: UIViewController, MyTaskDelegate, UITextViewDelega
         return retVal
     }
     
-    func myTaskDidFinish(controller:taskViewController, actionType: String, currentTask: task)
+    func displayTaskOptions(sourceView: UIView, workingTask: task) -> UIAlertController
     {
-        // reload the task Items collection view
+        let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .ActionSheet)
         
-        // Associate the task with the meeting
+        let myOption1 = UIAlertAction(title: "Edit Action", style: .Default, handler: { (action: UIAlertAction) -> () in
+            let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("tasks") as! taskViewController
+            popoverContent.modalPresentationStyle = .Popover
+            let popover = popoverContent.popoverPresentationController
+            popover!.delegate = self
+            popover!.sourceView = sourceView
+            popover!.sourceRect = CGRectMake(700,700,0,0)
+            
+            popoverContent.passedTask = workingTask
+            
+            if self.myTaskListType == "Meeting"
+            {
+                popoverContent.passedTaskType = "minutes"
+                let myWorkingItem = myCalendarItem(inEventStore: eventStore, inMeetingID: self.myMeetingID)
+                
+                popoverContent.passedEvent = myWorkingItem
+            }
+            
+            popoverContent.preferredContentSize = CGSizeMake(700,700)
+            
+            self.presentViewController(popoverContent, animated: true, completion: nil)
+        })
         
-        colTaskList.reloadData()
-        controller.dismissViewControllerAnimated(true, completion: nil)
+        let myOption2 = UIAlertAction(title: "Action Updates", style: .Default, handler: { (action: UIAlertAction) -> () in
+            let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("taskUpdate") as! taskUpdatesViewController
+            popoverContent.modalPresentationStyle = .Popover
+            let popover = popoverContent.popoverPresentationController
+            popover!.delegate = self
+            popover!.sourceView = sourceView
+            popover!.sourceRect = CGRectMake(700,700,0,0)
+            
+            popoverContent.passedTask = workingTask
+            
+            popoverContent.preferredContentSize = CGSizeMake(700,700)
+            
+            self.presentViewController(popoverContent, animated: true, completion: nil)
+        })
+        
+        myOptions.addAction(myOption1)
+        myOptions.addAction(myOption2)
+        
+        return myOptions
     }
-    
-    func myTaskUpdateDidFinish(controller:taskUpdatesViewController, actionType: String, currentTask: task)
-    {
-        colTaskList.reloadData()
-        controller.dismissViewControllerAnimated(true, completion: nil)
-    }    
+
 }
 
 class myTaskListItem: UICollectionViewCell

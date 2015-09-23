@@ -33,6 +33,9 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
     private var mySelectedTeam: team!
     private var myHeadObjectType: String = ""
     private var mySavedParentObject: AnyObject!
+    private var myHeadCells: [cellDetails] = Array()
+    private var myBodyCells: [cellDetails] = Array()
+    private var headerSize: CGFloat = 0.0
     
     override func viewDidLoad()
     {
@@ -76,6 +79,8 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
     
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
     {
+        myHeadCells.removeAll()
+        myBodyCells.removeAll()
         return 2
     }
     
@@ -97,9 +102,10 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
     {
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellBody", forIndexPath: indexPath) as! myGTDDisplay
+        
         if indexPath.section == 0
         {  // Head
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellBody", forIndexPath: indexPath) as! myGTDDisplay
             
             if myDisplayHeadArray[indexPath.row].isKindOfClass(team)
             {
@@ -230,15 +236,17 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             lpgr.delaysTouchesBegan = true
             lpgr.delegate = self
             lpgr.displayView = cell.contentView
+            lpgr.frame = cell.frame
             self.colBody.addGestureRecognizer(lpgr)
             
-            cell.layoutSubviews()
-            return cell
+            let myCell = cellDetails()
+            myCell.displayView = cell.contentView
+            
+            myCell.frame = cell.frame
+            myHeadCells.append(myCell)
         }
         else
         {  // Body
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellBody", forIndexPath: indexPath) as! myGTDDisplay
-
             if myDisplayBodyArray[indexPath.row].isKindOfClass(workingGTDItem)
             {
                 let tempObject = myDisplayBodyArray[indexPath.row] as! workingGTDItem
@@ -302,9 +310,25 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             cell.layer.cornerRadius = 5.0
             cell.layer.masksToBounds = true
 
-            cell.layoutSubviews()
-            return cell
+            let lpgr = textLongPressGestureRecognizer(target: self, action: "handleLongPress:")
+            lpgr.minimumPressDuration = 0.5
+            lpgr.delaysTouchesBegan = true
+            lpgr.delegate = self
+            lpgr.displayView = cell.contentView
+            lpgr.frame = cell.frame
+            let myCell = cellDetails()
+            myCell.displayView = cell.contentView
+            
+            NSLog("cell \(cell.lblName.text) frame = \(cell.frame)")
+            
+            myCell.frame = cell.frame
+            myBodyCells.append(myCell)
+            
+            self.colBody.addGestureRecognizer(lpgr)
         }
+
+        cell.layoutSubviews()
+        return cell
     }
     
     func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
@@ -457,10 +481,12 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                 headerView.lblTitle.text = ""
             }
         }
-                
+        
+        headerSize = headerView.frame.size.height
+        
         return headerView
     }
-
+    
     // Start move
 
     func moveDataItem(toIndexPath : NSIndexPath, fromIndexPath: NSIndexPath) -> Void
@@ -671,83 +697,70 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
     
     func handleLongPress(gestureReconizer: textLongPressGestureRecognizer)
     {
-        
         if gestureReconizer.state == .Ended
         {
             let p = gestureReconizer.locationInView(self.colBody)
             let indexPath = self.colBody.indexPathForItemAtPoint(p)
         
-            //var cell = self.colBody.cellForItemAtIndexPath(index)
-
             if let index = indexPath
             {
                 if index.section == 0
                 { // Head
+                    var myOptions: UIAlertController!
+                    
                     if myDisplayHeadArray[index.row].isKindOfClass(team)
                     {
                         let tempObject = myDisplayHeadArray[indexPath!.row] as! team
                         highlightID = tempObject.teamID
                         
-                        let myOptions = displayTeamOptions(gestureReconizer.displayView, inTeam: myDisplayHeadArray[index.row] as! team)
-                        
-                        myOptions.popoverPresentationController!.sourceView = gestureReconizer.displayView
-                  //      myOptions.popoverPresentationController!.sourceRect = CGRectMake(self.view.bounds.size.width / 2.0, self.view.bounds.size.height / 2.0, 1.0, 1.0);
-                        self.presentViewController(myOptions, animated: true, completion: nil)
+                        myOptions = displayTeamOptions(gestureReconizer.displayView, inTeam: myDisplayHeadArray[index.row] as! team)
                     }
                     else if myDisplayHeadArray[index.row].isKindOfClass(workingGTDItem)
                     {
                         let tempObject = myDisplayHeadArray[indexPath!.row] as! workingGTDItem
                         highlightID = tempObject.GTDItemID
-                        let myOptions = displayGTDOptions(gestureReconizer.displayView, inGTDItem: myDisplayHeadArray[index.row] as! workingGTDItem, inDisplayType: "Head")
-                        myOptions.popoverPresentationController!.sourceView = gestureReconizer.displayView
-                  //      myOptions.popoverPresentationController!.sourceRect = CGRectMake(self.view.bounds.size.width / 2.0, self.view.bounds.size.height / 2.0, 1.0, 1.0);
-                        self.presentViewController(myOptions, animated: true, completion: nil)
+                        myOptions = displayGTDOptions(myDisplayHeadArray[index.row] as! workingGTDItem, inDisplayType: "Head", xPos: myHeadCells[index.row].displayX, yPos: myHeadCells[index.row].displayY)
                     }
                     else if myDisplayHeadArray[index.row].isKindOfClass(project)
                     {
                         let tempObject = myDisplayHeadArray[indexPath!.row] as! project
                         highlightID = tempObject.projectID
 
-                        let myOptions = displayProjectOptions(gestureReconizer.displayView, inProjectItem: myDisplayHeadArray[index.row] as! project, inDisplayType: "Head")
-                        myOptions.popoverPresentationController!.sourceView = gestureReconizer.displayView
-                   //     myOptions.popoverPresentationController!.sourceRect = CGRectMake(self.view.bounds.size.width / 2.0, self.view.bounds.size.height / 2.0, 1.0, 1.0);
-                        self.presentViewController(myOptions, animated: true, completion: nil)
+                        myOptions = displayProjectOptions(myDisplayHeadArray[index.row] as! project, inDisplayType: "Head", xPos: myHeadCells[index.row].displayX, yPos: myHeadCells[index.row].displayY)
                     }
+                    myOptions.popoverPresentationController!.sourceView = self.view
+                    
+                    myOptions.popoverPresentationController!.sourceRect = CGRectMake(myHeadCells[index.row].displayX + 20, myHeadCells[index.row].displayY + headerSize, 0, 0)
+                    
+                    self.presentViewController(myOptions, animated: true, completion: nil)
                 }
                 else
                 { // Body
+                    var myOptions: UIAlertController!
                     if myDisplayBodyArray[index.row].isKindOfClass(workingGTDItem)
                     {
                         let tempObject = myDisplayBodyArray[indexPath!.row] as! workingGTDItem
                         highlightID = tempObject.GTDItemID
 
-                        let myOptions = displayGTDOptions(gestureReconizer.displayView, inGTDItem: myDisplayBodyArray[index.row] as! workingGTDItem, inDisplayType: "Body")
-                        myOptions.popoverPresentationController!.sourceView = gestureReconizer.displayView
-                  //      myOptions.popoverPresentationController!.sourceRect = CGRectMake(self.view.bounds.size.width / 2.0, self.view.bounds.size.height / 2.0, 1.0, 1.0);
-                        self.presentViewController(myOptions, animated: true, completion: nil)
+                        myOptions = displayGTDOptions(myDisplayBodyArray[index.row] as! workingGTDItem, inDisplayType: "Body", xPos: myBodyCells[index.row].displayX, yPos: myBodyCells[index.row].displayY)
                     }
                     else if myDisplayBodyArray[index.row].isKindOfClass(project)
                     {
                         let tempObject = myDisplayBodyArray[indexPath!.row] as! project
                         highlightID = tempObject.projectID
                         
-                        let myOptions = displayProjectOptions(gestureReconizer.displayView, inProjectItem: myDisplayBodyArray[index.row] as! project, inDisplayType: "Body")
-                        myOptions.popoverPresentationController!.sourceView = gestureReconizer.displayView
-                //        myOptions.popoverPresentationController!.sourceRect = CGRectMake(self.view.bounds.size.width / 2.0, self.view.bounds.size.height / 2.0, 1.0, 1.0);
-                        self.presentViewController(myOptions, animated: true, completion: nil)
+                        myOptions = displayProjectOptions(myDisplayBodyArray[index.row] as! project, inDisplayType: "Body", xPos: myBodyCells[index.row].displayX, yPos: myBodyCells[index.row].displayY)
                     }
                     else if myDisplayBodyArray[index.row].isKindOfClass(task)
                     {
-                        let tempObject = myDisplayBodyArray[indexPath!.row] as! task
-                        highlightID = tempObject.taskID
-                        
-                        let myOptions = displayTaskOptions(gestureReconizer.displayView, workingTask: myDisplayBodyArray[index.row] as! task, displayType: "Body")
-                        myOptions.popoverPresentationController!.sourceView = gestureReconizer.displayView
-                        
-                        self.presentViewController(myOptions, animated: true, completion: nil)
+                        myOptions = displayTaskOptions(myDisplayBodyArray[index.row] as! task, displayType: "Body", xPos: myBodyCells[index.row].displayX, yPos: myBodyCells[index.row].displayY)
                     }
                     
+                    myOptions.popoverPresentationController!.sourceView = self.view
+
+                    myOptions.popoverPresentationController!.sourceRect = CGRectMake(myBodyCells[index.row].displayX + 20, myBodyCells[index.row].displayY + headerSize, 0, 0)
                     
+                    self.presentViewController(myOptions, animated: true, completion: nil)
                 }
                 
             }
@@ -1265,6 +1278,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
     func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle
     {
         return .FullScreen
+       // return .None
     }
     
     func presentationController(controller: UIPresentationController, viewControllerForAdaptivePresentationStyle style: UIModalPresentationStyle) -> UIViewController?
@@ -1313,7 +1327,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             
                 myDisplayHeadArray = buildProjectArray(myObject2.children)
                 
-                highlightID = myObject2.GTDItemID
+              //  highlightID = myObject2.GTDItemID
                 buildHead(highlightID)
             
             case "task":
@@ -1423,7 +1437,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         return myOptions
     }
     
-    func displayGTDOptions(inSourceView: UIView, inGTDItem: workingGTDItem, inDisplayType: String) -> UIAlertController
+    func displayGTDOptions(inGTDItem: workingGTDItem, inDisplayType: String, xPos: CGFloat, yPos: CGFloat) -> UIAlertController
     {
         // Need to get the name of the GTD Level
         
@@ -1470,7 +1484,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             popoverContent.modalPresentationStyle = .Popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
-            popover!.sourceView = inSourceView
+            popover!.sourceView = self.view
             popover!.sourceRect = CGRectMake(500,400,0,0)
             
             popoverContent.inGTDObject = inGTDItem
@@ -1506,7 +1520,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     popoverContent.modalPresentationStyle = .Popover
                     let popover = popoverContent.popoverPresentationController
                     popover!.delegate = self
-                    popover!.sourceView = inSourceView
+                    popover!.sourceView = self.view
                 
                     let tempChild = workingGTDItem(inTeamID: self.mySelectedTeam.teamID, inParentID: inGTDItem.GTDItemID)
                     tempChild.GTDLevel = inGTDItem.GTDLevel + 1
@@ -1521,7 +1535,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     popoverContent.modalPresentationStyle = .Popover
                     let popover = popoverContent.popoverPresentationController
                     popover!.delegate = self
-                    popover!.sourceView = inSourceView
+                    popover!.sourceView = self.view
                     popover!.sourceRect = CGRectMake(700,700,0,0)
                     
                     let tempProject = project(inTeamID: self.mySelectedTeam.teamID)
@@ -1556,7 +1570,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         return myOptions
     }
     
-    func displayProjectOptions(inSourceView: UIView, inProjectItem: project, inDisplayType: String) -> UIAlertController
+    func displayProjectOptions(inProjectItem: project, inDisplayType: String, xPos: CGFloat, yPos: CGFloat) -> UIAlertController
     {
         let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .ActionSheet)
         
@@ -1565,7 +1579,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             popoverContent.modalPresentationStyle = .Popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
-            popover!.sourceView = inSourceView
+            popover!.sourceView = self.view
             popover!.sourceRect = CGRectMake(700,700,0,0)
             
  //           self.myParentObject = inProjectItem
@@ -1612,15 +1626,12 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             popoverContent.modalPresentationStyle = .Popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
-            popover!.sourceView = inSourceView
+            popover!.sourceView = self.view
             popover!.sourceRect = CGRectMake(700,700,0,0)
             
-            let myPassedTask = TaskModel()
-            myPassedTask.taskType = ""
-            
-            myPassedTask.currentTask = task(inTeamID: self.mySelectedTeam.teamID)
-            myPassedTask.currentTask.projectID = inProjectItem.projectID
-            popoverContent.passedTask = myPassedTask
+            let newTask = task(inTeamID: self.mySelectedTeam.teamID)
+            newTask.projectID = inProjectItem.projectID
+            popoverContent.passedTask = newTask
             
             popoverContent.preferredContentSize = CGSizeMake(700,700)
             
@@ -1633,24 +1644,46 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         return myOptions
     }
     
-    func displayTaskOptions(sourceView: UIView, workingTask: task, displayType: String) -> UIAlertController
+    func displayTaskOptions(workingTask: task, displayType: String, xPos: CGFloat, yPos: CGFloat) -> UIAlertController
     {
         let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .ActionSheet)
-        
+
+//NSLog("GRE = frame = \(sourceGesture.displayX) - \(sourceGesture.displayY)")
         let myOption1 = UIAlertAction(title: "Edit Action", style: .Default, handler: { (action: UIAlertAction) -> () in
             let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("tasks") as! taskViewController
             popoverContent.modalPresentationStyle = .Popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
-            popover!.sourceView = sourceView
+            popover!.sourceView = self.view
             popover!.sourceRect = CGRectMake(700,700,0,0)
             
-            let myPassedTask = TaskModel()
-            myPassedTask.taskType = "Edit"
+ /*
+            popover!.sourceView = sourceGesture.displayView
+//            popover!.sourceRect = CGRectMake(700,700,0,0)
+            popover!.sourceRect = CGRectMake(sourceGesture.displayX,sourceGesture.displayY,700,700)
+ */
+            popoverContent.passedTask = workingTask
             
-            myPassedTask.currentTask = workingTask
-            popoverContent.passedTask = myPassedTask
+            popoverContent.preferredContentSize = CGSizeMake(700,700)
             
+            self.presentViewController(popoverContent, animated: true, completion: nil)
+        })
+        
+        let myOption2 = UIAlertAction(title: "Action Updates", style: .Default, handler: { (action: UIAlertAction) -> () in
+            let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("taskUpdate") as! taskUpdatesViewController
+            popoverContent.modalPresentationStyle = .Popover
+            let popover = popoverContent.popoverPresentationController
+            popover!.delegate = self
+            popover!.sourceView = self.view
+            
+            //  Calculate the start position based on screen width and position of the item
+            let myXPos = xPos
+            let myYPos = yPos
+NSLog("Position = \(myXPos), \(myYPos)")
+            
+            popover!.sourceRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 700, 700)
+ 
+            popoverContent.passedTask = workingTask
             popoverContent.preferredContentSize = CGSizeMake(700,700)
             
             self.presentViewController(popoverContent, animated: true, completion: nil)
@@ -1687,6 +1720,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
  */
         
         myOptions.addAction(myOption1)
+        myOptions.addAction(myOption2)
         
         return myOptions
     }

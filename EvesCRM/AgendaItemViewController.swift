@@ -13,7 +13,7 @@ protocol MyAgendaItemDelegate
     func myAgendaItemDidFinish(controller:agendaItemViewController, actionType: String)
 }
 
-class agendaItemViewController: UIViewController, MyTaskDelegate, UITextViewDelegate, SMTEFillDelegate
+class agendaItemViewController: UIViewController, UITextViewDelegate, SMTEFillDelegate, UIPopoverPresentationControllerDelegate
 {
     var delegate: MyAgendaItemDelegate?
 
@@ -42,6 +42,8 @@ class agendaItemViewController: UIViewController, MyTaskDelegate, UITextViewDele
     
     private var pickerOptions: [String] = Array()
     private var pickerTarget: String = ""
+    private var myCells: [cellDetails] = Array()
+    private var headerSize: CGFloat = 0.0
     
     // Textexpander
     
@@ -142,6 +144,7 @@ class agendaItemViewController: UIViewController, MyTaskDelegate, UITextViewDele
     
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
     {
+        myCells.removeAll()
         return 1
     }
     
@@ -198,17 +201,10 @@ class agendaItemViewController: UIViewController, MyTaskDelegate, UITextViewDele
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
     {
-        let taskViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("taskTab") as! tasksTabViewController
+        let myOptions = displayTaskOptions(collectionView, workingTask: agendaItem.tasks[indexPath.row])
+        myOptions.popoverPresentationController!.sourceView = collectionView
         
-        let myPassedTask = TaskModel()
-        myPassedTask.taskType = "minutes"
-        myPassedTask.currentTask = agendaItem.tasks[indexPath.row]
-        myPassedTask.delegate = self
-        myPassedTask.event = event
-        
-        taskViewControl.myPassedTask = myPassedTask
-        
-        self.presentViewController(taskViewControl, animated: true, completion: nil)
+        self.presentViewController(myOptions, animated: true, completion: nil)
     }
 
     
@@ -253,18 +249,18 @@ class agendaItemViewController: UIViewController, MyTaskDelegate, UITextViewDele
     
     @IBAction func btnAddAction(sender: UIButton)
     {
-        let taskViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("taskTab") as! tasksTabViewController
+        let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("tasks") as! taskViewController
+        popoverContent.modalPresentationStyle = .Popover
+        let popover = popoverContent.popoverPresentationController
+        popover!.sourceView = sender
+        popover!.sourceRect = CGRectMake(700,700,0,0)
         
-        let myPassedTask = TaskModel()
-        myPassedTask.taskType = "minutes"
-        let workingTask = task(inTeamID: myCurrentTeam.teamID)
-        myPassedTask.currentTask = workingTask
-        myPassedTask.delegate = self
-        myPassedTask.event = event
- 
-        taskViewControl.myPassedTask = myPassedTask
+        let newTask = task(inTeamID: myCurrentTeam.teamID)
+        popoverContent.passedTask = newTask
         
-        self.presentViewController(taskViewControl, animated: true, completion: nil)
+        popoverContent.preferredContentSize = CGSizeMake(700,700)
+        
+        presentViewController(popoverContent, animated: true, completion: nil)
     }
     
     @IBAction func btnOwner(sender: UIButton)
@@ -355,22 +351,47 @@ class agendaItemViewController: UIViewController, MyTaskDelegate, UITextViewDele
         btnAddAction.hidden = false
         colActions.hidden = false
     }
-
-    func myTaskDidFinish(controller:taskViewController, actionType: String, currentTask: task)
-    {
-        // reload the task Items collection view
-            
-        // Associate the task with the meeting
-            
-        agendaItem.addTask(currentTask)
-        colActions.reloadData()
-        controller.dismissViewControllerAnimated(true, completion: nil)
-    }
     
-    func myTaskUpdateDidFinish(controller:taskUpdatesViewController, actionType: String, currentTask: task)
+    func displayTaskOptions(sourceView: UIView, workingTask: task) -> UIAlertController
     {
-        colActions.reloadData()
-        controller.dismissViewControllerAnimated(true, completion: nil)
+        let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .ActionSheet)
+        
+        let myOption1 = UIAlertAction(title: "Edit Action", style: .Default, handler: { (action: UIAlertAction) -> () in
+            let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("tasks") as! taskViewController
+            popoverContent.modalPresentationStyle = .Popover
+            let popover = popoverContent.popoverPresentationController
+            popover!.delegate = self
+            popover!.sourceView = sourceView
+            popover!.sourceRect = CGRectMake(700,700,0,0)
+            
+            popoverContent.passedTaskType = "minutes"
+            popoverContent.passedEvent = self.event
+            popoverContent.passedTask = workingTask
+            
+            popoverContent.preferredContentSize = CGSizeMake(700,700)
+            
+            self.presentViewController(popoverContent, animated: true, completion: nil)
+        })
+        
+        let myOption2 = UIAlertAction(title: "Action Updates", style: .Default, handler: { (action: UIAlertAction) -> () in
+            let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("taskUpdate") as! taskUpdatesViewController
+            popoverContent.modalPresentationStyle = .Popover
+            let popover = popoverContent.popoverPresentationController
+            popover!.delegate = self
+            popover!.sourceView = sourceView
+            popover!.sourceRect = CGRectMake(700,700,0,0)
+            
+            popoverContent.passedTask = workingTask
+            
+            popoverContent.preferredContentSize = CGSizeMake(700,700)
+            
+            self.presentViewController(popoverContent, animated: true, completion: nil)
+        })
+        
+        myOptions.addAction(myOption1)
+        myOptions.addAction(myOption2)
+        
+        return myOptions
     }
 
     //---------------------------------------------------------------

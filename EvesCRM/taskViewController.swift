@@ -17,7 +17,9 @@ protocol MyTaskDelegate
 
 class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegate
 {
-    var passedTask: TaskModel!
+    var passedTask: task!
+    var passedEvent: myCalendarItem!
+    var passedTaskType: String = "Task"
     
     @IBOutlet weak var lblTaskTitle: UILabel!
     @IBOutlet weak var lblTaskDescription: UILabel!
@@ -88,8 +90,6 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         txtTaskDescription.layer.cornerRadius = 5.0
         txtTaskDescription.layer.masksToBounds = true
         
-   //     passedTask = (tabBarController as! tasksTabViewController).myPassedTask
-
         toolbar.translucent = false
         
         let spacer = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace,
@@ -99,102 +99,94 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         
         self.toolbar.items=[spacer, share]
         
-        if passedTask.currentTask.taskID != 0
+        if passedTask.taskID != 0
         {
             // Lets load up the fields
-            txtTaskTitle.text = passedTask.currentTask.title
-            txtTaskDescription.text = passedTask.currentTask.details
-            if passedTask.currentTask.displayDueDate == ""
+            txtTaskTitle.text = passedTask.title
+            txtTaskDescription.text = passedTask.details
+            if passedTask.displayDueDate == ""
             {
                 btnTargetDate.setTitle("None", forState: .Normal)
             }
             else
             {
-                btnTargetDate.setTitle(passedTask.currentTask.displayDueDate, forState: .Normal)
+                btnTargetDate.setTitle(passedTask.displayDueDate, forState: .Normal)
             }
 
-            if passedTask.currentTask.displayStartDate == ""
+            if passedTask.displayStartDate == ""
             {
                 btnStart.setTitle("None", forState: .Normal)
             }
             else
             {
-                btnStart.setTitle(passedTask.currentTask.displayStartDate, forState: .Normal)
+                btnStart.setTitle(passedTask.displayStartDate, forState: .Normal)
             }
 
-            if passedTask.currentTask.status == ""
+            if passedTask.status == ""
             {
                 btnStatus.setTitle("Open", forState: .Normal)
             }
             else
             {
-                btnStatus.setTitle(passedTask.currentTask.status, forState: .Normal)
+                btnStatus.setTitle(passedTask.status, forState: .Normal)
             }
             
-            myStartDate = passedTask.currentTask.startDate
-            myDueDate = passedTask.currentTask.dueDate
+            myStartDate = passedTask.startDate
+            myDueDate = passedTask.dueDate
             
-            if passedTask.currentTask.priority == ""
+            if passedTask.priority == ""
             {
                 btnPriority.setTitle("Click to set", forState: .Normal)
             }
             else
             {
-                btnPriority.setTitle(passedTask.currentTask.priority, forState: .Normal)
+                btnPriority.setTitle(passedTask.priority, forState: .Normal)
             }
             
-            if passedTask.currentTask.energyLevel == ""
+            if passedTask.energyLevel == ""
             {
                 btnEnergy.setTitle("Click to set", forState: .Normal)
             }
             else
             {
-                btnEnergy.setTitle(passedTask.currentTask.energyLevel, forState: .Normal)
+                btnEnergy.setTitle(passedTask.energyLevel, forState: .Normal)
             }
             
-            if passedTask.currentTask.urgency == ""
+            if passedTask.urgency == ""
             {
                 btnUrgency.setTitle("Click to set", forState: .Normal)
             }
             else
             {
-                btnUrgency.setTitle(passedTask.currentTask.urgency, forState: .Normal)
+                btnUrgency.setTitle(passedTask.urgency, forState: .Normal)
             }
 
             
-            if passedTask.currentTask.estimatedTimeType == ""
+            if passedTask.estimatedTimeType == ""
             {
                 btnEstTimeInterval.setTitle("Click to set", forState: .Normal)
             }
             else
             {
-                btnEstTimeInterval.setTitle(passedTask.currentTask.estimatedTimeType, forState: .Normal)
+                btnEstTimeInterval.setTitle(passedTask.estimatedTimeType, forState: .Normal)
             }
             
-            if passedTask.currentTask.projectID == 0
+            if passedTask.projectID == 0
             {
                 btnProject.setTitle("Click to set", forState: .Normal)
             }
             else
             {
                 // Go an get the project name
-                setProjectName(passedTask.currentTask.projectID)
+                setProjectName(passedTask.projectID)
             }
 
-            txtEstTime.text = "\(passedTask.currentTask.estimatedTime)"
+            txtEstTime.text = "\(passedTask.estimatedTime)"
             
             lblNewContext.hidden = true
             txtNewContext.hidden = true
             btnNewContext.hidden = true
             
-            let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-            showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
-            self.view.addGestureRecognizer(showGestureRecognizer)
-            
-            let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-            hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
-            self.view.addGestureRecognizer(hideGestureRecognizer)
-
             NSNotificationCenter.defaultCenter().addObserver(self, selector: "removeTaskContext:", name:"NotificationRemoveTaskContext", object: nil)
             
             txtTaskDescription.delegate = self
@@ -227,22 +219,6 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         colContexts.reloadData()
     }
     
-    func handleSwipe(recognizer:UISwipeGestureRecognizer)
-    {
-        if recognizer.direction == UISwipeGestureRecognizerDirection.Left
-        {
-            // Move to next item in tab hierarchy
-            
-            let myCurrentTab = self.tabBarController
-            
-            myCurrentTab!.selectedIndex = myCurrentTab!.selectedIndex + 1
-        }
-        else
-        {
-            passedTask.delegate.myTaskDidFinish(self, actionType: "Cancel", currentTask: passedTask.currentTask)
-        }
-    }
-    
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
     {
         return 1
@@ -250,7 +226,7 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
     
     func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
-        return passedTask.currentTask.contexts.count
+        return passedTask.contexts.count
     }
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
@@ -259,9 +235,9 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
 
         cell = collectionView.dequeueReusableCellWithReuseIdentifier("reuseContext", forIndexPath: indexPath) as! myContextItem
         
-        cell.lblContext.text = passedTask.currentTask.contexts[indexPath.row].name
+        cell.lblContext.text = passedTask.contexts[indexPath.row].name
         cell.btnRemove.setTitle("Remove", forState: .Normal)
-        cell.btnRemove.tag = passedTask.currentTask.contexts[indexPath.row].contextID
+        cell.btnRemove.tag = passedTask.contexts[indexPath.row].contextID
          
         if (indexPath.row % 2 == 0)  // was .row
         {
@@ -352,11 +328,11 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
             
             pickerOptions.append("")
             
-            if passedTask.taskType == "minutes"
+            if passedTaskType == "minutes"
             { // a meeting task
                 // First need to loop through the meetings attendees
                 
-                for myAttendee in passedTask.event.attendees
+                for myAttendee in passedEvent.attendees
                 {
                     // check in the address book to see if we have a person for this email address, this is so we make sure we try and use consistent Context names
                     let person:ABRecord! = findPersonbyEmail(myAttendee.emailAddress)
@@ -425,14 +401,14 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         {
             btnTargetDate.setTitle(dateFormatter.stringFromDate(myDatePicker.date), forState: .Normal)
             myDueDate = myDatePicker.date
-            passedTask.currentTask.dueDate = myDueDate
+            passedTask.dueDate = myDueDate
             btnSetTargetDate.hidden = true
         }
         else
         {
             btnStart.setTitle(dateFormatter.stringFromDate(myDatePicker.date), forState: .Normal)
             myStartDate = myDatePicker.date
-            passedTask.currentTask.startDate = myStartDate
+            passedTask.startDate = myStartDate
             btnSetTargetDate.hidden = true
         }
         
@@ -600,13 +576,13 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
     {
         if txtTaskTitle.text != ""
         {
-            passedTask.currentTask.title = txtTaskTitle.text!
+            passedTask.title = txtTaskTitle.text!
         }
     }
     
     @IBAction func txtEstTime(sender: UITextField)
     {
-        passedTask.currentTask.estimatedTime = Int(txtEstTime.text!)!
+        passedTask.estimatedTime = Int(txtEstTime.text!)!
     }
     
     @IBAction func btnSelect(sender: UIButton)
@@ -618,31 +594,31 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
             if pickerTarget == "Status"
             {
                 btnStatus.setTitle(pickerOptions[mySelectedRow], forState: .Normal)
-                passedTask.currentTask.status = btnStatus.currentTitle!
+                passedTask.status = btnStatus.currentTitle!
             }
         
             if pickerTarget == "TimeInterval"
             {
                 btnEstTimeInterval.setTitle(pickerOptions[mySelectedRow], forState: .Normal)
-                passedTask.currentTask.estimatedTimeType = btnEstTimeInterval.currentTitle!
+                passedTask.estimatedTimeType = btnEstTimeInterval.currentTitle!
             }
         
             if pickerTarget == "Priority"
             {
                 btnPriority.setTitle(pickerOptions[mySelectedRow], forState: .Normal)
-                passedTask.currentTask.priority = btnPriority.currentTitle!
+                passedTask.priority = btnPriority.currentTitle!
             }
         
             if pickerTarget == "Energy"
             {
                 btnEnergy.setTitle(pickerOptions[mySelectedRow], forState: .Normal)
-                passedTask.currentTask.energyLevel = btnEnergy.currentTitle!
+                passedTask.energyLevel = btnEnergy.currentTitle!
             }
         
             if pickerTarget == "Urgency"
             {
                 btnUrgency.setTitle(pickerOptions[mySelectedRow], forState: .Normal)
-                passedTask.currentTask.urgency = btnUrgency.currentTitle!
+                passedTask.urgency = btnUrgency.currentTitle!
             }
         
             if pickerTarget == "Project"
@@ -699,7 +675,7 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         
         if textView == txtTaskDescription
         {
-            passedTask.currentTask.details = textView.text
+            passedTask.details = textView.text
         }
     }
     
@@ -773,12 +749,12 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
             btnProject.setTitle(myProjects[0].projectName, forState: .Normal)
             myProjectID = myProjects[0].projectID as Int
         }
-        passedTask.currentTask.projectID = myProjectID
+        passedTask.projectID = myProjectID
     }
     
     func setContext(inContextID: Int)
     {
-        passedTask.currentTask.addContext(inContextID)
+        passedTask.addContext(inContextID)
         
         // Reload the collection data
         
@@ -789,7 +765,7 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
     {
         let contextToRemove = notification.userInfo!["itemNo"] as! Int
         
-        passedTask.currentTask.removeContext(contextToRemove)
+        passedTask.removeContext(contextToRemove)
         
         // Reload the collection data
         
@@ -803,11 +779,11 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         let inString: String = ""
         let sharingActivityProvider: SharingActivityProvider = SharingActivityProvider(placeholderItem: inString)
         
-        let myTmp1 = passedTask.currentTask.buildShareHTMLString().stringByReplacingOccurrencesOfString("\n", withString: "<p>")
+        let myTmp1 = passedTask.buildShareHTMLString().stringByReplacingOccurrencesOfString("\n", withString: "<p>")
         sharingActivityProvider.HTMLString = myTmp1
-        sharingActivityProvider.plainString = passedTask.currentTask.buildShareString()
+        sharingActivityProvider.plainString = passedTask.buildShareString()
         
-        sharingActivityProvider.messageSubject = "Task: \(passedTask.currentTask.title)"
+        sharingActivityProvider.messageSubject = "Task: \(passedTask.title)"
         
         let activityItems : Array = [sharingActivityProvider];
         
@@ -936,8 +912,8 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         // to activate.
         // It especially needs to save the contents of the textview/textfield!
         
-        passedTask.currentTask.title = txtTaskTitle.text!
-        passedTask.currentTask.details = txtTaskDescription.text
+        passedTask.title = txtTaskTitle.text!
+        passedTask.details = txtTaskDescription.text
         
         return true
     }
