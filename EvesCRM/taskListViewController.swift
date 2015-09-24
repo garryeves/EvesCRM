@@ -72,7 +72,7 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
             
             for myItem in myData
             {
-                let newTask = task(inTaskID: myItem.taskID as Int, inTeamID: myCurrentTeam.teamID)
+                let newTask = task(taskID: myItem.taskID as Int)
                 myTaskList.append(newTask)
             }
         }

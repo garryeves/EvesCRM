@@ -319,8 +319,6 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             let myCell = cellDetails()
             myCell.displayView = cell.contentView
             
-            NSLog("cell \(cell.lblName.text) frame = \(cell.frame)")
-            
             myCell.frame = cell.frame
             myBodyCells.append(myCell)
             
@@ -1377,13 +1375,25 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             popoverContent.modalPresentationStyle = .Popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
-            popover!.sourceView = inSourceView
             
             let tempChild = workingGTDItem(inTeamID: inTeam.teamID, inParentID: 0)
             tempChild.GTDLevel = 1
             popoverContent.inGTDObject = tempChild
             
+            popover!.sourceView = self.view
+            
+            //  Calculate the start position based on screen width and position of the item
+            //            let myXPos = xPos
+            //            let myYPos = yPos
+            //            let arrowRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 10, 10)
+            
+            //            popover!.sourceRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 500, 400)
+            popover!.sourceRect = CGRectMake(0, 0, 500, 400)
+            
             popoverContent.preferredContentSize = CGSizeMake(500,400)
+            
+            //      let aPopover =  UIPopoverController(contentViewController: popoverContent)
+            //      aPopover.presentPopoverFromRect(arrowRect, inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
             self.presentViewController(popoverContent, animated: true, completion: nil)
         })
         
@@ -1397,7 +1407,20 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             let parentObject = inTeam
             popoverContent.myWorkingTeam = parentObject
             
+            popover!.sourceView = self.view
+            
+            //  Calculate the start position based on screen width and position of the item
+            //            let myXPos = xPos
+            //            let myYPos = yPos
+            //            let arrowRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 10, 10)
+            
+            //            popover!.sourceRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 700, 700)
+            popover!.sourceRect = CGRectMake(0, 0, 800, 700)
+            
             popoverContent.preferredContentSize = CGSizeMake(800,700)
+            
+            //      let aPopover =  UIPopoverController(contentViewController: popoverContent)
+            //      aPopover.presentPopoverFromRect(arrowRect, inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
             self.presentViewController(popoverContent, animated: true, completion: nil)
         })
         
@@ -1411,7 +1434,20 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             let parentObject = inTeam
             popoverContent.myWorkingTeam = parentObject
             
+            popover!.sourceView = self.view
+            
+            //  Calculate the start position based on screen width and position of the item
+            //            let myXPos = xPos
+            //            let myYPos = yPos
+            //            let arrowRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 10, 10)
+            
+            //            popover!.sourceRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 700, 700)
+            popover!.sourceRect = CGRectMake(0, 0, 600, 400)
+            
             popoverContent.preferredContentSize = CGSizeMake(600,400)
+            
+            //      let aPopover =  UIPopoverController(contentViewController: popoverContent)
+            //      aPopover.presentPopoverFromRect(arrowRect, inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
             self.presentViewController(popoverContent, animated: true, completion: nil)
         })
         
@@ -1425,8 +1461,23 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             let parentObject = team()
             popoverContent.myWorkingTeam = parentObject
             
+            
+            popover!.sourceView = self.view
+            
+            //  Calculate the start position based on screen width and position of the item
+            //            let myXPos = xPos
+            //            let myYPos = yPos
+            //            let arrowRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 10, 10)
+            
+            //            popover!.sourceRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 700, 700)
+            popover!.sourceRect = CGRectMake(0, 0, 800, 700)
+            
             popoverContent.preferredContentSize = CGSizeMake(800,700)
+            
+            //      let aPopover =  UIPopoverController(contentViewController: popoverContent)
+            //      aPopover.presentPopoverFromRect(arrowRect, inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
             self.presentViewController(popoverContent, animated: true, completion: nil)
+
         })
         
         myOptions.addAction(myOption1)
@@ -1485,11 +1536,21 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
             popover!.sourceView = self.view
-            popover!.sourceRect = CGRectMake(500,400,0,0)
             
             popoverContent.inGTDObject = inGTDItem
                 
             popoverContent.preferredContentSize = CGSizeMake(500,400)
+            
+            //  Calculate the start position based on screen width and position of the item
+            //            let myXPos = xPos
+            //            let myYPos = yPos
+            //            let arrowRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 10, 10)
+            
+            //            popover!.sourceRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 500, 400)
+            popover!.sourceRect = CGRectMake(0, 0, 500, 400)
+            
+      //      let aPopover =  UIPopoverController(contentViewController: popoverContent)
+      //      aPopover.presentPopoverFromRect(arrowRect, inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
             self.presentViewController(popoverContent, animated: true, completion: nil)
             })
             
@@ -1527,7 +1588,19 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     popoverContent.inGTDObject = tempChild
                 
                     popoverContent.preferredContentSize = CGSizeMake(500,400)
+                    
+                    //  Calculate the start position based on screen width and position of the item
+                    //            let myXPos = xPos
+                    //            let myYPos = yPos
+                    //            let arrowRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 10, 10)
+                    
+                    //            popover!.sourceRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 500, 400)
+                    popover!.sourceRect = CGRectMake(0, 0, 500, 400)
+                    
+                    //      let aPopover =  UIPopoverController(contentViewController: popoverContent)
+                    //      aPopover.presentPopoverFromRect(arrowRect, inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
                     self.presentViewController(popoverContent, animated: true, completion: nil)
+
                 }
                 else
                 {  // Project
@@ -1536,7 +1609,6 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     let popover = popoverContent.popoverPresentationController
                     popover!.delegate = self
                     popover!.sourceView = self.view
-                    popover!.sourceRect = CGRectMake(700,700,0,0)
                     
                     let tempProject = project(inTeamID: self.mySelectedTeam.teamID)
  //                   self.myParentObject = tempProject
@@ -1547,6 +1619,16 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                         
                     popoverContent.preferredContentSize = CGSizeMake(700,700)
                         
+                    //  Calculate the start position based on screen width and position of the item
+                    //            let myXPos = xPos
+                    //            let myYPos = yPos
+                    //            let arrowRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 10, 10)
+                    
+                    //            popover!.sourceRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 700, 700)
+                    popover!.sourceRect = CGRectMake(0, 0, 700, 700)
+                    
+                    //      let aPopover =  UIPopoverController(contentViewController: popoverContent)
+                    //      aPopover.presentPopoverFromRect(arrowRect, inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
                     self.presentViewController(popoverContent, animated: true, completion: nil)
                 }
             })
@@ -1580,15 +1662,23 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
             popover!.sourceView = self.view
-            popover!.sourceRect = CGRectMake(700,700,0,0)
             
- //           self.myParentObject = inProjectItem
             popoverContent.inProjectObject = inProjectItem
             popoverContent.myActionType = "Edit"
             popoverContent.mySelectedTeam = self.mySelectedTeam
             
             popoverContent.preferredContentSize = CGSizeMake(700,700)
-
+            
+            //  Calculate the start position based on screen width and position of the item
+            //            let myXPos = xPos
+            //            let myYPos = yPos
+            //            let arrowRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 10, 10)
+            
+            //            popover!.sourceRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 700, 700)
+            popover!.sourceRect = CGRectMake(0, 0, 700, 700)
+            
+            //      let aPopover =  UIPopoverController(contentViewController: popoverContent)
+            //      aPopover.presentPopoverFromRect(arrowRect, inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
             self.presentViewController(popoverContent, animated: true, completion: nil)
         })
         
@@ -1627,14 +1717,22 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
             popover!.sourceView = self.view
-            popover!.sourceRect = CGRectMake(700,700,0,0)
             
             let newTask = task(inTeamID: self.mySelectedTeam.teamID)
             newTask.projectID = inProjectItem.projectID
             popoverContent.passedTask = newTask
             
             popoverContent.preferredContentSize = CGSizeMake(700,700)
+            //  Calculate the start position based on screen width and position of the item
+            //            let myXPos = xPos
+            //            let myYPos = yPos
+            //            let arrowRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 10, 10)
             
+            //            popover!.sourceRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 700, 700)
+            popover!.sourceRect = CGRectMake(0, 0, 700, 700)
+            
+            //      let aPopover =  UIPopoverController(contentViewController: popoverContent)
+            //      aPopover.presentPopoverFromRect(arrowRect, inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
             self.presentViewController(popoverContent, animated: true, completion: nil)
         })
 
@@ -1648,24 +1746,26 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
     {
         let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .ActionSheet)
 
-//NSLog("GRE = frame = \(sourceGesture.displayX) - \(sourceGesture.displayY)")
         let myOption1 = UIAlertAction(title: "Edit Action", style: .Default, handler: { (action: UIAlertAction) -> () in
             let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("tasks") as! taskViewController
             popoverContent.modalPresentationStyle = .Popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
             popover!.sourceView = self.view
-            popover!.sourceRect = CGRectMake(700,700,0,0)
             
- /*
-            popover!.sourceView = sourceGesture.displayView
-//            popover!.sourceRect = CGRectMake(700,700,0,0)
-            popover!.sourceRect = CGRectMake(sourceGesture.displayX,sourceGesture.displayY,700,700)
- */
             popoverContent.passedTask = workingTask
-            
             popoverContent.preferredContentSize = CGSizeMake(700,700)
             
+            //  Calculate the start position based on screen width and position of the item
+            //            let myXPos = xPos
+            //            let myYPos = yPos
+            //            let arrowRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 10, 10)
+            
+            //            popover!.sourceRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 700, 700)
+            popover!.sourceRect = CGRectMake(0, 0, 700, 700)
+            
+            //      let aPopover =  UIPopoverController(contentViewController: popoverContent)
+            //      aPopover.presentPopoverFromRect(arrowRect, inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
             self.presentViewController(popoverContent, animated: true, completion: nil)
         })
         
@@ -1677,47 +1777,20 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             popover!.sourceView = self.view
             
             //  Calculate the start position based on screen width and position of the item
-            let myXPos = xPos
-            let myYPos = yPos
-NSLog("Position = \(myXPos), \(myYPos)")
+//            let myXPos = xPos
+//            let myYPos = yPos
+//            let arrowRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 10, 10)
             
-            popover!.sourceRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 700, 700)
+//            popover!.sourceRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 700, 700)
+            popover!.sourceRect = CGRectMake(0, 0, 700, 700)
  
             popoverContent.passedTask = workingTask
             popoverContent.preferredContentSize = CGSizeMake(700,700)
             
+            //      let aPopover =  UIPopoverController(contentViewController: popoverContent)
+            //      aPopover.presentPopoverFromRect(arrowRect, inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
             self.presentViewController(popoverContent, animated: true, completion: nil)
         })
-        
-/*
-        if inDisplayType == "Body"
-        {            let myOption0 = UIAlertAction(title: "Zoom", style: .Default, handler: { (action: UIAlertAction) -> () in
-                self.myDisplayHeadArray = self.myDisplayBodyArray
-                self.highlightID = inProjectItem.projectID as Int
-                self.buildHead(self.highlightID)
-                
-                self.buildBody(inProjectItem)
-            })
-            myOptions.addAction(myOption0)
-            
-            let myOption2 = UIAlertAction(title: "Delete Activity", style: .Default, handler: { (action: UIAlertAction) -> () in
-                if !inProjectItem.delete()
-                {
-                    let alert = UIAlertController(title: "Delete Activity", message:
-                        "Unable to delete Activity.  Check that there are no Actions", preferredStyle: UIAlertControllerStyle.Alert)
-                    
-                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
-                    self.presentViewController(alert, animated: false, completion: nil)
-                }
-                else
-                {
-                    self.buildHead(self.highlightID)
-                    self.buildBody(self.mySavedParentObject)
-                }
-            })
-            myOptions.addAction(myOption2)
-        }
- */
         
         myOptions.addAction(myOption1)
         myOptions.addAction(myOption2)

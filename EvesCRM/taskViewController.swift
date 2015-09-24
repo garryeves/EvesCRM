@@ -53,7 +53,12 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
     @IBOutlet weak var btnUrgency: UIButton!
     @IBOutlet weak var btnSelect: UIButton!
     @IBOutlet weak var toolbar: UIToolbar!
-    
+    @IBOutlet weak var lblrepeatEvery: UILabel!
+    @IBOutlet weak var lblFromActivity: UILabel!
+    @IBOutlet weak var txtRepeatInterval: UITextField!
+    @IBOutlet weak var btnRepeatPeriod: UIButton!
+    @IBOutlet weak var btnRepeatBase: UIButton!
+
     private var pickerOptions: [String] = Array()
     private var pickerTarget: String = ""
     private var myStartDate: NSDate!
@@ -61,6 +66,8 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
     private var myProjectID: Int = 0
     private var myProjectDetails: [Projects] = Array()
     private var mySelectedRow: Int = 0
+    private var kbHeight: CGFloat!
+    private var colContextsHeight: CGFloat!
     
     lazy var activityPopover:UIPopoverController = {
         return UIPopoverController(contentViewController: self.activityViewController)
@@ -110,7 +117,7 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
             }
             else
             {
-                btnTargetDate.setTitle(passedTask.displayDueDate, forState: .Normal)
+                setDisplayDate(btnTargetDate, targetDate: passedTask.dueDate)
             }
 
             if passedTask.displayStartDate == ""
@@ -119,7 +126,7 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
             }
             else
             {
-                btnStart.setTitle(passedTask.displayStartDate, forState: .Normal)
+                setDisplayDate(btnStart, targetDate: passedTask.startDate)
             }
 
             if passedTask.status == ""
@@ -178,9 +185,28 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
             else
             {
                 // Go an get the project name
-                setProjectName(passedTask.projectID)
+                getProjectName(passedTask.projectID)
             }
 
+            if passedTask.repeatType == ""
+            {
+                btnRepeatPeriod.setTitle("Set Period", forState: UIControlState.Normal)
+            }
+            else
+            {
+                btnRepeatPeriod.setTitle(passedTask.repeatType, forState: UIControlState.Normal)
+            }
+            
+            if passedTask.repeatBase == ""
+            {
+                btnRepeatBase.setTitle("Set Base", forState: UIControlState.Normal)
+            }
+            else
+            {
+                btnRepeatBase.setTitle(passedTask.repeatBase, forState: UIControlState.Normal)
+            }
+            
+            txtRepeatInterval.text = "\(passedTask.repeatInterval)"
             txtEstTime.text = "\(passedTask.estimatedTime)"
             
             lblNewContext.hidden = true
@@ -203,6 +229,21 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
             myCurrentViewController = taskViewController()
             myCurrentViewController = self
         }
+    }
+    
+    override func viewWillAppear(animated:Bool)
+    {
+        super.viewWillAppear(animated)
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillShow:"), name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillHide:"), name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    override func viewWillDisappear(animated: Bool)
+    {
+        super.viewWillDisappear(animated)
+        
+        NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
     override func didReceiveMemoryWarning()
@@ -297,12 +338,15 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
     
     @IBAction func btnTargetDate(sender: UIButton)
     {
-        btnSetTargetDate.setTitle("Set Target Date", forState: .Normal)
-        pickerTarget = "TargetDate"
-        myDatePicker.datePickerMode = UIDatePickerMode.Date
-        hideFields()
-        myDatePicker.hidden = false
-        btnSetTargetDate.hidden = false
+        var myOptions: UIAlertController!
+        
+        myOptions = delayTime("Due")
+        
+        myOptions.popoverPresentationController!.sourceView = self.view
+        
+        myOptions.popoverPresentationController!.sourceRect = CGRectMake(btnTargetDate.frame.origin.x, btnTargetDate.frame.origin.y + 20, 0, 0)
+        
+        self.presentViewController(myOptions, animated: true, completion: nil)
     }
     
     @IBAction func btnOwner(sender: UIButton)
@@ -381,7 +425,8 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         pickerOptions.removeAll(keepCapacity: false)
         pickerOptions.append("")
         pickerOptions.append("Open")
-        pickerOptions.append("Closed")
+        pickerOptions.append("Pause")
+        pickerOptions.append("Complete")
         hideFields()
         myPicker.hidden = false
         btnSelect.hidden = false
@@ -394,24 +439,20 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
     
     @IBAction func btnSetTargetDate(sender: UIButton)
     {
-        let dateFormatter = NSDateFormatter()
-        dateFormatter.dateFormat = "dd MMM yyyy"
-        
         if pickerTarget == "TargetDate"
         {
-            btnTargetDate.setTitle(dateFormatter.stringFromDate(myDatePicker.date), forState: .Normal)
+            setDisplayDate(btnTargetDate, targetDate: myDatePicker.date)
             myDueDate = myDatePicker.date
             passedTask.dueDate = myDueDate
-            btnSetTargetDate.hidden = true
         }
         else
         {
-            btnStart.setTitle(dateFormatter.stringFromDate(myDatePicker.date), forState: .Normal)
+            setDisplayDate(btnStart, targetDate: myDatePicker.date)
             myStartDate = myDatePicker.date
             passedTask.startDate = myStartDate
-            btnSetTargetDate.hidden = true
         }
         
+        btnSetTargetDate.hidden = true
         myDatePicker.hidden = true
         
         showFields()
@@ -419,12 +460,15 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
     
     @IBAction func btnStart(sender: UIButton)
     {
-        btnSetTargetDate.setTitle("Set Start Date", forState: .Normal)
-        pickerTarget = "StartDate"
-        myDatePicker.datePickerMode = UIDatePickerMode.Date
-        hideFields()
-        myDatePicker.hidden = false
-        btnSetTargetDate.hidden = false
+        var myOptions: UIAlertController!
+
+        myOptions = delayTime("Start")
+        
+        myOptions.popoverPresentationController!.sourceView = self.view
+        
+        myOptions.popoverPresentationController!.sourceRect = CGRectMake(btnStart.frame.origin.x, btnStart.frame.origin.y + 20, 0, 0)
+        
+        self.presentViewController(myOptions, animated: true, completion: nil)
     }
     
     @IBAction func btnEstTimeInterval(sender: UIButton)
@@ -623,9 +667,22 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         
             if pickerTarget == "Project"
             {
-                setProjectName(myProjectDetails[mySelectedRow - 1].projectID as Int)
+                getProjectName(myProjectDetails[mySelectedRow - 1].projectID as Int)
+                passedTask.projectID = myProjectDetails[mySelectedRow - 1].projectID as Int
             }
         
+            if pickerTarget == "RepeatPeriod"
+            {
+                passedTask.repeatType = myRepeatPeriods[mySelectedRow]
+                btnRepeatPeriod.setTitle(passedTask.repeatType, forState: UIControlState.Normal)
+            }
+            
+            if pickerTarget == "RepeatBase"
+            {
+                passedTask.repeatBase = myRepeatBases[mySelectedRow]
+                btnRepeatBase.setTitle(passedTask.repeatBase, forState: UIControlState.Normal)
+            }
+            
             if pickerTarget == "Context"
             {
                 let myNewContext = context(inContextName: pickerOptions[mySelectedRow])
@@ -679,65 +736,177 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         }
     }
     
+    @IBAction func txtRepeatInterval(sender: UITextField)
+    {
+        passedTask.repeatInterval = Int(txtRepeatInterval.text!)!
+    }
+    
+    @IBAction func btnrepeatPeriod(sender: UIButton)
+    {
+        var selectedRow: Int = 0
+        var rowCount: Int = 0
+        pickerOptions.removeAll()
+        
+        for myItem in myRepeatPeriods
+        {
+            pickerOptions.append(myItem)
+            if myItem == passedTask.repeatType
+            {
+                selectedRow = rowCount
+            }
+            rowCount++
+        }
+        btnSelect.setTitle("Select Repeating type", forState: .Normal)
+        pickerTarget = "RepeatPeriod"
+        myPicker.reloadAllComponents()
+        myPicker.hidden = false
+        btnSelect.hidden = false
+        mySelectedRow = -1
+        myPicker.selectRow(selectedRow, inComponent: 0, animated: true)
+        hideFields()
+    }
+    
+    @IBAction func btnRepeatBase(sender: UIButton)
+    {
+        var selectedRow: Int = 0
+        var rowCount: Int = 0
+
+        pickerOptions.removeAll()
+        
+        for myItem in myRepeatBases
+        {
+            pickerOptions.append(myItem)
+            if myItem == passedTask.repeatBase
+            {
+                selectedRow = rowCount
+            }
+            rowCount++
+        }
+        btnSelect.setTitle("Select Repeating base", forState: .Normal)
+        pickerTarget = "RepeatBase"
+        myPicker.reloadAllComponents()
+        myPicker.hidden = false
+        btnSelect.hidden = false
+        mySelectedRow = -1
+        myPicker.selectRow(selectedRow, inComponent: 0, animated: true)
+        hideFields()
+    }
+    
+    func changeViewHeight(viewName: UIView, newHeight: CGFloat)
+    {
+        viewName.frame = CGRectMake(
+            viewName.frame.origin.x,
+            viewName.frame.origin.y,
+            viewName.frame.size.width,
+            newHeight
+        )
+    }
+    
+    func showKeyboardFields()
+    {
+        lblTargetDate.hidden = false
+        changeViewHeight(lblTargetDate, newHeight: 0)
+        btnTargetDate.hidden = false
+        changeViewHeight(btnTargetDate, newHeight: 0)
+        lblStart.hidden = false
+        changeViewHeight(lblStart, newHeight: 0)
+        btnStart.hidden = false
+        changeViewHeight(btnStart, newHeight: 0)
+        lblContexts.hidden = false
+        changeViewHeight(lblContexts, newHeight: 0)
+        colContexts.hidden = false
+        changeViewHeight(colContexts, newHeight: 0)
+        lblPriority.hidden = false
+        changeViewHeight(lblPriority, newHeight: 0)
+        btnPriority.hidden = false
+        changeViewHeight(btnPriority, newHeight: 0)
+        lblEnergy.hidden = false
+        changeViewHeight(lblEnergy, newHeight: 0)
+        btnEnergy.hidden = false
+        changeViewHeight(btnEnergy, newHeight: 0)
+        lblUrgency.hidden = false
+        changeViewHeight(lblUrgency, newHeight: 0)
+        btnUrgency.hidden = false
+        changeViewHeight(btnUrgency, newHeight: 0)
+        btnOwner.hidden = false
+        changeViewHeight(btnOwner, newHeight: 0)
+    }
+    
+    func hideKeyboardFields()
+    {
+        lblTargetDate.hidden = true
+        changeViewHeight(lblTargetDate, newHeight: 30)
+        btnTargetDate.hidden = true
+        changeViewHeight(btnTargetDate, newHeight: 30)
+        lblStart.hidden = true
+        changeViewHeight(lblStart, newHeight: 30)
+        btnStart.hidden = true
+        changeViewHeight(btnStart, newHeight: 30)
+        lblContexts.hidden = true
+        changeViewHeight(lblContexts, newHeight: 30)
+        colContexts.hidden = true
+        changeViewHeight(colContexts, newHeight: 200)
+        lblPriority.hidden = true
+        changeViewHeight(lblPriority, newHeight: 30)
+        btnPriority.hidden = true
+        changeViewHeight(btnPriority, newHeight: 30)
+        lblEnergy.hidden = true
+        changeViewHeight(lblEnergy, newHeight: 30)
+        btnEnergy.hidden = true
+        changeViewHeight(btnEnergy, newHeight: 30)
+        lblUrgency.hidden = true
+        changeViewHeight(lblUrgency, newHeight: 30)
+        btnUrgency.hidden = true
+        changeViewHeight(btnUrgency, newHeight: 30)
+        btnOwner.hidden = true
+        changeViewHeight(btnOwner, newHeight: 30)
+    }
+    
     func showFields()
     {
+        showKeyboardFields()
+        lblStatus.hidden = false
+        btnStatus.hidden = false
         lblTaskTitle.hidden = false
         lblTaskDescription.hidden = false
-        lblTargetDate.hidden = false
-        lblStatus.hidden = false
         txtTaskTitle.hidden = false
         txtTaskDescription.hidden = false
-        btnTargetDate.hidden = false
-        btnOwner.hidden = false
-        btnStatus.hidden = false
-        lblStart.hidden = false
-        lblContexts.hidden = false
-        btnStart.hidden = false
-        colContexts.hidden = false
-        lblPriority.hidden = false
         txtEstTime.hidden = false
         btnEstTimeInterval.hidden = false
         lblEstTime.hidden = false
-        btnPriority.hidden = false
-        lblEnergy.hidden = false
-        btnEnergy.hidden = false
         lblProject.hidden = false
         btnProject.hidden = false
-        lblUrgency.hidden = false
-        btnUrgency.hidden = false
+        lblrepeatEvery.hidden = false
+        lblFromActivity.hidden = false
+        txtRepeatInterval.hidden = false
+        btnRepeatPeriod.hidden = false
+        btnRepeatBase.hidden = false
     }
     
     func hideFields()
     {
+        hideKeyboardFields()
+        lblStatus.hidden = true
+        btnStatus.hidden = true
         lblTaskTitle.hidden = true
         lblTaskDescription.hidden = true
-        lblTargetDate.hidden = true
-        lblStatus.hidden = true
         txtTaskTitle.hidden = true
         txtTaskDescription.hidden = true
-        btnTargetDate.hidden = true
-        btnOwner.hidden = true
-        btnStatus.hidden = true
-        lblStart.hidden = true
-        lblContexts.hidden = true
-        btnStart.hidden = true
-        colContexts.hidden = true
-        lblPriority.hidden = true
         txtEstTime.hidden = true
         btnEstTimeInterval.hidden = true
         lblEstTime.hidden = true
-        btnPriority.hidden = true
-        lblEnergy.hidden = true
-        btnEnergy.hidden = true
         lblProject.hidden = true
         btnProject.hidden = true
-        lblUrgency.hidden = true
-        btnUrgency.hidden = true
+        lblrepeatEvery.hidden = false
+        lblFromActivity.hidden = false
+        txtRepeatInterval.hidden = false
+        btnRepeatPeriod.hidden = false
+        btnRepeatBase.hidden = false
     }
     
-    func setProjectName(inProjectID: Int)
+    func getProjectName(projectID: Int)
     {
-        let myProjects = myDatabaseConnection.getProjectDetails(inProjectID)
+        let myProjects = myDatabaseConnection.getProjectDetails(projectID)
         
         if myProjects.count == 0
         {
@@ -749,7 +918,6 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
             btnProject.setTitle(myProjects[0].projectName, forState: .Normal)
             myProjectID = myProjects[0].projectID as Int
         }
-        passedTask.projectID = myProjectID
     }
     
     func setContext(inContextID: Int)
@@ -814,6 +982,274 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         // as it says, do nothing
     }
     
+    func delayTime(actionType: String) -> UIAlertController
+    {
+        var messagePrefix: String = ""
+        
+        if actionType == "Start"
+        {
+            messagePrefix = "Defer :"
+        }
+        else
+        { // actionType = Due
+            messagePrefix = "Due :"
+        }
+        
+        let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .ActionSheet)
+
+        let myOption1 = UIAlertAction(title: "\(messagePrefix) 1 Hour", style: .Default, handler: { (action: UIAlertAction) -> () in
+            if actionType == "Start"
+            {
+                let myCalendar = NSCalendar.currentCalendar()
+                
+                let newTime = myCalendar.dateByAddingUnit(
+                    .Hour,
+                    value: 1,
+                    toDate: NSDate(),
+                    options: [])!
+                
+                self.setDisplayDate(self.btnStart, targetDate: newTime)
+                
+                self.myStartDate = newTime
+                self.passedTask.startDate = newTime
+            }
+            else
+            { // actionType = Due
+                let myCalendar = NSCalendar.currentCalendar()
+                
+                let newTime = myCalendar.dateByAddingUnit(
+                    .Hour,
+                    value: 1,
+                    toDate: NSDate(),
+                    options: [])!
+                
+                self.setDisplayDate(self.btnTargetDate, targetDate: newTime)
+                
+                self.myDueDate = newTime
+                self.passedTask.dueDate = newTime
+            }
+        })
+        
+        let myOption2 = UIAlertAction(title: "\(messagePrefix) 4 Hours", style: .Default, handler: { (action: UIAlertAction) -> () in
+            if actionType == "Start"
+            {
+                let myCalendar = NSCalendar.currentCalendar()
+                
+                let newTime = myCalendar.dateByAddingUnit(
+                    .Hour,
+                    value: 4,
+                    toDate: NSDate(),
+                    options: [])!
+                
+                self.setDisplayDate(self.btnStart, targetDate: newTime)
+                
+                self.myStartDate = newTime
+                self.passedTask.startDate = newTime
+            }
+            else
+            { // actionType = Due
+                let myCalendar = NSCalendar.currentCalendar()
+                
+                let newTime = myCalendar.dateByAddingUnit(
+                    .Hour,
+                    value: 4,
+                    toDate: NSDate(),
+                    options: [])!
+                
+                self.setDisplayDate(self.btnTargetDate, targetDate: newTime)
+                
+                self.myDueDate = newTime
+                self.passedTask.dueDate = newTime
+            }
+        })
+        
+        let myOption3 = UIAlertAction(title: "\(messagePrefix) 1 Day", style: .Default, handler: { (action: UIAlertAction) -> () in
+            if actionType == "Start"
+            {
+                let myCalendar = NSCalendar.currentCalendar()
+                
+                let newTime = myCalendar.dateByAddingUnit(
+                    .Day,
+                    value: 1,
+                    toDate: NSDate(),
+                    options: [])!
+                
+                self.setDisplayDate(self.btnStart, targetDate: newTime)
+                
+                self.myStartDate = newTime
+                self.passedTask.startDate = newTime
+            }
+            else
+            { // actionType = Due
+                let myCalendar = NSCalendar.currentCalendar()
+                
+                let newTime = myCalendar.dateByAddingUnit(
+                    .Day,
+                    value: 1,
+                    toDate: NSDate(),
+                    options: [])!
+                
+                self.setDisplayDate(self.btnTargetDate, targetDate: newTime)
+                
+                self.myDueDate = newTime
+                self.passedTask.dueDate = newTime
+            }
+        })
+        
+        let myOption4 = UIAlertAction(title: "\(messagePrefix) 1 Week", style: .Default, handler: { (action: UIAlertAction) -> () in
+
+            if actionType == "Start"
+            {
+                let myCalendar = NSCalendar.currentCalendar()
+                
+                let newTime = myCalendar.dateByAddingUnit(
+                    .Day,
+                    value: 7,
+                    toDate: NSDate(),
+                    options: [])!
+                
+                self.setDisplayDate(self.btnStart, targetDate: newTime)
+                
+                self.myStartDate = newTime
+                self.passedTask.startDate = newTime
+            }
+            else
+            { // actionType = Due
+                let myCalendar = NSCalendar.currentCalendar()
+                
+                let newTime = myCalendar.dateByAddingUnit(
+                    .Day,
+                    value: 7,
+                    toDate: NSDate(),
+                    options: [])!
+                
+                self.setDisplayDate(self.btnTargetDate, targetDate: newTime)
+                
+                self.myDueDate = newTime
+                self.passedTask.dueDate = newTime
+            }
+        })
+        
+        let myOption5 = UIAlertAction(title: "\(messagePrefix) 1 Month", style: .Default, handler: { (action: UIAlertAction) -> () in
+            if actionType == "Start"
+            {
+                let myCalendar = NSCalendar.currentCalendar()
+                
+                let newTime = myCalendar.dateByAddingUnit(
+                    .Month,
+                    value: 1,
+                    toDate: NSDate(),
+                    options: [])!
+                
+                self.setDisplayDate(self.btnStart, targetDate: newTime)
+                
+                self.myStartDate = newTime
+                self.passedTask.startDate = newTime
+            }
+            else
+            { // actionType = Due
+                let myCalendar = NSCalendar.currentCalendar()
+                
+                let newTime = myCalendar.dateByAddingUnit(
+                    .Month,
+                    value: 1,
+                    toDate: NSDate(),
+                    options: [])!
+                
+                self.setDisplayDate(self.btnTargetDate, targetDate: newTime)
+                
+                self.myDueDate = newTime
+                self.passedTask.dueDate = newTime
+            }
+        })
+        
+        let myOption6 = UIAlertAction(title: "\(messagePrefix) 1 Year", style: .Default, handler: { (action: UIAlertAction) -> () in
+            if actionType == "Start"
+            {
+                let myCalendar = NSCalendar.currentCalendar()
+                
+                let newTime = myCalendar.dateByAddingUnit(
+                    .Year,
+                    value: 1,
+                    toDate: NSDate(),
+                    options: [])!
+                
+                self.setDisplayDate(self.btnStart, targetDate: newTime)
+                
+                self.myStartDate = newTime
+                self.passedTask.startDate = newTime
+            }
+            else
+            { // actionType = Due
+                let myCalendar = NSCalendar.currentCalendar()
+                
+                let newTime = myCalendar.dateByAddingUnit(
+                    .Year,
+                    value: 1,
+                    toDate: NSDate(),
+                    options: [])!
+                
+                self.setDisplayDate(self.btnTargetDate, targetDate: newTime)
+                
+                self.myDueDate = newTime
+                self.passedTask.dueDate = newTime
+            }
+        })
+
+        let myOption7 = UIAlertAction(title: "\(messagePrefix) Custom", style: .Default, handler: { (action: UIAlertAction) -> () in
+            if actionType == "Start"
+            {
+                self.btnSetTargetDate.setTitle("Set Start Date", forState: .Normal)
+                self.pickerTarget = "StartDate"
+                if self.passedTask.displayStartDate == ""
+                {
+                    self.myDatePicker.date = NSDate()
+                }
+                else
+                {
+                    self.myDatePicker.date = self.passedTask.startDate
+                }
+            }
+            else
+            { // actionType = Due
+                self.btnSetTargetDate.setTitle("Set Target Date", forState: .Normal)
+                self.pickerTarget = "TargetDate"
+                if self.passedTask.displayDueDate == ""
+                {
+                    self.myDatePicker.date = NSDate()
+                }
+                else
+                {
+                    self.myDatePicker.date = self.passedTask.dueDate
+                }
+            }
+        
+            self.myDatePicker.datePickerMode = UIDatePickerMode.DateAndTime
+            self.hideFields()
+            self.myDatePicker.hidden = false
+            self.btnSetTargetDate.hidden = false
+        })
+        
+        myOptions.addAction(myOption1)
+        myOptions.addAction(myOption2)
+        myOptions.addAction(myOption3)
+        myOptions.addAction(myOption4)
+        myOptions.addAction(myOption5)
+        myOptions.addAction(myOption6)
+        myOptions.addAction(myOption7)
+        
+        return myOptions
+    }
+    
+    func setDisplayDate(targetButton: UIButton, targetDate: NSDate)
+    {
+        let myDateFormatter = NSDateFormatter()
+        myDateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
+        myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
+        
+        targetButton.setTitle(myDateFormatter.stringFromDate(targetDate), forState: .Normal)
+    }
+
     func share(sender: AnyObject)
     {
         if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
@@ -841,6 +1277,86 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
             self.activityPopover.dismissPopoverAnimated(true)
         }
     }
+    
+    func keyboardWillShow(notification: NSNotification)
+    {
+        if let userInfo = notification.userInfo {
+            if let keyboardSize =  (userInfo[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
+                kbHeight = keyboardSize.height
+                self.animateTextField(true)
+            }
+        }
+    }
+    
+    func keyboardWillHide(notification: NSNotification)
+    {
+        self.animateTextField(false)
+    }
+    
+    func animateTextField(up: Bool)
+    {
+        var boolActionMove = false
+        let movement = (up ? -kbHeight : kbHeight)
+
+        if txtTaskTitle.isFirstResponder()
+        {
+            //  This is at the top, so we do not need to do anything
+            boolActionMove = true
+        }
+        else if txtRepeatInterval.isFirstResponder()
+        {
+            boolActionMove = true
+        }
+        else if txtTaskDescription.isFirstResponder()
+        {
+            boolActionMove = true
+        }
+        else if txtEstTime.isFirstResponder()
+        {
+            boolActionMove = true
+        }
+        else if txtNewContext.isFirstResponder()
+        {
+            boolActionMove = true
+        }
+        
+        if boolActionMove
+        {
+            UIView.animateWithDuration(0.3, animations: {
+                self.view.frame = CGRectOffset(self.view.frame, 0, movement)
+                
+            })
+            
+            if up
+            {
+                hideKeyboardFields()
+ //               for myItem in colContexts.constraints
+//                {
+//                    if myItem.firstAttribute == NSLayoutAttribute.Height && myItem.firstItem.isKindOfClass(UICollectionView)
+//                    {
+//                        colContextsHeight = myItem.constant
+//                        myItem.constant = 0
+//                        colContexts.layoutIfNeeded()
+//                    }
+//                }
+            }
+            else
+            {
+                showKeyboardFields()
+//                for myItem in colContexts.constraints
+//                {
+//                    if myItem.firstAttribute == NSLayoutAttribute.Height && myItem.firstItem.isKindOfClass(UICollectionView)
+//                    {
+//                        myItem.constant = colContextsHeight
+ //                       colContexts.layoutIfNeeded()
+//                    }
+//                }
+            }
+            
+            
+        }
+    }
+
 
     //---------------------------------------------------------------
     // These three methods implement the SMTEFillDelegate protocol to support fill-ins
@@ -896,6 +1412,7 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         
         return result
     }
+    
     
     
     /* Usually called milliseconds after identifierForTextArea:, SMTEDelegateController is

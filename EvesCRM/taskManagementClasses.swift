@@ -1007,11 +1007,11 @@ class project: NSObject // 10k level
     {
         myTasks.removeAll()
         
-        let myProjectTasks = myDatabaseConnection.getTasksForProject(myProjectID, inTeamID: myTeamID)
+        let myProjectTasks = myDatabaseConnection.getTasksForProject(myProjectID)
         
         for myProjectTask in myProjectTasks
         {
-            let myNewTask = task(inTaskID: myProjectTask.taskID as Int, inTeamID: myTeamID)
+            let myNewTask = task(taskID: myProjectTask.taskID as Int)
             myTasks.append(myNewTask)
         }
     }
@@ -1582,9 +1582,9 @@ class task: NSObject
         save()
     }
     
-    init(inTaskID: Int, inTeamID: Int)
+    init(taskID: Int)
     {
-        let myTaskData = myDatabaseConnection.getTask(inTaskID, inTeamID: inTeamID)
+        let myTaskData = myDatabaseConnection.getTask(taskID)
         
         for myTask in myTaskData
         {
@@ -1609,16 +1609,16 @@ class task: NSObject
             
             // get contexts
             
-            let myContextList = myDatabaseConnection.getContextsForTask(inTaskID)
+            let myContextList = myDatabaseConnection.getContextsForTask(taskID)
             myContexts.removeAll()
             
             for myContextItem in myContextList
             {
-                let myNewContext = context(inContextID: myContextItem.contextID as Int, inTeamID: myTeamID)
+                let myNewContext = context(contextID: myContextItem.contextID as Int)
                 myContexts.append(myNewContext)
             }
             
-            let myPredecessorList = myDatabaseConnection.getTaskPredecessors(inTaskID)
+            let myPredecessorList = myDatabaseConnection.getTaskPredecessors(taskID)
             
             myPredecessors.removeAll()
             
@@ -1642,7 +1642,7 @@ class task: NSObject
         }
     }
     
-    func addContext(inContextID: Int)
+    func addContext(contextID: Int)
     {
         var itemFound: Bool = false
         
@@ -1650,13 +1650,13 @@ class task: NSObject
         
         // Get the context name
         
-        let myContext = context(inContextID: inContextID, inTeamID: myTeamID)
+        let myContext = context(contextID: contextID)
         
         let myCheck = myDatabaseConnection.getContextsForTask(myTaskID)
         
         for myItem in myCheck
         {
-            let myRetrievedContext = context(inContextID: myItem.contextID as Int, inTeamID: myTeamID)
+            let myRetrievedContext = context(contextID: myItem.contextID as Int)
             if myRetrievedContext.name.lowercaseString == myContext.name.lowercaseString
             {
                 itemFound = true
@@ -1666,29 +1666,29 @@ class task: NSObject
         
         if !itemFound
         { // Not match found
-            myDatabaseConnection.saveTaskContext(inContextID, inTaskID: myTaskID)
+            myDatabaseConnection.saveTaskContext(contextID, inTaskID: myTaskID)
         
             let myContextList = myDatabaseConnection.getContextsForTask(myTaskID)
             myContexts.removeAll()
         
             for myContextItem in myContextList
             {
-                let myNewContext = context(inContextID: myContextItem.contextID as Int, inTeamID: myTeamID)
+                let myNewContext = context(contextID: myContextItem.contextID as Int)
                 myContexts.append(myNewContext)
             }
         }
     }
     
-    func removeContext(inContextID: Int)
+    func removeContext(contextID: Int)
     {
-        myDatabaseConnection.deleteTaskContext(inContextID, inTaskID: myTaskID)
+        myDatabaseConnection.deleteTaskContext(contextID, inTaskID: myTaskID)
         
         let myContextList = myDatabaseConnection.getContextsForTask(myTaskID)
         myContexts.removeAll()
         
         for myContextItem in myContextList
         {
-            let myNewContext = context(inContextID: myContextItem.contextID as Int, inTeamID: myTeamID)
+            let myNewContext = context(contextID: myContextItem.contextID as Int)
             myContexts.append(myNewContext)
         }
     }
@@ -2165,7 +2165,7 @@ class context: NSObject
             }
             else
             { // Navigate to parent
-                let theParent = context(inContextID: myParentContext, inTeamID: myTeamID)
+                let theParent = context(contextID: myParentContext)
                 retString = "\(theParent.contextHierarchy) - \(myName)"
             }
         
@@ -2299,10 +2299,10 @@ class context: NSObject
         }
     }
     
-    init(inContextID: Int, inTeamID: Int)
+    init(contextID: Int)
     {
         super.init()
-        let myContexts = myDatabaseConnection.getContextDetails(inContextID, inTeamID: inTeamID)
+        let myContexts = myDatabaseConnection.getContextDetails(contextID)
         
         for myContext in myContexts
         {

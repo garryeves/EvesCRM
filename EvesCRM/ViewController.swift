@@ -41,9 +41,10 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     @IBOutlet weak var labelName: UILabel!
     @IBOutlet weak var myWebView: UIWebView!
     @IBOutlet weak var btnCloseWindow: UIButton!
-    private var myCells: [cellDetails] = Array()
-    private var headerSize: CGFloat = 0.0
-
+    @IBOutlet weak var myDatePicker: UIDatePicker!
+    @IBOutlet weak var btnSetStartDate: UIButton!
+    
+    
     let CONTACT_CELL_IDENTIFER = "contactNameCell"
     let dataTable1_CELL_IDENTIFER = "dataTable1Cell"
     
@@ -120,6 +121,8 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     var myCalendarItems: [myCalendarItem] = Array()
     
     var myTaskItems: [task] = Array()
+    var myWorkingTask: task!
+    var myWorkingTable: String = ""
     
     // Peoplepicker settings
     
@@ -182,25 +185,12 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         self.dataTable3.registerClass(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
         self.dataTable4.registerClass(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
         
-        TableTypeSelection1.hidden = true
-        setSelectionButton.hidden = true
-        TableTypeButton1.hidden = true
-        TableTypeButton2.hidden = true
-        TableTypeButton3.hidden = true
-        TableTypeButton4.hidden = true
-        dataTable1.hidden = true
-        dataTable2.hidden = true
-        dataTable3.hidden = true
-        dataTable4.hidden = true
-        StartLabel.hidden = false
-        
+        hideFields()
         buttonAdd1.hidden = true
         buttonAdd2.hidden = true
         buttonAdd3.hidden = true
         buttonAdd4.hidden = true
-        
-        myWebView.hidden = true
-        btnCloseWindow.hidden = true
+        StartLabel.hidden = false
         
         dataTable1.tableFooterView = UIView(frame:CGRectZero)
         dataTable2.tableFooterView = UIView(frame:CGRectZero)
@@ -262,7 +252,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         
         sideBar = SideBar(sourceView: self.view)
         sideBar.delegate = self
-
+        
         // Textexpander
 
         if SMTEDelegateController.isTextExpanderTouchInstalled() == true
@@ -328,19 +318,8 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         
         TableTypeSelection1.hidden = false
         setSelectionButton.hidden = false
-        TableTypeButton1.hidden = true
-        TableTypeButton2.hidden = true
-        TableTypeButton3.hidden = true
-        TableTypeButton4.hidden = true
-        dataTable1.hidden = true
-        dataTable2.hidden = true
-        dataTable3.hidden = true
-        dataTable4.hidden = true
-        StartLabel.hidden = true
-        buttonAdd1.hidden = true
-        buttonAdd2.hidden = true
-        buttonAdd3.hidden = true
-        buttonAdd4.hidden = true
+
+        hideFields()
         
         let myIndex = TableOptions.indexOf(getFirstPartofString(sender.currentTitle!))
 
@@ -399,17 +378,9 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             
             }
             
+            showFields()
             TableTypeSelection1.hidden = true
             setSelectionButton.hidden = true
-            TableTypeButton1.hidden = false
-            TableTypeButton2.hidden = false
-            TableTypeButton3.hidden = false
-            TableTypeButton4.hidden = false
-            dataTable1.hidden = false
-            dataTable2.hidden = false
-            dataTable3.hidden = false
-            dataTable4.hidden = false
-            StartLabel.hidden = true
         }
     }
 
@@ -474,7 +445,6 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
 
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        myCells.removeAll()
         var retVal: Int = 0
         
         if (tableView == dataTable1)
@@ -537,19 +507,19 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
 
         if tableView == dataTable1
         {
-            dataCellClicked(indexPath.row, table: "Table1", viewClicked: tableView)
+            dataCellClicked(indexPath.row, table: "Table1", viewClicked: tableView.cellForRowAtIndexPath(indexPath)!)
         }
         else if tableView == dataTable2
         {
-            dataCellClicked(indexPath.row, table: "Table2", viewClicked: tableView)
+            dataCellClicked(indexPath.row, table: "Table2", viewClicked: tableView.cellForRowAtIndexPath(indexPath)!)
         }
         else if tableView == dataTable3
         {
-            dataCellClicked(indexPath.row, table: "Table3", viewClicked: tableView)
+            dataCellClicked(indexPath.row, table: "Table3", viewClicked: tableView.cellForRowAtIndexPath(indexPath)!)
         }
         else if tableView == dataTable4
         {
-            dataCellClicked(indexPath.row, table: "Table4", viewClicked: tableView)
+            dataCellClicked(indexPath.row, table: "Table4", viewClicked: tableView.cellForRowAtIndexPath(indexPath)!)
         }
         
     }
@@ -807,7 +777,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             var myReturnedData: [Task] = Array()
             if myDisplayType == "Project"
             {
-                myReturnedData = myDatabaseConnection.getTasksForProject(mySelectedProject.projectID, inTeamID: myCurrentTeam.teamID)
+                myReturnedData = myDatabaseConnection.getActiveTasksForProject(mySelectedProject.projectID)
             }
             else
             {
@@ -835,7 +805,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     for myTaskContext in myTaskContextList
                     {
                         // Get the context details
-                        let myTaskList = myDatabaseConnection.getActiveTask(myTaskContext.taskID as Int, inTeamID: myCurrentTeam.teamID)
+                        let myTaskList = myDatabaseConnection.getActiveTask(myTaskContext.taskID as Int)
                     
                         for myTask in myTaskList
                         {  //append project details to work array
@@ -852,7 +822,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             
             for myItem in myReturnedData
             {
-                let myTempTask = task(inTaskID: myItem.taskID as Int, inTeamID: myCurrentTeam.teamID)
+                let myTempTask = task(taskID: myItem.taskID as Int)
                 
                 myTaskItems.append(myTempTask)
             }
@@ -986,7 +956,7 @@ println("facebook ID = \(myFacebookID)")
         return workArray
     }
     
-    func dataCellClicked(rowID: Int, table: String, viewClicked: UITableView)
+    func dataCellClicked(rowID: Int, table: String, viewClicked: UITableViewCell)
     {
         var dataType: String = ""
         // First we need to work out the type of data in the table, we get this from the button
@@ -1148,35 +1118,21 @@ println("facebook ID = \(myFacebookID)")
             }
 
         case "GMail":
-            TableTypeButton1.hidden = true
-            TableTypeButton2.hidden = true
-            TableTypeButton3.hidden = true
-            TableTypeButton4.hidden = true
-            dataTable1.hidden = true
-            dataTable2.hidden = true
-            dataTable3.hidden = true
-            dataTable4.hidden = true
+            hideFields()
             
             myWebView.hidden = false
             btnCloseWindow.hidden = false
             myWebView.loadHTMLString(myGmailMessages.messages[rowID].body, baseURL: nil)
   
         case "Hangouts":
-            TableTypeButton1.hidden = true
-            TableTypeButton2.hidden = true
-            TableTypeButton3.hidden = true
-            TableTypeButton4.hidden = true
-            dataTable1.hidden = true
-            dataTable2.hidden = true
-            dataTable3.hidden = true
-            dataTable4.hidden = true
+            showFields()
             
             myWebView.hidden = false
             btnCloseWindow.hidden = false
             myWebView.loadHTMLString(myHangoutsMessages.messages[rowID].body, baseURL: nil)
         
         case "Tasks":
-            let myOptions = displayTaskOptions(viewClicked, workingTask: myTaskItems[rowID])
+            let myOptions = displayTaskOptions(myTaskItems[rowID], targetTable: table)
             myOptions.popoverPresentationController!.sourceView = viewClicked
             
             self.presentViewController(myOptions, animated: true, completion: nil)
@@ -2631,14 +2587,7 @@ print("Nothing found")
     
     @IBAction func btnCloseWindowClick(sender: UIButton)
     {
-        TableTypeButton1.hidden = false
-        TableTypeButton2.hidden = false
-        TableTypeButton3.hidden = false
-        TableTypeButton4.hidden = false
-        dataTable1.hidden = false
-        dataTable2.hidden = false
-        dataTable3.hidden = false
-        dataTable4.hidden = false
+        showFields()
         
         myWebView.hidden = true
         btnCloseWindow.hidden = true
@@ -2847,15 +2796,8 @@ print("Nothing found")
     {
         TableTypeSelection1.hidden = true
         setSelectionButton.hidden = true
-        TableTypeButton1.hidden = false
-        TableTypeButton2.hidden = false
-        TableTypeButton3.hidden = false
-        TableTypeButton4.hidden = false
-        dataTable1.hidden = false
-        dataTable2.hidden = false
-        dataTable3.hidden = false
-        dataTable4.hidden = false
-        StartLabel.hidden = true
+
+        showFields()
         
         myDisplayType = "Project"
         mySelectedProject = project(inProjectID: projectID, inTeamID: teamID)
@@ -2899,15 +2841,8 @@ print("Nothing found")
     {
         TableTypeSelection1.hidden = true
         setSelectionButton.hidden = true
-        TableTypeButton1.hidden = false
-        TableTypeButton2.hidden = false
-        TableTypeButton3.hidden = false
-        TableTypeButton4.hidden = false
-        dataTable1.hidden = false
-        dataTable2.hidden = false
-        dataTable3.hidden = false
-        dataTable4.hidden = false
-        StartLabel.hidden = true
+        
+        showFields()
     
         myDisplayType = "Person"
     
@@ -2940,15 +2875,8 @@ print("Nothing found")
     {
         TableTypeSelection1.hidden = true
         setSelectionButton.hidden = true
-        TableTypeButton1.hidden = false
-        TableTypeButton2.hidden = false
-        TableTypeButton3.hidden = false
-        TableTypeButton4.hidden = false
-        dataTable1.hidden = false
-        dataTable2.hidden = false
-        dataTable3.hidden = false
-        dataTable4.hidden = false
-        StartLabel.hidden = true
+        
+        showFields()
         
         myDisplayType = "Context"
         myContextName = inContext
@@ -3053,7 +2981,7 @@ print("Nothing found")
         controller.dismissViewControllerAnimated(true, completion: nil)
     }
     
-    func displayTaskOptions(sourceView: UIView, workingTask: task) -> UIAlertController
+    func displayTaskOptions(workingTask: task, targetTable: String) -> UIAlertController
     {
         let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .ActionSheet)
         
@@ -3062,8 +2990,8 @@ print("Nothing found")
             popoverContent.modalPresentationStyle = .Popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
-            popover!.sourceView = sourceView
-            popover!.sourceRect = CGRectMake(700,700,0,0)
+            popover!.sourceView = self.view
+            popover!.sourceRect = CGRectMake(0,0,700,700)
             
             popoverContent.passedTask = workingTask
             
@@ -3077,8 +3005,8 @@ print("Nothing found")
             popoverContent.modalPresentationStyle = .Popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
-            popover!.sourceView = sourceView
-            popover!.sourceRect = CGRectMake(700,700,0,0)
+            popover!.sourceView = self.view
+            popover!.sourceRect = CGRectMake(0,0,700,700)
             
             popoverContent.passedTask = workingTask
             
@@ -3087,10 +3015,296 @@ print("Nothing found")
             self.presentViewController(popoverContent, animated: true, completion: nil)
         })
         
+        let myOption3 = UIAlertAction(title: "Defer: 1 Hour", style: .Default, handler: { (action: UIAlertAction) -> () in
+            let myCalendar = NSCalendar.currentCalendar()
+                
+            let newTime = myCalendar.dateByAddingUnit(
+                .Hour,
+                value: 1,
+                toDate: NSDate(),
+                options: [])!
+
+            workingTask.startDate = newTime
+            
+            switch targetTable
+            {
+                case "Table1":
+                    self.table1Contents = Array()
+                    self.populateArraysForTables("Table1")
+                
+                case "Table2":
+                    self.table2Contents = Array()
+                    self.populateArraysForTables("Table2")
+                
+                case "Table3":
+                    self.table3Contents = Array()
+                    self.populateArraysForTables("Table3")
+                
+                case "Table4":
+                    self.table4Contents = Array()
+                    self.populateArraysForTables("Table4")
+                
+                default:
+                    print("displayTaskOptions: inTable hit default for some reason")
+            }
+        })
+        
+        let myOption4 = UIAlertAction(title: "Defer: 4 Hours", style: .Default, handler: { (action: UIAlertAction) -> () in
+            let myCalendar = NSCalendar.currentCalendar()
+                
+            let newTime = myCalendar.dateByAddingUnit(
+                .Hour,
+                value: 4,
+                toDate: NSDate(),
+                options: [])!
+
+            workingTask.startDate = newTime
+            
+            switch targetTable
+            {
+                case "Table1":
+                    self.table1Contents = Array()
+                    self.populateArraysForTables("Table1")
+                
+                case "Table2":
+                    self.table2Contents = Array()
+                    self.populateArraysForTables("Table2")
+                
+                case "Table3":
+                    self.table3Contents = Array()
+                    self.populateArraysForTables("Table3")
+                
+                case "Table4":
+                    self.table4Contents = Array()
+                    self.populateArraysForTables("Table4")
+                
+                default:print("displayTaskOptions: inTable hit default for some reason")
+            }
+        })
+        
+        let myOption5 = UIAlertAction(title: "Defer: 1 Day", style: .Default, handler: { (action: UIAlertAction) -> () in
+            let myCalendar = NSCalendar.currentCalendar()
+                
+            let newTime = myCalendar.dateByAddingUnit(
+                .Day,
+                value: 1,
+                toDate: NSDate(),
+                options: [])!
+
+            workingTask.startDate = newTime
+            
+            switch targetTable
+            {
+                case "Table1":
+                    self.table1Contents = Array()
+                    self.populateArraysForTables("Table1")
+                
+                case "Table2":
+                    self.table2Contents = Array()
+                    self.populateArraysForTables("Table2")
+                
+                case "Table3":
+                    self.table3Contents = Array()
+                    self.populateArraysForTables("Table3")
+                
+                case "Table4":
+                    self.table4Contents = Array()
+                    self.populateArraysForTables("Table4")
+                
+                default:print("displayTaskOptions: inTable hit default for some reason")
+            }
+        })
+        
+        let myOption6 = UIAlertAction(title: "Defer: 1 Week", style: .Default, handler: { (action: UIAlertAction) -> () in
+            let myCalendar = NSCalendar.currentCalendar()
+                
+            let newTime = myCalendar.dateByAddingUnit(
+                .Day,
+                value: 7,
+                toDate: NSDate(),
+                options: [])!
+
+            workingTask.startDate = newTime
+            
+            switch targetTable
+            {
+                case "Table1":
+                    self.table1Contents = Array()
+                    self.populateArraysForTables("Table1")
+                
+                case "Table2":
+                    self.table2Contents = Array()
+                    self.populateArraysForTables("Table2")
+                
+                case "Table3":
+                    self.table3Contents = Array()
+                    self.populateArraysForTables("Table3")
+                
+                case "Table4":
+                    self.table4Contents = Array()
+                    self.populateArraysForTables("Table4")
+                
+                default:print("displayTaskOptions: inTable hit default for some reason")
+            }
+        })
+        
+        let myOption7 = UIAlertAction(title: "Defer: 1 Month", style: .Default, handler: { (action: UIAlertAction) -> () in
+            let myCalendar = NSCalendar.currentCalendar()
+                
+            let newTime = myCalendar.dateByAddingUnit(
+                .Month,
+                value: 1,
+                toDate: NSDate(),
+                options: [])!
+
+            workingTask.startDate = newTime
+            
+            switch targetTable
+            {
+                case "Table1":
+                    self.table1Contents = Array()
+                    self.populateArraysForTables("Table1")
+                
+                case "Table2":
+                    self.table2Contents = Array()
+                    self.populateArraysForTables("Table2")
+                
+                case "Table3":
+                    self.table3Contents = Array()
+                    self.populateArraysForTables("Table3")
+                
+                case "Table4":
+                    self.table4Contents = Array()
+                    self.populateArraysForTables("Table4")
+                
+                default:print("displayTaskOptions: inTable hit default for some reason")
+            }
+        })
+        
+        let myOption8 = UIAlertAction(title: "Defer: 1 Year", style: .Default, handler: { (action: UIAlertAction) -> () in
+            let myCalendar = NSCalendar.currentCalendar()
+                
+            let newTime = myCalendar.dateByAddingUnit(
+                .Year,
+                value: 1,
+                toDate: NSDate(),
+                options: [])!
+
+            workingTask.startDate = newTime
+            
+            switch targetTable
+            {
+                case "Table1":
+                    self.table1Contents = Array()
+                    self.populateArraysForTables("Table1")
+                
+                case "Table2":
+                    self.table2Contents = Array()
+                    self.populateArraysForTables("Table2")
+                
+                case "Table3":
+                    self.table3Contents = Array()
+                    self.populateArraysForTables("Table3")
+                
+                case "Table4":
+                    self.table4Contents = Array()
+                    self.populateArraysForTables("Table4")
+                
+                default:print("displayTaskOptions: inTable hit default for some reason")
+            }
+        })
+        
+        let myOption9 = UIAlertAction(title: "Defer: Custom", style: .Default, handler: { (action: UIAlertAction) -> () in
+            if workingTask.displayStartDate == ""
+            {
+                self.myDatePicker.date = NSDate()
+            }
+            else
+            {
+                self.myDatePicker.date = workingTask.startDate
+            }
+            
+            self.myDatePicker.datePickerMode = UIDatePickerMode.DateAndTime
+            self.hideFields()
+            self.myDatePicker.hidden = false
+            self.btnSetStartDate.hidden = false
+            self.myWorkingTask = workingTask
+            self.myWorkingTable = targetTable
+        })
+        
         myOptions.addAction(myOption1)
         myOptions.addAction(myOption2)
+        myOptions.addAction(myOption3)
+        myOptions.addAction(myOption4)
+        myOptions.addAction(myOption5)
+        myOptions.addAction(myOption6)
+        myOptions.addAction(myOption7)
+        myOptions.addAction(myOption8)
+        myOptions.addAction(myOption9)
         
         return myOptions
     }
-
+    
+    func showFields()
+    {
+        TableTypeSelection1.hidden = true
+        setSelectionButton.hidden = true
+        TableTypeButton1.hidden = false
+        TableTypeButton2.hidden = false
+        TableTypeButton3.hidden = false
+        TableTypeButton4.hidden = false
+        dataTable1.hidden = false
+        dataTable2.hidden = false
+        dataTable3.hidden = false
+        dataTable4.hidden = false
+    }
+    
+    func hideFields()
+    {
+        TableTypeButton1.hidden = true
+        TableTypeButton2.hidden = true
+        TableTypeButton3.hidden = true
+        TableTypeButton4.hidden = true
+        dataTable1.hidden = true
+        dataTable2.hidden = true
+        dataTable3.hidden = true
+        dataTable4.hidden = true
+        StartLabel.hidden = true
+        btnCloseWindow.hidden = true
+        myDatePicker.hidden = true
+        btnSetStartDate.hidden = true
+    }
+    
+    @IBAction func btnSetStartDate(sender: UIButton)
+    {
+        myWorkingTask.startDate = myDatePicker.date
+        myDatePicker.hidden = true
+        btnSetStartDate.hidden = true
+        table1Contents = Array()
+        table2Contents = Array()
+        table3Contents = Array()
+        table4Contents = Array()
+        
+        switch myWorkingTable
+        {
+            case "Table1":
+                table1Contents = Array()
+                populateArraysForTables("Table1")
+            
+            case "Table2":
+                table2Contents = Array()
+                populateArraysForTables("Table2")
+            
+            case "Table3":
+                table3Contents = Array()
+                populateArraysForTables("Table3")
+            
+            case "Table4":
+                table4Contents = Array()
+                populateArraysForTables("Table4")
+            
+            default:print("displayTaskOptions: inTable hit default for some reason")
+        }
+        showFields()
+    }
 }
