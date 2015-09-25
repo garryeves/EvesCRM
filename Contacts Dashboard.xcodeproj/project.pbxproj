@@ -201,6 +201,8 @@
 		34BDECAD1B0089CC008C9F3F /* Decodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BDECAB1B0089CC008C9F3F /* Decodes.swift */; };
 		34BDECBE1B009C17008C9F3F /* Panes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BDECBD1B009C17008C9F3F /* Panes.swift */; };
 		34BDECBF1B009C17008C9F3F /* Panes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BDECBD1B009C17008C9F3F /* Panes.swift */; };
+		34C74F8C1BB508A30083AF2E /* GTDInbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C74F8B1BB508A30083AF2E /* GTDInbox.swift */; settings = {ASSET_TAGS = (); }; };
+		34C74F8D1BB508A30083AF2E /* GTDInbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C74F8B1BB508A30083AF2E /* GTDInbox.swift */; settings = {ASSET_TAGS = (); }; };
 		34C7E8071B5F625C005555B3 /* TaskUpdates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7E8061B5F625C005555B3 /* TaskUpdates.swift */; };
 		34C7E8081B5F625C005555B3 /* TaskUpdates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C7E8061B5F625C005555B3 /* TaskUpdates.swift */; };
 		34C899F71B8447340087DA8E /* TaskPredecessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C899F61B8447340087DA8E /* TaskPredecessor.swift */; };
@@ -446,6 +448,7 @@
 		34BDECA91B008846008C9F3F /* displayPanes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = displayPanes.swift; sourceTree = "<group>"; };
 		34BDECAB1B0089CC008C9F3F /* Decodes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Decodes.swift; sourceTree = "<group>"; };
 		34BDECBD1B009C17008C9F3F /* Panes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Panes.swift; sourceTree = "<group>"; };
+		34C74F8B1BB508A30083AF2E /* GTDInbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTDInbox.swift; sourceTree = "<group>"; };
 		34C7E8061B5F625C005555B3 /* TaskUpdates.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskUpdates.swift; sourceTree = "<group>"; };
 		34C899F11B8446080087DA8E /* EvesCRM 17.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 17.xcdatamodel"; sourceTree = "<group>"; };
 		34C899F61B8447340087DA8E /* TaskPredecessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskPredecessor.swift; sourceTree = "<group>"; };
@@ -714,6 +717,7 @@
 				347EE41B1B8D68620044D569 /* GTDPlanning.swift */,
 				347EE4221B8D6AC50044D569 /* GTDPlanningTabController.swift */,
 				34349B511B92C26200C5EFF8 /* GTDEditViewController.swift */,
+				34C74F8B1BB508A30083AF2E /* GTDInbox.swift */,
 				34FED38C1B044BF1006B414C /* maintainPanes.swift */,
 				346B70DD1AF70B8F005E1BC2 /* maintainProjectViewController.swift */,
 				34F35BDD1B6B549000A19ACE /* meetingTabViewController.swift */,
@@ -1133,6 +1137,7 @@
 				34A182DA1B0EDB3D00FC369D /* LiveOperationProgress.m in Sources */,
 				34A1831D1B0EDBB400FC369D /* JsonParser.m in Sources */,
 				34A578C31B5F6170008D3D8E /* MeetingTasks.swift in Sources */,
+				34C74F8C1BB508A30083AF2E /* GTDInbox.swift in Sources */,
 				34A578BD1B5F6110008D3D8E /* Context.swift in Sources */,
 				340650701ADDF8FF00C90CBB /* ViewController.swift in Sources */,
 				34BDECAA1B008846008C9F3F /* displayPanes.swift in Sources */,
@@ -1229,6 +1234,7 @@
 				34A1832A1B0EDBB400FC369D /* StringHelper.m in Sources */,
 				340F84A81B79BE220028439B /* taskListViewController.swift in Sources */,
 				342C0A231B4B844D00A73CA5 /* meetingsViewController.swift in Sources */,
+				34C74F8D1BB508A30083AF2E /* GTDInbox.swift in Sources */,
 				342CA6A31B26C79B006FEAED /* GTLNetworking_Sources.m in Sources */,
 				34BDECAD1B0089CC008C9F3F /* Decodes.swift in Sources */,
 				34A182D31B0EDB3D00FC369D /* LiveConnectClient.m in Sources */,

@@ -1788,13 +1788,13 @@ class coreDatabase: NSObject
         return fetchResults!
     }
 
-    func getTasksWithoutProject(inTeamID: Int)->[Task]
+    func getTasksWithoutProject(teamID: Int)->[Task]
     {
         let fetchRequest = NSFetchRequest(entityName: "Task")
 
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectID == 0) && (updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Deleted\") && (status != \"Complete\")")
+        let predicate = NSPredicate(format: "(projectID == 0) && (updateType != \"Delete\") && (teamID == \(teamID)) && (status != \"Deleted\") && (status != \"Complete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1805,7 +1805,7 @@ class coreDatabase: NSObject
         return fetchResults!
     }
     
-    func getTaskWithoutContext(inTeamID: Int)->[Task]
+    func getTaskWithoutContext(teamID: Int)->[Task]
     {
         // first get a list of all tasks that have a context
         
@@ -1827,7 +1827,7 @@ class coreDatabase: NSObject
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate2 = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Deleted\") && (status != \"Complete\")")
+        let predicate2 = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(teamID)) && (status != \"Deleted\") && (status != \"Complete\")")
         
         // Set the predicate on the fetch request
         fetchTask.predicate = predicate2
@@ -4781,6 +4781,27 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Team]
     
+        return fetchResults!
+    }
+    
+    func getMyTeams(myID: String)->[Team]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Team")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        let sortDescriptor = NSSortDescriptor(key: "name", ascending: true)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Team]
+        
         return fetchResults!
     }
     

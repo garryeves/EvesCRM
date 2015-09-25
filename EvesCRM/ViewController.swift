@@ -17,7 +17,7 @@ import Accounts
 //import "ENSDK/Headers/ENSDK.h"
 
 // PeoplePicker code
-class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate, MyMeetingsDelegate, SideBarDelegate, MyMaintainPanesDelegate, UIPopoverPresentationControllerDelegate
+class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate, MyMeetingsDelegate, SideBarDelegate, MyMaintainPanesDelegate, UIPopoverPresentationControllerDelegate, MyGTDInboxDelegate
 {
     
     @IBOutlet weak var TableTypeSelection1: UIPickerView!
@@ -136,6 +136,8 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        myID = "dummy" // this is here for when I enable multiuser, to make it easy to implement
+        
         myDatabaseConnection = coreDatabase()
         myCloudDB = CloudKitInteraction()
         
@@ -1432,6 +1434,11 @@ println("facebook ID = \(myFacebookID)")
         
         controller.dismissViewControllerAnimated(true, completion: nil)
     }
+    
+    func myGTDInboxDidFinish(controller:GTDInboxViewController)
+    {
+        controller.dismissViewControllerAnimated(true, completion: nil)
+    }
 
     func setAddButtonState(inTable: Int)
     {
@@ -2679,14 +2686,6 @@ print("Nothing found")
                 switch passedItem.displayString
                 {
                     case "Planning":
-                     //   let MaintainProjectViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("MaintainProject") as! MaintainProjectViewController
-                    
-                     //   MaintainProjectViewControl.delegate = self
-                     //   MaintainProjectViewControl.myActionType = "Add"
-                    
-                     //   self.presentViewController(MaintainProjectViewControl, animated: true, completion: nil)
-                    
-                    
                         let projectViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("GTDPlanning") as! MaintainGTDPlanningViewController
                         
                         let myPassedGTD = GTDModel()
@@ -2697,20 +2696,28 @@ print("Nothing found")
                         projectViewControl.passedGTD = myPassedGTD
                         
                         self.presentViewController(projectViewControl, animated: true, completion: nil)
+ 
+                    case "Inbox":
+                        let GTDInboxViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("GTDInbox") as! GTDInboxViewController
                     
-                case "Context":
-                    let projectViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("GTDPlanning") as! MaintainGTDPlanningViewController
+                        GTDInboxViewControl.delegate = self
+                        
+                        self.presentViewController(GTDInboxViewControl, animated: true, completion: nil)
                     
-                    let myPassedGTD = GTDModel()
+                    case "Context":
+                        let projectViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("GTDPlanning") as! MaintainGTDPlanningViewController
                     
-                    myPassedGTD.delegate = self
-                    myPassedGTD.actionSource = "Context"
+                        let myPassedGTD = GTDModel()
                     
-                    projectViewControl.passedGTD = myPassedGTD
+                        myPassedGTD.delegate = self
+                        myPassedGTD.actionSource = "Context"
                     
-                    self.presentViewController(projectViewControl, animated: true, completion: nil)
+                        projectViewControl.passedGTD = myPassedGTD
                     
-                    default: print("sideBarDidSelectButtonAtIndex - Action selector: Hit default")
+                        self.presentViewController(projectViewControl, animated: true, completion: nil)
+                    
+                    default:
+                        print("sideBarDidSelectButtonAtIndex - Action selector: Hit default")
                 }
 
             
@@ -2718,27 +2725,27 @@ print("Nothing found")
                 let myProject = passedItem.displayObject as! Projects
                 loadProject(myProject.projectID as Int, teamID: myProject.teamID as Int)
             
-        case "People":
-            if passedItem.displayString == "Address Book"
-            {
-                let picker = ABPeoplePickerNavigationController()
-                
-                picker.peoplePickerDelegate = self
-                presentViewController(picker, animated: true, completion: nil)
-            }
-            else
-            {
-                let myPerson: ABRecord! = findPersonRecord(passedItem.displayString) as ABRecord!
-            
-                if myPerson == nil
+            case "People":
+                if passedItem.displayString == "Address Book"
                 {
-                    loadContext(passedItem.displayString)
+                    let picker = ABPeoplePickerNavigationController()
+                
+                    picker.peoplePickerDelegate = self
+                    presentViewController(picker, animated: true, completion: nil)
                 }
                 else
                 {
-                    loadPerson(myPerson)
+                    let myPerson: ABRecord! = findPersonRecord(passedItem.displayString) as ABRecord!
+            
+                    if myPerson == nil
+                    {
+                        loadContext(passedItem.displayString)
+                    }
+                    else
+                    {
+                        loadPerson(myPerson)
+                    }
                 }
-            }
 
             case "Context":
                 loadContext(passedItem.displayString)
@@ -2773,12 +2780,13 @@ print("Nothing found")
                                 textExpander.clientAppName = "EvesCRM"
                                 textExpander.getSnippetsScheme = "EvesCRM-get-snippets-xc"
                                 textExpander.fillCompletionScheme = "EvesCRM-fill-xc"
-                            //    textExpander.fillDelegate = self
+                                //    textExpander.fillDelegate = self
                             }
                             textExpander.getSnippets()
                         }
                     
-                    default: print("sideBarDidSelectButtonAtIndex - Action selector: Hit default")
+                    default:
+                        print("sideBarDidSelectButtonAtIndex - Action selector: Hit default")
                     
                 }
             

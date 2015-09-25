@@ -21,6 +21,8 @@ var debugMessages: Bool = false
 
 var myCurrentTeam: team!
 
+var myID: String = ""
+
 var myCurrentViewController: AnyObject!
 
 let myRowColour = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)

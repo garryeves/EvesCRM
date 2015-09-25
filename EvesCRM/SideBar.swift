@@ -69,7 +69,12 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
         planningObject.section = "Header"
         
         headerArray.append(planningObject)
+
+        let inboxObject = createMenuItem("Inbox", inType: "Header", inObject: "Inbox")
+        inboxObject.section = "Header"
         
+        headerArray.append(inboxObject)
+
         let doingObject = createMenuItem("Doing", inType: "Header", inObject: "Doing")
         doingObject.type = "disclosure"
         doingObject.section = "Header"
@@ -77,7 +82,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
 
         headerArray.append(doingObject)
         
-        for myTeamItem in myDatabaseConnection.getAllTeams()
+        for myTeamItem in myDatabaseConnection.getMyTeams(myID)
         {
             let myTeam = team(inTeamID: myTeamItem.teamID as Int)
             let teamObject = createMenuItem(myTeam.name, inType: "Disclosure", inObject: myTeam)
@@ -88,7 +93,11 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
             let myProjects = myDatabaseConnection.getProjects(myTeam.teamID)
             for myProject in myProjects
             {
-                let displayObject = createMenuItem(myProject.projectName, inType: "Project", inObject: myProject)
+                // Get the number of items in the project
+                
+                let myReturnedData = myDatabaseConnection.getActiveTasksForProject(myProject.projectID as Int)
+                
+                let displayObject = createMenuItem("\(myProject.projectName) (\(myReturnedData.count))", inType: "Project", inObject: myProject)
                 //displayObject.section = "\(myTeam.teamID)"
                 displayObject.section = teamObject.childSection
                 

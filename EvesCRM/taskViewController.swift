@@ -58,6 +58,8 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
     @IBOutlet weak var txtRepeatInterval: UITextField!
     @IBOutlet weak var btnRepeatPeriod: UIButton!
     @IBOutlet weak var btnRepeatBase: UIButton!
+    
+    
 
     private var pickerOptions: [String] = Array()
     private var pickerTarget: String = ""
@@ -68,6 +70,7 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
     private var mySelectedRow: Int = 0
     private var kbHeight: CGFloat!
     private var colContextsHeight: CGFloat!
+    private var constraintArray: [NSLayoutConstraint] = Array()
     
     lazy var activityPopover:UIPopoverController = {
         return UIPopoverController(contentViewController: self.activityViewController)
@@ -794,42 +797,50 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
     
     func changeViewHeight(viewName: UIView, newHeight: CGFloat)
     {
-        viewName.frame = CGRectMake(
-            viewName.frame.origin.x,
-            viewName.frame.origin.y,
-            viewName.frame.size.width,
-            newHeight
-        )
+//        viewName.frame = CGRectMake(
+////            viewName.frame.origin.x,
+//            viewName.frame.origin.y,
+//            viewName.frame.size.width,
+//            newHeight
+//        )
     }
     
     func showKeyboardFields()
     {
         lblTargetDate.hidden = false
-        changeViewHeight(lblTargetDate, newHeight: 0)
+        changeViewHeight(lblTargetDate, newHeight: 30)
         btnTargetDate.hidden = false
-        changeViewHeight(btnTargetDate, newHeight: 0)
+        changeViewHeight(btnTargetDate, newHeight: 30)
         lblStart.hidden = false
-        changeViewHeight(lblStart, newHeight: 0)
+        changeViewHeight(lblStart, newHeight: 30)
         btnStart.hidden = false
-        changeViewHeight(btnStart, newHeight: 0)
+        changeViewHeight(btnStart, newHeight: 30)
         lblContexts.hidden = false
-        changeViewHeight(lblContexts, newHeight: 0)
+        changeViewHeight(lblContexts, newHeight: 30)
         colContexts.hidden = false
-        changeViewHeight(colContexts, newHeight: 0)
+        changeViewHeight(colContexts, newHeight: 190)
         lblPriority.hidden = false
-        changeViewHeight(lblPriority, newHeight: 0)
+        changeViewHeight(lblPriority, newHeight: 30)
         btnPriority.hidden = false
-        changeViewHeight(btnPriority, newHeight: 0)
+        changeViewHeight(btnPriority, newHeight: 30)
         lblEnergy.hidden = false
-        changeViewHeight(lblEnergy, newHeight: 0)
+        changeViewHeight(lblEnergy, newHeight: 30)
         btnEnergy.hidden = false
-        changeViewHeight(btnEnergy, newHeight: 0)
+        changeViewHeight(btnEnergy, newHeight: 30)
         lblUrgency.hidden = false
-        changeViewHeight(lblUrgency, newHeight: 0)
+        changeViewHeight(lblUrgency, newHeight: 30)
         btnUrgency.hidden = false
-        changeViewHeight(btnUrgency, newHeight: 0)
+        changeViewHeight(btnUrgency, newHeight: 30)
         btnOwner.hidden = false
-        changeViewHeight(btnOwner, newHeight: 0)
+        changeViewHeight(btnOwner, newHeight: 30)
+        lblStatus.hidden = false
+        changeViewHeight(lblStatus, newHeight: 30)
+        btnStatus.hidden = false
+        changeViewHeight(btnStatus, newHeight: 30)
+        lblProject.hidden = false
+        changeViewHeight(lblProject, newHeight: 30)
+        btnProject.hidden = false
+        changeViewHeight(btnProject, newHeight: 30)
     }
     
     func hideKeyboardFields()
@@ -845,7 +856,7 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         lblContexts.hidden = true
         changeViewHeight(lblContexts, newHeight: 30)
         colContexts.hidden = true
-        changeViewHeight(colContexts, newHeight: 200)
+        changeViewHeight(colContexts, newHeight: 190)
         lblPriority.hidden = true
         changeViewHeight(lblPriority, newHeight: 30)
         btnPriority.hidden = true
@@ -860,13 +871,19 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         changeViewHeight(btnUrgency, newHeight: 30)
         btnOwner.hidden = true
         changeViewHeight(btnOwner, newHeight: 30)
+        lblStatus.hidden = true
+        changeViewHeight(lblStatus, newHeight: 30)
+        btnStatus.hidden = true
+        changeViewHeight(btnStatus, newHeight: 30)
+        lblProject.hidden = true
+        changeViewHeight(lblProject, newHeight: 30)
+        btnProject.hidden = true
+        changeViewHeight(btnProject, newHeight: 30)
     }
     
     func showFields()
     {
         showKeyboardFields()
-        lblStatus.hidden = false
-        btnStatus.hidden = false
         lblTaskTitle.hidden = false
         lblTaskDescription.hidden = false
         txtTaskTitle.hidden = false
@@ -874,8 +891,6 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         txtEstTime.hidden = false
         btnEstTimeInterval.hidden = false
         lblEstTime.hidden = false
-        lblProject.hidden = false
-        btnProject.hidden = false
         lblrepeatEvery.hidden = false
         lblFromActivity.hidden = false
         txtRepeatInterval.hidden = false
@@ -886,8 +901,6 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
     func hideFields()
     {
         hideKeyboardFields()
-        lblStatus.hidden = true
-        btnStatus.hidden = true
         lblTaskTitle.hidden = true
         lblTaskDescription.hidden = true
         txtTaskTitle.hidden = true
@@ -895,8 +908,6 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         txtEstTime.hidden = true
         btnEstTimeInterval.hidden = true
         lblEstTime.hidden = true
-        lblProject.hidden = true
-        btnProject.hidden = true
         lblrepeatEvery.hidden = false
         lblFromActivity.hidden = false
         txtRepeatInterval.hidden = false
@@ -1327,33 +1338,59 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
                 
             })
             
+            let myConstraints = [
+                "constraintContexts",
+                "constraintContexts1",
+                "constraintContexts2",
+                "constraintContexts3",
+                "constraintStart",
+                "constraintDue",
+                "constraintPriority",
+                "constraintUrgency",
+                "constraintEnergy",
+                "constraintContextTable",
+                "constraintOwner",
+                "constraintLabelStart",
+                "constraintLabelDue",
+                "constraintLabelPriority",
+                "constraintLabelUrgency",
+                "constraintLabelEnergy",
+                "constraintProjectButton1",
+                "constraintProjectButton2",
+                "constraintProjectButton3",
+                "constraintProjectButton4",
+                "constraintProjectButton5",
+                "constraintProjectButton6",
+                "constraintProjectDesc1",
+                "constraintProjectDesc2",
+                "constraintProjectDesc3"
+            ]
+            
             if up
             {
+                if constraintArray.count == 0
+                {
+                    // Populate the array
+                    for myItem in self.view.constraints
+                    {
+                        if myItem.identifier != nil
+                        {
+                            if myConstraints.contains(myItem.identifier!)
+                            {
+                                constraintArray.append(myItem)
+                            }
+                        }
+                    }
+                }
+                
+                NSLayoutConstraint.deactivateConstraints(constraintArray)
                 hideKeyboardFields()
- //               for myItem in colContexts.constraints
-//                {
-//                    if myItem.firstAttribute == NSLayoutAttribute.Height && myItem.firstItem.isKindOfClass(UICollectionView)
-//                    {
-//                        colContextsHeight = myItem.constant
-//                        myItem.constant = 0
-//                        colContexts.layoutIfNeeded()
-//                    }
-//                }
             }
             else
             {
                 showKeyboardFields()
-//                for myItem in colContexts.constraints
-//                {
-//                    if myItem.firstAttribute == NSLayoutAttribute.Height && myItem.firstItem.isKindOfClass(UICollectionView)
-//                    {
-//                        myItem.constant = colContextsHeight
- //                       colContexts.layoutIfNeeded()
-//                    }
-//                }
+                NSLayoutConstraint.activateConstraints(constraintArray)
             }
-            
-            
         }
     }
 
