@@ -194,6 +194,8 @@
 		34B4C7E51B8191930098F6BC /* TaskAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B4C7E11B8191930098F6BC /* TaskAttachment.swift */; };
 		34B525391B130F1C00093250 /* oneNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B525381B130F1C00093250 /* oneNote.swift */; };
 		34B5253A1B130F1C00093250 /* oneNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B525381B130F1C00093250 /* oneNote.swift */; };
+		34B7242E1BB62C7700C7AE34 /* startViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B7242D1BB62C7700C7AE34 /* startViewController.swift */; settings = {ASSET_TAGS = (); }; };
+		34B7242F1BB62C7700C7AE34 /* startViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B7242D1BB62C7700C7AE34 /* startViewController.swift */; settings = {ASSET_TAGS = (); }; };
 		34B9C0111B26BA70005E52F9 /* gMail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B9C0101B26BA70005E52F9 /* gMail.swift */; };
 		34B9C0121B26BA70005E52F9 /* gMail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B9C0101B26BA70005E52F9 /* gMail.swift */; };
 		34BDECAA1B008846008C9F3F /* displayPanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BDECA91B008846008C9F3F /* displayPanes.swift */; };
@@ -443,6 +445,7 @@
 		34B4C7DC1B8190D50098F6BC /* EvesCRM 15.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 15.xcdatamodel"; sourceTree = "<group>"; };
 		34B4C7E11B8191930098F6BC /* TaskAttachment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskAttachment.swift; sourceTree = "<group>"; };
 		34B525381B130F1C00093250 /* oneNote.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = oneNote.swift; sourceTree = "<group>"; };
+		34B7242D1BB62C7700C7AE34 /* startViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = startViewController.swift; sourceTree = "<group>"; };
 		34B9C0101B26BA70005E52F9 /* gMail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = gMail.swift; sourceTree = "<group>"; };
 		34BDECA81B0086D3008C9F3F /* EvesCRM 3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 3.xcdatamodel"; sourceTree = "<group>"; };
 		34BDECA91B008846008C9F3F /* displayPanes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = displayPanes.swift; sourceTree = "<group>"; };
@@ -726,6 +729,7 @@
 				34111C391AEC898B003090EB /* reminderViewController.swift */,
 				341E08C61B01B1B90036202D /* settingsViewController.swift */,
 				349331C81B705756004AA569 /* SideBarTableViewController.swift */,
+				34B7242D1BB62C7700C7AE34 /* startViewController.swift */,
 				340F84A61B79BE220028439B /* taskListViewController.swift */,
 				342A357B1B5F727200D6DB29 /* taskViewController.swift */,
 				34F35BD21B6B3F7000A19ACE /* taskUpdatesViewController.swift */,
@@ -1170,6 +1174,7 @@
 				342C0A1D1B4B7CED00A73CA5 /* MeetingAttendees.swift in Sources */,
 				341F23121AFC284400FC2883 /* DropboxCoreService.swift in Sources */,
 				34F35BD31B6B3F7000A19ACE /* taskUpdatesViewController.swift in Sources */,
+				34B7242E1BB62C7700C7AE34 /* startViewController.swift in Sources */,
 				34A1831F1B0EDBB400FC369D /* JsonWriter.m in Sources */,
 				349331CF1B70576C004AA569 /* SideBar.swift in Sources */,
 				34A182D21B0EDB3D00FC369D /* LiveConnectClient.m in Sources */,
@@ -1194,6 +1199,7 @@
 				34E92AE11B9D191900F158F3 /* GTDLevel+CoreDataProperties.swift in Sources */,
 				342C0A181B4B7CED00A73CA5 /* MeetingTasks.swift in Sources */,
 				34B3BDA01AF0979E00C5B09D /* ViewController.swift in Sources */,
+				34B7242F1BB62C7700C7AE34 /* startViewController.swift in Sources */,
 				342C0A1C1B4B7CED00A73CA5 /* MeetingAgendaItem.swift in Sources */,
 				342C0A161B4B7CED00A73CA5 /* MeetingSupportingDocs.swift in Sources */,
 				346B70F81AF75FF4005E1BC2 /* Roles.swift in Sources */,

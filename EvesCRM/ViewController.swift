@@ -138,12 +138,15 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
 
         myID = "dummy" // this is here for when I enable multiuser, to make it easy to implement
         
-        myDatabaseConnection = coreDatabase()
-        myCloudDB = CloudKitInteraction()
+//        myDatabaseConnection = coreDatabase()
+//        myCloudDB = CloudKitInteraction()
         
         // sync with the master database
         
-        myDBSync.sync()
+//        myDBSync.sync()
+
+        
+        
         myDBSync.startTimer()
 //        _ = NSTimer(timeInterval: 60, target: myDBSync, selector: "timerSync:", userInfo: nil, repeats: true)
      //   let myTimer = NSTimer(timeInterval: 60, target: self, selector: "timerTest:", userInfo: nil, repeats: true)
@@ -151,7 +154,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         //   code to reset decodes if needed for testing
  //       myDatabaseConnection.deleteDecodeValue()
         
-        initialPopulationOfTables()
+   //     initialPopulationOfTables()
         
         eventStore = EKEventStore()
         
@@ -2159,55 +2162,6 @@ print("Nothing found")
         }
     }
 
-    func initialPopulationOfTables()
-    {
-        var decodeString: String = ""
- 
-        //  For testing purposes, this will remove all the teams and GTD levels
-       // myDatabaseConnection.deleteAllTeams()
-        
-        if myDatabaseConnection.getTeamsCount() == 0
-        {
-            let myNewTeam = team()
-            myNewTeam.name = "My Life"
-            myNewTeam.type = "private"
-            myNewTeam.status = "Open"
-            
-            // Store the ID for the default team
-            myDatabaseConnection.updateDecodeValue("Default Team", inCodeValue: "\(myNewTeam.teamID)", inCodeType: "hidden")
-            
-            myCurrentTeam = myNewTeam
-        }
-        else
-        {
-            // Load up the default team
-            
-            decodeString = myDatabaseConnection.getDecodeValue("Default Team")
-            
-            let tempId = Int(decodeString)
-            
-            myCurrentTeam = team(inTeamID: tempId!)
-        }
-
-        //  For testing purposes, this will reset decodes
-        // myDatabaseConnection.tidyDecodes()
-        //      myDatabaseConnection.resetDecodes()
-
-        decodeString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date")
-        
-        if decodeString == ""
-        {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("Calendar - Weeks before current date", inCodeValue: "1", inCodeType: "stepper")
-        }
-
-        decodeString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date")
-        
-        if decodeString == ""
-        {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("Calendar - Weeks after current date", inCodeValue: "4", inCodeType: "stepper")
-        }
-    }
-    
     func displayScreen()
     {
         // Go and get the list of available panes

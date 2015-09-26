@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8191" systemVersion="15B17c" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8191" systemVersion="15B17c" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="VLY-vP-DjN">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
@@ -2320,10 +2320,10 @@
             </objects>
             <point key="canvasLocation" x="2829.75" y="-2133"/>
         </scene>
-        <!--Storyboard-->
+        <!--iPad Start-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController title="Storyboard" id="BYZ-38-t0r" customClass="ViewController" customModule="EvesCRM" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="iPadStart" title="iPadStart" id="BYZ-38-t0r" userLabel="iPad Start" customClass="ViewController" customModule="EvesCRM" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>
@@ -7207,6 +7207,44 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="axR-PA-kd5" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="4950" y="-3077"/>
+        </scene>
+        <!--startViewController-->
+        <scene sceneID="saS-vl-0mA">
+            <objects>
+                <viewController id="VLY-vP-DjN" userLabel="startViewController" customClass="startViewController" customModule="EvesCRM" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="TDU-Su-fKm"/>
+                        <viewControllerLayoutGuide type="bottom" id="0Sh-Ji-UTW"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Epx-ZV-Anq">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Please wait whilst data is synchronised with Cloud" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8ZE-Bs-2eZ">
+                                <rect key="frame" x="109" y="289" width="383" height="21"/>
+                                <animations/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <animations/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="8ZE-Bs-2eZ" firstAttribute="centerX" secondItem="Epx-ZV-Anq" secondAttribute="centerX" id="5h6-Um-YTr"/>
+                            <constraint firstItem="8ZE-Bs-2eZ" firstAttribute="top" secondItem="TDU-Su-fKm" secondAttribute="bottom" id="C8e-Vw-1Wh"/>
+                            <constraint firstItem="8ZE-Bs-2eZ" firstAttribute="centerY" secondItem="Epx-ZV-Anq" secondAttribute="centerY" id="Nst-K9-xAY"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="C8e-Vw-1Wh"/>
+                            </mask>
+                        </variation>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="O4w-ZE-xy5" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2678" y="-26"/>
         </scene>
         <!--taskUpdate-->
         <scene sceneID="au9-8h-fVO">
