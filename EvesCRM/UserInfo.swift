@@ -82,6 +82,7 @@ class UserInfo {
   }
   
   func userInfo(completion: (userInfo: CKDiscoveredUserInfo!, error: NSError!)->()) {
+NSLog("gre userinfo")
     requestDiscoverability() { discoverable in
       self.userID() { recordID, error in
         if error != nil {

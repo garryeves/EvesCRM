@@ -2068,7 +2068,7 @@ class context: NSObject
     private var myAutoEmail: String = ""
     private var myParentContext: Int = 0
     private var myStatus: String = ""
-    private var myPersonID: Int32 = 0
+    private var myPersonID: Int = 0
     private var myTeamID: Int = 0
     private var myPredecessor: Int = 0
     
@@ -2173,7 +2173,7 @@ class context: NSObject
         }
     }
     
-    var personID: Int32
+    var personID: Int
     {
         get
         {
@@ -2283,7 +2283,7 @@ class context: NSObject
                 {
                     myName = ABRecordCopyCompositeName(myPersonEmail).takeRetainedValue() as String
                     myEmail = inContextName
-                    myPersonID = ABRecordGetRecordID(myPersonEmail)
+                    myPersonID = Int(ABRecordGetRecordID(myPersonEmail))
                 }
                 else
                 {  // No match so use text passed in
@@ -2293,7 +2293,7 @@ class context: NSObject
             else
             {
                 myName = ABRecordCopyCompositeName(myPerson).takeRetainedValue() as String
-                myPersonID = ABRecordGetRecordID(myPerson)
+                myPersonID = Int(ABRecordGetRecordID(myPerson))
             }
             save()
         }
@@ -2312,7 +2312,7 @@ class context: NSObject
             myAutoEmail = myContext.autoEmail
             myParentContext = myContext.parentContext as Int
             myStatus = myContext.status
-            myPersonID = myContext.personID.intValue
+            myPersonID = myContext.personID as Int
             myTeamID = myContext.teamID as Int
             
             getContext1_1()
@@ -2328,7 +2328,7 @@ class context: NSObject
         myAutoEmail = inContext.autoEmail
         myParentContext = inContext.parentContext as Int
         myStatus = inContext.status
-        myPersonID = inContext.personID.intValue
+        myPersonID = inContext.personID as Int
         myTeamID = inContext.teamID as Int
         
         getContext1_1()

@@ -268,6 +268,27 @@ print("appdelegate application - source Application URL = \(url.scheme)")
         // Saves changes in the application's managed object context before the application terminates.
         self.saveContext()
     }
+    
+    // GRE Added for Google sign in
+    
+    func signIn(signIn: GIDSignIn!, didSignInForUser user: GIDGoogleUser!,
+        withError error: NSError!) {
+            if (error == nil) {
+                // Perform any operations on signed in user here.
+                // ...
+                
+            } else {
+                print("\(error.localizedDescription)")
+            }
+            NSNotificationCenter.defaultCenter().postNotificationName("NotificationGmailSignedIn", object: nil)
+    }
+    func signIn(signIn: GIDSignIn!, didDisconnectWithUser user:GIDGoogleUser!,
+        withError error: NSError!) {
+            // Perform any operations when the user disconnects from app here.
+            // ...
+    }
+    
+    
 
     // MARK: - Core Data stack
 
@@ -283,18 +304,6 @@ print("appdelegate application - source Application URL = \(url.scheme)")
         return NSManagedObjectModel(contentsOfURL: modelURL)!
     }()
     
-    func cloudDirectory() -> NSURL
-    {
-        let fileManager: NSFileManager = NSFileManager.defaultManager()
-//        let teamID: String = "garry@eves.id.au"
-        let teamID: String = "iCloud"
-        let bundleID: String = NSBundle.mainBundle().bundleIdentifier!
-        let cloudRoot: String = "\(teamID).\(bundleID)"
-        let cloudRootURL: NSURL = fileManager.URLForUbiquityContainerIdentifier(cloudRoot)!
-        NSLog("cloudRootURL=%@", cloudRootURL)
-        return cloudRootURL
-    }
-
     lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator? = {
         // The persistent store coordinator for the application. This implementation creates and return a coordinator, having added the store for the application to it. This property is optional since there are legitimate error conditions that could cause the creation of the store to fail.
         // Create the coordinator and store
@@ -302,31 +311,9 @@ print("appdelegate application - source Application URL = \(url.scheme)")
         let url = self.applicationDocumentsDirectory.URLByAppendingPathComponent("EvesCRM.sqlite")
         var error: NSError? = nil
         var failureReason = "There was an error creating or loading the application's saved data."
-        
-  // GRE start add section
-        
-     //   var options:NSMutableDictionary = NSMutableDictionary
-    //    options.setValue(YES, forKey: "NSMigratePersistentStoresAutomaticallyOption")
-    //    options.setValue(YES, forKey: "NSInferMappingModelAutomaticallyOption")
-        // commented out below to stop sync to icloud for coredata
-  /*      let mOptions = [NSMigratePersistentStoresAutomaticallyOption: true,
-            NSInferMappingModelAutomaticallyOption: true,
-       //     NSPersistentStoreRebuildFromUbiquitousContentOption: true,
-            NSPersistentStoreUbiquitousContentNameKey : "iCloud",
-            NSPersistentStoreUbiquitousContentURLKey : self.cloudDirectory()]  */
-        
         let mOptions = [NSMigratePersistentStoresAutomaticallyOption: true,
             NSInferMappingModelAutomaticallyOption: true]
 
-  //_persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
-  // if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error]) {
-
-  
-  //       self.registerCoordinatorForStoreNotifications (coordinator!)
-
-  // GRE end add section
-
-  // if coordinator!.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: url, options: nil, error: &error) == nil {
   do {
       try coordinator!.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: url, options: mOptions)
   } catch var error1 as NSError {
@@ -362,8 +349,6 @@ print("appdelegate application - source Application URL = \(url.scheme)")
         managedObjectContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         managedObjectContext.persistentStoreCoordinator = coordinator
         
-    //    var managedObjectContext = NSManagedObjectContext()
-     //   managedObjectContext.persistentStoreCoordinator = coordinator
         return managedObjectContext
     }()
 
@@ -374,7 +359,9 @@ print("appdelegate application - source Application URL = \(url.scheme)")
             var error: NSError? = nil
             if moc.hasChanges {
                 do {
+
                     try moc.save()
+                    
                 } catch let error1 as NSError {
                     error = error1
                     // Replace this implementation with code to handle the error appropriately.
@@ -399,10 +386,6 @@ print("appdelegate application - source Application URL = \(url.scheme)")
             name: NSPersistentStoreCoordinatorStoresDidChangeNotification,
             object: coordinator)
         
- //       nc.addObserver(self, selector: "handleStoresWillRemove:",
- //           name: NSPersistentStoreCoordinatorWillRemoveStoreNotification,
- //           object: coordinator)
-        
         nc.addObserver(self, selector: "persistentStoreDidImportUbiquitousContentChanges:",
             name: NSPersistentStoreDidImportUbiquitousContentChangesNotification,
             object: coordinator)
@@ -410,24 +393,7 @@ print("appdelegate application - source Application URL = \(url.scheme)")
         nc.addObserver(self, selector: "mergeChanges:", name: NSManagedObjectContextDidSaveNotification, object: coordinator);
     }
     
-    // GRE Added for Google sign in
-    
-    func signIn(signIn: GIDSignIn!, didSignInForUser user: GIDGoogleUser!,
-        withError error: NSError!) {
-            if (error == nil) {
-                // Perform any operations on signed in user here.
-                // ...
-                
-            } else {
-                print("\(error.localizedDescription)")
-            }
-            NSNotificationCenter.defaultCenter().postNotificationName("NotificationGmailSignedIn", object: nil)
-    }
-    func signIn(signIn: GIDSignIn!, didDisconnectWithUser user:GIDGoogleUser!,
-        withError error: NSError!) {
-            // Perform any operations when the user disconnects from app here.
-            // ...
-    }
+
     
     
     // GRE coredata
@@ -506,10 +472,5 @@ print("appdelegate application - source Application URL = \(url.scheme)")
         self.mergeChanges(notification);
         NSLog("persistentStoreDidImportUbiquitousContentChanges posting notif");
     }
-
-    
-    
-    
-    
 }
 

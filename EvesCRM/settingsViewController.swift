@@ -278,10 +278,9 @@ class settingsViewController: UIViewController
             // Delete the entries from the current tables
             
             myDBSync.deleteAllFromCoreData()
-            
             // Load
             
-            myDBSync.syncFromCloudKit(self.syncDate)
+            myDBSync.replaceWithCloudKit()
             myDBSync.refreshRunning = false
         })
     }

@@ -10,11 +10,14 @@ import Foundation
 
 class startViewController: UIViewController
 {
+    @IBOutlet weak var lblDebug: UILabel!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         myID = "dummy" // this is here for when I enable multiuser, to make it easy to implement
+        
+        lblDebug.text = ""
         
         myDatabaseConnection = coreDatabase()
         myCloudDB = CloudKitInteraction()
@@ -27,8 +30,11 @@ class startViewController: UIViewController
     
     func performInitialSync()
     {
-        myDBSync.sync()
+  //      NSNotificationCenter.defaultCenter().addObserver(self, selector: "DBUpdateMessage:", name:"NotificationSyncMessage", object: nil)
         
+        myDBSync.sync()
+        NSLog("finished sync")
+//        NSNotificationCenter.defaultCenter().removeObserver(self, name:"NotificationSyncMessage", object: nil)
         initialPopulationOfTables()
 
         let deviceIdiom = UIDevice.currentDevice().userInterfaceIdiom
@@ -47,6 +53,13 @@ class startViewController: UIViewController
         {
             NSLog("unknown device")
         }
+    }
+    
+    func DBUpdateMessage(notification: NSNotification)
+    {
+        let workingText = notification.userInfo!["displayMessage"] as! String
+        NSLog("working text = \(workingText)")
+        self.lblDebug.text = workingText
     }
     
     func initialPopulationOfTables()
@@ -74,9 +87,16 @@ class startViewController: UIViewController
             
             decodeString = myDatabaseConnection.getDecodeValue("Default Team")
             
-            let tempId = Int(decodeString)
+            let tempID = Int(decodeString)
             
-            myCurrentTeam = team(inTeamID: tempId!)
+            if tempID == nil
+            {
+                myCurrentTeam = team(inTeamID: 1)
+            }
+            else
+            {
+                myCurrentTeam = team(inTeamID: tempID!)
+            }
         }
         
         //  For testing purposes, this will reset decodes

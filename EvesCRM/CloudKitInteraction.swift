@@ -1607,6 +1607,7 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
         let query: CKQuery = CKQuery(recordType: "Context", predicate: predicate)
+        var predecessor: Int = 0
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
@@ -1615,10 +1616,14 @@ class CloudKitInteraction
                 let email = record.objectForKey("email") as! String
                 let name = record.objectForKey("name") as! String
                 let parentContext = record.objectForKey("parentContext") as! Int
-                let personID = record.objectForKey("personID") as! Int32
+                let personID = record.objectForKey("personID") as! Int
                 let status = record.objectForKey("status") as! String
                 let teamID = record.objectForKey("teamID") as! Int
-                let predecessor = record.objectForKey("predecessor") as! Int
+                
+                if record.objectForKey("predecessor") != nil
+                {
+                    predecessor = record.objectForKey("predecessor") as! Int
+                }
                 let updateTime = record.objectForKey("updateTime") as! NSDate
                 let updateType = record.objectForKey("updateType") as! String
                 
@@ -2542,5 +2547,623 @@ class CloudKitInteraction
         queue.addOperations([operation], waitUntilFinished: true)
       //  privateDB.addOperation(operation, waitUntilFinished: true)
         NSLog("finished delete")
+    }
+    
+    func replaceContextInCoreData()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        let myDateFormatter = NSDateFormatter()
+        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let query: CKQuery = CKQuery(recordType: "Context", predicate: predicate)
+        var predecessor: Int = 0
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let contextID = record.objectForKey("contextID") as! Int
+                let autoEmail = record.objectForKey("autoEmail") as! String
+                let email = record.objectForKey("email") as! String
+                let name = record.objectForKey("name") as! String
+                let parentContext = record.objectForKey("parentContext") as! Int
+                let personID = record.objectForKey("personID") as! Int
+                let status = record.objectForKey("status") as! String
+                let teamID = record.objectForKey("teamID") as! Int
+                
+                if record.objectForKey("predecessor") != nil
+                {
+                    predecessor = record.objectForKey("predecessor") as! Int
+                }
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                
+                myDatabaseConnection.replaceContext(contextID, inName: name, inEmail: email, inAutoEmail: autoEmail, inParentContext: parentContext, inStatus: status, inPersonID: personID, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+                
+                
+                myDatabaseConnection.replaceContext1_1(contextID, inPredecessor: predecessor, inUpdateTime: updateTime, inUpdateType: updateType)
+                
+            }
+            dispatch_semaphore_signal(sem)
+        })
+    }
+    
+    func replaceDecodesInCoreData()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        let myDateFormatter = NSDateFormatter()
+        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let query: CKQuery = CKQuery(recordType: "Decodes", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                
+                let decodeName = record.objectForKey("decode_name") as! String
+                let decodeValue = record.objectForKey("decode_value") as! String
+                let decodeType = record.objectForKey("decodeType") as! String
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                
+                myDatabaseConnection.replaceDecodeValue(decodeName, inCodeValue: decodeValue, inCodeType: decodeType, inUpdateTime: updateTime, inUpdateType: updateType)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func replaceGTDItemInCoreData()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        let myDateFormatter = NSDateFormatter()
+        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let query: CKQuery = CKQuery(recordType: "GTDItem", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let gTDItemID = record.objectForKey("gTDItemID") as! Int
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let gTDParentID = record.objectForKey("gTDParentID") as! Int
+                let lastReviewDate = record.objectForKey("lastReviewDate") as! NSDate
+                let note = record.objectForKey("note") as! String
+                let predecessor = record.objectForKey("predecessor") as! Int
+                let reviewFrequency = record.objectForKey("reviewFrequency") as! Int
+                let reviewPeriod = record.objectForKey("reviewPeriod") as! String
+                let status = record.objectForKey("status") as! String
+                let teamID = record.objectForKey("teamID") as! Int
+                let title = record.objectForKey("title") as! String
+                let gTDLevel = record.objectForKey("gTDLevel") as! Int
+                
+                myDatabaseConnection.replaceGTDItem(gTDItemID, inParentID: gTDParentID, inTitle: title, inStatus: status, inTeamID: teamID, inNote: note, inLastReviewDate: lastReviewDate, inReviewFrequency: reviewFrequency, inReviewPeriod: reviewPeriod, inPredecessor: predecessor, inGTDLevel: gTDLevel, inUpdateTime: updateTime, inUpdateType: updateType)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func replaceGTDLevelInCoreData()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        let myDateFormatter = NSDateFormatter()
+        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let query: CKQuery = CKQuery(recordType: "GTDLevel", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let gTDLevel = record.objectForKey("gTDLevel") as! Int
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey( "updateType") as! String
+                let teamID = record.objectForKey("teamID") as! Int
+                let levelName = record.objectForKey("levelName") as! String
+                
+                myDatabaseConnection.replaceGTDLevel(gTDLevel, inLevelName: levelName, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func replaceMeetingAgendaInCoreData()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        let myDateFormatter = NSDateFormatter()
+        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let query: CKQuery = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let meetingID = record.objectForKey("meetingID") as! String
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let chair = record.objectForKey("chair") as! String
+                let endTime = record.objectForKey("endTime") as! NSDate
+                let location = record.objectForKey("location") as! String
+                let minutes = record.objectForKey("minutes") as! String
+                let minutesType = record.objectForKey("minutesType") as! String
+                let name = record.objectForKey("name") as! String
+                let previousMeetingID = record.objectForKey("previousMeetingID") as! String
+                let startTime = record.objectForKey("startTime") as! NSDate
+                let teamID = record.objectForKey("teamID") as! Int
+                
+                myDatabaseConnection.replaceAgenda(meetingID, inPreviousMeetingID : previousMeetingID, inName: name, inChair: chair, inMinutes: minutes, inLocation: location, inStartTime: startTime, inEndTime: endTime, inMinutesType: minutesType, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func replaceMeetingAgendaItemInCoreData()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        let myDateFormatter = NSDateFormatter()
+        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let query: CKQuery = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let meetingID = record.objectForKey("meetingID") as! String
+                let agendaID = record.objectForKey("agendaID") as! Int
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let actualEndTime = record.objectForKey("actualEndTime") as! NSDate
+                let actualStartTime = record.objectForKey("actualStartTime") as! NSDate
+                let decisionMade = record.objectForKey("decisionMade") as! String
+                let discussionNotes = record.objectForKey("discussionNotes") as! String
+                let owner = record.objectForKey("owner") as! String
+                let status = record.objectForKey("status") as! String
+                let timeAllocation = record.objectForKey("timeAllocation") as! Int
+                let title = record.objectForKey("title") as! String
+                
+                
+                myDatabaseConnection.replaceAgendaItem(meetingID, actualEndTime: actualEndTime, actualStartTime: actualStartTime, status: status, decisionMade: decisionMade, discussionNotes: discussionNotes, timeAllocation: timeAllocation, owner: owner, title: title, agendaID: agendaID, inUpdateTime: updateTime, inUpdateType: updateType)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func replaceMeetingAttendeesInCoreData()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        let myDateFormatter = NSDateFormatter()
+        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let query: CKQuery = CKQuery(recordType: "MeetingAttendees", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let meetingID = record.objectForKey("meetingID") as! String
+                let name  = record.objectForKey("name") as! String
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let attendenceStatus = record.objectForKey("attendenceStatus") as! String
+                let email = record.objectForKey("email") as! String
+                let type = record.objectForKey("type") as! String
+                
+                myDatabaseConnection.replaceAttendee(meetingID, name: name, email: email,  type: type, status: attendenceStatus, inUpdateTime: updateTime, inUpdateType: updateType)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func replaceMeetingSupportingDocsInCoreData()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        let myDateFormatter = NSDateFormatter()
+        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let query: CKQuery = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            // for record in results!
+            for _ in results!
+            {
+                //              let meetingID = record.objectForKey("meetingID") as! String
+                //              let agendaID = record.objectForKey("agendaID") as! Int
+                //              let updateTime = record.objectForKey("updateTime") as! NSDate
+                //              let updateType = record.objectForKey("updateType") as! String
+                //              let attachmentPath = record.objectForKey("attachmentPath") as! String
+                //              let title = record.objectForKey("title") as! String
+                
+                NSLog("replaceMeetingSupportingDocsInCoreData - Need to have the save for this")
+                
+                // myDatabaseConnection.replaceDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func replaceMeetingTasksInCoreData()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        let myDateFormatter = NSDateFormatter()
+        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let query: CKQuery = CKQuery(recordType: "MeetingTasks", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let meetingID = record.objectForKey("meetingID") as! String
+                let agendaID = record.objectForKey("agendaID") as! Int
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let taskID = record.objectForKey("taskID") as! Int
+                
+                myDatabaseConnection.replaceMeetingTask(agendaID, meetingID: meetingID, taskID: taskID, inUpdateTime: updateTime, inUpdateType: updateType)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func replacePanesInCoreData()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        let myDateFormatter = NSDateFormatter()
+        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let query: CKQuery = CKQuery(recordType: "Panes", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let pane_name = record.objectForKey("pane_name") as! String
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let pane_available = record.objectForKey("pane_available") as! Bool
+                let pane_order = record.objectForKey("pane_order") as! Int
+                let pane_visible = record.objectForKey("pane_visible") as! Bool
+                
+                myDatabaseConnection.replacePane(pane_name, inPaneAvailable: pane_available, inPaneVisible: pane_visible, inPaneOrder: pane_order, inUpdateTime: updateTime, inUpdateType: updateType)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func replaceProjectsInCoreData()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        let myDateFormatter = NSDateFormatter()
+        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let projectID = record.objectForKey("projectID") as! Int
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let areaID = record.objectForKey("areaID") as! Int
+                let lastReviewDate = record.objectForKey("lastReviewDate") as! NSDate
+                let projectEndDate = record.objectForKey("projectEndDate") as! NSDate
+                let projectName = record.objectForKey("projectName") as! String
+                let projectStartDate = record.objectForKey("projectStartDate") as! NSDate
+                let projectStatus = record.objectForKey("projectStatus") as! String
+                let repeatBase = record.objectForKey("repeatBase") as! String
+                let repeatInterval = record.objectForKey("repeatInterval") as! Int
+                let repeatType = record.objectForKey("repeatType") as! String
+                let reviewFrequency = record.objectForKey("reviewFrequency") as! Int
+                let teamID = record.objectForKey("teamID") as! Int
+                let note = record.objectForKey("note") as! String
+                let reviewPeriod = record.objectForKey("reviewPeriod") as! String
+                let predecessor = record.objectForKey("predecessor") as! Int
+                
+                myDatabaseConnection.replaceProject(projectID, inProjectEndDate: projectEndDate, inProjectName: projectName, inProjectStartDate: projectStartDate, inProjectStatus: projectStatus, inReviewFrequency: reviewFrequency, inLastReviewDate: lastReviewDate, inGTDItemID: areaID, inRepeatInterval: repeatInterval, inRepeatType: repeatType, inRepeatBase: repeatBase, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+                
+                myDatabaseConnection.replaceProjectNote(projectID, inNote: note, inReviewPeriod: reviewPeriod, inPredecessor: predecessor, inUpdateTime: updateTime, inUpdateType: updateType)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func replaceProjectTeamMembersInCoreData()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        let myDateFormatter = NSDateFormatter()
+        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let query: CKQuery = CKQuery(recordType: "ProjectTeamMembers", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let projectID = record.objectForKey("projectID") as! Int
+                let teamMember = record.objectForKey("teamMember") as! String
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let roleID = record.objectForKey("roleID") as! Int
+                let projectMemberNotes = record.objectForKey("projectMemberNotes") as! String
+                
+                myDatabaseConnection.replaceTeamMember(projectID, inRoleID: roleID, inPersonName: teamMember, inNotes: projectMemberNotes, inUpdateTime: updateTime, inUpdateType: updateType)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func replaceRolesInCoreData()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        let myDateFormatter = NSDateFormatter()
+        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let query: CKQuery = CKQuery(recordType: "Roles", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let roleID = record.objectForKey("roleID") as! Int
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let teamID = record.objectForKey("teamID") as! Int
+                let roleDescription = record.objectForKey("roleDescription") as! String
+                
+                myDatabaseConnection.replaceRole(roleDescription, teamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType, roleID: roleID)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func replaceStagesInCoreData()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        let myDateFormatter = NSDateFormatter()
+        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let query: CKQuery = CKQuery(recordType: "Stages", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let stageDescription = record.objectForKey("stageDescription") as! String
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let teamID = record.objectForKey("teamID") as! Int
+                
+                myDatabaseConnection.replaceStage(stageDescription, teamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func replaceTaskInCoreData()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        let myDateFormatter = NSDateFormatter()
+        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let query: CKQuery = CKQuery(recordType: "Task", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let taskID = record.objectForKey("taskID") as! Int
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let completionDate = record.objectForKey("completionDate") as! NSDate
+                let details = record.objectForKey("details") as! String
+                let dueDate = record.objectForKey("dueDate") as! NSDate
+                let energyLevel = record.objectForKey("energyLevel") as! String
+                let estimatedTime = record.objectForKey("estimatedTime") as! Int
+                let estimatedTimeType = record.objectForKey("estimatedTimeType") as! String
+                let flagged = record.objectForKey("flagged") as! Bool
+                let priority = record.objectForKey("priority") as! String
+                let repeatBase = record.objectForKey("repeatBase") as! String
+                let repeatInterval = record.objectForKey("repeatInterval") as! Int
+                let repeatType = record.objectForKey("repeatType") as! String
+                let startDate = record.objectForKey("startDate") as! NSDate
+                let status = record.objectForKey("status") as! String
+                let teamID = record.objectForKey("teamID") as! Int
+                let title = record.objectForKey("title") as! String
+                let urgency = record.objectForKey("urgency") as! String
+                let projectID = record.objectForKey("projectID") as! Int
+                
+                myDatabaseConnection.replaceTask(taskID, inTitle: title, inDetails: details, inDueDate: dueDate, inStartDate: startDate, inStatus: status, inPriority: priority, inEnergyLevel: energyLevel, inEstimatedTime: estimatedTime, inEstimatedTimeType: estimatedTimeType, inProjectID: projectID, inCompletionDate: completionDate, inRepeatInterval: repeatInterval, inRepeatType: repeatType, inRepeatBase: repeatBase, inFlagged: flagged, inUrgency: urgency, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func replaceTaskAttachmentInCoreData()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        let myDateFormatter = NSDateFormatter()
+        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let query: CKQuery = CKQuery(recordType: "TaskAttachment", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            //   for record in results!
+            for _ in results!
+            {
+                //    let taskID = record.objectForKey("taskID") as! Int
+                //    let title = record.objectForKey("title") as! String
+                //    let updateTime = record.objectForKey("updateTime") as! NSDate
+                //    let updateType = record.objectForKey("updateType") as! String
+                //    let attachment = record.objectForKey("attachment") as! NSData
+                NSLog("replaceTaskAttachmentInCoreData - Still to be coded")
+                //   myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func replaceTaskContextInCoreData()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        let myDateFormatter = NSDateFormatter()
+        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let query: CKQuery = CKQuery(recordType: "TaskContext", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let taskID = record.objectForKey("taskID") as! Int
+                let contextID = record.objectForKey("contextID") as! Int
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                
+                myDatabaseConnection.replaceTaskContext(contextID, inTaskID: taskID, inUpdateTime: updateTime, inUpdateType: updateType)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func replaceTaskPredecessorInCoreData()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        let myDateFormatter = NSDateFormatter()
+        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let query: CKQuery = CKQuery(recordType: "TaskPredecessor", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let taskID = record.objectForKey("taskID") as! Int
+                let predecessorID = record.objectForKey("predecessorID") as! Int
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let predecessorType = record.objectForKey("predecessorType") as! String
+                
+                myDatabaseConnection.replacePredecessorTask(taskID, inPredecessorID: predecessorID, inPredecessorType: predecessorType, inUpdateTime: updateTime, inUpdateType: updateType)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func replaceTaskUpdatesInCoreData()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        let myDateFormatter = NSDateFormatter()
+        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let query: CKQuery = CKQuery(recordType: "TaskUpdates", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let taskID = record.objectForKey("taskID") as! Int
+                let updateDate = record.objectForKey("updateDate") as! NSDate
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let details = record.objectForKey("details") as! String
+                let source = record.objectForKey("source") as! String
+                
+                myDatabaseConnection.replaceTaskUpdate(taskID, inDetails: details, inSource: source, inUpdateDate: updateDate, inUpdateTime: updateTime, inUpdateType: updateType)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func replaceTeamInCoreData()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        let myDateFormatter = NSDateFormatter()
+        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let query: CKQuery = CKQuery(recordType: "Team", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let teamID = record.objectForKey("teamID") as! Int
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let name = record.objectForKey("name") as! String
+                let note = record.objectForKey("note") as! String
+                let status = record.objectForKey("status") as! String
+                let type = record.objectForKey("type") as! String
+                let predecessor = record.objectForKey("predecessor") as! Int
+                let externalID = record.objectForKey("externalID") as! Int
+
+                myDatabaseConnection.replaceTeam(teamID, inName: name, inStatus: status, inNote: note, inType: type, inPredecessor: predecessor, inExternalID: externalID, inUpdateTime: updateTime, inUpdateType: updateType)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     }
 }

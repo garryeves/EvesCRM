@@ -7227,6 +7227,13 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Oux-vg-yL2" userLabel="lblDebug">
+                                <rect key="frame" x="20" y="350" width="560" height="21"/>
+                                <animations/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -7234,13 +7241,21 @@
                             <constraint firstItem="8ZE-Bs-2eZ" firstAttribute="centerX" secondItem="Epx-ZV-Anq" secondAttribute="centerX" id="5h6-Um-YTr"/>
                             <constraint firstItem="8ZE-Bs-2eZ" firstAttribute="top" secondItem="TDU-Su-fKm" secondAttribute="bottom" id="C8e-Vw-1Wh"/>
                             <constraint firstItem="8ZE-Bs-2eZ" firstAttribute="centerY" secondItem="Epx-ZV-Anq" secondAttribute="centerY" id="Nst-K9-xAY"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="Oux-vg-yL2" secondAttribute="trailing" id="P3C-Md-pK0"/>
+                            <constraint firstItem="Oux-vg-yL2" firstAttribute="top" secondItem="8ZE-Bs-2eZ" secondAttribute="bottom" constant="40" id="fay-9Y-efa"/>
+                            <constraint firstItem="Oux-vg-yL2" firstAttribute="leading" secondItem="Epx-ZV-Anq" secondAttribute="leadingMargin" id="pH6-1b-leO"/>
+                            <constraint firstItem="Oux-vg-yL2" firstAttribute="centerY" secondItem="Epx-ZV-Anq" secondAttribute="centerY" id="u1N-el-axM"/>
                         </constraints>
                         <variation key="default">
                             <mask key="constraints">
                                 <exclude reference="C8e-Vw-1Wh"/>
+                                <exclude reference="u1N-el-axM"/>
                             </mask>
                         </variation>
                     </view>
+                    <connections>
+                        <outlet property="lblDebug" destination="Oux-vg-yL2" id="fRn-tG-Hnc"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="O4w-ZE-xy5" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
