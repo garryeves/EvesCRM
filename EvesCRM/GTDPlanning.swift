@@ -61,6 +61,8 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         highlightID = myCurrentTeam.teamID
         mySelectedTeam = myCurrentTeam
         buildHead(myCurrentTeam.teamID)
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "displaySubmenu:", name:"NotificationDisplayGTDSubmenu", object: nil)
     }
     
     override func didReceiveMemoryWarning()
@@ -106,7 +108,8 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         
         if indexPath.section == 0
         {  // Head
-            
+            cell.sectionType = "head"
+            cell.rowNumber = indexPath.row
             if myDisplayHeadArray[indexPath.row].isKindOfClass(team)
             {
                 let tempObject = myDisplayHeadArray[indexPath.row] as! team
@@ -247,6 +250,8 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         }
         else
         {  // Body
+            cell.sectionType = "body"
+            cell.rowNumber = indexPath.row
             if myDisplayBodyArray[indexPath.row].isKindOfClass(workingGTDItem)
             {
                 let tempObject = myDisplayBodyArray[indexPath.row] as! workingGTDItem
@@ -310,19 +315,11 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             cell.layer.cornerRadius = 5.0
             cell.layer.masksToBounds = true
 
-            let lpgr = textLongPressGestureRecognizer(target: self, action: "handleLongPress:")
-            lpgr.minimumPressDuration = 0.5
-            lpgr.delaysTouchesBegan = true
-            lpgr.delegate = self
-            lpgr.displayView = cell.contentView
-            lpgr.frame = cell.frame
             let myCell = cellDetails()
             myCell.displayView = cell.contentView
             
             myCell.frame = cell.frame
             myBodyCells.append(myCell)
-            
-            self.colBody.addGestureRecognizer(lpgr)
         }
 
         cell.layoutSubviews()
@@ -692,84 +689,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
     }
     
     // End move
-    
-    func handleLongPress(gestureReconizer: textLongPressGestureRecognizer)
-    {
-        if gestureReconizer.state == .Ended
-        {
-            let p = gestureReconizer.locationInView(self.colBody)
-            let indexPath = self.colBody.indexPathForItemAtPoint(p)
-        
-            if let index = indexPath
-            {
-                if index.section == 0
-                { // Head
-                    var myOptions: UIAlertController!
-                    
-                    if myDisplayHeadArray[index.row].isKindOfClass(team)
-                    {
-                        let tempObject = myDisplayHeadArray[indexPath!.row] as! team
-                        highlightID = tempObject.teamID
-                        
-                        myOptions = displayTeamOptions(gestureReconizer.displayView, inTeam: myDisplayHeadArray[index.row] as! team)
-                    }
-                    else if myDisplayHeadArray[index.row].isKindOfClass(workingGTDItem)
-                    {
-                        let tempObject = myDisplayHeadArray[indexPath!.row] as! workingGTDItem
-                        highlightID = tempObject.GTDItemID
-                        myOptions = displayGTDOptions(myDisplayHeadArray[index.row] as! workingGTDItem, inDisplayType: "Head", xPos: myHeadCells[index.row].displayX, yPos: myHeadCells[index.row].displayY)
-                    }
-                    else if myDisplayHeadArray[index.row].isKindOfClass(project)
-                    {
-                        let tempObject = myDisplayHeadArray[indexPath!.row] as! project
-                        highlightID = tempObject.projectID
 
-                        myOptions = displayProjectOptions(myDisplayHeadArray[index.row] as! project, inDisplayType: "Head", xPos: myHeadCells[index.row].displayX, yPos: myHeadCells[index.row].displayY)
-                    }
-                    myOptions.popoverPresentationController!.sourceView = self.view
-                    
-                    myOptions.popoverPresentationController!.sourceRect = CGRectMake(myHeadCells[index.row].displayX + 20, myHeadCells[index.row].displayY + headerSize, 0, 0)
-                    
-                    self.presentViewController(myOptions, animated: true, completion: nil)
-                }
-                else
-                { // Body
-                    var myOptions: UIAlertController!
-                    if myDisplayBodyArray[index.row].isKindOfClass(workingGTDItem)
-                    {
-                        let tempObject = myDisplayBodyArray[indexPath!.row] as! workingGTDItem
-                        highlightID = tempObject.GTDItemID
-
-                        myOptions = displayGTDOptions(myDisplayBodyArray[index.row] as! workingGTDItem, inDisplayType: "Body", xPos: myBodyCells[index.row].displayX, yPos: myBodyCells[index.row].displayY)
-                    }
-                    else if myDisplayBodyArray[index.row].isKindOfClass(project)
-                    {
-                        let tempObject = myDisplayBodyArray[indexPath!.row] as! project
-                        highlightID = tempObject.projectID
-                        
-                        myOptions = displayProjectOptions(myDisplayBodyArray[index.row] as! project, inDisplayType: "Body", xPos: myBodyCells[index.row].displayX, yPos: myBodyCells[index.row].displayY)
-                    }
-                    else if myDisplayBodyArray[index.row].isKindOfClass(task)
-                    {
-                        myOptions = displayTaskOptions(myDisplayBodyArray[index.row] as! task, displayType: "Body", xPos: myBodyCells[index.row].displayX, yPos: myBodyCells[index.row].displayY)
-                    }
-                    
-                    myOptions.popoverPresentationController!.sourceView = self.view
-
-                    myOptions.popoverPresentationController!.sourceRect = CGRectMake(myBodyCells[index.row].displayX + 20, myBodyCells[index.row].displayY + headerSize, 0, 0)
-                    
-                    self.presentViewController(myOptions, animated: true, completion: nil)
-                }
-                
-            }
-            else
-            {
-                NSLog("Could not find index path")
-            }
-            colBody.reloadData()
-        }
-    }
-    
     @IBAction func btnUp(sender: UIButton)
     {
         switch myHeadObjectType
@@ -1351,7 +1271,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         }
     }
     
-    func displayTeamOptions(inSourceView: UIView, inTeam: team) -> UIAlertController
+    func displayTeamOptions(inTeam: team) -> UIAlertController
     {
         let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .ActionSheet)
         
@@ -1402,7 +1322,6 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             popoverContent.modalPresentationStyle = .Popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
-            popover!.sourceView = inSourceView
             
             let parentObject = inTeam
             popoverContent.myWorkingTeam = parentObject
@@ -1429,7 +1348,6 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             popoverContent.modalPresentationStyle = .Popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
-            popover!.sourceView = inSourceView
             
             let parentObject = inTeam
             popoverContent.myWorkingTeam = parentObject
@@ -1456,7 +1374,6 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             popoverContent.modalPresentationStyle = .Popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
-            popover!.sourceView = inSourceView
             
             let parentObject = team()
             popoverContent.myWorkingTeam = parentObject
@@ -1797,6 +1714,75 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         
         return myOptions
     }
+    
+    func displaySubmenu(notification: NSNotification)
+    {
+        let sectionType = notification.userInfo!["sectionType"] as! String
+        let rowString = notification.userInfo!["rowNumber"] as! String
+        
+        let rowNumber = Int(rowString)
+        
+        if sectionType == "head"
+        { // Head
+            var myOptions: UIAlertController!
+                    
+            if myDisplayHeadArray[rowNumber!].isKindOfClass(team)
+            {
+                let tempObject = myDisplayHeadArray[rowNumber!] as! team
+                highlightID = tempObject.teamID
+                        
+                myOptions = displayTeamOptions(myDisplayHeadArray[rowNumber!] as! team)
+            }
+            else if myDisplayHeadArray[rowNumber!].isKindOfClass(workingGTDItem)
+            {
+                let tempObject = myDisplayHeadArray[rowNumber!] as! workingGTDItem
+                highlightID = tempObject.GTDItemID
+                myOptions = displayGTDOptions(myDisplayHeadArray[rowNumber!] as! workingGTDItem, inDisplayType: "Head", xPos: myHeadCells[rowNumber!].displayX, yPos: myHeadCells[rowNumber!].displayY)
+            }
+            else if myDisplayHeadArray[rowNumber!].isKindOfClass(project)
+            {
+                let tempObject = myDisplayHeadArray[rowNumber!] as! project
+                highlightID = tempObject.projectID
+                        
+                myOptions = displayProjectOptions(myDisplayHeadArray[rowNumber!] as! project, inDisplayType: "Head", xPos: myHeadCells[rowNumber!].displayX, yPos: myHeadCells[rowNumber!].displayY)
+            }
+            myOptions.popoverPresentationController!.sourceView = self.view
+                    
+            myOptions.popoverPresentationController!.sourceRect = CGRectMake(myHeadCells[rowNumber!].displayX + 20, myHeadCells[rowNumber!].displayY + headerSize, 0, 0)
+                    
+            self.presentViewController(myOptions, animated: true, completion: nil)
+        }
+        else
+        { // Body
+            var myOptions: UIAlertController!
+            if myDisplayBodyArray[rowNumber!].isKindOfClass(workingGTDItem)
+            {
+                let tempObject = myDisplayBodyArray[rowNumber!] as! workingGTDItem
+                highlightID = tempObject.GTDItemID
+                        
+                myOptions = displayGTDOptions(myDisplayBodyArray[rowNumber!] as! workingGTDItem, inDisplayType: "Body", xPos: myBodyCells[rowNumber!].displayX, yPos: myBodyCells[rowNumber!].displayY)
+            }
+            else if myDisplayBodyArray[rowNumber!].isKindOfClass(project)
+            {
+                let tempObject = myDisplayBodyArray[rowNumber!] as! project
+                highlightID = tempObject.projectID
+                        
+                myOptions = displayProjectOptions(myDisplayBodyArray[rowNumber!] as! project, inDisplayType: "Body", xPos: myBodyCells[rowNumber!].displayX, yPos: myBodyCells[rowNumber!].displayY)
+            }
+            else if myDisplayBodyArray[rowNumber!].isKindOfClass(task)
+            {
+                myOptions = displayTaskOptions(myDisplayBodyArray[rowNumber!] as! task, displayType: "Body", xPos: myBodyCells[rowNumber!].displayX, yPos: myBodyCells[rowNumber!].displayY)
+            }
+                    
+            myOptions.popoverPresentationController!.sourceView = self.view
+                    
+            myOptions.popoverPresentationController!.sourceRect = CGRectMake(myBodyCells[rowNumber!].displayX + 20, myBodyCells[rowNumber!].displayY + headerSize, 0, 0)
+                    
+            self.presentViewController(myOptions, animated: true, completion: nil)
+        }
+
+        colBody.reloadData()
+    }
 }
 
 class KDRearrangeableGTDDisplayHierarchy: UICollectionViewCell
@@ -1804,6 +1790,10 @@ class KDRearrangeableGTDDisplayHierarchy: UICollectionViewCell
     
     @IBOutlet weak var lblChildren: UILabel!
     @IBOutlet weak var lblName: UILabel!
+    @IBOutlet weak var btnDetails: UIButton!
+    
+    var sectionType: String = ""
+    var rowNumber: Int = 0
     
     override init(frame: CGRect)
     {
@@ -1814,7 +1804,6 @@ class KDRearrangeableGTDDisplayHierarchy: UICollectionViewCell
     {
         super.init(coder: aDecoder)
     }
-    
     
     override func awakeFromNib()
     {
@@ -1836,12 +1825,10 @@ class KDRearrangeableGTDDisplayHierarchy: UICollectionViewCell
         super.layoutSubviews()
     }
     
-    
-    @IBAction func btnAdd(sender: UIButton)
+    @IBAction func btnDetails(sender: UIButton)
     {
-      //  NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeSettings", object: nil, userInfo:["setting":"HierarchyUpdate", "Item": myGTDLevel])
-        
-        NSLog("Add pressed")
+        let selectedDictionary = ["sectionType" : sectionType, "rowNumber": "\(rowNumber)"]
+        NSNotificationCenter.defaultCenter().postNotificationName("NotificationDisplayGTDSubmenu", object: nil, userInfo:selectedDictionary as [String : String])
     }
 }
 

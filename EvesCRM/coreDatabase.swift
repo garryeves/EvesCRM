@@ -256,7 +256,7 @@ class coreDatabase: NSObject
         
         let myRoles = getRole(roleID, teamID: teamID)
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performBlock
             {
                 var mySelectedRole: Roles
         if myRoles.count == 0
@@ -297,8 +297,6 @@ class coreDatabase: NSObject
                 mySelectedRole.updateType = inUpdateType
             }
         }
-
-        
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -472,7 +470,7 @@ class coreDatabase: NSObject
             }
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performBlock
             {
                 do
                 {
@@ -788,7 +786,7 @@ class coreDatabase: NSObject
             }
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performBlock
             {
                 do
                 {
@@ -1018,7 +1016,7 @@ class coreDatabase: NSObject
             }
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performBlock
             {
                 do
                 {
@@ -1339,7 +1337,7 @@ class coreDatabase: NSObject
             }
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performBlock
             {
                 do
                 {
@@ -1607,7 +1605,7 @@ class coreDatabase: NSObject
             myPerson.updateTime = NSDate()
             myPerson.updateType = "Add"
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performBlock
                 {
                     do
                     {
@@ -1703,7 +1701,7 @@ class coreDatabase: NSObject
             }
         }
             
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performBlock
             {
                 do
                 {
@@ -1866,7 +1864,7 @@ class coreDatabase: NSObject
         mySavedItem.updateTime = NSDate()
         mySavedItem.updateType = "Add"
 
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performBlock
             {
                 do
                 {
@@ -1949,7 +1947,7 @@ class coreDatabase: NSObject
             }
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performBlock
             {
                 do
                 {
@@ -2269,7 +2267,7 @@ class coreDatabase: NSObject
             
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performBlock
             {
                 do
                 {
@@ -2646,7 +2644,7 @@ class coreDatabase: NSObject
             }
         }
 
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performBlock
             {
                 do
                 {
@@ -2870,7 +2868,7 @@ class coreDatabase: NSObject
             }
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performBlock
             {
                 do
                 {
@@ -3047,7 +3045,7 @@ class coreDatabase: NSObject
                 myTaskUpdate.updateType = inUpdateType
             }
         
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performBlock
                 {
                     do
                     {
@@ -3203,7 +3201,7 @@ class coreDatabase: NSObject
             }
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performBlock
             {
                 do
                 {
@@ -3476,7 +3474,7 @@ class coreDatabase: NSObject
             }
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performBlock
             {
                 do
                 {
@@ -3685,7 +3683,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performBlock
             {
                 do
                 {
@@ -3950,7 +3948,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
       
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performBlock
         {
             do
             {
@@ -4461,7 +4459,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performBlock
             {
                 do
                 {
@@ -4924,7 +4922,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         myTask.updateTime = NSDate()
         myTask.updateType = "Add"
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performBlock
             {
                 do
                 {
@@ -5044,7 +5042,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performBlock
             {
                 do
                 {
@@ -6983,7 +6981,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performBlock
             {
                 do
                 {
@@ -7245,7 +7243,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performBlock
             {
                 do
                 {
@@ -7701,7 +7699,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performBlock
             {
                 do
                 {

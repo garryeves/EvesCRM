@@ -33,7 +33,7 @@ class startViewController: UIViewController
   //      NSNotificationCenter.defaultCenter().addObserver(self, selector: "DBUpdateMessage:", name:"NotificationSyncMessage", object: nil)
         
         myDBSync.sync()
-        NSLog("finished sync")
+
 //        NSNotificationCenter.defaultCenter().removeObserver(self, name:"NotificationSyncMessage", object: nil)
         initialPopulationOfTables()
 

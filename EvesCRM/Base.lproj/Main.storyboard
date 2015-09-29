@@ -1845,8 +1845,15 @@
                                             <rect key="frame" x="0.0" y="0.0" width="339" height="165"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m35-8W-QId" userLabel="lblName">
+                                                    <rect key="frame" x="8" y="8" width="323" height="117"/>
+                                                    <animations/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1fj-06-K3I" userLabel="lblChildren">
-                                                    <rect key="frame" x="8" y="135" width="323" height="22"/>
+                                                    <rect key="frame" x="8" y="135" width="291" height="22"/>
                                                     <animations/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="22" id="3A0-he-Bc9"/>
@@ -1855,13 +1862,22 @@
                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="m35-8W-QId" userLabel="lblName">
-                                                    <rect key="frame" x="8" y="8" width="323" height="117"/>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="contactAdd" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Zok-gC-GgF" userLabel="btnDetails">
+                                                    <rect key="frame" x="309" y="135" width="22" height="22"/>
                                                     <animations/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="22" id="Wwf-yj-KbX"/>
+                                                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="22" id="tYU-nX-eE1"/>
+                                                    </constraints>
+                                                    <variation key="default">
+                                                        <mask key="constraints">
+                                                            <exclude reference="tYU-nX-eE1"/>
+                                                        </mask>
+                                                    </variation>
+                                                    <connections>
+                                                        <action selector="btnDetails:" destination="9Ul-KJ-yHX" eventType="touchUpInside" id="h0E-SU-zy1"/>
+                                                    </connections>
+                                                </button>
                                             </subviews>
                                             <animations/>
                                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -1869,14 +1885,18 @@
                                         <animations/>
                                         <constraints>
                                             <constraint firstAttribute="trailingMargin" secondItem="m35-8W-QId" secondAttribute="trailing" id="0LG-G1-iex"/>
+                                            <constraint firstItem="Zok-gC-GgF" firstAttribute="leading" secondItem="1fj-06-K3I" secondAttribute="trailing" constant="10" id="0pQ-iW-uzT"/>
+                                            <constraint firstItem="Zok-gC-GgF" firstAttribute="top" secondItem="m35-8W-QId" secondAttribute="bottom" constant="10" id="1Mk-FJ-wrT"/>
                                             <constraint firstItem="1fj-06-K3I" firstAttribute="leading" secondItem="9Ul-KJ-yHX" secondAttribute="leadingMargin" id="6Cb-aK-Vpf"/>
                                             <constraint firstItem="m35-8W-QId" firstAttribute="top" secondItem="9Ul-KJ-yHX" secondAttribute="topMargin" id="JoJ-kN-ET4"/>
                                             <constraint firstItem="1fj-06-K3I" firstAttribute="top" secondItem="m35-8W-QId" secondAttribute="bottom" constant="10" id="Lep-az-1Mf"/>
+                                            <constraint firstAttribute="bottomMargin" secondItem="Zok-gC-GgF" secondAttribute="bottom" id="MQZ-l3-jLR"/>
                                             <constraint firstAttribute="bottomMargin" secondItem="1fj-06-K3I" secondAttribute="bottom" id="XsZ-Ki-mlf"/>
                                             <constraint firstItem="m35-8W-QId" firstAttribute="leading" secondItem="9Ul-KJ-yHX" secondAttribute="leadingMargin" id="dwC-tl-haF"/>
-                                            <constraint firstAttribute="trailingMargin" secondItem="1fj-06-K3I" secondAttribute="trailing" id="haz-2O-9lY"/>
+                                            <constraint firstAttribute="trailingMargin" secondItem="Zok-gC-GgF" secondAttribute="trailing" id="vHi-Bx-iwZ"/>
                                         </constraints>
                                         <connections>
+                                            <outlet property="btnDetails" destination="Zok-gC-GgF" id="5aJ-u1-sud"/>
                                             <outlet property="lblChildren" destination="1fj-06-K3I" id="8yY-Vl-Wsz"/>
                                             <outlet property="lblName" destination="m35-8W-QId" id="rcz-JA-eXp"/>
                                         </connections>

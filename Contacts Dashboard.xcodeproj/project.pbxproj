@@ -1426,6 +1426,7 @@
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = EvesCRMBridging.h;
 				"SWIFT_OBJC_BRIDGING_HEADER[arch=*]" = EvesCRM/EvesCRMBridging.h;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Debug;
@@ -1457,6 +1458,7 @@
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "ENSDK.framework/Headers/ENSDK.h Dropbox.framework/Headers/Dropbox.h";
 				"SWIFT_OBJC_BRIDGING_HEADER[arch=*]" = EvesCRM/EvesCRMBridging.h;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Release;

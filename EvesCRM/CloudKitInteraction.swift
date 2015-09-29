@@ -1652,8 +1652,9 @@ class CloudKitInteraction
                 let decodeType = record.objectForKey("decodeType") as! String
                 let updateTime = record.objectForKey("updateTime") as! NSDate
                 let updateType = record.objectForKey("updateType") as! String
-                
+NSLog("sending \(decodeName)")
                 myDatabaseConnection.updateDecodeValue(decodeName, inCodeValue: decodeValue, inCodeType: decodeType, inUpdateTime: updateTime, inUpdateType: updateType)
+NSLog("returned \(decodeName)")
             }
             dispatch_semaphore_signal(sem)
         })
