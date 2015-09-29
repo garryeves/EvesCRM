@@ -142,8 +142,9 @@ class DBSync: NSObject
         myCloudDB.saveTaskUpdatesToCloudKit(inDate)
         progressMessage("syncToCloudKit Team")
         myCloudDB.saveTeamToCloudKit(inDate)
-        progressMessage("syncToCloudKit Done")
-        
+        progressMessage("syncToCloudKit ProcessedEmails")
+        myCloudDB.saveProcessedEmailsToCloudKit(inDate)
+
         NSNotificationCenter.defaultCenter().postNotificationName("NotificationCloudSyncFinished", object: nil)
     }
     
@@ -189,7 +190,8 @@ class DBSync: NSObject
         myCloudDB.updateTaskUpdatesInCoreData(inDate)
         progressMessage("syncFromCloudKit Team")
         myCloudDB.updateTeamInCoreData(inDate)
-        progressMessage("syncFromCloudKit Done")
+        progressMessage("syncFromCloudKit ProcessedEmails")
+        myCloudDB.updateProcessedEmailsInCoreData(inDate)
         
         NSNotificationCenter.defaultCenter().postNotificationName("NotificationCloudSyncFinished", object: nil)
     }
@@ -236,11 +238,11 @@ class DBSync: NSObject
         myCloudDB.replaceTaskUpdatesInCoreData()
         progressMessage("replaceWithCloudKit Team")
         myCloudDB.replaceTeamInCoreData()
-        progressMessage("replaceWithCloudKit Done")
+        progressMessage("replaceWithCloudKit ProcessedEmails")
+        myCloudDB.replaceProcessedEmailsInCoreData()
         
         NSNotificationCenter.defaultCenter().postNotificationName("NotificationCloudSyncFinished", object: nil)
     }
-
     
     func deleteAllFromCloudKit()
     {
@@ -264,6 +266,7 @@ class DBSync: NSObject
         myCloudDB.deleteTaskPredecessor()
         myCloudDB.deleteTaskUpdates()
         myCloudDB.deleteTeam()
+        myCloudDB.deleteProcessedEmails()
     }
     
     func deleteAllFromCoreData()
@@ -273,7 +276,7 @@ class DBSync: NSObject
     
     func progressMessage(displayString: String)
     {
-        NSLog(displayString)
+//        NSLog(displayString)
         
 //        let selectedDictionary = ["displayMessage" : displayString]
         

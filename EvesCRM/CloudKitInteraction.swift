@@ -1601,6 +1601,76 @@ class CloudKitInteraction
         }
     }
     
+    func saveProcessedEmailsToCloudKit(inLastSyncDate: NSDate)
+    {
+        NSLog("Syncing ProcessedEmails")
+        for myItem in myDatabaseConnection.getProcessedEmailsForSync(inLastSyncDate)
+        {
+            let predicate = NSPredicate(format: "(emailID == \"\(myItem.emailID!)\")") // better be accurate to get only the record you need
+            let query = CKQuery(recordType: "ProcessedEmails", predicate: predicate)
+            privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+                if error != nil
+                {
+                    NSLog("Error querying records: \(error!.localizedDescription)")
+                }
+                else
+                {
+                    if records!.count > 0
+                    {
+                        let record = records!.first// as! CKRecord
+                        // Now you have grabbed your existing record from iCloud
+                        // Apply whatever changes you want
+                        record!.setValue(myItem.updateTime, forKey: "updateTime")
+                        record!.setValue(myItem.updateType, forKey: "updateType")
+                        record!.setValue(myItem.emailType, forKey: "emailType")
+                        record!.setValue(myItem.processedDate, forKey: "processedDate")
+                        
+                        // Save this record again
+                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully updated record!")
+                                }
+                            }
+                        })
+                    }
+                    else
+                    {  // Insert
+                        let record = CKRecord(recordType: "ProcessedEmails")
+                        record.setValue(myItem.emailID, forKey: "emailID")
+                        record.setValue(myItem.updateTime, forKey: "updateTime")
+                        record.setValue(myItem.updateType, forKey: "updateType")
+                        record.setValue(myItem.emailType, forKey: "emailType")
+                        record.setValue(myItem.processedDate, forKey: "processedDate")
+                        
+                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully saved record!")
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+            
+            sleep(1)
+        }
+    }
+
+    
     func updateContextInCoreData(inLastSyncDate: NSDate)
     {
         let sem = dispatch_semaphore_create(0);
@@ -2140,6 +2210,29 @@ NSLog("returned \(decodeName)")
         dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     }
     
+    func updateProcessedEmailsInCoreData(inLastSyncDate: NSDate)
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let query: CKQuery = CKQuery(recordType: "ProcessedEmails", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let emailID = record.objectForKey("emailID") as! String
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let emailType = record.objectForKey("emailType") as! String
+                let processedDate = record.objectForKey("processedDate") as! NSDate
+                
+                myDatabaseConnection.saveProcessedEmail(emailID, emailType: emailType, processedDate: processedDate, updateTime: updateTime, updateType: updateType)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
     func deleteContext()
     {
         let sem = dispatch_semaphore_create(0);
@@ -2527,6 +2620,25 @@ NSLog("returned \(decodeName)")
         })
         dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     }
+    
+    func deleteProcessedEmails()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "ProcessedEmails", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performDelete(myRecordList)
+            dispatch_semaphore_signal(sem)
+        })
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
 
     func performDelete(inRecordSet: [CKRecordID])
     {
@@ -2547,7 +2659,7 @@ NSLog("returned \(decodeName)")
         let queue = NSOperationQueue()
         queue.addOperations([operation], waitUntilFinished: true)
       //  privateDB.addOperation(operation, waitUntilFinished: true)
-        NSLog("finished delete")
+     //   NSLog("finished delete")
     }
     
     func replaceContextInCoreData()
@@ -3161,6 +3273,33 @@ NSLog("returned \(decodeName)")
                 let externalID = record.objectForKey("externalID") as! Int
 
                 myDatabaseConnection.replaceTeam(teamID, inName: name, inStatus: status, inNote: note, inType: type, inPredecessor: predecessor, inExternalID: externalID, inUpdateTime: updateTime, inUpdateType: updateType)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func replaceProcessedEmailsInCoreData()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        let myDateFormatter = NSDateFormatter()
+        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let query: CKQuery = CKQuery(recordType: "ProcessedEmails", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let emailID = record.objectForKey("emailID") as! String
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                let emailType = record.objectForKey("emailType") as! String
+                let processedDate = record.objectForKey("processedDate") as! NSDate
+                
+                myDatabaseConnection.replaceProcessedEmail(emailID, emailType: emailType, processedDate: processedDate, updateTime: updateTime, updateType: updateType)
             }
             dispatch_semaphore_signal(sem)
         })

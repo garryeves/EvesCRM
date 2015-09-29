@@ -1033,7 +1033,8 @@ let myRepeatPeriods = ["",
     "Quarter",
     "Year"]
 
-let myRepeatBases = ["Completion Date",
+let myRepeatBases = ["",
+    "Completion Date",
     "1st of month",
     "Monday",
     "Tuesday",

@@ -58,8 +58,6 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
     @IBOutlet weak var txtRepeatInterval: UITextField!
     @IBOutlet weak var btnRepeatPeriod: UIButton!
     @IBOutlet weak var btnRepeatBase: UIButton!
-    
-    
 
     private var pickerOptions: [String] = Array()
     private var pickerTarget: String = ""
@@ -584,8 +582,8 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         myProjectDetails.removeAll(keepCapacity: false)
         
         pickerOptions.append("")
-        
-        let myProjects = myDatabaseConnection.getAllOpenProjects(myCurrentTeam.teamID)
+NSLog("Team ID = \(passedTask.teamID)")
+        let myProjects = myDatabaseConnection.getAllOpenProjects(passedTask.teamID)
         
         for myProject in myProjects
         {

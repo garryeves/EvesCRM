@@ -1062,11 +1062,11 @@ class project: NSObject // 10k level
                 
                 var daysToAdd: Int = 0
                 
-                if myProjectStartDate != getDefaultDate() && myProjectStartDate != getDefaultDate()
+                if myProjectStartDate != getDefaultDate() && myProjectEndDate != getDefaultDate()
                 {
                     let calendar = NSCalendar.currentCalendar()
                 
-                    let components = calendar.components([.Day], fromDate: myProjectStartDate, toDate: myProjectStartDate, options: [])
+                    let components = calendar.components([.Day], fromDate: myProjectStartDate, toDate: myProjectEndDate, options: [])
                 
                     daysToAdd = components.day
                 }
@@ -1346,8 +1346,9 @@ class task: NSObject
         set
         {
             myStatus = newValue
-            if newValue == "Completed"
+            if newValue == "Complete"
             {
+                checkForRepeat()
                 myCompletionDate = NSDate()
             }
             save()
@@ -1979,6 +1980,90 @@ class task: NSObject
         myExportString = writeHTMLLine(myExportString, inLineString: "</body></html>")
         
         return myExportString
+    }
+    
+    func checkForRepeat()
+    {
+        // Check to see if there is a repeat pattern
+        var tempStartDate: NSDate = getDefaultDate()
+        var tempEndDate: NSDate = getDefaultDate()
+        
+        if myRepeatInterval != 0
+        {
+            // Calculate new start and end dates, based on the repeat fields
+            
+            if myStartDate == getDefaultDate() && myDueDate == getDefaultDate()
+            {  // No dates have set, so we set the start date
+                tempStartDate = calculateNewDate(NSDate(), inDateBase:myRepeatBase, inInterval: myRepeatInterval, inPeriod: myRepeatType)
+            }
+            else
+            { // A date has been set in at least one of the fields, so we use that as the date to set
+                
+                // If both start and end dates are set then we want to make sure we keep interval between them the same, so we need to work out the time to add
+                
+                var daysToAdd: Int = 0
+                
+                if myStartDate != getDefaultDate() && myDueDate != getDefaultDate()
+                {
+                    let calendar = NSCalendar.currentCalendar()
+                    
+                    let components = calendar.components([.Day], fromDate: myStartDate, toDate: myDueDate, options: [])
+                    
+                    daysToAdd = components.day
+                }
+                
+                if myStartDate != getDefaultDate()
+                {
+                    tempStartDate = calculateNewDate(NSDate(), inDateBase:myRepeatBase, inInterval: myRepeatInterval, inPeriod: myRepeatType)
+                }
+                
+                if myDueDate != getDefaultDate()
+                {
+                    let calendar = NSCalendar.currentCalendar()
+                    
+                    let tempDate = calendar.dateByAddingUnit(
+                        [.Day],
+                        value: daysToAdd,
+                        toDate: NSDate(),
+                        options: [])!
+                    
+                    tempEndDate = calculateNewDate(tempDate, inDateBase:myRepeatBase, inInterval: myRepeatInterval, inPeriod: myRepeatType)
+                }
+            }
+            
+            // Create new task
+            
+            let newTask = task(inTeamID: myTeamID)
+            newTask.title = myTitle
+            newTask.details = myDetails
+            newTask.dueDate = tempEndDate
+            newTask.startDate = tempStartDate
+            newTask.status = "Open"
+            newTask.priority = myPriority
+            newTask.energyLevel = myEnergyLevel
+            newTask.estimatedTime = myEstimatedTime
+            newTask.estimatedTimeType = myEstimatedTimeType
+            newTask.projectID = myProjectID
+            newTask.repeatInterval = myRepeatInterval
+            newTask.repeatType = myRepeatType
+            newTask.repeatBase = myRepeatBase
+            newTask.flagged = myFlagged
+            newTask.urgency = myUrgency
+            
+            // Populate Contexts
+            
+            for myContext in myContexts
+            {
+                newTask.addContext(myContext.contextID)
+            }
+            
+            // populate Predecessors
+
+            for myPredecessor in myPredecessors
+            {
+                newTask.addPredecessor(myPredecessor.predecessorID, inPredecessorType: myPredecessor.predecessorType)
+            }
+        }
     }
 }
 

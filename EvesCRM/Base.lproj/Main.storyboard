@@ -819,10 +819,10 @@
             </objects>
             <point key="canvasLocation" x="2015.25" y="-212.25"/>
         </scene>
-        <!--taskDetails-->
+        <!--TaskDetails-->
         <scene sceneID="M3V-5D-hAr">
             <objects>
-                <viewController storyboardIdentifier="tasks" title="Meeting Tasks" id="Er5-bg-pW1" userLabel="taskDetails" customClass="taskViewController" customModule="EvesCRM" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="tasks" title="Meeting Tasks" id="Er5-bg-pW1" userLabel="TaskDetails" customClass="taskViewController" customModule="EvesCRM" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="LwA-LR-ekp"/>
                         <viewControllerLayoutGuide type="bottom" id="gU9-wd-DGI"/>
@@ -1527,6 +1527,7 @@
                             <constraint firstItem="IIO-8u-w3D" firstAttribute="top" relation="greaterThanOrEqual" secondItem="mtU-vu-bZ4" secondAttribute="bottom" constant="10" id="ql6-7w-dgF"/>
                             <constraint firstItem="fl1-VX-LXV" firstAttribute="top" secondItem="mtU-vu-bZ4" secondAttribute="bottom" constant="10" identifier="constraintProjectButton6" id="qqo-fj-rpk"/>
                             <constraint firstItem="gU9-wd-DGI" firstAttribute="top" relation="greaterThanOrEqual" secondItem="DmT-Wl-60R" secondAttribute="bottom" constant="8" id="raZ-xD-9In"/>
+                            <constraint firstItem="hAE-mF-mV6" firstAttribute="top" relation="greaterThanOrEqual" secondItem="mtU-vu-bZ4" secondAttribute="bottom" constant="10" id="s8P-0m-R8b"/>
                             <constraint firstItem="rNO-su-PMq" firstAttribute="leading" secondItem="3Tt-dR-6zC" secondAttribute="trailing" constant="10" id="sja-N7-Gz3"/>
                             <constraint firstItem="GRZ-7P-fgh" firstAttribute="top" secondItem="eTG-qR-a16" secondAttribute="bottom" constant="20" id="tHF-zK-6o4">
                                 <variation key="heightClass=regular-widthClass=regular" constant="20"/>
@@ -1697,7 +1698,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="xWM-DD-hUk" userLabel="ColGTDInbox">
-                                <rect key="frame" x="20" y="20" width="560" height="580"/>
+                                <rect key="frame" x="20" y="20" width="560" height="265"/>
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="uAl-Xo-MNe">
@@ -1715,19 +1716,19 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hLm-y0-NRW" userLabel="lblName">
-                                                    <rect key="frame" x="8" y="8" width="431" height="34"/>
+                                                    <rect key="frame" x="8" y="8" width="406" height="34"/>
                                                     <animations/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Lg7-7E-T4L" userLabel="btnCloseTask">
-                                                    <rect key="frame" x="449" y="8" width="75" height="34"/>
+                                                    <rect key="frame" x="424" y="8" width="100" height="34"/>
                                                     <animations/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="75" id="W8e-n7-fvb"/>
+                                                        <constraint firstAttribute="width" constant="100" id="W8e-n7-fvb"/>
                                                     </constraints>
-                                                    <state key="normal" title="Close Task"/>
+                                                    <state key="normal" title="Close Action"/>
                                                 </button>
                                             </subviews>
                                             <animations/>
@@ -1787,17 +1788,184 @@
                                     <outlet property="delegate" destination="Ycj-P2-1sB" id="R5n-iw-flZ"/>
                                 </connections>
                             </collectionView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rOi-FS-mS8" userLabel="btnEmail">
+                                <rect key="frame" x="260" y="295" width="81" height="30"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="7JK-JO-Ria"/>
+                                </constraints>
+                                <state key="normal" title="GMail Inbox"/>
+                                <connections>
+                                    <action selector="btnEmail:" destination="Ycj-P2-1sB" eventType="touchUpInside" id="Tlo-Nz-RBQ"/>
+                                </connections>
+                            </button>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="cjI-gH-EOr" userLabel="colEmailInbox">
+                                <rect key="frame" x="20" y="335" width="560" height="265"/>
+                                <animations/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="fM2-qe-ODG">
+                                    <size key="itemSize" width="559" height="50"/>
+                                    <size key="headerReferenceSize" width="50" height="50"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="cellEmailInbox" id="cNO-Ku-KEU" customClass="myEmailInboxItem" customModule="EvesCRM" customModuleProvider="target">
+                                        <rect key="frame" x="1" y="50" width="559" height="50"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
+                                            <rect key="frame" x="0.0" y="0.0" width="559" height="50"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O1u-4Z-hRb" userLabel="lblDate">
+                                                    <rect key="frame" x="8" y="8" width="175" height="34"/>
+                                                    <animations/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="175" id="0wS-6h-4d3"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SGy-4s-YHb" userLabel="lblFrom">
+                                                    <rect key="frame" x="193" y="8" width="150" height="34"/>
+                                                    <animations/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="150" id="5u9-rp-sPW"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4wd-NM-Uag" userLabel="lblSubject">
+                                                    <rect key="frame" x="353" y="8" width="88" height="34"/>
+                                                    <animations/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ghe-6e-EhO" userLabel="btnCreate">
+                                                    <rect key="frame" x="451" y="8" width="100" height="30"/>
+                                                    <animations/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="100" id="pLO-y4-F2j"/>
+                                                    </constraints>
+                                                    <state key="normal" title="Create Action"/>
+                                                    <connections>
+                                                        <action selector="btnCreate:" destination="cNO-Ku-KEU" eventType="touchUpInside" id="Eqy-Od-OKH"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                            <animations/>
+                                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        </view>
+                                        <animations/>
+                                        <constraints>
+                                            <constraint firstAttribute="bottomMargin" secondItem="ghe-6e-EhO" secondAttribute="bottom" constant="4" id="1vE-iy-KBW"/>
+                                            <constraint firstAttribute="bottomMargin" secondItem="4wd-NM-Uag" secondAttribute="bottom" id="3v1-Xd-g1w"/>
+                                            <constraint firstAttribute="bottomMargin" secondItem="SGy-4s-YHb" secondAttribute="bottom" id="4ir-t4-0yd"/>
+                                            <constraint firstItem="O1u-4Z-hRb" firstAttribute="top" secondItem="cNO-Ku-KEU" secondAttribute="topMargin" id="8P5-SY-PQI"/>
+                                            <constraint firstItem="SGy-4s-YHb" firstAttribute="top" secondItem="cNO-Ku-KEU" secondAttribute="topMargin" id="CZP-vi-2Zm"/>
+                                            <constraint firstItem="O1u-4Z-hRb" firstAttribute="leading" secondItem="cNO-Ku-KEU" secondAttribute="leadingMargin" id="FHt-Xb-LWj"/>
+                                            <constraint firstItem="SGy-4s-YHb" firstAttribute="leading" secondItem="O1u-4Z-hRb" secondAttribute="trailing" constant="10" id="Frk-p6-kl3"/>
+                                            <constraint firstItem="ghe-6e-EhO" firstAttribute="leading" secondItem="4wd-NM-Uag" secondAttribute="trailing" constant="10" id="ON9-Vi-Xi9"/>
+                                            <constraint firstAttribute="bottomMargin" secondItem="O1u-4Z-hRb" secondAttribute="bottom" id="Tza-GM-Ug3"/>
+                                            <constraint firstAttribute="trailingMargin" secondItem="ghe-6e-EhO" secondAttribute="trailing" id="Vdn-5m-HA7"/>
+                                            <constraint firstItem="4wd-NM-Uag" firstAttribute="leading" secondItem="SGy-4s-YHb" secondAttribute="trailing" constant="10" id="aNf-M9-drH"/>
+                                            <constraint firstItem="4wd-NM-Uag" firstAttribute="top" secondItem="cNO-Ku-KEU" secondAttribute="topMargin" id="bra-wg-Q3n"/>
+                                            <constraint firstAttribute="topMargin" secondItem="ghe-6e-EhO" secondAttribute="top" id="deg-lY-ZKR"/>
+                                        </constraints>
+                                        <connections>
+                                            <outlet property="btnCreate" destination="ghe-6e-EhO" id="Acb-VQ-p7z"/>
+                                            <outlet property="lblDate" destination="O1u-4Z-hRb" id="QnX-Jo-y0C"/>
+                                            <outlet property="lblFrom" destination="SGy-4s-YHb" id="oHP-FF-zhB"/>
+                                            <outlet property="lblSubject" destination="4wd-NM-Uag" id="9ki-Ph-Ejs"/>
+                                        </connections>
+                                    </collectionViewCell>
+                                </cells>
+                                <collectionReusableView key="sectionHeaderView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="cellEmailInboxHeader" id="2ch-5y-Qhk" customClass="myEmailInboxHeaderItem" customModule="EvesCRM" customModuleProvider="target">
+                                    <rect key="frame" x="0.0" y="0.0" width="560" height="50"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Received" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MdD-np-DN7" userLabel="lblDateHeader">
+                                            <rect key="frame" x="8" y="8" width="175" height="34"/>
+                                            <animations/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="175" id="vZI-cb-ult"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="From" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T9N-8s-Zja" userLabel="lblFromHeader">
+                                            <rect key="frame" x="193" y="8" width="150" height="34"/>
+                                            <animations/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="150" id="LAc-MW-rux"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Subject" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1pb-t1-Tly" userLabel="lblSubjectHeader">
+                                            <rect key="frame" x="353" y="8" width="89" height="34"/>
+                                            <animations/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Action" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Gpl-z3-hEp" userLabel="lblAction">
+                                            <rect key="frame" x="452" y="8" width="100" height="34"/>
+                                            <animations/>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="100" id="xwg-eE-NDA"/>
+                                            </constraints>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
+                                    <animations/>
+                                    <constraints>
+                                        <constraint firstItem="Gpl-z3-hEp" firstAttribute="leading" secondItem="1pb-t1-Tly" secondAttribute="trailing" constant="10" id="2M4-ZU-Fct"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="T9N-8s-Zja" secondAttribute="bottom" id="CXE-tg-Utc"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="1pb-t1-Tly" secondAttribute="bottom" id="F8W-Bn-30E"/>
+                                        <constraint firstItem="1pb-t1-Tly" firstAttribute="leading" secondItem="T9N-8s-Zja" secondAttribute="trailing" constant="10" id="Gr4-Dr-9Uf"/>
+                                        <constraint firstItem="Gpl-z3-hEp" firstAttribute="top" secondItem="2ch-5y-Qhk" secondAttribute="topMargin" id="LgA-CN-K6A"/>
+                                        <constraint firstItem="1pb-t1-Tly" firstAttribute="top" secondItem="2ch-5y-Qhk" secondAttribute="topMargin" id="Lqf-Lg-avP"/>
+                                        <constraint firstItem="T9N-8s-Zja" firstAttribute="top" secondItem="2ch-5y-Qhk" secondAttribute="topMargin" id="QJb-DJ-PyY"/>
+                                        <constraint firstItem="MdD-np-DN7" firstAttribute="leading" secondItem="2ch-5y-Qhk" secondAttribute="leadingMargin" id="UFo-7j-67A"/>
+                                        <constraint firstAttribute="trailingMargin" secondItem="Gpl-z3-hEp" secondAttribute="trailing" id="cXs-XC-CPF"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="MdD-np-DN7" secondAttribute="bottom" id="eH6-0e-bQP"/>
+                                        <constraint firstItem="T9N-8s-Zja" firstAttribute="leading" secondItem="MdD-np-DN7" secondAttribute="trailing" constant="10" id="ea7-pR-0HI"/>
+                                        <constraint firstAttribute="bottomMargin" secondItem="Gpl-z3-hEp" secondAttribute="bottom" id="gMa-Zw-Gs6"/>
+                                        <constraint firstItem="MdD-np-DN7" firstAttribute="top" secondItem="2ch-5y-Qhk" secondAttribute="topMargin" id="tbQ-Uy-87E"/>
+                                    </constraints>
+                                </collectionReusableView>
+                                <connections>
+                                    <outlet property="dataSource" destination="Ycj-P2-1sB" id="wsw-CB-2IA"/>
+                                    <outlet property="delegate" destination="Ycj-P2-1sB" id="YWJ-pX-w15"/>
+                                </connections>
+                            </collectionView>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="M7e-Bj-9k9" firstAttribute="top" secondItem="xWM-DD-hUk" secondAttribute="bottom" id="3pO-XB-4zD"/>
+                            <constraint firstItem="cjI-gH-EOr" firstAttribute="leading" secondItem="i1p-FZ-6vW" secondAttribute="leadingMargin" id="BVi-lA-lbF"/>
+                            <constraint firstItem="rOi-FS-mS8" firstAttribute="centerX" secondItem="i1p-FZ-6vW" secondAttribute="centerX" id="F5H-kP-Y5L"/>
                             <constraint firstAttribute="trailingMargin" secondItem="xWM-DD-hUk" secondAttribute="trailing" id="GtK-Sa-EAR"/>
+                            <constraint firstItem="M7e-Bj-9k9" firstAttribute="top" secondItem="cjI-gH-EOr" secondAttribute="bottom" id="cVT-Eu-N5s"/>
+                            <constraint firstItem="cjI-gH-EOr" firstAttribute="top" secondItem="rOi-FS-mS8" secondAttribute="bottom" constant="10" id="gP7-jL-h4r"/>
                             <constraint firstItem="xWM-DD-hUk" firstAttribute="leading" secondItem="i1p-FZ-6vW" secondAttribute="leadingMargin" id="n1L-tE-thN"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="cjI-gH-EOr" secondAttribute="trailing" id="nl1-Hv-DR2"/>
+                            <constraint firstItem="rOi-FS-mS8" firstAttribute="top" secondItem="xWM-DD-hUk" secondAttribute="bottom" constant="10" id="sHI-kG-1tO"/>
                             <constraint firstItem="xWM-DD-hUk" firstAttribute="top" secondItem="WME-1g-bIL" secondAttribute="bottom" id="w4C-MQ-cGH"/>
+                            <constraint firstItem="cjI-gH-EOr" firstAttribute="height" secondItem="xWM-DD-hUk" secondAttribute="height" id="yLA-OZ-yu9"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="btnEmail" destination="rOi-FS-mS8" id="gRY-cT-0Oq"/>
+                        <outlet property="colEmailInbox" destination="cjI-gH-EOr" id="W5a-c0-d8w"/>
                         <outlet property="colGTDInbox" destination="xWM-DD-hUk" id="yz3-3K-a47"/>
                     </connections>
                 </viewController>

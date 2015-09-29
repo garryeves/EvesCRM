@@ -491,7 +491,7 @@ class gmailMessage: NSObject
                             myDateString = valueString2
                         
                         default:
-                            NSLog("Do nothing")
+                            _ = 1
                         
                         }
                     
@@ -601,6 +601,21 @@ class gmailMessages: NSObject
         }
         
     }
+    
+    func getInbox()
+    {
+        // this is used to get the messages
+        
+        var workingString: String = "https://www.googleapis.com/gmail/v1/users/me/messages?maxResults=20"
+        
+        workingString += "&q=in:inbox"
+        
+        let myString = myGmailData.getData(workingString)
+        
+        splitString(myString)
+        
+        NSNotificationCenter.defaultCenter().postNotificationName("NotificationGmailInboxLoadDidFinish", object: nil)
+    }
 
     
     private func splitString(inString: String)
@@ -676,7 +691,7 @@ class gmailMessages: NSObject
                         myMessage.threadId = valueString
                         
                     default:
-                        NSLog("Do nothing")
+                        _ = 1
                     }
                 }
                 
@@ -734,7 +749,7 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
     private var myQueryType: String = ""
     
     var sourceViewController: UIViewController
-        {
+    {
         get
         {
             return mySourceViewController
@@ -848,6 +863,13 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
     func gmailSignedIn(notification: NSNotification)
     {
         currentUser = GIDSignIn.sharedInstance().currentUser
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationGmailConnected", object: nil)
+        if mySourceViewController is GTDInboxViewController
+        {
+            NSNotificationCenter.defaultCenter().postNotificationName("NotificationGmailInboxConnected", object: nil)
+        }
+        else
+        {
+            NSNotificationCenter.defaultCenter().postNotificationName("NotificationGmailConnected", object: nil)
+        }
     }
 }

@@ -6082,6 +6082,30 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         //            print("Failure to save context: \(error)")
         //       }
 
+        let fetchRequest27 = NSFetchRequest(entityName: "ProcessedEmails")
+        
+        // Set the predicate on the fetch request
+        fetchRequest27.predicate = predicate
+        let fetchResults27 = (try? managedObjectContext!.executeFetchRequest(fetchRequest27)) as? [ProcessedEmails]
+        
+        for myItem27 in fetchResults27!
+        {
+            managedObjectContext!.deleteObject(myItem27 as NSManagedObject)
+        }
+        
+        managedObjectContext!.performBlockAndWait
+            {
+                do
+                {
+                    try self.managedObjectContext!.save()
+                }
+                catch let error as NSError
+                {
+                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+                    
+                    print("Failure to save context: \(error)")
+                }
+        }
     }
 
     func clearSyncedItems()
@@ -6927,7 +6951,32 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             //            print("Failure to save context: \(error)")
             //       }
         }
-
+        
+        let fetchRequest27 = NSFetchRequest(entityName: "ProcessedEmails")
+        // Set the predicate on the fetch request
+        fetchRequest27.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults27 = (try? managedObjectContext!.executeFetchRequest(fetchRequest27)) as? [ProcessedEmails]
+        
+        for myItem27 in fetchResults27!
+        {
+            myItem27.updateType = ""
+            
+            managedObjectContext!.performBlockAndWait
+            {
+                do
+                {
+                    try self.managedObjectContext!.save()
+                }
+                catch let error as NSError
+                {
+                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+                        
+                    print("Failure to save context: \(error)")
+                }
+            }
+        }
     }
     
     func saveTeam(inTeamID: Int, inName: String, inStatus: String, inNote: String, inType: String, inPredecessor: Int, inExternalID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
@@ -8225,6 +8274,21 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         return fetchResults!
     }
     
+    func getProcessedEmailsForSync(inLastSyncDate: NSDate) -> [ProcessedEmails]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "ProcessedEmails")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [ProcessedEmails]
+        
+        return fetchResults!
+    }
+    
     func deleteAllCoreData()
     {
         let fetchRequest2 = NSFetchRequest(entityName: "Context")
@@ -9020,6 +9084,169 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         //            print("Failure to save context: \(error)")
         //       }
         
+        let fetchRequest27 = NSFetchRequest(entityName: "ProcessedEmails")
+        
+        managedObjectContext!.performBlockAndWait
+            {
+                let fetchResults27 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest27)) as? [ProcessedEmails]
+                
+                for myItem27 in fetchResults27!
+                {
+                    self.managedObjectContext!.deleteObject(myItem27 as NSManagedObject)
+                }
+                
+                
+                do
+                {
+                    try self.managedObjectContext!.save()
+                }
+                catch let error as NSError
+                {
+                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+                    
+                    print("Failure to save context: \(error)")
+                }
+        }
+
+        
+    }
+
+    func saveProcessedEmail(emailID: String, emailType: String, processedDate: NSDate, updateTime: NSDate = NSDate(), updateType: String = "CODE")
+    {
+        var myEmail: ProcessedEmails!
+        
+        let myEmailItems = getProcessedEmail(emailID)
+        
+        if myEmailItems.count == 0
+        { // Add
+            myEmail = NSEntityDescription.insertNewObjectForEntityForName("ProcessedEmails", inManagedObjectContext: self.managedObjectContext!) as! ProcessedEmails
+            myEmail.emailID = emailID
+            myEmail.emailType = emailType
+            myEmail.processedDate = processedDate
+
+            if updateType == "CODE"
+            {
+                myEmail.updateTime = NSDate()
+                myEmail.updateType = "Add"
+            }
+            else
+            {
+                myEmail.updateTime = updateTime
+                myEmail.updateType = updateType
+            }
+        }
+        else
+        { // Update
+            myEmail = myEmailItems[0]
+            myEmail.emailType = emailType
+            myEmail.processedDate = processedDate
+            if updateType == "CODE"
+            {
+                if myEmail.updateType != "Add"
+                {
+                    myEmail.updateType = "Update"
+                }
+            }
+            else
+            {
+                myEmail.updateTime = updateTime
+                myEmail.updateType = updateType
+            }
+        }
+        
+        managedObjectContext!.performBlock
+            {
+                do
+                {
+                    try self.managedObjectContext!.save()
+                }
+                catch let error as NSError
+                {
+                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+                    
+                    print("Failure to save context: \(error)")
+                }
+        }
+
+    }
+    
+    func replaceProcessedEmail(emailID: String, emailType: String, processedDate: NSDate, updateTime: NSDate = NSDate(), updateType: String = "CODE")
+    {
+        let myEmail = NSEntityDescription.insertNewObjectForEntityForName("ProcessedEmails", inManagedObjectContext: self.managedObjectContext!) as! ProcessedEmails
+        myEmail.emailID = emailID
+        myEmail.emailType = emailType
+        myEmail.processedDate = processedDate
+        
+        if updateType == "CODE"
+        {
+            myEmail.updateTime = NSDate()
+            myEmail.updateType = "Add"
+        }
+        else
+        {
+            myEmail.updateTime = updateTime
+            myEmail.updateType = updateType
+        }
+        
+        managedObjectContext!.performBlockAndWait
+            {
+                do
+                {
+                    try self.managedObjectContext!.save()
+                }
+                catch let error as NSError
+                {
+                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+                    
+                    print("Failure to save context: \(error)")
+                }
+        }
+    }
+    
+    func deleteProcessedEmail(emailID: String)
+    {
+        var myEmail: ProcessedEmails!
+        
+        let myEmailItems = getProcessedEmail(emailID)
+        
+        if myEmailItems.count > 0
+        { // Update
+            myEmail = myEmailItems[0]
+            myEmail.updateTime = NSDate()
+            myEmail.updateType = "Delete"
+        }
+        
+        managedObjectContext!.performBlockAndWait
+            {
+                do
+                {
+                    try self.managedObjectContext!.save()
+                }
+                catch let error as NSError
+                {
+                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+                    
+                    print("Failure to save context: \(error)")
+                }
+        }
+
+    }
+    
+    func getProcessedEmail(emailID: String)->[ProcessedEmails]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "ProcessedEmails")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(emailID == \"\(emailID)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [ProcessedEmails]
+        
+        return fetchResults!
     }
 
 }

@@ -103,6 +103,10 @@
 		344F226E1AF1DD04002C373E /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 344F226D1AF1DD04002C373E /* MobileCoreServices.framework */; };
 		344F22701AF1DD13002C373E /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 344F226F1AF1DD13002C373E /* libxml2.dylib */; };
 		344F22721AF1DFF3002C373E /* evernoteDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344F22711AF1DFF3002C373E /* evernoteDetails.swift */; };
+		3456E0571BBA650500533186 /* ProcessedEmails+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3456E0551BBA650500533186 /* ProcessedEmails+CoreDataProperties.swift */; settings = {ASSET_TAGS = (); }; };
+		3456E0581BBA650500533186 /* ProcessedEmails+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3456E0551BBA650500533186 /* ProcessedEmails+CoreDataProperties.swift */; settings = {ASSET_TAGS = (); }; };
+		3456E0591BBA650500533186 /* ProcessedEmails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3456E0561BBA650500533186 /* ProcessedEmails.swift */; settings = {ASSET_TAGS = (); }; };
+		3456E05A1BBA650500533186 /* ProcessedEmails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3456E0561BBA650500533186 /* ProcessedEmails.swift */; settings = {ASSET_TAGS = (); }; };
 		345E027F1AEF714800BE8D0A /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 345E027E1AEF714800BE8D0A /* Social.framework */; };
 		345E02811AEF715700BE8D0A /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 345E02801AEF715700BE8D0A /* MessageUI.framework */; };
 		345E02831AEF71CF00BE8D0A /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 345E02821AEF71CF00BE8D0A /* Accounts.framework */; };
@@ -355,6 +359,9 @@
 		344F226D1AF1DD04002C373E /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		344F226F1AF1DD13002C373E /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = usr/lib/libxml2.dylib; sourceTree = SDKROOT; };
 		344F22711AF1DFF3002C373E /* evernoteDetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = evernoteDetails.swift; sourceTree = "<group>"; };
+		3456E0501BBA646300533186 /* EvesCRM 22.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 22.xcdatamodel"; sourceTree = "<group>"; };
+		3456E0551BBA650500533186 /* ProcessedEmails+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ProcessedEmails+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		3456E0561BBA650500533186 /* ProcessedEmails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProcessedEmails.swift; sourceTree = "<group>"; };
 		345E027E1AEF714800BE8D0A /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		345E02801AEF715700BE8D0A /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		345E02821AEF71CF00BE8D0A /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
@@ -677,6 +684,8 @@
 				342C0A0F1B4B7CED00A73CA5 /* MeetingSupportingDocs.swift */,
 				34A578C21B5F6170008D3D8E /* MeetingTasks.swift */,
 				34BDECBD1B009C17008C9F3F /* Panes.swift */,
+				3456E0551BBA650500533186 /* ProcessedEmails+CoreDataProperties.swift */,
+				3456E0561BBA650500533186 /* ProcessedEmails.swift */,
 				346A2E4A1B66027100C6C63E /* Projects.swift */,
 				3428522B1B8E9B30003D188F /* ProjectNote.swift */,
 				346B70F51AF75FF4005E1BC2 /* ProjectTeamMembers.swift */,
@@ -1154,6 +1163,7 @@
 				34A182FC1B0EDB5C00FC369D /* LiveAuthRefreshRequest.m in Sources */,
 				342CA6A21B26C79B006FEAED /* GTLNetworking_Sources.m in Sources */,
 				3406506B1ADDF8FF00C90CBB /* AppDelegate.swift in Sources */,
+				3456E0591BBA650500533186 /* ProcessedEmails.swift in Sources */,
 				34A1832B1B0EDBB400FC369D /* UrlHelper.m in Sources */,
 				34A183231B0EDBB400FC369D /* LiveAuthHelper.m in Sources */,
 				342C0A221B4B844D00A73CA5 /* meetingsViewController.swift in Sources */,
@@ -1182,6 +1192,7 @@
 				344F22721AF1DFF3002C373E /* evernoteDetails.swift in Sources */,
 				34A182D81B0EDB3D00FC369D /* LiveOperation.m in Sources */,
 				346A2E511B66027100C6C63E /* Projects.swift in Sources */,
+				3456E0571BBA650500533186 /* ProcessedEmails+CoreDataProperties.swift in Sources */,
 				341F230B1AFB2DD600FC2883 /* Dropbox.m in Sources */,
 				3406506E1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld in Sources */,
 				34E92ADC1B9D191900F158F3 /* GTDItem+CoreDataProperties.swift in Sources */,
@@ -1228,6 +1239,7 @@
 				346B70FA1AF75FF4005E1BC2 /* ProjectTeamMembers.swift in Sources */,
 				34E92ADD1B9D191900F158F3 /* GTDItem+CoreDataProperties.swift in Sources */,
 				34A183091B0EDB5C00FC369D /* LiveUploadOperationCore.m in Sources */,
+				3456E0581BBA650500533186 /* ProcessedEmails+CoreDataProperties.swift in Sources */,
 				3428522D1B8E9B30003D188F /* Team.swift in Sources */,
 				342C0A1E1B4B7CED00A73CA5 /* MeetingAttendees.swift in Sources */,
 				34F35BD41B6B3F7000A19ACE /* taskUpdatesViewController.swift in Sources */,
@@ -1278,6 +1290,7 @@
 				342CA6A11B26C79B006FEAED /* GTLCommon_Sources.m in Sources */,
 				34E92ADF1B9D191900F158F3 /* GTDItem.swift in Sources */,
 				348E6D4C1ADF74C800697268 /* ContactDetails.swift in Sources */,
+				3456E05A1BBA650500533186 /* ProcessedEmails.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1546,6 +1559,7 @@
 		3406506C1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				3456E0501BBA646300533186 /* EvesCRM 22.xcdatamodel */,
 				342F71661BA26B4600F0A833 /* EvesCRM 21.xcdatamodel */,
 				34E92AD31B9D163D00F158F3 /* EvesCRM 20.xcdatamodel */,
 				347FF2001B93F03F00133D62 /* EvesCRM 19.xcdatamodel */,
@@ -1568,7 +1582,7 @@
 				346B70F21AF75EFE005E1BC2 /* EvesCRM 2.xcdatamodel */,
 				3406506D1ADDF8FF00C90CBB /* EvesCRM.xcdatamodel */,
 			);
-			currentVersion = 342F71661BA26B4600F0A833 /* EvesCRM 21.xcdatamodel */;
+			currentVersion = 3456E0501BBA646300533186 /* EvesCRM 22.xcdatamodel */;
 			path = EvesCRM.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
