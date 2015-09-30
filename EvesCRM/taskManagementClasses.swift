@@ -1430,6 +1430,16 @@ class task: NSObject
         set
         {
             myProjectID = newValue
+            
+            // Check the team ID for the new project.  If it is different than the current teamID then change the tasks teamID
+            
+            let tempProject = myDatabaseConnection.getProjectDetails(projectID)
+            
+            if tempProject.count > 0
+            {
+                myTeamID = tempProject[0].teamID as Int
+            }
+            
             save()
         }
     }

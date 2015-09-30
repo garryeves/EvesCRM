@@ -41,6 +41,8 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
         
         loadDataArray()
         
+        myGmailEmails.removeAll()
+        
         gmailDisplayMessage = "Retrieving GMail messages.  Screen will refresh when done."
         
         if myGmailData == nil
@@ -404,11 +406,21 @@ class myEmailInboxItem: UICollectionViewCell
         let newTask = task(inTeamID: myCurrentTeam.teamID)
         newTask.title = emailMessage.subject
         
-        var myBody: String = emailMessage.from
+        var myBody: String = "From : \(emailMessage.from)"
         myBody += "\n"
-        myBody += emailMessage.dateReceived
+        myBody += "Date received : \(emailMessage.dateReceived)"
         myBody += "\n\n\n"
-        myBody += emailMessage.body
+        
+        
+    //    let plainBody = NSAttributedString(
+    //        data: emailMessage.body.dataUsingEncoding(NSUnicodeStringEncoding, allowLossyConversion: true),
+    //        options: [ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType],
+    //        documentAttributes: nil,
+    //        error: nil)
+        
+        let plainBody = emailMessage.body.html2String
+        
+        myBody += plainBody
         
         newTask.details = myBody
         
@@ -417,4 +429,19 @@ class myEmailInboxItem: UICollectionViewCell
 
         NSNotificationCenter.defaultCenter().postNotificationName("NotificationGTDInboxDisplayTask", object: nil, userInfo:["task":newTask])
     }
+ }
+
+extension String {
+    var html2String:String {
+        do
+        {
+            return try NSAttributedString(data: dataUsingEncoding(NSUTF8StringEncoding)!, options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute:NSUTF8StringEncoding], documentAttributes: nil).string
+        }
+        catch let error as NSError
+        {
+            NSLog("Warning: failed to create plain text \(error)")
+            return ""
+        }
+    }
 }
+

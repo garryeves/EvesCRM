@@ -23,33 +23,13 @@ class startViewController: UIViewController
         myCloudDB = CloudKitInteraction()
 
         NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: Selector("performInitialSync"), userInfo: nil, repeats: false)
-        
-        
-  //      NSNotificationCenter.defaultCenter().addObserver(self, selector: "performInitialSync", name:"NotificationPerformInitialSync", object: nil)
-  //      NSNotificationCenter.defaultCenter().postNotificationName("NotificationPerformInitialSync", object: nil)
-      //  dispatch_async(dispatch_get_main_queue())
-      //  {
-      //      self.performInitialSync()
-      //  }
+
     }
     
     func performInitialSync()
     {
-        NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: Selector("performSetupCheck"), userInfo: nil, repeats: false)
-    //    NSNotificationCenter.defaultCenter().addObserver(self, selector: "performSetupCheck", name:"NotificationDBSyncCompleted", object: nil)
-    //    NSNotificationCenter.defaultCenter().removeObserver(self, name:"NotificationPerformInitialSync", object: nil)
-
-        myDBSync.sync()
-    }
-    
-    func performSetupCheck()
-    {
-     //   NSNotificationCenter.defaultCenter().removeObserver(self, name:"NotificationDBSyncCompleted", object: nil)
-
         NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: Selector("initialPopulationOfTables"), userInfo: nil, repeats: false)
-        
-   //     initialPopulationOfTables()
-        
+        myDBSync.sync()
     }
     
     func DBUpdateMessage(notification: NSNotification)

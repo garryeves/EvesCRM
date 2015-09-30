@@ -137,24 +137,8 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         super.viewDidLoad()
 
         myID = "dummy" // this is here for when I enable multiuser, to make it easy to implement
-        
-//        myDatabaseConnection = coreDatabase()
-//        myCloudDB = CloudKitInteraction()
-        
-        // sync with the master database
-        
-//        myDBSync.sync()
 
-        
-        
         myDBSync.startTimer()
-//        _ = NSTimer(timeInterval: 60, target: myDBSync, selector: "timerSync:", userInfo: nil, repeats: true)
-     //   let myTimer = NSTimer(timeInterval: 60, target: self, selector: "timerTest:", userInfo: nil, repeats: true)
-     //   NSTimer.scheduledTimerWithTimeInterval(60, target: self, selector: Selector("timerTest:"), userInfo: nil, repeats: true)
-        //   code to reset decodes if needed for testing
- //       myDatabaseConnection.deleteDecodeValue()
-        
-   //     initialPopulationOfTables()
         
         eventStore = EKEventStore()
         

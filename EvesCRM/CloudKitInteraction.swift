@@ -823,7 +823,7 @@ class CloudKitInteraction
         NSLog("Syncing Projects")
         for myItem in myDatabaseConnection.getProjectsForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(projectID == \(myItem.projectID as Int)) && (teamID == \(myItem.teamID as Int))") // better be accurate to get only the record you need
+            let predicate = NSPredicate(format: "(projectID == \(myItem.projectID as Int))") // better be accurate to get only the record you need
             let query = CKQuery(recordType: "Projects", predicate: predicate)
             privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -849,6 +849,7 @@ class CloudKitInteraction
                         record!.setValue(myItem.repeatInterval, forKey: "repeatInterval")
                         record!.setValue(myItem.repeatType, forKey: "repeatType")
                         record!.setValue(myItem.reviewFrequency, forKey: "reviewFrequency")
+                        record!.setValue(myItem.teamID, forKey: "teamID")
                         
                         // Save this record again
                         self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
@@ -1156,7 +1157,7 @@ class CloudKitInteraction
         NSLog("Syncing Task")
         for myItem in myDatabaseConnection.getTaskForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(taskID == \(myItem.taskID as Int)) && (teamID == \(myItem.teamID as Int))") // better be accurate to get only the record you need
+            let predicate = NSPredicate(format: "(taskID == \(myItem.taskID as Int))") // better be accurate to get only the record you need
             let query = CKQuery(recordType: "Task", predicate: predicate)
             privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -1188,6 +1189,7 @@ class CloudKitInteraction
                         record!.setValue(myItem.title, forKey: "title")
                         record!.setValue(myItem.urgency, forKey: "urgency")
                         record!.setValue(myItem.projectID, forKey: "projectID")
+                        record!.setValue(myItem.teamID, forKey: "teamID")
                         
                         // Save this record again
                         self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in

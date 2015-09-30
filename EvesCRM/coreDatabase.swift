@@ -22,27 +22,6 @@ class coreDatabase: NSObject
       //  managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
     }
     
-    func getAllOpenProjects(inTeamID: Int)->[Projects]
-    {
-        let fetchRequest = NSFetchRequest(entityName: "Projects")
-        
-        // Create a new predicate that filters out any object that
-        // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(inTeamID))")
-        
-        // Set the predicate on the fetch request
-        fetchRequest.predicate = predicate
-        
-        let sortDescriptor = NSSortDescriptor(key: "projectName", ascending: true)
-        let sortDescriptors = [sortDescriptor]
-        fetchRequest.sortDescriptors = sortDescriptors
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Projects]
-        
-        return fetchResults!
-    }
-    
     func getOpenProjectsForGTDItem(inGTDItemID: Int, inTeamID: Int)->[Projects]
     {
         let fetchRequest = NSFetchRequest(entityName: "Projects")

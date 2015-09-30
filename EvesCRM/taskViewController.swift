@@ -582,14 +582,31 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         myProjectDetails.removeAll(keepCapacity: false)
         
         pickerOptions.append("")
-NSLog("Team ID = \(passedTask.teamID)")
-        let myProjects = myDatabaseConnection.getAllOpenProjects(passedTask.teamID)
+        
+        // Get the projects for the tasks current team ID
+        let myProjects = myDatabaseConnection.getProjects(passedTask.teamID)
         
         for myProject in myProjects
         {
             pickerOptions.append(myProject.projectName)
             myProjectDetails.append(myProject)
         }
+        
+        // Now also add in the users projects for other team Ids they have access to
+        
+        for myTeamItem in myDatabaseConnection.getMyTeams(myID)
+        {
+            if myTeamItem.teamID as Int != passedTask.teamID
+            {
+                let myProjects = myDatabaseConnection.getProjects(myTeamItem.teamID as Int)
+                for myProject in myProjects
+                {
+                    pickerOptions.append(myProject.projectName)
+                    myProjectDetails.append(myProject)
+                }
+            }
+        }
+        
         hideFields()
         myPicker.hidden = false
         btnSelect.hidden = false
