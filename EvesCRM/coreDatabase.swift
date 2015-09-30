@@ -13,7 +13,14 @@ import CoreData
 class coreDatabase: NSObject
 {
     
-    private let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext 
+    private let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
+    
+    func refreshObject(objectID: NSManagedObject)
+    {
+        managedObjectContext!.refreshObject(objectID, mergeChanges: true)
+      //  managedObjectContext!.processPendingChanges()
+      //  managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
+    }
     
     func getAllOpenProjects(inTeamID: Int)->[Projects]
     {
@@ -323,6 +330,8 @@ class coreDatabase: NSObject
 
     func replaceRole(roleName: String, teamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE", roleID: Int = 0)
     {
+        managedObjectContext!.performBlock
+            {
         let mySelectedRole = NSEntityDescription.insertNewObjectForEntityForName("Roles", inManagedObjectContext: self.managedObjectContext!) as! Roles
                     
                     // Get the role number
@@ -340,8 +349,7 @@ class coreDatabase: NSObject
                         mySelectedRole.updateType = inUpdateType
                     }
 
-        managedObjectContext!.performBlockAndWait
-            {
+
                 
                 do
                 {
@@ -498,6 +506,8 @@ class coreDatabase: NSObject
 
     func replaceTeamMember(inProjectID: Int, inRoleID: Int, inPersonName: String, inNotes: String, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
+        managedObjectContext!.performBlock
+            {
         let myProjectTeam = NSEntityDescription.insertNewObjectForEntityForName("ProjectTeamMembers", inManagedObjectContext: self.managedObjectContext!) as! ProjectTeamMembers
             myProjectTeam.projectID = inProjectID
             myProjectTeam.teamMember = inPersonName
@@ -514,8 +524,6 @@ class coreDatabase: NSObject
                 myProjectTeam.updateType = inUpdateType
             }
 
-        managedObjectContext!.performBlockAndWait
-            {
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -526,7 +534,10 @@ class coreDatabase: NSObject
                     
                     print("Failure to save context: \(error)")
                 }
+                self.refreshObject(myProjectTeam)
         }
+        
+        
         
         //       do
         //       {
@@ -814,7 +825,9 @@ class coreDatabase: NSObject
     
     func replaceDecodeValue(inCodeKey: String, inCodeValue: String, inCodeType: String, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
-        let myDecode = NSEntityDescription.insertNewObjectForEntityForName("Decodes", inManagedObjectContext: managedObjectContext!) as! Decodes
+        managedObjectContext!.performBlock
+            {
+        let myDecode = NSEntityDescription.insertNewObjectForEntityForName("Decodes", inManagedObjectContext: self.managedObjectContext!) as! Decodes
             
         myDecode.decode_name = inCodeKey
         myDecode.decode_value = inCodeValue
@@ -831,8 +844,7 @@ class coreDatabase: NSObject
         }
 
         
-        managedObjectContext!.performBlockAndWait
-            {
+
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -844,17 +856,6 @@ class coreDatabase: NSObject
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
     
     func getStages(inTeamID: Int)->[Stages]
@@ -1044,7 +1045,9 @@ class coreDatabase: NSObject
     
     func replaceStage(stageDesc: String, teamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
-        let myStage = NSEntityDescription.insertNewObjectForEntityForName("Stages", inManagedObjectContext: managedObjectContext!) as! Stages
+        managedObjectContext!.performBlock
+            {
+        let myStage = NSEntityDescription.insertNewObjectForEntityForName("Stages", inManagedObjectContext: self.managedObjectContext!) as! Stages
             
             myStage.stageDescription = stageDesc
             myStage.teamID = teamID
@@ -1058,9 +1061,8 @@ class coreDatabase: NSObject
                 myStage.updateTime = inUpdateTime
                 myStage.updateType = inUpdateType
             }
-        
-        managedObjectContext!.performBlockAndWait
-            {
+
+                
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -1365,7 +1367,9 @@ class coreDatabase: NSObject
 
     func replaceAgenda(inMeetingID: String, inPreviousMeetingID : String, inName: String, inChair: String, inMinutes: String, inLocation: String, inStartTime: NSDate, inEndTime: NSDate, inMinutesType: String, inTeamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
-        let myAgenda = NSEntityDescription.insertNewObjectForEntityForName("MeetingAgenda", inManagedObjectContext: managedObjectContext!) as! MeetingAgenda
+        managedObjectContext!.performBlock
+            {
+        let myAgenda = NSEntityDescription.insertNewObjectForEntityForName("MeetingAgenda", inManagedObjectContext: self.managedObjectContext!) as! MeetingAgenda
             myAgenda.meetingID = inMeetingID
             myAgenda.previousMeetingID = inPreviousMeetingID
             myAgenda.name = inName
@@ -1387,8 +1391,7 @@ class coreDatabase: NSObject
                 myAgenda.updateType = inUpdateType
             }
         
-        managedObjectContext!.performBlockAndWait
-            {
+
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -1729,7 +1732,9 @@ class coreDatabase: NSObject
 
     func replaceAttendee(meetingID: String, name: String, email: String,  type: String, status: String, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
-        let myPerson = NSEntityDescription.insertNewObjectForEntityForName("MeetingAttendees", inManagedObjectContext: managedObjectContext!) as! MeetingAttendees
+        managedObjectContext!.performBlock
+            {
+        let myPerson = NSEntityDescription.insertNewObjectForEntityForName("MeetingAttendees", inManagedObjectContext: self.managedObjectContext!) as! MeetingAttendees
             myPerson.meetingID = meetingID
             myPerson.name = name
             myPerson.attendenceStatus = status
@@ -1746,8 +1751,6 @@ class coreDatabase: NSObject
                 myPerson.updateType = inUpdateType
             }
         
-        managedObjectContext!.performBlockAndWait
-            {
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -1976,7 +1979,9 @@ class coreDatabase: NSObject
     
     func replaceAgendaItem(meetingID: String, actualEndTime: NSDate, actualStartTime: NSDate, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int, owner: String, title: String, agendaID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
-        let mySavedItem = NSEntityDescription.insertNewObjectForEntityForName("MeetingAgendaItem", inManagedObjectContext: managedObjectContext!) as! MeetingAgendaItem
+        managedObjectContext!.performBlock
+            {
+        let mySavedItem = NSEntityDescription.insertNewObjectForEntityForName("MeetingAgendaItem", inManagedObjectContext: self.managedObjectContext!) as! MeetingAgendaItem
             mySavedItem.meetingID = meetingID
             mySavedItem.agendaID = agendaID
             mySavedItem.actualEndTime = actualEndTime
@@ -1998,8 +2003,7 @@ class coreDatabase: NSObject
                 mySavedItem.updateType = inUpdateType
             }
 
-        managedObjectContext!.performBlockAndWait
-            {
+
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -2295,6 +2299,8 @@ class coreDatabase: NSObject
     
     func replaceTask(inTaskID: Int, inTitle: String, inDetails: String, inDueDate: NSDate, inStartDate: NSDate, inStatus: String, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int, inEstimatedTimeType: String, inProjectID: Int, inCompletionDate: NSDate, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inFlagged: Bool, inUrgency: String, inTeamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
+        managedObjectContext!.performBlock
+            {
         let myTask = NSEntityDescription.insertNewObjectForEntityForName("Task", inManagedObjectContext: self.managedObjectContext!) as! Task
             myTask.taskID = inTaskID
             myTask.title = inTitle
@@ -2326,8 +2332,7 @@ class coreDatabase: NSObject
                 myTask.updateType = inUpdateType
             }
 
-        managedObjectContext!.performBlockAndWait
-            {
+
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -2672,6 +2677,8 @@ class coreDatabase: NSObject
     
     func replacePredecessorTask(inTaskID: Int, inPredecessorID: Int, inPredecessorType: String, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
+        managedObjectContext!.performBlock
+            {
         let myTask = NSEntityDescription.insertNewObjectForEntityForName("TaskPredecessor", inManagedObjectContext: self.managedObjectContext!) as! TaskPredecessor
             myTask.taskID = inTaskID
             myTask.predecessorID = inPredecessorID
@@ -2688,8 +2695,7 @@ class coreDatabase: NSObject
             }
 
         
-        managedObjectContext!.performBlockAndWait
-            {
+
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -2896,6 +2902,8 @@ class coreDatabase: NSObject
 
     func replaceProject(inProjectID: Int, inProjectEndDate: NSDate, inProjectName: String, inProjectStartDate: NSDate, inProjectStatus: String, inReviewFrequency: Int, inLastReviewDate: NSDate, inGTDItemID: Int, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inTeamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
+        managedObjectContext!.performBlock
+            {
         let myProject = NSEntityDescription.insertNewObjectForEntityForName("Projects", inManagedObjectContext: self.managedObjectContext!) as! Projects
             myProject.projectID = inProjectID
             myProject.projectEndDate = inProjectEndDate
@@ -2921,9 +2929,7 @@ class coreDatabase: NSObject
                 myProject.updateType = inUpdateType
             }
 
-        
-        managedObjectContext!.performBlockAndWait
-            {
+
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -3074,6 +3080,8 @@ class coreDatabase: NSObject
     
     func replaceTaskUpdate(inTaskID: Int, inDetails: String, inSource: String, inUpdateDate: NSDate = NSDate(), inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
+        managedObjectContext!.performBlock
+            {
         let myTaskUpdate = NSEntityDescription.insertNewObjectForEntityForName("TaskUpdates", inManagedObjectContext: self.managedObjectContext!) as! TaskUpdates
             myTaskUpdate.taskID = inTaskID
             myTaskUpdate.updateDate = inUpdateDate
@@ -3090,8 +3098,7 @@ class coreDatabase: NSObject
                 myTaskUpdate.updateType = inUpdateType
             }
             
-            managedObjectContext!.performBlockAndWait
-            {
+
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -3229,6 +3236,8 @@ class coreDatabase: NSObject
     
     func replaceContext(inContextID: Int, inName: String, inEmail: String, inAutoEmail: String, inParentContext: Int, inStatus: String, inPersonID: Int, inTeamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
+        managedObjectContext!.performBlock
+            {
         let myContext = NSEntityDescription.insertNewObjectForEntityForName("Context", inManagedObjectContext: self.managedObjectContext!) as! Context
         myContext.contextID = inContextID
         myContext.name = inName
@@ -3249,9 +3258,6 @@ class coreDatabase: NSObject
             myContext.updateType = inUpdateType
         }
 
-        
-        managedObjectContext!.performBlockAndWait
-            {
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -3502,7 +3508,9 @@ class coreDatabase: NSObject
 
 func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
 {
-    let myContext = NSEntityDescription.insertNewObjectForEntityForName("TaskContext", inManagedObjectContext: managedObjectContext!) as! TaskContext
+    managedObjectContext!.performBlock
+        {
+    let myContext = NSEntityDescription.insertNewObjectForEntityForName("TaskContext", inManagedObjectContext: self.managedObjectContext!) as! TaskContext
         myContext.contextID = inContextID
         myContext.taskID = inTaskID
         if inUpdateType == "CODE"
@@ -3516,9 +3524,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             myContext.updateType = inUpdateType
         }
 
-    
-    managedObjectContext!.performBlockAndWait
-        {
             do
             {
                 try self.managedObjectContext!.save()
@@ -3711,6 +3716,8 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
     
     func replaceGTDLevel(inGTDLevel: Int, inLevelName: String, inTeamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
+        managedObjectContext!.performBlock
+            {
         let myGTD = NSEntityDescription.insertNewObjectForEntityForName("GTDLevel", inManagedObjectContext: self.managedObjectContext!) as! GTDLevel
             myGTD.gTDLevel = inGTDLevel
             myGTD.levelName = inLevelName
@@ -3726,10 +3733,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 myGTD.updateTime = inUpdateTime
                 myGTD.updateType = inUpdateType
             }
-        
-        
-        managedObjectContext!.performBlockAndWait
-            {
+
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -3976,6 +3980,8 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
     
     func replaceGTDItem(inGTDItemID: Int, inParentID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String, inLastReviewDate: NSDate, inReviewFrequency: Int, inReviewPeriod: String, inPredecessor: Int, inGTDLevel: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
+        managedObjectContext!.performBlock
+            {
         let myGTD = NSEntityDescription.insertNewObjectForEntityForName("GTDItem", inManagedObjectContext: self.managedObjectContext!) as! GTDItem
             myGTD.gTDItemID = inGTDItemID
             myGTD.gTDParentID = inParentID
@@ -3999,8 +4005,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 myGTD.updateType = inUpdateType
             }
 
-        managedObjectContext!.performBlockAndWait
-            {
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -4487,6 +4491,8 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
     
     func replacePane(inPaneName:String, inPaneAvailable: Bool, inPaneVisible: Bool, inPaneOrder: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
+        managedObjectContext!.performBlock
+            {
         let myPane = NSEntityDescription.insertNewObjectForEntityForName("Panes", inManagedObjectContext: self.managedObjectContext!) as! Panes
             
             myPane.pane_name = inPaneName
@@ -4504,9 +4510,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 myPane.updateType = inUpdateType
             }
 
-        
-        managedObjectContext!.performBlockAndWait
-            {
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -4950,15 +4953,15 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
     
     func replaceAgendaTask(inAgendaID: Int, inMeetingID: String, inTaskID: Int)
     {
-        let myTask = NSEntityDescription.insertNewObjectForEntityForName("MeetingTasks", inManagedObjectContext: managedObjectContext!) as! MeetingTasks
+        managedObjectContext!.performBlock
+            {
+        let myTask = NSEntityDescription.insertNewObjectForEntityForName("MeetingTasks", inManagedObjectContext: self.managedObjectContext!) as! MeetingTasks
         myTask.agendaID = inAgendaID
         myTask.meetingID = inMeetingID
         myTask.taskID = inTaskID
         myTask.updateTime = NSDate()
         myTask.updateType = "Add"
-        
-        managedObjectContext!.performBlockAndWait
-            {
+
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -5070,7 +5073,9 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
 
     func replaceMeetingTask(agendaID: Int, meetingID: String, taskID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
-        let myTask = NSEntityDescription.insertNewObjectForEntityForName("MeetingTasks", inManagedObjectContext: managedObjectContext!) as! MeetingTasks
+        managedObjectContext!.performBlock
+            {
+        let myTask = NSEntityDescription.insertNewObjectForEntityForName("MeetingTasks", inManagedObjectContext: self.managedObjectContext!) as! MeetingTasks
             myTask.agendaID = agendaID
             myTask.meetingID = meetingID
             myTask.taskID = taskID
@@ -5085,9 +5090,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 myTask.updateType = inUpdateType
             }
 
-        
-        managedObjectContext!.performBlockAndWait
-            {
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -7058,6 +7060,8 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
     
     func replaceTeam(inTeamID: Int, inName: String, inStatus: String, inNote: String, inType: String, inPredecessor: Int, inExternalID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
+        managedObjectContext!.performBlock
+            {
         let myTeam = NSEntityDescription.insertNewObjectForEntityForName("Team", inManagedObjectContext: self.managedObjectContext!) as! Team
             myTeam.teamID = inTeamID
             myTeam.name = inName
@@ -7076,9 +7080,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 myTeam.updateTime = inUpdateTime
                 myTeam.updateType = inUpdateType
             }
-        
-        managedObjectContext!.performBlockAndWait
-            {
+
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -7089,6 +7091,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     
                     print("Failure to save context: \(error)")
                 }
+                self.refreshObject(myTeam)
         }
         
         //       do
@@ -7166,6 +7169,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
     func getTeamsCount() -> Int
     {
         let fetchRequest = NSFetchRequest(entityName: "Team")
+        fetchRequest.shouldRefreshRefetchedObjects = true
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Team]
@@ -7320,6 +7324,8 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
  
     func replaceProjectNote(inProjectID: Int, inNote: String, inReviewPeriod: String, inPredecessor: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
+        managedObjectContext!.performBlock
+            {
         let myProjectNote = NSEntityDescription.insertNewObjectForEntityForName("ProjectNote", inManagedObjectContext: self.managedObjectContext!) as! ProjectNote
             myProjectNote.projectID = inProjectID
             myProjectNote.note = inNote
@@ -7337,9 +7343,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 myProjectNote.updateType = inUpdateType
             }
 
-        
-        managedObjectContext!.performBlockAndWait
-            {
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -7776,6 +7779,8 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
     
     func replaceContext1_1(inContextID: Int, inPredecessor: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
+        managedObjectContext!.performBlock
+            {
         let myContext = NSEntityDescription.insertNewObjectForEntityForName("Context1_1", inManagedObjectContext: self.managedObjectContext!) as! Context1_1
         myContext.contextID = inContextID
         myContext.predecessor = inPredecessor
@@ -7790,9 +7795,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             myContext.updateType = inUpdateType
         }
 
-        
-        managedObjectContext!.performBlockAndWait
-            {
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -9172,6 +9174,8 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
     
     func replaceProcessedEmail(emailID: String, emailType: String, processedDate: NSDate, updateTime: NSDate = NSDate(), updateType: String = "CODE")
     {
+        managedObjectContext!.performBlock
+            {
         let myEmail = NSEntityDescription.insertNewObjectForEntityForName("ProcessedEmails", inManagedObjectContext: self.managedObjectContext!) as! ProcessedEmails
         myEmail.emailID = emailID
         myEmail.emailType = emailType
@@ -9187,9 +9191,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             myEmail.updateTime = updateTime
             myEmail.updateType = updateType
         }
-        
-        managedObjectContext!.performBlockAndWait
-            {
+
                 do
                 {
                     try self.managedObjectContext!.save()

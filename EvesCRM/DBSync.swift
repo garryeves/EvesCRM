@@ -34,14 +34,11 @@ class DBSync: NSObject
             {
                 if myDatabaseConnection.getTeamsCount() == 0
                 {  // Nothing in teams table so lets do a full sync
+                    NSNotificationCenter.defaultCenter().addObserver(self, selector: "DBReplaceDone", name:"NotificationDBReplaceDone", object: nil)
                     replaceWithCloudKit()
-                    // Convert string to date
                     
-                    let myDateFormatter = NSDateFormatter()
-                    myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-                    
-                    let syncDate: NSDate = myDateFormatter.dateFromString("01/01/15")!
-                    dateString = "\(syncDate)"
+                    NSNotificationCenter.defaultCenter().postNotificationName("NotificationDBReplaceDone", object: nil)
+
                 }
                 else
                 {
@@ -83,11 +80,15 @@ class DBSync: NSObject
                     // Update last sync date
         
                     dateString = "\(syncStart)"
+                    
+                    myDatabaseConnection.updateDecodeValue("CloudKit Sync", inCodeValue: dateString, inCodeType: "hidden")
+                    
+                    myDatabaseConnection.clearDeletedItems()
+                    myDatabaseConnection.clearSyncedItems()
+                    
+                    NSNotificationCenter.defaultCenter().postNotificationName("NotificationDBSyncCompleted", object: nil)
                 }
-                myDatabaseConnection.updateDecodeValue("CloudKit Sync", inCodeValue: dateString, inCodeType: "hidden")
-        
-                myDatabaseConnection.clearDeletedItems()
-                myDatabaseConnection.clearSyncedItems()
+
             }
             else if iCloudConnected == .CouldNotDetermine
             {
@@ -100,6 +101,26 @@ class DBSync: NSObject
         }
     }
 
+    func DBReplaceDone()
+    {
+        NSNotificationCenter.defaultCenter().removeObserver(self, name:"NotificationDBReplaceDone", object: nil)
+        
+        // Convert string to date
+        
+        let myDateFormatter = NSDateFormatter()
+        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        
+        let syncDate: NSDate = myDateFormatter.dateFromString("01/01/15")!
+        let dateString = "\(syncDate)"
+        
+        myDatabaseConnection.updateDecodeValue("CloudKit Sync", inCodeValue: dateString, inCodeType: "hidden")
+        
+        myDatabaseConnection.clearDeletedItems()
+        myDatabaseConnection.clearSyncedItems()
+        
+        NSNotificationCenter.defaultCenter().postNotificationName("NotificationDBSyncCompleted", object: nil)
+    }
+    
     func syncToCloudKit(inDate: NSDate)
     {
         progressMessage("syncToCloudKit Context")
@@ -198,6 +219,8 @@ class DBSync: NSObject
     
     func replaceWithCloudKit()
     {
+        progressMessage("replaceWithCloudKit Team")
+        myCloudDB.replaceTeamInCoreData()
         progressMessage("replaceWithCloudKit Context")
         myCloudDB.replaceContextInCoreData()
         progressMessage("replaceWithCloudKit Decodes")
@@ -236,11 +259,10 @@ class DBSync: NSObject
         myCloudDB.replaceTaskPredecessorInCoreData()
         progressMessage("replaceWithCloudKit TaskUpdates")
         myCloudDB.replaceTaskUpdatesInCoreData()
-        progressMessage("replaceWithCloudKit Team")
-        myCloudDB.replaceTeamInCoreData()
         progressMessage("replaceWithCloudKit ProcessedEmails")
         myCloudDB.replaceProcessedEmailsInCoreData()
         
+  //      refreshObject()
         NSNotificationCenter.defaultCenter().postNotificationName("NotificationCloudSyncFinished", object: nil)
     }
     
@@ -276,7 +298,7 @@ class DBSync: NSObject
     
     func progressMessage(displayString: String)
     {
-//        NSLog(displayString)
+        NSLog(displayString)
         
 //        let selectedDictionary = ["displayMessage" : displayString]
         

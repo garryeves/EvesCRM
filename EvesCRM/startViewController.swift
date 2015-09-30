@@ -21,38 +21,35 @@ class startViewController: UIViewController
         
         myDatabaseConnection = coreDatabase()
         myCloudDB = CloudKitInteraction()
+
+        NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: Selector("performInitialSync"), userInfo: nil, repeats: false)
         
-        dispatch_async(dispatch_get_main_queue())
-        {
-            self.performInitialSync()
-        }
+        
+  //      NSNotificationCenter.defaultCenter().addObserver(self, selector: "performInitialSync", name:"NotificationPerformInitialSync", object: nil)
+  //      NSNotificationCenter.defaultCenter().postNotificationName("NotificationPerformInitialSync", object: nil)
+      //  dispatch_async(dispatch_get_main_queue())
+      //  {
+      //      self.performInitialSync()
+      //  }
     }
     
     func performInitialSync()
     {
-  //      NSNotificationCenter.defaultCenter().addObserver(self, selector: "DBUpdateMessage:", name:"NotificationSyncMessage", object: nil)
-        
+        NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: Selector("performSetupCheck"), userInfo: nil, repeats: false)
+    //    NSNotificationCenter.defaultCenter().addObserver(self, selector: "performSetupCheck", name:"NotificationDBSyncCompleted", object: nil)
+    //    NSNotificationCenter.defaultCenter().removeObserver(self, name:"NotificationPerformInitialSync", object: nil)
+
         myDBSync.sync()
+    }
+    
+    func performSetupCheck()
+    {
+     //   NSNotificationCenter.defaultCenter().removeObserver(self, name:"NotificationDBSyncCompleted", object: nil)
 
-//        NSNotificationCenter.defaultCenter().removeObserver(self, name:"NotificationSyncMessage", object: nil)
-        initialPopulationOfTables()
-
-        let deviceIdiom = UIDevice.currentDevice().userInterfaceIdiom
+        NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: Selector("initialPopulationOfTables"), userInfo: nil, repeats: false)
         
-        if deviceIdiom == UIUserInterfaceIdiom.Pad
-        {
-            let myStart = self.storyboard?.instantiateViewControllerWithIdentifier("iPadStart") as! ViewController
+   //     initialPopulationOfTables()
         
-            self.presentViewController(myStart, animated: true, completion: nil)
-        }
-        else if  deviceIdiom == UIUserInterfaceIdiom.Pad
-        {
-            NSLog("Phone")
-        }
-        else
-        {
-            NSLog("unknown device")
-        }
     }
     
     func DBUpdateMessage(notification: NSNotification)
@@ -116,5 +113,23 @@ class startViewController: UIViewController
         {  // Nothing found so go and create
             myDatabaseConnection.updateDecodeValue("Calendar - Weeks after current date", inCodeValue: "4", inCodeType: "stepper")
         }
+        
+        let deviceIdiom = UIDevice.currentDevice().userInterfaceIdiom
+        
+        if deviceIdiom == UIUserInterfaceIdiom.Pad
+        {
+            let myStart = self.storyboard?.instantiateViewControllerWithIdentifier("iPadStart") as! ViewController
+            
+            self.presentViewController(myStart, animated: true, completion: nil)
+        }
+        else if  deviceIdiom == UIUserInterfaceIdiom.Pad
+        {
+            NSLog("Phone")
+        }
+        else
+        {
+            NSLog("unknown device")
+        }
+
     }
 }
