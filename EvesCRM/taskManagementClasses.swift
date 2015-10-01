@@ -2088,9 +2088,11 @@ class contexts: NSObject
     {
         for myItem in myDatabaseConnection.getContextsForType("Person")
         {
-            let myContext = context(contextID: myItem.contextID as! Int)
-            if myContext.status != "Archived" && myContext.status != "Deleted"
+            let myItemDetails = myDatabaseConnection.getContextDetails(myItem.contextID as! Int)
+            
+            if myItemDetails.count > 0
             {
+                let myContext = context(contextID: myItem.contextID as! Int)
                 myPeopleContexts.append(myContext)
                 myContexts.append(myContext)
             }
@@ -2100,9 +2102,11 @@ class contexts: NSObject
         
         for myItem in myDatabaseConnection.getContextsForType("Place")
         {
-            let myContext = context(contextID: myItem.contextID as! Int)
-            if myContext.status != "Archived" && myContext.status != "Deleted"
+            let myItemDetails = myDatabaseConnection.getContextDetails(myItem.contextID as! Int)
+            
+            if myItemDetails.count > 0
             {
+                let myContext = context(contextID: myItem.contextID as! Int)
                 myPlaceContexts.append(myContext)
                 myContexts.append(myContext)
             }
@@ -2112,9 +2116,11 @@ class contexts: NSObject
         
         for myItem in myDatabaseConnection.getContextsForType("Tool")
         {
-            let myContext = context(contextID: myItem.contextID as! Int)
-            if myContext.status != "Archived" && myContext.status != "Deleted"
+            let myItemDetails = myDatabaseConnection.getContextDetails(myItem.contextID as! Int)
+            
+            if myItemDetails.count > 0
             {
+                let myContext = context(contextID: myItem.contextID as! Int)
                 myToolContexts.append(myContext)
                 myContexts.append(myContext)
             }
@@ -2519,12 +2525,14 @@ class context: NSObject
         if myNotes.count == 0
         {
             myPredecessor = 0
+            myContextType = ""
         }
         else
         {
             for myItem in myNotes
             {
                 myPredecessor = myItem.predecessor as! Int
+                myContextType = myItem.contextType!
             }
         }
 

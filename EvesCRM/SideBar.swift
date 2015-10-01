@@ -123,7 +123,9 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
         
         for myContext in myContextList.people
         {
-            let displayObject = createMenuItem(myContext.contextHierarchy, inType: "People", inObject: myContext)
+            let myReturnedData = getContextCount(myContext.contextID)
+            
+            let displayObject = createMenuItem("\(myContext.contextHierarchy) (\(myReturnedData))", inType: "People", inObject: myContext)
             peopleObject.section = peopleObject.childSection
 
             peopleArray.append(displayObject)
@@ -152,7 +154,9 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
         
         for myContext in myContextList.places
         {
-            let displayObject = createMenuItem(myContext.contextHierarchy, inType: "Place", inObject: myContext)
+            let myReturnedData = getContextCount(myContext.contextID)
+
+            let displayObject = createMenuItem("\(myContext.contextHierarchy) (\(myReturnedData))", inType: "Place", inObject: myContext)
             displayObject.section = placeObject.childSection
 
             placeArray.append(displayObject)
@@ -173,7 +177,9 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
         
         for myContext in myContextList.tools
         {
-            let displayObject = createMenuItem(myContext.contextHierarchy, inType: "Tool", inObject: myContext)
+            let myReturnedData = getContextCount(myContext.contextID)
+
+            let displayObject = createMenuItem("\(myContext.contextHierarchy) (\(myReturnedData))", inType: "Tool", inObject: myContext)
             displayObject.section = toolObject.childSection
             
             toolArray.append(displayObject)
@@ -307,5 +313,22 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
         delegate?.sideBarDidSelectButtonAtIndex(passedItem)
         showSideBar(false)
         delegate?.sideBarWillClose?()
+    }
+    
+    func getContextCount(contextID: Int) -> Int
+    {
+        var retVal: Int = 0
+        
+        // Get list of tasks for the context
+        for myItem in myDatabaseConnection.getTasksForContext(contextID)
+        {
+            // get items that are open
+            if myDatabaseConnection.getActiveTask(myItem.taskID as Int).count > 0
+            {
+                retVal++
+            }
+        }
+        
+        return retVal
     }
 }

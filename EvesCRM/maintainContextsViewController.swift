@@ -46,6 +46,8 @@ class MaintainContextsViewController: UIViewController, ABPeoplePickerNavigation
         hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
         self.view.addGestureRecognizer(hideGestureRecognizer)
         
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "deleteContext:", name:"NotificationMaintainContextsDeleteContext", object: nil)
+        
         let contextList = contexts()
         
         peopleArray = contextList.people
@@ -107,6 +109,8 @@ class MaintainContextsViewController: UIViewController, ABPeoplePickerNavigation
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellPeople", forIndexPath: indexPath) as! myContextDetails
             
             cell.lblName.text = peopleArray[indexPath.row].name
+            cell.rowID = indexPath.row
+            cell.contextType = peopleArray[indexPath.row].contextType
             
             if (indexPath.row % 2 == 0)
             {
@@ -126,6 +130,8 @@ class MaintainContextsViewController: UIViewController, ABPeoplePickerNavigation
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellPlace", forIndexPath: indexPath) as! myContextDetails
             
             cell.lblName.text = placeArray[indexPath.row].name
+            cell.rowID = indexPath.row
+            cell.contextType = placeArray[indexPath.row].contextType
             
             if (indexPath.row % 2 == 0)
             {
@@ -145,6 +151,8 @@ class MaintainContextsViewController: UIViewController, ABPeoplePickerNavigation
             let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellTool", forIndexPath: indexPath) as! myContextDetails
             
             cell.lblName.text = toolArray[indexPath.row].name
+            cell.rowID = indexPath.row
+            cell.contextType = toolArray[indexPath.row].contextType
             
             if (indexPath.row % 2 == 0)
             {
@@ -283,6 +291,36 @@ class MaintainContextsViewController: UIViewController, ABPeoplePickerNavigation
         presentViewController(picker, animated: true, completion: nil)
     }
     
+    func deleteContext(notification: NSNotification)
+    {
+        let rowID = notification.userInfo!["rowID"] as! Int
+        let contextType = notification.userInfo!["contextType"] as! String
+        
+        switch contextType
+        {
+            case "Person" :
+                peopleArray[rowID].delete()
+            
+            case "Place":
+                placeArray[rowID].delete()
+            
+            case "Tool" :
+                toolArray[rowID].delete()
+            
+            default :
+                let _ = 1
+        }
+        
+        let contextList = contexts()
+        
+        peopleArray = contextList.people
+        placeArray = contextList.places
+        toolArray = contextList.tools
+        
+        colPeople.reloadData()
+        colPlace.reloadData()
+        colTool.reloadData()
+    }
 }
 
 class myContextDetails: UICollectionViewCell
@@ -290,10 +328,11 @@ class myContextDetails: UICollectionViewCell
     @IBOutlet weak var lblName: UILabel!
     @IBOutlet weak var btnRemove: UIButton!
     
+    var rowID: Int = 0
     var contextType: String = ""
     
     @IBAction func btnRemove(sender: UIButton)
     {
-        
+        NSNotificationCenter.defaultCenter().postNotificationName("NotificationMaintainContextsDeleteContext", object: nil, userInfo:["rowID":rowID, "contextType":contextType])
     }
 }
