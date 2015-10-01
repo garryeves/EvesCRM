@@ -32,7 +32,7 @@ class CloudKitInteraction
     
     func saveContextToCloudKit(inLastSyncDate: NSDate)
     {
-        NSLog("Syncing Contexts")
+//        NSLog("Syncing Contexts")
         for myItem in myDatabaseConnection.getContextsForSync(inLastSyncDate)
         {
             let predicate = NSPredicate(format: "(contextID == \(myItem.contextID as Int)) && (teamID == \(myItem.teamID as Int))") // better be accurate to get only the record you need
@@ -44,6 +44,19 @@ class CloudKitInteraction
                 }
                 else
                 {
+                    // Lets go and get the additional details from the context1_1 table
+                    
+                    let tempContext1_1 = myDatabaseConnection.getContext1_1(myItem.contextID as Int)
+                    
+                    var myPredecessor: Int = 0
+                    var myContextType: String = ""
+                    
+                    if tempContext1_1.count > 0
+                    {
+                        myPredecessor = tempContext1_1[0].predecessor as! Int
+                        myContextType = tempContext1_1[0].contextType!
+                    }
+                    
                     if records!.count > 0
                     {
                         let record = records!.first// as! CKRecord
@@ -57,6 +70,8 @@ class CloudKitInteraction
                         record!.setValue(myItem.status, forKey: "status")
                         record!.setValue(myItem.updateTime, forKey: "updateTime")
                         record!.setValue(myItem.updateType, forKey: "updateType")
+                        record!.setValue(myPredecessor, forKey: "predecessor")
+                        record!.setValue(myContextType, forKey: "contextType")
                         
                         // Save this record again
                         self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
@@ -86,7 +101,8 @@ class CloudKitInteraction
                         record.setValue(myItem.teamID, forKey: "teamID")
                         record.setValue(myItem.updateTime, forKey: "updateTime")
                         record.setValue(myItem.updateType, forKey: "updateType")
-
+                        record.setValue(myPredecessor, forKey: "predecessor")
+                        record.setValue(myContextType, forKey: "contextType")
                         
                         self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
@@ -105,12 +121,12 @@ class CloudKitInteraction
                 }
             })
             
-            sleep(1)
+//            sleep(1)
         }
         
         for myItem in myDatabaseConnection.getContexts1_1ForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(contextID == \(myItem.contextID as Int))") // better be accurate to get only the record you need
+            let predicate = NSPredicate(format: "(contextID == \(myItem.contextID as! Int))") // better be accurate to get only the record you need
             let query = CKQuery(recordType: "Context", predicate: predicate)
             privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -125,6 +141,7 @@ class CloudKitInteraction
                         // Now you have grabbed your existing record from iCloud
                         // Apply whatever changes you want
                         record!.setValue(myItem.predecessor, forKey: "predecessor")
+                        record!.setValue(myItem.contextType, forKey: "contextType")
                         record!.setValue(myItem.updateTime, forKey: "updateTime")
                         record!.setValue(myItem.updateType, forKey: "updateType")
                         
@@ -146,13 +163,13 @@ class CloudKitInteraction
                 }
             })
             
-            sleep(1)
+//            sleep(1)
         }
     }
 
     func saveDecodesToCloudKit(inLastSyncDate: NSDate)
     {
-        NSLog("Syncing Decodes")
+//        NSLog("Syncing Decodes")
         for myItem in myDatabaseConnection.getDecodesForSync(inLastSyncDate)
         {
             let predicate = NSPredicate(format: "(decode_name == \"\(myItem.decode_name)\")") // better be accurate to get only the record you need
@@ -215,13 +232,13 @@ class CloudKitInteraction
                 }
             })
 
-            sleep(1)
+//            sleep(1)
         }
     }
 
     func saveGTDItemToCloudKit(inLastSyncDate: NSDate)
     {
-        NSLog("Syncing GTDItem")
+//        NSLog("Syncing GTDItem")
         for myItem in myDatabaseConnection.getGTDItemsForSync(inLastSyncDate)
         {
             let predicate = NSPredicate(format: "(gTDItemID == \(myItem.gTDItemID as! Int)) && (teamID == \(myItem.teamID as! Int))")
@@ -300,13 +317,13 @@ class CloudKitInteraction
                 }
             })
             
-            sleep(1)
+//            sleep(1)
         }
     }
     
     func saveGTDLevelToCloudKit(inLastSyncDate: NSDate)
     {
-        NSLog("Syncing GTDLevel")
+//        NSLog("Syncing GTDLevel")
         for myItem in myDatabaseConnection.getGTDLevelsForSync(inLastSyncDate)
         {
             let predicate = NSPredicate(format: "(gTDLevel == \(myItem.gTDLevel as! Int)) && (teamID == \(myItem.teamID as! Int))") // better be accurate to get only the record you need
@@ -368,13 +385,13 @@ class CloudKitInteraction
                 }
             })
             
-            sleep(1)
+//            sleep(1)
         }
     }
 
     func saveMeetingAgendaToCloudKit(inLastSyncDate: NSDate)
     {
-        NSLog("Syncing Meeting Agenda")
+//        NSLog("Syncing Meeting Agenda")
         for myItem in myDatabaseConnection.getMeetingAgendasForSync(inLastSyncDate)
         {
             let predicate = NSPredicate(format: "(meetingID == \"\(myItem.meetingID)\") && (teamID == \(myItem.teamID as Int))") // better be accurate to get only the record you need
@@ -450,13 +467,13 @@ class CloudKitInteraction
                 }
             })
             
-            sleep(1)
+//            sleep(1)
         }
     }
     
     func saveMeetingAgendaItemToCloudKit(inLastSyncDate: NSDate)
     {
-        NSLog("Syncing meetingAgendaItems")
+//        NSLog("Syncing meetingAgendaItems")
         for myItem in myDatabaseConnection.getMeetingAgendaItemsForSync(inLastSyncDate)
         {
             let predicate = NSPredicate(format: "(meetingID == \"\(myItem.meetingID)\") && (agendaID == \(myItem.agendaID as Int))") // better be accurate to get only the record you need
@@ -532,13 +549,13 @@ class CloudKitInteraction
                 }
             })
             
-            sleep(1)
+//            sleep(1)
         }
     }
     
     func saveMeetingAttendeesToCloudKit(inLastSyncDate: NSDate)
     {
-        NSLog("Syncing MeetingAttendees")
+//        NSLog("Syncing MeetingAttendees")
         for myItem in myDatabaseConnection.getMeetingAttendeesForSync(inLastSyncDate)
         {
             let predicate = NSPredicate(format: "(meetingID == \"\(myItem.meetingID)\") && (name = \"\(myItem.name)\")") // better be accurate to get only the record you need
@@ -604,13 +621,13 @@ class CloudKitInteraction
                 }
             })
             
-            sleep(1)
+//            sleep(1)
         }
     }
     
     func saveMeetingSupportingDocsToCloudKit(inLastSyncDate: NSDate)
     {
-        NSLog("Syncing MeetingSupportingDocs")
+//        NSLog("Syncing MeetingSupportingDocs")
         for myItem in myDatabaseConnection.getMeetingSupportingDocsForSync(inLastSyncDate)
         {
             let predicate = NSPredicate(format: "(meetingID == \"\(myItem.meetingID)\") && (agendaID == \(myItem.agendaID as Int))") // better be accurate to get only the
@@ -674,13 +691,13 @@ class CloudKitInteraction
                 }
             })
             
-            sleep(1)
+//            sleep(1)
         }
     }
     
     func saveMeetingTasksToCloudKit(inLastSyncDate: NSDate)
     {
-        NSLog("Syncing MeetingTasks")
+//        NSLog("Syncing MeetingTasks")
         for myItem in myDatabaseConnection.getMeetingTasksForSync(inLastSyncDate)
         {
             let predicate = NSPredicate(format: "(meetingID == \"\(myItem.meetingID)\") && (agendaID == \(myItem.agendaID as Int)) && (taskID == \(myItem.taskID as Int))") // better be accurate to get only the
@@ -743,13 +760,13 @@ class CloudKitInteraction
                 }
             })
             
-            sleep(1)
+//            sleep(1)
         }
     }
     
     func savePanesToCloudKit(inLastSyncDate: NSDate)
     {
-        NSLog("Syncing Panes")
+//        NSLog("Syncing Panes")
         for myItem in myDatabaseConnection.getPanesForSync(inLastSyncDate)
         {
             let predicate = NSPredicate(format: "(pane_name == \"\(myItem.pane_name)\")") // better be accurate to get only the record you need
@@ -814,13 +831,13 @@ class CloudKitInteraction
                 }
             })
             
-            sleep(1)
+//            sleep(1)
         }
     }
     
     func saveProjectsToCloudKit(inLastSyncDate: NSDate)
     {
-        NSLog("Syncing Projects")
+//        NSLog("Syncing Projects")
         for myItem in myDatabaseConnection.getProjectsForSync(inLastSyncDate)
         {
             let predicate = NSPredicate(format: "(projectID == \(myItem.projectID as Int))") // better be accurate to get only the record you need
@@ -832,6 +849,22 @@ class CloudKitInteraction
                 }
                 else
                 {
+                    
+                    // First need to get additional info from other table
+                    
+                    let tempProjectNote = myDatabaseConnection.getProjectNote(myItem.projectID as Int)
+                    
+                    var myNote: String = ""
+                    var myReviewPeriod: String = ""
+                    var myPredecessor: Int = 0
+                    
+                    if tempProjectNote.count > 0
+                    {
+                        myNote = tempProjectNote[0].note
+                        myReviewPeriod = tempProjectNote[0].reviewPeriod
+                        myPredecessor = tempProjectNote[0].predecessor as Int
+                    }
+                    
                     if records!.count > 0
                     {
                         let record = records!.first// as! CKRecord
@@ -850,6 +883,9 @@ class CloudKitInteraction
                         record!.setValue(myItem.repeatType, forKey: "repeatType")
                         record!.setValue(myItem.reviewFrequency, forKey: "reviewFrequency")
                         record!.setValue(myItem.teamID, forKey: "teamID")
+                        record!.setValue(myNote, forKey: "note")
+                        record!.setValue(myReviewPeriod, forKey: "reviewPeriod")
+                        record!.setValue(myPredecessor, forKey: "predecessor")
                         
                         // Save this record again
                         self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
@@ -883,6 +919,9 @@ class CloudKitInteraction
                         record.setValue(myItem.repeatType, forKey: "repeatType")
                         record.setValue(myItem.reviewFrequency, forKey: "reviewFrequency")
                         record.setValue(myItem.teamID, forKey: "teamID")
+                        record.setValue(myNote, forKey: "note")
+                        record.setValue(myReviewPeriod, forKey: "reviewPeriod")
+                        record.setValue(myPredecessor, forKey: "predecessor")
                         
                         self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
@@ -901,7 +940,7 @@ class CloudKitInteraction
                 }
             })
             
-            sleep(1)
+//            sleep(1)
         }
         
         for myItem in myDatabaseConnection.getProjectNotesForSync(inLastSyncDate)
@@ -944,13 +983,13 @@ class CloudKitInteraction
                 }
             })
             
-            sleep(1)
+//            sleep(1)
         }
     }
     
     func saveProjectTeamMembersToCloudKit(inLastSyncDate: NSDate)
     {
-        NSLog("Syncing ProjectTeamMembers")
+//        NSLog("Syncing ProjectTeamMembers")
         for myItem in myDatabaseConnection.getProjectTeamMembersForSync(inLastSyncDate)
         {
             let predicate = NSPredicate(format: "(projectID == \(myItem.projectID as Int)) && (teamMember == \"\(myItem.teamMember)\")") // better be accurate to get only the record you need
@@ -1014,13 +1053,13 @@ class CloudKitInteraction
                 }
             })
             
-            sleep(1)
+//            sleep(1)
         }
     }
     
     func saveRolesToCloudKit(inLastSyncDate: NSDate)
     {
-        NSLog("Syncing Roles")
+//        NSLog("Syncing Roles")
         for myItem in myDatabaseConnection.getRolesForSync(inLastSyncDate)
         {
             let predicate = NSPredicate(format: "(roleID == \(myItem.roleID as Int)) && (teamID == \(myItem.teamID as Int))") // better be accurate to get only the record you need
@@ -1082,13 +1121,13 @@ class CloudKitInteraction
                 }
             })
             
-            sleep(1)
+//            sleep(1)
         }
     }
     
     func saveStagesToCloudKit(inLastSyncDate: NSDate)
     {
-        NSLog("Syncing Stages")
+//        NSLog("Syncing Stages")
         for myItem in myDatabaseConnection.getStagesForSync(inLastSyncDate)
         {
             let predicate = NSPredicate(format: "(stageDescription == \"\(myItem.stageDescription)\") && (teamID == \(myItem.teamID as Int))") // better be accurate to get only the record you need
@@ -1148,13 +1187,13 @@ class CloudKitInteraction
                 }
             })
             
-            sleep(1)
+//            sleep(1)
         }
     }
     
     func saveTaskToCloudKit(inLastSyncDate: NSDate)
     {
-        NSLog("Syncing Task")
+//        NSLog("Syncing Task")
         for myItem in myDatabaseConnection.getTaskForSync(inLastSyncDate)
         {
             let predicate = NSPredicate(format: "(taskID == \(myItem.taskID as Int))") // better be accurate to get only the record you need
@@ -1247,13 +1286,13 @@ class CloudKitInteraction
                 }
             })
             
-            sleep(1)
+//            sleep(1)
         }
     }
     
     func saveTaskAttachmentToCloudKit(inLastSyncDate: NSDate)
     {
-        NSLog("Syncing taskAttachments")
+ //       NSLog("Syncing taskAttachments")
         for myItem in myDatabaseConnection.getTaskAttachmentsForSync(inLastSyncDate)
         {
             let predicate = NSPredicate(format: "(taskID == \(myItem.taskID as Int)) && (title == \"\(myItem.title)\")") // better be accurate to get only the record you need
@@ -1316,13 +1355,13 @@ class CloudKitInteraction
                 }
             })
             
-            sleep(1)
+//            sleep(1)
         }
     }
     
     func saveTaskContextToCloudKit(inLastSyncDate: NSDate)
     {
-        NSLog("Syncing TaskContext")
+//        NSLog("Syncing TaskContext")
         for myItem in myDatabaseConnection.getTaskContextsForSync(inLastSyncDate)
         {
             let predicate = NSPredicate(format: "(taskID == \(myItem.taskID as Int)) && (contextID == \(myItem.contextID as Int))") // better be accurate to get only the record you need
@@ -1383,13 +1422,13 @@ class CloudKitInteraction
                 }
             })
             
-            sleep(1)
+//            sleep(1)
         }
     }
     
     func saveTaskPredecessorToCloudKit(inLastSyncDate: NSDate)
     {
-        NSLog("Syncing TaskPredecessor")
+//        NSLog("Syncing TaskPredecessor")
         for myItem in myDatabaseConnection.getTaskPredecessorsForSync(inLastSyncDate)
         {
             let predicate = NSPredicate(format: "(taskID == \(myItem.taskID as Int)) && (predecessorID == \(myItem.predecessorID as Int))") // better be accurate to get only the record you need
@@ -1451,13 +1490,13 @@ class CloudKitInteraction
                 }
             })
             
-            sleep(1)
+//            sleep(1)
         }
     }
     
     func saveTaskUpdatesToCloudKit(inLastSyncDate: NSDate)
     {
-        NSLog("Syncing TaskUpdates")
+//        NSLog("Syncing TaskUpdates")
         for myItem in myDatabaseConnection.getTaskUpdatesForSync(inLastSyncDate)
         {
             let predicate = NSPredicate(format: "(taskID == \(myItem.taskID as Int)) && (updateDate == %@)", myItem.updateDate) // better be accurate to get only the record you need
@@ -1521,13 +1560,13 @@ class CloudKitInteraction
                 }
             })
             
-            sleep(1)
+//            sleep(1)
         }
     }
     
     func saveTeamToCloudKit(inLastSyncDate: NSDate)
     {
-        NSLog("Syncing Team")
+//        NSLog("Syncing Team")
         for myItem in myDatabaseConnection.getTeamsForSync(inLastSyncDate)
         {
             let predicate = NSPredicate(format: "(teamID == \(myItem.teamID as Int))") // better be accurate to get only the record you need
@@ -1599,13 +1638,13 @@ class CloudKitInteraction
                 }
             })
             
-            sleep(1)
+//            sleep(1)
         }
     }
     
     func saveProcessedEmailsToCloudKit(inLastSyncDate: NSDate)
     {
-        NSLog("Syncing ProcessedEmails")
+//        NSLog("Syncing ProcessedEmails")
         for myItem in myDatabaseConnection.getProcessedEmailsForSync(inLastSyncDate)
         {
             let predicate = NSPredicate(format: "(emailID == \"\(myItem.emailID!)\")") // better be accurate to get only the record you need
@@ -1668,7 +1707,7 @@ class CloudKitInteraction
                 }
             })
             
-            sleep(1)
+//            sleep(1)
         }
     }
 
@@ -1691,6 +1730,8 @@ class CloudKitInteraction
                 let personID = record.objectForKey("personID") as! Int
                 let status = record.objectForKey("status") as! String
                 let teamID = record.objectForKey("teamID") as! Int
+                let contextType = record.objectForKey("contextType") as! String
+                
                 
                 if record.objectForKey("predecessor") != nil
                 {
@@ -1702,7 +1743,7 @@ class CloudKitInteraction
                 myDatabaseConnection.saveContext(contextID, inName: name, inEmail: email, inAutoEmail: autoEmail, inParentContext: parentContext, inStatus: status, inPersonID: personID, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
                 
                 
-                myDatabaseConnection.saveContext1_1(contextID, inPredecessor: predecessor, inUpdateTime: updateTime, inUpdateType: updateType)
+                myDatabaseConnection.saveContext1_1(contextID, predecessor: predecessor, contextType: contextType, updateTime: updateTime, updateType: updateType)
                 
             }
             dispatch_semaphore_signal(sem)
@@ -1724,9 +1765,9 @@ class CloudKitInteraction
                 let decodeType = record.objectForKey("decodeType") as! String
                 let updateTime = record.objectForKey("updateTime") as! NSDate
                 let updateType = record.objectForKey("updateType") as! String
-NSLog("sending \(decodeName)")
+
                 myDatabaseConnection.updateDecodeValue(decodeName, inCodeValue: decodeValue, inCodeType: decodeType, inUpdateTime: updateTime, inUpdateType: updateType)
-NSLog("returned \(decodeName)")
+
             }
             dispatch_semaphore_signal(sem)
         })
@@ -2686,6 +2727,8 @@ NSLog("returned \(decodeName)")
                 let personID = record.objectForKey("personID") as! Int
                 let status = record.objectForKey("status") as! String
                 let teamID = record.objectForKey("teamID") as! Int
+                let contextType = record.objectForKey("contextType") as! String
+                
                 
                 if record.objectForKey("predecessor") != nil
                 {
@@ -2697,7 +2740,7 @@ NSLog("returned \(decodeName)")
                 myDatabaseConnection.replaceContext(contextID, inName: name, inEmail: email, inAutoEmail: autoEmail, inParentContext: parentContext, inStatus: status, inPersonID: personID, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
                 
                 
-                myDatabaseConnection.replaceContext1_1(contextID, inPredecessor: predecessor, inUpdateTime: updateTime, inUpdateType: updateType)
+                myDatabaseConnection.replaceContext1_1(contextID, predecessor: predecessor, contextType: contextType, updateTime: updateTime, updateType: updateType)
                 
             }
             dispatch_semaphore_signal(sem)

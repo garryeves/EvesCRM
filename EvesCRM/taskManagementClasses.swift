@@ -2080,19 +2080,53 @@ class task: NSObject
 class contexts: NSObject
 {
     private var myContexts:[context] = Array()
+    private var myPeopleContexts:[context] = Array()
+    private var myPlaceContexts:[context] = Array()
+    private var myToolContexts:[context] = Array()
     
     override init()
     {
-        let myData = myDatabaseConnection.getContexts(myCurrentTeam.teamID)
-        
-        for myItem in myData
+        for myItem in myDatabaseConnection.getContextsForType("Person")
         {
-            let myContext = context(inContext: myItem)
-            myContexts.append(myContext)
+            let myContext = context(contextID: myItem.contextID as! Int)
+            if myContext.status != "Archived" && myContext.status != "Deleted"
+            {
+                myPeopleContexts.append(myContext)
+                myContexts.append(myContext)
+            }
         }
+        
+        myPeopleContexts.sortInPlace { $0.name < $1.name }
+        
+        for myItem in myDatabaseConnection.getContextsForType("Place")
+        {
+            let myContext = context(contextID: myItem.contextID as! Int)
+            if myContext.status != "Archived" && myContext.status != "Deleted"
+            {
+                myPlaceContexts.append(myContext)
+                myContexts.append(myContext)
+            }
+        }
+        
+        myPlaceContexts.sortInPlace { $0.name < $1.name }
+        
+        for myItem in myDatabaseConnection.getContextsForType("Tool")
+        {
+            let myContext = context(contextID: myItem.contextID as! Int)
+            if myContext.status != "Archived" && myContext.status != "Deleted"
+            {
+                myToolContexts.append(myContext)
+                myContexts.append(myContext)
+            }
+        }
+        
+        myToolContexts.sortInPlace { $0.name < $1.name }
+        
+        myContexts.sortInPlace { $0.name < $1.name }
     }
     
-    var contexts: [context]
+
+    var allContexts: [context]
     {
         get
         {
@@ -2100,7 +2134,35 @@ class contexts: NSObject
         }
     }
 
-    var contextsByHierarchy: [context]
+    var people: [context]
+    {
+        get
+        {
+            return myPeopleContexts
+        }
+    }
+
+    
+    var places: [context]
+    {
+        get
+        {
+            return myPlaceContexts
+        }
+    }
+
+    
+    var tools: [context]
+    {
+        get
+        {
+            return myToolContexts
+        }
+    }
+
+    
+    /*
+   var contextsByHierarchy: [context]
     {
         get
         {
@@ -2153,6 +2215,7 @@ class contexts: NSObject
             return workingArray
         }
     }
+   */
 }
 
 class context: NSObject
@@ -2166,6 +2229,7 @@ class context: NSObject
     private var myPersonID: Int = 0
     private var myTeamID: Int = 0
     private var myPredecessor: Int = 0
+    private var myContextType: String = ""
     
     var contextID: Int
     {
@@ -2184,6 +2248,19 @@ class context: NSObject
         set
         {
             myName = newValue
+            save()
+        }
+    }
+    
+    var contextType: String
+    {
+        get
+        {
+            return myContextType
+        }
+        set
+        {
+            myContextType = newValue
             save()
         }
     }
@@ -2326,7 +2403,7 @@ class context: NSObject
     init(inContextName: String)
     {
         super.init()
-        var matchFound: Bool = false
+ //       var matchFound: Bool = false
         
         let myContextList = contexts()
         
@@ -2334,7 +2411,7 @@ class context: NSObject
         
         let strippedContext = removeWhitespace(inContextName)
         
-        for myContext in myContextList.contexts
+        for myContext in myContextList.allContexts
         {
             if myContext.name.lowercaseString == strippedContext.lowercaseString
             {
@@ -2348,8 +2425,9 @@ class context: NSObject
                 myStatus = myContext.status
                 myPersonID = myContext.personID
                 myTeamID = myContext.teamID
+                myContextType = myContext.contextType
 
-                matchFound = true
+ //               matchFound = true
                 
                 getContext1_1()
                 
@@ -2357,6 +2435,7 @@ class context: NSObject
             }
         }
         
+/*
         // if no match then create context
         
         if !matchFound
@@ -2392,6 +2471,7 @@ class context: NSObject
             }
             save()
         }
+*/
     }
     
     init(contextID: Int)
@@ -2444,7 +2524,7 @@ class context: NSObject
         {
             for myItem in myNotes
             {
-                myPredecessor = myItem.predecessor as Int
+                myPredecessor = myItem.predecessor as! Int
             }
         }
 
@@ -2453,6 +2533,8 @@ class context: NSObject
     func save()
     {
         myDatabaseConnection.saveContext(myContextID, inName: myName, inEmail: myEmail, inAutoEmail: myAutoEmail, inParentContext: myParentContext, inStatus: myStatus, inPersonID: myPersonID, inTeamID: myTeamID)
+        
+        myDatabaseConnection.saveContext1_1(myContextID, predecessor: myPredecessor, contextType: myContextType)
     }
     
     func delete() -> Bool

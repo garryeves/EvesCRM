@@ -17,7 +17,7 @@ import Accounts
 //import "ENSDK/Headers/ENSDK.h"
 
 // PeoplePicker code
-class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate, MyMeetingsDelegate, SideBarDelegate, MyMaintainPanesDelegate, UIPopoverPresentationControllerDelegate, MyGTDInboxDelegate
+class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate, MyMeetingsDelegate, SideBarDelegate, MyMaintainPanesDelegate, UIPopoverPresentationControllerDelegate, MyGTDInboxDelegate, MyMaintainContextsDelegate
 {
     
     @IBOutlet weak var TableTypeSelection1: UIPickerView!
@@ -1426,6 +1426,11 @@ println("facebook ID = \(myFacebookID)")
     {
         controller.dismissViewControllerAnimated(true, completion: nil)
     }
+    
+    func myMaintainContextsDidFinish(controller:MaintainContextsViewController)
+    {
+        controller.dismissViewControllerAnimated(true, completion: nil)
+    }
 
     func setAddButtonState(inTable: Int)
     {
@@ -2727,6 +2732,13 @@ print("Nothing found")
                         print("sideBarDidSelectButtonAtIndex - Action selector: Hit default")
                     
                 }
+            
+                case "MaintainContexts":
+                    let maintainContextViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("maintainContexts") as! MaintainContextsViewController
+                    
+                    maintainContextViewControl.delegate = self
+                    
+                    self.presentViewController(maintainContextViewControl, animated: true, completion: nil)
             
             default:
                 print("sideBarDidSelectButtonAtIndex: Hit default")

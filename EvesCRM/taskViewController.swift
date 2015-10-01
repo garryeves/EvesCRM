@@ -373,6 +373,12 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
             
             pickerOptions.append("")
             
+            for myContext in myContextList.allContexts
+            {
+                pickerOptions.append(myContext.contextHierarchy)
+            }
+            /*  Need to look at this as this needs to provide a better way of select contexts for the task
+            
             if passedTaskType == "minutes"
             { // a meeting task
                 // First need to loop through the meetings attendees
@@ -392,19 +398,19 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
                         pickerOptions.append(myAttendee.name)
                     }
                 }
-                for myContext in myContextList.contextsByHierarchy
+                for myContext in myContextList.people
                 {
                     pickerOptions.append(myContext.contextHierarchy)
                 }
             }
             else
             { // Not a meeting task
-                for myContext in myContextList.contextsByHierarchy
+                for myContext in myContextList.people
                 {
                     pickerOptions.append(myContext.contextHierarchy)
                 }
             }
-
+*/
             hideFields()
             
             if pickerOptions.count > 0

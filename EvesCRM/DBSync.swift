@@ -298,7 +298,7 @@ class DBSync: NSObject
     
     func progressMessage(displayString: String)
     {
-        NSLog(displayString)
+//        NSLog(displayString)
         
 //        let selectedDictionary = ["displayMessage" : displayString]
         

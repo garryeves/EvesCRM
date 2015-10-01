@@ -1211,3 +1211,18 @@ func calculateDateForWeekDay(inStartDate: NSDate, dayToFind: Int) -> NSDate
     
     return returnDate
 }
+
+extension String
+{
+    var html2String:String {
+        do
+        {
+            return try NSAttributedString(data: dataUsingEncoding(NSUTF8StringEncoding)!, options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute:NSUTF8StringEncoding], documentAttributes: nil).string
+        }
+        catch let error as NSError
+        {
+            NSLog("Warning: failed to create plain text \(error)")
+            return ""
+        }
+    }
+}

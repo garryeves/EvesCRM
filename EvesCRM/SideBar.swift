@@ -121,7 +121,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
 
         headerArray.append(peopleObject)
         
-        for myContext in myContextList.peopleContextsByHierarchy
+        for myContext in myContextList.people
         {
             let displayObject = createMenuItem(myContext.contextHierarchy, inType: "People", inObject: myContext)
             peopleObject.section = peopleObject.childSection
@@ -129,10 +129,15 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
             peopleArray.append(displayObject)
         }
 
-        let addressObject = createMenuItem("Address Book", inType: "People", inObject: "Address Book")
-        addressObject.section = peopleObject.childSection
+ //       let addressObject = createMenuItem("Address Book", inType: "People", inObject: "Address Book")
+ //       addressObject.section = peopleObject.childSection
 
-        peopleArray.append(addressObject)
+ //       peopleArray.append(addressObject)
+
+        let contextMaintenceObject1 = createMenuItem("Maintain People", inType: "MaintainContexts", inObject: "Contexts")
+        contextMaintenceObject1.section = peopleObject.childSection
+        
+        peopleArray.append(contextMaintenceObject1)
         
         let peopleEntry = menuEntry(menuType: peopleObject.childSection, menuEntries: peopleArray)
         fullArray.append(peopleEntry)
@@ -145,13 +150,18 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
 
         headerArray.append(placeObject)
         
-        for myContext in myContextList.nonPeopleContextsByHierarchy
+        for myContext in myContextList.places
         {
             let displayObject = createMenuItem(myContext.contextHierarchy, inType: "Place", inObject: myContext)
             displayObject.section = placeObject.childSection
 
             placeArray.append(displayObject)
         }
+        
+        let contextMaintenceObject2 = createMenuItem("Maintain Places", inType: "MaintainContexts", inObject: "Contexts")
+        contextMaintenceObject2.section = placeObject.childSection
+        
+        placeArray.append(contextMaintenceObject2)
         
         let placeEntry = menuEntry(menuType: placeObject.childSection, menuEntries: placeArray)
         fullArray.append(placeEntry)
@@ -161,14 +171,19 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate {
         toolObject.section = "Header"
         toolObject.childSection = "Tool"
         
-        for myContext in myContextList.nonPeopleContextsByHierarchy
+        for myContext in myContextList.tools
         {
             let displayObject = createMenuItem(myContext.contextHierarchy, inType: "Tool", inObject: myContext)
             displayObject.section = toolObject.childSection
             
             toolArray.append(displayObject)
         }
-
+        
+        let contextMaintenceObject3 = createMenuItem("Maintain Tools", inType: "MaintainContexts", inObject: "Contexts")
+        contextMaintenceObject3.section = toolObject.childSection
+        
+        toolArray.append(contextMaintenceObject3)
+        
         headerArray.append(toolObject)
 
         let toolEntry = menuEntry(menuType: toolObject.childSection, menuEntries: toolArray)

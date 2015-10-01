@@ -3154,6 +3154,7 @@ class coreDatabase: NSObject
             if inUpdateType == "CODE"
             {
                 myContext.updateTime = NSDate()
+
                 myContext.updateType = "Add"
             }
             else
@@ -3354,6 +3355,23 @@ class coreDatabase: NSObject
         return fetchResults!
     }
 
+    func getContextsForType(contextType: String)->[Context1_1]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Context1_1")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(contextType == \"\(contextType)\") && (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Context1_1]
+        
+        return fetchResults!
+    }
+    
     func getContextByName(inContextName: String, inTeamID: Int)->[Context]
     {
         let fetchRequest = NSFetchRequest(entityName: "Context")
@@ -7689,33 +7707,36 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         updateDecodeValue("Task", inCodeValue: tempInt, inCodeType: "hidden")
     }
 
-    func saveContext1_1(inContextID: Int, inPredecessor: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func saveContext1_1(contextID: Int, predecessor: Int, contextType: String, updateTime: NSDate = NSDate(), updateType: String = "CODE")
     {
         var myContext: Context1_1!
         
-        let myContexts = getContext1_1(inContextID)
+        let myContexts = getContext1_1(contextID)
         
         if myContexts.count == 0
         { // Add
             myContext = NSEntityDescription.insertNewObjectForEntityForName("Context1_1", inManagedObjectContext: self.managedObjectContext!) as! Context1_1
-            myContext.contextID = inContextID
-            myContext.predecessor = inPredecessor
-            if inUpdateType == "CODE"
+            myContext.contextID = contextID
+            myContext.predecessor = predecessor
+            myContext.contextType = contextType
+            if updateType == "CODE"
             {
                 myContext.updateTime = NSDate()
                 myContext.updateType = "Add"
+
             }
             else
             {
-                myContext.updateTime = inUpdateTime
-                myContext.updateType = inUpdateType
+                myContext.updateTime = updateTime
+                myContext.updateType = updateType
             }
         }
         else
         {
             myContext = myContexts[0]
-            myContext.predecessor = inPredecessor
-            if inUpdateType == "CODE"
+            myContext.predecessor = predecessor
+            myContext.contextType = contextType
+            if updateType == "CODE"
             {
                 myContext.updateTime = NSDate()
                 if myContext.updateType != "Add"
@@ -7725,8 +7746,8 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
             else
             {
-                myContext.updateTime = inUpdateTime
-                myContext.updateType = inUpdateType
+                myContext.updateTime = updateTime
+                myContext.updateType = updateType
             }
         }
         
@@ -7756,22 +7777,23 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         //       }
     }
     
-    func replaceContext1_1(inContextID: Int, inPredecessor: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func replaceContext1_1(contextID: Int, predecessor: Int, contextType: String, updateTime: NSDate = NSDate(), updateType: String = "CODE")
     {
         managedObjectContext!.performBlock
             {
         let myContext = NSEntityDescription.insertNewObjectForEntityForName("Context1_1", inManagedObjectContext: self.managedObjectContext!) as! Context1_1
-        myContext.contextID = inContextID
-        myContext.predecessor = inPredecessor
-        if inUpdateType == "CODE"
+        myContext.contextID = contextID
+        myContext.predecessor = predecessor
+        myContext.contextType = contextType
+        if updateType == "CODE"
         {
             myContext.updateTime = NSDate()
             myContext.updateType = "Add"
         }
         else
         {
-            myContext.updateTime = inUpdateTime
-            myContext.updateType = inUpdateType
+            myContext.updateTime = updateTime
+            myContext.updateType = updateType
         }
 
                 do
@@ -7928,7 +7950,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
     func getContextsForSync(inLastSyncDate: NSDate) -> [Context]
     {
         let fetchRequest = NSFetchRequest(entityName: "Context")
-        
+
         let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
         
         // Set the predicate on the fetch request
@@ -7943,7 +7965,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
     func getContexts1_1ForSync(inLastSyncDate: NSDate) -> [Context1_1]
     {
         let fetchRequest = NSFetchRequest(entityName: "Context1_1")
-        
+     
         let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
         
         // Set the predicate on the fetch request

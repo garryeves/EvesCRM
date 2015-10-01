@@ -11,9 +11,4 @@ import CoreData
 
 class Context1_1: NSManagedObject {
 
-    @NSManaged var contextID: NSNumber
-    @NSManaged var predecessor: NSNumber
-    @NSManaged var updateTime: NSDate
-    @NSManaged var updateType: String
-
 }

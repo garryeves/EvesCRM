@@ -20,6 +20,7 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
     @IBOutlet weak var colGTDInbox: UICollectionView!
     @IBOutlet weak var btnEmail: UIButton!
     @IBOutlet weak var colEmailInbox: UICollectionView!
+    @IBOutlet weak var myPicker: UIPickerView!
     
     private var myTaskList: [task] = Array()
     
@@ -31,6 +32,8 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
     private var myGmailEmails: [gmailMessage] = Array()
     private var gmailDisplayMessage: String = ""
     
+    private var myPickerOptions = ["Select Email Inbox", "GMail Inbox"]
+    
     override func viewDidLoad()
     {
         super.viewDidLoad()
@@ -41,20 +44,7 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
         
         loadDataArray()
         
-        myGmailEmails.removeAll()
-        
-        gmailDisplayMessage = "Retrieving GMail messages.  Screen will refresh when done."
-        
-        if myGmailData == nil
-        {
-            myGmailData = gmailData()
-            myGmailData.sourceViewController = self
-            myGmailData.connectToGmail()
-        }
-        else
-        {
-            loadEmailArray()
-        }
+        myPicker.hidden = true
         
         let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
         showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
@@ -90,6 +80,47 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
         {
             delegate?.myGTDInboxDidFinish(self)
         }
+    }
+    
+    func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int
+    {
+        return 1
+    }
+    
+    func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int
+    {
+        return myPickerOptions.count
+    }
+    
+    func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String!
+    {
+        return myPickerOptions[row]
+    }
+    
+    func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int)
+    {
+        btnEmail.setTitle(myPickerOptions[row], forState: .Normal)
+        
+        hidePicker()
+        
+        if myPickerOptions[row] == "GMail Inbox"
+        {
+            myGmailEmails.removeAll()
+            
+            gmailDisplayMessage = "Retrieving GMail messages.  Screen will refresh when done."
+            
+            if myGmailData == nil
+            {
+                myGmailData = gmailData()
+                myGmailData.sourceViewController = self
+                myGmailData.connectToGmail()
+            }
+            else
+            {
+                loadEmailArray()
+            }
+        }
+        
     }
     
     func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
@@ -235,7 +266,10 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
     
     func popoverPresentationControllerDidDismissPopover(popoverPresentationController: UIPopoverPresentationController)
     {
-        myGmailDidFinish()
+        if btnEmail.currentTitle == "GMail Inbox"
+        {
+            myGmailDidFinish()
+        }
     }
 
     func loadDataArray()
@@ -332,7 +366,7 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
     
     @IBAction func btnEmail(sender: UIButton)
     {
-        NSLog("To do once I have multple email accounts available")
+        displayPicker()
     }
     
     func displayTask(notification: NSNotification)
@@ -351,6 +385,22 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
         
         popover!.sourceRect = CGRectMake(0, 0, 700, 700)
         self.presentViewController(popoverContent, animated: true, completion: nil)
+    }
+    
+    func displayPicker()
+    {
+        colGTDInbox.hidden = true
+        btnEmail.hidden = true
+        colEmailInbox.hidden = true
+        myPicker.hidden = false
+    }
+    
+    func hidePicker()
+    {
+        colGTDInbox.hidden = false
+        btnEmail.hidden = false
+        colEmailInbox.hidden = false
+        myPicker.hidden = true
     }
 }
 
@@ -430,18 +480,3 @@ class myEmailInboxItem: UICollectionViewCell
         NSNotificationCenter.defaultCenter().postNotificationName("NotificationGTDInboxDisplayTask", object: nil, userInfo:["task":newTask])
     }
  }
-
-extension String {
-    var html2String:String {
-        do
-        {
-            return try NSAttributedString(data: dataUsingEncoding(NSUTF8StringEncoding)!, options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute:NSUTF8StringEncoding], documentAttributes: nil).string
-        }
-        catch let error as NSError
-        {
-            NSLog("Warning: failed to create plain text \(error)")
-            return ""
-        }
-    }
-}
-
