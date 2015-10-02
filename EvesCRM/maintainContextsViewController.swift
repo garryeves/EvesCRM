@@ -28,11 +28,16 @@ class MaintainContextsViewController: UIViewController, ABPeoplePickerNavigation
     @IBOutlet weak var btnAddTool: UIButton!
     @IBOutlet weak var btnSelectPerson: UIButton!
     
+    @IBOutlet weak var constraintColPeopleHeight: NSLayoutConstraint!
+    
+    
     var delegate: MyMaintainContextsDelegate?
     
     private var peopleArray: [context] = Array()
     private var placeArray: [context] = Array()
     private var toolArray: [context] = Array()
+    
+    private var kbHeight: CGFloat!
     
     override func viewDidLoad()
     {
@@ -60,6 +65,22 @@ class MaintainContextsViewController: UIViewController, ABPeoplePickerNavigation
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    override func viewWillAppear(animated:Bool)
+    {
+        super.viewWillAppear(animated)
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillShow:"), name: UIKeyboardWillShowNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillHide:"), name: UIKeyboardWillHideNotification, object: nil)
+    }
+    
+    override func viewWillDisappear(animated: Bool)
+    {
+        super.viewWillDisappear(animated)
+        
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+    }
+
     
     override func viewWillLayoutSubviews()
     {
@@ -320,6 +341,38 @@ class MaintainContextsViewController: UIViewController, ABPeoplePickerNavigation
         colPeople.reloadData()
         colPlace.reloadData()
         colTool.reloadData()
+    }
+    
+    func keyboardWillShow(notification: NSNotification)
+    {
+        if let userInfo = notification.userInfo {
+            if let keyboardSize =  (userInfo[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
+                kbHeight = keyboardSize.height
+                self.animateTextField(true)
+            }
+        }
+    }
+    
+    func keyboardWillHide(notification: NSNotification)
+    {
+        self.animateTextField(false)
+    }
+    
+    func animateTextField(up: Bool)
+    {
+        let movement = (up ? -kbHeight : kbHeight)
+        
+        UIView.animateWithDuration(0.3, animations: { self.view.frame = CGRectOffset(self.view.frame, 0, movement)
+        })
+            
+        if up
+        {
+            constraintColPeopleHeight.constant = 150
+        }
+        else
+        {
+            constraintColPeopleHeight.constant >= 100
+        }
     }
 }
 

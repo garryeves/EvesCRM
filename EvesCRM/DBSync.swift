@@ -20,7 +20,10 @@ class DBSync: NSObject
     
     func timerSync(timer:NSTimer)
     {
-        sync()
+        dispatch_async(dispatch_get_main_queue())
+        {
+            self.sync()
+        }
     }
     
     func sync()
@@ -85,7 +88,7 @@ class DBSync: NSObject
                     
                     myDatabaseConnection.clearDeletedItems()
                     myDatabaseConnection.clearSyncedItems()
-                    
+
                     NSNotificationCenter.defaultCenter().postNotificationName("NotificationDBSyncCompleted", object: nil)
                 }
 

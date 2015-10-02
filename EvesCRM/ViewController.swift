@@ -43,6 +43,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     @IBOutlet weak var btnCloseWindow: UIButton!
     @IBOutlet weak var myDatePicker: UIDatePicker!
     @IBOutlet weak var btnSetStartDate: UIButton!
+    @IBOutlet weak var btnSendToInbox: UIButton!
     
     
     let CONTACT_CELL_IDENTIFER = "contactNameCell"
@@ -123,6 +124,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
     var myTaskItems: [task] = Array()
     var myWorkingTask: task!
     var myWorkingTable: String = ""
+    var myWorkingGmailMessage: gmailMessage!
     
     // Peoplepicker settings
     
@@ -236,6 +238,8 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "myGmailDidFinish", name:"NotificationGmailDidFinish", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "myHangoutsDidFinish", name:"NotificationHangoutsDidFinish", object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "gmailSignedIn:", name:"NotificationGmailConnected", object: nil)
+        
+        myWebView.hidden = true
         
         sideBar = SideBar()
         
@@ -781,7 +785,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     searchString = personContact.fullName
                 }
                 
-                let myContext = myDatabaseConnection.getContextByName(searchString, inTeamID: myCurrentTeam.teamID)
+                let myContext = myDatabaseConnection.getContextByName(searchString)
                 
                 if myContext.count != 0
                 {
@@ -1110,14 +1114,19 @@ println("facebook ID = \(myFacebookID)")
             hideFields()
             
             myWebView.hidden = false
+            btnSendToInbox.hidden = false
             btnCloseWindow.hidden = false
+            myWorkingGmailMessage = myGmailMessages.messages[rowID]
             myWebView.loadHTMLString(myGmailMessages.messages[rowID].body, baseURL: nil)
   
         case "Hangouts":
             showFields()
             
             myWebView.hidden = false
+            btnSendToInbox.hidden = false
+
             btnCloseWindow.hidden = false
+            myWorkingGmailMessage = myHangoutsMessages.messages[rowID]
             myWebView.loadHTMLString(myHangoutsMessages.messages[rowID].body, baseURL: nil)
         
         case "Tasks":
@@ -2540,6 +2549,7 @@ print("Nothing found")
         showFields()
         
         myWebView.hidden = true
+        btnSendToInbox.hidden = true
         btnCloseWindow.hidden = true
     }
     
@@ -2660,7 +2670,7 @@ print("Nothing found")
                         self.presentViewController(projectViewControl, animated: true, completion: nil)
                     
                     default:
-                        print("sideBarDidSelectButtonAtIndex - Action selector: Hit default")
+                        print("sideBarDidSelectButtonAtIndex Header - Action selector: Hit default")
                 }
 
             
@@ -2678,8 +2688,19 @@ print("Nothing found")
                 }
                 else
                 {
-                    let myPerson: ABRecord! = findPersonRecord(passedItem.displayString) as ABRecord!
-            
+                    let myContext = passedItem.displayObject as! context
+                    
+                    var myPerson: ABRecord!
+                    
+                    if myContext.personID > 0
+                    {
+                        myPerson = findPersonRecordByID(Int32(myContext.personID)) as ABRecord!
+                    }
+                    else
+                    {
+                        myPerson = findPersonRecord(myContext.name) as ABRecord!
+                    }
+                        
                     if myPerson == nil
                     {
                         loadContext(passedItem.displayString)
@@ -2729,19 +2750,27 @@ print("Nothing found")
                         }
                     
                     default:
-                        print("sideBarDidSelectButtonAtIndex - Action selector: Hit default")
+                        print("sideBarDidSelectButtonAtIndex Action - Action selector: Hit default")
                     
                 }
             
-                case "MaintainContexts":
-                    let maintainContextViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("maintainContexts") as! MaintainContextsViewController
+            case "MaintainContexts":
+                let maintainContextViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("maintainContexts") as! MaintainContextsViewController
                     
-                    maintainContextViewControl.delegate = self
+                maintainContextViewControl.delegate = self
                     
-                    self.presentViewController(maintainContextViewControl, animated: true, completion: nil)
-            
+                self.presentViewController(maintainContextViewControl, animated: true, completion: nil)
+
+            case "Place":
+                let myContext = passedItem.displayObject as! context
+                loadContext(myContext.name)
+
+            case "Tool":
+                let myContext = passedItem.displayObject as! context
+                loadContext(myContext.name)
+
             default:
-                print("sideBarDidSelectButtonAtIndex: Hit default")
+                print("sideBarDidSelectButtonAtIndex Main: Hit default")
         }
     }
     
@@ -2799,6 +2828,7 @@ print("Nothing found")
     {
         TableTypeSelection1.hidden = true
         setSelectionButton.hidden = true
+        StartLabel.hidden = true
         
         showFields()
     
@@ -3229,6 +3259,7 @@ print("Nothing found")
         dataTable4.hidden = true
         StartLabel.hidden = true
         btnCloseWindow.hidden = true
+        btnSendToInbox.hidden = true
         myDatePicker.hidden = true
         btnSetStartDate.hidden = true
     }
@@ -3264,5 +3295,27 @@ print("Nothing found")
             default:print("displayTaskOptions: inTable hit default for some reason")
         }
         showFields()
+    }
+    
+    @IBAction func btnSendToInbox(sender: UIButton)
+    {
+        let newTask = task(inTeamID: myCurrentTeam.teamID)
+        newTask.title = myWorkingGmailMessage.subject
+
+        var myBody: String = "From : \(myWorkingGmailMessage.from)"
+        myBody += "\n"
+        myBody += "Date received : \(myWorkingGmailMessage.dateReceived)"
+        myBody += "\n\n\n"
+
+        let plainBody = myWorkingGmailMessage.body.html2String
+        
+        myBody += plainBody
+        
+        newTask.details = myBody
+        
+        myDatabaseConnection.saveProcessedEmail(myWorkingGmailMessage.id, emailType: "GMail", processedDate: NSDate())
+        NSLog("need something here to do the context")
+        
+
     }
 }

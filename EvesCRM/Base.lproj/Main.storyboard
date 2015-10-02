@@ -2534,6 +2534,9 @@
                             <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1rA-Ky-1ww" userLabel="TableTypeButton1">
                                 <rect key="frame" x="20" y="94" width="280" height="30"/>
                                 <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="fwF-eN-1eL"/>
+                                </constraints>
                                 <state key="normal" title="Details"/>
                                 <variation key="heightClass=regular-widthClass=regular">
                                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
@@ -2564,6 +2567,12 @@
                                     <action selector="TableTypeButton1TouchUp:" destination="BYZ-38-t0r" eventType="touchUpInside" id="AhY-3w-ny7"/>
                                 </connections>
                             </button>
+                            <webView contentMode="scaleToFill" allowsInlineMediaPlayback="NO" mediaPlaybackRequiresUserAction="NO" mediaPlaybackAllowsAirPlay="NO" keyboardDisplayRequiresUserAction="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tjh-aI-dOj">
+                                <rect key="frame" x="20" y="72" width="560" height="488"/>
+                                <animations/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <dataDetectorType key="dataDetectorTypes"/>
+                            </webView>
                             <button opaque="NO" tag="4" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9Lp-Uk-wWz" userLabel="TableTypeButton4">
                                 <rect key="frame" x="301" y="348" width="279" height="30"/>
                                 <animations/>
@@ -2587,18 +2596,19 @@
                                 <rect key="frame" x="20" y="125" width="280" height="222"/>
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <webView key="tableFooterView" contentMode="scaleToFill" allowsInlineMediaPlayback="NO" mediaPlaybackRequiresUserAction="NO" mediaPlaybackAllowsAirPlay="NO" keyboardDisplayRequiresUserAction="NO" id="tjh-aI-dOj">
-                                    <rect key="frame" x="0.0" y="0.0" width="280" height="228"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <animations/>
-                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    <dataDetectorType key="dataDetectorTypes"/>
-                                </webView>
                                 <connections>
                                     <outlet property="dataSource" destination="BYZ-38-t0r" id="CcY-zU-g0m"/>
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="nLy-fB-6Lt"/>
                                 </connections>
                             </tableView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vCF-tS-Pby" userLabel="btnSendToInbox">
+                                <rect key="frame" x="120" y="570" width="94" height="30"/>
+                                <animations/>
+                                <state key="normal" title="Create Action"/>
+                                <connections>
+                                    <action selector="btnSendToInbox:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Mzr-jK-zxg"/>
+                                </connections>
+                            </button>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="KIH-Yc-zXC" userLabel="dataTable2">
                                 <rect key="frame" x="301" y="125" width="279" height="222"/>
                                 <animations/>
@@ -2623,6 +2633,14 @@
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="JAc-tg-qDN"/>
                                 </connections>
                             </tableView>
+                            <pickerView hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="i2y-Qo-evu" userLabel="TableType1">
+                                <rect key="frame" x="140" y="192" width="320" height="216"/>
+                                <animations/>
+                                <connections>
+                                    <outlet property="dataSource" destination="BYZ-38-t0r" id="zG8-ja-Knp"/>
+                                    <outlet property="delegate" destination="BYZ-38-t0r" id="jTN-oE-lNS"/>
+                                </connections>
+                            </pickerView>
                             <button opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="contactAdd" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="s21-HU-ZWn" userLabel="buttonAdd2">
                                 <rect key="frame" x="529" y="94" width="46" height="30"/>
                                 <animations/>
@@ -2674,24 +2692,6 @@
                                     <action selector="buttonAddClicked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="56I-5V-h1y"/>
                                 </connections>
                             </button>
-                            <pickerView hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="i2y-Qo-evu" userLabel="TableType1">
-                                <rect key="frame" x="140" y="192" width="320" height="216"/>
-                                <animations/>
-                                <connections>
-                                    <outlet property="dataSource" destination="BYZ-38-t0r" id="zG8-ja-Knp"/>
-                                    <outlet property="delegate" destination="BYZ-38-t0r" id="jTN-oE-lNS"/>
-                                </connections>
-                            </pickerView>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="y5M-gs-vv0">
-                                <rect key="frame" x="255" y="413" width="91" height="30"/>
-                                <animations/>
-                                <state key="normal" title="Set Selection">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="setSelectionButtonTouchUp:" destination="BYZ-38-t0r" eventType="touchUpInside" id="hVL-UD-UWh"/>
-                                </connections>
-                            </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Swipe in from left of screen to select an action" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="02F-h2-Cwf">
                                 <rect key="frame" x="123" y="289" width="354" height="21"/>
                                 <animations/>
@@ -2707,7 +2707,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="d22-ff-RYB">
-                                <rect key="frame" x="250" y="570" width="100" height="30"/>
+                                <rect key="frame" x="380" y="570" width="100" height="30"/>
                                 <animations/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="100" id="IdE-WI-B6d"/>
@@ -2741,6 +2741,14 @@
                                     <action selector="buttonAddClicked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Nln-OF-XlV"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JcO-oe-I2D" userLabel="btnSetStartDate">
+                                <rect key="frame" x="252" y="428" width="97" height="30"/>
+                                <animations/>
+                                <state key="normal" title="Set Start Date"/>
+                                <connections>
+                                    <action selector="btnSetStartDate:" destination="BYZ-38-t0r" eventType="touchUpInside" id="rK8-XH-nTv"/>
+                                </connections>
+                            </button>
                             <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="lqh-S7-pOw" userLabel="myDatePicker">
                                 <rect key="frame" x="140" y="192" width="320" height="216"/>
                                 <animations/>
@@ -2748,12 +2756,14 @@
                                     <!--2015-09-24 03:26:31 +0000-->
                                 </date>
                             </datePicker>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JcO-oe-I2D" userLabel="btnSetStartDate">
-                                <rect key="frame" x="252" y="428" width="97" height="30"/>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="y5M-gs-vv0">
+                                <rect key="frame" x="255" y="418" width="91" height="30"/>
                                 <animations/>
-                                <state key="normal" title="Set Start Date"/>
+                                <state key="normal" title="Set Selection">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
                                 <connections>
-                                    <action selector="btnSetStartDate:" destination="BYZ-38-t0r" eventType="touchUpInside" id="rK8-XH-nTv"/>
+                                    <action selector="setSelectionButtonTouchUp:" destination="BYZ-38-t0r" eventType="touchUpInside" id="hVL-UD-UWh"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -2765,10 +2775,12 @@
                             <constraint firstItem="8aF-OY-HHv" firstAttribute="top" secondItem="1rA-Ky-1ww" secondAttribute="bottom" constant="-30" id="3Fn-LL-QzB">
                                 <variation key="heightClass=regular-widthClass=regular" constant="-30"/>
                             </constraint>
+                            <constraint firstItem="d22-ff-RYB" firstAttribute="top" secondItem="tjh-aI-dOj" secondAttribute="bottom" constant="10" id="3lR-cy-RFf"/>
                             <constraint firstItem="fGn-zY-37L" firstAttribute="height" secondItem="av4-WN-3jk" secondAttribute="height" id="4zX-Bl-cp1"/>
                             <constraint firstItem="9Lp-Uk-wWz" firstAttribute="leading" secondItem="Uc3-uz-tX8" secondAttribute="trailing" constant="1" id="5gZ-GC-XHl">
                                 <variation key="heightClass=regular-widthClass=regular" constant="1"/>
                             </constraint>
+                            <constraint firstItem="vCF-tS-Pby" firstAttribute="top" secondItem="tjh-aI-dOj" secondAttribute="bottom" constant="10" id="8GZ-pr-NCj"/>
                             <constraint firstItem="fGn-zY-37L" firstAttribute="top" secondItem="9Lp-Uk-wWz" secondAttribute="bottom" constant="1" id="8Iz-N0-iff">
                                 <variation key="heightClass=regular-widthClass=regular" constant="1"/>
                             </constraint>
@@ -2780,12 +2792,11 @@
                                 <variation key="heightClass=regular-widthClass=regular" constant="-30"/>
                             </constraint>
                             <constraint firstItem="R9C-8v-x3I" firstAttribute="leading" secondItem="Uc3-uz-tX8" secondAttribute="trailing" constant="-30" id="FjG-iv-gwL"/>
-                            <constraint firstItem="y5M-gs-vv0" firstAttribute="top" secondItem="i2y-Qo-evu" secondAttribute="bottom" constant="5" id="G3u-y8-RDk">
-                                <variation key="heightClass=regular-widthClass=regular" constant="5"/>
-                            </constraint>
+                            <constraint firstItem="y5M-gs-vv0" firstAttribute="top" secondItem="i2y-Qo-evu" secondAttribute="bottom" constant="10" id="Gdf-fw-cYn"/>
                             <constraint firstAttribute="trailingMargin" secondItem="KIH-Yc-zXC" secondAttribute="trailing" id="HcB-MI-ncc">
                                 <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
                             </constraint>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="vCF-tS-Pby" secondAttribute="bottom" id="J53-wt-T6i"/>
                             <constraint firstItem="KIH-Yc-zXC" firstAttribute="width" secondItem="fGn-zY-37L" secondAttribute="width" id="JUN-lI-j0j"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="fGn-zY-37L" secondAttribute="bottom" id="JmL-Fe-WpE">
                                 <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
@@ -2797,8 +2808,7 @@
                             <constraint firstItem="Uc3-uz-tX8" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="KS8-Lc-Zp2">
                                 <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
                             </constraint>
-                            <constraint firstItem="1rA-Ky-1ww" firstAttribute="width" secondItem="9Lp-Uk-wWz" secondAttribute="width" id="LBu-uX-chR"/>
-                            <constraint firstAttribute="centerY" secondItem="i2y-Qo-evu" secondAttribute="centerY" id="OBs-Co-qX8"/>
+                            <constraint firstItem="vCF-tS-Pby" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="100" id="QCY-iE-36J"/>
                             <constraint firstItem="9Lp-Uk-wWz" firstAttribute="trailing" secondItem="vUd-uZ-PH9" secondAttribute="trailing" constant="5" id="Qne-4A-cEz">
                                 <variation key="heightClass=regular-widthClass=regular" constant="5"/>
                             </constraint>
@@ -2806,6 +2816,7 @@
                                 <variation key="heightClass=regular-widthClass=regular" constant="1"/>
                             </constraint>
                             <constraint firstItem="fGn-zY-37L" firstAttribute="leading" secondItem="av4-WN-3jk" secondAttribute="trailing" constant="1" id="QzK-eq-2wm"/>
+                            <constraint firstItem="i2y-Qo-evu" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="RZk-0B-60N"/>
                             <constraint firstItem="KIH-Yc-zXC" firstAttribute="top" secondItem="JyM-kr-GxR" secondAttribute="bottom" constant="1" id="RzD-ym-D8Z">
                                 <variation key="heightClass=regular-widthClass=regular" constant="1"/>
                             </constraint>
@@ -2815,17 +2826,16 @@
                                 <variation key="heightClass=regular-widthClass=regular" constant="1"/>
                             </constraint>
                             <constraint firstItem="Uc3-uz-tX8" firstAttribute="width" secondItem="9Lp-Uk-wWz" secondAttribute="width" id="U0W-4F-BeO"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="tjh-aI-dOj" secondAttribute="trailing" id="V2A-N9-A81"/>
                             <constraint firstAttribute="trailingMargin" secondItem="JyM-kr-GxR" secondAttribute="trailing" id="Y4f-Zj-meo">
                                 <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
                             </constraint>
                             <constraint firstItem="8aF-OY-HHv" firstAttribute="leading" secondItem="1rA-Ky-1ww" secondAttribute="trailing" constant="-30" id="ZAF-7m-ReH">
                                 <variation key="heightClass=regular-widthClass=regular" constant="-30"/>
                             </constraint>
-                            <constraint firstItem="1rA-Ky-1ww" firstAttribute="height" secondItem="9Lp-Uk-wWz" secondAttribute="height" id="Zn2-WN-ftf"/>
+                            <constraint firstItem="KIH-Yc-zXC" firstAttribute="leading" secondItem="1rA-Ky-1ww" secondAttribute="trailing" constant="1" id="Zd6-W7-tC3"/>
                             <constraint firstAttribute="centerX" secondItem="cJS-9W-ulv" secondAttribute="centerX" constant="19" id="a7Q-qk-jbC"/>
-                            <constraint firstAttribute="centerX" secondItem="d22-ff-RYB" secondAttribute="centerX" id="b4q-ZQ-ieM"/>
                             <constraint firstItem="JyM-kr-GxR" firstAttribute="width" secondItem="9Lp-Uk-wWz" secondAttribute="width" id="bTo-Mz-Ybh"/>
-                            <constraint firstAttribute="centerX" secondItem="i2y-Qo-evu" secondAttribute="centerX" id="bq7-lZ-Mkw"/>
                             <constraint firstAttribute="trailingMargin" secondItem="9Lp-Uk-wWz" secondAttribute="trailing" id="c43-TL-s49">
                                 <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
                             </constraint>
@@ -2833,12 +2843,14 @@
                                 <variation key="heightClass=regular-widthClass=regular" constant="1"/>
                             </constraint>
                             <constraint firstItem="JyM-kr-GxR" firstAttribute="trailing" secondItem="s21-HU-ZWn" secondAttribute="trailing" constant="5" id="fYs-D8-VIj"/>
+                            <constraint firstItem="i2y-Qo-evu" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="gbg-dx-3IN"/>
                             <constraint firstItem="cJS-9W-ulv" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="h03-Vz-gAW">
                                 <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
                             </constraint>
                             <constraint firstItem="av4-WN-3jk" firstAttribute="top" secondItem="Uc3-uz-tX8" secondAttribute="bottom" constant="1" id="hr3-19-iib">
                                 <variation key="heightClass=regular-widthClass=regular" constant="1"/>
                             </constraint>
+                            <constraint firstAttribute="trailingMargin" secondItem="d22-ff-RYB" secondAttribute="trailing" constant="100" id="i1J-Ol-Guq"/>
                             <constraint firstItem="lqh-S7-pOw" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="iN2-iZ-ukc"/>
                             <constraint firstItem="1rA-Ky-1ww" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="k50-Hz-2dy">
                                 <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
@@ -2849,15 +2861,14 @@
                             <constraint firstAttribute="trailingMargin" secondItem="fGn-zY-37L" secondAttribute="trailing" id="lWJ-NO-01z">
                                 <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
                             </constraint>
+                            <constraint firstItem="tjh-aI-dOj" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" symbolic="YES" id="m5j-6s-9fv"/>
                             <constraint firstItem="dQ6-lY-5LW" firstAttribute="width" secondItem="fGn-zY-37L" secondAttribute="width" id="mUi-FW-jTF"/>
-                            <constraint firstItem="JyM-kr-GxR" firstAttribute="leading" secondItem="1rA-Ky-1ww" secondAttribute="trailing" constant="1" id="mx7-vy-91K">
-                                <variation key="heightClass=regular-widthClass=regular" constant="1"/>
-                            </constraint>
                             <constraint firstItem="JcO-oe-I2D" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="pGV-co-Loo"/>
                             <constraint firstItem="JyM-kr-GxR" firstAttribute="height" secondItem="9Lp-Uk-wWz" secondAttribute="height" id="puF-EN-rTz"/>
                             <constraint firstItem="9Lp-Uk-wWz" firstAttribute="top" secondItem="vUd-uZ-PH9" secondAttribute="bottom" constant="-30" id="px4-YS-a9l">
                                 <variation key="heightClass=regular-widthClass=regular" constant="-30"/>
                             </constraint>
+                            <constraint firstItem="tjh-aI-dOj" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="rfN-r1-nhz"/>
                             <constraint firstItem="dQ6-lY-5LW" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="sHB-Ru-jVm">
                                 <variation key="heightClass=regular-widthClass=regular" constant="0.0"/>
                             </constraint>
@@ -2882,24 +2893,19 @@
                                 <include reference="s21-HU-ZWn"/>
                                 <include reference="R9C-8v-x3I"/>
                                 <include reference="vUd-uZ-PH9"/>
-                                <include reference="i2y-Qo-evu"/>
-                                <include reference="y5M-gs-vv0"/>
                                 <include reference="02F-h2-Cwf"/>
                                 <include reference="cJS-9W-ulv"/>
                                 <include reference="d22-ff-RYB"/>
                                 <include reference="8aF-OY-HHv"/>
+                                <include reference="y5M-gs-vv0"/>
                             </mask>
                             <mask key="constraints">
-                                <include reference="LBu-uX-chR"/>
-                                <include reference="Zn2-WN-ftf"/>
                                 <include reference="k50-Hz-2dy"/>
                                 <include reference="dD4-Oh-YM3"/>
                                 <include reference="kLh-8G-6B9"/>
                                 <include reference="mUi-FW-jTF"/>
                                 <include reference="sHB-Ru-jVm"/>
                                 <include reference="xa2-4R-fnk"/>
-                                <include reference="OBs-Co-qX8"/>
-                                <include reference="bq7-lZ-Mkw"/>
                                 <include reference="a7Q-qk-jbC"/>
                                 <include reference="h03-Vz-gAW"/>
                                 <include reference="3Fn-LL-QzB"/>
@@ -2909,7 +2915,6 @@
                                 <include reference="Y4f-Zj-meo"/>
                                 <include reference="bTo-Mz-Ybh"/>
                                 <include reference="fYs-D8-VIj"/>
-                                <include reference="mx7-vy-91K"/>
                                 <include reference="puF-EN-rTz"/>
                                 <include reference="HcB-MI-ncc"/>
                                 <include reference="JUN-lI-j0j"/>
@@ -2935,13 +2940,11 @@
                                 <include reference="QzK-eq-2wm"/>
                                 <include reference="k74-du-fEX"/>
                                 <include reference="lWJ-NO-01z"/>
-                                <include reference="G3u-y8-RDk"/>
                                 <include reference="ScC-fx-X2J"/>
                                 <include reference="KNf-SX-Abn"/>
                                 <include reference="2BW-vs-6eH"/>
                                 <include reference="JmL-Fe-WpE"/>
                                 <include reference="taV-nQ-tGd"/>
-                                <include reference="b4q-ZQ-ieM"/>
                             </mask>
                         </variation>
                     </view>
@@ -2954,6 +2957,7 @@
                         <outlet property="TableTypeButton4" destination="9Lp-Uk-wWz" id="2QP-nh-ZAe"/>
                         <outlet property="TableTypeSelection1" destination="i2y-Qo-evu" id="9jF-xo-cfk"/>
                         <outlet property="btnCloseWindow" destination="d22-ff-RYB" id="HYj-WW-nYJ"/>
+                        <outlet property="btnSendToInbox" destination="vCF-tS-Pby" id="7me-Yc-kNN"/>
                         <outlet property="btnSetStartDate" destination="JcO-oe-I2D" id="FBg-Fx-4Po"/>
                         <outlet property="buttonAdd1" destination="8aF-OY-HHv" id="bNo-eV-lPs"/>
                         <outlet property="buttonAdd2" destination="s21-HU-ZWn" id="N1S-P6-BsD"/>
@@ -7774,6 +7778,9 @@
                                 <rect key="frame" x="20" y="61" width="180" height="449"/>
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="100" identifier="constraintColPeopleHeight" id="MLJ-pU-j3h"/>
+                                </constraints>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="6Ba-g9-2b5">
                                     <size key="itemSize" width="169" height="50"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -8091,6 +8098,7 @@
                         <outlet property="colPeople" destination="AMS-kw-b6V" id="f9G-hH-bOb"/>
                         <outlet property="colPlace" destination="Ykm-r3-BZP" id="YpL-Fr-3LI"/>
                         <outlet property="colTool" destination="Sjd-xb-n5z" id="x2O-m8-nhK"/>
+                        <outlet property="constraintColPeopleHeight" destination="MLJ-pU-j3h" id="WhI-Ns-pDE"/>
                         <outlet property="lblPeople" destination="Krc-qJ-xsE" id="Eby-EK-3dM"/>
                         <outlet property="lblPlaces" destination="36g-a4-cSD" id="bZP-Wv-loh"/>
                         <outlet property="lblTool" destination="nvQ-EQ-Q5h" id="P72-I6-KwE"/>

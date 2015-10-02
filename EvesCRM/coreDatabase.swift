@@ -3372,13 +3372,13 @@ class coreDatabase: NSObject
         return fetchResults!
     }
     
-    func getContextByName(inContextName: String, inTeamID: Int)->[Context]
+    func getContextByName(contextName: String)->[Context]
     {
         let fetchRequest = NSFetchRequest(entityName: "Context")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(name = \"\(inContextName)\") && (updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Deleted\")")
+        let predicate = NSPredicate(format: "(name = \"\(contextName)\") && (updateType != \"Delete\") && (status != \"Deleted\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

@@ -544,11 +544,14 @@ class iOSContact
             }
         }
     }
+}
 
+func findPersonRecordByID(recordID: ABRecordID) -> ABRecord
+{
+    let person = ABAddressBookGetPersonWithRecordID(adbk, recordID)
+    let personRef: ABRecordRef = Unmanaged<NSObject>.fromOpaque(person.toOpaque()).takeUnretainedValue() as ABRecordRef
     
-   
-    
-    
+    return personRef
 }
 
 func findPersonRecord(inName: String) -> ABRecord!

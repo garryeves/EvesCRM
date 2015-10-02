@@ -2275,7 +2275,6 @@ class iOSCalendar
                                 let emailEndPos = emailText.endIndex.predecessor()
                                 emailAddress = emailText[nextPlace!...emailEndPos]
                             }
-                                    
                             if emailAddress == inEmail
                             {
                                 storeEvent(event, inAttendee: attendee)
