@@ -362,21 +362,33 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         }
         else
         {
-            lblNewContext.hidden = false
-            txtNewContext.hidden = false
-            btnNewContext.hidden = false
-            txtNewContext.text = ""
+       //     lblNewContext.hidden = false
+      //      txtNewContext.hidden = false
+      //      btnNewContext.hidden = false
+      //      txtNewContext.text = ""
         
             let myContextList = contexts()
             
             pickerOptions.removeAll(keepCapacity: false)
             
             pickerOptions.append("")
-            
-            for myContext in myContextList.allContexts
+
+            for myContext in myContextList.people
             {
                 pickerOptions.append(myContext.contextHierarchy)
             }
+            
+            for myContext in myContextList.places
+            {
+                pickerOptions.append(myContext.contextHierarchy)
+            }
+            
+            for myContext in myContextList.tools
+            {
+                pickerOptions.append(myContext.contextHierarchy)
+            }
+            
+            
             /*  Need to look at this as this needs to provide a better way of select contexts for the task
             
             if passedTaskType == "minutes"
@@ -929,11 +941,11 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         txtEstTime.hidden = true
         btnEstTimeInterval.hidden = true
         lblEstTime.hidden = true
-        lblrepeatEvery.hidden = false
-        lblFromActivity.hidden = false
-        txtRepeatInterval.hidden = false
-        btnRepeatPeriod.hidden = false
-        btnRepeatBase.hidden = false
+        lblrepeatEvery.hidden = true
+        lblFromActivity.hidden = true
+        txtRepeatInterval.hidden = true
+        btnRepeatPeriod.hidden = true
+        btnRepeatBase.hidden = true
     }
     
     func getProjectName(projectID: Int)

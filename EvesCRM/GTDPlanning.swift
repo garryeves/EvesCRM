@@ -104,100 +104,38 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
     {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellBody", forIndexPath: indexPath) as! myGTDDisplay
-        
         if indexPath.section == 0
         {  // Head
-            cell.sectionType = "head"
-            cell.rowNumber = indexPath.row
-            if myDisplayHeadArray[indexPath.row].isKindOfClass(team)
+            if myDisplayHeadArray[indexPath.row].isKindOfClass(task)
             {
-                let tempObject = myDisplayHeadArray[indexPath.row] as! team
-                cell.lblName.text = tempObject.name
-                if tempObject.GTDTopLevel.count == 0
-                {
-                    cell.lblChildren.text = ""
-                }
-                else if tempObject.GTDTopLevel.count == 1
-                {
-                    cell.lblChildren.text = "1 child record"
-                }
-                else
-                {
-                    cell.lblChildren.text = "\(tempObject.GTDTopLevel.count) child records"
-                }
-                
-                if highlightID == tempObject.teamID
-                {
-                    cell.backgroundColor = myRowColour
-                }
-                else
-                {
-                    cell.backgroundColor = UIColor.clearColor()
-                }
-            }
-            else if myDisplayHeadArray[indexPath.row].isKindOfClass(workingGTDItem)
-            {
-                let tempObject = myDisplayHeadArray[indexPath.row] as! workingGTDItem
-                
-                cell.lblName.text = tempObject.title
-                
-                let myChildRecords = tempObject.children.count
-                if myChildRecords == 0
-                {
-                    cell.lblChildren.text = ""
-                }
-                else if myChildRecords == 1
-                {
-                    cell.lblChildren.text = "1 child record"
-                }
-                else
-                {
-                    cell.lblChildren.text = "\(myChildRecords) child records"
-                }
-                
-                if highlightID == tempObject.GTDItemID
-                {
-                    cell.backgroundColor = myRowColour
-                }
-                else
-                {
-                    cell.backgroundColor = UIColor.clearColor()
-                }
-            }
-            else if myDisplayHeadArray[indexPath.row].isKindOfClass(project)
-            {
-                let tempObject = myDisplayHeadArray[indexPath.row] as! project
-                cell.lblName.text = tempObject.projectName
-                
-                let myChildRecords = tempObject.tasks.count
-                if myChildRecords == 0
-                {
-                    cell.lblChildren.text = ""
-                }
-                else if myChildRecords == 1
-                {
-                    cell.lblChildren.text = "1 child record"
-                }
-                else
-                {
-                    cell.lblChildren.text = "\(myChildRecords) child records"
-                }
-                
-                if highlightID == tempObject.projectID
-                {
-                    cell.backgroundColor = myRowColour
-                }
-                else
-                {
-                    cell.backgroundColor = UIColor.clearColor()
-                }
-            }
-            else if myDisplayHeadArray[indexPath.row].isKindOfClass(task)
-            {
+                let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellTask", forIndexPath: indexPath) as! myGTDTaskDisplay
+                cell.sectionType = "head"
+                cell.rowNumber = indexPath.row
+
                 let tempObject = myDisplayHeadArray[indexPath.row] as! task
+                
                 cell.lblName.text = tempObject.title
+                cell.lblStart.text = tempObject.displayStartDate
+                cell.lblDue.text = tempObject.displayDueDate
+
                 cell.lblChildren.text = ""
+                
+                var pass1: Bool = true
+                var contextList: String = ""
+                
+                for myItem in tempObject.contexts
+                {
+                    if pass1
+                    {
+                        contextList = myItem.name
+                        pass1 = false
+                    }
+                    else
+                    {
+                        contextList += ", \(myItem.name)"
+                    }
+                }
+                cell.lblContexts.text = contextList
                 
                 if highlightID == tempObject.taskID
                 {
@@ -207,123 +145,268 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                 {
                     cell.backgroundColor = UIColor.clearColor()
                 }
-            }
-            else if myDisplayHeadArray[indexPath.row].isKindOfClass(context)
-            {
-                let tempObject = myDisplayBodyArray[indexPath.row] as! context
-                cell.lblName.text = tempObject.name
-                cell.lblChildren.text = ""
                 
-                if highlightID == tempObject.contextID
-                {
-                    cell.backgroundColor = myRowColour
-                }
-                else
-                {
-                    cell.backgroundColor = UIColor.clearColor()
-                }
+                cell.layer.borderColor = UIColor.lightGrayColor().CGColor
+                cell.layer.borderWidth = 0.5
+                cell.layer.cornerRadius = 5.0
+                cell.layer.masksToBounds = true
+                
+                let myCell = cellDetails()
+                myCell.displayView = cell.contentView
+                
+                myCell.frame = cell.frame
+                myHeadCells.append(myCell)
+                
+                cell.layoutSubviews()
+                return cell
             }
-            else if myDisplayHeadArray[indexPath.row] is String
+            else
             {
-                cell.lblName.text = myDisplayHeadArray[indexPath.row] as? String
-                cell.lblChildren.text = ""
-            }
+                let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellBody", forIndexPath: indexPath) as! myGTDDisplay
 
-            cell.layer.borderColor = UIColor.lightGrayColor().CGColor
-            cell.layer.borderWidth = 0.5
-            cell.layer.cornerRadius = 5.0
-            cell.layer.masksToBounds = true
+                cell.sectionType = "head"
+                cell.rowNumber = indexPath.row
+                if myDisplayHeadArray[indexPath.row].isKindOfClass(team)
+                {
+                    let tempObject = myDisplayHeadArray[indexPath.row] as! team
+                    cell.lblName.text = tempObject.name
+                    if tempObject.GTDTopLevel.count == 0
+                    {
+                    cell.lblChildren.text = ""
+                    }
+                    else if tempObject.GTDTopLevel.count == 1
+                    {
+                        cell.lblChildren.text = "1 child record"
+                    }
+                    else
+                    {
+                        cell.lblChildren.text = "\(tempObject.GTDTopLevel.count) child records"
+                    }
+                
+                    if highlightID == tempObject.teamID
+                    {
+                        cell.backgroundColor = myRowColour
+                    }
+                    else
+                    {
+                        cell.backgroundColor = UIColor.clearColor()
+                    }
+                }
+                else if myDisplayHeadArray[indexPath.row].isKindOfClass(workingGTDItem)
+                {
+                    let tempObject = myDisplayHeadArray[indexPath.row] as! workingGTDItem
+                
+                    cell.lblName.text = tempObject.title
+                
+                    let myChildRecords = tempObject.children.count
+                    if myChildRecords == 0
+                    {
+                        cell.lblChildren.text = ""
+                    }
+                    else if myChildRecords == 1
+                    {
+                        cell.lblChildren.text = "1 child record"
+                    }
+                    else
+                    {
+                        cell.lblChildren.text = "\(myChildRecords) child records"
+                    }
+                
+                    if highlightID == tempObject.GTDItemID
+                    {
+                        cell.backgroundColor = myRowColour
+                    }
+                    else
+                    {
+                        cell.backgroundColor = UIColor.clearColor()
+                    }
+                }
+                else if myDisplayHeadArray[indexPath.row].isKindOfClass(project)
+                {
+                    let tempObject = myDisplayHeadArray[indexPath.row] as! project
+                    cell.lblName.text = tempObject.projectName
+                
+                    let myChildRecords = tempObject.tasks.count
+                    if myChildRecords == 0
+                    {
+                        cell.lblChildren.text = ""
+                    }
+                    else if myChildRecords == 1
+                    {
+                        cell.lblChildren.text = "1 child record"
+                    }
+                    else
+                    {
+                        cell.lblChildren.text = "\(myChildRecords) child records"
+                    }
+                
+                    if highlightID == tempObject.projectID
+                    {
+                        cell.backgroundColor = myRowColour
+                    }
+                    else
+                    {
+                        cell.backgroundColor = UIColor.clearColor()
+                    }
+                }
+                else if myDisplayHeadArray[indexPath.row].isKindOfClass(context)
+                {
+                    let tempObject = myDisplayBodyArray[indexPath.row] as! context
+                    cell.lblName.text = tempObject.name
+                    cell.lblChildren.text = ""
+                
+                    if highlightID == tempObject.contextID
+                    {
+                        cell.backgroundColor = myRowColour
+                    }
+                    else
+                    {
+                        cell.backgroundColor = UIColor.clearColor()
+                    }
+                }
+                else if myDisplayHeadArray[indexPath.row] is String
+                {
+                    cell.lblName.text = myDisplayHeadArray[indexPath.row] as? String
+                    cell.lblChildren.text = ""
+                }
+
+                cell.layer.borderColor = UIColor.lightGrayColor().CGColor
+                cell.layer.borderWidth = 0.5
+                cell.layer.cornerRadius = 5.0
+                cell.layer.masksToBounds = true
+                
+                let myCell = cellDetails()
+                myCell.displayView = cell.contentView
             
-            let lpgr = textLongPressGestureRecognizer(target: self, action: "handleLongPress:")
-            lpgr.minimumPressDuration = 0.5
-            lpgr.delaysTouchesBegan = true
-            lpgr.delegate = self
-            lpgr.displayView = cell.contentView
-            lpgr.frame = cell.frame
-            self.colBody.addGestureRecognizer(lpgr)
-            
-            let myCell = cellDetails()
-            myCell.displayView = cell.contentView
-            
-            myCell.frame = cell.frame
-            myHeadCells.append(myCell)
+                myCell.frame = cell.frame
+                myHeadCells.append(myCell)
+                
+                cell.layoutSubviews()
+                return cell
+            }
         }
         else
         {  // Body
-            cell.sectionType = "body"
-            cell.rowNumber = indexPath.row
-            if myDisplayBodyArray[indexPath.row].isKindOfClass(workingGTDItem)
+            if myDisplayBodyArray[indexPath.row].isKindOfClass(task)
             {
-                let tempObject = myDisplayBodyArray[indexPath.row] as! workingGTDItem
-                
-                cell.lblName.text = tempObject.title
-                
-                let myChildRecords = tempObject.children.count
-                if myChildRecords == 0
-                {
-                    cell.lblChildren.text = ""
-                }
-                else if myChildRecords == 1
-                {
-                    cell.lblChildren.text = "1 child record"
-                }
-                else
-                {
-                    cell.lblChildren.text = "\(myChildRecords) child records"
-                }
-            }
-            else if myDisplayBodyArray[indexPath.row].isKindOfClass(project)
-            {
-                let tempObject = myDisplayBodyArray[indexPath.row] as! project
-                cell.lblName.text = tempObject.projectName
-                
-                let myChildRecords = tempObject.tasks.count
-                if myChildRecords == 0
-                {
-                    cell.lblChildren.text = ""
-                }
-                else if myChildRecords == 1
-                {
-                    cell.lblChildren.text = "1 child record"
-                }
-                else
-                {
-                    cell.lblChildren.text = "\(myChildRecords) child records"
-                }
-            }
-            else if myDisplayBodyArray[indexPath.row].isKindOfClass(task)
-            {
+                let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellTask", forIndexPath: indexPath) as! myGTDTaskDisplay
+                cell.sectionType = "body"
+                cell.rowNumber = indexPath.row
+              
                 let tempObject = myDisplayBodyArray[indexPath.row] as! task
+                
                 cell.lblName.text = tempObject.title
+                cell.lblStart.text = tempObject.displayStartDate
+                cell.lblDue.text = tempObject.displayDueDate
+                
                 cell.lblChildren.text = ""
+                
+                var pass1: Bool = true
+                var contextList: String = ""
+                
+                for myItem in tempObject.contexts
+                {
+                    if pass1
+                    {
+                        contextList = myItem.name
+                        pass1 = false
+                    }
+                    else
+                    {
+                        contextList += ", \(myItem.name)"
+                    }
+                }
+                cell.lblContexts.text = contextList
+                
+                cell.layer.borderColor = UIColor.lightGrayColor().CGColor
+                cell.layer.borderWidth = 0.5
+                cell.layer.cornerRadius = 5.0
+                cell.layer.masksToBounds = true
+                
+                let myCell = cellDetails()
+                myCell.displayView = cell.contentView
+                
+                myCell.frame = cell.frame
+                myBodyCells.append(myCell)
+                
+                
+                cell.layoutSubviews()
+                return cell
             }
-            else if myDisplayBodyArray[indexPath.row].isKindOfClass(context)
+            else
             {
-                let tempObject = myDisplayBodyArray[indexPath.row] as! context
-                cell.lblName.text = tempObject.name
-                cell.lblChildren.text = ""
-            }
-            else if myDisplayBodyArray[indexPath.row] is String
-            {
-                cell.lblName.text = myDisplayBodyArray[indexPath.row] as? String
-                cell.lblChildren.text = ""
-            }
-            
-            cell.backgroundColor = UIColor.clearColor()
-            cell.layer.borderColor = UIColor.lightGrayColor().CGColor
-            cell.layer.borderWidth = 0.5
-            cell.layer.cornerRadius = 5.0
-            cell.layer.masksToBounds = true
+                let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellBody", forIndexPath: indexPath) as! myGTDDisplay
 
-            let myCell = cellDetails()
-            myCell.displayView = cell.contentView
+                cell.sectionType = "body"
+                cell.rowNumber = indexPath.row
             
-            myCell.frame = cell.frame
-            myBodyCells.append(myCell)
+                if myDisplayBodyArray[indexPath.row].isKindOfClass(workingGTDItem)
+                {
+                    let tempObject = myDisplayBodyArray[indexPath.row] as! workingGTDItem
+                
+                    cell.lblName.text = tempObject.title
+                
+                    let myChildRecords = tempObject.children.count
+                    if myChildRecords == 0
+                    {
+                        cell.lblChildren.text = ""
+                    }
+                    else if myChildRecords == 1
+                    {
+                        cell.lblChildren.text = "1 child record"
+                    }
+                    else
+                    {
+                        cell.lblChildren.text = "\(myChildRecords) child records"
+                    }
+                }
+                else if myDisplayBodyArray[indexPath.row].isKindOfClass(project)
+                {
+                    let tempObject = myDisplayBodyArray[indexPath.row] as! project
+                    cell.lblName.text = tempObject.projectName
+                
+                    let myChildRecords = tempObject.tasks.count
+                    if myChildRecords == 0
+                    {
+                        cell.lblChildren.text = ""
+                    }
+                    else if myChildRecords == 1
+                    {
+                        cell.lblChildren.text = "1 child record"
+                    }
+                    else
+                    {
+                        cell.lblChildren.text = "\(myChildRecords) child records"
+                    }
+                }
+                else if myDisplayBodyArray[indexPath.row].isKindOfClass(context)
+                {
+                    let tempObject = myDisplayBodyArray[indexPath.row] as! context
+                    cell.lblName.text = tempObject.name
+                    cell.lblChildren.text = ""
+                }
+                else if myDisplayBodyArray[indexPath.row] is String
+                {
+                    cell.lblName.text = myDisplayBodyArray[indexPath.row] as? String
+                    cell.lblChildren.text = ""
+                }
+            
+                cell.backgroundColor = UIColor.clearColor()
+                cell.layer.borderColor = UIColor.lightGrayColor().CGColor
+                cell.layer.borderWidth = 0.5
+                cell.layer.cornerRadius = 5.0
+                cell.layer.masksToBounds = true
+
+                let myCell = cellDetails()
+                myCell.displayView = cell.contentView
+            
+                myCell.frame = cell.frame
+                myBodyCells.append(myCell)
+                
+                cell.layoutSubviews()
+                return cell
+            }
         }
-
-        cell.layoutSubviews()
-        return cell
     }
     
     func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
@@ -332,7 +415,29 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         
         if collectionView == colBody
         {
-            retVal = CGSize(width: 225, height: 125)
+            if indexPath.section == 0
+            {
+                // Head
+                if myDisplayHeadArray[indexPath.row].isKindOfClass(task)
+                {
+                    retVal = CGSize(width: 310, height: 125)
+                }
+                else
+                {
+                    retVal = CGSize(width: 225, height: 125)
+                }
+            }
+            else
+            {  // Body
+                if myDisplayBodyArray[indexPath.row].isKindOfClass(task)
+                {
+                    retVal = CGSize(width: 310, height: 125)
+                }
+                else
+                {
+                    retVal = CGSize(width: 225, height: 125)
+                }
+            }
         }
         
         return retVal
@@ -1846,4 +1951,65 @@ class myGTDDisplay: KDRearrangeableGTDDisplayHierarchy
 class GTDHeaderView: UICollectionReusableView
 {
     @IBOutlet weak var lblTitle: UILabel!
+}
+
+class KDRearrangeableGTDTaskDisplay: UICollectionViewCell
+{
+    
+    @IBOutlet weak var lblStart: UILabel!
+    @IBOutlet weak var lblName: UILabel!
+    @IBOutlet weak var lblDue: UILabel!
+    @IBOutlet weak var lblChildren: UILabel!
+    @IBOutlet weak var lblContexts: UILabel!
+    @IBOutlet weak var btnDetails: UIButton!
+    
+    var sectionType: String = ""
+    var rowNumber: Int = 0
+    
+    override init(frame: CGRect)
+    {
+        super.init(frame: frame)
+    }
+    
+    required init?(coder aDecoder: NSCoder)
+    {
+        super.init(coder: aDecoder)
+    }
+    
+    override func awakeFromNib()
+    {
+        super.awakeFromNib()
+    }
+    
+    var dragging : Bool = false
+        {
+        didSet
+        {
+            
+        }
+        
+    }
+    
+    override func layoutSubviews()
+    {
+        contentView.frame = bounds
+        super.layoutSubviews()
+    }
+    
+    @IBAction func btnDetails(sender: UIButton)
+    {
+        let selectedDictionary = ["sectionType" : sectionType, "rowNumber": "\(rowNumber)"]
+        NSNotificationCenter.defaultCenter().postNotificationName("NotificationDisplayGTDSubmenu", object: nil, userInfo:selectedDictionary as [String : String])
+    }
+}
+
+class myGTDTaskDisplay: KDRearrangeableGTDTaskDisplay
+{
+    override func awakeFromNib()
+    {
+        super.awakeFromNib()
+        
+        //  self.layer.cornerRadius = self.frame.size.width * 0.5
+        self.clipsToBounds = true
+    }
 }
