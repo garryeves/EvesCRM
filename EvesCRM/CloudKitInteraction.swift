@@ -54,7 +54,14 @@ class CloudKitInteraction
                     if tempContext1_1.count > 0
                     {
                         myPredecessor = tempContext1_1[0].predecessor as! Int
-                        myContextType = tempContext1_1[0].contextType!
+                        if tempContext1_1[0].contextType != nil
+                        {
+                            myContextType = tempContext1_1[0].contextType!
+                        }
+                        else
+                        {
+                            myContextType = "Person"
+                        }
                     }
                     
                     if records!.count > 0

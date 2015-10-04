@@ -2,7 +2,7 @@
 //  Context1_1+CoreDataProperties.swift
 //  
 //
-//  Created by Garry Eves on 1/10/2015.
+//  Created by Garry Eves on 5/10/2015.
 //
 //
 //  Choose "Create NSManagedObject Subclass…" from the Core Data editor menu
