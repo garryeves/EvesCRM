@@ -8,7 +8,7 @@
 
 import Foundation
 
-class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTaskListDelegate, SMTEFillDelegate
+class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTaskListDelegate, SMTEFillDelegate, KDRearrangeableCollectionViewDelegate, UIGestureRecognizerDelegate
 {
     
     private var passedMeeting: MeetingModel!
@@ -147,9 +147,14 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
     
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
     {
-        var cell: myAgendaItem!
-            
-        cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseAgendaTime, forIndexPath: indexPath) as! myAgendaItem
+        var cell: myMovableAgendaItem!
+     
+        if indexPath.row == 0
+        {
+            myWorkingTime = passedMeeting.event.startDate
+        }
+        
+        cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseAgendaTime, forIndexPath: indexPath) as! myMovableAgendaItem
         cell.lblTime.text = "\(myDateFormatter.stringFromDate(myWorkingTime))"
         cell.lblItem.text = myAgendaList[indexPath.row].title
         cell.lblOwner.text = myAgendaList[indexPath.row].owner
@@ -217,6 +222,73 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
         return CGSize(width: colAgenda.bounds.size.width, height: 39)
     }
     
+    // Start move
+    
+    func moveDataItem(toIndexPath : NSIndexPath, fromIndexPath: NSIndexPath) -> Void
+    {
+        if passedMeeting.actionType != "Agenda"
+        {
+            let alert = UIAlertController(title: "Move item", message:
+                "You can only move Agenda items when building the Agenda.", preferredStyle: UIAlertControllerStyle.Alert)
+            
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+            self.presentViewController(alert, animated: false, completion: nil)
+        }
+        else if myAgendaList[toIndexPath.item].title == "Close meeting" ||
+           myAgendaList[fromIndexPath.item].title == "Close meeting"
+        {
+            let alert = UIAlertController(title: "Move item", message:
+                "Unable to move \"Close meeting\" item", preferredStyle: UIAlertControllerStyle.Alert)
+            
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+            self.presentViewController(alert, animated: false, completion: nil)
+        }
+        else if myAgendaList[toIndexPath.item].title == "Review of previous meeting actions" ||
+            myAgendaList[fromIndexPath.item].title == "Review of previous meeting actions"
+        {
+            let alert = UIAlertController(title: "Move item", message:
+                "Unable to move \"Review of previous meeting actions\" item", preferredStyle: UIAlertControllerStyle.Alert)
+            
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+            self.presentViewController(alert, animated: false, completion: nil)
+        }
+        else
+        {
+            if toIndexPath.item > fromIndexPath.item
+            {
+                myAgendaList[toIndexPath.item].meetingOrder = myAgendaList[fromIndexPath.item].meetingOrder
+                
+                var loopCount: Int = fromIndexPath.item
+                
+                while loopCount < toIndexPath.item
+                {
+                    myAgendaList[loopCount].meetingOrder = loopCount + 2
+                    loopCount++
+                }
+            }
+            else // toIndexPath.item < fromIndexPath.item
+            {
+                let tempToIndex = toIndexPath.item
+
+                myAgendaList[toIndexPath.item].meetingOrder = myAgendaList[fromIndexPath.item].meetingOrder
+
+                var loopCount: Int = tempToIndex + 1
+                
+                while loopCount <= fromIndexPath.item
+                {
+                    myAgendaList[loopCount].meetingOrder = loopCount
+                    loopCount++
+                }
+            }
+        }
+
+        buildAgendaArray()
+        
+        colAgenda.reloadData()
+    }
+    
+    // End move
+    
     func numberOfComponentsInPickerView(TableTypeSelection1: UIPickerView) -> Int {
         return 1
     }
@@ -271,7 +343,6 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
             agendaItem.save()
 
             // reload the Agenda Items collection view
-            passedMeeting.event.loadAgendaItems()
             buildAgendaArray()
             
             myWorkingTime = passedMeeting.event.startDate
@@ -329,6 +400,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
 
     func buildAgendaArray()
     {
+        passedMeeting.event.loadAgendaItems()
         if passedMeeting.event.previousMinutes == ""
         { // No previous meeting
             myAgendaList = passedMeeting.event.agendaItems
@@ -345,13 +417,12 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
             }
         }
         
-        let closeMeeting = meetingAgendaItem(rowType: "PreviousMinutes")
+        let closeMeeting = meetingAgendaItem(rowType: "Close")
         myAgendaList.append(closeMeeting)
     }
     
     func myAgendaItemDidFinish(controller:agendaItemViewController, actionType: String)
     {
-        passedMeeting.event.loadAgendaItems()
         buildAgendaArray()
         myWorkingTime = passedMeeting.event.startDate
         colAgenda.reloadData()
@@ -361,7 +432,6 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
     
     func myTaskListDidFinish(controller:taskListViewController)
     {
-        passedMeeting.event.loadAgendaItems()
         buildAgendaArray()
         myWorkingTime = passedMeeting.event.startDate
         colAgenda.reloadData()
@@ -705,10 +775,46 @@ class myAgendaItem: UICollectionViewCell
     @IBOutlet weak var lblItem: UILabel!
     @IBOutlet weak var lblOwner: UILabel!
   
+    override init(frame: CGRect)
+    {
+        super.init(frame: frame)
+    }
+    
+    required init?(coder aDecoder: NSCoder)
+    {
+        super.init(coder: aDecoder)
+    }
+    
+    override func awakeFromNib()
+    {
+        super.awakeFromNib()
+    }
+    
+    var dragging : Bool = false
+    {
+        didSet
+        {
+            
+        }
+        
+    }
+
     override func layoutSubviews()
     {
         contentView.frame = bounds
         super.layoutSubviews()
     }
 }
+
+class myMovableAgendaItem: myAgendaItem
+{
+    override func awakeFromNib()
+    {
+        super.awakeFromNib()
+        
+        //  self.layer.cornerRadius = self.frame.size.width * 0.5
+        self.clipsToBounds = true
+    }
+}
+
 

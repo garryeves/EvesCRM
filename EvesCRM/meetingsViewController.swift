@@ -57,6 +57,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
     private var pickerStartDateArray: [NSDate] = Array()
     private var pickerTarget: String = ""
     private var mySelectedRow: Int = 0
+    private var rowToAction: Int = 0
     
     lazy var activityPopover:UIPopoverController = {
         return UIPopoverController(contentViewController: self.activityViewController)
@@ -253,7 +254,14 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
         cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseAttendeeIdentifier, forIndexPath: indexPath) as! myAttendeeDisplayItem
         cell.lblName.text = passedMeeting.event.attendees[indexPath.row].name
         cell.lblStatus.text = passedMeeting.event.attendees[indexPath.row].status
-        cell.btnAction.setTitle("Remove", forState: .Normal)
+        if passedMeeting.actionType == "Agenda"
+        {
+            cell.btnAction.setTitle("Remove", forState: .Normal)
+        }
+        else
+        {
+            cell.btnAction.setTitle("Record Attendence", forState: .Normal)
+        }
         cell.btnAction.tag = indexPath.row
             
         if (indexPath.row % 2 == 0)  // was .row
@@ -633,6 +641,19 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
             }
         }
         
+        if pickerTarget == "attendence"
+        {
+            passedMeeting.event.attendees[rowToAction].status = pickerOptions[mySelectedRow]
+
+            myDatabaseConnection.saveAttendee(passedMeeting.event.eventID, inAttendees: passedMeeting.event.attendees)
+            
+            passedMeeting.event.loadAttendees()
+            
+            colAttendees.reloadData()
+
+            rowToAction = 0
+        }
+
         myPicker.hidden = true
         btnSelect.hidden = true
         showFields()
@@ -777,12 +798,31 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
     
     func attendeeRemoved(notification: NSNotification)
     {
+        
+        let action = notification.userInfo!["Action"] as! String
         let itemToRemove = notification.userInfo!["itemNo"] as! Int
         
-        passedMeeting.event.removeAttendee(itemToRemove)
-        colAttendees.reloadData()
+        if action == "Remove"
+        {
+            passedMeeting.event.removeAttendee(itemToRemove)
+            colAttendees.reloadData()
+        }
+        else
+        {
+            pickerOptions.removeAll()
+            pickerOptions.append("Attended")
+            pickerOptions.append("Apology")
+            pickerOptions.append("Delegated")
+            hideFields()
+            myPicker.hidden = false
+            btnSelect.setTitle("Set Attendence", forState: .Normal)
+            btnSelect.hidden = false
+            myPicker.reloadAllComponents()
+            pickerTarget = "attendence"
+            rowToAction = itemToRemove
+        }
     }
-    
+
     func getPreviousMeeting()
     {
         // We only list items here that we have Meeting records for, as otherwise there is no previous actions to get and display
@@ -1349,7 +1389,11 @@ class myAttendeeDisplayItem: UICollectionViewCell
     {
         if btnAction.currentTitle == "Remove"
         {
-            NSNotificationCenter.defaultCenter().postNotificationName("NotificationAttendeeRemoved", object: nil, userInfo:["itemNo":btnAction.tag])
+            NSNotificationCenter.defaultCenter().postNotificationName("NotificationAttendeeRemoved", object: nil, userInfo:["Action":"Remove","itemNo":btnAction.tag])
+        }
+        else
+        {
+            NSNotificationCenter.defaultCenter().postNotificationName("NotificationAttendeeRemoved", object: nil, userInfo:["Action":"Attendence","itemNo":btnAction.tag])
         }
     }
 }

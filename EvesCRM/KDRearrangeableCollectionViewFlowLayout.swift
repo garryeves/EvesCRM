@@ -85,8 +85,13 @@ class KDRearrangeableCollectionViewFlowLayout: UICollectionViewFlowLayout, UIGes
         if let collectionView = self.collectionView {
             
             collectionViewFrameInCanvas = collectionView.frame
-            
-            
+ //Insert by GRE
+            if self.canvas == nil {
+                
+                self.canvas = self.collectionView!.superview
+                
+            }
+ // End insert
             if self.canvas != collectionView.superview {
                 collectionViewFrameInCanvas = self.canvas!.convertRect(collectionViewFrameInCanvas, fromView: collectionView)
             }
