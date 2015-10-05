@@ -1614,8 +1614,7 @@ class coreDatabase: NSObject
 
         }
     }
-    
-    
+
     func checkMeetingsForAttendee(attendeeName: String, meetingID: String)->[MeetingAttendees]
     {
         let fetchRequest = NSFetchRequest(entityName: "MeetingAttendees")
@@ -1684,17 +1683,17 @@ class coreDatabase: NSObject
         }
             
         managedObjectContext!.performBlock
+        {
+            do
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+                try self.managedObjectContext!.save()
+            }
+            catch let error as NSError
+            {
+                NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
                     
-                    print("Failure to save context: \(error)")
-                }
+                print("Failure to save context: \(error)")
+            }
         }
         
         //       do

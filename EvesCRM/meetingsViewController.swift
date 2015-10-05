@@ -645,7 +645,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
         {
             passedMeeting.event.attendees[rowToAction].status = pickerOptions[mySelectedRow]
 
-            myDatabaseConnection.saveAttendee(passedMeeting.event.eventID, inAttendees: passedMeeting.event.attendees)
+            myDatabaseConnection.saveAttendee(passedMeeting.event.eventID, name: passedMeeting.event.attendees[rowToAction].name, email: passedMeeting.event.attendees[rowToAction].emailAddress, type: passedMeeting.event.attendees[rowToAction].type, status: pickerOptions[mySelectedRow])
             
             passedMeeting.event.loadAttendees()
             
