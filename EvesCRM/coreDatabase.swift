@@ -1814,66 +1814,18 @@ class coreDatabase: NSObject
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
-        
+
+        let sortDescriptor = NSSortDescriptor(key: "meetingOrder", ascending: true)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+
         // Execute the fetch request, and cast the results to an array of LogItem objects
         let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAgendaItem]
         
         return fetchResults!
     }
     
-    func saveAgendaItem(inMeetingID: String, inItem: meetingAgendaItem)
-    {
-        var mySavedItem: MeetingAgendaItem
-        
-        mySavedItem = NSEntityDescription.insertNewObjectForEntityForName("MeetingAgendaItem", inManagedObjectContext: managedObjectContext!) as! MeetingAgendaItem
-        mySavedItem.meetingID = inMeetingID
-        if inItem.actualEndTime != nil
-        {
-            mySavedItem.actualEndTime = inItem.actualEndTime!
-        }
-        if inItem.actualStartTime != nil
-        {
-            mySavedItem.actualStartTime = inItem.actualStartTime!
-        }
-        mySavedItem.status = inItem.status
-        mySavedItem.decisionMade = inItem.decisionMade
-        mySavedItem.discussionNotes = inItem.discussionNotes
-        mySavedItem.timeAllocation = inItem.timeAllocation
-        mySavedItem.owner = inItem.owner
-        mySavedItem.title = inItem.title
-        mySavedItem.agendaID = inItem.agendaID
-        mySavedItem.updateTime = NSDate()
-        mySavedItem.updateTime = NSDate()
-        mySavedItem.updateType = "Add"
-
-        managedObjectContext!.performBlock
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
-
-    }
-    
-    func saveAgendaItem(meetingID: String, actualEndTime: NSDate, actualStartTime: NSDate, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int, owner: String, title: String, agendaID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func saveAgendaItem(meetingID: String, actualEndTime: NSDate, actualStartTime: NSDate, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int, owner: String, title: String, agendaID: Int, meetingOrder: Int,  inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
         var mySavedItem: MeetingAgendaItem
         
@@ -1892,6 +1844,8 @@ class coreDatabase: NSObject
             mySavedItem.timeAllocation = timeAllocation
             mySavedItem.owner = owner
             mySavedItem.title = title
+            mySavedItem.meetingOrder = meetingOrder
+            
             if inUpdateType == "CODE"
             {
                 mySavedItem.updateTime = NSDate()
@@ -1914,6 +1868,8 @@ class coreDatabase: NSObject
             mySavedItem.timeAllocation = timeAllocation
             mySavedItem.owner = owner
             mySavedItem.title = title
+            mySavedItem.meetingOrder = meetingOrder
+
             if inUpdateType == "CODE"
             {
                 mySavedItem.updateTime = NSDate()
@@ -1956,7 +1912,7 @@ class coreDatabase: NSObject
         
     }
     
-    func replaceAgendaItem(meetingID: String, actualEndTime: NSDate, actualStartTime: NSDate, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int, owner: String, title: String, agendaID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func replaceAgendaItem(meetingID: String, actualEndTime: NSDate, actualStartTime: NSDate, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int, owner: String, title: String, agendaID: Int, meetingOrder: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
         managedObjectContext!.performBlock
             {
@@ -1971,6 +1927,8 @@ class coreDatabase: NSObject
             mySavedItem.timeAllocation = timeAllocation
             mySavedItem.owner = owner
             mySavedItem.title = title
+            mySavedItem.meetingOrder = meetingOrder
+
             if inUpdateType == "CODE"
             {
                 mySavedItem.updateTime = NSDate()
@@ -2022,69 +1980,23 @@ class coreDatabase: NSObject
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
-        
+
+        let sortDescriptor = NSSortDescriptor(key: "meetingOrder", ascending: true)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+
         // Execute the fetch request, and cast the results to an array of LogItem objects
         let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAgendaItem]
         
         return fetchResults!
     }
     
-    func updateAgendaItem(inMeetingID: String, inItem: meetingAgendaItem)
-    {
-        let myAgendaItem = loadSpecificAgendaItem(inMeetingID,inAgendaID: inItem.agendaID)[0]
-        if inItem.actualEndTime != nil
-        {
-            myAgendaItem.actualEndTime = inItem.actualEndTime!
-        }
-        if inItem.actualStartTime != nil
-        {
-            myAgendaItem.actualStartTime = inItem.actualStartTime!
-        }
-        myAgendaItem.status = inItem.status
-        myAgendaItem.decisionMade = inItem.decisionMade
-        myAgendaItem.discussionNotes = inItem.discussionNotes
-        myAgendaItem.timeAllocation = inItem.timeAllocation
-        myAgendaItem.owner = inItem.owner
-        myAgendaItem.title = inItem.title
-        myAgendaItem.updateTime = NSDate()
-        if myAgendaItem.updateType != "Add"
-        {
-            myAgendaItem.updateType = "Update"
-        }
-        
-        managedObjectContext!.performBlockAndWait
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
-
-    }
-
-    func deleteAgendaItem(inMeetingID: String, inItem: meetingAgendaItem)
+    func deleteAgendaItem(meetingID: String, agendaID: Int)
     {
         var predicate: NSPredicate
         
         let fetchRequest = NSFetchRequest(entityName: "MeetingAgendaItem")
-        predicate = NSPredicate(format: "(meetingID == \"\(inMeetingID)\") AND (agendaID == \(inItem.agendaID)) && (updateType != \"Delete\")")
+        predicate = NSPredicate(format: "(meetingID == \"\(meetingID)\") AND (agendaID == \(agendaID)) && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

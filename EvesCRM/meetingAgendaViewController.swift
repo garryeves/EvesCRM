@@ -335,9 +335,8 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
         }
         else
         { // Previous meeting exists
-            let previousMinutes  = meetingAgendaItem()
+            let previousMinutes  = meetingAgendaItem(rowType: "PreviousMinutes")
             
-            previousMinutes.createPreviousMeetingRow()
             myAgendaList.removeAll(keepCapacity: false)
             myAgendaList.append(previousMinutes)
             for myItem in passedMeeting.event.agendaItems
@@ -345,8 +344,8 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
                 myAgendaList.append(myItem)
             }
         }
-        let closeMeeting = meetingAgendaItem()
-        closeMeeting.createCloseMeetingRow()
+        
+        let closeMeeting = meetingAgendaItem(rowType: "PreviousMinutes")
         myAgendaList.append(closeMeeting)
     }
     

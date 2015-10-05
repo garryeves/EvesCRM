@@ -24,6 +24,7 @@ class meetingAgendaItem
     private var myTasks: [task] = Array()
     private var myMeetingID: String = ""
     private var myUpdateAllowed: Bool = true
+    private var myMeetingOrder: Int = 0
 
     var actualEndTime: NSDate?
     {
@@ -141,7 +142,20 @@ class meetingAgendaItem
             save()
         }
     }
-    
+
+    var meetingOrder: Int
+        {
+        get
+        {
+            return myMeetingOrder
+        }
+        set
+        {
+            myMeetingOrder = newValue
+            save()
+        }
+    }
+
     var tasks: [task]
     {
         get
@@ -160,7 +174,7 @@ class meetingAgendaItem
         
         myAgendaID = tempAgendaItems.count + 1
         
-        myDatabaseConnection.saveAgendaItem(myMeetingID, inItem: self)
+        save()
     }
     
     init(inMeetingID: String, inAgendaID: Int)
@@ -171,13 +185,17 @@ class meetingAgendaItem
      
         if tempAgendaItems.count > 0
         {
-            myAgendaID = tempAgendaItems[0].agendaID as Int
-            myTitle = tempAgendaItems[0].title
-            myOwner = tempAgendaItems[0].owner
-            myTimeAllocation = tempAgendaItems[0].timeAllocation as Int
-            myDiscussionNotes = tempAgendaItems[0].discussionNotes
-            myDecisionMade = tempAgendaItems[0].decisionMade
-            myStatus = tempAgendaItems[0].status
+            myAgendaID = tempAgendaItems[0].agendaID as! Int
+            myTitle = tempAgendaItems[0].title!
+            myOwner = tempAgendaItems[0].owner!
+            myTimeAllocation = tempAgendaItems[0].timeAllocation as! Int
+            myDiscussionNotes = tempAgendaItems[0].discussionNotes!
+            myDecisionMade = tempAgendaItems[0].decisionMade!
+            myStatus = tempAgendaItems[0].status!
+            if tempAgendaItems[0].meetingOrder != nil
+            {
+                myMeetingOrder = tempAgendaItems[0].meetingOrder as! Int
+            }
             myActualStartTime = tempAgendaItems[0].actualStartTime
             myActualEndTime = tempAgendaItems[0].actualEndTime
         }
@@ -187,24 +205,23 @@ class meetingAgendaItem
         }
     }
     
-    init()
+    init(rowType: String)
     {
-       // Do nothing
-    }
-    
-    func createPreviousMeetingRow()
-    {
-        myTitle = "Review of previous meeting actions"
-        myTimeAllocation = 10
-        myStatus = "Open"
-        myOwner = "All"
-        myUpdateAllowed = false
-    }
-    
-    func createCloseMeetingRow()
-    {
-        myTitle = "Close meeting"
-        myTimeAllocation = 1
+        switch rowType
+        {
+            case "PreviousMinutes" :
+                myTitle = "Review of previous meeting actions"
+                myTimeAllocation = 10
+            
+            case "Close" :
+                myTitle = "Close meeting"
+                myTimeAllocation = 1
+            
+            default:
+                myTitle = "Unknown item"
+                myTimeAllocation = 10
+        }
+        
         myStatus = "Open"
         myOwner = "All"
         myUpdateAllowed = false
@@ -214,7 +231,7 @@ class meetingAgendaItem
     {        
         if myUpdateAllowed
         {
-            myDatabaseConnection.updateAgendaItem(myMeetingID, inItem: self)
+            myDatabaseConnection.saveAgendaItem(myMeetingID, actualEndTime: myActualEndTime, actualStartTime: myActualStartTime, status: myStatus, decisionMade: myDecisionMade, discussionNotes: myDiscussionNotes, timeAllocation: myTimeAllocation, owner: myOwner, title: myTitle, agendaID: myAgendaID, meetingOrder: myMeetingOrder)
         }
     }
     
@@ -223,7 +240,7 @@ class meetingAgendaItem
         // call code to perform the delete
         if myUpdateAllowed
         {
-            myDatabaseConnection.deleteAgendaItem(myMeetingID, inItem: self)
+            myDatabaseConnection.deleteAgendaItem(myMeetingID, agendaID: myAgendaID)
         }
     }
     
@@ -1135,9 +1152,19 @@ class myCalendarItem
         
         if mySavedValues.count > 0
         {
+            var runningMeetingOrder: Int = 0
+            
             for savedAgenda in mySavedValues
             {
-                let myAgendaItem =  meetingAgendaItem(inMeetingID: savedAgenda.meetingID, inAgendaID:savedAgenda.agendaID as Int)
+                let myAgendaItem =  meetingAgendaItem(inMeetingID: savedAgenda.meetingID!, inAgendaID:savedAgenda.agendaID as! Int)
+                if myAgendaItem.meetingOrder == 0
+                {
+                    myAgendaItem.meetingOrder = ++runningMeetingOrder
+                }
+                else
+                {
+                    runningMeetingOrder = myAgendaItem.meetingOrder
+                }
                 myAgendaItem.loadTasks()
                 myAgendaItems.append(myAgendaItem)
             }

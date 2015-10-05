@@ -401,7 +401,7 @@ class CloudKitInteraction
 //        NSLog("Syncing Meeting Agenda")
         for myItem in myDatabaseConnection.getMeetingAgendasForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(meetingID == \"\(myItem.meetingID)\") && (teamID == \(myItem.teamID as Int))") // better be accurate to get only the record you need
+            let predicate = NSPredicate(format: "(meetingID == \"\(myItem.meetingID)\") && (actualTeamID == \(myItem.teamID as Int))") // better be accurate to get only the record you need
             let query = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
             privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -424,7 +424,7 @@ class CloudKitInteraction
                         record!.setValue(myItem.minutesType, forKey: "minutesType")
                         record!.setValue(myItem.name, forKey: "name")
                         record!.setValue(myItem.previousMeetingID, forKey: "previousMeetingID")
-                        record!.setValue(myItem.startTime, forKey: "startTime")
+                        record!.setValue(myItem.startTime, forKey: "meetingStartTime")
                         
                         // Save this record again
                         self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
@@ -454,8 +454,8 @@ class CloudKitInteraction
                         record.setValue(myItem.minutesType, forKey: "minutesType")
                         record.setValue(myItem.name, forKey: "name")
                         record.setValue(myItem.previousMeetingID, forKey: "previousMeetingID")
-                        record.setValue(myItem.startTime, forKey: "startTime")
-                        record.setValue(myItem.teamID, forKey: "teamID")
+                        record.setValue(myItem.startTime, forKey: "meetingStartTime")
+                        record.setValue(myItem.teamID, forKey: "actualTeamID")
                         
                         self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
@@ -483,7 +483,7 @@ class CloudKitInteraction
 //        NSLog("Syncing meetingAgendaItems")
         for myItem in myDatabaseConnection.getMeetingAgendaItemsForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(meetingID == \"\(myItem.meetingID)\") && (agendaID == \(myItem.agendaID as Int))") // better be accurate to get only the record you need
+            let predicate = NSPredicate(format: "(meetingID == \"\(myItem.meetingID!)\") && (agendaID == \(myItem.agendaID as! Int))") // better be accurate to get only the record you need
             let query = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
             privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -507,6 +507,7 @@ class CloudKitInteraction
                         record!.setValue(myItem.status, forKey: "status")
                         record!.setValue(myItem.timeAllocation, forKey: "timeAllocation")
                         record!.setValue(myItem.title, forKey: "title")
+                        record!.setValue(myItem.meetingOrder, forKey: "meetingOrder")
                         
                         // Save this record again
                         self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
@@ -538,6 +539,8 @@ class CloudKitInteraction
                         record.setValue(myItem.status, forKey: "status")
                         record.setValue(myItem.timeAllocation, forKey: "timeAllocation")
                         record.setValue(myItem.title, forKey: "title")
+                        record.setValue(myItem.meetingOrder, forKey: "meetingOrder")
+
                         
                         self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
@@ -1855,8 +1858,8 @@ class CloudKitInteraction
                 let minutesType = record.objectForKey("minutesType") as! String
                 let name = record.objectForKey("name") as! String
                 let previousMeetingID = record.objectForKey("previousMeetingID") as! String
-                let startTime = record.objectForKey("startTime") as! NSDate
-                let teamID = record.objectForKey("teamID") as! Int
+                let startTime = record.objectForKey("meetingStartTime") as! NSDate
+                let teamID = record.objectForKey("actualTeamID") as! Int
                 
                 myDatabaseConnection.saveAgenda(meetingID, inPreviousMeetingID : previousMeetingID, inName: name, inChair: chair, inMinutes: minutes, inLocation: location, inStartTime: startTime, inEndTime: endTime, inMinutesType: minutesType, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
             }
@@ -1879,17 +1882,34 @@ class CloudKitInteraction
                 let agendaID = record.objectForKey("agendaID") as! Int
                 let updateTime = record.objectForKey("updateTime") as! NSDate
                 let updateType = record.objectForKey("updateType") as! String
-                let actualEndTime = record.objectForKey("actualEndTime") as! NSDate
-                let actualStartTime = record.objectForKey("actualStartTime") as! NSDate
+                var actualEndTime: NSDate!
+                if record.objectForKey("actualEndTime") != nil
+                {
+                    actualEndTime = record.objectForKey("actualEndTime") as! NSDate
+                }
+                else
+                {
+                    actualEndTime = getDefaultDate()
+                }
+                var actualStartTime: NSDate!
+                if record.objectForKey("actualStartTime") != nil
+                {
+                    actualStartTime = record.objectForKey("actualStartTime") as! NSDate
+                }
+                else
+                {
+                    actualStartTime = getDefaultDate()
+                }
                 let decisionMade = record.objectForKey("decisionMade") as! String
                 let discussionNotes = record.objectForKey("discussionNotes") as! String
                 let owner = record.objectForKey("owner") as! String
                 let status = record.objectForKey("status") as! String
                 let timeAllocation = record.objectForKey("timeAllocation") as! Int
                 let title = record.objectForKey("title") as! String
+                let meetingOrder = record.objectForKey("meetingOrder") as! Int
+
                 
-                
-                myDatabaseConnection.saveAgendaItem(meetingID, actualEndTime: actualEndTime, actualStartTime: actualStartTime, status: status, decisionMade: decisionMade, discussionNotes: discussionNotes, timeAllocation: timeAllocation, owner: owner, title: title, agendaID: agendaID, inUpdateTime: updateTime, inUpdateType: updateType)
+                myDatabaseConnection.saveAgendaItem(meetingID, actualEndTime: actualEndTime, actualStartTime: actualStartTime, status: status, decisionMade: decisionMade, discussionNotes: discussionNotes, timeAllocation: timeAllocation, owner: owner, title: title, agendaID: agendaID, meetingOrder: meetingOrder, inUpdateTime: updateTime, inUpdateType: updateType)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -2867,8 +2887,8 @@ class CloudKitInteraction
                 let minutesType = record.objectForKey("minutesType") as! String
                 let name = record.objectForKey("name") as! String
                 let previousMeetingID = record.objectForKey("previousMeetingID") as! String
-                let startTime = record.objectForKey("startTime") as! NSDate
-                let teamID = record.objectForKey("teamID") as! Int
+                let startTime = record.objectForKey("meetingStartTime") as! NSDate
+                let teamID = record.objectForKey("actualTeamID") as! Int
                 
                 myDatabaseConnection.replaceAgenda(meetingID, inPreviousMeetingID : previousMeetingID, inName: name, inChair: chair, inMinutes: minutes, inLocation: location, inStartTime: startTime, inEndTime: endTime, inMinutesType: minutesType, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
             }
@@ -2903,9 +2923,9 @@ class CloudKitInteraction
                 let status = record.objectForKey("status") as! String
                 let timeAllocation = record.objectForKey("timeAllocation") as! Int
                 let title = record.objectForKey("title") as! String
+                let meetingOrder = record.objectForKey("meetingOrder") as! Int
                 
-                
-                myDatabaseConnection.replaceAgendaItem(meetingID, actualEndTime: actualEndTime, actualStartTime: actualStartTime, status: status, decisionMade: decisionMade, discussionNotes: discussionNotes, timeAllocation: timeAllocation, owner: owner, title: title, agendaID: agendaID, inUpdateTime: updateTime, inUpdateType: updateType)
+                myDatabaseConnection.replaceAgendaItem(meetingID, actualEndTime: actualEndTime, actualStartTime: actualStartTime, status: status, decisionMade: decisionMade, discussionNotes: discussionNotes, timeAllocation: timeAllocation, owner: owner, title: title, agendaID: agendaID, meetingOrder: meetingOrder, inUpdateTime: updateTime, inUpdateType: updateType)
             }
             dispatch_semaphore_signal(sem)
         })

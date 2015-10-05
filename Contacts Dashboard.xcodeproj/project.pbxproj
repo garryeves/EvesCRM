@@ -92,6 +92,8 @@
 		343B3F1F1B83045D0053777B /* DBSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 343B3F1D1B83045D0053777B /* DBSync.swift */; };
 		344726611B54D6A800BEFF0B /* coreDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344726601B54D6A800BEFF0B /* coreDatabase.swift */; };
 		344726621B54D6A800BEFF0B /* coreDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344726601B54D6A800BEFF0B /* coreDatabase.swift */; };
+		344829841BC1FEBC000EFEA4 /* MeetingAgendaItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344829831BC1FEBC000EFEA4 /* MeetingAgendaItem+CoreDataProperties.swift */; settings = {ASSET_TAGS = (); }; };
+		344829851BC1FEBC000EFEA4 /* MeetingAgendaItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344829831BC1FEBC000EFEA4 /* MeetingAgendaItem+CoreDataProperties.swift */; settings = {ASSET_TAGS = (); }; };
 		344B6ACD1BA7B3B600A5377B /* CloudKitInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344B6ACC1BA7B3B600A5377B /* CloudKitInteraction.swift */; settings = {ASSET_TAGS = (); }; };
 		344B6ACE1BA7B3B600A5377B /* CloudKitInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344B6ACC1BA7B3B600A5377B /* CloudKitInteraction.swift */; settings = {ASSET_TAGS = (); }; };
 		344B6AD01BA7B47500A5377B /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344B6ACF1BA7B47500A5377B /* UserInfo.swift */; settings = {ASSET_TAGS = (); }; };
@@ -356,6 +358,8 @@
 		3443A4A31B6F2F4400B0D63A /* EvesCRM 9.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 9.xcdatamodel"; sourceTree = "<group>"; };
 		344726601B54D6A800BEFF0B /* coreDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = coreDatabase.swift; sourceTree = "<group>"; };
 		3448297D1BC1E9A8000EFEA4 /* EvesCRM 25.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 25.xcdatamodel"; sourceTree = "<group>"; };
+		344829821BC1FE30000EFEA4 /* EvesCRM 26.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 26.xcdatamodel"; sourceTree = "<group>"; };
+		344829831BC1FEBC000EFEA4 /* MeetingAgendaItem+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MeetingAgendaItem+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		344B6ACC1BA7B3B600A5377B /* CloudKitInteraction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudKitInteraction.swift; sourceTree = "<group>"; };
 		344B6ACF1BA7B47500A5377B /* UserInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		344DC1F91BA1146600DBCE3D /* TextExpander.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = TextExpander.framework; sourceTree = "<group>"; };
@@ -689,6 +693,7 @@
 				34E92ADA1B9D191900F158F3 /* GTDLevel+CoreDataProperties.swift */,
 				34E92ADB1B9D191900F158F3 /* GTDLevel.swift */,
 				342C0A141B4B7CED00A73CA5 /* MeetingAgenda.swift */,
+				344829831BC1FEBC000EFEA4 /* MeetingAgendaItem+CoreDataProperties.swift */,
 				342C0A121B4B7CED00A73CA5 /* MeetingAgendaItem.swift */,
 				342C0A131B4B7CED00A73CA5 /* MeetingAttendees.swift */,
 				342C0A0F1B4B7CED00A73CA5 /* MeetingSupportingDocs.swift */,
@@ -1127,6 +1132,7 @@
 				342852311B8EA38C003D188F /* teamClass.swift in Sources */,
 				342A357C1B5F727200D6DB29 /* taskViewController.swift in Sources */,
 				347EE4231B8D6AC50044D569 /* GTDPlanningTabController.swift in Sources */,
+				344829841BC1FEBC000EFEA4 /* MeetingAgendaItem+CoreDataProperties.swift in Sources */,
 				34A183291B0EDBB400FC369D /* StringHelper.m in Sources */,
 				344B6AD01BA7B47500A5377B /* UserInfo.swift in Sources */,
 				342F46D21B9FC804004BAC9D /* KDRearrangeableCollectionViewFlowLayout.swift in Sources */,
@@ -1292,6 +1298,7 @@
 				347EE41D1B8D68620044D569 /* GTDPlanning.swift in Sources */,
 				34A183051B0EDB5C00FC369D /* LiveDownloadOperationCore.m in Sources */,
 				347518DC1AE3635100FF1C46 /* EvesCRMSharedFiles.swift in Sources */,
+				344829851BC1FEBC000EFEA4 /* MeetingAgendaItem+CoreDataProperties.swift in Sources */,
 				342F46D11B9FC804004BAC9D /* KDRearrangeableCollectionViewCell.swift in Sources */,
 				347FF2071B93FB6600133D62 /* Context1_1.swift in Sources */,
 				342F46D91B9FC826004BAC9D /* LICENCE.md in Sources */,
@@ -1574,6 +1581,7 @@
 		3406506C1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				344829821BC1FE30000EFEA4 /* EvesCRM 26.xcdatamodel */,
 				3448297D1BC1E9A8000EFEA4 /* EvesCRM 25.xcdatamodel */,
 				34DF7AD51BBD03D9000E3B09 /* EvesCRM 24.xcdatamodel */,
 				34DF7AD11BBCE6C8000E3B09 /* EvesCRM 23.xcdatamodel */,
@@ -1600,7 +1608,7 @@
 				346B70F21AF75EFE005E1BC2 /* EvesCRM 2.xcdatamodel */,
 				3406506D1ADDF8FF00C90CBB /* EvesCRM.xcdatamodel */,
 			);
-			currentVersion = 3448297D1BC1E9A8000EFEA4 /* EvesCRM 25.xcdatamodel */;
+			currentVersion = 344829821BC1FE30000EFEA4 /* EvesCRM 26.xcdatamodel */;
 			path = EvesCRM.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
