@@ -1569,7 +1569,7 @@ class coreDatabase: NSObject
         return fetchResults!
     }
 
-    func saveAttendee(inMeetingID: String, inAttendees: [meetingAttendee])
+/*    func saveAttendee(inMeetingID: String, inAttendees: [meetingAttendee])
     {
         var myPerson: MeetingAttendees
         
@@ -1614,7 +1614,7 @@ class coreDatabase: NSObject
 
         }
     }
-
+*/
     func checkMeetingsForAttendee(attendeeName: String, meetingID: String)->[MeetingAttendees]
     {
         let fetchRequest = NSFetchRequest(entityName: "MeetingAttendees")
@@ -1752,8 +1752,7 @@ class coreDatabase: NSObject
         //            print("Failure to save context: \(error)")
         //       }
     }
-
-    func deleteAllAttendees(inMeetingID: String)
+/*    func deleteAllAttendees(inMeetingID: String)
     {
         var predicate: NSPredicate
         
@@ -1799,7 +1798,41 @@ class coreDatabase: NSObject
          //   managedObjectContext!.deleteObject(myMeeting as NSManagedObject)
         }
     }
-    
+*/
+    func deleteAttendee(meetingID: String, name: String)
+    {
+        var predicate: NSPredicate
+        
+        let fetchRequest = NSFetchRequest(entityName: "MeetingAttendees")
+        predicate = NSPredicate(format: "(meetingID == \"\(meetingID)\") && (name != \"\(name)\") && (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAttendees]
+        
+        for myMeeting in fetchResults!
+        {
+            myMeeting.updateTime = NSDate()
+            myMeeting.updateType = "Delete"
+            
+            managedObjectContext!.performBlockAndWait
+            {
+                do
+                {
+                    try self.managedObjectContext!.save()
+                }
+                catch let error as NSError
+                {
+                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+                        
+                    print("Failure to save context: \(error)")
+                }
+            }
+        }
+    }
+
     func loadAgendaItem(inMeetingID: String)->[MeetingAgendaItem]
     {
         let fetchRequest = NSFetchRequest(entityName: "MeetingAgendaItem")
