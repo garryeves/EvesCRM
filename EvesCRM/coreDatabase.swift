@@ -713,8 +713,8 @@ class coreDatabase: NSObject
     {
         let fetchRequest = NSFetchRequest(entityName: "Decodes")
         
- //       let predicate = NSPredicate(format: "(decodeType != \"hidden\") && (updateType != \"Delete\")")
-        let predicate = NSPredicate(format: "(updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(decodeType != \"hidden\") && (updateType != \"Delete\")")
+   //     let predicate = NSPredicate(format: "(updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         
