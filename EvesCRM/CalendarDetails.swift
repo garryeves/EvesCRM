@@ -284,6 +284,7 @@ class meetingAgendaItem
 
 class meetingAttendee
 {
+    private var myMeetingID: String = ""
     private var myName: String = ""
     private var myEmailAddress: String = ""
     private var myType: String = ""
@@ -335,6 +336,45 @@ class meetingAttendee
         {
             myStatus = newValue
         }
+    }
+    
+    var meetingID: String
+    {
+        get
+        {
+            return myMeetingID
+        }
+        set
+        {
+            myMeetingID = newValue
+        }
+    }
+    
+    func load(meetingID: String, name: String)
+    {
+        let myAttendees = myDatabaseConnection.checkMeetingsForAttendee(name, meetingID: meetingID)
+        
+        if myAttendees.count > 0
+        {
+            for myItem in myAttendees
+            {
+                myMeetingID = myItem.meetingID
+                myName = myItem.name
+                myEmailAddress = myItem.email
+                myType = myItem.type
+                myStatus = myItem.attendenceStatus
+            }
+        }
+    }
+    
+    func delete()
+    {
+        myDatabaseConnection.deleteAttendee(myMeetingID, name: myName)
+    }
+    
+    func save()
+    {
+        myDatabaseConnection.saveAttendee(myMeetingID, name: myName, email: myEmailAddress,  type: myType, status: myStatus)
     }
 }
 
@@ -803,21 +843,19 @@ class myCalendarItem
     
     func addAttendee(inName: String, inEmailAddress: String, inType: String, inStatus: String)
     {
+        // make sure we have saved the Agenda
+        
+        save()
+
         let attendee: meetingAttendee = meetingAttendee()
         attendee.name = inName
         attendee.emailAddress = inEmailAddress
         attendee.type = inType
         attendee.status = inStatus
- 
+        attendee.meetingID = eventID
+        attendee.save()
+        
         myAttendees.append(attendee)
-        
-        // make sure we have saved the Agenda
-        
-        save()
-        
-        // Save Attendees
-        
-        myDatabaseConnection.saveAttendee(eventID, inAttendees: myAttendees)
     }
     
     private func initaliseAttendee(inName: String, inEmailAddress: String, inType: String, inStatus: String)
@@ -827,6 +865,7 @@ class myCalendarItem
         attendee.emailAddress = inEmailAddress
         attendee.type = inType
         attendee.status = inStatus
+        attendee.meetingID = eventID
         
         myAttendees.append(attendee)
     }
@@ -838,7 +877,7 @@ class myCalendarItem
         
         // Save Attendees
         
-        myDatabaseConnection.saveAttendee(eventID, inAttendees: myAttendees)
+        myAttendees[inIndex].delete()
     }
     
     func populateAttendeesFromInvite()
@@ -1124,13 +1163,6 @@ class myCalendarItem
                 {
                     initaliseAttendee(savedAttendee.name, inEmailAddress: savedAttendee.email, inType: savedAttendee.type, inStatus: savedAttendee.attendenceStatus)
                 }
-            }
-
-            // Save Attendees
-        
-            if myAttendees.count > 0
-            {
-                myDatabaseConnection.saveAttendee(eventID, inAttendees: myAttendees)
             }
         }
     }
