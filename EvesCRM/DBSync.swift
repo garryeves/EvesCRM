@@ -6,7 +6,7 @@
 //  Copyright (c) 2015 Garry Eves. All rights reserved.
 //
 
-import UIKit
+import Foundation
 
 class DBSync: NSObject
 {

@@ -6,14 +6,23 @@
 //  Copyright (c) 2015 Garry Eves. All rights reserved.
 //
 
-import UIKit
+import Foundation
 import CoreData
-
 
 class coreDatabase: NSObject
 {
+    private var managedObjectContext: NSManagedObjectContext!
     
-    private let managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
+    override init()
+    {
+        #if os(iOS)
+            managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
+        #elseif os(OSX)
+            managedObjectContext = (NSApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
+        #else
+            NSLog("Unexpected OS")
+        #endif
+    }
     
     func refreshObject(objectID: NSManagedObject)
     {
