@@ -1027,8 +1027,15 @@ class oneNoteNotebooks: NSObject
                                 let myDateFormatter = NSDateFormatter()
                                 myDateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
                             
-                                let myDate = myDateFormatter.dateFromString(myTempString)
+                                var myDate = myDateFormatter.dateFromString(myTempString)
                             
+                                if myDate == nil
+                                {
+                                    myDateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+                                    
+                                    myDate = myDateFormatter.dateFromString(myTempString)
+                                }
+                                
                                 myPage.lastModifiedTime = myDate!
                             
                             case "id" :
@@ -1038,7 +1045,7 @@ class oneNoteNotebooks: NSObject
                                 myPage.urlCallback = returnSearchStringToNormal(valueString)
                         
                             default:
-                                NSLog("Do nothing")
+                                let _ = 1
                         }
                     }
                 }
