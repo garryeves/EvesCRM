@@ -203,8 +203,43 @@ print("appdelegate application - source Application URL = \(url.scheme)")
         }
         else if "EvesCRM-get-snippets-xc" == url.scheme
         {
+    
+            /*
+            UITabBarController *tabController = (UITabBarController*)self.window.rootViewController;
+                UIViewController *currentViewController = tabController.selectedViewController;
+                SMTEDelegateController *textExpander = [currentViewController performSelector:@selector(textExpander)];
+                NSError *error = nil;
+                BOOL cancel = NO;
+                if ([textExpander handleGetSnippetsURL:url error:&error cancelFlag:&cancel] == NO) {
+                    NSLog(@"Failed to handle URL: user canceled: %@, error: %@", cancel ? @"yes" : @"no", error);
+                } else {
+                    if (cancel) {
+                        NSLog(@"User cancelled get snippets");
+                        [[NSUserDefaults standardUserDefaults] setBool:NO forKey:SMTEExpansionEnabled];
+                    } else if (error != nil) {
+                        NSLog(@"Error updating TextExpander snippets: %@", error);
+                    } else {
+                        NSLog(@"Successfully updated TextExpander Snippets");
+                    }
+                    return YES;
+                }
+*/
+            
+      //      var tabController: UITabBarController = self.window.rootViewController
+    //        let currentViewController: ViewController = self.window!.rootViewController!
+            //  textExpander = currentViewController.textExpander as SMTEDelegateController
+            
+            if myCurrentViewController.isKindOfClass(ViewController)
+            {
+                var tempController: ViewController!
+                tempController = myCurrentViewController as! ViewController
+                textExpander = tempController.textExpander
+            }
+                
+            //textExpander = myCurrentViewController.textExpander as SMTEDelegateController
+            
             var cancel: ObjCBool = false
-            textExpander = SMTEDelegateController()
+         //   textExpander = SMTEDelegateController()
             
             if textExpander.handleGetSnippetsURL(url, error:&error, cancelFlag:&cancel) == false
             {

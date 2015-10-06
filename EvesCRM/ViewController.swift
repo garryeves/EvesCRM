@@ -257,6 +257,9 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 textExpander.clientAppName = "EvesCRM"
                 textExpander.getSnippetsScheme = "EvesCRM-get-snippets-xc"
                 textExpander.fillCompletionScheme = "EvesCRM-fill-xc"
+                myCurrentViewController = ViewController()
+                myCurrentViewController = self
+
    //             textExpander.fillDelegate = self
             }
         }
@@ -2744,6 +2747,9 @@ print("Nothing found")
                                 textExpander.clientAppName = "EvesCRM"
                                 textExpander.getSnippetsScheme = "EvesCRM-get-snippets-xc"
                                 textExpander.fillCompletionScheme = "EvesCRM-fill-xc"
+                                myCurrentViewController = ViewController()
+                                myCurrentViewController = self
+
                                 //    textExpander.fillDelegate = self
                             }
                             textExpander.getSnippets()
