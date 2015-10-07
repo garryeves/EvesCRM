@@ -2663,48 +2663,52 @@ class iOSReminder
     }
 }
 
-class MeetingModel: NSObject
-{
-    private var myDelegate: MyMeetingsDelegate!
-    private var myEvent: myCalendarItem!
-    private var myActionType: String = ""
-    
-    var delegate: MyMeetingsDelegate
+#if os(iOS)
+    class MeetingModel: NSObject
     {
-        get
-        {
-            return myDelegate
+        private var myDelegate: MyMeetingsDelegate!
+        private var myEvent: myCalendarItem!
+        private var myActionType: String = ""
+        
+        var delegate: MyMeetingsDelegate
+            {
+            get
+            {
+                return myDelegate
+            }
+            set
+            {
+                myDelegate = newValue
+            }
         }
-        set
-        {
-            myDelegate = newValue
+        
+        var actionType: String
+            {
+            get
+            {
+                return myActionType
+            }
+            set
+            {
+                myActionType = newValue
+            }
+        }
+        
+        var event: myCalendarItem
+            {
+            get
+            {
+                return myEvent
+            }
+            set
+            {
+                myEvent = newValue
+            }
         }
     }
     
-    var actionType: String
-    {
-        get
-        {
-            return myActionType
-        }
-        set
-        {
-            myActionType = newValue
-        }
-    }
     
-    var event: myCalendarItem
-    {
-        get
-        {
-            return myEvent
-        }
-        set
-        {
-            myEvent = newValue
-        }
-    }
-}
+#endif
 
 func parsePastMeeting(inMeetingID: String) -> [task]
 {

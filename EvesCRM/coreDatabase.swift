@@ -9,6 +9,11 @@
 import Foundation
 import CoreData
 
+#if os(OSX)
+    import AppKit
+#endif
+
+
 class coreDatabase: NSObject
 {
     private var managedObjectContext: NSManagedObjectContext!

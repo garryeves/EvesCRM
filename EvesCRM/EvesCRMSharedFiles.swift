@@ -10,8 +10,24 @@ import Foundation
 import AddressBook
 import EventKit
 
+#if os(iOS)
+// Nothing
+#elseif os(OSX)
+    import AppKit
+#else
+// NSLog("Unexpected OS")
+#endif
+
 // Here I am definging my own struct to use in the Display array.  This is to allow passing of multiple different types of information
-var dropboxCoreService: DropboxCoreService = DropboxCoreService()
+#if os(iOS)
+    var dropboxCoreService: DropboxCoreService = DropboxCoreService()
+    
+#elseif os(OSX)
+//
+#else
+    // NSLog("Unexpected OS")
+#endif
+
 var myDatabaseConnection: coreDatabase!
 var myCloudDB: CloudKitInteraction!
 let myDBSync = DBSync()
@@ -25,7 +41,12 @@ var myID: String = ""
 
 var myCurrentViewController: AnyObject!
 
-let myRowColour = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
+#if os(iOS)
+    let myRowColour = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
+#elseif os(OSX)
+    let myRowColour = NSColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
+#endif
+
 
 struct TableData
 {
@@ -130,7 +151,14 @@ struct EvernoteData
     private var myUpdateDate: NSDate!
     private var myCreateDate: NSDate!
     private var myIdentifier: String
-    private var myNoteRef: ENNoteRef!
+    #if os(iOS)
+        private var myNoteRef: ENNoteRef!
+    #elseif os(OSX)
+        // NSLog("Evernote to be determined")
+    #else
+        //NSLog("Unexpected OS")
+    #endif
+
 
     var title: String
         {
@@ -172,16 +200,24 @@ struct EvernoteData
         }
     }
 
-    var NoteRef: ENNoteRef
+    #if os(iOS)
+        var NoteRef: ENNoteRef
         {
-        get {
-            return myNoteRef
+            get
+            {
+                return myNoteRef
+            }
+            set
+            {
+                myNoteRef = newValue
+            }
         }
-        set {
-            myNoteRef = newValue
-        }
-    }
 
+    #elseif os(OSX)
+        // Evernote to do
+    #else
+        //    NSLog("Unexpected OS")
+    #endif
     
     init()
     {
@@ -321,10 +357,21 @@ func displayProjectsForPerson(inPerson: String, inout lookupArray: [String]) -> 
     return tableContents
 }
 
-class MyDocument: UIDocument
-{
-    var userText: String? = "Some Sample Text"
-}
+#if os(iOS)
+    class MyDocument: UIDocument
+    {
+        var userText: String? = "Some Sample Text"
+    }
+    
+#elseif os(OSX)
+    class MyDocument: NSDocument
+    {
+        var userText: String? = "Some Sample Text"
+    }
+    
+#else
+// NSLog("Unexpected OS")
+#endif
 
 /*
  from http://stackoverflow.com/questions/24581517/read-a-file-url-line-by-line-in-swift
@@ -429,49 +476,95 @@ func populateStages(inTeamID: Int)
     }
 }
 
-
-func setCellFormatting (inCell: UITableViewCell, inDisplayFormat: String) -> UITableViewCell
-{
-    inCell.textLabel!.numberOfLines = 0;
-    inCell.textLabel!.lineBreakMode = NSLineBreakMode.ByWordWrapping;
-    
-    if inDisplayFormat != ""
+#if os(iOS)
+    func setCellFormatting (inCell: UITableViewCell, inDisplayFormat: String) -> UITableViewCell
     {
-        switch inDisplayFormat
+        inCell.textLabel!.numberOfLines = 0;
+        inCell.textLabel!.lineBreakMode = NSLineBreakMode.ByWordWrapping;
+        
+        if inDisplayFormat != ""
         {
-        case "Gray" :
-            inCell.textLabel!.textColor = UIColor.grayColor()
-            
-        case "Red" :
-            inCell.textLabel!.textColor = UIColor.redColor()
-            
-        case "Yellow" :
-            inCell.textLabel!.textColor = UIColor.yellowColor()
-            
-        case "Orange" :
-            inCell.textLabel!.textColor = UIColor.orangeColor()
-            
-        case "Purple" :
-            inCell.textLabel!.textColor = UIColor.purpleColor()
-            
-        case "Header":
-            inCell.textLabel!.font = UIFont.boldSystemFontOfSize(24.0)
-            inCell.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
-            
-        default:
+            switch inDisplayFormat
+            {
+            case "Gray" :
+                inCell.textLabel!.textColor = UIColor.grayColor()
+                
+            case "Red" :
+                inCell.textLabel!.textColor = UIColor.redColor()
+                
+            case "Yellow" :
+                inCell.textLabel!.textColor = UIColor.yellowColor()
+                
+            case "Orange" :
+                inCell.textLabel!.textColor = UIColor.orangeColor()
+                
+            case "Purple" :
+                inCell.textLabel!.textColor = UIColor.purpleColor()
+                
+            case "Header":
+                inCell.textLabel!.font = UIFont.boldSystemFontOfSize(24.0)
+                inCell.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
+                
+            default:
+                inCell.textLabel!.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
+                inCell.textLabel!.textColor = UIColor.blackColor()
+            }
+        }
+        else
+        {
             inCell.textLabel!.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
             inCell.textLabel!.textColor = UIColor.blackColor()
         }
+        
+        return inCell
     }
-    else
+
+#elseif os(OSX)
+    func setCellFormatting (inCell: NSTableCellView, inDisplayFormat: String) -> NSTableCellView
     {
-        inCell.textLabel!.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
-        inCell.textLabel!.textColor = UIColor.blackColor()
+ //       inCell.textField!.numberOfLines = 0;
+        inCell.textField!.lineBreakMode = NSLineBreakMode.ByWordWrapping;
+        
+        if inDisplayFormat != ""
+        {
+            switch inDisplayFormat
+            {
+            case "Gray" :
+                inCell.textField!.textColor = NSColor.grayColor()
+                
+            case "Red" :
+                inCell.textField!.textColor = NSColor.redColor()
+                
+            case "Yellow" :
+                inCell.textField!.textColor = NSColor.yellowColor()
+                
+            case "Orange" :
+                inCell.textField!.textColor = NSColor.orangeColor()
+                
+            case "Purple" :
+                inCell.textField!.textColor = NSColor.purpleColor()
+                
+            case "Header":
+                inCell.textField!.font = NSFont.boldSystemFontOfSize(24.0)
+  //              inCell.accessoryType = setIndicatorImage(NSDisclosureImage)
+                
+            default:
+//                inCell.textField!.font = NSFont.preferredFontForTextStyle(NSFontTextStyleBody)
+                inCell.textField!.textColor = NSColor.blackColor()
+            }
+        }
+        else
+        {
+//            inCell.textField!.font = NSFont.preferredFontForTextStyle(NSFontTextStyleBody)
+            inCell.textField!.textColor = NSColor.blackColor()
+        }
+        
+        return inCell
     }
     
-    return inCell
-    
-}
+#else
+//NSLog("Unexpected OS")
+#endif
 
 func fixStringForSearch(inString: String) -> String
 {
@@ -534,22 +627,47 @@ func characterAtIndex(inString: String, index: Int) -> Character {
     return retVal
 }
 
-class MyDisplayCollectionViewCell: UICollectionViewCell
-{
-    @IBOutlet var Label: UILabel! = UILabel()
-    
-    required init?(coder aDecoder: NSCoder)
+#if os(iOS)
+    class MyDisplayCollectionViewCell: UICollectionViewCell
     {
-        super.init(coder: aDecoder)
-        Label.text = ""
+        @IBOutlet var Label: UILabel! = UILabel()
+        
+        required init?(coder aDecoder: NSCoder)
+        {
+            super.init(coder: aDecoder)
+            Label.text = ""
+        }
+        
+        override init(frame: CGRect)
+        {
+            super.init(frame: frame)
+            Label.text = ""
+        }
+    }
+
+#elseif os(OSX)
+    class MyDisplayCollectionViewCell: NSCollectionViewItem
+    {
+        @IBOutlet var Label: NSTextField! = NSTextField()
+        
+        required init?(coder aDecoder: NSCoder)
+        {
+            super.init(coder: aDecoder)
+            Label.stringValue = ""
+        }
+        
+ //       init(frame: CGRect)
+ //       {
+            //super.init(frame: frame)
+            //super.init()
+ //           Label.stringValue = ""
+ //       }
     }
     
-    override init(frame: CGRect)
-    {
-        super.init(frame: frame)
-        Label.text = ""
-    }
-}
+#else
+    //NSLog("Unexpected OS")
+#endif
+
 
 class menuObject: NSObject
 {
@@ -653,42 +771,42 @@ struct menuEntry
     var menuEntries: [menuObject]!
 }
 
-//class SharingActivityProvider: UIActivityItemProvider, UIActivityItemSource
-class SharingActivityProvider: UIActivityItemProvider
-{
-    var HTMLString : String!
-    var plainString : String!
-    var messageSubject: String!
-    
-    override func activityViewController(activityViewController: UIActivityViewController, itemForActivityType activityType: String) -> AnyObject?
+#if os(iOS)
+    class SharingActivityProvider: UIActivityItemProvider
     {
-        switch activityType
+        var HTMLString : String!
+        var plainString : String!
+        var messageSubject: String!
+    
+        override func activityViewController(activityViewController: UIActivityViewController, itemForActivityType activityType: String) -> AnyObject?
         {
-        case UIActivityTypeMail:
-            return HTMLString
+            switch activityType
+            {
+            case UIActivityTypeMail:
+                return HTMLString
             
-        case UIActivityTypePrint:
-            return HTMLString
+            case UIActivityTypePrint:
+                return HTMLString
             
-        case UIActivityTypeCopyToPasteboard:
-            return HTMLString
+            case UIActivityTypeCopyToPasteboard:
+                return HTMLString
             
-        default:
-            return plainString
+            default:
+                return plainString
+            }
+        }
+    
+        override func activityViewControllerPlaceholderItem(activityViewController: UIActivityViewController) -> AnyObject
+        {
+            return "";
+        }
+    
+        override func activityViewController(activityViewController: UIActivityViewController, subjectForActivityType activityType: String?) -> String
+        {
+            return messageSubject
         }
     }
-    
-    override func activityViewControllerPlaceholderItem(activityViewController: UIActivityViewController) -> AnyObject
-    {
-        return "";
-    }
-    
-    override func activityViewController(activityViewController: UIActivityViewController, subjectForActivityType activityType: String?) -> String
-    {
-        return messageSubject
-    }
-}
-
+    #endif
 /*
 class textViewTapGestureRecognizer:UITapGestureRecognizer
 {
@@ -789,126 +907,135 @@ class textViewTapGestureRecognizer:UITapGestureRecognizer
 }
 */
 
-class textLongPressGestureRecognizer:UILongPressGestureRecognizer
-{
-    private var myTag: Int = 0
-    private var myTargetObject: AnyObject!
-    private var myView: UIView!
-    private var myHeadBody: String = ""
-    private var myType: String = ""
-    private var myFrame: CGRect!
-    
-    var tag: Int
+#if os(iOS)
+    class textLongPressGestureRecognizer:UILongPressGestureRecognizer
     {
-        get
-        {
-            return myTag
-        }
-        set
-        {
-            myTag = newValue
-        }
-    }
+        private var myTag: Int = 0
+        private var myTargetObject: AnyObject!
+        private var myView: UIView!
+        private var myHeadBody: String = ""
+        private var myType: String = ""
+        private var myFrame: CGRect!
     
-    var targetObject: AnyObject
-    {
-        get
+        var tag: Int
         {
-            return myTargetObject
+            get
+            {
+                return myTag
+            }
+            set
+            {
+                myTag = newValue
+            }
         }
-        set
+    
+        var targetObject: AnyObject
         {
-            myTargetObject = newValue
+            get
+            {
+                return myTargetObject
+            }
+            set
+            {
+                myTargetObject = newValue
             
-            if newValue.isKindOfClass(team)
-            {
-                myType = "team"
+                if newValue.isKindOfClass(team)
+                {
+                    myType = "team"
+                }
+                else if newValue.isKindOfClass(workingGTDItem)
+                {
+                    myType = "workingGTDItem"
+                }
+                else if newValue.isKindOfClass(project)
+                {
+                    myType = "project"
+                }
+                else if newValue.isKindOfClass(task)
+                {
+                    myType = "task"
+                }
+                else if newValue.isKindOfClass(context)
+                {
+                    myType = "context"
+                }
             }
-            else if newValue.isKindOfClass(workingGTDItem)
+        }
+    
+        var displayView: UIView
+        {
+            get
             {
-                myType = "workingGTDItem"
+                return myView
             }
-            else if newValue.isKindOfClass(project)
+            set
             {
-                myType = "project"
-            }
-            else if newValue.isKindOfClass(task)
-            {
-                myType = "task"
-            }
-            else if newValue.isKindOfClass(context)
-            {
-                myType = "context"
+                myView = newValue
             }
         }
-    }
     
-    var displayView: UIView
-    {
-        get
+        var headBody: String
         {
-            return myView
+            get
+            {
+                return myHeadBody
+            }
+            set
+            {
+                myHeadBody = newValue
+            }
         }
-        set
-        {
-            myView = newValue
-        }
-    }
     
-    var headBody: String
-    {
-        get
+        var type: String
         {
-            return myHeadBody
+            get
+            {
+                return myType
+            }
         }
-        set
-        {
-            myHeadBody = newValue
-        }
-    }
     
-    var type: String
-    {
-        get
+        var displayX: CGFloat
         {
-            return myType
+            get
+            {
+                return myFrame.origin.x
+            }
         }
-    }
     
-    var displayX: CGFloat
-    {
-        get
+        var displayY: CGFloat
         {
-            return myFrame.origin.x
+            get
+            {
+                return myFrame.origin.y
+            }
         }
-    }
     
-    var displayY: CGFloat
-    {
-        get
+        var frame: CGRect
         {
-            return myFrame.origin.y
+            get
+            {
+                return myFrame
+            }
+            set
+            {
+                myFrame = newValue
+            }
         }
     }
-    
-    var frame: CGRect
-    {
-        get
-        {
-            return myFrame
-        }
-        set
-        {
-            myFrame = newValue
-        }
-    }
-}
+#endif
 
 class cellDetails: NSObject
 {
     private var myTag: Int = 0
     private var myTargetObject: AnyObject!
-    private var myView: UIView!
+    #if os(iOS)
+        private var myView: UIView!
+    #elseif os(OSX)
+        private var myView: NSView!
+    #else
+        //NSLog("Unexpected OS")
+    #endif
+
     private var myHeadBody: String = ""
     private var myType: String = ""
     private var myFrame: CGRect!
@@ -957,18 +1084,37 @@ class cellDetails: NSObject
             }
         }
     }
+
+    #if os(iOS)
+        var displayView: UIView
+        {
+            get
+            {
+                return myView
+            }
+            set
+            {
+                myView = newValue
+            }
+        }
     
-    var displayView: UIView
+    #elseif os(OSX)
+        var displayView: NSView
         {
-        get
-        {
-            return myView
+            get
+            {
+                return myView
+            }
+            set
+            {
+                myView = newValue
+            }
         }
-        set
-        {
-            myView = newValue
-        }
-    }
+    
+    #else
+        //NSLog("Unexpected OS")
+    #endif
+
     
     var headBody: String
         {

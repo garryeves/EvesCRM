@@ -2651,32 +2651,35 @@ class taskUpdates: NSObject
     }
 }
 
-class GTDModel: NSObject
-{
-    private var myDelegate: MyMaintainProjectDelegate!
-    private var myActionSource: String = ""
-    
-    var delegate: MyMaintainProjectDelegate
+#if os(iOS)
+    class GTDModel: NSObject
     {
-        get
-        {
-            return myDelegate
+        private var myDelegate: MyMaintainProjectDelegate!
+        private var myActionSource: String = ""
+        
+        var delegate: MyMaintainProjectDelegate
+            {
+            get
+            {
+                return myDelegate
+            }
+            set
+            {
+                myDelegate = newValue
+            }
         }
-        set
-        {
-            myDelegate = newValue
+        
+        var actionSource: String
+            {
+            get
+            {
+                return myActionSource
+            }
+            set
+            {
+                myActionSource = newValue
+            }
         }
     }
-    
-    var actionSource: String
-    {
-        get
-        {
-            return myActionSource
-        }
-        set
-        {
-            myActionSource = newValue
-        }
-    }
-}
+#endif
+
