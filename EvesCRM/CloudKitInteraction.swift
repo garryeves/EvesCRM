@@ -23,7 +23,14 @@ class CloudKitInteraction
     
     init()
     {
-        container = CKContainer.defaultContainer()
+        #if os(iOS)
+            container = CKContainer.defaultContainer()
+        #elseif os(OSX)
+            container = CKContainer.init(identifier: "iCloud.com.garryeves.EvesCRM")
+        #else
+            NSLog("Unexpected OS")
+        #endif
+
         publicDB = container.publicCloudDatabase // data saved here can be seen by all users
         privateDB = container.privateCloudDatabase // this is the one to use to save the data
         
@@ -3330,6 +3337,7 @@ class CloudKitInteraction
         let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+
         let query: CKQuery = CKQuery(recordType: "Team", predicate: predicate)
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!

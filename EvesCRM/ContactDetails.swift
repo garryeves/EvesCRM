@@ -9,7 +9,10 @@
 //This file is used to populate Contact details table
 
 import Foundation
-import AddressBook
+
+#if os(iOS)
+
+    import AddressBook
 
 class iOSContact
 {
@@ -618,49 +621,383 @@ func findPersonbyEmail(inEmail: String) -> ABRecord!
     return person
 }
 
-/*
-func decodePhone(decodeType: String, decodeProperty: ABMultiValueRef, inComingType: CFString, inout tableContents: [TableData])
+#else
+
+    import Contacts
+    
+    let contactDataArray = [
+      CNContactNamePrefixKey,
+      CNContactGivenNameKey,
+      CNContactMiddleNameKey,
+      CNContactFamilyNameKey,
+      CNContactPreviousFamilyNameKey,
+      CNContactNameSuffixKey,
+      CNContactNicknameKey,
+      CNContactOrganizationNameKey,
+      CNContactDepartmentNameKey,
+      CNContactJobTitleKey,
+      CNContactBirthdayKey,
+      CNContactNoteKey,
+      CNContactTypeKey,
+      CNContactPhoneNumbersKey,
+      CNContactEmailAddressesKey,
+      CNContactPostalAddressesKey,
+      CNContactDatesKey,
+      CNContactUrlAddressesKey,
+      CNContactRelationsKey,
+      CNContactSocialProfilesKey,
+      CNContactInstantMessageAddressesKey
+    ]
+
+class iOSContact
 {
-    var myIndex: Int = inComingType.toInt()!
+    private var myFacebookID: String = ""
+    private var myLinkedInID: String = ""
+    private var myTwitterID: String = ""
+    private var tableContents:[TableData] = [TableData]()
+    private var myContactRecord: CNContact!
+    private var myEmailAddresses: [String]!
+    private var myFullName: String = ""
     
-    if ABMultiValueCopyValueAtIndex(decodeProperty,myIndex) != nil
-    {
-        var myPhone = ABMultiValueCopyValueAtIndex(decodeProperty,myIndex).takeRetainedValue() as! String
-    
-        if myPhone != ""
+    var facebookID: String
         {
-            writeRowToArray(decodeType + " = " + myPhone, &tableContents)
+        get
+        {
+            return myFacebookID
         }
     }
-}
-*/
-
-
-/*
-func getEmailAddress (contactRecord: ABRecord)-> [String]
-{
     
-    var tableContents:[String] = [String]()
-    
-    let decodeProperty = ABRecordCopyValue(contactRecord, kABPersonEmailProperty)
-    let emailAddrs: ABMultiValueRef = Unmanaged.fromOpaque(decodeProperty.toOpaque()).takeUnretainedValue() as NSObject as ABMultiValueRef
-    
-    let recordCount = ABMultiValueGetCount(emailAddrs)
-    var myType: CFString!
-    var myString: String = ""
-    
-    if recordCount > 0
-    {
-        for loopCount in 0...recordCount-1
+    var linkedInID: String
         {
-            myString = ABMultiValueCopyValueAtIndex(emailAddrs, loopCount).takeRetainedValue() as! String
+        get
+        {
+            return myLinkedInID
+        }
+    }
+    
+    var twitterID: String
+        {
+        get
+        {
+            return myTwitterID
+        }
+    }
+    
+    var tableData: [TableData]
+        {
+        get
+        {
+            return tableContents
+        }
+    }
+    
+    var contactRecord: CNContact
+        {
+        get
+        {
+            return myContactRecord
+        }
+    }
+    
+    var emailAddresses: [String]
+        {
+        get
+        {
+            return myEmailAddresses
+        }
+    }
+    
+    var fullName: String
+        {
+        get
+        {
+            return myFullName
+        }
+    }
+    
+    init (contactRecord: CNContact)
+    {
+        var myString: String = ""
+        
+        myContactRecord = contactRecord
+        tableContents.removeAll()
+        myEmailAddresses = Array()
+
+        myString = "Name : \(CNContactFormatter.stringFromContact(myContactRecord, style: .FullName))"
+        writeRowToArray(myString, inTable: &tableContents)
+
+        for myAddress in myContactRecord.postalAddresses
+        {
+            switch myAddress.label
+            {
+                case CNLabelHome :
+                    myString = "Home : \n"
+
+                case CNLabelWork :
+                    myString = "Work : \n"
+                
+                case CNLabelOther :
+                    myString = "Other : \n"
+                
+                default :
+                    myString = "Unknown Address : \(myAddress.label) : \n"
+            }
             
-            tableContents.append(myString)
+            let myAddressValue = myAddress.value as! CNPostalAddress
+            myString += "\(myAddressValue.street)\n"
+            myString += "\(myAddressValue.city)\n"
+            myString += "\(myAddressValue.state)\n"
+            myString += "\(myAddressValue.country)\n"
+            myString += "\(myAddressValue.postalCode)\n"
+            
+            writeRowToArray(myString, inTable: &tableContents)
         }
-    }
+        
+        myString = "Organization : \(myContactRecord.organizationName)"
+        writeRowToArray(myString, inTable: &tableContents)
 
-    return tableContents
+        myString = "Dept : \(myContactRecord.departmentName)"
+        writeRowToArray(myString, inTable: &tableContents)
+
+        myString = "Job Title : \(myContactRecord.jobTitle)"
+        writeRowToArray(myString, inTable: &tableContents)
+
+        for myPhone in myContactRecord.phoneNumbers
+        {
+            switch myPhone.label
+            {
+                case CNLabelPhoneNumberiPhone :
+                    myString = "iPhone : "
+                
+                case CNLabelPhoneNumberMobile :
+                    myString = "Mobile : "
+                
+                case CNLabelPhoneNumberMain :
+                    myString = "Main : "
+
+                case CNLabelPhoneNumberHomeFax :
+                    myString = "Home Fax : "
+
+                case CNLabelPhoneNumberWorkFax :
+                    myString = "Work Fax : "
+
+                case CNLabelPhoneNumberOtherFax :
+                    myString = "Other Fax : "
+                
+                case CNLabelPhoneNumberPager :
+                    myString = "Pager : "
+
+                default :
+                    myString = "Unknown phone number : \(myPhone.label) : "
+            }
+            let myPhoneValue = myPhone.value as! CNPhoneNumber
+            myString += "\(myPhoneValue.stringValue)"
+            
+            writeRowToArray(myString, inTable: &tableContents)
+        }
+
+        for myEmail in myContactRecord.emailAddresses
+        {
+            switch myEmail.label
+            {
+                case CNLabelEmailiCloud :
+                    myString = "iCloud : "
+                
+                default :
+                    myString = "Unknown email address : \(myEmail.label) : "
+            }
+            let myEmailValue = myEmail.value as! String
+            myString += "\(myEmailValue)"
+            
+            writeRowToArray(myString, inTable: &tableContents)
+            
+            myEmailAddresses.append(myEmailValue)
+        }
+
+        myString = "Note : \(myContactRecord.note)"
+        writeRowToArray(myString, inTable: &tableContents)
+
+        myString = "Birthday : \(myContactRecord.birthday)"
+        writeRowToArray(myString, inTable: &tableContents)
+        
+        for myIM in myContactRecord.instantMessageAddresses
+        {
+            switch myIM.label
+            {
+                case CNInstantMessageServiceAIM :
+                    myString = "AIM : "
+
+                case CNInstantMessageServiceFacebook :
+                    myString = "Facebook : "
+
+                case CNInstantMessageServiceGaduGadu :
+                    myString = "GaduGadu : "
+
+                case CNInstantMessageServiceGoogleTalk :
+                    myString = "Google Talk : "
+
+                case CNInstantMessageServiceICQ :
+                    myString = "ICQ : "
+
+                case CNInstantMessageServiceJabber :
+                    myString = "Jabber : "
+
+                case CNInstantMessageServiceMSN :
+                    myString = "MSN : "
+
+                case CNInstantMessageServiceQQ :
+                    myString = "QQ : "
+
+                case CNInstantMessageServiceSkype :
+                    myString = "SkyPE : "
+
+                case CNInstantMessageServiceYahoo :
+                    myString = "Yahoo : "
+
+                default :
+                    myString = "Unknown IM address : \(myIM.label) : "
+            }
+            let myIMValue = myIM.value as! CNInstantMessageAddress
+            myString += "\(myIMValue.username)"
+            
+            writeRowToArray(myString, inTable: &tableContents)
+        }
+
+        for mySocial in myContactRecord.socialProfiles
+        {
+            switch mySocial.label
+            {
+                case CNSocialProfileServiceFacebook :
+                    myString = "Facebook : "
+                
+                case CNSocialProfileServiceFlickr :
+                    myString = "Flickr : "
+                
+                case CNSocialProfileServiceLinkedIn :
+                    myString = "LinkedIN : "
+                
+                case CNSocialProfileServiceMySpace :
+                    myString = "MySpace : "
+                
+                case CNSocialProfileServiceSinaWeibo :
+                    myString = "Sina Weibo : "
+                
+                case CNSocialProfileServiceTencentWeibo :
+                    myString = "Tencent Weibo : "
+                
+                case CNSocialProfileServiceTwitter :
+                    myString = "Twitter : "
+                
+                case CNSocialProfileServiceYelp :
+                    myString = "Yelp : "
+                
+                case CNSocialProfileServiceGameCenter :
+                    myString = "GameCenter : "
+                
+                default :
+                    myString = "Unknown Social address : \(mySocial.label) : "
+            }
+            let mySocialValue = mySocial.value as! CNSocialProfile
+            myString += "\(mySocialValue.username)"
+            
+            writeRowToArray(myString, inTable: &tableContents)
+        }
+
+        for myURL in myContactRecord.urlAddresses
+        {
+            switch myURL.label
+            {
+                case CNLabelURLAddressHomePage :
+                    myString = "Home Page : "
+                
+                default :
+                    myString = "Unknown URL address : \(myURL.label) : "
+            }
+            let myURLValue = myURL.value as! String
+            myString += "\(myURLValue)"
+            
+            writeRowToArray(myString, inTable: &tableContents)
+        }
+
+        myString = "Nickname : \(myContactRecord.nickname)"
+        writeRowToArray(myString, inTable: &tableContents)
+
+        myFullName = CNContactFormatter.stringFromContact(myContactRecord, style: .FullName)!
+    }
 }
 
-*/
+func findPersonRecordByID(recordID: String) -> CNContact
+{
+    var person: CNContact!
 
+    do
+    {
+        let people = try adbk.unifiedContactsMatchingPredicate(CNContact.predicateForContactsWithIdentifiers([recordID]), keysToFetch: contactDataArray)
+        person = people[0]
+    }
+    catch let error as NSError
+    {
+        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+        
+        print("Failure to save context: \(error)")
+    }
+    
+    return person
+}
+
+func findPersonRecord(name: String) -> CNContact!
+{
+    var person: CNContact!
+
+    //  there may be a better way to do this, but it works.
+    do
+    {
+        person = try adbk.unifiedContactsMatchingPredicate(CNContact.predicateForContactsMatchingName(name), keysToFetch: contactDataArray)[0]
+    }
+    catch let error as NSError
+    {
+        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+        
+        print("Failure to save context: \(error)")
+    }
+    
+    return person
+}
+
+func findPersonbyEmail(searchEmail: String) -> CNContact!
+{
+    //  there may be a better way to do this, but it works.
+    var person: CNContact!
+    
+    let fetch = CNContactFetchRequest(keysToFetch: contactDataArray)
+    fetch.keysToFetch = [CNContactEmailAddressesKey] // Enter the keys for the values you want to fetch here
+    fetch.unifyResults = true
+    fetch.predicate = nil // Set this to nil will give you all Contacts
+    do
+    {
+        _ = try adbk.enumerateContactsWithFetchRequest(fetch, usingBlock:
+                {
+                    contact, cursor in
+                    // Do something with the result...for example put it in an array of CNContacts as shown below
+                    let theContact = contact as CNContact
+                    
+                    for myEmail in contact.emailAddresses
+                    {
+                        if myEmail.value as! String == searchEmail
+                        {
+                            person = theContact
+                            break
+                        }
+                    }
+                })
+        
+    }
+    catch
+    {
+        print("Error")
+    }
+
+    return person
+}
+    
+#endif

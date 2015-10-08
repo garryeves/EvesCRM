@@ -7,13 +7,17 @@
 //
 
 import Foundation
-import AddressBook
 import EventKit
 
 #if os(iOS)
 // Nothing
+    import AddressBook
+    var adbk : ABAddressBook!
 #elseif os(OSX)
     import AppKit
+    import Contacts
+    
+    var adbk: CNContactStore!
 #else
 // NSLog("Unexpected OS")
 #endif
@@ -31,7 +35,6 @@ import EventKit
 var myDatabaseConnection: coreDatabase!
 var myCloudDB: CloudKitInteraction!
 let myDBSync = DBSync()
-var adbk : ABAddressBook!
 var eventStore: EKEventStore!
 var debugMessages: Bool = false
 
