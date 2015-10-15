@@ -426,7 +426,14 @@ class myCalendarItem
         myTitle = inEvent.title
         myStartDate = inEvent.startDate
         myEndDate = inEvent.endDate
-        myLocation = inEvent.location!
+        if inEvent.location == nil
+        {
+            myLocation = ""
+        }
+        else
+        {
+            myLocation = inEvent.location!
+        }
         
         if inEvent.recurrenceRules != nil
         {

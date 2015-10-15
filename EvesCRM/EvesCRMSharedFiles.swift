@@ -671,7 +671,6 @@ func characterAtIndex(inString: String, index: Int) -> Character {
     //NSLog("Unexpected OS")
 #endif
 
-
 class menuObject: NSObject
 {
     private var myDisplayString: String = ""
@@ -764,6 +763,49 @@ class menuObject: NSObject
         set
         {
             myChildSection = newValue
+        }
+    }
+}
+
+class menuObjectMac: NSObject
+{
+    private var myString: String = ""
+    private var myArray: [NSObject] = Array()
+    private var myObject: NSObject!
+    
+    var name: String
+    {
+        get
+        {
+            return myString
+        }
+        set
+        {
+            myString = newValue
+        }
+    }
+    
+    var array: [NSObject]
+    {
+        get
+        {
+            return myArray
+        }
+        set
+        {
+            myArray = newValue
+        }
+    }
+
+    var object: NSObject
+    {
+        get
+        {
+            return myObject
+        }
+        set
+        {
+            myObject = newValue
         }
     }
 }
@@ -1373,5 +1415,29 @@ extension String
             NSLog("Warning: failed to create plain text \(error)")
             return ""
         }
+    }
+}
+
+func connectCalendar()
+{
+    eventStore = EKEventStore()
+    
+    switch EKEventStore.authorizationStatusForEntityType(EKEntityType.Event) {
+    case .Authorized:
+        print("Calendar Access granted")
+    case .Denied:
+        print("Calendar Access denied")
+    case .NotDetermined:
+        // 3
+        eventStore.requestAccessToEntityType(EKEntityType.Event, completion:
+            {(granted: Bool, error: NSError?) -> Void in
+                if granted {
+                    print("Calendar Access granted")
+                } else {
+                    print("Calendar Access denied")
+                }
+        })
+    default:
+        print("Calendar Case Default")
     }
 }
