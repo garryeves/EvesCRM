@@ -79,9 +79,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>16</string>
-	<key>FacebookAppID</key>
-	<string>456682554489016</string>
+	<string>21</string>
 	<key>FacebookDisplayName</key>
 	<string>Contacts Dashboard</string>
 	<key>LSApplicationQueriesSchemes</key>

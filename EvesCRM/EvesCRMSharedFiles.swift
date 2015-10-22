@@ -60,6 +60,7 @@ struct TableData
     private var myReminderPriority: Int
     private var myNotes: String
     private var mycalendarItemIdentifier: String
+    private var myTask: task!
     
     var displaySpecialFormat: String
         {
@@ -108,6 +109,18 @@ struct TableData
         }
         set {
             myNotes = newValue
+        }
+    }
+    
+    var targetTask: task
+    {
+        get
+        {
+            return myTask
+        }
+        set
+        {
+            myTask = newValue
         }
     }
     
@@ -245,6 +258,23 @@ func writeRowToArray(inDisplayText: String, inout inTable: [TableData], inDispla
         
     inTable.append(myDisplay)
 }
+
+func writeRowToArray(displayText: String, inout table: [TableData], targetTask: task, displayFormat: String="")
+{
+    // Create the struct for this record
+    
+    var myDisplay: TableData = TableData(displayText: displayText)
+    
+    if displayFormat != ""
+    {
+        myDisplay.displaySpecialFormat = displayFormat
+    }
+    
+    myDisplay.targetTask = targetTask
+    
+    table.append(myDisplay)
+}
+
 
 func getFirstPartofString(inText: String) -> String
 {
