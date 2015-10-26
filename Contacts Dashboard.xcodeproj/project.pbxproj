@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2A77F31174CAA86D0C284939 /* Pods_EvesCRMTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92959BF0D8483C131E7E26F7 /* Pods_EvesCRMTests.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		2A77F31174CAA86D0C284939 /* Pods_EvesCRMTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92959BF0D8483C131E7E26F7 /* Pods_EvesCRMTests.framework */; };
 		3403BA451B02FFEC0043D52C /* settingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341E08C61B01B1B90036202D /* settingsViewController.swift */; };
 		3406506B1ADDF8FF00C90CBB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406506A1ADDF8FF00C90CBB /* AppDelegate.swift */; };
 		3406506E1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3406506C1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld */; };
@@ -247,7 +247,7 @@
 		34F35BE61B6B54A200A19ACE /* meetingAgendaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F35BE41B6B54A200A19ACE /* meetingAgendaViewController.swift */; };
 		34FED38D1B044BF1006B414C /* maintainPanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FED38C1B044BF1006B414C /* maintainPanes.swift */; };
 		34FED38E1B044BF1006B414C /* maintainPanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FED38C1B044BF1006B414C /* maintainPanes.swift */; };
-		D54BFC2948A2402742B6E462 /* Pods_EvesCRM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 023D2F9C8B259D5BD59411AE /* Pods_EvesCRM.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		D54BFC2948A2402742B6E462 /* Pods_EvesCRM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 023D2F9C8B259D5BD59411AE /* Pods_EvesCRM.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */

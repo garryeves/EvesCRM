@@ -442,10 +442,11 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
     @IBAction func btnStatus(sender: UIButton)
     {
         pickerOptions.removeAll(keepCapacity: false)
-        pickerOptions.append("")
-        pickerOptions.append("Open")
-        pickerOptions.append("Pause")
-        pickerOptions.append("Complete")
+        for myItem in myTaskStatus
+        {
+            pickerOptions.append(myItem)
+        }
+
         hideFields()
         myPicker.hidden = false
         btnSelect.hidden = false
@@ -493,13 +494,11 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
     @IBAction func btnEstTimeInterval(sender: UIButton)
     {
         pickerOptions.removeAll(keepCapacity: false)
-        pickerOptions.append("")
-        pickerOptions.append("Minutes")
-        pickerOptions.append("Hours")
-        pickerOptions.append("Days")
-        pickerOptions.append("Weeks")
-        pickerOptions.append("Months")
-        pickerOptions.append("Years")
+        for myItem in myTimeInterval
+        {
+            pickerOptions.append(myItem)
+        }
+
         hideFields()
         myPicker.hidden = false
         btnSelect.hidden = false
@@ -513,10 +512,13 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
     @IBAction func btnPriority(sender: UIButton)
     {
         pickerOptions.removeAll(keepCapacity: false)
-        pickerOptions.append("")
-        pickerOptions.append("High")
-        pickerOptions.append("Medium")
-        pickerOptions.append("Low")
+        
+        for myItem in myTaskPriority
+        {
+            pickerOptions.append(myItem)
+        }
+
+        
         hideFields()
         myPicker.hidden = false
         btnSelect.hidden = false
@@ -530,10 +532,12 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
     @IBAction func btnEnergy(sender: UIButton)
     {
         pickerOptions.removeAll(keepCapacity: false)
-        pickerOptions.append("")
-        pickerOptions.append("High")
-        pickerOptions.append("Medium")
-        pickerOptions.append("Low")
+        
+        for myItem in myTaskEnergy
+        {
+            pickerOptions.append(myItem)
+        }
+
         hideFields()
         myPicker.hidden = false
         btnSelect.hidden = false
@@ -638,10 +642,12 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
     @IBAction func btnUrgency(sender: UIButton)
     {
         pickerOptions.removeAll(keepCapacity: false)
-        pickerOptions.append("")
-        pickerOptions.append("High")
-        pickerOptions.append("Medium")
-        pickerOptions.append("Low")
+        
+        for myItem in myTaskUrgency
+        {
+            pickerOptions.append(myItem)
+        }
+
         hideFields()
         myPicker.hidden = false
         btnSelect.hidden = false

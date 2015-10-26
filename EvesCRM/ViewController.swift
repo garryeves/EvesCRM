@@ -3275,10 +3275,6 @@ print("Nothing found")
         myWorkingTask.startDate = myDatePicker.date
         myDatePicker.hidden = true
         btnSetStartDate.hidden = true
-        table1Contents = Array()
-        table2Contents = Array()
-        table3Contents = Array()
-        table4Contents = Array()
         
         switch myWorkingTable
         {

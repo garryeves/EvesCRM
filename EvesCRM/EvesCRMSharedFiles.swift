@@ -1265,6 +1265,30 @@ let myRepeatBases = ["",
     "Saturday",
     "Sunday"]
 
+let myTaskStatus = ["", "Open", "Pause", "Complete"]
+let myTimeInterval = ["",
+    "Minutes",
+    "Hours",
+    "Days",
+    "Weeks",
+    "Months",
+    "Years"]
+
+let myTaskPriority = ["",
+    "High",
+    "Medium",
+    "Low"]
+
+let myTaskUrgency = ["",
+    "High",
+    "Medium",
+    "Low"]
+
+let myTaskEnergy = ["",
+    "High",
+    "Medium",
+    "Low"]
+
 func calculateNewDate(inOriginalDate: NSDate, inDateBase: String, inInterval: Int, inPeriod: String) -> NSDate
 {
     var addCalendarUnit: NSCalendarUnit!
