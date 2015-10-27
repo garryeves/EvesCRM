@@ -47,7 +47,8 @@ var myCurrentViewController: AnyObject!
 #if os(iOS)
     let myRowColour = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
 #elseif os(OSX)
-    let myRowColour = NSColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
+//    let myRowColour = NSColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25) as! CGColor
+    let myRowColour = CGColorCreateGenericRGB(0.75, 1.0, 0.92, 0.25)
 #endif
 
 
@@ -1459,7 +1460,8 @@ func calculateDateForWeekDay(inStartDate: NSDate, dayToFind: Int) -> NSDate
 
 extension String
 {
-    var html2String:String {
+    var html2String:String
+    {
         do
         {
             return try NSAttributedString(data: dataUsingEncoding(NSUTF8StringEncoding)!, options: [NSDocumentTypeDocumentAttribute:NSHTMLTextDocumentType,NSCharacterEncodingDocumentAttribute:NSUTF8StringEncoding], documentAttributes: nil).string
@@ -1467,6 +1469,11 @@ extension String
         catch let error as NSError
         {
             NSLog("Warning: failed to create plain text \(error)")
+            return ""
+        }
+        catch
+        {
+            NSLog("html2String unknown error")
             return ""
         }
     }
