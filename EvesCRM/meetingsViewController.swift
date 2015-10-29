@@ -810,9 +810,12 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
         else
         {
             pickerOptions.removeAll()
-            pickerOptions.append("Attended")
-            pickerOptions.append("Apology")
-            pickerOptions.append("Delegated")
+            
+            for myItem in myAttendenceStatus
+            {
+                pickerOptions.append(myItem)
+            }
+            
             hideFields()
             myPicker.hidden = false
             btnSelect.setTitle("Set Attendence", forState: .Normal)

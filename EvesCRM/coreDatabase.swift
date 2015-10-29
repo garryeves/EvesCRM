@@ -1818,7 +1818,7 @@ class coreDatabase: NSObject
         var predicate: NSPredicate
         
         let fetchRequest = NSFetchRequest(entityName: "MeetingAttendees")
-        predicate = NSPredicate(format: "(meetingID == \"\(meetingID)\") && (name != \"\(name)\") && (updateType != \"Delete\")")
+        predicate = NSPredicate(format: "(meetingID == \"\(meetingID)\") && (name == \"\(name)\") && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

@@ -453,6 +453,8 @@ class myCalendarItem
             myStatus = Int(inAttendee!.participantStatus.rawValue)
             myType = Int(inAttendee!.participantType.rawValue)
         }
+        
+        loadAgenda()
     }
     
     init(inEventStore: EKEventStore, inMeetingAgenda: MeetingAgenda)
@@ -472,6 +474,8 @@ class myCalendarItem
         myMinutes = inMeetingAgenda.minutes
         myLocation = inMeetingAgenda.location
         myMinutesType = inMeetingAgenda.minutesType
+        
+        loadAgenda()
     }
     
     init(inEventStore: EKEventStore, inMeetingID: String)
@@ -525,6 +529,8 @@ class myCalendarItem
                 }
             }
         }
+        
+        loadAgenda()
     }
 
     var event: EKEvent?
@@ -2484,11 +2490,11 @@ class iOSCalendar
             if event.startDate.compare(NSDate()) == NSComparisonResult.OrderedAscending
             {
                 // Event is in the past
-                writeRowToArray(myString, inTable: &tableContents, inDisplayFormat: "Gray")
+                writeRowToArray(myString, table: &tableContents, targetEvent: event, displayFormat: "Gray")
             }
             else
             {
-                writeRowToArray(myString, inTable: &tableContents)
+                writeRowToArray(myString, table: &tableContents, targetEvent: event)
             }
         }
         return tableContents
@@ -2670,52 +2676,49 @@ class iOSReminder
     }
 }
 
-#if os(iOS)
-    class MeetingModel: NSObject
+class MeetingModel: NSObject
+{
+    private var myDelegate: MyMeetingsDelegate!
+    private var myEvent: myCalendarItem!
+    private var myActionType: String = ""
+        
+    var delegate: MyMeetingsDelegate
     {
-        private var myDelegate: MyMeetingsDelegate!
-        private var myEvent: myCalendarItem!
-        private var myActionType: String = ""
-        
-        var delegate: MyMeetingsDelegate
-            {
-            get
-            {
-                return myDelegate
-            }
-            set
-            {
-                myDelegate = newValue
-            }
+        get
+        {
+            return myDelegate
         }
-        
-        var actionType: String
-            {
-            get
-            {
-                return myActionType
-            }
-            set
-            {
-                myActionType = newValue
-            }
-        }
-        
-        var event: myCalendarItem
-            {
-            get
-            {
-                return myEvent
-            }
-            set
-            {
-                myEvent = newValue
-            }
+        set
+        {
+            myDelegate = newValue
         }
     }
-    
-    
-#endif
+        
+    var actionType: String
+    {
+        get
+        {
+            return myActionType
+        }
+        set
+        {
+            myActionType = newValue
+        }
+    }
+        
+    var event: myCalendarItem
+    {
+        get
+        {
+            return myEvent
+        }
+        set
+        {
+            myEvent = newValue
+        }
+    }
+}
+
 
 func parsePastMeeting(inMeetingID: String) -> [task]
 {

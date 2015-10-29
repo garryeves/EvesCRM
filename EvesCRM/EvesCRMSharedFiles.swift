@@ -62,6 +62,7 @@ struct TableData
     private var myNotes: String
     private var mycalendarItemIdentifier: String
     private var myTask: task!
+    private var myEvent: myCalendarItem!
     
     var displaySpecialFormat: String
         {
@@ -122,6 +123,18 @@ struct TableData
         set
         {
             myTask = newValue
+        }
+    }
+    
+    var targetEvent: myCalendarItem
+    {
+        get
+        {
+            return myEvent
+        }
+        set
+        {
+            myEvent = newValue
         }
     }
     
@@ -272,6 +285,22 @@ func writeRowToArray(displayText: String, inout table: [TableData], targetTask: 
     }
     
     myDisplay.targetTask = targetTask
+    
+    table.append(myDisplay)
+}
+
+func writeRowToArray(displayText: String, inout table: [TableData], targetEvent: myCalendarItem, displayFormat: String="")
+{
+    // Create the struct for this record
+    
+    var myDisplay: TableData = TableData(displayText: displayText)
+    
+    if displayFormat != ""
+    {
+        myDisplay.displaySpecialFormat = displayFormat
+    }
+    
+    myDisplay.targetEvent = targetEvent
     
     table.append(myDisplay)
 }
@@ -1289,6 +1318,10 @@ let myTaskEnergy = ["",
     "High",
     "Medium",
     "Low"]
+
+let myAttendenceStatus = [ "Attended",
+                            "Apology",
+                            "Delegated"]
 
 func calculateNewDate(inOriginalDate: NSDate, inDateBase: String, inInterval: Int, inPeriod: String) -> NSDate
 {
