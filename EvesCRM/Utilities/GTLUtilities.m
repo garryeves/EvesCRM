@@ -24,7 +24,7 @@
 // URL Encoding
 
 + (NSString *)stringByURLEncodingString:(NSString *)str {
-  NSString *result = [str stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+  NSString *result = [str stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
   return result;
 }
 
@@ -44,6 +44,7 @@ const CFStringRef kCharsToForceEscape = CFSTR("!*'();:@&=+$,/?%#[]");
   CFStringRef leaveUnescaped = NULL;
 
   CFStringRef escapedStr;
+    
   escapedStr = CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
                                                        originalString,
                                                        leaveUnescaped,

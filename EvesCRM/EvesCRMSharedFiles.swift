@@ -9,17 +9,12 @@
 import Foundation
 import EventKit
 
-#if os(iOS)
-// Nothing
-    import AddressBook
-    var adbk : ABAddressBook!
-#elseif os(OSX)
+import Contacts
+
+var adbk: CNContactStore!
+
+#if os(OSX)
     import AppKit
-    import Contacts
-    
-    var adbk: CNContactStore!
-#else
-// NSLog("Unexpected OS")
 #endif
 
 // Here I am definging my own struct to use in the Display array.  This is to allow passing of multiple different types of information
@@ -35,7 +30,7 @@ import EventKit
 var myDatabaseConnection: coreDatabase!
 var myCloudDB: CloudKitInteraction!
 let myDBSync = DBSync()
-var eventStore: EKEventStore!
+var globalEventStore: EKEventStore!
 var debugMessages: Bool = false
 
 var myCurrentTeam: team!
@@ -63,6 +58,7 @@ struct TableData
     private var mycalendarItemIdentifier: String
     private var myTask: task!
     private var myEvent: myCalendarItem!
+    private var myObject: AnyObject!
     
     var displaySpecialFormat: String
         {
@@ -138,6 +134,18 @@ struct TableData
         }
     }
     
+    var targetObject: AnyObject
+    {
+        get
+        {
+            return myObject
+        }
+        set
+        {
+            myObject = newValue
+        }
+    }
+    
     init(displayText: String)
     {
         self.displayText = displayText
@@ -155,7 +163,7 @@ struct PeopleData
 {
     var fullName: String
     private var myDisplayFormat: String
-    var personRecord: ABRecordRef
+    var personRecord: CNContact
     
     var displaySpecialFormat: String
         {
@@ -167,7 +175,7 @@ struct PeopleData
         }
     }
     
-    init(fullName: String, inRecord: ABRecordRef)
+    init(fullName: String, inRecord: CNContact)
     {
         self.fullName = fullName
         self.myDisplayFormat = ""
@@ -305,6 +313,21 @@ func writeRowToArray(displayText: String, inout table: [TableData], targetEvent:
     table.append(myDisplay)
 }
 
+func writeRowToArray(displayText: String, inout table: [TableData], targetObject: AnyObject, displayFormat: String="")
+{
+    // Create the struct for this record
+    
+    var myDisplay: TableData = TableData(displayText: displayText)
+    
+    if displayFormat != ""
+    {
+        myDisplay.displaySpecialFormat = displayFormat
+    }
+    
+    myDisplay.targetObject = targetObject
+    
+    table.append(myDisplay)
+}
 
 func getFirstPartofString(inText: String) -> String
 {
@@ -379,7 +402,9 @@ func displayTeamMembers(inProject: project, inout lookupArray: [String])->[Table
         
         lookupArray.append(myTeamMember.teamMember)
         
-        writeRowToArray(titleText, inTable: &tableContents)
+        let personObject = findPersonRecord(myTeamMember.teamMember)
+        
+        writeRowToArray(titleText, table: &tableContents, targetObject: personObject)
     }
     
     return tableContents
@@ -412,8 +437,9 @@ func displayProjectsForPerson(inPerson: String, inout lookupArray: [String]) -> 
                 
                 lookupArray.append(myProject.projectID.stringValue)
                 
-                writeRowToArray(titleText, inTable: &tableContents)
-                //writeRowToArray(myDetails[0].projectName, &tableContents)
+                let projectObject = project(inProjectID: myDetails[0].projectID as Int, inTeamID: myDetails[0].teamID as Int)
+
+                writeRowToArray(titleText, table: &tableContents, targetObject: projectObject)
             }
         }
     }
@@ -1513,25 +1539,60 @@ extension String
 }
 
 func connectCalendar()
+{    
+    globalEventStore = EKEventStore()
+    checkCalendarConnected(globalEventStore)
+}
+
+func checkCalendarConnected(myEventStore: EKEventStore)
 {
-    eventStore = EKEventStore()
+    switch EKEventStore.authorizationStatusForEntityType(EKEntityType.Event)
+    {
+        case .Authorized:
+            print("Event Access granted")
+        
+        case .Denied:
+            print("Event Access denied")
+        
+        case .NotDetermined:
+            myEventStore.requestAccessToEntityType(EKEntityType.Event, completion:
+                {(granted: Bool, error: NSError?) -> Void in
+                    if granted
+                    {
+                        print("Event Access granted")
+                    }
+                    else
+                    {
+                        print("Event Access denied")
+                    }
+            })
+        
+        default:
+            print("Event Case Default")
+    }
     
-    switch EKEventStore.authorizationStatusForEntityType(EKEntityType.Event) {
-    case .Authorized:
-        print("Calendar Access granted")
-    case .Denied:
-        print("Calendar Access denied")
-    case .NotDetermined:
-        // 3
-        eventStore.requestAccessToEntityType(EKEntityType.Event, completion:
-            {(granted: Bool, error: NSError?) -> Void in
-                if granted {
-                    print("Calendar Access granted")
-                } else {
-                    print("Calendar Access denied")
-                }
-        })
-    default:
-        print("Calendar Case Default")
+    switch EKEventStore.authorizationStatusForEntityType(EKEntityType.Reminder)
+    {
+        case .Authorized:
+            print("Reminder Access granted")
+        
+        case .Denied:
+            print("Reminder Access denied")
+        
+        case .NotDetermined:
+            myEventStore.requestAccessToEntityType(EKEntityType.Reminder, completion:
+                {(granted: Bool, error: NSError?) -> Void in
+                    if granted
+                    {
+                        print("Reminder Access granted")
+                    }
+                    else
+                    {
+                        print("Reminder Access denied")
+                    }
+            })
+        
+        default:
+            print("Reminder Case Default")
     }
 }

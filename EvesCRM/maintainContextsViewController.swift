@@ -7,14 +7,14 @@
 //
 
 import Foundation
-import AddressBook
-import AddressBookUI
+import Contacts
+import ContactsUI
 
 protocol MyMaintainContextsDelegate{
     func myMaintainContextsDidFinish(controller:MaintainContextsViewController)
 }
 
-class MaintainContextsViewController: UIViewController, ABPeoplePickerNavigationControllerDelegate//, SMTEFillDelegate, UITextViewDelegate, UITextFieldDelegate
+class MaintainContextsViewController: UIViewController, CNContactPickerDelegate//, SMTEFillDelegate, UITextViewDelegate, UITextFieldDelegate
 {
     @IBOutlet weak var lblPeople: UILabel!
     @IBOutlet weak var lblPlaces: UILabel!
@@ -210,17 +210,22 @@ class MaintainContextsViewController: UIViewController, ABPeoplePickerNavigation
         return retVal
     }
     
-    func peoplePickerNavigationController(peoplePicker: ABPeoplePickerNavigationController, didSelectPerson person: ABRecordRef)
+    func contactPickerDidCancel(picker: CNContactPickerViewController)
     {
-        peoplePicker.dismissViewControllerAnimated(true, completion: nil)
+        picker.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func contactPicker(picker: CNContactPickerViewController, didSelectContact contact: CNContact)
+    {
+        picker.dismissViewControllerAnimated(true, completion: nil)
         
-        let fullname = (ABRecordCopyCompositeName(person).takeRetainedValue() as String) ?? ""
+        let fullname = CNContactFormatter.stringFromContact(contact, style: CNContactFormatterStyle.FullName)
         
         let newContext = context(inTeamID: myCurrentTeam.teamID)
         
-        newContext.name = fullname
+        newContext.name = fullname!
         newContext.contextType = "Person"
-        newContext.personID = Int(ABRecordGetRecordID(person))
+        newContext.personID = Int(contact.identifier)!
         newContext.status = "Open"
         
         let contextList = contexts()
@@ -228,11 +233,6 @@ class MaintainContextsViewController: UIViewController, ABPeoplePickerNavigation
         peopleArray = contextList.people
         
         colPeople.reloadData()
-    }
-    
-    func peoplePickerNavigationControllerDidCancel(peoplePicker: ABPeoplePickerNavigationController)
-    {
-        peoplePicker.dismissViewControllerAnimated(true, completion: nil)
     }
     
     func handleSwipe(recognizer:UISwipeGestureRecognizer)
@@ -306,9 +306,9 @@ class MaintainContextsViewController: UIViewController, ABPeoplePickerNavigation
     
     @IBAction func btnSelectPerson(sender: UIButton)
     {
-        let picker = ABPeoplePickerNavigationController()
+        let picker = CNContactPickerViewController()
         
-        picker.peoplePickerDelegate = self
+        picker.delegate = self
         presentViewController(picker, animated: true, completion: nil)
     }
     
@@ -369,10 +369,10 @@ class MaintainContextsViewController: UIViewController, ABPeoplePickerNavigation
         {
             constraintColPeopleHeight.constant = 150
         }
-        else
-        {
-            constraintColPeopleHeight.constant >= 100
-        }
+//        else
+//        {
+//            constraintColPeopleHeight.constant >= 100
+//        }
     }
 }
 

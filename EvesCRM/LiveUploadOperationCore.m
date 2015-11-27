@@ -98,7 +98,10 @@
                                    nil];
     if (![LiveApiHelper isFilePath:self.path]) 
     {
-        NSString *encodedFileNamePath = [_fileName stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        NSString *encodedFileNamePath = [_fileName stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+        
+   //     NSString *encodedFileNamePath = [_fileName stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        
         uploadPath = [uploadPath stringByAppendingString:encodedFileNamePath];
     
         NSString *overwrite = @"false";

@@ -245,7 +245,7 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
             if self.myTaskListType == "Meeting"
             {
                 popoverContent.passedTaskType = "minutes"
-                let myWorkingItem = myCalendarItem(inEventStore: eventStore, inMeetingID: self.myMeetingID)
+                let myWorkingItem = myCalendarItem(inEventStore: globalEventStore, inMeetingID: self.myMeetingID, teamID: myCurrentTeam.teamID)
                 
                 popoverContent.passedEvent = myWorkingItem
             }

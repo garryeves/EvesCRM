@@ -256,8 +256,7 @@ class coreDatabase: NSObject
         
         let myRoles = getRole(roleID, teamID: teamID)
         
-        managedObjectContext!.performBlock
-            {
+
                 var mySelectedRole: Roles
         if myRoles.count == 0
         {
@@ -297,6 +296,9 @@ class coreDatabase: NSObject
                 mySelectedRole.updateType = inUpdateType
             }
         }
+        
+        managedObjectContext!.performBlock
+            {
                 do
                 {
                     try self.managedObjectContext!.save()

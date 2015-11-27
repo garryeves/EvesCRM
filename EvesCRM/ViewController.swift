@@ -7,8 +7,8 @@
 //
 
 import UIKit
-import AddressBook
-import AddressBookUI
+import Contacts
+import ContactsUI
 import EventKit
 import EventKitUI
 import Social
@@ -17,7 +17,7 @@ import Accounts
 //import "ENSDK/Headers/ENSDK.h"
 
 // PeoplePicker code
-class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate, MyMeetingsDelegate, SideBarDelegate, MyMaintainPanesDelegate, UIPopoverPresentationControllerDelegate, MyGTDInboxDelegate, MyMaintainContextsDelegate
+class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate, MyMeetingsDelegate, SideBarDelegate, MyMaintainPanesDelegate, UIPopoverPresentationControllerDelegate, MyGTDInboxDelegate, MyMaintainContextsDelegate
 {
     
     @IBOutlet weak var TableTypeSelection1: UIPickerView!
@@ -142,7 +142,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
 
         myDBSync.startTimer()
         
-        eventStore = EKEventStore()
+        globalEventStore = EKEventStore()
         
         switch EKEventStore.authorizationStatusForEntityType(EKEntityType.Event) {
         case .Authorized:
@@ -151,7 +151,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             print("Calendar Access denied")
         case .NotDetermined:
             // 3
-            eventStore.requestAccessToEntityType(EKEntityType.Event, completion:
+            globalEventStore.requestAccessToEntityType(EKEntityType.Event, completion:
                 {(granted: Bool, error: NSError?) -> Void in
                     if granted {
                         print("Calendar Access granted")
@@ -379,64 +379,11 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
             setSelectionButton.hidden = true
         }
     }
-
-    func createAddressBook() -> Bool {
-        if adbk != nil {
-            return true
-        }
-        var err : Unmanaged<CFError>? = nil
-        let myAdbk : ABAddressBook? = ABAddressBookCreateWithOptions(nil, &err).takeRetainedValue()
-        if myAdbk == nil
-        {
-            print(err)
-            adbk = nil
-            return false
-        }
-        adbk = myAdbk
-        
-        return true
-    }
-    
-    func determineStatus() -> Bool {
-        let status = ABAddressBookGetAuthorizationStatus()
-        switch status {
-        case .Authorized:
-            return self.createAddressBook()
-        case .NotDetermined:
-            var ok = false
-            ABAddressBookRequestAccessWithCompletion(nil) {
-                (granted:Bool, err:CFError!) in
-                dispatch_async(dispatch_get_main_queue()) {
-                    if granted {
-                        ok = self.createAddressBook()
-                    }
-                }
-            }
-            if ok == true {
-                return true
-            }
-            adbk = nil
-            return false
-        case .Restricted:
-            adbk = nil
-            return false
-        case .Denied:
-            adbk = nil
-            return false
-        }
-    }
-    
-    func extractABAddressBookRef(abRef: Unmanaged<ABAddressBookRef>!) -> ABAddressBookRef? {
-        if let ab = abRef {
-            return Unmanaged<NSObject>.fromOpaque(ab.toOpaque()).takeUnretainedValue()
-        }
-        return nil
-    }
  
     func populateContactList()
     {
         createAddressBook()
-        determineStatus()
+        determineAddressBookStatus()
     }
 
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
@@ -630,11 +577,11 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                     workArray = personContact.tableData
                 }
             case "Calendar":
-                eventDetails = iOSCalendar(inEventStore: eventStore)
+                eventDetails = iOSCalendar(inEventStore: globalEventStore)
 
                 if myDisplayType == "Project"
                 {
-                    eventDetails.loadCalendarDetails(mySelectedProject.projectName)
+                    eventDetails.loadCalendarDetails(mySelectedProject.projectName, teamID: mySelectedProject.teamID)
                 }
                 else if myDisplayType == "Context"
                 {
@@ -642,7 +589,7 @@ class ViewController: UIViewController, MyReminderDelegate, ABPeoplePickerNaviga
                 }
                 else
                 {
-                    eventDetails.loadCalendarDetails(personContact.emailAddresses)
+                    eventDetails.loadCalendarDetails(personContact.emailAddresses, teamID: myCurrentTeam.teamID)
                 }
                 workArray = eventDetails.displayEvent()
                 
@@ -1039,7 +986,7 @@ println("facebook ID = \(myFacebookID)")
                 let edit = UIAlertAction(title: "Edit Meeting", style: .Default, handler: { (action: UIAlertAction) -> () in
                     // doing something for "product page
                     let evc = EKEventEditViewController()
-                    evc.eventStore = eventStore
+                    evc.eventStore = globalEventStore
                     evc.editViewDelegate = self
                     evc.event = self.eventDetails.events[rowID]
                     self.presentViewController(evc, animated: true, completion: nil)
@@ -1094,7 +1041,7 @@ println("facebook ID = \(myFacebookID)")
                 // Project team membership details
                 if myDisplayType == "Project"
                 {
-                    let myPerson: ABRecord = findPersonRecord(projectMemberArray[rowID]) as ABRecord
+                    let myPerson = findPersonRecord(projectMemberArray[rowID])
                     loadPerson(myPerson)
                 }
                 else
@@ -1337,7 +1284,7 @@ println("facebook ID = \(myFacebookID)")
             
             case "Calendar":
                 let evc = EKEventEditViewController()
-                evc.eventStore = eventStore
+                evc.eventStore = globalEventStore
                 evc.editViewDelegate = self
                 self.presentViewController(evc, animated: true, completion: nil)
           
@@ -1556,16 +1503,16 @@ println("facebook ID = \(myFacebookID)")
         }
     }
     
-    func peoplePickerNavigationController(peoplePicker: ABPeoplePickerNavigationController, didSelectPerson person: ABRecordRef)
+    func contactPicker(picker: CNContactPickerViewController, didSelectContact contact: CNContact)
     {
-        peoplePicker.dismissViewControllerAnimated(true, completion: nil)
+        picker.dismissViewControllerAnimated(true, completion: nil)
         
-        loadPerson(person)
+        loadPerson(contact)
     }
 
-    func peoplePickerNavigationControllerDidCancel(peoplePicker: ABPeoplePickerNavigationController)
+    func contactPickerDidCancel(picker: CNContactPickerViewController)
     {
-        peoplePicker.dismissViewControllerAnimated(true, completion: nil)
+        picker.dismissViewControllerAnimated(true, completion: nil)
     }
 
     func EvernoteComplete()
@@ -2283,7 +2230,7 @@ print("Nothing found")
     func eventEditViewControllerDefaultCalendarForNewEvents(controller: EKEventEditViewController) -> EKCalendar
     {
 
-        return eventStore.defaultCalendarForNewEvents
+        return globalEventStore.defaultCalendarForNewEvents
     }
 
     
@@ -2684,25 +2631,25 @@ print("Nothing found")
             case "People":
                 if passedItem.displayString == "Address Book"
                 {
-                    let picker = ABPeoplePickerNavigationController()
+                    let picker = CNContactPickerViewController()
                 
-                    picker.peoplePickerDelegate = self
+                    picker.delegate = self
                     presentViewController(picker, animated: true, completion: nil)
                 }
                 else
                 {
                     let myContext = passedItem.displayObject as! context
                     
-                    var myPerson: ABRecord!
+                    var myPerson: CNContact!
                     
-                    if myContext.personID > 0
-                    {
-                        myPerson = findPersonRecordByID(Int32(myContext.personID)) as ABRecord!
-                    }
-                    else
-                    {
-                        myPerson = findPersonRecord(myContext.name) as ABRecord!
-                    }
+//                    if myContext.personID > 0
+//                    {
+//                        myPerson = findPersonRecordByID("\(myContext.personID)")
+//                    }
+//                    else
+//                    {
+                        myPerson = findPersonRecord(myContext.name)
+ //                   }
                         
                     if myPerson == nil
                     {
@@ -2830,7 +2777,7 @@ print("Nothing found")
         TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: mySelectedProject.projectName), forState: .Normal)
     }
     
-    func loadPerson(personRecord: ABRecord)
+    func loadPerson(personRecord: CNContact)
     {
         TableTypeSelection1.hidden = true
         setSelectionButton.hidden = true

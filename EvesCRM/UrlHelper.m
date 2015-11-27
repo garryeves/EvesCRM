@@ -37,7 +37,7 @@
     {
         id value = [params valueForKey:key];
         id kvStr = [NSString stringWithFormat:@"%@=%@", key, 
-                    [value stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+                    [value stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]]];
         
         [entrylist addObject: kvStr];
     }
@@ -54,7 +54,7 @@
     {
         NSArray *kv = [kvStr componentsSeparatedByString: @"="];
         
-        [params setObject:[[kv objectAtIndex:1] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding] 
+        [params setObject:[[kv objectAtIndex:1] stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]] 
                    forKey:[kv objectAtIndex:0]];
     }
     

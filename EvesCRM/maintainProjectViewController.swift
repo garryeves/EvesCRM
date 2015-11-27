@@ -8,15 +8,15 @@
 
 import Foundation
 import CoreData
-import AddressBook
-import AddressBookUI
+import Contacts
+import ContactsUI
 
 protocol MyMaintainProjectDelegate{
     func myMaintainProjectDidFinish(controller:MaintainProjectViewController, actionType: String)
     func myGTDPlanningDidFinish(controller:MaintainGTDPlanningViewController)
 }
 
-class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationControllerDelegate, MyMaintainProjectDelegate, SMTEFillDelegate, UITextViewDelegate, UITextFieldDelegate
+class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, MyMaintainProjectDelegate, SMTEFillDelegate, UITextViewDelegate, UITextFieldDelegate
 {
    private var passedGTD: GTDModel!
     
@@ -62,7 +62,7 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
     private var myStages: [Stages]!
     private var mySelectedRoles: [projectTeamMember] = Array()
     private var mySelectedTeamMember: projectTeamMember!
-    private var personSelected: ABRecord!
+    private var personSelected: CNContact!
     private var teamMemberAction: String = ""
     private var workingCell: Int = -1
     private var pickerTarget: String = ""
@@ -332,9 +332,9 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
 
         myActionType = "Edit"
 
-        let picker = ABPeoplePickerNavigationController()
+        let picker = CNContactPickerViewController()
         
-        picker.peoplePickerDelegate = self
+        picker.delegate = self
         presentViewController(picker, animated: true, completion: nil)
     }
 
@@ -379,22 +379,22 @@ class MaintainProjectViewController: UIViewController, ABPeoplePickerNavigationC
 
     // Peoplepicker code
     
-    func peoplePickerNavigationController(peoplePicker: ABPeoplePickerNavigationController, didSelectPerson person: ABRecordRef)
+    func contactPickerDidCancel(picker: CNContactPickerViewController)
     {
-        personSelected = person as ABRecord
+        picker.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func contactPicker(picker: CNContactPickerViewController, didSelectContact contact: CNContact)
+    {
+        personSelected = contact
      
-        let myFullName = (ABRecordCopyCompositeName(personSelected).takeRetainedValue() as String) ?? ""
+        let myFullName = CNContactFormatter.stringFromContact(contact, style: CNContactFormatterStyle.FullName)
         
-        _ = projectTeamMember(inProjectID: inProjectObject.projectID, inTeamMember: myFullName, inRoleID: 0, inTeamID: mySelectedTeam.teamID)
+        _ = projectTeamMember(inProjectID: inProjectObject.projectID, inTeamMember: myFullName!, inRoleID: 0, inTeamID: mySelectedTeam.teamID)
         
         inProjectObject.loadTeamMembers()
         mySelectedRoles = inProjectObject.teamMembers
         colTeamMembers.reloadData()
-    }
-    
-    func peoplePickerNavigationControllerDidCancel(peoplePicker: ABPeoplePickerNavigationController)
-    {
-        peoplePicker.dismissViewControllerAnimated(true, completion: nil)
     }
     
     @IBAction func txtTitle(sender: UITextField)

@@ -169,6 +169,8 @@ class meetingAgendaItem
         myMeetingID = inMeetingID
         myTitle = "New Item"
         myTimeAllocation = 10
+        myActualEndTime = getDefaultDate()
+        myActualStartTime = getDefaultDate()
         
         let tempAgendaItems = myDatabaseConnection.loadAgendaItem(myMeetingID)
         
@@ -209,6 +211,10 @@ class meetingAgendaItem
     {
         switch rowType
         {
+            case "Welcome" :
+                myTitle = "Welcome"
+                myTimeAllocation = 5
+            
             case "PreviousMinutes" :
                 myTitle = "Review of previous meeting actions"
                 myTimeAllocation = 10
@@ -409,42 +415,65 @@ class myCalendarItem
     // This is used in order to allow to identify unique instances of a repeating Event
     
     private var myUniqueIdentifier: String = ""
-    private var eventStore: EKEventStore!
+    private var myEventStore: EKEventStore!
     
     // Flag to indicate if we have data saved in database as well
     
     private var mySavedData: Bool = false
 
-    init(inEventStore: EKEventStore, inEvent: EKEvent, inAttendee: EKParticipant?)
+    init(inEventStore: EKEventStore, inEvent: EKEvent, inAttendee: EKParticipant?, teamID: Int)
     {
         startDateFormatter.dateStyle = dateFormat
         startDateFormatter.timeStyle = timeFormat
         endDateFormatter.timeStyle = timeFormat
-        eventStore = inEventStore
+        myEventStore = inEventStore
         
-        myEvent = inEvent
-        myTitle = inEvent.title
-        myStartDate = inEvent.startDate
-        myEndDate = inEvent.endDate
-        if inEvent.location == nil
+        myTeamID = teamID
+        // Check to see if there is an existing entry for the meeting
+        
+        let mySavedValues = myDatabaseConnection.loadAgenda("\(inEvent.calendarItemExternalIdentifier) Date: \(inEvent.startDate)", inTeamID: myTeamID)
+        
+        if mySavedValues.count > 0
         {
-            myLocation = ""
+            myEvent = inEvent
+            myTitle = mySavedValues[0].name
+            myStartDate = mySavedValues[0].startTime
+            myEndDate = mySavedValues[0].endTime
+            myLocation = mySavedValues[0].location
+            myPreviousMinutes = mySavedValues[0].previousMeetingID
+            myEventID = mySavedValues[0].meetingID
+            myChair = mySavedValues[0].chair
+            myMinutes = mySavedValues[0].minutes
+            myLocation = mySavedValues[0].location
+            myMinutesType = mySavedValues[0].minutesType
+            mySavedData = true
         }
         else
         {
-            myLocation = inEvent.location!
-        }
-        
-        if inEvent.recurrenceRules != nil
-        {
-            // This is a recurring event
-            let myWorkingRecur: NSArray = inEvent.recurrenceRules!
-            
-            for myItem in myWorkingRecur
+            myEvent = inEvent
+            myTitle = inEvent.title
+            myStartDate = inEvent.startDate
+            myEndDate = inEvent.endDate
+            if inEvent.location == nil
             {
-                myRecurrenceFrequency = myItem.interval
-                let testFrequency: EKRecurrenceFrequency = myItem.frequency
-                myRecurrence = Int(testFrequency.rawValue)
+                myLocation = ""
+            }
+            else
+            {
+                myLocation = inEvent.location!
+            }
+        
+            if inEvent.recurrenceRules != nil
+            {
+                // This is a recurring event
+                let myWorkingRecur: NSArray = inEvent.recurrenceRules!
+            
+                for myItem in myWorkingRecur
+                {
+                    myRecurrenceFrequency = myItem.interval
+                    let testFrequency: EKRecurrenceFrequency = myItem.frequency
+                    myRecurrence = Int(testFrequency.rawValue)
+                }
             }
         }
         // Need to validate this works when displaying by person and also by project
@@ -454,7 +483,8 @@ class myCalendarItem
             myType = Int(inAttendee!.participantType.rawValue)
         }
         
-        loadAgenda()
+        loadAttendees()
+        loadAgendaItems()
     }
     
     init(inEventStore: EKEventStore, inMeetingAgenda: MeetingAgenda)
@@ -462,7 +492,7 @@ class myCalendarItem
         startDateFormatter.dateStyle = dateFormat
         startDateFormatter.timeStyle = timeFormat
         endDateFormatter.timeStyle = timeFormat
-        eventStore = inEventStore
+        myEventStore = inEventStore
         
         myTitle = inMeetingAgenda.name
         myStartDate = inMeetingAgenda.startTime
@@ -474,12 +504,15 @@ class myCalendarItem
         myMinutes = inMeetingAgenda.minutes
         myLocation = inMeetingAgenda.location
         myMinutesType = inMeetingAgenda.minutesType
+        myTeamID = inMeetingAgenda.teamID as Int
         
-        loadAgenda()
+        loadAttendees()
+        loadAgendaItems()
     }
     
-    init(inEventStore: EKEventStore, inMeetingID: String)
+    init(inEventStore: EKEventStore, inMeetingID: String, teamID: Int)
     {
+        myTeamID = teamID
         let mySavedValues = myDatabaseConnection.loadAgenda(inMeetingID, inTeamID: myTeamID)
         
         if mySavedValues.count > 0
@@ -500,13 +533,13 @@ class myCalendarItem
         startDateFormatter.dateStyle = dateFormat
         startDateFormatter.timeStyle = timeFormat
         endDateFormatter.timeStyle = timeFormat
-        eventStore = inEventStore
+        myEventStore = inEventStore
         
         // We neeed to go and the the event details from the calendar, if they exist
         
-        let nextEvent = iOSCalendar(inEventStore: eventStore)
+        let nextEvent = iOSCalendar(inEventStore: myEventStore)
         
-        nextEvent.loadCalendarForEvent(myEventID, inStartDate: myStartDate)
+        nextEvent.loadCalendarForEvent(myEventID, inStartDate: myStartDate, teamID: myTeamID)
         
         if nextEvent.events.count == 0
         {
@@ -530,7 +563,8 @@ class myCalendarItem
             }
         }
         
-        loadAgenda()
+        loadAttendees()
+        loadAgendaItems()
     }
 
     var event: EKEvent?
@@ -542,7 +576,7 @@ class myCalendarItem
         set
         {
             myEvent = newValue
-            myEventID = myEvent!.eventIdentifier
+            myEventID = "\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)"
             save()
         }
     }
@@ -814,8 +848,8 @@ class myCalendarItem
             }
             else
             {
-                myEventID = myEvent!.eventIdentifier
-                return myEvent!.eventIdentifier
+                myEventID = "\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)"
+                return "\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)"
             }
         }
     }
@@ -838,6 +872,56 @@ class myCalendarItem
         get
         {
             return myAgendaItems
+        }
+    }
+
+    var fullAgenda: [meetingAgendaItem]
+    {
+        get
+        {
+            var agendaArray: [meetingAgendaItem] = Array()
+            // Add in Welcome
+            
+            let welcomeItem = meetingAgendaItem(rowType: "Welcome")
+            agendaArray.append(welcomeItem)
+            
+            // Check for outstanding actions
+            
+            if myPreviousMinutes != ""
+            { // Previous meeting exists
+                // Does the previous meeting have any tasks
+                let myData = myDatabaseConnection.getMeetingsTasks(myPreviousMinutes)
+                
+                if myData.count > 0
+                {  // There are tasks for the previous meeting
+                    
+                    let previousItem = meetingAgendaItem(rowType: "PreviousMinutes")
+                    agendaArray.append(previousItem)
+                }
+                else
+                {
+                    let myOutstandingTasks = parsePastMeeting(myPreviousMinutes)
+                    
+                    if myOutstandingTasks.count > 0
+                    {
+                        let previousItem = meetingAgendaItem(rowType: "PreviousMinutes")
+                        agendaArray.append(previousItem)
+                    }
+                }
+            }
+            
+            // Add in Agenda Items
+            
+            for myItem in myAgendaItems
+            {
+                agendaArray.append(myItem)
+            }
+            
+            // Add in Close
+            let closeItem = meetingAgendaItem(rowType: "Close")
+            agendaArray.append(closeItem)
+
+            return agendaArray
         }
     }
     
@@ -919,6 +1003,9 @@ class myCalendarItem
 
         if myEvent != nil
         {
+            myEventID = "\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)"
+            
+            /*
             if myEvent!.hasRecurrenceRules
             {  // recurring event
                 // if we do not have a "unique" id for this occurrence then we need to save the calendar event, with a small change, and then get the event ID again
@@ -945,6 +1032,7 @@ class myCalendarItem
                     myEventID = myEvent!.eventIdentifier
                 }
             }
+*/
         }
         
         //  Here we save the Agenda details
@@ -969,7 +1057,7 @@ class myCalendarItem
         var mySavedValues: [MeetingAgenda]!
         if myEventID == ""
         {
-            mySavedValues = myDatabaseConnection.loadAgenda(myEvent!.eventIdentifier, inTeamID: myTeamID)
+            mySavedValues = myDatabaseConnection.loadAgenda("\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)", inTeamID: myTeamID)
         }
         else
         {
@@ -1007,7 +1095,7 @@ class myCalendarItem
         
         if myEventID == ""
         {
-            mySavedValues = myDatabaseConnection.loadAttendees(myEvent!.eventIdentifier)
+            mySavedValues = myDatabaseConnection.loadAttendees("\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)")
         }
         else
         {
@@ -1105,7 +1193,7 @@ class myCalendarItem
             
                     if myEventID == ""
                     {
-                        mySavedValues = myDatabaseConnection.loadAttendees(myEvent!.eventIdentifier)
+                        mySavedValues = myDatabaseConnection.loadAttendees("\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)")
                     }
                     else
                     {
@@ -1186,7 +1274,7 @@ class myCalendarItem
         
         if myEventID == ""
         {
-            mySavedValues = myDatabaseConnection.loadAgendaItem(myEvent!.eventIdentifier)
+            mySavedValues = myDatabaseConnection.loadAgendaItem("\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)")
         }
         else
         {
@@ -2142,17 +2230,59 @@ class myCalendarItem
             myNextMeeting = inCalendarItem.eventID
         }
     }
+    
+    func checkForEvent() -> Bool
+    {
+  //      var itemFound: Bool = false
+        
+        // Using the eventID get the calendar eventID and start date
+        
+ //       let myStringArr = myEventID.componentsSeparatedByString(" Date: ")
+        
+//    NSLog("Meeting Parts = \(myStringArr[0]) - \(myStringArr[1])")
+        
+        // Go an get the calendar entry
+        
+ //       let searchString = myStringArr[0]
+        
+ //       let myItems = myEventStore.calendarItemsWithExternalIdentifier(searchString)
+        
+ //       if myItems.count == 0
+ //       {
+ //           itemFound = true
+ //       }
+ //       else
+ //       {
+ //           for myItem in myItems
+ //           {
+ //               let foundEvent: EKEvent = myItem as! EKEvent
+//NSLog("found date = \(foundEvent.startDate)")
+    
+ //               if foundEvent.startDate == myStringArr[1]
+ //               {
+ //                   itemFound = true
+ //               }
+ //           }
+ //       }
+  //      return itemFound
+        return true
+    }
+    
+    func updateEventForNewEventDate(newEvent: EKEvent)
+    {
+        NSLog("Do code to chnage the event details")
+    }
 }
 
 class iOSCalendar
 {
-    private var eventStore: EKEventStore!
+    private var myEventStore: EKEventStore!
     private var eventDetails: [myCalendarItem] = Array()
     private var eventRecords: [EKEvent] = Array()
 
     init(inEventStore: EKEventStore)
     {
-        eventStore = inEventStore
+        myEventStore = inEventStore
     }
     
     var events: [EKEvent]
@@ -2171,11 +2301,11 @@ class iOSCalendar
         }
     }
     
-    func loadCalendarDetails(emailAddresses: [String])
+    func loadCalendarDetails(emailAddresses: [String], teamID: Int)
     {
         for myEmail in emailAddresses
         {
-            parseCalendarByEmail(myEmail)
+            parseCalendarByEmail(myEmail, teamID: teamID)
             loadMeetingsForContext(myEmail)
         }
         
@@ -2184,7 +2314,7 @@ class iOSCalendar
          eventDetails.sortInPlace({$0.startDate.timeIntervalSinceNow < $1.startDate.timeIntervalSinceNow})
     }
     
-    func loadCalendarForEvent(inEventID: String, inStartDate: NSDate)
+    func loadCalendarForEvent(inEventID: String, inStartDate: NSDate, teamID: Int)
     {
         /* The end date */
         //Calculate - Days * hours * mins * secs
@@ -2194,34 +2324,34 @@ class iOSCalendar
         let endDate = inStartDate.dateByAddingTimeInterval(myEndDateValue)
         
         /* Create the predicate that we can later pass to the event store in order to fetch the events */
-        let searchPredicate = eventStore.predicateForEventsWithStartDate(
+        let searchPredicate = myEventStore.predicateForEventsWithStartDate(
             inStartDate,
             endDate: endDate,
             calendars: nil)
         
         /* Fetch all the events that fall between the starting and the ending dates */
         
-        if eventStore.sources.count > 0
+        if myEventStore.sources.count > 0
         {
-            let events = eventStore.eventsMatchingPredicate(searchPredicate)
+            let calItems = myEventStore.eventsMatchingPredicate(searchPredicate)
             
-            for event in events
+            for calItem in calItems
             {
-                if event.eventIdentifier == inEventID
+                if "\(calItem.calendarItemExternalIdentifier) Date: \(calItem.startDate)" == inEventID
                 {
-                    eventRecords.append(event)
-                    let calendarEntry = myCalendarItem(inEventStore: eventStore, inEvent: event, inAttendee: nil)
+                    eventRecords.append(calItem)
+                    let calendarEntry = myCalendarItem(inEventStore: myEventStore, inEvent: calItem, inAttendee: nil, teamID: teamID)
                     
                     eventDetails.append(calendarEntry)
-                    eventRecords.append(event)
+                    eventRecords.append(calItem)
                 }
             }
         }
     }
     
-    func loadCalendarDetails(projectName: String)
+    func loadCalendarDetails(projectName: String, teamID: Int)
     {
-        parseCalendarByProject(projectName)
+        parseCalendarByProject(projectName, teamID: teamID)
         
         loadMeetingsForProject(projectName)
         
@@ -2259,7 +2389,7 @@ class iOSCalendar
                     
                     if !meetingFound
                     {
-                        let calendarEntry = myCalendarItem(inEventStore: eventStore, inMeetingAgenda: myMeeting)
+                        let calendarEntry = myCalendarItem(inEventStore: myEventStore, inMeetingAgenda: myMeeting)
                     
                         eventDetails.append(calendarEntry)
             //        eventRecords.append(nil)
@@ -2306,7 +2436,7 @@ class iOSCalendar
                 
                 if !meetingFound
                 {
-                    let calendarEntry = myCalendarItem(inEventStore: eventStore, inMeetingAgenda: myMeeting)
+                    let calendarEntry = myCalendarItem(inEventStore: myEventStore, inMeetingAgenda: myMeeting)
                     
                     eventDetails.append(calendarEntry)
                     //        eventRecords.append(nil)
@@ -2314,7 +2444,7 @@ class iOSCalendar
                 
                 if !dateMatch
                 {
-                    let calendarEntry = myCalendarItem(inEventStore: eventStore, inMeetingAgenda: myMeeting)
+                    let calendarEntry = myCalendarItem(inEventStore: myEventStore, inMeetingAgenda: myMeeting)
                     
                     eventDetails.append(calendarEntry)
                     //        eventRecords.append(nil)
@@ -2323,7 +2453,7 @@ class iOSCalendar
         }
     }
     
-    private func parseCalendarByEmail(inEmail: String)
+    private func parseCalendarByEmail(inEmail: String, teamID: Int)
     {
         let events = getEventsForDateRange()
         
@@ -2349,7 +2479,7 @@ class iOSCalendar
                             }
                             if emailAddress == inEmail
                             {
-                                storeEvent(event, inAttendee: attendee)
+                                storeEvent(event, inAttendee: attendee, teamID: teamID)
                             }
                         }
                     }
@@ -2358,7 +2488,7 @@ class iOSCalendar
         }
     }
     
-    private func parseCalendarByProject(inProject: String)
+    private func parseCalendarByProject(inProject: String, teamID: Int)
     {
         let events = getEventsForDateRange()
         
@@ -2371,7 +2501,7 @@ class iOSCalendar
                         
                 if myTitle.lowercaseString.rangeOfString(inProject.lowercaseString) != nil
                 {
-                    storeEvent(event, inAttendee: nil)
+                    storeEvent(event, inAttendee: nil, teamID: teamID)
                 }
             }
         }
@@ -2404,16 +2534,16 @@ class iOSCalendar
         let endDate = baseDate.dateByAddingTimeInterval(myEndDateValue)
         
         /* Create the predicate that we can later pass to the event store in order to fetch the events */
-        let searchPredicate = eventStore.predicateForEventsWithStartDate(
+        let searchPredicate = myEventStore.predicateForEventsWithStartDate(
             startDate,
             endDate: endDate,
             calendars: nil)
         
         /* Fetch all the events that fall between the starting and the ending dates */
         
-        if eventStore.sources.count > 0
+        if myEventStore.sources.count > 0
         {
-            events = eventStore.eventsMatchingPredicate(searchPredicate)
+            events = myEventStore.eventsMatchingPredicate(searchPredicate)
         }
         return events
     }
@@ -2443,7 +2573,7 @@ class iOSCalendar
         let endDate = baseDate.dateByAddingTimeInterval(myEndDateValue)
         
         /* Create the predicate that we can later pass to the event store in order to fetch the events */
-        _ = eventStore.predicateForEventsWithStartDate(
+        _ = myEventStore.predicateForEventsWithStartDate(
             startDate,
             endDate: endDate,
             calendars: nil)
@@ -2453,9 +2583,9 @@ class iOSCalendar
         return myDatabaseConnection.getAgendaForDateRange(startDate, inEndDate: endDate, inTeamID: myCurrentTeam.teamID)
     }
     
-    private func storeEvent(inEvent: EKEvent, inAttendee: EKParticipant?)
+    private func storeEvent(inEvent: EKEvent, inAttendee: EKParticipant?, teamID: Int)
     {
-        let calendarEntry = myCalendarItem(inEventStore: eventStore, inEvent: inEvent, inAttendee: inAttendee)
+        let calendarEntry = myCalendarItem(inEventStore: myEventStore, inEvent: inEvent, inAttendee: inAttendee, teamID: teamID)
         
         eventDetails.append(calendarEntry)
         eventRecords.append(inEvent)

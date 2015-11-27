@@ -8,6 +8,7 @@
 
 import Foundation
 import AddressBook
+import AppKit
 
 
 class gmailMessage: NSObject
@@ -732,6 +733,7 @@ class gmailMessages: NSObject
     }
 }
 
+#if os(iOS)
 class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate, GIDSignInUIDelegate
 {
 //    var liveClient: LiveConnectClient!
@@ -873,3 +875,256 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
         }
     }
 }
+
+#else
+      
+    class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate
+    {
+        //    var liveClient: LiveConnectClient!
+        // Set the CLIENT_ID value to be the one you get from http://manage.dev.live.com/
+        private let CLIENT_ID = "344184320417-h2nr89gi0ji02tbcs7f7kpj0kevuhq6f.apps.googleusercontent.com"
+        private let gmailSecret = "USKddrDHh2aL6C2rzQGmrYku"
+        private let kKeychainItemName = "Contacts Dashboard Gmail"
+        private let kShouldSaveInKeychainKey = "shouldSaveInKeychain"
+        
+        private var auth: GTMOAuth2Authentication!
+        private var currentUser: String = ""
+        
+        private var myInString: String = ""
+        private var myQueryType: String = ""
+        
+        private let scopes = [kGTLAuthScopeGmailReadonly]
+        private let service = GTLServiceGmail()
+        private var myParentViewController: NSViewController!
+        
+        init(parentViewController: NSViewController)
+        {
+            super.init()
+            
+            myParentViewController = parentViewController
+            
+            if let auth = GTMOAuth2WindowController.authForGoogleFromKeychainForName(
+                kKeychainItemName,
+                clientID: CLIENT_ID,
+                clientSecret: gmailSecret)
+            {
+                service.authorizer = auth
+            }
+            
+            if let authorizer = service.authorizer,
+                canAuth = authorizer.canAuthorize where canAuth
+            {
+                fetchLabels()
+            }
+            else
+            {
+                let myStart = myParentViewController.storyboard?.instantiateControllerWithIdentifier("GTMOAuth2Window") as! GTMOAuth2WindowController
+                
+                myStart.showWindow(myStart)
+   //             myParentViewController.view.window?.contentViewController = myStart
+   //             myParentViewController.presentViewControllerAsModalWindow(createAuthController())
+            }
+        }
+        
+        // Construct a query and get a list of upcoming labels from the gmail API
+        func fetchLabels()
+        {
+//            output.text = "Getting labels..."
+            
+            let query = GTLQueryGmail.queryForUsersLabelsList()
+            service.executeQuery(query,
+                delegate: self,
+                didFinishSelector: "displayResultWithTicket:finishedWithObject:error:"
+            )
+        }
+        
+        // Display the labels in the UITextView
+        func displayResultWithTicket(ticket : GTLServiceTicket,
+            finishedWithObject labelsResponse : GTLGmailListLabelsResponse,
+            error : NSError?)
+        {
+                
+            if let error = error {
+                showAlert("Error", message: error.localizedDescription)
+                return
+            }
+                
+            var labelString = ""
+                
+            if !labelsResponse.labels.isEmpty
+            {
+                labelString += "Labels:\n"
+                for label in labelsResponse.labels as! [GTLGmailLabel]
+                {
+                    labelString += "\(label.name)\n"
+                }
+            }
+            else
+            {
+                labelString = "No labels found."
+            }
+                
+           //     output.text = labelString
+                
+        }
+        
+        // Creates the auth controller for authorizing access to Gmail API
+        private func createAuthController() -> GTMOAuth2WindowController
+        {
+    //        let scopeString = " ".join(scopes)
+            let scopeString = scopes.joinWithSeparator("")
+          
+            /*return GTMOAuth2WindowController(
+                scope: scopeString,
+                clientID: CLIENT_ID,
+                clientSecret: gmailSecret,
+                keychainItemName: kKeychainItemName,
+                delegate: self,
+                finishedSelector: "viewController:finishedWithAuth:error:"
+            )*/
+            
+            return GTMOAuth2WindowController(
+                scope: scopeString,
+                clientID: CLIENT_ID,
+                clientSecret: gmailSecret,
+                keychainItemName: kKeychainItemName,
+                resourceBundle: nil
+            )
+        }
+        
+        // Handle completion of the authorization process, and update the Gmail API
+        // with the new credentials.
+        func viewController(vc : NSViewController,
+            finishedWithAuth authResult : GTMOAuth2Authentication, error : NSError?)
+        {
+                
+            if let error = error
+            {
+                service.authorizer = nil
+                showAlert("Authentication Error", message: error.localizedDescription)
+                return
+            }
+                
+            service.authorizer = authResult
+            myParentViewController.dismissViewController(vc)
+        }
+        
+        // Helper for showing an alert
+        func showAlert(title : String, message: String)
+        {
+            let alert = NSAlert()
+            alert.messageText = message
+            alert.informativeText = message
+            alert.addButtonWithTitle("OK")
+            
+            let _ = alert.runModal()
+        }
+        
+        func getData(inURLString: String) -> String
+        {
+/*            var response: NSURLResponse?
+            var myReturnString: String = ""
+            
+            // Swap userId for the userd ID
+            
+            //       let tempStr1 = inURLString.stringByReplacingOccurrencesOfString("userId", withString:GIDSignIn.sharedInstance().currentUser.userID)
+            
+            let escapedURL: String = inURLString.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
+            
+            
+            let url: NSURL = NSURL(string: escapedURL)!
+            let request = NSMutableURLRequest(URL: url)
+            request.HTTPMethod = "GET"
+            request.cachePolicy = NSURLRequestCachePolicy.ReloadIgnoringLocalCacheData
+            
+            if currentUser != ""
+            {
+                request.setValue("Bearer \(GIDSignIn.sharedInstance().currentUser.authentication.accessToken)", forHTTPHeaderField: "Authorization")
+                // Send the HTTP request
+                
+                let result: NSData?
+                do
+                {
+                    result = try NSURLConnection.sendSynchronousRequest(request, returningResponse:&response)
+                }
+                catch let error1 as NSError
+                {
+                    NSLog("GMail getDate: \(error1)")
+                    result = nil
+                }
+                
+                let httpResponse = response as? NSHTTPURLResponse
+                
+                let status = httpResponse!.statusCode
+                
+                if status == 200
+                {
+                    // this means data was retrieved OK
+                    myReturnString = NSString(data: result!, encoding: NSUTF8StringEncoding) as! String
+                }
+                else if status == 201
+                {
+                    print("gmailData: Page created!")
+                }
+                else
+                {
+                    print("gmailData: getData: There was an error accessing the gmailData data. Response code: \(status)")
+                }
+            }
+            return myReturnString
+*/
+            return ""
+        }
+       
+        
+        
+        
+        
+        
+   /*
+        
+        
+        
+        
+        
+        func shouldSaveInKeychain() -> Bool
+        {
+            let defaults: NSUserDefaults = NSUserDefaults.standardUserDefaults()
+            let flag = defaults.boolForKey(kShouldSaveInKeychainKey)
+            return flag
+        }
+        
+        func connectToGmail()
+        {
+//            if currentUser == ""
+//            {
+               // auth = GTMOAuth2WindowController.authForGoogleFromKeychainForName(kKeychainItemName, clientID: CLIENT_ID, clientSecret: gmailSecret)
+                
+//                GIDSignIn.sharedInstance().uiDelegate = self
+                
+//                GIDSignIn.sharedInstance().clientID = CLIENT_ID
+//                GIDSignIn.sharedInstance().scopes = ["https://www.googleapis.com/auth/gmail.readonly"]
+                
+                // Uncomment to automatically sign in the user.
+//                GIDSignIn.sharedInstance().signIn()
+//            }
+        }
+        
+        
+        func gmailSignedIn(notification: NSNotification)
+        {
+   //         currentUser = GIDSignIn.sharedInstance().currentUser
+   //         if mySourceViewController is GTDInboxViewController
+   //         {
+   //             NSNotificationCenter.defaultCenter().postNotificationName("NotificationGmailInboxConnected", object: nil)
+   //         }
+   //         else
+   //         {
+   //             NSNotificationCenter.defaultCenter().postNotificationName("NotificationGmailConnected", object: nil)
+   //         }
+        }
+
+*/
+}
+    
+#endif

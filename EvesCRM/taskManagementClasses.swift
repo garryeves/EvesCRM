@@ -370,21 +370,37 @@ class workingGTDItem: NSObject
         
         // Load the details
         
-        let myGTDDetail = myDatabaseConnection.getGTDItem(inGTDItemID, inTeamID: inTeamID)
-        
-        for myItem in myGTDDetail
+        if inGTDItemID == 0
         {
-            myGTDItemID = myItem.gTDItemID as! Int
-            myTitle = myItem.title!
-            myStatus = myItem.status!
-            myTeamID = myItem.teamID as! Int
-            myNote = myItem.note!
-            myLastReviewDate = myItem.lastReviewDate
-            myReviewFrequency = myItem.reviewFrequency as! Int
-            myReviewPeriod = myItem.reviewPeriod!
-            myPredecessor = myItem.predecessor as! Int
-            myGTDLevel = myItem.gTDLevel as! Int
-            myGTDParentID = myItem.gTDParentID as! Int
+            // this is top level so have no details
+            myTeamID = inTeamID
+            myGTDLevel = 1
+        }
+        else
+        {
+            let myGTDDetail = myDatabaseConnection.getGTDItem(inGTDItemID, inTeamID: inTeamID)
+        
+            for myItem in myGTDDetail
+            {
+                myGTDItemID = myItem.gTDItemID as! Int
+                myTitle = myItem.title!
+                myStatus = myItem.status!
+                myTeamID = myItem.teamID as! Int
+                myNote = myItem.note!
+                myLastReviewDate = myItem.lastReviewDate
+                myReviewFrequency = myItem.reviewFrequency as! Int
+                myReviewPeriod = myItem.reviewPeriod!
+                myPredecessor = myItem.predecessor as! Int
+                myGTDLevel = myItem.gTDLevel as! Int
+                myGTDParentID = myItem.gTDParentID as! Int
+            }
+        }
+        
+        if myStoreGTDLevel == 0
+        { // We only wantto do this once per instantiation of the object
+            let tempTeam = myDatabaseConnection.getGTDLevels(myTeamID)
+            
+            myStoreGTDLevel = tempTeam.count
         }
         
         // Load the Members
@@ -399,6 +415,13 @@ class workingGTDItem: NSObject
         myGTDParentID = inParentID
         myLastReviewDate = getDefaultDate()
         myTeamID = inTeamID
+        
+        if myStoreGTDLevel == 0
+        { // We only wantto do this once per instantiation of the object
+            let tempTeam = myDatabaseConnection.getGTDLevels(myTeamID)
+            
+            myStoreGTDLevel = tempTeam.count
+        }
         
         save()
     }
@@ -423,14 +446,7 @@ class workingGTDItem: NSObject
     func loadChildren()
     {
         // check to see if this is the bottom of the GTD hierarchy
-        
-        if myStoreGTDLevel == 0
-        { // We only wantto do this once per instantiation of the object
-            let tempTeam = myDatabaseConnection.getGTDLevels(myTeamID)
-            
-            myStoreGTDLevel = tempTeam.count
-        }
-        
+
         if myGTDLevel != myStoreGTDLevel
         { // Not bottom of hierarchy so get GTDITem as children
             let myChildrenList = myDatabaseConnection.getOpenGTDChildItems(myGTDItemID, inTeamID: myTeamID)
@@ -547,7 +563,7 @@ class projectTeamMember: NSObject
     }
 
     var roleName: String
-        {
+    {
         get
         {
             return myDatabaseConnection.getRoleDescription(myRoleID as Int, inTeamID: myTeamID)

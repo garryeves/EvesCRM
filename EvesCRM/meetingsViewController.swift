@@ -492,15 +492,15 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                                     
                                     if myMeetingCheck.count == 0
                                     { // No meeting found, so need to create
-                                        let nextEvent = iOSCalendar(inEventStore: eventStore)
+                                        let nextEvent = iOSCalendar(inEventStore: globalEventStore)
                                         
-                                        nextEvent.loadCalendarForEvent(self.pickerEventArray[self.mySelectedRow], inStartDate: self.pickerStartDateArray[self.mySelectedRow])
+                                        nextEvent.loadCalendarForEvent(self.pickerEventArray[self.mySelectedRow], inStartDate: self.pickerStartDateArray[self.mySelectedRow], teamID: myCurrentTeam.teamID)
                                         
                                         nextCalItem = nextEvent.calendarItems[0]
                                     }
                                     else
                                     { // meeting found use it
-                                        nextCalItem = myCalendarItem(inEventStore: eventStore, inMeetingAgenda: myMeetingCheck[0])
+                                        nextCalItem = myCalendarItem(inEventStore: globalEventStore, inMeetingAgenda: myMeetingCheck[0])
                                     }
                                     
                                     // Get the previous meetings details
@@ -555,15 +555,15 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                                 
                                 if myMeetingCheck.count == 0
                                 { // No meeting found, so need to create
-                                    let nextEvent = iOSCalendar(inEventStore: eventStore)
+                                    let nextEvent = iOSCalendar(inEventStore: globalEventStore)
                                     
-                                    nextEvent.loadCalendarForEvent(pickerEventArray[mySelectedRow], inStartDate: pickerStartDateArray[mySelectedRow])
+                                    nextEvent.loadCalendarForEvent(pickerEventArray[mySelectedRow], inStartDate: pickerStartDateArray[mySelectedRow], teamID: myCurrentTeam.teamID)
                                     
                                     nextCalItem = nextEvent.calendarItems[0]
                                 }
                                 else
                                 { // meeting found use it
-                                    nextCalItem = myCalendarItem(inEventStore: eventStore, inMeetingAgenda: myMeetingCheck[0])
+                                    nextCalItem = myCalendarItem(inEventStore: globalEventStore, inMeetingAgenda: myMeetingCheck[0])
                                 }
                                 
                                 // Get the previous meetings details
@@ -605,15 +605,15 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                         
                         if myMeetingCheck.count == 0
                         { // No meeting found, so need to create
-                            let nextEvent = iOSCalendar(inEventStore: eventStore)
+                            let nextEvent = iOSCalendar(inEventStore: globalEventStore)
                         
-                            nextEvent.loadCalendarForEvent(pickerEventArray[mySelectedRow], inStartDate: pickerStartDateArray[mySelectedRow])
+                            nextEvent.loadCalendarForEvent(pickerEventArray[mySelectedRow], inStartDate: pickerStartDateArray[mySelectedRow], teamID: myCurrentTeam.teamID)
                         
                             nextCalItem = nextEvent.calendarItems[0]
                         }
                         else
                         { // meeting found use it
-                            nextCalItem = myCalendarItem(inEventStore: eventStore, inMeetingAgenda: myMeetingCheck[0])
+                            nextCalItem = myCalendarItem(inEventStore: globalEventStore, inMeetingAgenda: myMeetingCheck[0])
                         }
 
                         // Get the previous meetings details
@@ -681,7 +681,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
         {
             for _ in myItems
             {
-                let tempMeeting = myCalendarItem(inEventStore: eventStore, inMeetingID: passedMeeting.event.previousMinutes)
+                let tempMeeting = myCalendarItem(inEventStore: globalEventStore, inMeetingID: passedMeeting.event.previousMinutes, teamID: myCurrentTeam.teamID)
                 tempMeeting.loadAgenda()
                 targetPassedMeeting.event = tempMeeting
             }
@@ -715,7 +715,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
         {
             for _ in myItems
             {
-                let tempMeeting = myCalendarItem(inEventStore: eventStore, inMeetingID: passedMeeting.event.nextMeeting)
+                let tempMeeting = myCalendarItem(inEventStore: globalEventStore, inMeetingID: passedMeeting.event.nextMeeting, teamID: myCurrentTeam.teamID)
                 tempMeeting.loadAgenda()
                 targetPassedMeeting.event = tempMeeting
             }
@@ -842,15 +842,13 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
          
             // get the meeting id, and remove the trailing portion in order to use in a search
             
-            let myStringArr = passedMeeting.event.event!.eventIdentifier.componentsSeparatedByString("/")
-
-            let myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(myStringArr[0], inMeetingStartDate: passedMeeting.event.startDate, inTeamID: myCurrentTeam.teamID)
+            let myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(passedMeeting.event.eventID, inMeetingStartDate: passedMeeting.event.startDate, inTeamID: myCurrentTeam.teamID)
 
             if myItems.count > 0
             { // There is an previous meeting
                 for myItem in myItems
                 {
-                    if myItem.meetingID != passedMeeting.event.event!.eventIdentifier
+                    if myItem.meetingID != passedMeeting.event.eventID
                     { // Not this meeting meeting
                         let startDateFormatter = NSDateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
@@ -865,13 +863,13 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
             
             // display remaining items, newest first
 
-            let myNonItems = myDatabaseConnection.searchPastAgendaWithoutPartialMeetingIDBeforeStart(myStringArr[0], inMeetingStartDate: passedMeeting.event.startDate, inTeamID: myCurrentTeam.teamID)
+            let myNonItems = myDatabaseConnection.searchPastAgendaWithoutPartialMeetingIDBeforeStart(passedMeeting.event.eventID, inMeetingStartDate: passedMeeting.event.startDate, inTeamID: myCurrentTeam.teamID)
             
             if myNonItems.count > 0
             { // There is an previous meeting
                 for myItem in myNonItems
                 {
-                    if myItem.meetingID != passedMeeting.event.event!.eventIdentifier
+                    if myItem.meetingID != passedMeeting.event.eventID
                     { // Not this meeting meeting
                         let startDateFormatter = NSDateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
@@ -898,7 +896,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
             { // There is an previous meeting
                 for myItem in myItems
                 {
-                    if myItem.meetingID != passedMeeting.event.event!.eventIdentifier
+                    if myItem.meetingID != passedMeeting.event.eventID
                     { // Not this meeting meeting
                         let startDateFormatter = NSDateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
@@ -929,7 +927,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
         pickerEventArray.removeAll(keepCapacity: false)
         pickerStartDateArray.removeAll(keepCapacity: false)
 
-        var events: [EKEvent] = []
+        var calItems: [EKEvent] = []
         
         let baseDate = NSDate()
         
@@ -943,32 +941,32 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
         let endDate = baseDate.dateByAddingTimeInterval(myEndDateValue)
         
         /* Create the predicate that we can later pass to the event store in order to fetch the events */
-        let searchPredicate = eventStore.predicateForEventsWithStartDate(
+        let searchPredicate = globalEventStore.predicateForEventsWithStartDate(
             startDate,
             endDate: endDate,
             calendars: nil)
         
         /* Fetch all the events that fall between the starting and the ending dates */
         
-        if eventStore.sources.count > 0
+        if globalEventStore.sources.count > 0
         {
-            events = eventStore.eventsMatchingPredicate(searchPredicate)
+            calItems = globalEventStore.eventsMatchingPredicate(searchPredicate)
         }
         
-        if events.count >  0
+        if calItems.count >  0
         {
             // Go through all the events and print them to the console
-            for event in events
+            for calItem in calItems
             {
-                if passedMeeting.event.eventID != event.eventIdentifier
+                if passedMeeting.event.eventID != "\(calItem.calendarItemExternalIdentifier) Date: \(calItem.startDate)"
                 {
                     let startDateFormatter = NSDateFormatter()
                     startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                    let myDisplayDate = startDateFormatter.stringFromDate(event.startDate)
+                    let myDisplayDate = startDateFormatter.stringFromDate(calItem.startDate)
                 
-                    pickerOptions.append("\(event.title) - \(myDisplayDate)")
-                    pickerEventArray.append(event.eventIdentifier)
-                    pickerStartDateArray.append(event.startDate)
+                    pickerOptions.append("\(calItem.title) - \(myDisplayDate)")
+                    pickerEventArray.append("\(calItem.calendarItemExternalIdentifier) Date: \(calItem.startDate)")
+                    pickerStartDateArray.append(calItem.startDate)
                 }
             }
         }
@@ -981,22 +979,22 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
             
             var myItems: [MeetingAgenda]!
             
-            let tempEventID = passedMeeting.event.event?.eventIdentifier
-            if tempEventID!.rangeOfString("/") != nil
+            let tempEventID = passedMeeting.event.eventID
+            if tempEventID.rangeOfString("/") != nil
             {
-                let myStringArr = tempEventID!.componentsSeparatedByString("/")
+                let myStringArr = tempEventID.componentsSeparatedByString("/")
                 myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(myStringArr[0], inMeetingStartDate: passedMeeting.event.startDate, inTeamID: myCurrentTeam.teamID)
             }
             else
             {
-                myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(passedMeeting.event.event!.eventIdentifier, inMeetingStartDate: passedMeeting.event.startDate, inTeamID: myCurrentTeam.teamID)
+                myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(passedMeeting.event.eventID, inMeetingStartDate: passedMeeting.event.startDate, inTeamID: myCurrentTeam.teamID)
             }
             
             if myItems.count > 1
             { // There is an previous meeting
                 for myItem in myItems
                 {
-                    if myItem.meetingID != passedMeeting.event.event!.eventIdentifier
+                    if myItem.meetingID != passedMeeting.event.eventID
                     { // Not this meeting meeting
                         let startDateFormatter = NSDateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
