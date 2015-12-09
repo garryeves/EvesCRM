@@ -1755,8 +1755,9 @@ class task: NSObject
     
     func markComplete()
     {
+        checkForRepeat()
         myCompletionDate = NSDate()
-        myStatus = "Completed"
+        myStatus = "Complete"
         save()
     }
     
@@ -2038,9 +2039,14 @@ class task: NSObject
                     daysToAdd = components.day
                 }
                 
+                let now: NSDate = NSDate()
+                let gregorian: NSCalendar = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)!
+                let dateComponents: NSDateComponents = gregorian.components([.Year, .Month, .Day], fromDate: now)
+                let todayDate: NSDate = gregorian.dateFromComponents(dateComponents)!
+
                 if myStartDate != getDefaultDate()
                 {
-                    tempStartDate = calculateNewDate(NSDate(), inDateBase:myRepeatBase, inInterval: myRepeatInterval, inPeriod: myRepeatType)
+                    tempStartDate = calculateNewDate(todayDate, inDateBase:myRepeatBase, inInterval: myRepeatInterval, inPeriod: myRepeatType)
                 }
                 
                 if myDueDate != getDefaultDate()
@@ -2050,7 +2056,7 @@ class task: NSObject
                     let tempDate = calendar.dateByAddingUnit(
                         [.Day],
                         value: daysToAdd,
-                        toDate: NSDate(),
+                        toDate: todayDate,
                         options: [])!
                     
                     tempEndDate = calculateNewDate(tempDate, inDateBase:myRepeatBase, inInterval: myRepeatInterval, inPeriod: myRepeatType)

@@ -8,7 +8,7 @@
 
 import Foundation
 import AddressBook
-import AppKit
+//import AppKit
 
 
 class gmailMessage: NSObject

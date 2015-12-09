@@ -66,7 +66,17 @@ class DBSync: NSObject
                         let myDateFormatter = NSDateFormatter()
                         myDateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZZ"
             
-                        syncDate = myDateFormatter.dateFromString(lastSyncDate)
+                        let tempSyncDate = myDateFormatter.dateFromString(lastSyncDate)
+                        
+                        // We want to sync everything changes in the last month so need to do some date math
+                        
+                        let myCalendar = NSCalendar.currentCalendar()
+                        
+                        syncDate = myCalendar.dateByAddingUnit(
+                            .Month,
+                            value: -1,
+                            toDate: tempSyncDate!,
+                            options: [])!
                     }
 
                     // Load
