@@ -181,7 +181,7 @@ class CloudKitInteraction
         }
     }
 
-    func saveDecodesToCloudKit(inLastSyncDate: NSDate)
+    func saveDecodesToCloudKit(inLastSyncDate: NSDate, syncName: String)
     {
 //        NSLog("Syncing Decodes")
         for myItem in myDatabaseConnection.getDecodesForSync(inLastSyncDate)
@@ -197,28 +197,152 @@ class CloudKitInteraction
                 {
                     if records!.count > 0
                     {
-                        let record = records!.first// as! CKRecord
-                        // Now you have grabbed your existing record from iCloud
-                        // Apply whatever changes you want
-                        record!.setValue(myItem.decode_value, forKey: "decode_value")
-                        record!.setValue(myItem.decodeType, forKey: "decodeType")
-                        record!.setValue(myItem.updateTime, forKey: "updateTime")
-                        record!.setValue(myItem.updateType, forKey: "updateType")
+                        // We need to do a check of the number for the tables, as otherwise we risk overwriting the changes
                         
-                        // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
+                        var updateRecord: Bool = true
+                        
+                        let record = records!.first// as! CKRecord
+                        
+                        switch myItem.decode_name
+                        {
+                            case "Context" :
+                                let localValue = Int(myItem.decode_value)
+                                let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
+                                let remoteValue = Int(tempValue as! String)
+                                
+                                if localValue > remoteValue
                                 {
-                                    NSLog("Successfully updated record!")
+                                    updateRecord = true
                                 }
-                            }
-                        })
+                                else
+                                {
+                                    updateRecord = false
+                                }
+                            
+                            case "Projects" :
+                                let localValue = Int(myItem.decode_value)
+                                let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
+                                let remoteValue = Int(tempValue as! String)
+                                
+                                if localValue > remoteValue
+                                {
+                                    updateRecord = true
+                                }
+                                else
+                                {
+                                    updateRecord = false
+                                }
+
+                            case "GTDItem" :
+                                let localValue = Int(myItem.decode_value)
+                                let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
+                                let remoteValue = Int(tempValue as! String)
+                                
+                                if localValue > remoteValue
+                                {
+                                    updateRecord = true
+                                }
+                                else
+                                {
+                                    updateRecord = false
+                                }
+
+                            case "Team" :
+                                let localValue = Int(myItem.decode_value)
+                                let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
+                                let remoteValue = Int(tempValue as! String)
+                                
+                                if localValue > remoteValue
+                                {
+                                    updateRecord = true
+                                }
+                                else
+                                {
+                                    updateRecord = false
+                                }
+
+                            case "Roles" :
+                                let localValue = Int(myItem.decode_value)
+                                let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
+                                let remoteValue = Int(tempValue as! String)
+                                
+                                if localValue > remoteValue
+                                {
+                                    updateRecord = true
+                                }
+                                else
+                                {
+                                    updateRecord = false
+                                }
+
+                            case "Task" :
+                                let localValue = Int(myItem.decode_value)
+                                let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
+                                let remoteValue = Int(tempValue as! String)
+                                
+                                if localValue > remoteValue
+                                {
+                                    updateRecord = true
+                                }
+                                else
+                                {
+                                    updateRecord = false
+                                }
+                            
+                            case "Device" :
+                                let localValue = Int(myItem.decode_value)
+                                let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
+                                let remoteValue = Int(tempValue as! String)
+                            
+                                if localValue > remoteValue
+                                {
+                                    updateRecord = true
+                                }
+                                else
+                                {
+                                    updateRecord = false
+                                }
+                            
+                            default:
+                                updateRecord = true
+                                
+                                if myItem.decode_name.hasPrefix("CloudKit Sync")
+                                {
+                                    if syncName == myItem.decode_name
+                                    {
+                                        updateRecord = true
+                                    }
+                                    else
+                                    {
+                                        updateRecord = false
+                                    }
+                                }
+                        }
+                        
+                        if updateRecord
+                        {
+                            // Now you have grabbed your existing record from iCloud
+                            // Apply whatever changes you want
+                            record!.setValue(myItem.decode_value, forKey: "decode_value")
+                            record!.setValue(myItem.decodeType, forKey: "decodeType")
+                            record!.setValue(myItem.updateTime, forKey: "updateTime")
+                            record!.setValue(myItem.updateType, forKey: "updateType")
+                        
+                            // Save this record again
+                            self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                                if saveError != nil
+                                {
+                                    NSLog("Error saving record: \(saveError!.localizedDescription)")
+                                }
+                                else
+                                {
+                                    if debugMessages
+                                    {
+                                        NSLog("Successfully updated record!")
+                                    }
+                                }
+                            })
+                        }
                     }
                     else
                     {  // Insert
@@ -1079,7 +1203,7 @@ class CloudKitInteraction
 //        NSLog("Syncing Roles")
         for myItem in myDatabaseConnection.getRolesForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(roleID == \(myItem.roleID as Int)) && (teamID == \(myItem.teamID as Int))") // better be accurate to get only the record you need
+            let predicate = NSPredicate(format: "(roleID == \(myItem.roleID as Int))") // better be accurate to get only the record you need
             let query = CKQuery(recordType: "Roles", predicate: predicate)
             privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -2099,7 +2223,7 @@ class CloudKitInteraction
                 let teamID = record.objectForKey("teamID") as! Int
                 let roleDescription = record.objectForKey("roleDescription") as! String
                 
-                myDatabaseConnection.saveRole(roleDescription, teamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType, roleID: roleID)
+                myDatabaseConnection.saveCloudRole(roleDescription, teamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType, roleID: roleID)
             }
             dispatch_semaphore_signal(sem)
         })

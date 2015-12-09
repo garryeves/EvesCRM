@@ -254,10 +254,10 @@ class coreDatabase: NSObject
     {
         
         
-        let myRoles = getRole(roleID, teamID: teamID)
+        let myRoles = getRole(roleID)
         
 
-                var mySelectedRole: Roles
+        var mySelectedRole: Roles
         if myRoles.count == 0
         {
             
@@ -323,6 +323,49 @@ class coreDatabase: NSObject
         //       }
     }
 
+    func saveCloudRole(roleName: String, teamID: Int, inUpdateTime: NSDate, inUpdateType: String, roleID: Int = 0)
+    {
+        
+        
+        let myRoles = getRole(roleID)
+        
+        
+        var mySelectedRole: Roles
+        if myRoles.count == 0
+        {
+            
+            mySelectedRole = NSEntityDescription.insertNewObjectForEntityForName("Roles", inManagedObjectContext: self.managedObjectContext!) as! Roles
+            
+            // Get the role number
+            mySelectedRole.roleID = roleID
+            mySelectedRole.roleDescription = roleName
+            mySelectedRole.teamID = teamID
+            mySelectedRole.updateTime = inUpdateTime
+            mySelectedRole.updateType = inUpdateType
+        }
+        else
+        {
+            mySelectedRole = myRoles[0]
+            mySelectedRole.roleDescription = roleName
+            mySelectedRole.updateTime = inUpdateTime
+            mySelectedRole.updateType = inUpdateType
+        }
+        
+        managedObjectContext!.performBlock
+            {
+                do
+                {
+                    try self.managedObjectContext!.save()
+                }
+                catch let error as NSError
+                {
+                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+                    
+                    print("Failure to save context: \(error)")
+                }
+        }
+    }
+
     func replaceRole(roleName: String, teamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE", roleID: Int = 0)
     {
         managedObjectContext!.performBlock
@@ -377,6 +420,21 @@ class coreDatabase: NSObject
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(teamID)) && (roleID == \(roleID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Roles]
+        
+        return fetchResults!
+    }
+    
+    func getRole(roleID: Int)->[Roles]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Roles")
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(updateType != \"Delete\") && (roleID == \(roleID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

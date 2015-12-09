@@ -50,9 +50,9 @@ class DBSync: NSObject
         
                     // Get the last sync date
         
-                    let lastSyncDate = myDatabaseConnection.getDecodeValue("CloudKit Sync")
+                    let lastSyncDate = myDatabaseConnection.getDecodeValue(getSyncID())
         
-                    if lastSyncDate == ""
+                    if lastSyncDate == "" || lastSyncDate == "nil" 
                     {
                         let myDateFormatter = NSDateFormatter()
                         myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
@@ -73,7 +73,7 @@ class DBSync: NSObject
                         let myCalendar = NSCalendar.currentCalendar()
                         
                         syncDate = myCalendar.dateByAddingUnit(
-                            .Month,
+                            .Day,
                             value: -1,
                             toDate: tempSyncDate!,
                             options: [])!
@@ -94,7 +94,7 @@ class DBSync: NSObject
         
                     dateString = "\(syncStart)"
                     
-                    myDatabaseConnection.updateDecodeValue("CloudKit Sync", inCodeValue: dateString, inCodeType: "hidden")
+                    myDatabaseConnection.updateDecodeValue(getSyncID(), inCodeValue: dateString, inCodeType: "hidden")
                     
                     myDatabaseConnection.clearDeletedItems()
                     myDatabaseConnection.clearSyncedItems()
@@ -139,7 +139,7 @@ class DBSync: NSObject
         progressMessage("syncToCloudKit Context")
         myCloudDB.saveContextToCloudKit(inDate)
         progressMessage("syncToCloudKit Decodes")
-        myCloudDB.saveDecodesToCloudKit(inDate)
+        myCloudDB.saveDecodesToCloudKit(inDate, syncName: getSyncID())
         progressMessage("syncToCloudKit GTD Item")
         myCloudDB.saveGTDItemToCloudKit(inDate)
         progressMessage("syncToCloudKit GTD Level")
@@ -318,5 +318,26 @@ class DBSync: NSObject
 //        NSNotificationCenter.defaultCenter().postNotificationName("NotificationSyncMessage", object: nil, userInfo:selectedDictionary)
         
 //        sleep(1)
+    }
+    
+    func getSyncID() -> String
+    {
+        let defaults = NSUserDefaults.standardUserDefaults()
+        
+        if let name = defaults.stringForKey("EvesCRM")
+        {
+            return name
+        }
+        else
+        {
+            // get the next device ID
+            let myNewID = myDatabaseConnection.getNextID("Device")
+            
+            let myValue = "CloudKit Sync \(myNewID)"
+            
+            defaults.setObject(myValue, forKey: "EvesCRM")
+            
+            return myValue
+        }
     }
 }
