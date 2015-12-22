@@ -42,142 +42,12 @@ class CloudKitInteraction
 //        NSLog("Syncing Contexts")
         for myItem in myDatabaseConnection.getContextsForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(contextID == \(myItem.contextID as Int)) && (teamID == \(myItem.teamID as Int))") // better be accurate to get only the record you need
-            let query = CKQuery(recordType: "Context", predicate: predicate)
-            privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
-                if error != nil
-                {
-                    NSLog("Error querying records: \(error!.localizedDescription)")
-                }
-                else
-                {
-                    // Lets go and get the additional details from the context1_1 table
-                    
-                    let tempContext1_1 = myDatabaseConnection.getContext1_1(myItem.contextID as Int)
-                    
-                    var myPredecessor: Int = 0
-                    var myContextType: String = ""
-                    
-                    if tempContext1_1.count > 0
-                    {
-                        myPredecessor = tempContext1_1[0].predecessor as! Int
-                        if tempContext1_1[0].contextType != nil
-                        {
-                            myContextType = tempContext1_1[0].contextType!
-                        }
-                        else
-                        {
-                            myContextType = "Person"
-                        }
-                    }
-                    
-                    if records!.count > 0
-                    {
-                        let record = records!.first// as! CKRecord
-                        // Now you have grabbed your existing record from iCloud
-                        // Apply whatever changes you want
-                        record!.setValue(myItem.autoEmail, forKey: "autoEmail")
-                        record!.setValue(myItem.email, forKey: "email")
-                        record!.setValue(myItem.name, forKey: "name")
-                        record!.setValue(myItem.parentContext, forKey: "parentContext")
-                        record!.setValue(myItem.personID, forKey: "personID")
-                        record!.setValue(myItem.status, forKey: "status")
-                        record!.setValue(myItem.updateTime, forKey: "updateTime")
-                        record!.setValue(myItem.updateType, forKey: "updateType")
-                        record!.setValue(myPredecessor, forKey: "predecessor")
-                        record!.setValue(myContextType, forKey: "contextType")
-                        
-                        // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully updated record!")
-                                }
-                            }
-                        })
-                    }
-                    else
-                    {  // Insert
-                        let record = CKRecord(recordType: "Context")
-                        record.setValue(myItem.contextID, forKey: "contextID")
-                        record.setValue(myItem.autoEmail, forKey: "autoEmail")
-                        record.setValue(myItem.email, forKey: "email")
-                        record.setValue(myItem.name, forKey: "name")
-                        record.setValue(myItem.parentContext, forKey: "parentContext")
-                        record.setValue(myItem.personID, forKey: "personID")
-                        record.setValue(myItem.status, forKey: "status")
-                        record.setValue(myItem.teamID, forKey: "teamID")
-                        record.setValue(myItem.updateTime, forKey: "updateTime")
-                        record.setValue(myItem.updateType, forKey: "updateType")
-                        record.setValue(myPredecessor, forKey: "predecessor")
-                        record.setValue(myContextType, forKey: "contextType")
-                        
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully saved record!")
-                                }
-                            }
-                        })
-                    }
-                }
-            })
-            
-//            sleep(1)
+            saveContextRecordToCloudKit(myItem)
         }
         
         for myItem in myDatabaseConnection.getContexts1_1ForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(contextID == \(myItem.contextID as! Int))") // better be accurate to get only the record you need
-            let query = CKQuery(recordType: "Context", predicate: predicate)
-            privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
-                if error != nil
-                {
-                    NSLog("Error querying records: \(error!.localizedDescription)")
-                }
-                else
-                {
-                    if records!.count > 0
-                    {
-                        let record = records!.first// as! CKRecord
-                        // Now you have grabbed your existing record from iCloud
-                        // Apply whatever changes you want
-                        record!.setValue(myItem.predecessor, forKey: "predecessor")
-                        record!.setValue(myItem.contextType, forKey: "contextType")
-                        record!.setValue(myItem.updateTime, forKey: "updateTime")
-                        record!.setValue(myItem.updateType, forKey: "updateType")
-                        
-                        // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully updated record!")
-                                }
-                            }
-                        })
-                    }
-                }
-            })
-            
-//            sleep(1)
+            saveContext1_1RecordToCloudKit(myItem)
         }
     }
 
@@ -186,191 +56,7 @@ class CloudKitInteraction
 //        NSLog("Syncing Decodes")
         for myItem in myDatabaseConnection.getDecodesForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(decode_name == \"\(myItem.decode_name)\")") // better be accurate to get only the record you need
-            let query = CKQuery(recordType: "Decodes", predicate: predicate)
-            privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
-                if error != nil
-                {
-                    NSLog("Error querying records: \(error!.localizedDescription)")
-                }
-                else
-                {
-                    if records!.count > 0
-                    {
-                        // We need to do a check of the number for the tables, as otherwise we risk overwriting the changes
-                        
-                        var updateRecord: Bool = true
-                        
-                        let record = records!.first// as! CKRecord
-                        
-                        switch myItem.decode_name
-                        {
-                            case "Context" :
-                                let localValue = Int(myItem.decode_value)
-                                let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
-                                let remoteValue = Int(tempValue as! String)
-                                
-                                if localValue > remoteValue
-                                {
-                                    updateRecord = true
-                                }
-                                else
-                                {
-                                    updateRecord = false
-                                }
-                            
-                            case "Projects" :
-                                let localValue = Int(myItem.decode_value)
-                                let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
-                                let remoteValue = Int(tempValue as! String)
-                                
-                                if localValue > remoteValue
-                                {
-                                    updateRecord = true
-                                }
-                                else
-                                {
-                                    updateRecord = false
-                                }
-
-                            case "GTDItem" :
-                                let localValue = Int(myItem.decode_value)
-                                let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
-                                let remoteValue = Int(tempValue as! String)
-                                
-                                if localValue > remoteValue
-                                {
-                                    updateRecord = true
-                                }
-                                else
-                                {
-                                    updateRecord = false
-                                }
-
-                            case "Team" :
-                                let localValue = Int(myItem.decode_value)
-                                let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
-                                let remoteValue = Int(tempValue as! String)
-                                
-                                if localValue > remoteValue
-                                {
-                                    updateRecord = true
-                                }
-                                else
-                                {
-                                    updateRecord = false
-                                }
-
-                            case "Roles" :
-                                let localValue = Int(myItem.decode_value)
-                                let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
-                                let remoteValue = Int(tempValue as! String)
-                                
-                                if localValue > remoteValue
-                                {
-                                    updateRecord = true
-                                }
-                                else
-                                {
-                                    updateRecord = false
-                                }
-
-                            case "Task" :
-                                let localValue = Int(myItem.decode_value)
-                                let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
-                                let remoteValue = Int(tempValue as! String)
-                                
-                                if localValue > remoteValue
-                                {
-                                    updateRecord = true
-                                }
-                                else
-                                {
-                                    updateRecord = false
-                                }
-                            
-                            case "Device" :
-                                let localValue = Int(myItem.decode_value)
-                                let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
-                                let remoteValue = Int(tempValue as! String)
-                            
-                                if localValue > remoteValue
-                                {
-                                    updateRecord = true
-                                }
-                                else
-                                {
-                                    updateRecord = false
-                                }
-                            
-                            default:
-                                updateRecord = true
-                                
-                                if myItem.decode_name.hasPrefix("CloudKit Sync")
-                                {
-                                    if syncName == myItem.decode_name
-                                    {
-                                        updateRecord = true
-                                    }
-                                    else
-                                    {
-                                        updateRecord = false
-                                    }
-                                }
-                        }
-                        
-                        if updateRecord
-                        {
-                            // Now you have grabbed your existing record from iCloud
-                            // Apply whatever changes you want
-                            record!.setValue(myItem.decode_value, forKey: "decode_value")
-                            record!.setValue(myItem.decodeType, forKey: "decodeType")
-                            record!.setValue(myItem.updateTime, forKey: "updateTime")
-                            record!.setValue(myItem.updateType, forKey: "updateType")
-                        
-                            // Save this record again
-                            self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
-                                if saveError != nil
-                                {
-                                    NSLog("Error saving record: \(saveError!.localizedDescription)")
-                                }
-                                else
-                                {
-                                    if debugMessages
-                                    {
-                                        NSLog("Successfully updated record!")
-                                    }
-                                }
-                            })
-                        }
-                    }
-                    else
-                    {  // Insert
-                        let todoRecord = CKRecord(recordType: "Decodes")
-                        todoRecord.setValue(myItem.decode_name, forKey: "decode_name")
-                        todoRecord.setValue(myItem.decodeType, forKey: "decodeType")
-                        todoRecord.setValue(myItem.decode_value, forKey: "decode_value")
-                        todoRecord.setValue(myItem.updateTime, forKey: "updateTime")
-                        todoRecord.setValue(myItem.updateType, forKey: "updateType")
-                        
-                        self.privateDB.saveRecord(todoRecord, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                NSLog("Successfully saved record! \(myItem.decode_name)")
-                                }
-                            }
-                        })
-                    }
-                }
-            })
-
-//            sleep(1)
+            saveDecodesRecordToCloudKit(myItem, syncName: syncName)
         }
     }
 
@@ -379,83 +65,7 @@ class CloudKitInteraction
 //        NSLog("Syncing GTDItem")
         for myItem in myDatabaseConnection.getGTDItemsForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(gTDItemID == \(myItem.gTDItemID as! Int)) && (teamID == \(myItem.teamID as! Int))")
-            let query = CKQuery(recordType: "GTDItem", predicate: predicate)
-            privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
-                if error != nil
-                {
-                    NSLog("Error querying records: \(error!.localizedDescription)")
-                }
-                else
-                {
-                    if records!.count > 0
-                    {
-                        let record = records!.first// as! CKRecord
-                        // Now you have grabbed your existing record from iCloud
-                        // Apply whatever changes you want
-                        record!.setValue(myItem.updateTime, forKey: "updateTime")
-                        record!.setValue(myItem.updateType, forKey: "updateType")
-                        record!.setValue(myItem.gTDParentID, forKey: "gTDParentID")
-                        record!.setValue(myItem.lastReviewDate, forKey: "lastReviewDate")
-                        record!.setValue(myItem.note, forKey: "note")
-                        record!.setValue(myItem.predecessor, forKey: "predecessor")
-                        record!.setValue(myItem.reviewFrequency, forKey: "reviewFrequency")
-                        record!.setValue(myItem.reviewPeriod, forKey: "reviewPeriod")
-                        record!.setValue(myItem.status, forKey: "status")
-                        record!.setValue(myItem.title, forKey: "title")
-                        record!.setValue(myItem.gTDLevel, forKey: "gTDLevel")
-
-                        
-                        // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully updated record!")
-                                }
-                            }
-                        })
-                    }
-                    else
-                    {  // Insert
-                        let record = CKRecord(recordType: "GTDItem")
-                        record.setValue(myItem.gTDItemID, forKey: "gTDItemID")
-                        record.setValue(myItem.updateTime, forKey: "updateTime")
-                        record.setValue(myItem.updateType, forKey: "updateType")
-                        record.setValue(myItem.gTDParentID, forKey: "gTDParentID")
-                        record.setValue(myItem.lastReviewDate, forKey: "lastReviewDate")
-                        record.setValue(myItem.note, forKey: "note")
-                        record.setValue(myItem.predecessor, forKey: "predecessor")
-                        record.setValue(myItem.reviewFrequency, forKey: "reviewFrequency")
-                        record.setValue(myItem.reviewPeriod, forKey: "reviewPeriod")
-                        record.setValue(myItem.status, forKey: "status")
-                        record.setValue(myItem.teamID, forKey: "teamID")
-                        record.setValue(myItem.title, forKey: "title")
-                        record.setValue(myItem.gTDLevel, forKey: "gTDLevel")
-                        
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully saved record!")
-                                }
-                            }
-                        })
-                    }
-                }
-            })
-            
-//            sleep(1)
+            saveGTDItemRecordToCloudKit(myItem)
         }
     }
     
@@ -464,66 +74,7 @@ class CloudKitInteraction
 //        NSLog("Syncing GTDLevel")
         for myItem in myDatabaseConnection.getGTDLevelsForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(gTDLevel == \(myItem.gTDLevel as! Int)) && (teamID == \(myItem.teamID as! Int))") // better be accurate to get only the record you need
-            let query = CKQuery(recordType: "GTDLevel", predicate: predicate)
-            privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
-                if error != nil
-                {
-                    NSLog("Error querying records: \(error!.localizedDescription)")
-                }
-                else
-                {
-                    if records!.count > 0
-                    {
-                        let record = records!.first// as! CKRecord
-                        // Now you have grabbed your existing record from iCloud
-                        // Apply whatever changes you want
-                        record!.setValue(myItem.updateTime, forKey: "updateTime")
-                        record!.setValue(myItem.updateType, forKey: "updateType")
-                        record!.setValue(myItem.levelName, forKey: "levelName")
-                        
-                        // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully updated record!")
-                                }
-                            }
-                        })
-                    }
-                    else
-                    {  // Insert
-                        let record = CKRecord(recordType: "GTDLevel")
-                        record.setValue(myItem.gTDLevel, forKey: "gTDLevel")
-                        record.setValue(myItem.updateTime, forKey: "updateTime")
-                        record.setValue(myItem.updateType, forKey: "updateType")
-                        record.setValue(myItem.teamID, forKey: "teamID")
-                        record.setValue(myItem.levelName, forKey: "levelName")
-                        
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully saved record!")
-                                }
-                            }
-                        })
-                    }
-                }
-            })
-            
-//            sleep(1)
+            saveGTDLevelRecordToCloudKit(myItem)
         }
     }
 
@@ -532,80 +83,7 @@ class CloudKitInteraction
 //        NSLog("Syncing Meeting Agenda")
         for myItem in myDatabaseConnection.getMeetingAgendasForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(meetingID == \"\(myItem.meetingID)\") && (actualTeamID == \(myItem.teamID as Int))") // better be accurate to get only the record you need
-            let query = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
-            privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
-                if error != nil
-                {
-                    NSLog("Error querying records: \(error!.localizedDescription)")
-                }
-                else
-                {
-                    if records!.count > 0
-                    {
-                        let record = records!.first// as! CKRecord
-                        // Now you have grabbed your existing record from iCloud
-                        // Apply whatever changes you want
-                        record!.setValue(myItem.updateTime, forKey: "updateTime")
-                        record!.setValue(myItem.updateType, forKey: "updateType")
-                        record!.setValue(myItem.chair, forKey: "chair")
-                        record!.setValue(myItem.endTime, forKey: "endTime")
-                        record!.setValue(myItem.location, forKey: "location")
-                        record!.setValue(myItem.minutes, forKey: "minutes")
-                        record!.setValue(myItem.minutesType, forKey: "minutesType")
-                        record!.setValue(myItem.name, forKey: "name")
-                        record!.setValue(myItem.previousMeetingID, forKey: "previousMeetingID")
-                        record!.setValue(myItem.startTime, forKey: "meetingStartTime")
-                        
-                        // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully updated record!")
-                                }
-                            }
-                        })
-                    }
-                    else
-                    {  // Insert
-                        let record = CKRecord(recordType: "MeetingAgenda")
-                        record.setValue(myItem.meetingID, forKey: "meetingID")
-                        record.setValue(myItem.updateTime, forKey: "updateTime")
-                        record.setValue(myItem.updateType, forKey: "updateType")
-                        record.setValue(myItem.chair, forKey: "chair")
-                        record.setValue(myItem.endTime, forKey: "endTime")
-                        record.setValue(myItem.location, forKey: "location")
-                        record.setValue(myItem.minutes, forKey: "minutes")
-                        record.setValue(myItem.minutesType, forKey: "minutesType")
-                        record.setValue(myItem.name, forKey: "name")
-                        record.setValue(myItem.previousMeetingID, forKey: "previousMeetingID")
-                        record.setValue(myItem.startTime, forKey: "meetingStartTime")
-                        record.setValue(myItem.teamID, forKey: "actualTeamID")
-                        
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully saved record!")
-                                }
-                            }
-                        })
-                    }
-                }
-            })
-            
-//            sleep(1)
+            saveMeetingAgendaRecordToCloudKit(myItem)
         }
     }
     
@@ -614,83 +92,7 @@ class CloudKitInteraction
 //        NSLog("Syncing meetingAgendaItems")
         for myItem in myDatabaseConnection.getMeetingAgendaItemsForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(meetingID == \"\(myItem.meetingID!)\") && (agendaID == \(myItem.agendaID as! Int))") // better be accurate to get only the record you need
-            let query = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
-            privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
-                if error != nil
-                {
-                    NSLog("Error querying records: \(error!.localizedDescription)")
-                }
-                else
-                {
-                    if records!.count > 0
-                    {
-                        let record = records!.first// as! CKRecord
-                        // Now you have grabbed your existing record from iCloud
-                        // Apply whatever changes you want
-                        record!.setValue(myItem.updateTime, forKey: "updateTime")
-                        record!.setValue(myItem.updateType, forKey: "updateType")
-                        record!.setValue(myItem.actualEndTime, forKey: "actualEndTime")
-                        record!.setValue(myItem.actualStartTime, forKey: "actualStartTime")
-                        record!.setValue(myItem.decisionMade, forKey: "decisionMade")
-                        record!.setValue(myItem.discussionNotes, forKey: "discussionNotes")
-                        record!.setValue(myItem.owner, forKey: "owner")
-                        record!.setValue(myItem.status, forKey: "status")
-                        record!.setValue(myItem.timeAllocation, forKey: "timeAllocation")
-                        record!.setValue(myItem.title, forKey: "title")
-                        record!.setValue(myItem.meetingOrder, forKey: "meetingOrder")
-                        
-                        // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully updated record!")
-                                }
-                            }
-                        })
-                    }
-                    else
-                    {  // Insert
-                        let record = CKRecord(recordType: "MeetingAgendaItem")
-                        record.setValue(myItem.meetingID, forKey: "meetingID")
-                        record.setValue(myItem.agendaID, forKey: "agendaID")
-                        record.setValue(myItem.updateTime, forKey: "updateTime")
-                        record.setValue(myItem.updateType, forKey: "updateType")
-                        record.setValue(myItem.actualEndTime, forKey: "actualEndTime")
-                        record.setValue(myItem.actualStartTime, forKey: "actualStartTime")
-                        record.setValue(myItem.decisionMade, forKey: "decisionMade")
-                        record.setValue(myItem.discussionNotes, forKey: "discussionNotes")
-                        record.setValue(myItem.owner, forKey: "owner")
-                        record.setValue(myItem.status, forKey: "status")
-                        record.setValue(myItem.timeAllocation, forKey: "timeAllocation")
-                        record.setValue(myItem.title, forKey: "title")
-                        record.setValue(myItem.meetingOrder, forKey: "meetingOrder")
-
-                        
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully saved record!")
-                                }
-                            }
-                        })
-                    }
-                }
-            })
-            
-//            sleep(1)
+            saveMeetingAgendaItemRecordToCloudKit(myItem)
         }
     }
     
@@ -699,70 +101,7 @@ class CloudKitInteraction
 //        NSLog("Syncing MeetingAttendees")
         for myItem in myDatabaseConnection.getMeetingAttendeesForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(meetingID == \"\(myItem.meetingID)\") && (name = \"\(myItem.name)\")") // better be accurate to get only the record you need
-            let query = CKQuery(recordType: "MeetingAttendees", predicate: predicate)
-            privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
-                if error != nil
-                {
-                    NSLog("Error querying records: \(error!.localizedDescription)")
-                }
-                else
-                {
-                    if records!.count > 0
-                    {
-                        let record = records!.first// as! CKRecord
-                        // Now you have grabbed your existing record from iCloud
-                        // Apply whatever changes you want
-                        record!.setValue(myItem.updateTime, forKey: "updateTime")
-                        record!.setValue(myItem.updateType, forKey: "updateType")
-                        record!.setValue(myItem.attendenceStatus, forKey: "attendenceStatus")
-                        record!.setValue(myItem.email, forKey: "email")
-                        record!.setValue(myItem.type, forKey: "type")
-                        
-                        // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully updated record!")
-                                }
-                            }
-                        })
-                    }
-                    else
-                    {  // Insert
-                        let record = CKRecord(recordType: "MeetingAttendees")
-                        record.setValue(myItem.meetingID, forKey: "meetingID")
-                        record.setValue(myItem.name, forKey: "name")
-                        record.setValue(myItem.updateTime, forKey: "updateTime")
-                        record.setValue(myItem.updateType, forKey: "updateType")
-                        record.setValue(myItem.attendenceStatus, forKey: "attendenceStatus")
-                        record.setValue(myItem.email, forKey: "email")
-                        record.setValue(myItem.type, forKey: "type")
-                        
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully saved record!")
-                                }
-                            }
-                        })
-                    }
-                }
-            })
-            
-//            sleep(1)
+            saveMeetingAttendeesRecordToCloudKit(myItem)
         }
     }
     
@@ -771,68 +110,7 @@ class CloudKitInteraction
 //        NSLog("Syncing MeetingSupportingDocs")
         for myItem in myDatabaseConnection.getMeetingSupportingDocsForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(meetingID == \"\(myItem.meetingID)\") && (agendaID == \(myItem.agendaID as Int))") // better be accurate to get only the
-            let query = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
-            privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
-                if error != nil
-                {
-                    NSLog("Error querying records: \(error!.localizedDescription)")
-                }
-                else
-                {
-                    if records!.count > 0
-                    {
-                        let record = records!.first// as! CKRecord
-                        // Now you have grabbed your existing record from iCloud
-                        // Apply whatever changes you want
-                        record!.setValue(myItem.updateTime, forKey: "updateTime")
-                        record!.setValue(myItem.updateType, forKey: "updateType")
-                        record!.setValue(myItem.attachmentPath, forKey: "attachmentPath")
-                        record!.setValue(myItem.title, forKey: "title")
-                        
-                        // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully updated record!")
-                                }
-                            }
-                        })
-                    }
-                    else
-                    {  // Insert
-                        let record = CKRecord(recordType: "MeetingSupportingDocs")
-                        record.setValue(myItem.meetingID, forKey: "meetingID")
-                        record.setValue(myItem.agendaID, forKey: "agendaID")
-                        record.setValue(myItem.updateTime, forKey: "updateTime")
-                        record.setValue(myItem.updateType, forKey: "updateType")
-                        record.setValue(myItem.attachmentPath, forKey: "attachmentPath")
-                        record.setValue(myItem.title, forKey: "title")
-
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully saved record!")
-                                }
-                            }
-                        })
-                    }
-                }
-            })
-            
-//            sleep(1)
+            saveMeetingSupportingDocsRecordToCloudKit(myItem)
         }
     }
     
@@ -841,67 +119,7 @@ class CloudKitInteraction
 //        NSLog("Syncing MeetingTasks")
         for myItem in myDatabaseConnection.getMeetingTasksForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(meetingID == \"\(myItem.meetingID)\") && (agendaID == \(myItem.agendaID as Int)) && (taskID == \(myItem.taskID as Int))") // better be accurate to get only the
-            let query = CKQuery(recordType: "MeetingTasks", predicate: predicate)
-            privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
-                if error != nil
-                {
-                    NSLog("Error querying records: \(error!.localizedDescription)")
-                }
-                else
-                {
-                    if records!.count > 0
-                    {
-                        let record = records!.first// as! CKRecord
-                        // Now you have grabbed your existing record from iCloud
-                        // Apply whatever changes you want
-                        record!.setValue(myItem.updateTime, forKey: "updateTime")
-                        record!.setValue(myItem.updateType, forKey: "updateType")
-                        record!.setValue(myItem.taskID, forKey: "taskID")
-                        
-                        // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully updated record!")
-                                }
-                            }
-                        })
-                    }
-                    else
-                    {  // Insert
-                        let record = CKRecord(recordType: "MeetingTasks")
-                        record.setValue(myItem.meetingID, forKey: "meetingID")
-                        record.setValue(myItem.agendaID, forKey: "agendaID")
-                        record.setValue(myItem.updateTime, forKey: "updateTime")
-                        record.setValue(myItem.updateType, forKey: "updateType")
-                        record.setValue(myItem.taskID, forKey: "taskID")
-
-                        
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully saved record!")
-                                }
-                            }
-                        })
-                    }
-                }
-            })
-            
-//            sleep(1)
+            saveMeetingTasksRecordToCloudKit(myItem)
         }
     }
     
@@ -910,69 +128,7 @@ class CloudKitInteraction
 //        NSLog("Syncing Panes")
         for myItem in myDatabaseConnection.getPanesForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(pane_name == \"\(myItem.pane_name)\")") // better be accurate to get only the record you need
-            let query = CKQuery(recordType: "Panes", predicate: predicate)
-            privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
-                if error != nil
-                {
-                    NSLog("Error querying records: \(error!.localizedDescription)")
-                }
-                else
-                {
-                    if records!.count > 0
-                    {
-                        let record = records!.first// as! CKRecord
-                        // Now you have grabbed your existing record from iCloud
-                        // Apply whatever changes you want
-                        record!.setValue(myItem.updateTime, forKey: "updateTime")
-                        record!.setValue(myItem.updateType, forKey: "updateType")
-                        record!.setValue(myItem.pane_available, forKey: "pane_available")
-                        record!.setValue(myItem.pane_order, forKey: "pane_order")
-                        record!.setValue(myItem.pane_visible, forKey: "pane_visible")
-                        
-                        // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully updated record!")
-                                }
-                            }
-                        })
-                    }
-                    else
-                    {  // Insert
-                        let record = CKRecord(recordType: "Panes")
-                        record.setValue(myItem.pane_name, forKey: "pane_name")
-                        record.setValue(myItem.updateTime, forKey: "updateTime")
-                        record.setValue(myItem.updateType, forKey: "updateType")
-                        record.setValue(myItem.pane_available, forKey: "pane_available")
-                        record.setValue(myItem.pane_order, forKey: "pane_order")
-                        record.setValue(myItem.pane_visible, forKey: "pane_visible")
-                        
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully saved record!")
-                                }
-                            }
-                        })
-                    }
-                }
-            })
-            
-//            sleep(1)
+            savePanesRecordToCloudKit(myItem)
         }
     }
     
@@ -981,150 +137,12 @@ class CloudKitInteraction
 //        NSLog("Syncing Projects")
         for myItem in myDatabaseConnection.getProjectsForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(projectID == \(myItem.projectID as Int))") // better be accurate to get only the record you need
-            let query = CKQuery(recordType: "Projects", predicate: predicate)
-            privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
-                if error != nil
-                {
-                    NSLog("Error querying records: \(error!.localizedDescription)")
-                }
-                else
-                {
-                    
-                    // First need to get additional info from other table
-                    
-                    let tempProjectNote = myDatabaseConnection.getProjectNote(myItem.projectID as Int)
-                    
-                    var myNote: String = ""
-                    var myReviewPeriod: String = ""
-                    var myPredecessor: Int = 0
-                    
-                    if tempProjectNote.count > 0
-                    {
-                        myNote = tempProjectNote[0].note
-                        myReviewPeriod = tempProjectNote[0].reviewPeriod
-                        myPredecessor = tempProjectNote[0].predecessor as Int
-                    }
-                    
-                    if records!.count > 0
-                    {
-                        let record = records!.first// as! CKRecord
-                        // Now you have grabbed your existing record from iCloud
-                        // Apply whatever changes you want
-                        record!.setValue(myItem.updateTime, forKey: "updateTime")
-                        record!.setValue(myItem.updateType, forKey: "updateType")
-                        record!.setValue(myItem.areaID, forKey: "areaID")
-                        record!.setValue(myItem.lastReviewDate, forKey: "lastReviewDate")
-                        record!.setValue(myItem.projectEndDate, forKey: "projectEndDate")
-                        record!.setValue(myItem.projectName, forKey: "projectName")
-                        record!.setValue(myItem.projectStartDate, forKey: "projectStartDate")
-                        record!.setValue(myItem.projectStatus, forKey: "projectStatus")
-                        record!.setValue(myItem.repeatBase, forKey: "repeatBase")
-                        record!.setValue(myItem.repeatInterval, forKey: "repeatInterval")
-                        record!.setValue(myItem.repeatType, forKey: "repeatType")
-                        record!.setValue(myItem.reviewFrequency, forKey: "reviewFrequency")
-                        record!.setValue(myItem.teamID, forKey: "teamID")
-                        record!.setValue(myNote, forKey: "note")
-                        record!.setValue(myReviewPeriod, forKey: "reviewPeriod")
-                        record!.setValue(myPredecessor, forKey: "predecessor")
-                        
-                        // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully updated record!")
-                                }
-                            }
-                        })
-                    }
-                    else
-                    {  // Insert
-                        let record = CKRecord(recordType: "Projects")
-                        record.setValue(myItem.projectID, forKey: "projectID")
-                        record.setValue(myItem.updateTime, forKey: "updateTime")
-                        record.setValue(myItem.updateType, forKey: "updateType")
-                        record.setValue(myItem.areaID, forKey: "areaID")
-                        record.setValue(myItem.lastReviewDate, forKey: "lastReviewDate")
-                        record.setValue(myItem.projectEndDate, forKey: "projectEndDate")
-                        record.setValue(myItem.projectName, forKey: "projectName")
-                        record.setValue(myItem.projectStartDate, forKey: "projectStartDate")
-                        record.setValue(myItem.projectStatus, forKey: "projectStatus")
-                        record.setValue(myItem.repeatBase, forKey: "repeatBase")
-                        record.setValue(myItem.repeatInterval, forKey: "repeatInterval")
-                        record.setValue(myItem.repeatType, forKey: "repeatType")
-                        record.setValue(myItem.reviewFrequency, forKey: "reviewFrequency")
-                        record.setValue(myItem.teamID, forKey: "teamID")
-                        record.setValue(myNote, forKey: "note")
-                        record.setValue(myReviewPeriod, forKey: "reviewPeriod")
-                        record.setValue(myPredecessor, forKey: "predecessor")
-                        
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully saved record!")
-                                }
-                            }
-                        })
-                    }
-                }
-            })
-            
-//            sleep(1)
+            saveProjectsRecordToCloudKit(myItem)
         }
         
         for myItem in myDatabaseConnection.getProjectNotesForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(projectID == \(myItem.projectID as Int))") // better be accurate to get only the record you need
-            let query = CKQuery(recordType: "Projects", predicate: predicate)
-            privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
-                if error != nil
-                {
-                    NSLog("Error querying records: \(error!.localizedDescription)")
-                }
-                else
-                {
-                    if records!.count > 0
-                    {
-                        let record = records!.first// as! CKRecord
-                        // Now you have grabbed your existing record from iCloud
-                        // Apply whatever changes you want
-                        record!.setValue(myItem.updateTime, forKey: "updateTime")
-                        record!.setValue(myItem.updateType, forKey: "updateType")
-                        record!.setValue(myItem.note, forKey: "note")
-                        record!.setValue(myItem.reviewPeriod, forKey: "reviewPeriod")
-                        record!.setValue(myItem.predecessor, forKey: "predecessor")
-                        
-                        // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully updated record!")
-                                }
-                            }
-                        })
-                    }
-                }
-            })
-            
-//            sleep(1)
+            saveProjectNoteRecordToCloudKit(myItem)
         }
     }
     
@@ -1133,68 +151,7 @@ class CloudKitInteraction
 //        NSLog("Syncing ProjectTeamMembers")
         for myItem in myDatabaseConnection.getProjectTeamMembersForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(projectID == \(myItem.projectID as Int)) && (teamMember == \"\(myItem.teamMember)\")") // better be accurate to get only the record you need
-            let query = CKQuery(recordType: "ProjectTeamMembers", predicate: predicate)
-            privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
-                if error != nil
-                {
-                    NSLog("Error querying records: \(error!.localizedDescription)")
-                }
-                else
-                {
-                    if records!.count > 0
-                    {
-                        let record = records!.first// as! CKRecord
-                        // Now you have grabbed your existing record from iCloud
-                        // Apply whatever changes you want
-                        record!.setValue(myItem.updateTime, forKey: "updateTime")
-                        record!.setValue(myItem.updateType, forKey: "updateType")
-                        record!.setValue(myItem.roleID, forKey: "roleID")
-                        record!.setValue(myItem.projectMemberNotes, forKey: "projectMemberNotes")
-                        
-                        // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully updated record!")
-                                }
-                            }
-                        })
-                    }
-                    else
-                    {  // Insert
-                        let record = CKRecord(recordType: "ProjectTeamMembers")
-                        record.setValue(myItem.projectID, forKey: "projectID")
-                        record.setValue(myItem.teamMember, forKey: "teamMember")
-                        record.setValue(myItem.updateTime, forKey: "updateTime")
-                        record.setValue(myItem.updateType, forKey: "updateType")
-                        record.setValue(myItem.roleID, forKey: "roleID")
-                        record.setValue(myItem.projectMemberNotes, forKey: "projectMemberNotes")
-                        
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully saved record!")
-                                }
-                            }
-                        })
-                    }
-                }
-            })
-            
-//            sleep(1)
+            saveProjectTeamMembersRecordToCloudKit(myItem)
         }
     }
     
@@ -1203,66 +160,7 @@ class CloudKitInteraction
 //        NSLog("Syncing Roles")
         for myItem in myDatabaseConnection.getRolesForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(roleID == \(myItem.roleID as Int))") // better be accurate to get only the record you need
-            let query = CKQuery(recordType: "Roles", predicate: predicate)
-            privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
-                if error != nil
-                {
-                    NSLog("Error querying records: \(error!.localizedDescription)")
-                }
-                else
-                {
-                    if records!.count > 0
-                    {
-                        let record = records!.first// as! CKRecord
-                        // Now you have grabbed your existing record from iCloud
-                        // Apply whatever changes you want
-                        record!.setValue(myItem.updateTime, forKey: "updateTime")
-                        record!.setValue(myItem.updateType, forKey: "updateType")
-                        record!.setValue(myItem.roleDescription, forKey: "roleDescription")
-                        
-                        // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully updated record!")
-                                }
-                            }
-                        })
-                    }
-                    else
-                    {  // Insert
-                        let record = CKRecord(recordType: "Roles")
-                        record.setValue(myItem.roleID, forKey: "roleID")
-                        record.setValue(myItem.updateTime, forKey: "updateTime")
-                        record.setValue(myItem.updateType, forKey: "updateType")
-                        record.setValue(myItem.teamID, forKey: "teamID")
-                        record.setValue(myItem.roleDescription, forKey: "roleDescription")
-                        
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully saved record!")
-                                }
-                            }
-                        })
-                    }
-                }
-            })
-            
-//            sleep(1)
+            saveRolesRecordToCloudKit(myItem)
         }
     }
     
@@ -1271,64 +169,7 @@ class CloudKitInteraction
 //        NSLog("Syncing Stages")
         for myItem in myDatabaseConnection.getStagesForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(stageDescription == \"\(myItem.stageDescription)\") && (teamID == \(myItem.teamID as Int))") // better be accurate to get only the record you need
-            let query = CKQuery(recordType: "Stages", predicate: predicate)
-            privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
-                if error != nil
-                {
-                    NSLog("Error querying records: \(error!.localizedDescription)")
-                }
-                else
-                {
-                    if records!.count > 0
-                    {
-                        let record = records!.first// as! CKRecord
-                        // Now you have grabbed your existing record from iCloud
-                        // Apply whatever changes you want
-                        record!.setValue(myItem.updateTime, forKey: "updateTime")
-                        record!.setValue(myItem.updateType, forKey: "updateType")
-                        
-                        // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully updated record!")
-                                }
-                            }
-                        })
-                    }
-                    else
-                    {  // Insert
-                        let record = CKRecord(recordType: "Stages")
-                        record.setValue(myItem.stageDescription, forKey: "stageDescription")
-                        record.setValue(myItem.updateTime, forKey: "updateTime")
-                        record.setValue(myItem.updateType, forKey: "updateType")
-                        record.setValue(myItem.teamID, forKey: "teamID")
-                        
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully saved record!")
-                                }
-                            }
-                        })
-                    }
-                }
-            })
-            
-//            sleep(1)
+            saveStagesRecordToCloudKit(myItem)
         }
     }
     
@@ -1337,97 +178,7 @@ class CloudKitInteraction
 //        NSLog("Syncing Task")
         for myItem in myDatabaseConnection.getTaskForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(taskID == \(myItem.taskID as Int))") // better be accurate to get only the record you need
-            let query = CKQuery(recordType: "Task", predicate: predicate)
-            privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
-                if error != nil
-                {
-                    NSLog("Error querying records: \(error!.localizedDescription)")
-                }
-                else
-                {
-                    if records!.count > 0
-                    {
-                        let record = records!.first// as! CKRecord
-                        // Now you have grabbed your existing record from iCloud
-                        // Apply whatever changes you want
-                        record!.setValue(myItem.updateTime, forKey: "updateTime")
-                        record!.setValue(myItem.updateType, forKey: "updateType")
-                        record!.setValue(myItem.completionDate, forKey: "completionDate")
-                        record!.setValue(myItem.details, forKey: "details")
-                        record!.setValue(myItem.dueDate, forKey: "dueDate")
-                        record!.setValue(myItem.energyLevel, forKey: "energyLevel")
-                        record!.setValue(myItem.estimatedTime, forKey: "estimatedTime")
-                        record!.setValue(myItem.estimatedTimeType, forKey: "estimatedTimeType")
-                        record!.setValue(myItem.flagged, forKey: "flagged")
-                        record!.setValue(myItem.priority, forKey: "priority")
-                        record!.setValue(myItem.repeatBase, forKey: "repeatBase")
-                        record!.setValue(myItem.repeatInterval, forKey: "repeatInterval")
-                        record!.setValue(myItem.repeatType, forKey: "repeatType")
-                        record!.setValue(myItem.startDate, forKey: "startDate")
-                        record!.setValue(myItem.status, forKey: "status")
-                        record!.setValue(myItem.title, forKey: "title")
-                        record!.setValue(myItem.urgency, forKey: "urgency")
-                        record!.setValue(myItem.projectID, forKey: "projectID")
-                        record!.setValue(myItem.teamID, forKey: "teamID")
-                        
-                        // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully updated record!")
-                                }
-                            }
-                        })
-                    }
-                    else
-                    {  // Insert
-                        let record = CKRecord(recordType: "Task")
-                        record.setValue(myItem.taskID, forKey: "taskID")
-                        record.setValue(myItem.updateTime, forKey: "updateTime")
-                        record.setValue(myItem.updateType, forKey: "updateType")
-                        record.setValue(myItem.completionDate, forKey: "completionDate")
-                        record.setValue(myItem.details, forKey: "details")
-                        record.setValue(myItem.dueDate, forKey: "dueDate")
-                        record.setValue(myItem.energyLevel, forKey: "energyLevel")
-                        record.setValue(myItem.estimatedTime, forKey: "estimatedTime")
-                        record.setValue(myItem.estimatedTimeType, forKey: "estimatedTimeType")
-                        record.setValue(myItem.flagged, forKey: "flagged")
-                        record.setValue(myItem.priority, forKey: "priority")
-                        record.setValue(myItem.repeatBase, forKey: "repeatBase")
-                        record.setValue(myItem.repeatInterval, forKey: "repeatInterval")
-                        record.setValue(myItem.repeatType, forKey: "repeatType")
-                        record.setValue(myItem.startDate, forKey: "startDate")
-                        record.setValue(myItem.status, forKey: "status")
-                        record.setValue(myItem.teamID, forKey: "teamID")
-                        record.setValue(myItem.title, forKey: "title")
-                        record.setValue(myItem.urgency, forKey: "urgency")
-                        record.setValue(myItem.projectID, forKey: "projectID")
-                        
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully saved record!")
-                                }
-                            }
-                        })
-                    }
-                }
-            })
-            
-//            sleep(1)
+            saveTaskRecordToCloudKit(myItem)
         }
     }
     
@@ -1436,67 +187,7 @@ class CloudKitInteraction
  //       NSLog("Syncing taskAttachments")
         for myItem in myDatabaseConnection.getTaskAttachmentsForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(taskID == \(myItem.taskID as Int)) && (title == \"\(myItem.title)\")") // better be accurate to get only the record you need
-            let query = CKQuery(recordType: "TaskAttachment", predicate: predicate)
-            privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
-                if error != nil
-                {
-                    NSLog("Error querying records: \(error!.localizedDescription)")
-                }
-                else
-                {
-                    if records!.count > 0
-                    {
-                        let record = records!.first// as! CKRecord
-                        // Now you have grabbed your existing record from iCloud
-                        // Apply whatever changes you want
-                        record!.setValue(myItem.updateTime, forKey: "updateTime")
-                        record!.setValue(myItem.updateType, forKey: "updateType")
-                        record!.setValue(myItem.attachment, forKey: "attachment")
-                        
-                        // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully updated record!")
-                                }
-                            }
-                        })
-                    }
-                    else
-                    {  // Insert
-                        let record = CKRecord(recordType: "TaskAttachment")
-                        record.setValue(myItem.taskID, forKey: "taskID")
-                        record.setValue(myItem.title, forKey: "title")
-                        record.setValue(myItem.updateTime, forKey: "updateTime")
-                        record.setValue(myItem.updateType, forKey: "updateType")
-                        record.setValue(myItem.attachment, forKey: "attachment")
-
-                        
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully saved record!")
-                                }
-                            }
-                        })
-                    }
-                }
-            })
-            
-//            sleep(1)
+            saveTaskAttachmentRecordToCloudKit(myItem)
         }
     }
     
@@ -1505,65 +196,7 @@ class CloudKitInteraction
 //        NSLog("Syncing TaskContext")
         for myItem in myDatabaseConnection.getTaskContextsForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(taskID == \(myItem.taskID as Int)) && (contextID == \(myItem.contextID as Int))") // better be accurate to get only the record you need
-            let query = CKQuery(recordType: "TaskContext", predicate: predicate)
-            privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
-                if error != nil
-                {
-                    NSLog("Error querying records: \(error!.localizedDescription)")
-                }
-                else
-                {
-                    if records!.count > 0
-                    {
-                        let record = records!.first// as! CKRecord
-                        // Now you have grabbed your existing record from iCloud
-                        // Apply whatever changes you want
-                        record!.setValue(myItem.updateTime, forKey: "updateTime")
-                        record!.setValue(myItem.updateType, forKey: "updateType")
-                        
-                        // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully updated record!")
-                                }
-                            }
-                        })
-                    }
-                    else
-                    {  // Insert
-                        let record = CKRecord(recordType: "TaskContext")
-                        record.setValue(myItem.taskID, forKey: "taskID")
-                        record.setValue(myItem.contextID, forKey: "contextID")
-                        record.setValue(myItem.updateTime, forKey: "updateTime")
-                        record.setValue(myItem.updateType, forKey: "updateType")
-
-                        
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully saved record!")
-                                }
-                            }
-                        })
-                    }
-                }
-            })
-            
-//            sleep(1)
+            saveTaskContextRecordToCloudKit(myItem)
         }
     }
     
@@ -1572,66 +205,7 @@ class CloudKitInteraction
 //        NSLog("Syncing TaskPredecessor")
         for myItem in myDatabaseConnection.getTaskPredecessorsForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(taskID == \(myItem.taskID as Int)) && (predecessorID == \(myItem.predecessorID as Int))") // better be accurate to get only the record you need
-            let query = CKQuery(recordType: "TaskPredecessor", predicate: predicate)
-            privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
-                if error != nil
-                {
-                    NSLog("Error querying records: \(error!.localizedDescription)")
-                }
-                else
-                {
-                    if records!.count > 0
-                    {
-                        let record = records!.first// as! CKRecord
-                        // Now you have grabbed your existing record from iCloud
-                        // Apply whatever changes you want
-                        record!.setValue(myItem.updateTime, forKey: "updateTime")
-                        record!.setValue(myItem.updateType, forKey: "updateType")
-                        record!.setValue(myItem.predecessorType, forKey: "predecessorType")
-                        
-                        // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully updated record!")
-                                }
-                            }
-                        })
-                    }
-                    else
-                    {  // Insert
-                        let record = CKRecord(recordType: "TaskPredecessor")
-                        record.setValue(myItem.taskID, forKey: "taskID")
-                        record.setValue(myItem.predecessorID, forKey: "predecessorID")
-                        record.setValue(myItem.updateTime, forKey: "updateTime")
-                        record.setValue(myItem.updateType, forKey: "updateType")
-                        record.setValue(myItem.predecessorType, forKey: "predecessorType")
-                        
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully saved record!")
-                                }
-                            }
-                        })
-                    }
-                }
-            })
-            
-//            sleep(1)
+            saveTaskPredecessorRecordToCloudKit(myItem)
         }
     }
     
@@ -1640,68 +214,7 @@ class CloudKitInteraction
 //        NSLog("Syncing TaskUpdates")
         for myItem in myDatabaseConnection.getTaskUpdatesForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(taskID == \(myItem.taskID as Int)) && (updateDate == %@)", myItem.updateDate) // better be accurate to get only the record you need
-            let query = CKQuery(recordType: "TaskUpdates", predicate: predicate)
-            privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
-                if error != nil
-                {
-                    NSLog("Error querying records: \(error!.localizedDescription)")
-                }
-                else
-                {
-                    if records!.count > 0
-                    {
-                        let record = records!.first// as! CKRecord
-                        // Now you have grabbed your existing record from iCloud
-                        // Apply whatever changes you want
-                        record!.setValue(myItem.updateTime, forKey: "updateTime")
-                        record!.setValue(myItem.updateType, forKey: "updateType")
-                        record!.setValue(myItem.details, forKey: "details")
-                        record!.setValue(myItem.source, forKey: "source")
-                        
-                        // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully updated record!")
-                                }
-                            }
-                        })
-                    }
-                    else
-                    {  // Insert
-                        let record = CKRecord(recordType: "TaskUpdates")
-                        record.setValue(myItem.taskID, forKey: "taskID")
-                        record.setValue(myItem.updateDate, forKey: "updateDate")
-                        record.setValue(myItem.updateTime, forKey: "updateTime")
-                        record.setValue(myItem.updateType, forKey: "updateType")
-                        record.setValue(myItem.details, forKey: "details")
-                        record.setValue(myItem.source, forKey: "source")
-                        
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully saved record!")
-                                }
-                            }
-                        })
-                    }
-                }
-            })
-            
-//            sleep(1)
+            saveTaskUpdatesRecordToCloudKit(myItem)
         }
     }
     
@@ -1710,76 +223,7 @@ class CloudKitInteraction
 //        NSLog("Syncing Team")
         for myItem in myDatabaseConnection.getTeamsForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(teamID == \(myItem.teamID as Int))") // better be accurate to get only the record you need
-            let query = CKQuery(recordType: "Team", predicate: predicate)
-            privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
-                if error != nil
-                {
-                    NSLog("Error querying records: \(error!.localizedDescription)")
-                }
-                else
-                {
-                    if records!.count > 0
-                    {
-                        let record = records!.first// as! CKRecord
-                        // Now you have grabbed your existing record from iCloud
-                        // Apply whatever changes you want
-                        record!.setValue(myItem.updateTime, forKey: "updateTime")
-                        record!.setValue(myItem.updateType, forKey: "updateType")
-                        record!.setValue(myItem.name, forKey: "name")
-                        record!.setValue(myItem.note, forKey: "note")
-                        record!.setValue(myItem.status, forKey: "status")
-                        record!.setValue(myItem.type, forKey: "type")
-                        record!.setValue(myItem.predecessor, forKey: "predecessor")
-                        record!.setValue(myItem.externalID, forKey: "externalID")
-
-                        
-                        // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully updated record!")
-                                }
-                            }
-                        })
-                    }
-                    else
-                    {  // Insert
-                        let record = CKRecord(recordType: "Team")
-                        record.setValue(myItem.teamID, forKey: "teamID")
-                        record.setValue(myItem.updateTime, forKey: "updateTime")
-                        record.setValue(myItem.updateType, forKey: "updateType")
-                        record.setValue(myItem.name, forKey: "name")
-                        record.setValue(myItem.note, forKey: "note")
-                        record.setValue(myItem.status, forKey: "status")
-                        record.setValue(myItem.type, forKey: "type")
-                        record.setValue(myItem.predecessor, forKey: "predecessor")
-                        record.setValue(myItem.externalID, forKey: "externalID")
-                        
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully saved record!")
-                                }
-                            }
-                        })
-                    }
-                }
-            })
-            
-//            sleep(1)
+            saveTeamRecordToCloudKit(myItem)
         }
     }
     
@@ -1788,70 +232,9 @@ class CloudKitInteraction
 //        NSLog("Syncing ProcessedEmails")
         for myItem in myDatabaseConnection.getProcessedEmailsForSync(inLastSyncDate)
         {
-            let predicate = NSPredicate(format: "(emailID == \"\(myItem.emailID!)\")") // better be accurate to get only the record you need
-            let query = CKQuery(recordType: "ProcessedEmails", predicate: predicate)
-            privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
-                if error != nil
-                {
-                    NSLog("Error querying records: \(error!.localizedDescription)")
-                }
-                else
-                {
-                    if records!.count > 0
-                    {
-                        let record = records!.first// as! CKRecord
-                        // Now you have grabbed your existing record from iCloud
-                        // Apply whatever changes you want
-                        record!.setValue(myItem.updateTime, forKey: "updateTime")
-                        record!.setValue(myItem.updateType, forKey: "updateType")
-                        record!.setValue(myItem.emailType, forKey: "emailType")
-                        record!.setValue(myItem.processedDate, forKey: "processedDate")
-                        
-                        // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully updated record!")
-                                }
-                            }
-                        })
-                    }
-                    else
-                    {  // Insert
-                        let record = CKRecord(recordType: "ProcessedEmails")
-                        record.setValue(myItem.emailID, forKey: "emailID")
-                        record.setValue(myItem.updateTime, forKey: "updateTime")
-                        record.setValue(myItem.updateType, forKey: "updateType")
-                        record.setValue(myItem.emailType, forKey: "emailType")
-                        record.setValue(myItem.processedDate, forKey: "processedDate")
-                        
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil
-                            {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            }
-                            else
-                            {
-                                if debugMessages
-                                {
-                                    NSLog("Successfully saved record!")
-                                }
-                            }
-                        })
-                    }
-                }
-            })
-            
-//            sleep(1)
+            saveProcessedEmailsRecordToCloudKit(myItem)
         }
     }
-
     
     func updateContextInCoreData(inLastSyncDate: NSDate)
     {
@@ -1859,36 +242,15 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
         let query: CKQuery = CKQuery(recordType: "Context", predicate: predicate)
-        var predecessor: Int = 0
+        
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let contextID = record.objectForKey("contextID") as! Int
-                let autoEmail = record.objectForKey("autoEmail") as! String
-                let email = record.objectForKey("email") as! String
-                let name = record.objectForKey("name") as! String
-                let parentContext = record.objectForKey("parentContext") as! Int
-                let personID = record.objectForKey("personID") as! Int
-                let status = record.objectForKey("status") as! String
-                let teamID = record.objectForKey("teamID") as! Int
-                let contextType = record.objectForKey("contextType") as! String
-                
-                
-                if record.objectForKey("predecessor") != nil
-                {
-                    predecessor = record.objectForKey("predecessor") as! Int
-                }
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                
-                myDatabaseConnection.saveContext(contextID, inName: name, inEmail: email, inAutoEmail: autoEmail, inParentContext: parentContext, inStatus: status, inPersonID: personID, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
-                
-                
-                myDatabaseConnection.saveContext1_1(contextID, predecessor: predecessor, contextType: contextType, updateTime: updateTime, updateType: updateType)
-                
+                self.updateContextRecord(record)
             }
             dispatch_semaphore_signal(sem)
         })
+        
     }
     
     func updateDecodesInCoreData(inLastSyncDate: NSDate)
@@ -1900,20 +262,13 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                
-                let decodeName = record.objectForKey("decode_name") as! String
-                let decodeValue = record.objectForKey("decode_value") as! String
-                let decodeType = record.objectForKey("decodeType") as! String
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-
-                myDatabaseConnection.updateDecodeValue(decodeName, inCodeValue: decodeValue, inCodeType: decodeType, inUpdateTime: updateTime, inUpdateType: updateType)
-
+                self.updateDecodeRecord(record)
             }
             dispatch_semaphore_signal(sem)
         })
         
         dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        
     }
     
     func updateGTDItemInCoreData(inLastSyncDate: NSDate)
@@ -1925,21 +280,7 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let gTDItemID = record.objectForKey("gTDItemID") as! Int
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let gTDParentID = record.objectForKey("gTDParentID") as! Int
-                let lastReviewDate = record.objectForKey("lastReviewDate") as! NSDate
-                let note = record.objectForKey("note") as! String
-                let predecessor = record.objectForKey("predecessor") as! Int
-                let reviewFrequency = record.objectForKey("reviewFrequency") as! Int
-                let reviewPeriod = record.objectForKey("reviewPeriod") as! String
-                let status = record.objectForKey("status") as! String
-                let teamID = record.objectForKey("teamID") as! Int
-                let title = record.objectForKey("title") as! String
-                let gTDLevel = record.objectForKey("gTDLevel") as! Int
-
-                myDatabaseConnection.saveGTDItem(gTDItemID, inParentID: gTDParentID, inTitle: title, inStatus: status, inTeamID: teamID, inNote: note, inLastReviewDate: lastReviewDate, inReviewFrequency: reviewFrequency, inReviewPeriod: reviewPeriod, inPredecessor: predecessor, inGTDLevel: gTDLevel, inUpdateTime: updateTime, inUpdateType: updateType)
+                self.updateGTDItemRecord(record)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -1956,13 +297,7 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let gTDLevel = record.objectForKey("gTDLevel") as! Int
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey( "updateType") as! String
-                let teamID = record.objectForKey("teamID") as! Int
-                let levelName = record.objectForKey("levelName") as! String
-                
-                myDatabaseConnection.saveGTDLevel(gTDLevel, inLevelName: levelName, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+                self.updateGTDLevelRecord(record)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -1979,20 +314,7 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let meetingID = record.objectForKey("meetingID") as! String
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let chair = record.objectForKey("chair") as! String
-                let endTime = record.objectForKey("endTime") as! NSDate
-                let location = record.objectForKey("location") as! String
-                let minutes = record.objectForKey("minutes") as! String
-                let minutesType = record.objectForKey("minutesType") as! String
-                let name = record.objectForKey("name") as! String
-                let previousMeetingID = record.objectForKey("previousMeetingID") as! String
-                let startTime = record.objectForKey("meetingStartTime") as! NSDate
-                let teamID = record.objectForKey("actualTeamID") as! Int
-                
-                myDatabaseConnection.saveAgenda(meetingID, inPreviousMeetingID : previousMeetingID, inName: name, inChair: chair, inMinutes: minutes, inLocation: location, inStartTime: startTime, inEndTime: endTime, inMinutesType: minutesType, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+                self.updateMeetingAgendaRecord(record)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -2009,38 +331,7 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let meetingID = record.objectForKey("meetingID") as! String
-                let agendaID = record.objectForKey("agendaID") as! Int
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                var actualEndTime: NSDate!
-                if record.objectForKey("actualEndTime") != nil
-                {
-                    actualEndTime = record.objectForKey("actualEndTime") as! NSDate
-                }
-                else
-                {
-                    actualEndTime = getDefaultDate()
-                }
-                var actualStartTime: NSDate!
-                if record.objectForKey("actualStartTime") != nil
-                {
-                    actualStartTime = record.objectForKey("actualStartTime") as! NSDate
-                }
-                else
-                {
-                    actualStartTime = getDefaultDate()
-                }
-                let decisionMade = record.objectForKey("decisionMade") as! String
-                let discussionNotes = record.objectForKey("discussionNotes") as! String
-                let owner = record.objectForKey("owner") as! String
-                let status = record.objectForKey("status") as! String
-                let timeAllocation = record.objectForKey("timeAllocation") as! Int
-                let title = record.objectForKey("title") as! String
-                let meetingOrder = record.objectForKey("meetingOrder") as! Int
-
-                
-                myDatabaseConnection.saveAgendaItem(meetingID, actualEndTime: actualEndTime, actualStartTime: actualStartTime, status: status, decisionMade: decisionMade, discussionNotes: discussionNotes, timeAllocation: timeAllocation, owner: owner, title: title, agendaID: agendaID, meetingOrder: meetingOrder, inUpdateTime: updateTime, inUpdateType: updateType)
+                self.updateMeetingAgendaItemRecord(record)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -2057,15 +348,7 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let meetingID = record.objectForKey("meetingID") as! String
-                let name  = record.objectForKey("name") as! String
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let attendenceStatus = record.objectForKey("attendenceStatus") as! String
-                let email = record.objectForKey("email") as! String
-                let type = record.objectForKey("type") as! String
-                
-                myDatabaseConnection.saveAttendee(meetingID, name: name, email: email,  type: type, status: attendenceStatus, inUpdateTime: updateTime, inUpdateType: updateType)
+                self.updateMeetingAttendeesRecord(record)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -2083,16 +366,7 @@ class CloudKitInteraction
            // for record in results!
             for _ in results!
             {
-  //              let meetingID = record.objectForKey("meetingID") as! String
-  //              let agendaID = record.objectForKey("agendaID") as! Int
-  //              let updateTime = record.objectForKey("updateTime") as! NSDate
-  //              let updateType = record.objectForKey("updateType") as! String
-  //              let attachmentPath = record.objectForKey("attachmentPath") as! String
-  //              let title = record.objectForKey("title") as! String
-                
-                NSLog("updateMeetingSupportingDocsInCoreData - Need to have the save for this")
-                
-                // myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+  //              self.updateMeetingSupportingDocsRecord(record)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -2109,13 +383,7 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let meetingID = record.objectForKey("meetingID") as! String
-                let agendaID = record.objectForKey("agendaID") as! Int
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let taskID = record.objectForKey("taskID") as! Int
-                
-                myDatabaseConnection.saveMeetingTask(agendaID, meetingID: meetingID, taskID: taskID, inUpdateTime: updateTime, inUpdateType: updateType)
+                self.updateMeetingTasksRecord(record)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -2132,14 +400,7 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let pane_name = record.objectForKey("pane_name") as! String
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let pane_available = record.objectForKey("pane_available") as! Bool
-                let pane_order = record.objectForKey("pane_order") as! Int
-                let pane_visible = record.objectForKey("pane_visible") as! Bool
-                
-                myDatabaseConnection.savePane(pane_name, inPaneAvailable: pane_available, inPaneVisible: pane_visible, inPaneOrder: pane_order, inUpdateTime: updateTime, inUpdateType: updateType)
+                self.updatePanesRecord(record)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -2156,27 +417,7 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let projectID = record.objectForKey("projectID") as! Int
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let areaID = record.objectForKey("areaID") as! Int
-                let lastReviewDate = record.objectForKey("lastReviewDate") as! NSDate
-                let projectEndDate = record.objectForKey("projectEndDate") as! NSDate
-                let projectName = record.objectForKey("projectName") as! String
-                let projectStartDate = record.objectForKey("projectStartDate") as! NSDate
-                let projectStatus = record.objectForKey("projectStatus") as! String
-                let repeatBase = record.objectForKey("repeatBase") as! String
-                let repeatInterval = record.objectForKey("repeatInterval") as! Int
-                let repeatType = record.objectForKey("repeatType") as! String
-                let reviewFrequency = record.objectForKey("reviewFrequency") as! Int
-                let teamID = record.objectForKey("teamID") as! Int
-                let note = record.objectForKey("note") as! String
-                let reviewPeriod = record.objectForKey("reviewPeriod") as! String
-                let predecessor = record.objectForKey("predecessor") as! Int
-                
-                myDatabaseConnection.saveProject(projectID, inProjectEndDate: projectEndDate, inProjectName: projectName, inProjectStartDate: projectStartDate, inProjectStatus: projectStatus, inReviewFrequency: reviewFrequency, inLastReviewDate: lastReviewDate, inGTDItemID: areaID, inRepeatInterval: repeatInterval, inRepeatType: repeatType, inRepeatBase: repeatBase, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
-                
-                myDatabaseConnection.saveProjectNote(projectID, inNote: note, inReviewPeriod: reviewPeriod, inPredecessor: predecessor, inUpdateTime: updateTime, inUpdateType: updateType)
+                self.updateProjectsRecord(record)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -2193,14 +434,7 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let projectID = record.objectForKey("projectID") as! Int
-                let teamMember = record.objectForKey("teamMember") as! String
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let roleID = record.objectForKey("roleID") as! Int
-                let projectMemberNotes = record.objectForKey("projectMemberNotes") as! String
-                
-                myDatabaseConnection.saveTeamMember(projectID, inRoleID: roleID, inPersonName: teamMember, inNotes: projectMemberNotes, inUpdateTime: updateTime, inUpdateType: updateType)
+                self.updateProjectTeamMembersRecord(record)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -2217,13 +451,7 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let roleID = record.objectForKey("roleID") as! Int
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let teamID = record.objectForKey("teamID") as! Int
-                let roleDescription = record.objectForKey("roleDescription") as! String
-                
-                myDatabaseConnection.saveCloudRole(roleDescription, teamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType, roleID: roleID)
+                self.updateRolesRecord(record)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -2240,12 +468,7 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let stageDescription = record.objectForKey("stageDescription") as! String
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let teamID = record.objectForKey("teamID") as! Int
-                
-                myDatabaseConnection.saveStage(stageDescription, teamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+                self.updateStagesRecord(record)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -2262,28 +485,7 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let taskID = record.objectForKey("taskID") as! Int
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let completionDate = record.objectForKey("completionDate") as! NSDate
-                let details = record.objectForKey("details") as! String
-                let dueDate = record.objectForKey("dueDate") as! NSDate
-                let energyLevel = record.objectForKey("energyLevel") as! String
-                let estimatedTime = record.objectForKey("estimatedTime") as! Int
-                let estimatedTimeType = record.objectForKey("estimatedTimeType") as! String
-                let flagged = record.objectForKey("flagged") as! Bool
-                let priority = record.objectForKey("priority") as! String
-                let repeatBase = record.objectForKey("repeatBase") as! String
-                let repeatInterval = record.objectForKey("repeatInterval") as! Int
-                let repeatType = record.objectForKey("repeatType") as! String
-                let startDate = record.objectForKey("startDate") as! NSDate
-                let status = record.objectForKey("status") as! String
-                let teamID = record.objectForKey("teamID") as! Int
-                let title = record.objectForKey("title") as! String
-                let urgency = record.objectForKey("urgency") as! String
-                let projectID = record.objectForKey("projectID") as! Int
-                
-                myDatabaseConnection.saveTask(taskID, inTitle: title, inDetails: details, inDueDate: dueDate, inStartDate: startDate, inStatus: status, inPriority: priority, inEnergyLevel: energyLevel, inEstimatedTime: estimatedTime, inEstimatedTimeType: estimatedTimeType, inProjectID: projectID, inCompletionDate: completionDate, inRepeatInterval: repeatInterval, inRepeatType: repeatType, inRepeatBase: repeatBase, inFlagged: flagged, inUrgency: urgency, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+                self.updateTaskRecord(record)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -2299,15 +501,9 @@ class CloudKitInteraction
         let query: CKQuery = CKQuery(recordType: "TaskAttachment", predicate: predicate)
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
          //   for record in results!
-            for _ in results!
+            for record in results!
             {
-            //    let taskID = record.objectForKey("taskID") as! Int
-            //    let title = record.objectForKey("title") as! String
-            //    let updateTime = record.objectForKey("updateTime") as! NSDate
-            //    let updateType = record.objectForKey("updateType") as! String
-            //    let attachment = record.objectForKey("attachment") as! NSData
-               NSLog("updateTaskAttachmentInCoreData - Still to be coded")
-             //   myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+                self.updateTaskAttachmentRecord(record)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -2324,12 +520,7 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let taskID = record.objectForKey("taskID") as! Int
-                let contextID = record.objectForKey("contextID") as! Int
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                
-                myDatabaseConnection.saveTaskContext(contextID, inTaskID: taskID, inUpdateTime: updateTime, inUpdateType: updateType)
+                self.updateTaskContextRecord(record)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -2346,13 +537,7 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let taskID = record.objectForKey("taskID") as! Int
-                let predecessorID = record.objectForKey("predecessorID") as! Int
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let predecessorType = record.objectForKey("predecessorType") as! String
-                
-                myDatabaseConnection.savePredecessorTask(taskID, inPredecessorID: predecessorID, inPredecessorType: predecessorType, inUpdateTime: updateTime, inUpdateType: updateType)
+                self.updateTaskPredecessorRecord(record)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -2369,14 +554,7 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let taskID = record.objectForKey("taskID") as! Int
-                let updateDate = record.objectForKey("updateDate") as! NSDate
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let details = record.objectForKey("details") as! String
-                let source = record.objectForKey("source") as! String
-                
-                myDatabaseConnection.saveTaskUpdate(taskID, inDetails: details, inSource: source, inUpdateDate: updateDate, inUpdateTime: updateTime, inUpdateType: updateType)
+                self.updateTaskUpdatesRecord(record)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -2393,17 +571,7 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let teamID = record.objectForKey("teamID") as! Int
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let name = record.objectForKey("name") as! String
-                let note = record.objectForKey("note") as! String
-                let status = record.objectForKey("status") as! String
-                let type = record.objectForKey("type") as! String
-                let predecessor = record.objectForKey("predecessor") as! Int
-                let externalID = record.objectForKey("externalID") as! Int
-                
-                myDatabaseConnection.saveTeam(teamID, inName: name, inStatus: status, inNote: note, inType: type, inPredecessor: predecessor, inExternalID: externalID, inUpdateTime: updateTime, inUpdateType: updateType)
+                self.updateTeamRecord(record)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -2420,13 +588,7 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let emailID = record.objectForKey("emailID") as! String
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let emailType = record.objectForKey("emailType") as! String
-                let processedDate = record.objectForKey("processedDate") as! NSDate
-                
-                myDatabaseConnection.saveProcessedEmail(emailID, emailType: emailType, processedDate: processedDate, updateTime: updateTime, updateType: updateType)
+                self.updateProcessedEmailsRecord(record)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -2918,14 +1080,7 @@ class CloudKitInteraction
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                
-                let decodeName = record.objectForKey("decode_name") as! String
-                let decodeValue = record.objectForKey("decode_value") as! String
-                let decodeType = record.objectForKey("decodeType") as! String
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                
-                myDatabaseConnection.replaceDecodeValue(decodeName, inCodeValue: decodeValue, inCodeType: decodeType, inUpdateTime: updateTime, inUpdateType: updateType)
+                self.updateDecodeRecord(record)
             }
             dispatch_semaphore_signal(sem)
         })
@@ -3509,5 +1664,2467 @@ class CloudKitInteraction
         })
         
         dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func saveContextRecordToCloudKit(sourceRecord: Context)
+    {
+        let predicate = NSPredicate(format: "(contextID == \(sourceRecord.contextID as Int)) && (teamID == \(sourceRecord.teamID as Int))") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "Context", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+                if error != nil
+                {
+                    NSLog("Error querying records: \(error!.localizedDescription)")
+                }
+                else
+                {
+                    // Lets go and get the additional details from the context1_1 table
+                    
+                    let tempContext1_1 = myDatabaseConnection.getContext1_1(sourceRecord.contextID as Int)
+                    
+                    var myPredecessor: Int = 0
+                    var myContextType: String = ""
+                    
+                    if tempContext1_1.count > 0
+                    {
+                        myPredecessor = tempContext1_1[0].predecessor as! Int
+                        if tempContext1_1[0].contextType != nil
+                        {
+                            myContextType = tempContext1_1[0].contextType!
+                        }
+                        else
+                        {
+                            myContextType = "Person"
+                        }
+                    }
+                    
+                    if records!.count > 0
+                    {
+                        let record = records!.first// as! CKRecord
+                        // Now you have grabbed your existing record from iCloud
+                        // Apply whatever changes you want
+                        record!.setValue(sourceRecord.autoEmail, forKey: "autoEmail")
+                        record!.setValue(sourceRecord.email, forKey: "email")
+                        record!.setValue(sourceRecord.name, forKey: "name")
+                        record!.setValue(sourceRecord.parentContext, forKey: "parentContext")
+                        record!.setValue(sourceRecord.personID, forKey: "personID")
+                        record!.setValue(sourceRecord.status, forKey: "status")
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record!.setValue(myPredecessor, forKey: "predecessor")
+                        record!.setValue(myContextType, forKey: "contextType")
+                        
+                        // Save this record again
+                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully updated record!")
+                                }
+                            }
+                        })
+                    }
+                    else
+                    {  // Insert
+                        let record = CKRecord(recordType: "Context")
+                        record.setValue(sourceRecord.contextID, forKey: "contextID")
+                        record.setValue(sourceRecord.autoEmail, forKey: "autoEmail")
+                        record.setValue(sourceRecord.email, forKey: "email")
+                        record.setValue(sourceRecord.name, forKey: "name")
+                        record.setValue(sourceRecord.parentContext, forKey: "parentContext")
+                        record.setValue(sourceRecord.personID, forKey: "personID")
+                        record.setValue(sourceRecord.status, forKey: "status")
+                        record.setValue(sourceRecord.teamID, forKey: "teamID")
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record.setValue(myPredecessor, forKey: "predecessor")
+                        record.setValue(myContextType, forKey: "contextType")
+                        
+                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully saved record!")
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+    }
+    
+    func saveContext1_1RecordToCloudKit(sourceRecord: Context1_1)
+    {
+        let predicate = NSPredicate(format: "(contextID == \(sourceRecord.contextID as! Int))") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "Context", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+                if error != nil
+                {
+                    NSLog("Error querying records: \(error!.localizedDescription)")
+                }
+                else
+                {
+                    if records!.count > 0
+                    {
+                        let record = records!.first// as! CKRecord
+                        // Now you have grabbed your existing record from iCloud
+                        // Apply whatever changes you want
+                        record!.setValue(sourceRecord.predecessor, forKey: "predecessor")
+                        record!.setValue(sourceRecord.contextType, forKey: "contextType")
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                        
+                        // Save this record again
+                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully updated record!")
+                                }
+                            }
+                        })
+                    }
+                    else
+                    {  // Insert
+                        let record = CKRecord(recordType: "Context")
+                        record.setValue(sourceRecord.contextID, forKey: "contextID")
+                        record.setValue(sourceRecord.predecessor, forKey: "predecessor")
+                        record.setValue(sourceRecord.contextType, forKey: "contextType")
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record.setValue(sourceRecord.updateType, forKey: "updateType")
+                        
+                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully saved record!")
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+    }
+    
+    func saveDecodesRecordToCloudKit(sourceRecord: Decodes, syncName: String)
+    {
+        let predicate = NSPredicate(format: "(decode_name == \"\(sourceRecord.decode_name)\")") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "Decodes", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+                if error != nil
+                {
+                    NSLog("Error querying records: \(error!.localizedDescription)")
+                }
+                else
+                {
+                    if records!.count > 0
+                    {
+                        // We need to do a check of the number for the tables, as otherwise we risk overwriting the changes
+                        
+                        var updateRecord: Bool = true
+                        
+                        let record = records!.first// as! CKRecord
+                        
+                        switch sourceRecord.decode_name
+                        {
+                        case "Context" :
+                            let localValue = Int(sourceRecord.decode_value)
+                            let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
+                            let remoteValue = Int(tempValue as! String)
+                            
+                            if localValue > remoteValue
+                            {
+                                updateRecord = true
+                            }
+                            else
+                            {
+                                updateRecord = false
+                            }
+                            
+                        case "Projects" :
+                            let localValue = Int(sourceRecord.decode_value)
+                            let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
+                            let remoteValue = Int(tempValue as! String)
+                            
+                            if localValue > remoteValue
+                            {
+                                updateRecord = true
+                            }
+                            else
+                            {
+                                updateRecord = false
+                            }
+                            
+                        case "GTDItem" :
+                            let localValue = Int(sourceRecord.decode_value)
+                            let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
+                            let remoteValue = Int(tempValue as! String)
+                            
+                            if localValue > remoteValue
+                            {
+                                updateRecord = true
+                            }
+                            else
+                            {
+                                updateRecord = false
+                            }
+                            
+                        case "Team" :
+                            let localValue = Int(sourceRecord.decode_value)
+                            let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
+                            let remoteValue = Int(tempValue as! String)
+                            
+                            if localValue > remoteValue
+                            {
+                                updateRecord = true
+                            }
+                            else
+                            {
+                                updateRecord = false
+                            }
+                            
+                        case "Roles" :
+                            let localValue = Int(sourceRecord.decode_value)
+                            let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
+                            let remoteValue = Int(tempValue as! String)
+                            
+                            if localValue > remoteValue
+                            {
+                                updateRecord = true
+                            }
+                            else
+                            {
+                                updateRecord = false
+                            }
+                            
+                        case "Task" :
+                            let localValue = Int(sourceRecord.decode_value)
+                            let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
+                            let remoteValue = Int(tempValue as! String)
+                            
+                            if localValue > remoteValue
+                            {
+                                updateRecord = true
+                            }
+                            else
+                            {
+                                updateRecord = false
+                            }
+                            
+                        case "Device" :
+                            let localValue = Int(sourceRecord.decode_value)
+                            let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
+                            let remoteValue = Int(tempValue as! String)
+                            
+                            if localValue > remoteValue
+                            {
+                                updateRecord = true
+                            }
+                            else
+                            {
+                                updateRecord = false
+                            }
+                            
+                        default:
+                            updateRecord = true
+                            
+                            if sourceRecord.decode_name.hasPrefix("CloudKit Sync")
+                            {
+                                if syncName == sourceRecord.decode_name
+                                {
+                                    updateRecord = true
+                                }
+                                else
+                                {
+                                    updateRecord = false
+                                }
+                            }
+                        }
+                        
+                        if updateRecord
+                        {
+                            // Now you have grabbed your existing record from iCloud
+                            // Apply whatever changes you want
+                            record!.setValue(sourceRecord.decode_value, forKey: "decode_value")
+                            record!.setValue(sourceRecord.decodeType, forKey: "decodeType")
+                            record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                            record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                            
+                            // Save this record again
+                            self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                                if saveError != nil
+                                {
+                                    NSLog("Error saving record: \(saveError!.localizedDescription)")
+                                }
+                                else
+                                {
+                                    if debugMessages
+                                    {
+                                        NSLog("Successfully updated record!")
+                                    }
+                                }
+                            })
+                        }
+                    }
+                    else
+                    {  // Insert
+                        let todoRecord = CKRecord(recordType: "Decodes")
+                        todoRecord.setValue(sourceRecord.decode_name, forKey: "decode_name")
+                        todoRecord.setValue(sourceRecord.decodeType, forKey: "decodeType")
+                        todoRecord.setValue(sourceRecord.decode_value, forKey: "decode_value")
+                        todoRecord.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        todoRecord.setValue(sourceRecord.updateType, forKey: "updateType")
+                        
+                        self.privateDB.saveRecord(todoRecord, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully saved record! \(sourceRecord.decode_name)")
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+
+    }
+    
+    func saveGTDItemRecordToCloudKit(sourceRecord: GTDItem)
+    {
+        let predicate = NSPredicate(format: "(gTDItemID == \(sourceRecord.gTDItemID as! Int)) && (teamID == \(sourceRecord.teamID as! Int))")
+        let query = CKQuery(recordType: "GTDItem", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+                if error != nil
+                {
+                    NSLog("Error querying records: \(error!.localizedDescription)")
+                }
+                else
+                {
+                    if records!.count > 0
+                    {
+                        let record = records!.first// as! CKRecord
+                        // Now you have grabbed your existing record from iCloud
+                        // Apply whatever changes you want
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record!.setValue(sourceRecord.gTDParentID, forKey: "gTDParentID")
+                        record!.setValue(sourceRecord.lastReviewDate, forKey: "lastReviewDate")
+                        record!.setValue(sourceRecord.note, forKey: "note")
+                        record!.setValue(sourceRecord.predecessor, forKey: "predecessor")
+                        record!.setValue(sourceRecord.reviewFrequency, forKey: "reviewFrequency")
+                        record!.setValue(sourceRecord.reviewPeriod, forKey: "reviewPeriod")
+                        record!.setValue(sourceRecord.status, forKey: "status")
+                        record!.setValue(sourceRecord.title, forKey: "title")
+                        record!.setValue(sourceRecord.gTDLevel, forKey: "gTDLevel")
+                        
+                        
+                        // Save this record again
+                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully updated record!")
+                                }
+                            }
+                        })
+                    }
+                    else
+                    {  // Insert
+                        let record = CKRecord(recordType: "GTDItem")
+                        record.setValue(sourceRecord.gTDItemID, forKey: "gTDItemID")
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record.setValue(sourceRecord.gTDParentID, forKey: "gTDParentID")
+                        record.setValue(sourceRecord.lastReviewDate, forKey: "lastReviewDate")
+                        record.setValue(sourceRecord.note, forKey: "note")
+                        record.setValue(sourceRecord.predecessor, forKey: "predecessor")
+                        record.setValue(sourceRecord.reviewFrequency, forKey: "reviewFrequency")
+                        record.setValue(sourceRecord.reviewPeriod, forKey: "reviewPeriod")
+                        record.setValue(sourceRecord.status, forKey: "status")
+                        record.setValue(sourceRecord.teamID, forKey: "teamID")
+                        record.setValue(sourceRecord.title, forKey: "title")
+                        record.setValue(sourceRecord.gTDLevel, forKey: "gTDLevel")
+                        
+                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully saved record!")
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+    }
+    
+    func saveGTDLevelRecordToCloudKit(sourceRecord: GTDLevel)
+    {
+        let predicate = NSPredicate(format: "(gTDLevel == \(sourceRecord.gTDLevel as! Int)) && (teamID == \(sourceRecord.teamID as! Int))") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "GTDLevel", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+                if error != nil
+                {
+                    NSLog("Error querying records: \(error!.localizedDescription)")
+                }
+                else
+                {
+                    if records!.count > 0
+                    {
+                        let record = records!.first// as! CKRecord
+                        // Now you have grabbed your existing record from iCloud
+                        // Apply whatever changes you want
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record!.setValue(sourceRecord.levelName, forKey: "levelName")
+                        
+                        // Save this record again
+                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully updated record!")
+                                }
+                            }
+                        })
+                    }
+                    else
+                    {  // Insert
+                        let record = CKRecord(recordType: "GTDLevel")
+                        record.setValue(sourceRecord.gTDLevel, forKey: "gTDLevel")
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record.setValue(sourceRecord.teamID, forKey: "teamID")
+                        record.setValue(sourceRecord.levelName, forKey: "levelName")
+                        
+                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully saved record!")
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+    }
+    
+    func saveMeetingAgendaRecordToCloudKit(sourceRecord: MeetingAgenda)
+    {
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID)\") && (actualTeamID == \(sourceRecord.teamID as Int))") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+                if error != nil
+                {
+                    NSLog("Error querying records: \(error!.localizedDescription)")
+                }
+                else
+                {
+                    if records!.count > 0
+                    {
+                        let record = records!.first// as! CKRecord
+                        // Now you have grabbed your existing record from iCloud
+                        // Apply whatever changes you want
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record!.setValue(sourceRecord.chair, forKey: "chair")
+                        record!.setValue(sourceRecord.endTime, forKey: "endTime")
+                        record!.setValue(sourceRecord.location, forKey: "location")
+                        record!.setValue(sourceRecord.minutes, forKey: "minutes")
+                        record!.setValue(sourceRecord.minutesType, forKey: "minutesType")
+                        record!.setValue(sourceRecord.name, forKey: "name")
+                        record!.setValue(sourceRecord.previousMeetingID, forKey: "previousMeetingID")
+                        record!.setValue(sourceRecord.startTime, forKey: "meetingStartTime")
+                        
+                        // Save this record again
+                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully updated record!")
+                                }
+                            }
+                        })
+                    }
+                    else
+                    {  // Insert
+                        let record = CKRecord(recordType: "MeetingAgenda")
+                        record.setValue(sourceRecord.meetingID, forKey: "meetingID")
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record.setValue(sourceRecord.chair, forKey: "chair")
+                        record.setValue(sourceRecord.endTime, forKey: "endTime")
+                        record.setValue(sourceRecord.location, forKey: "location")
+                        record.setValue(sourceRecord.minutes, forKey: "minutes")
+                        record.setValue(sourceRecord.minutesType, forKey: "minutesType")
+                        record.setValue(sourceRecord.name, forKey: "name")
+                        record.setValue(sourceRecord.previousMeetingID, forKey: "previousMeetingID")
+                        record.setValue(sourceRecord.startTime, forKey: "meetingStartTime")
+                        record.setValue(sourceRecord.teamID, forKey: "actualTeamID")
+                        
+                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully saved record!")
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+    }
+    
+    func saveMeetingAgendaItemRecordToCloudKit(sourceRecord: MeetingAgendaItem)
+    {
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID as! Int))") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+                if error != nil
+                {
+                    NSLog("Error querying records: \(error!.localizedDescription)")
+                }
+                else
+                {
+                    if records!.count > 0
+                    {
+                        let record = records!.first// as! CKRecord
+                        // Now you have grabbed your existing record from iCloud
+                        // Apply whatever changes you want
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record!.setValue(sourceRecord.actualEndTime, forKey: "actualEndTime")
+                        record!.setValue(sourceRecord.actualStartTime, forKey: "actualStartTime")
+                        record!.setValue(sourceRecord.decisionMade, forKey: "decisionMade")
+                        record!.setValue(sourceRecord.discussionNotes, forKey: "discussionNotes")
+                        record!.setValue(sourceRecord.owner, forKey: "owner")
+                        record!.setValue(sourceRecord.status, forKey: "status")
+                        record!.setValue(sourceRecord.timeAllocation, forKey: "timeAllocation")
+                        record!.setValue(sourceRecord.title, forKey: "title")
+                        record!.setValue(sourceRecord.meetingOrder, forKey: "meetingOrder")
+                        
+                        // Save this record again
+                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully updated record!")
+                                }
+                            }
+                        })
+                    }
+                    else
+                    {  // Insert
+                        let record = CKRecord(recordType: "MeetingAgendaItem")
+                        record.setValue(sourceRecord.meetingID, forKey: "meetingID")
+                        record.setValue(sourceRecord.agendaID, forKey: "agendaID")
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record.setValue(sourceRecord.actualEndTime, forKey: "actualEndTime")
+                        record.setValue(sourceRecord.actualStartTime, forKey: "actualStartTime")
+                        record.setValue(sourceRecord.decisionMade, forKey: "decisionMade")
+                        record.setValue(sourceRecord.discussionNotes, forKey: "discussionNotes")
+                        record.setValue(sourceRecord.owner, forKey: "owner")
+                        record.setValue(sourceRecord.status, forKey: "status")
+                        record.setValue(sourceRecord.timeAllocation, forKey: "timeAllocation")
+                        record.setValue(sourceRecord.title, forKey: "title")
+                        record.setValue(sourceRecord.meetingOrder, forKey: "meetingOrder")
+                        
+                        
+                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully saved record!")
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+    }
+    
+    func saveMeetingAttendeesRecordToCloudKit(sourceRecord: MeetingAttendees)
+    {
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID)\") && (name = \"\(sourceRecord.name)\")") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "MeetingAttendees", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+                if error != nil
+                {
+                    NSLog("Error querying records: \(error!.localizedDescription)")
+                }
+                else
+                {
+                    if records!.count > 0
+                    {
+                        let record = records!.first// as! CKRecord
+                        // Now you have grabbed your existing record from iCloud
+                        // Apply whatever changes you want
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record!.setValue(sourceRecord.attendenceStatus, forKey: "attendenceStatus")
+                        record!.setValue(sourceRecord.email, forKey: "email")
+                        record!.setValue(sourceRecord.type, forKey: "type")
+                        
+                        // Save this record again
+                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully updated record!")
+                                }
+                            }
+                        })
+                    }
+                    else
+                    {  // Insert
+                        let record = CKRecord(recordType: "MeetingAttendees")
+                        record.setValue(sourceRecord.meetingID, forKey: "meetingID")
+                        record.setValue(sourceRecord.name, forKey: "name")
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record.setValue(sourceRecord.attendenceStatus, forKey: "attendenceStatus")
+                        record.setValue(sourceRecord.email, forKey: "email")
+                        record.setValue(sourceRecord.type, forKey: "type")
+                        
+                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully saved record!")
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+    }
+    
+    func saveMeetingSupportingDocsRecordToCloudKit(sourceRecord: MeetingSupportingDocs)
+    {
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID)\") && (agendaID == \(sourceRecord.agendaID as Int))") // better be accurate to get only the
+        let query = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+                if error != nil
+                {
+                    NSLog("Error querying records: \(error!.localizedDescription)")
+                }
+                else
+                {
+                    if records!.count > 0
+                    {
+                        let record = records!.first// as! CKRecord
+                        // Now you have grabbed your existing record from iCloud
+                        // Apply whatever changes you want
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record!.setValue(sourceRecord.attachmentPath, forKey: "attachmentPath")
+                        record!.setValue(sourceRecord.title, forKey: "title")
+                        
+                        // Save this record again
+                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully updated record!")
+                                }
+                            }
+                        })
+                    }
+                    else
+                    {  // Insert
+                        let record = CKRecord(recordType: "MeetingSupportingDocs")
+                        record.setValue(sourceRecord.meetingID, forKey: "meetingID")
+                        record.setValue(sourceRecord.agendaID, forKey: "agendaID")
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record.setValue(sourceRecord.attachmentPath, forKey: "attachmentPath")
+                        record.setValue(sourceRecord.title, forKey: "title")
+                        
+                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully saved record!")
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+    }
+    
+    func saveMeetingTasksRecordToCloudKit(sourceRecord: MeetingTasks)
+    {
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID)\") && (agendaID == \(sourceRecord.agendaID as Int)) && (taskID == \(sourceRecord.taskID as Int))") // better be accurate to get only the
+        let query = CKQuery(recordType: "MeetingTasks", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+                if error != nil
+                {
+                    NSLog("Error querying records: \(error!.localizedDescription)")
+                }
+                else
+                {
+                    if records!.count > 0
+                    {
+                        let record = records!.first// as! CKRecord
+                        // Now you have grabbed your existing record from iCloud
+                        // Apply whatever changes you want
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record!.setValue(sourceRecord.taskID, forKey: "taskID")
+                        
+                        // Save this record again
+                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully updated record!")
+                                }
+                            }
+                        })
+                    }
+                    else
+                    {  // Insert
+                        let record = CKRecord(recordType: "MeetingTasks")
+                        record.setValue(sourceRecord.meetingID, forKey: "meetingID")
+                        record.setValue(sourceRecord.agendaID, forKey: "agendaID")
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record.setValue(sourceRecord.taskID, forKey: "taskID")
+                        
+                        
+                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully saved record!")
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+    }
+    
+    func savePanesRecordToCloudKit(sourceRecord: Panes)
+    {
+        let predicate = NSPredicate(format: "(pane_name == \"\(sourceRecord.pane_name)\")") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "Panes", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+                if error != nil
+                {
+                    NSLog("Error querying records: \(error!.localizedDescription)")
+                }
+                else
+                {
+                    if records!.count > 0
+                    {
+                        let record = records!.first// as! CKRecord
+                        // Now you have grabbed your existing record from iCloud
+                        // Apply whatever changes you want
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record!.setValue(sourceRecord.pane_available, forKey: "pane_available")
+                        record!.setValue(sourceRecord.pane_order, forKey: "pane_order")
+                        record!.setValue(sourceRecord.pane_visible, forKey: "pane_visible")
+                        
+                        // Save this record again
+                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully updated record!")
+                                }
+                            }
+                        })
+                    }
+                    else
+                    {  // Insert
+                        let record = CKRecord(recordType: "Panes")
+                        record.setValue(sourceRecord.pane_name, forKey: "pane_name")
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record.setValue(sourceRecord.pane_available, forKey: "pane_available")
+                        record.setValue(sourceRecord.pane_order, forKey: "pane_order")
+                        record.setValue(sourceRecord.pane_visible, forKey: "pane_visible")
+                        
+                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully saved record!")
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+    }
+    
+    func saveProjectsRecordToCloudKit(sourceRecord: Projects)
+    {
+        let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID as Int))") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "Projects", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+                if error != nil
+                {
+                    NSLog("Error querying records: \(error!.localizedDescription)")
+                }
+                else
+                {
+                    
+                    // First need to get additional info from other table
+                    
+                    let tempProjectNote = myDatabaseConnection.getProjectNote(sourceRecord.projectID as Int)
+                    
+                    var myNote: String = ""
+                    var myReviewPeriod: String = ""
+                    var myPredecessor: Int = 0
+                    
+                    if tempProjectNote.count > 0
+                    {
+                        myNote = tempProjectNote[0].note
+                        myReviewPeriod = tempProjectNote[0].reviewPeriod
+                        myPredecessor = tempProjectNote[0].predecessor as Int
+                    }
+                    
+                    if records!.count > 0
+                    {
+                        let record = records!.first// as! CKRecord
+                        // Now you have grabbed your existing record from iCloud
+                        // Apply whatever changes you want
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record!.setValue(sourceRecord.areaID, forKey: "areaID")
+                        record!.setValue(sourceRecord.lastReviewDate, forKey: "lastReviewDate")
+                        record!.setValue(sourceRecord.projectEndDate, forKey: "projectEndDate")
+                        record!.setValue(sourceRecord.projectName, forKey: "projectName")
+                        record!.setValue(sourceRecord.projectStartDate, forKey: "projectStartDate")
+                        record!.setValue(sourceRecord.projectStatus, forKey: "projectStatus")
+                        record!.setValue(sourceRecord.repeatBase, forKey: "repeatBase")
+                        record!.setValue(sourceRecord.repeatInterval, forKey: "repeatInterval")
+                        record!.setValue(sourceRecord.repeatType, forKey: "repeatType")
+                        record!.setValue(sourceRecord.reviewFrequency, forKey: "reviewFrequency")
+                        record!.setValue(sourceRecord.teamID, forKey: "teamID")
+                        record!.setValue(myNote, forKey: "note")
+                        record!.setValue(myReviewPeriod, forKey: "reviewPeriod")
+                        record!.setValue(myPredecessor, forKey: "predecessor")
+                        
+                        // Save this record again
+                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully updated record!")
+                                }
+                            }
+                        })
+                    }
+                    else
+                    {  // Insert
+                        let record = CKRecord(recordType: "Projects")
+                        record.setValue(sourceRecord.projectID, forKey: "projectID")
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record.setValue(sourceRecord.areaID, forKey: "areaID")
+                        record.setValue(sourceRecord.lastReviewDate, forKey: "lastReviewDate")
+                        record.setValue(sourceRecord.projectEndDate, forKey: "projectEndDate")
+                        record.setValue(sourceRecord.projectName, forKey: "projectName")
+                        record.setValue(sourceRecord.projectStartDate, forKey: "projectStartDate")
+                        record.setValue(sourceRecord.projectStatus, forKey: "projectStatus")
+                        record.setValue(sourceRecord.repeatBase, forKey: "repeatBase")
+                        record.setValue(sourceRecord.repeatInterval, forKey: "repeatInterval")
+                        record.setValue(sourceRecord.repeatType, forKey: "repeatType")
+                        record.setValue(sourceRecord.reviewFrequency, forKey: "reviewFrequency")
+                        record.setValue(sourceRecord.teamID, forKey: "teamID")
+                        record.setValue(myNote, forKey: "note")
+                        record.setValue(myReviewPeriod, forKey: "reviewPeriod")
+                        record.setValue(myPredecessor, forKey: "predecessor")
+                        
+                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully saved record!")
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+    }
+    
+    func saveProjectNoteRecordToCloudKit(sourceRecord: ProjectNote)
+    {
+        let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID as Int))") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "Projects", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+                if error != nil
+                {
+                    NSLog("Error querying records: \(error!.localizedDescription)")
+                }
+                else
+                {
+                    if records!.count > 0
+                    {
+                        let record = records!.first// as! CKRecord
+                        // Now you have grabbed your existing record from iCloud
+                        // Apply whatever changes you want
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record!.setValue(sourceRecord.note, forKey: "note")
+                        record!.setValue(sourceRecord.reviewPeriod, forKey: "reviewPeriod")
+                        record!.setValue(sourceRecord.predecessor, forKey: "predecessor")
+                        
+                        // Save this record again
+                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully updated record!")
+                                }
+                            }
+                        })
+                    }
+                    else
+                    {  // Insert
+                        let record = CKRecord(recordType: "Projects")
+                        record.setValue(sourceRecord.projectID, forKey: "projectID")
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record.setValue(sourceRecord.note, forKey: "note")
+                        record.setValue(sourceRecord.reviewPeriod, forKey: "reviewPeriod")
+                        record.setValue(sourceRecord.predecessor, forKey: "predecessor")
+                        
+                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully saved record!")
+                                }
+                            }
+                        })
+                    }
+
+                }
+            })
+    }
+
+    func saveProjectTeamMembersRecordToCloudKit(sourceRecord: ProjectTeamMembers)
+    {
+        let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID as Int)) && (teamMember == \"\(sourceRecord.teamMember)\")") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "ProjectTeamMembers", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+                if error != nil
+                {
+                    NSLog("Error querying records: \(error!.localizedDescription)")
+                }
+                else
+                {
+                    if records!.count > 0
+                    {
+                        let record = records!.first// as! CKRecord
+                        // Now you have grabbed your existing record from iCloud
+                        // Apply whatever changes you want
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record!.setValue(sourceRecord.roleID, forKey: "roleID")
+                        record!.setValue(sourceRecord.projectMemberNotes, forKey: "projectMemberNotes")
+                        
+                        // Save this record again
+                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully updated record!")
+                                }
+                            }
+                        })
+                    }
+                    else
+                    {  // Insert
+                        let record = CKRecord(recordType: "ProjectTeamMembers")
+                        record.setValue(sourceRecord.projectID, forKey: "projectID")
+                        record.setValue(sourceRecord.teamMember, forKey: "teamMember")
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record.setValue(sourceRecord.roleID, forKey: "roleID")
+                        record.setValue(sourceRecord.projectMemberNotes, forKey: "projectMemberNotes")
+                        
+                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully saved record!")
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+    }
+    
+    func saveRolesRecordToCloudKit(sourceRecord: Roles)
+    {
+        let predicate = NSPredicate(format: "(roleID == \(sourceRecord.roleID as Int))") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "Roles", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+                if error != nil
+                {
+                    NSLog("Error querying records: \(error!.localizedDescription)")
+                }
+                else
+                {
+                    if records!.count > 0
+                    {
+                        let record = records!.first// as! CKRecord
+                        // Now you have grabbed your existing record from iCloud
+                        // Apply whatever changes you want
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record!.setValue(sourceRecord.roleDescription, forKey: "roleDescription")
+                        
+                        // Save this record again
+                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully updated record!")
+                                }
+                            }
+                        })
+                    }
+                    else
+                    {  // Insert
+                        let record = CKRecord(recordType: "Roles")
+                        record.setValue(sourceRecord.roleID, forKey: "roleID")
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record.setValue(sourceRecord.teamID, forKey: "teamID")
+                        record.setValue(sourceRecord.roleDescription, forKey: "roleDescription")
+                        
+                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully saved record!")
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+    }
+    
+    func saveStagesRecordToCloudKit(sourceRecord: Stages)
+    {
+        let predicate = NSPredicate(format: "(stageDescription == \"\(sourceRecord.stageDescription)\") && (teamID == \(sourceRecord.teamID as Int))") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "Stages", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+                if error != nil
+                {
+                    NSLog("Error querying records: \(error!.localizedDescription)")
+                }
+                else
+                {
+                    if records!.count > 0
+                    {
+                        let record = records!.first// as! CKRecord
+                        // Now you have grabbed your existing record from iCloud
+                        // Apply whatever changes you want
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                        
+                        // Save this record again
+                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully updated record!")
+                                }
+                            }
+                        })
+                    }
+                    else
+                    {  // Insert
+                        let record = CKRecord(recordType: "Stages")
+                        record.setValue(sourceRecord.stageDescription, forKey: "stageDescription")
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record.setValue(sourceRecord.teamID, forKey: "teamID")
+                        
+                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully saved record!")
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+    }
+    
+    func saveTaskRecordToCloudKit(sourceRecord: Task)
+    {
+        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as Int))") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "Task", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+                if error != nil
+                {
+                    NSLog("Error querying records: \(error!.localizedDescription)")
+                }
+                else
+                {
+                    if records!.count > 0
+                    {
+                        let record = records!.first// as! CKRecord
+                        // Now you have grabbed your existing record from iCloud
+                        // Apply whatever changes you want
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record!.setValue(sourceRecord.completionDate, forKey: "completionDate")
+                        record!.setValue(sourceRecord.details, forKey: "details")
+                        record!.setValue(sourceRecord.dueDate, forKey: "dueDate")
+                        record!.setValue(sourceRecord.energyLevel, forKey: "energyLevel")
+                        record!.setValue(sourceRecord.estimatedTime, forKey: "estimatedTime")
+                        record!.setValue(sourceRecord.estimatedTimeType, forKey: "estimatedTimeType")
+                        record!.setValue(sourceRecord.flagged, forKey: "flagged")
+                        record!.setValue(sourceRecord.priority, forKey: "priority")
+                        record!.setValue(sourceRecord.repeatBase, forKey: "repeatBase")
+                        record!.setValue(sourceRecord.repeatInterval, forKey: "repeatInterval")
+                        record!.setValue(sourceRecord.repeatType, forKey: "repeatType")
+                        record!.setValue(sourceRecord.startDate, forKey: "startDate")
+                        record!.setValue(sourceRecord.status, forKey: "status")
+                        record!.setValue(sourceRecord.title, forKey: "title")
+                        record!.setValue(sourceRecord.urgency, forKey: "urgency")
+                        record!.setValue(sourceRecord.projectID, forKey: "projectID")
+                        record!.setValue(sourceRecord.teamID, forKey: "teamID")
+                        
+                        // Save this record again
+                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully updated record!")
+                                }
+                            }
+                        })
+                    }
+                    else
+                    {  // Insert
+                        let record = CKRecord(recordType: "Task")
+                        record.setValue(sourceRecord.taskID, forKey: "taskID")
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record.setValue(sourceRecord.completionDate, forKey: "completionDate")
+                        record.setValue(sourceRecord.details, forKey: "details")
+                        record.setValue(sourceRecord.dueDate, forKey: "dueDate")
+                        record.setValue(sourceRecord.energyLevel, forKey: "energyLevel")
+                        record.setValue(sourceRecord.estimatedTime, forKey: "estimatedTime")
+                        record.setValue(sourceRecord.estimatedTimeType, forKey: "estimatedTimeType")
+                        record.setValue(sourceRecord.flagged, forKey: "flagged")
+                        record.setValue(sourceRecord.priority, forKey: "priority")
+                        record.setValue(sourceRecord.repeatBase, forKey: "repeatBase")
+                        record.setValue(sourceRecord.repeatInterval, forKey: "repeatInterval")
+                        record.setValue(sourceRecord.repeatType, forKey: "repeatType")
+                        record.setValue(sourceRecord.startDate, forKey: "startDate")
+                        record.setValue(sourceRecord.status, forKey: "status")
+                        record.setValue(sourceRecord.teamID, forKey: "teamID")
+                        record.setValue(sourceRecord.title, forKey: "title")
+                        record.setValue(sourceRecord.urgency, forKey: "urgency")
+                        record.setValue(sourceRecord.projectID, forKey: "projectID")
+                        
+                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully saved record!")
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+    }
+    
+    func saveTaskAttachmentRecordToCloudKit(sourceRecord: TaskAttachment)
+    {
+        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as Int)) && (title == \"\(sourceRecord.title)\")") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "TaskAttachment", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+                if error != nil
+                {
+                    NSLog("Error querying records: \(error!.localizedDescription)")
+                }
+                else
+                {
+                    if records!.count > 0
+                    {
+                        let record = records!.first// as! CKRecord
+                        // Now you have grabbed your existing record from iCloud
+                        // Apply whatever changes you want
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record!.setValue(sourceRecord.attachment, forKey: "attachment")
+                        
+                        // Save this record again
+                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully updated record!")
+                                }
+                            }
+                        })
+                    }
+                    else
+                    {  // Insert
+                        let record = CKRecord(recordType: "TaskAttachment")
+                        record.setValue(sourceRecord.taskID, forKey: "taskID")
+                        record.setValue(sourceRecord.title, forKey: "title")
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record.setValue(sourceRecord.attachment, forKey: "attachment")
+                        
+                        
+                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully saved record!")
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+    }
+    
+    func saveTaskContextRecordToCloudKit(sourceRecord: TaskContext)
+    {
+        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as Int)) && (contextID == \(sourceRecord.contextID as Int))") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "TaskContext", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+                if error != nil
+                {
+                    NSLog("Error querying records: \(error!.localizedDescription)")
+                }
+                else
+                {
+                    if records!.count > 0
+                    {
+                        let record = records!.first// as! CKRecord
+                        // Now you have grabbed your existing record from iCloud
+                        // Apply whatever changes you want
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                        
+                        // Save this record again
+                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully updated record!")
+                                }
+                            }
+                        })
+                    }
+                    else
+                    {  // Insert
+                        let record = CKRecord(recordType: "TaskContext")
+                        record.setValue(sourceRecord.taskID, forKey: "taskID")
+                        record.setValue(sourceRecord.contextID, forKey: "contextID")
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record.setValue(sourceRecord.updateType, forKey: "updateType")
+                        
+                        
+                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully saved record!")
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+    }
+    
+    func saveTaskPredecessorRecordToCloudKit(sourceRecord: TaskPredecessor)
+    {
+        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as Int)) && (predecessorID == \(sourceRecord.predecessorID as Int))") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "TaskPredecessor", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+                if error != nil
+                {
+                    NSLog("Error querying records: \(error!.localizedDescription)")
+                }
+                else
+                {
+                    if records!.count > 0
+                    {
+                        let record = records!.first// as! CKRecord
+                        // Now you have grabbed your existing record from iCloud
+                        // Apply whatever changes you want
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record!.setValue(sourceRecord.predecessorType, forKey: "predecessorType")
+                        
+                        // Save this record again
+                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully updated record!")
+                                }
+                            }
+                        })
+                    }
+                    else
+                    {  // Insert
+                        let record = CKRecord(recordType: "TaskPredecessor")
+                        record.setValue(sourceRecord.taskID, forKey: "taskID")
+                        record.setValue(sourceRecord.predecessorID, forKey: "predecessorID")
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record.setValue(sourceRecord.predecessorType, forKey: "predecessorType")
+                        
+                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully saved record!")
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+    }
+    
+    func saveTaskUpdatesRecordToCloudKit(sourceRecord: TaskUpdates)
+    {
+        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as Int)) && (updateDate == %@)", sourceRecord.updateDate) // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "TaskUpdates", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+                if error != nil
+                {
+                    NSLog("Error querying records: \(error!.localizedDescription)")
+                }
+                else
+                {
+                    if records!.count > 0
+                    {
+                        let record = records!.first// as! CKRecord
+                        // Now you have grabbed your existing record from iCloud
+                        // Apply whatever changes you want
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record!.setValue(sourceRecord.details, forKey: "details")
+                        record!.setValue(sourceRecord.source, forKey: "source")
+                        
+                        // Save this record again
+                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully updated record!")
+                                }
+                            }
+                        })
+                    }
+                    else
+                    {  // Insert
+                        let record = CKRecord(recordType: "TaskUpdates")
+                        record.setValue(sourceRecord.taskID, forKey: "taskID")
+                        record.setValue(sourceRecord.updateDate, forKey: "updateDate")
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record.setValue(sourceRecord.details, forKey: "details")
+                        record.setValue(sourceRecord.source, forKey: "source")
+                        
+                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully saved record!")
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+    }
+    
+    func saveTeamRecordToCloudKit(sourceRecord: Team)
+    {
+        let predicate = NSPredicate(format: "(teamID == \(sourceRecord.teamID as Int))") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "Team", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+                if error != nil
+                {
+                    NSLog("Error querying records: \(error!.localizedDescription)")
+                }
+                else
+                {
+                    if records!.count > 0
+                    {
+                        let record = records!.first// as! CKRecord
+                        // Now you have grabbed your existing record from iCloud
+                        // Apply whatever changes you want
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record!.setValue(sourceRecord.name, forKey: "name")
+                        record!.setValue(sourceRecord.note, forKey: "note")
+                        record!.setValue(sourceRecord.status, forKey: "status")
+                        record!.setValue(sourceRecord.type, forKey: "type")
+                        record!.setValue(sourceRecord.predecessor, forKey: "predecessor")
+                        record!.setValue(sourceRecord.externalID, forKey: "externalID")
+                        
+                        
+                        // Save this record again
+                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully updated record!")
+                                }
+                            }
+                        })
+                    }
+                    else
+                    {  // Insert
+                        let record = CKRecord(recordType: "Team")
+                        record.setValue(sourceRecord.teamID, forKey: "teamID")
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record.setValue(sourceRecord.name, forKey: "name")
+                        record.setValue(sourceRecord.note, forKey: "note")
+                        record.setValue(sourceRecord.status, forKey: "status")
+                        record.setValue(sourceRecord.type, forKey: "type")
+                        record.setValue(sourceRecord.predecessor, forKey: "predecessor")
+                        record.setValue(sourceRecord.externalID, forKey: "externalID")
+                        
+                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully saved record!")
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+    }
+    
+    func saveProcessedEmailsRecordToCloudKit(sourceRecord: ProcessedEmails)
+    {
+        let predicate = NSPredicate(format: "(emailID == \"\(sourceRecord.emailID!)\")") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "ProcessedEmails", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+                if error != nil
+                {
+                    NSLog("Error querying records: \(error!.localizedDescription)")
+                }
+                else
+                {
+                    if records!.count > 0
+                    {
+                        let record = records!.first// as! CKRecord
+                        // Now you have grabbed your existing record from iCloud
+                        // Apply whatever changes you want
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record!.setValue(sourceRecord.emailType, forKey: "emailType")
+                        record!.setValue(sourceRecord.processedDate, forKey: "processedDate")
+                        
+                        // Save this record again
+                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully updated record!")
+                                }
+                            }
+                        })
+                    }
+                    else
+                    {  // Insert
+                        let record = CKRecord(recordType: "ProcessedEmails")
+                        record.setValue(sourceRecord.emailID, forKey: "emailID")
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        record.setValue(sourceRecord.updateType, forKey: "updateType")
+                        record.setValue(sourceRecord.emailType, forKey: "emailType")
+                        record.setValue(sourceRecord.processedDate, forKey: "processedDate")
+                        
+                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully saved record!")
+                                }
+                            }
+                        })
+                    }
+                }
+            })
+    }
+
+    private func updateContextRecord(sourceRecord: CKRecord)
+    {
+        var predecessor: Int = 0
+        
+        let contextID = sourceRecord.objectForKey("contextID") as! Int
+        let autoEmail = sourceRecord.objectForKey("autoEmail") as! String
+        let email = sourceRecord.objectForKey("email") as! String
+        let name = sourceRecord.objectForKey("name") as! String
+        let parentContext = sourceRecord.objectForKey("parentContext") as! Int
+        let personID = sourceRecord.objectForKey("personID") as! Int
+        let status = sourceRecord.objectForKey("status") as! String
+        let teamID = sourceRecord.objectForKey("teamID") as! Int
+        let contextType = sourceRecord.objectForKey("contextType") as! String
+        
+        if sourceRecord.objectForKey("predecessor") != nil
+        {
+            predecessor = sourceRecord.objectForKey("predecessor") as! Int
+        }
+        
+        var updateTime = NSDate()
+        if sourceRecord.objectForKey("updateTime") != nil
+        {
+            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+        }
+        
+        var updateType = ""
+        
+        if sourceRecord.objectForKey("updateType") != nil
+        {
+            updateType = sourceRecord.objectForKey("updateType") as! String
+        }
+
+        myDatabaseConnection.saveContext(contextID, inName: name, inEmail: email, inAutoEmail: autoEmail, inParentContext: parentContext, inStatus: status, inPersonID: personID, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+        
+        myDatabaseConnection.saveContext1_1(contextID, predecessor: predecessor, contextType: contextType, updateTime: updateTime, updateType: updateType)
+    }
+
+    private func updateDecodeRecord(sourceRecord: CKRecord)
+    {
+        let decodeName = sourceRecord.objectForKey("decode_name") as! String
+        let decodeValue = sourceRecord.objectForKey("decode_value") as! String
+        let decodeType = sourceRecord.objectForKey("decodeType") as! String
+        
+        var updateTime = NSDate()
+        if sourceRecord.objectForKey("updateTime") != nil
+        {
+            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+        }
+    
+        var updateType = ""
+        
+        if sourceRecord.objectForKey("updateType") != nil
+        {
+            updateType = sourceRecord.objectForKey("updateType") as! String
+        }
+        
+        myDatabaseConnection.updateDecodeValue(decodeName, inCodeValue: decodeValue, inCodeType: decodeType, inUpdateTime: updateTime, inUpdateType: updateType)
+    }
+    
+    private func updateGTDItemRecord(sourceRecord: CKRecord)
+    {
+        let gTDItemID = sourceRecord.objectForKey("gTDItemID") as! Int
+        var updateTime = NSDate()
+        if sourceRecord.objectForKey("updateTime") != nil
+        {
+            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+        }
+        
+        var updateType = ""
+        
+        if sourceRecord.objectForKey("updateType") != nil
+        {
+            updateType = sourceRecord.objectForKey("updateType") as! String
+        }
+        let gTDParentID = sourceRecord.objectForKey("gTDParentID") as! Int
+        let lastReviewDate = sourceRecord.objectForKey("lastReviewDate") as! NSDate
+        let note = sourceRecord.objectForKey("note") as! String
+        let predecessor = sourceRecord.objectForKey("predecessor") as! Int
+        let reviewFrequency = sourceRecord.objectForKey("reviewFrequency") as! Int
+        let reviewPeriod = sourceRecord.objectForKey("reviewPeriod") as! String
+        let status = sourceRecord.objectForKey("status") as! String
+        let teamID = sourceRecord.objectForKey("teamID") as! Int
+        let title = sourceRecord.objectForKey("title") as! String
+        let gTDLevel = sourceRecord.objectForKey("gTDLevel") as! Int
+        
+        myDatabaseConnection.saveGTDItem(gTDItemID, inParentID: gTDParentID, inTitle: title, inStatus: status, inTeamID: teamID, inNote: note, inLastReviewDate: lastReviewDate, inReviewFrequency: reviewFrequency, inReviewPeriod: reviewPeriod, inPredecessor: predecessor, inGTDLevel: gTDLevel, inUpdateTime: updateTime, inUpdateType: updateType)
+    }
+    
+    private func updateGTDLevelRecord(sourceRecord: CKRecord)
+    {
+        let gTDLevel = sourceRecord.objectForKey("gTDLevel") as! Int
+        var updateTime = NSDate()
+        if sourceRecord.objectForKey("updateTime") != nil
+        {
+            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+        }
+        
+        var updateType = ""
+        
+        if sourceRecord.objectForKey("updateType") != nil
+        {
+            updateType = sourceRecord.objectForKey("updateType") as! String
+        }
+        let teamID = sourceRecord.objectForKey("teamID") as! Int
+        let levelName = sourceRecord.objectForKey("levelName") as! String
+        
+        myDatabaseConnection.saveGTDLevel(gTDLevel, inLevelName: levelName, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+    }
+    
+    private func updateMeetingAgendaRecord(sourceRecord: CKRecord)
+    {
+        let meetingID = sourceRecord.objectForKey("meetingID") as! String
+        var updateTime = NSDate()
+        if sourceRecord.objectForKey("updateTime") != nil
+        {
+            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+        }
+        
+        var updateType = ""
+        
+        if sourceRecord.objectForKey("updateType") != nil
+        {
+            updateType = sourceRecord.objectForKey("updateType") as! String
+        }
+        let chair = sourceRecord.objectForKey("chair") as! String
+        let endTime = sourceRecord.objectForKey("endTime") as! NSDate
+        let location = sourceRecord.objectForKey("location") as! String
+        let minutes = sourceRecord.objectForKey("minutes") as! String
+        let minutesType = sourceRecord.objectForKey("minutesType") as! String
+        let name = sourceRecord.objectForKey("name") as! String
+        let previousMeetingID = sourceRecord.objectForKey("previousMeetingID") as! String
+        let startTime = sourceRecord.objectForKey("meetingStartTime") as! NSDate
+        let teamID = sourceRecord.objectForKey("actualTeamID") as! Int
+        
+        myDatabaseConnection.saveAgenda(meetingID, inPreviousMeetingID : previousMeetingID, inName: name, inChair: chair, inMinutes: minutes, inLocation: location, inStartTime: startTime, inEndTime: endTime, inMinutesType: minutesType, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+    }
+    
+    private func updateMeetingAgendaItemRecord(sourceRecord: CKRecord)
+    {
+        let meetingID = sourceRecord.objectForKey("meetingID") as! String
+        let agendaID = sourceRecord.objectForKey("agendaID") as! Int
+        var updateTime = NSDate()
+        if sourceRecord.objectForKey("updateTime") != nil
+        {
+            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+        }
+        
+        var updateType = ""
+        
+        if sourceRecord.objectForKey("updateType") != nil
+        {
+            updateType = sourceRecord.objectForKey("updateType") as! String
+        }
+        var actualEndTime: NSDate!
+        if sourceRecord.objectForKey("actualEndTime") != nil
+        {
+            actualEndTime = sourceRecord.objectForKey("actualEndTime") as! NSDate
+        }
+        else
+        {
+            actualEndTime = getDefaultDate()
+        }
+        var actualStartTime: NSDate!
+        if sourceRecord.objectForKey("actualStartTime") != nil
+        {
+            actualStartTime = sourceRecord.objectForKey("actualStartTime") as! NSDate
+        }
+        else
+        {
+            actualStartTime = getDefaultDate()
+        }
+        let decisionMade = sourceRecord.objectForKey("decisionMade") as! String
+        let discussionNotes = sourceRecord.objectForKey("discussionNotes") as! String
+        let owner = sourceRecord.objectForKey("owner") as! String
+        let status = sourceRecord.objectForKey("status") as! String
+        let timeAllocation = sourceRecord.objectForKey("timeAllocation") as! Int
+        let title = sourceRecord.objectForKey("title") as! String
+        let meetingOrder = sourceRecord.objectForKey("meetingOrder") as! Int
+        
+        myDatabaseConnection.saveAgendaItem(meetingID, actualEndTime: actualEndTime, actualStartTime: actualStartTime, status: status, decisionMade: decisionMade, discussionNotes: discussionNotes, timeAllocation: timeAllocation, owner: owner, title: title, agendaID: agendaID, meetingOrder: meetingOrder, inUpdateTime: updateTime, inUpdateType: updateType)
+    }
+    
+    private func updateMeetingAttendeesRecord(sourceRecord: CKRecord)
+    {
+        let meetingID = sourceRecord.objectForKey("meetingID") as! String
+        let name  = sourceRecord.objectForKey("name") as! String
+        var updateTime = NSDate()
+        if sourceRecord.objectForKey("updateTime") != nil
+        {
+            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+        }
+        
+        var updateType = ""
+        
+        if sourceRecord.objectForKey("updateType") != nil
+        {
+            updateType = sourceRecord.objectForKey("updateType") as! String
+        }
+        let attendenceStatus = sourceRecord.objectForKey("attendenceStatus") as! String
+        let email = sourceRecord.objectForKey("email") as! String
+        let type = sourceRecord.objectForKey("type") as! String
+        
+        myDatabaseConnection.saveAttendee(meetingID, name: name, email: email,  type: type, status: attendenceStatus, inUpdateTime: updateTime, inUpdateType: updateType)
+    }
+    
+    private func updateMeetingSupportingDocsRecord(sourceRecord: CKRecord)
+    {
+      //  let meetingID = sourceRecord.objectForKey("meetingID") as! String
+        //              let agendaID = sourceRecord.objectForKey("agendaID") as! Int
+        //        var updateTime = NSDate()
+        //        if sourceRecord.objectForKey("updateTime") != nil
+        //        {
+        //            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+        //        }
+        
+        //       var updateType = ""
+        
+        //      if sourceRecord.objectForKey("updateType") != nil
+        //      {
+        //          updateType = sourceRecord.objectForKey("updateType") as! String
+        //      }
+        //              let attachmentPath = sourceRecord.objectForKey("attachmentPath") as! String
+        //              let title = sourceRecord.objectForKey("title") as! String
+        
+        NSLog("updateMeetingSupportingDocsInCoreData - Need to have the save for this")
+        
+        // myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+    }
+    
+    private func updateMeetingTasksRecord(sourceRecord: CKRecord)
+    {
+        let meetingID = sourceRecord.objectForKey("meetingID") as! String
+        let agendaID = sourceRecord.objectForKey("agendaID") as! Int
+        var updateTime = NSDate()
+        if sourceRecord.objectForKey("updateTime") != nil
+        {
+            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+        }
+        
+        var updateType = ""
+        
+        if sourceRecord.objectForKey("updateType") != nil
+        {
+            updateType = sourceRecord.objectForKey("updateType") as! String
+        }
+        let taskID = sourceRecord.objectForKey("taskID") as! Int
+        
+        myDatabaseConnection.saveMeetingTask(agendaID, meetingID: meetingID, taskID: taskID, inUpdateTime: updateTime, inUpdateType: updateType)
+    }
+    
+    private func updatePanesRecord(sourceRecord: CKRecord)
+    {
+        let pane_name = sourceRecord.objectForKey("pane_name") as! String
+        var updateTime = NSDate()
+        if sourceRecord.objectForKey("updateTime") != nil
+        {
+            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+        }
+        
+        var updateType = ""
+        
+        if sourceRecord.objectForKey("updateType") != nil
+        {
+            updateType = sourceRecord.objectForKey("updateType") as! String
+        }
+        let pane_available = sourceRecord.objectForKey("pane_available") as! Bool
+        let pane_order = sourceRecord.objectForKey("pane_order") as! Int
+        let pane_visible = sourceRecord.objectForKey("pane_visible") as! Bool
+        
+        myDatabaseConnection.savePane(pane_name, inPaneAvailable: pane_available, inPaneVisible: pane_visible, inPaneOrder: pane_order, inUpdateTime: updateTime, inUpdateType: updateType)
+    }
+    
+    private func updateProjectsRecord(sourceRecord: CKRecord)
+    {
+        let projectID = sourceRecord.objectForKey("projectID") as! Int
+        var updateTime = NSDate()
+        if sourceRecord.objectForKey("updateTime") != nil
+        {
+            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+        }
+        
+        var updateType = ""
+        
+        if sourceRecord.objectForKey("updateType") != nil
+        {
+            updateType = sourceRecord.objectForKey("updateType") as! String
+        }
+        let areaID = sourceRecord.objectForKey("areaID") as! Int
+        let lastReviewDate = sourceRecord.objectForKey("lastReviewDate") as! NSDate
+        let projectEndDate = sourceRecord.objectForKey("projectEndDate") as! NSDate
+        let projectName = sourceRecord.objectForKey("projectName") as! String
+        let projectStartDate = sourceRecord.objectForKey("projectStartDate") as! NSDate
+        let projectStatus = sourceRecord.objectForKey("projectStatus") as! String
+        let repeatBase = sourceRecord.objectForKey("repeatBase") as! String
+        let repeatInterval = sourceRecord.objectForKey("repeatInterval") as! Int
+        let repeatType = sourceRecord.objectForKey("repeatType") as! String
+        let reviewFrequency = sourceRecord.objectForKey("reviewFrequency") as! Int
+        let teamID = sourceRecord.objectForKey("teamID") as! Int
+        let note = sourceRecord.objectForKey("note") as! String
+        let reviewPeriod = sourceRecord.objectForKey("reviewPeriod") as! String
+        let predecessor = sourceRecord.objectForKey("predecessor") as! Int
+        
+        myDatabaseConnection.saveProject(projectID, inProjectEndDate: projectEndDate, inProjectName: projectName, inProjectStartDate: projectStartDate, inProjectStatus: projectStatus, inReviewFrequency: reviewFrequency, inLastReviewDate: lastReviewDate, inGTDItemID: areaID, inRepeatInterval: repeatInterval, inRepeatType: repeatType, inRepeatBase: repeatBase, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+        
+        myDatabaseConnection.saveProjectNote(projectID, inNote: note, inReviewPeriod: reviewPeriod, inPredecessor: predecessor, inUpdateTime: updateTime, inUpdateType: updateType)
+    }
+    
+    private func updateProjectTeamMembersRecord(sourceRecord: CKRecord)
+    {
+        let projectID = sourceRecord.objectForKey("projectID") as! Int
+        let teamMember = sourceRecord.objectForKey("teamMember") as! String
+        var updateTime = NSDate()
+        if sourceRecord.objectForKey("updateTime") != nil
+        {
+            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+        }
+        
+        var updateType = ""
+        
+        if sourceRecord.objectForKey("updateType") != nil
+        {
+            updateType = sourceRecord.objectForKey("updateType") as! String
+        }
+        let roleID = sourceRecord.objectForKey("roleID") as! Int
+        let projectMemberNotes = sourceRecord.objectForKey("projectMemberNotes") as! String
+        
+        myDatabaseConnection.saveTeamMember(projectID, inRoleID: roleID, inPersonName: teamMember, inNotes: projectMemberNotes, inUpdateTime: updateTime, inUpdateType: updateType)
+    }
+    
+    private func updateRolesRecord(sourceRecord: CKRecord)
+    {
+        let roleID = sourceRecord.objectForKey("roleID") as! Int
+        var updateTime = NSDate()
+        if sourceRecord.objectForKey("updateTime") != nil
+        {
+            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+        }
+        
+        var updateType = ""
+        
+        if sourceRecord.objectForKey("updateType") != nil
+        {
+            updateType = sourceRecord.objectForKey("updateType") as! String
+        }
+        let teamID = sourceRecord.objectForKey("teamID") as! Int
+        let roleDescription = sourceRecord.objectForKey("roleDescription") as! String
+        
+        myDatabaseConnection.saveCloudRole(roleDescription, teamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType, roleID: roleID)
+    }
+    
+    private func updateStagesRecord(sourceRecord: CKRecord)
+    {
+        let stageDescription = sourceRecord.objectForKey("stageDescription") as! String
+        var updateTime = NSDate()
+        if sourceRecord.objectForKey("updateTime") != nil
+        {
+            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+        }
+        
+        var updateType = ""
+        
+        if sourceRecord.objectForKey("updateType") != nil
+        {
+            updateType = sourceRecord.objectForKey("updateType") as! String
+        }
+        let teamID = sourceRecord.objectForKey("teamID") as! Int
+        
+        myDatabaseConnection.saveStage(stageDescription, teamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+    }
+    
+    private func updateTaskRecord(sourceRecord: CKRecord)
+    {
+        let taskID = sourceRecord.objectForKey("taskID") as! Int
+        var updateTime = NSDate()
+        if sourceRecord.objectForKey("updateTime") != nil
+        {
+            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+        }
+        
+        var updateType = ""
+        
+        if sourceRecord.objectForKey("updateType") != nil
+        {
+            updateType = sourceRecord.objectForKey("updateType") as! String
+        }
+        let completionDate = sourceRecord.objectForKey("completionDate") as! NSDate
+        let details = sourceRecord.objectForKey("details") as! String
+        let dueDate = sourceRecord.objectForKey("dueDate") as! NSDate
+        let energyLevel = sourceRecord.objectForKey("energyLevel") as! String
+        let estimatedTime = sourceRecord.objectForKey("estimatedTime") as! Int
+        let estimatedTimeType = sourceRecord.objectForKey("estimatedTimeType") as! String
+        let flagged = sourceRecord.objectForKey("flagged") as! Bool
+        let priority = sourceRecord.objectForKey("priority") as! String
+        let repeatBase = sourceRecord.objectForKey("repeatBase") as! String
+        let repeatInterval = sourceRecord.objectForKey("repeatInterval") as! Int
+        let repeatType = sourceRecord.objectForKey("repeatType") as! String
+        let startDate = sourceRecord.objectForKey("startDate") as! NSDate
+        let status = sourceRecord.objectForKey("status") as! String
+        let teamID = sourceRecord.objectForKey("teamID") as! Int
+        let title = sourceRecord.objectForKey("title") as! String
+        let urgency = sourceRecord.objectForKey("urgency") as! String
+        let projectID = sourceRecord.objectForKey("projectID") as! Int
+        
+        myDatabaseConnection.saveTask(taskID, inTitle: title, inDetails: details, inDueDate: dueDate, inStartDate: startDate, inStatus: status, inPriority: priority, inEnergyLevel: energyLevel, inEstimatedTime: estimatedTime, inEstimatedTimeType: estimatedTimeType, inProjectID: projectID, inCompletionDate: completionDate, inRepeatInterval: repeatInterval, inRepeatType: repeatType, inRepeatBase: repeatBase, inFlagged: flagged, inUrgency: urgency, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+    }
+    
+    private func updateTaskAttachmentRecord(sourceRecord: CKRecord)
+    {
+        //    let taskID = sourceRecord.objectForKey("taskID") as! Int
+        //    let title = sourceRecord.objectForKey("title") as! String
+        //        var updateTime = NSDate()
+        //        if sourceRecord.objectForKey("updateTime") != nil
+        //        {
+        //            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+        //        }
+        
+        //        var updateType = ""
+        
+        //       if sourceRecord.objectForKey("updateType") != nil
+        //       {
+        //           updateType = sourceRecord.objectForKey("updateType") as! String
+        //       }
+        //    let attachment = sourceRecord.objectForKey("attachment") as! NSData
+        NSLog("updateTaskAttachmentInCoreData - Still to be coded")
+        //   myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+    }
+    
+    private func updateTaskContextRecord(sourceRecord: CKRecord)
+    {
+        let taskID = sourceRecord.objectForKey("taskID") as! Int
+        let contextID = sourceRecord.objectForKey("contextID") as! Int
+        var updateTime = NSDate()
+        if sourceRecord.objectForKey("updateTime") != nil
+        {
+            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+        }
+        
+        var updateType = ""
+        
+        if sourceRecord.objectForKey("updateType") != nil
+        {
+            updateType = sourceRecord.objectForKey("updateType") as! String
+        }
+        
+        myDatabaseConnection.saveTaskContext(contextID, inTaskID: taskID, inUpdateTime: updateTime, inUpdateType: updateType)
+    }
+    
+    private func updateTaskPredecessorRecord(sourceRecord: CKRecord)
+    {
+        let taskID = sourceRecord.objectForKey("taskID") as! Int
+        let predecessorID = sourceRecord.objectForKey("predecessorID") as! Int
+        var updateTime = NSDate()
+        if sourceRecord.objectForKey("updateTime") != nil
+        {
+            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+        }
+        
+        var updateType = ""
+        
+        if sourceRecord.objectForKey("updateType") != nil
+        {
+            updateType = sourceRecord.objectForKey("updateType") as! String
+        }
+        let predecessorType = sourceRecord.objectForKey("predecessorType") as! String
+        
+        myDatabaseConnection.savePredecessorTask(taskID, inPredecessorID: predecessorID, inPredecessorType: predecessorType, inUpdateTime: updateTime, inUpdateType: updateType)
+    }
+    
+    private func updateTaskUpdatesRecord(sourceRecord: CKRecord)
+    {
+        let taskID = sourceRecord.objectForKey("taskID") as! Int
+        let updateDate = sourceRecord.objectForKey("updateDate") as! NSDate
+        var updateTime = NSDate()
+        if sourceRecord.objectForKey("updateTime") != nil
+        {
+            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+        }
+        
+        var updateType = ""
+        
+        if sourceRecord.objectForKey("updateType") != nil
+        {
+            updateType = sourceRecord.objectForKey("updateType") as! String
+        }
+        let details = sourceRecord.objectForKey("details") as! String
+        let source = sourceRecord.objectForKey("source") as! String
+        
+        myDatabaseConnection.saveTaskUpdate(taskID, inDetails: details, inSource: source, inUpdateDate: updateDate, inUpdateTime: updateTime, inUpdateType: updateType)
+    }
+    
+    private func updateTeamRecord(sourceRecord: CKRecord)
+    {
+        let teamID = sourceRecord.objectForKey("teamID") as! Int
+        var updateTime = NSDate()
+        if sourceRecord.objectForKey("updateTime") != nil
+        {
+            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+        }
+        
+        var updateType = ""
+        
+        if sourceRecord.objectForKey("updateType") != nil
+        {
+            updateType = sourceRecord.objectForKey("updateType") as! String
+        }
+        let name = sourceRecord.objectForKey("name") as! String
+        let note = sourceRecord.objectForKey("note") as! String
+        let status = sourceRecord.objectForKey("status") as! String
+        let type = sourceRecord.objectForKey("type") as! String
+        let predecessor = sourceRecord.objectForKey("predecessor") as! Int
+        let externalID = sourceRecord.objectForKey("externalID") as! Int
+        
+        myDatabaseConnection.saveTeam(teamID, inName: name, inStatus: status, inNote: note, inType: type, inPredecessor: predecessor, inExternalID: externalID, inUpdateTime: updateTime, inUpdateType: updateType)
+    }
+    
+    private func updateProcessedEmailsRecord(sourceRecord: CKRecord)
+    {
+        let emailID = sourceRecord.objectForKey("emailID") as! String
+        var updateTime = NSDate()
+        if sourceRecord.objectForKey("updateTime") != nil
+        {
+            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+        }
+        
+        var updateType = ""
+        
+        if sourceRecord.objectForKey("updateType") != nil
+        {
+            updateType = sourceRecord.objectForKey("updateType") as! String
+        }
+        let emailType = sourceRecord.objectForKey("emailType") as! String
+        let processedDate = sourceRecord.objectForKey("processedDate") as! NSDate
+        
+        myDatabaseConnection.saveProcessedEmail(emailID, emailType: emailType, processedDate: processedDate, updateTime: updateTime, updateType: updateType)
+    }
+    
+    private func createSubscription(sourceTable:String, sourceQuery: String)
+    {
+        let predicate: NSPredicate = NSPredicate(format: sourceQuery)
+        let subscription = CKSubscription(recordType: sourceTable, predicate: predicate, options: [CKSubscriptionOptions.FiresOnRecordCreation, CKSubscriptionOptions.FiresOnRecordUpdate])
+        
+        let notification = CKNotificationInfo()
+        
+        subscription.notificationInfo = notification
+        
+        let sem = dispatch_semaphore_create(0);
+        
+        NSLog("Creating subscription for \(sourceTable)")
+        
+        self.privateDB.saveSubscription(subscription) { (result, error) -> Void in
+            if error != nil
+            {
+                print("Table = \(sourceTable)  Error = \(error!.localizedDescription)")
+            }
+            
+            dispatch_semaphore_signal(sem)
+        }
+
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER)
+    }
+    
+    func setupSubscriptions()
+    {
+        // Setup notification
+        
+        let sem = dispatch_semaphore_create(0);
+        
+        privateDB.fetchAllSubscriptionsWithCompletionHandler() { [unowned self] (subscriptions, error) -> Void in
+            if error == nil
+            {
+                if let subscriptions = subscriptions
+                {
+                    for subscription in subscriptions
+                    {
+                        self.privateDB.deleteSubscriptionWithID(subscription.subscriptionID, completionHandler: { (str, error) -> Void in
+                            if error != nil
+                            {
+                                // do your error handling here!
+                                print(error!.localizedDescription)
+                            }
+                        })
+
+                    }
+                }
+            }
+            else
+            {
+                // do your error handling here!
+                print(error!.localizedDescription)
+            }
+            dispatch_semaphore_signal(sem)
+        }
+    
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        
+        createSubscription("Context", sourceQuery: "contextID > -1")
+        
+        createSubscription("Decodes", sourceQuery: "decode_name != ''")
+        
+        createSubscription("GTDItem", sourceQuery: "gTDItemID > -1")
+        
+        createSubscription("GTDLevel", sourceQuery: "gTDLevel > -1")
+        
+        createSubscription("MeetingTasks", sourceQuery: "meetingID != ''")
+        
+        createSubscription("MeetingAgenda", sourceQuery: "meetingID != ''")
+        
+        createSubscription("MeetingAgendaItem", sourceQuery: "meetingID != ''")
+        
+        createSubscription("MeetingAttendees", sourceQuery: "meetingID != ''")
+        
+        createSubscription("MeetingSupportingDocs", sourceQuery: "meetingID != ''")
+        
+        createSubscription("Panes", sourceQuery: "pane_name != ''")
+        
+        createSubscription("ProcessedEmails", sourceQuery: "emailID != ''")
+        
+        createSubscription("Projects", sourceQuery: "projectID > -1")
+        
+        createSubscription("ProjectTeamMembers", sourceQuery: "projectID > -1")
+        
+        createSubscription("Stages", sourceQuery: "stageDescription != ''")
+        
+        createSubscription("Roles", sourceQuery:  "roleDescription != ''")
+        
+        createSubscription("Task", sourceQuery: "taskID > -1")
+            
+        createSubscription("TaskAttachment", sourceQuery: "taskID > -1")
+                
+        createSubscription("TaskContext", sourceQuery: "taskID > -1")
+                    
+        createSubscription("TaskPredecessor", sourceQuery: "taskID > -1")
+                        
+        createSubscription("TaskUpdates", sourceQuery: "taskID > -1")
+                            
+        createSubscription("Team", sourceQuery: "teamID > -1")
+    }
+    
+    func getRecords(sourceID: CKRecordID)
+    {
+        NSLog("source record = \(sourceID)")
+        
+        privateDB.fetchRecordWithID(sourceID)
+        { (record, error) -> Void in
+            if error == nil
+            {
+                NSLog("record = \(record)")
+                
+                NSLog("recordtype = \(record!.recordType)")
+
+                switch record!.recordType
+                {
+                    case "Context" :
+                        self.updateContextRecord(record!)
+
+                    case "Decodes" :
+                        self.updateDecodeRecord(record!)
+                    
+                    case "GTDItem" :
+                        self.updateGTDItemRecord(record!)
+                    
+                    case "GTDLevel" :
+                        self.updateGTDLevelRecord(record!)
+                    
+                    case "MeetingTasks" :
+                        self.updateMeetingTasksRecord(record!)
+                    
+                    case "MeetingAgenda" :
+                        self.updateMeetingAgendaRecord(record!)
+                    
+                    case "MeetingAgendaItem" :
+                        self.updateMeetingAgendaItemRecord(record!)
+                    
+                    case "MeetingAttendees" :
+                        self.updateMeetingAttendeesRecord(record!)
+                    
+                    case "MeetingSupportingDocs" :
+                        self.updateMeetingSupportingDocsRecord(record!)
+                    
+                    case "Panes" :
+                        self.updatePanesRecord(record!)
+                    
+                    case "ProcessedEmails" :
+                        self.updateProcessedEmailsRecord(record!)
+                    
+                    case "Projects" :
+                        self.updateProjectsRecord(record!)
+                    
+                    case "ProjectTeamMembers" :
+                        self.updateProjectTeamMembersRecord(record!)
+                    
+                    case "Stages" :
+                        self.updateStagesRecord(record!)
+                    
+                    case "Roles" :
+                        self.updateRolesRecord(record!)
+                    
+                    case "Task" :
+                        self.updateTaskRecord(record!)
+                    
+                    case "TaskAttachment" :
+                        self.updateTaskAttachmentRecord(record!)
+                    
+                    case "TaskContext" :
+                        self.updateTaskContextRecord(record!)
+                    
+                    case "TaskPredecessor" :
+                        self.updateTaskPredecessorRecord(record!)
+                    
+                    case "TaskUpdates" :
+                        self.updateTaskUpdatesRecord(record!)
+                    
+                    case "Team" :
+                        self.updateTeamRecord(record!)
+                    
+                    default:
+                        NSLog("getRecords error in switch")
+                }
+            }
+            else
+            {
+                NSLog("Error = \(error)")
+            }
+        }
     }
 }

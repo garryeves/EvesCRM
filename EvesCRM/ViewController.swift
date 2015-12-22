@@ -2740,7 +2740,7 @@ print("Nothing found")
         showFields()
         
         myDisplayType = "Project"
-        mySelectedProject = project(inProjectID: projectID, inTeamID: teamID)
+        mySelectedProject = project(inProjectID: projectID)
         
         displayScreen()
         

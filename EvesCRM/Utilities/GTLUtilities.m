@@ -40,16 +40,25 @@ const CFStringRef kCharsToForceEscape = CFSTR("!*'();:@&=+$,/?%#[]");
 
   NSString *resultStr = str;
 
-  CFStringRef originalString = (CFStringRef) str;
-  CFStringRef leaveUnescaped = NULL;
+//  CFStringRef originalString = (CFStringRef) str;
+//  CFStringRef leaveUnescaped = NULL;
 
-  CFStringRef escapedStr;
+  //CFStringRef escapedStr;
+  
+    NSString *escapedStr;
     
-  escapedStr = CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
-                                                       originalString,
-                                                       leaveUnescaped,
-                                                       kCharsToForceEscape,
-                                                       kCFStringEncodingUTF8);
+    
+//  escapedStr = CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
+ //                                                      originalString,
+//                                                       leaveUnescaped,
+//                                                       kCharsToForceEscape,
+//                                                       kCFStringEncodingUTF8);
+
+    
+    
+    escapedStr = [resultStr stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+  //  escapedStr = resultStr.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet());
+    
   if (escapedStr) {
     resultStr = [(id)CFMakeCollectable(escapedStr) autorelease];
   }
@@ -61,15 +70,21 @@ const CFStringRef kCharsToForceEscape = CFSTR("!*'();:@&=+$,/?%#[]");
   // them with +'s
   NSString *resultStr = str;
 
-  CFStringRef originalString = (CFStringRef) str;
-  CFStringRef leaveUnescaped = CFSTR(" ");
+//  CFStringRef originalString = (CFStringRef) str;
+//  CFStringRef leaveUnescaped = CFSTR(" ");
 
-  CFStringRef escapedStr;
-  escapedStr = CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
-                                                       originalString,
-                                                       leaveUnescaped,
-                                                       kCharsToForceEscape,
-                                                       kCFStringEncodingUTF8);
+//  CFStringRef escapedStr;
+    
+  NSString *escapedStr;
+    
+//  escapedStr = CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
+//                                                       originalString,
+//                                                       leaveUnescaped,
+//                                                       kCharsToForceEscape,
+//                                                       kCFStringEncodingUTF8);
+    
+    escapedStr = [resultStr stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+
 
   if (escapedStr) {
     NSMutableString *mutableStr = [NSMutableString stringWithString:(NSString *)escapedStr];

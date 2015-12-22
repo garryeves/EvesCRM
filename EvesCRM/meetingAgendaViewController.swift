@@ -38,13 +38,13 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
     private let myCalendar = NSCalendar.currentCalendar()
     private var myWorkingTime: NSDate = NSDate()
         
-    lazy var activityPopover:UIPopoverController = {
-        return UIPopoverController(contentViewController: self.activityViewController)
-        }()
+//    lazy var activityPopover:UIPopoverController = {
+//        return UIPopoverController(contentViewController: self.activityViewController)
+//        }()
     
-    lazy var activityViewController:UIActivityViewController = {
-        return self.createActivityController()
-        }()
+//    lazy var activityViewController:UIActivityViewController = {
+//        return self.createActivityController()
+//        }()
     
     // Textexpander
     
@@ -490,14 +490,23 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
     func share(sender: AnyObject)
     {
         if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-            self.navigationController?.presentViewController(activityViewController, animated: true, completion: nil)
+            //self.navigationController?.presentViewController(activityViewController, animated: true, completion: nil)
+            let activityViewController: UIActivityViewController = createActivityController()
+            activityViewController.popoverPresentationController!.sourceView = sender.view
+            presentViewController(activityViewController, animated:true, completion:nil)
         } else if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
             // actually, you don't have to do this. But if you do want a popover, this is how to do it.
             iPad(sender)
         }
     }
     
-    func iPad(sender: AnyObject) {
+    func iPad(sender: AnyObject)
+    {
+        let activityViewController: UIActivityViewController = createActivityController()
+        activityViewController.modalPresentationStyle = UIModalPresentationStyle.Popover
+        activityViewController.popoverPresentationController!.sourceView = sender.view
+        presentViewController(activityViewController, animated:true, completion:nil)
+        /*
         if !self.activityPopover.popoverVisible {
             if sender is UIBarButtonItem {
                 self.activityPopover.presentPopoverFromBarButtonItem(sender as! UIBarButtonItem,
@@ -513,6 +522,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
         } else {
             self.activityPopover.dismissPopoverAnimated(true)
         }
+*/
     }
     //---------------------------------------------------------------
     // These three methods implement the SMTEFillDelegate protocol to support fill-ins

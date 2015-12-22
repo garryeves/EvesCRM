@@ -70,13 +70,13 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
     private var colContextsHeight: CGFloat!
     private var constraintArray: [NSLayoutConstraint] = Array()
     
-    lazy var activityPopover:UIPopoverController = {
-        return UIPopoverController(contentViewController: self.activityViewController)
-        }()
+//    lazy var activityPopover:UIPopoverController = {
+//        return UIPopoverController(contentViewController: self.activityViewController)
+//        }()
     
-    lazy var activityViewController:UIActivityViewController = {
-        return self.createActivityController()
-        }()
+//    lazy var activityViewController:UIActivityViewController = {
+//        return self.createActivityController()
+//        }()
 
     // Textexpander
     
@@ -1303,14 +1303,22 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
     func share(sender: AnyObject)
     {
         if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-            self.navigationController?.presentViewController(activityViewController, animated: true, completion: nil)
+            let activityViewController: UIActivityViewController = createActivityController()
+            activityViewController.popoverPresentationController!.sourceView = sender.view
+            presentViewController(activityViewController, animated:true, completion:nil)
         } else if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
             // actually, you don't have to do this. But if you do want a popover, this is how to do it.
             iPad(sender)
         }
     }
     
-    func iPad(sender: AnyObject) {
+    func iPad(sender: AnyObject)
+    {
+        let activityViewController: UIActivityViewController = createActivityController()
+        activityViewController.modalPresentationStyle = UIModalPresentationStyle.Popover
+        activityViewController.popoverPresentationController!.sourceView = sender.view
+        presentViewController(activityViewController, animated:true, completion:nil)
+        /*
         if !self.activityPopover.popoverVisible {
             if sender is UIBarButtonItem {
                 self.activityPopover.presentPopoverFromBarButtonItem(sender as! UIBarButtonItem,
@@ -1326,6 +1334,7 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         } else {
             self.activityPopover.dismissPopoverAnimated(true)
         }
+*/
     }
     
     func keyboardWillShow(notification: NSNotification)

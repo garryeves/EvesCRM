@@ -1124,7 +1124,7 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
     func createOneNoteObject(inName: String, inType: String, inParent: String) -> String
     {
         var ret_val: String = ""
-        var response: NSURLResponse?
+//        var response: NSURLResponse?
         
         var myCommand: String = ""
         var myBody: String = ""
@@ -1168,17 +1168,54 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
                 
                 // Send the HTTP request
                 
-            let result: NSData?
-                do
-                {
-                    result = try NSURLConnection.sendSynchronousRequest(request, returningResponse:&response)
-                }
-                catch let error1 as NSError
-                {
-                    NSLog("createOneNoteObject\(error1)")
-                    result = nil
-                }
+  //          let result: NSData?
+  //              do
+  //              {
+  //                  result = try NSURLConnection.sendSynchronousRequest(request, returningResponse:&response)
+  //              }
+  //              catch let error1 as NSError
+  //              {
+  //                  NSLog("createOneNoteObject\(error1)")
+ //                   result = nil
+ //               }
                 
+                let session = NSURLSession.sharedSession()
+                
+                let sem = dispatch_semaphore_create(0);
+                
+                let task = session.dataTaskWithRequest(request, completionHandler: {data, myresponse, error -> Void in
+                    
+                    let httpResponse = myresponse as? NSHTTPURLResponse
+                    
+                    let status = httpResponse!.statusCode
+                    
+                    let myReturnString = NSString(data: data!, encoding: NSUTF8StringEncoding) as! String
+                    
+                    if status == 201
+                    {
+                        switch inType
+                        {
+                        case "Notebook" :
+                            ret_val = self.processNotebookCreateReturn(myReturnString)
+                            
+                        case "Section" :
+                            ret_val = self.processNotebookCreateReturn(myReturnString)
+                            
+                        default: print("createOneNoteObject: invalid type passed in")
+                        }
+
+                    }
+                    else
+                    {
+                        print("oneNoteData: createOneNoteObject: There was an error accessing the OneNote data. Response code: \(status)")
+                    }
+                    dispatch_semaphore_signal(sem)
+                })
+                
+                task.resume()
+                dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+
+     /*
                 let httpResponse = response as? NSHTTPURLResponse
                 
                 let status = httpResponse!.statusCode
@@ -1202,8 +1239,8 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
                 {
                     print("oneNoteData: createOneNoteObject: There was an error accessing the OneNote data. Response code: \(status)")
                 }
+*/
             }
-
         }
     
         return ret_val
@@ -1212,7 +1249,7 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
     func createOneNotePage(inName: String, inType: String, inParent: String) -> String
     {
         var ret_val: String = ""
-        var response: NSURLResponse?
+//        var response: NSURLResponse?
         
         var myCommand: String = ""
         var myBody: String = ""
@@ -1253,7 +1290,7 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
                 
                 // Send the HTTP request
                 
-            let result: NSData?
+          /*  let result: NSData?
                 do
                 {
                     result = try NSURLConnection.sendSynchronousRequest(request, returningResponse:&response)
@@ -1263,7 +1300,36 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
                     NSLog("createOneNotePage\(error1)")
                     result = nil
                 }
+              */
                 
+                let session = NSURLSession.sharedSession()
+                
+                let sem = dispatch_semaphore_create(0);
+                
+                let task = session.dataTaskWithRequest(request, completionHandler: {data, myresponse, error -> Void in
+                    
+                    let httpResponse = myresponse as? NSHTTPURLResponse
+                    
+                    let status = httpResponse!.statusCode
+                    
+                    let myReturnString = NSString(data: data!, encoding: NSUTF8StringEncoding) as! String
+                    
+                    if status == 201
+                    {
+                        ret_val = self.processPageCreateReturn(myReturnString)
+                    }
+                    else
+                    {
+                        print("oneNoteData: createOneNotePage: There was an error accessing the OneNote data. Response code: \(status)")
+                    }
+                    dispatch_semaphore_signal(sem)
+                })
+                
+                task.resume()
+                dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+                
+                
+                /*
                 let httpResponse = response as? NSHTTPURLResponse
                 
                 let status = httpResponse!.statusCode
@@ -1278,6 +1344,7 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
                 {
                     print("oneNoteData: createOneNotePage: There was an error accessing the OneNote data. Response code: \(status)")
                 }
+*/
             }
             
         }
@@ -1404,7 +1471,7 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
     
     private func performGetData(inURLString: String) -> String
     {
-        var response: NSURLResponse?
+  //      var response: NSURLResponse?
         var myReturnString: String = ""
         
         myOneNoteFinished = false
@@ -1418,7 +1485,7 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
             request.setValue("Bearer \(liveClient.session.accessToken)", forHTTPHeaderField: "Authorization")
             // Send the HTTP request
 
-        let result: NSData?
+  /*      let result: NSData?
             do
             {
                 result = try NSURLConnection.sendSynchronousRequest(request, returningResponse:&response)
@@ -1428,6 +1495,39 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
                 NSLog("performGetData\(error1)")
                 result = nil
             }
+      */
+            
+            let session = NSURLSession.sharedSession()
+            
+            let sem = dispatch_semaphore_create(0);
+            
+            let task = session.dataTaskWithRequest(request, completionHandler: {data, myresponse, error -> Void in
+                
+                let httpResponse = myresponse as? NSHTTPURLResponse
+                
+                let status = httpResponse!.statusCode
+                
+                if status == 200
+                {
+                    // this means data was retrieved OK
+                    myReturnString = NSString(data: data!, encoding: NSUTF8StringEncoding) as! String
+                }
+                else if status == 201
+                {
+                    print("oneNoteData: Page created!")
+                }
+                else
+                {
+                    print("oneNoteData: connectionDidFinishLoading: There was an error accessing the OneNote data. Response code: \(status)")
+                }
+                dispatch_semaphore_signal(sem)
+            })
+            
+            task.resume()
+            dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+            
+            
+            /*
             
             let httpResponse = response as? NSHTTPURLResponse
           
@@ -1446,6 +1546,7 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
             {
                 print("oneNoteData: connectionDidFinishLoading: There was an error accessing the OneNote data. Response code: \(status)")
             }
+*/
         }
         return myReturnString
     }

@@ -437,7 +437,7 @@ func displayProjectsForPerson(inPerson: String, inout lookupArray: [String]) -> 
                 
                 lookupArray.append(myProject.projectID.stringValue)
                 
-                let projectObject = project(inProjectID: myDetails[0].projectID as Int, inTeamID: myDetails[0].teamID as Int)
+                let projectObject = project(inProjectID: myDetails[0].projectID as Int)
 
                 writeRowToArray(titleText, table: &tableContents, targetObject: projectObject)
             }
@@ -554,7 +554,7 @@ class StreamReader  {
 
 func populateStages(inTeamID: Int)
 {
-    let loadSet = ["Definition", "Initiation", "Planning", "Execution", "Monitoring & Control", "Closure", "Completed", "Archived"]
+    let loadSet = ["Definition", "Initiation", "Planning", "Execution", "Monitoring & Control", "Closure", "Completed", "Archived", "On Hold"]
     
     for myItem in loadSet
     {
@@ -1312,6 +1312,7 @@ let myRepeatPeriods = ["",
 
 let myRepeatBases = ["",
     "Completion Date",
+    "Start Date",
     "1st of month",
     "Monday",
     "Tuesday",
@@ -1385,6 +1386,13 @@ func calculateNewDate(inOriginalDate: NSDate, inDateBase: String, inInterval: In
     switch inDateBase
     {
         case "Completion Date":
+            returnDate = calendar.dateByAddingUnit(
+                [addCalendarUnit],
+                value: tempInterval,
+                toDate: inOriginalDate,
+                options: [])!
+        
+        case "Start Date":
             returnDate = calendar.dateByAddingUnit(
                 [addCalendarUnit],
                 value: tempInterval,

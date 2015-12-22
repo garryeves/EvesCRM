@@ -59,13 +59,13 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
     private var mySelectedRow: Int = 0
     private var rowToAction: Int = 0
     
-    lazy var activityPopover:UIPopoverController = {
-        return UIPopoverController(contentViewController: self.activityViewController)
-        }()
+//    lazy var activityPopover:UIViewController = {
+//        return self.activityViewController
+//        }()
     
-    lazy var activityViewController:UIActivityViewController = {
-        return self.createActivityController()
-         }()
+//    lazy var activityViewController:UIActivityViewController = {
+//        return self.createActivityController()
+//         }()
     
     // Textexpander
     
@@ -1069,30 +1069,58 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
 
     func share(sender: AnyObject)
     {
-        if UIDevice.currentDevice().userInterfaceIdiom == .Phone {
-            self.navigationController?.presentViewController(activityViewController, animated: true, completion: nil)
-        } else if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+        if UIDevice.currentDevice().userInterfaceIdiom == .Phone
+        {
+            let activityViewController: UIActivityViewController = createActivityController()
+            activityViewController.popoverPresentationController!.sourceView = sender.view
+            presentViewController(activityViewController, animated:true, completion:nil)
+        }
+        else if UIDevice.currentDevice().userInterfaceIdiom == .Pad
+        {
             // actually, you don't have to do this. But if you do want a popover, this is how to do it.
             iPad(sender)
         }
     }
     
-    func iPad(sender: AnyObject) {
-        if !self.activityPopover.popoverVisible {
-            if sender is UIBarButtonItem {
-                self.activityPopover.presentPopoverFromBarButtonItem(sender as! UIBarButtonItem,
-                    permittedArrowDirections:.Any,
-                    animated:true)
-            } else {
-                let b = sender as! UIButton
-                self.activityPopover.presentPopoverFromRect(b.frame,
-                    inView: self.view,
-                    permittedArrowDirections:.Any,
-                    animated:true)
-            }
-        } else {
-            self.activityPopover.dismissPopoverAnimated(true)
-        }
+    func iPad(sender: AnyObject)
+    {
+        
+        let activityViewController: UIActivityViewController = createActivityController()
+        activityViewController.modalPresentationStyle = UIModalPresentationStyle.Popover
+        activityViewController.popoverPresentationController!.sourceView = sender.view
+            
+        presentViewController(activityViewController, animated:true, completion:nil)
+        
+        
+//        if !self.activityPopover.isViewLoaded()
+//            {
+//            if sender is UIBarButtonItem
+//            {
+//                let b = sender as! UIBarButtonItem
+        
+//                self.activityPopover.modalPresentationStyle = UIModalPresentationStyle.Popover
+//                self.activityPopover.popoverPresentationController!.sourceView = b.customView
+//                presentViewController(self.activityPopover, animated:true, completion:nil)
+    //            self.activityPopover.presentPopoverFromBarButtonItem(sender as! UIBarButtonItem,
+    //                permittedArrowDirections:.Any,
+    //                animated:true)
+//            }
+//            else
+//            {
+//                let b = sender as! UIButton
+//                self.activityPopover.modalPresentationStyle = UIModalPresentationStyle.Popover
+//                self.activityPopover.popoverPresentationController!.sourceView = b
+//                presentViewController(self.activityPopover, animated:true, completion:nil)
+         //       self.activityPopover.presentPopoverFromRect(b.frame,
+         //           inView: self.view,
+         //           permittedArrowDirections:.Any,
+         //           animated:true)
+//            }
+//        }
+//        else
+//        {
+//            self.activityPopover.dismissViewControllerAnimated(true, completion: nil)
+//        }
     }
     
     func myMeetingsAgendaDidFinish(controller:meetingAgendaViewController)

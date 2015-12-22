@@ -667,7 +667,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                             
                             if fromCurrentPredecessor > 0
                             {
-                                let tempSuccessor = project(inProjectID: fromCurrentPredecessor, inTeamID: toItem.teamID)
+                                let tempSuccessor = project(inProjectID: fromCurrentPredecessor)
                                 tempSuccessor.predecessor = toItem.projectID
                             }
                         }
@@ -739,7 +739,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
 
                             if fromCurrentPredecessor > 0
                             {
-                                let tempSuccessor = project(inProjectID: fromCurrentPredecessor, inTeamID: toItem.teamID)
+                                let tempSuccessor = project(inProjectID: fromCurrentPredecessor)
                                 tempSuccessor.predecessor = toItem.projectID
                             }
                         }

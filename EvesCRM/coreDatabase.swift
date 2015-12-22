@@ -212,6 +212,8 @@ class coreDatabase: NSObject
                     }
             }
             
+            myCloudDB.saveRolesRecordToCloudKit(myStage)
+            
             //       do
             //       {
             //            try managedObjectContext!.save()
@@ -252,11 +254,8 @@ class coreDatabase: NSObject
     
     func saveRole(roleName: String, teamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE", roleID: Int = 0)
     {
-        
-        
         let myRoles = getRole(roleID)
-        
-
+ 
         var mySelectedRole: Roles
         if myRoles.count == 0
         {
@@ -310,6 +309,8 @@ class coreDatabase: NSObject
                     print("Failure to save context: \(error)")
                 }
         }
+        
+        myCloudDB.saveRolesRecordToCloudKit(mySelectedRole)
         
         //       do
         //       {
@@ -474,6 +475,8 @@ class coreDatabase: NSObject
                     }
             }
             
+            myCloudDB.saveRolesRecordToCloudKit(myStage)
+            
             //       do
             //       {
             //            try managedObjectContext!.save()
@@ -544,6 +547,8 @@ class coreDatabase: NSObject
                     print("Failure to save context: \(error)")
                 }
         }
+        
+        myCloudDB.saveProjectTeamMembersRecordToCloudKit(myProjectTeam)
         
         //       do
         //       {
@@ -803,7 +808,7 @@ class coreDatabase: NSObject
     {
         // first check to see if decode exists, if not we create
         var myDecode: Decodes!
-        
+
         if getDecodeValue(inCodeKey) == ""
         { // Add
             myDecode = NSEntityDescription.insertNewObjectForEntityForName("Decodes", inManagedObjectContext: managedObjectContext!) as! Decodes
@@ -863,6 +868,8 @@ class coreDatabase: NSObject
                     print("Failure to save context: \(error)")
                 }
         }
+        
+        myCloudDB.saveDecodesRecordToCloudKit(myDecode, syncName: myDBSync.getSyncID())
         
         //       do
         //       {
@@ -970,6 +977,8 @@ class coreDatabase: NSObject
                         print("Failure to save context: \(error)")
                     }
             }
+            
+            myCloudDB.saveStagesRecordToCloudKit(myStage)
             
             //       do
             //       {
@@ -1084,6 +1093,8 @@ class coreDatabase: NSObject
                 }
         }
         
+        myCloudDB.saveStagesRecordToCloudKit(myStage)
+        
         //       do
         //       {
         //            try managedObjectContext!.save()
@@ -1170,6 +1181,8 @@ class coreDatabase: NSObject
                         print("Failure to save context: \(error)")
                     }
             }
+            
+            myCloudDB.saveStagesRecordToCloudKit(myStage)
             
             //       do
             //       {
@@ -1367,7 +1380,7 @@ class coreDatabase: NSObject
         }
         else
         {
-            let myAgenda = myAgendas[0]
+            myAgenda = myAgendas[0]
             myAgenda.previousMeetingID = inPreviousMeetingID
             myAgenda.name = inName
             myAgenda.chair = inChair
@@ -1405,6 +1418,8 @@ class coreDatabase: NSObject
                     print("Failure to save context: \(error)")
                 }
         }
+        
+        myCloudDB.saveMeetingAgendaRecordToCloudKit(myAgenda)
         
         //       do
         //       {
@@ -1770,6 +1785,8 @@ class coreDatabase: NSObject
             }
         }
         
+        myCloudDB.saveMeetingAttendeesRecordToCloudKit(myPerson)
+        
         //       do
         //       {
         //            try managedObjectContext!.save()
@@ -2004,6 +2021,8 @@ class coreDatabase: NSObject
                     print("Failure to save context: \(error)")
                 }
         }
+        
+        myCloudDB.saveMeetingAgendaItemRecordToCloudKit(mySavedItem)
         
         //       do
         //       {
@@ -2281,6 +2300,8 @@ class coreDatabase: NSObject
                     print("Failure to save context: \(error)")
                 }
         }
+        
+        myCloudDB.saveTaskRecordToCloudKit(myTask)
         
         //       do
         //       {
@@ -2660,6 +2681,8 @@ class coreDatabase: NSObject
                 }
         }
         
+        myCloudDB.saveTaskPredecessorRecordToCloudKit(myTask)
+        
         //       do
         //       {
         //            try managedObjectContext!.save()
@@ -2751,6 +2774,8 @@ class coreDatabase: NSObject
                     }
             }
             
+            myCloudDB.saveTaskPredecessorRecordToCloudKit(myStage)
+            
             //       do
             //       {
             //            try managedObjectContext!.save()
@@ -2794,6 +2819,8 @@ class coreDatabase: NSObject
                         print("Failure to save context: \(error)")
                     }
             }
+            
+            myCloudDB.saveTaskPredecessorRecordToCloudKit(myStage)
             
             //       do
             //       {
@@ -2884,6 +2911,8 @@ class coreDatabase: NSObject
                     print("Failure to save context: \(error)")
                 }
         }
+        
+        myCloudDB.saveProjectsRecordToCloudKit(myProject)
         
         //       do
         //       {
@@ -3062,6 +3091,8 @@ class coreDatabase: NSObject
                     }
             }
             
+            myCloudDB.saveTaskUpdatesRecordToCloudKit(myTaskUpdate)
+            
             //       do
             //       {
             //            try managedObjectContext!.save()
@@ -3220,6 +3251,8 @@ class coreDatabase: NSObject
                 }
         }
         
+        
+        myCloudDB.saveContextRecordToCloudKit(myContext)
         //       do
         //       {
         //            try managedObjectContext!.save()
@@ -3509,6 +3542,8 @@ class coreDatabase: NSObject
                 }
         }
         
+        myCloudDB.saveTaskContextRecordToCloudKit(myContext)
+        
         //       do
         //       {
         //            try managedObjectContext!.save()
@@ -3717,6 +3752,8 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
+        
+        myCloudDB.saveGTDLevelRecordToCloudKit(myGTD)
         //       do
         //       {
         //            try managedObjectContext!.save()
@@ -3981,6 +4018,8 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
     
+        myCloudDB.saveGTDItemRecordToCloudKit(myGTD)
+        
  //       do
  //       {
 //            try managedObjectContext!.save()
@@ -4369,6 +4408,8 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     }
             }
             
+            myCloudDB.savePanesRecordToCloudKit(myPane)
+            
             //       do
             //       {
             //            try managedObjectContext!.save()
@@ -4416,6 +4457,8 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
+            
+            myCloudDB.savePanesRecordToCloudKit(myPane)
             
             //       do
             //       {
@@ -4491,6 +4534,8 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
+        
+        myCloudDB.savePanesRecordToCloudKit(myPane)
         
         //       do
         //       {
@@ -4953,6 +4998,8 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
+        
+        myCloudDB.saveMeetingTasksRecordToCloudKit(myTask)
         
         //       do
         //       {
@@ -7061,6 +7108,8 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
+        myCloudDB.saveTeamRecordToCloudKit(myTeam)
+        
         //       do
         //       {
         //            try managedObjectContext!.save()
@@ -7324,6 +7373,8 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
+        
+        myCloudDB.saveProjectNoteRecordToCloudKit(myProjectNote)
         
         //       do
         //       {
@@ -7783,6 +7834,8 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
+        myCloudDB.saveContext1_1RecordToCloudKit(myContext)
+        
         //       do
         //       {
         //            try managedObjectContext!.save()
@@ -7893,6 +7946,8 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
+        
+        
         
         //       do
         //       {
@@ -9188,7 +9243,8 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-
+        
+        myCloudDB.saveProcessedEmailsRecordToCloudKit(myEmail)
     }
     
     func replaceProcessedEmail(emailID: String, emailType: String, processedDate: NSDate, updateTime: NSDate = NSDate(), updateType: String = "CODE")

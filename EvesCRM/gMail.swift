@@ -791,7 +791,7 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
     
     func getData(inURLString: String) -> String
     {
-        var response: NSURLResponse?
+ //       var response: NSURLResponse?
         var myReturnString: String = ""
         
         // Swap userId for the userd ID
@@ -811,17 +811,52 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
             request.setValue("Bearer \(GIDSignIn.sharedInstance().currentUser.authentication.accessToken)", forHTTPHeaderField: "Authorization")
             // Send the HTTP request
             
-        let result: NSData?
-            do
-            {
-                result = try NSURLConnection.sendSynchronousRequest(request, returningResponse:&response)
-            }
-            catch let error1 as NSError
-            {
-                NSLog("GMail getDate: \(error1)")
-                result = nil
-            }
+ //       let result: NSData?
+ //           do
+ //           {
+ //               result = try NSURLConnection.sendSynchronousRequest(request, returningResponse:&response)
+                
 
+ //       NSLog("Initial responce = \(response)")
+                
+ //           NSLog("Initial result = \(result)")
+                
+                let session = NSURLSession.sharedSession()
+                
+                let sem = dispatch_semaphore_create(0);
+                
+                let task = session.dataTaskWithRequest(request, completionHandler: {data, myresponse, error -> Void in
+                    
+                    let httpResponse = myresponse as? NSHTTPURLResponse
+                    
+                    let status = httpResponse!.statusCode
+                    
+                    if status == 200
+                    {
+                        // this means data was retrieved OK
+                        myReturnString = NSString(data: data!, encoding: NSUTF8StringEncoding) as! String
+                    }
+                    else if status == 201
+                    {
+                        print("gmailData: Page created!")
+                    }
+                    else
+                    {
+                        print("gmailData: getData: There was an error accessing the gmailData data. Response code: \(status)")
+                    }
+                    dispatch_semaphore_signal(sem)
+                })
+                
+                task.resume()
+                dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+                
+//            }
+ //           catch let error1 as NSError
+  //          {
+    //            NSLog("GMail getDate: \(error1)")
+      //          result = nil
+        //    }
+/*
             let httpResponse = response as? NSHTTPURLResponse
             
             let status = httpResponse!.statusCode
@@ -838,8 +873,11 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
             else
             {
                 print("gmailData: getData: There was an error accessing the gmailData data. Response code: \(status)")
+            NSLog("initia string temp = \(myReturnString)")
             }
+*/
         }
+
         return myReturnString
     }
     

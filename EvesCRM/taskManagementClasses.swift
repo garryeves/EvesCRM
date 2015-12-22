@@ -480,7 +480,7 @@ class workingGTDItem: NSObject
                 
                 if boolAddProject
                 {
-                    let myNewChild = project(inProjectID: myItem.projectID as Int, inTeamID: myTeamID)
+                    let myNewChild = project(inProjectID: myItem.projectID as Int)
                     myChildren.append(myNewChild)
                 }
             }
@@ -926,7 +926,7 @@ class project: NSObject // 10k level
         save()
     }
     
-    init(inProjectID: Int, inTeamID: Int)
+    init(inProjectID: Int)
     {
         super.init()
         
@@ -1180,7 +1180,7 @@ class project: NSObject // 10k level
             
             if fromCurrentPredecessor > 0
             {  // This item is a predecessor
-                let tempSuccessor = project(inProjectID: fromCurrentPredecessor, inTeamID: myTeamID)
+                let tempSuccessor = project(inProjectID: fromCurrentPredecessor)
                 tempSuccessor.predecessor = myPredecessor
             }
             return true
@@ -2046,7 +2046,14 @@ class task: NSObject
 
                 if myStartDate != getDefaultDate()
                 {
-                    tempStartDate = calculateNewDate(todayDate, inDateBase:myRepeatBase, inInterval: myRepeatInterval, inPeriod: myRepeatType)
+                    if myRepeatBase == "Start Date"
+                    {
+                        tempStartDate = calculateNewDate(myStartDate, inDateBase:myRepeatBase, inInterval: myRepeatInterval, inPeriod: myRepeatType)
+                    }
+                    else
+                    {
+                        tempStartDate = calculateNewDate(todayDate, inDateBase:myRepeatBase, inInterval: myRepeatInterval, inPeriod: myRepeatType)
+                    }
                 }
                 
                 if myDueDate != getDefaultDate()
@@ -2111,7 +2118,7 @@ class contexts: NSObject
         for myItem in myDatabaseConnection.getContextsForType("Person")
         {
             let myItemDetails = myDatabaseConnection.getContextDetails(myItem.contextID as! Int)
-            
+  
             if myItemDetails.count > 0
             {
                 let myContext = context(contextID: myItem.contextID as! Int)
@@ -2670,6 +2677,109 @@ class taskUpdates: NSObject
     func save()
     {
         myDatabaseConnection.saveTaskUpdate(myTaskID, inDetails: myDetails, inSource: mySource)
+    }
+}
+
+class tasks: NSObject
+{
+    var myActiveTasks: [task] = Array()
+    var myTasks: [task] = Array()
+    
+    var activeTasks: [task]
+    {
+        get
+        {
+            return myActiveTasks
+        }
+    }
+    
+    var allTasks: [task]
+    {
+        get
+        {
+            return myTasks
+        }
+    }
+
+    init(projectID: Int)
+    {
+        super.init()
+        
+        // check to see if the project is on hold
+        
+        let myProject = project(inProjectID: projectID)
+     
+        if myProject.projectStatus != "On Hold"
+        {
+            loadActiveTasksForProject(projectID)
+        }
+    }
+    
+    init(contextID: Int)
+    {
+        super.init()
+        
+        loadActiveTasksForContext(contextID)
+    }
+    
+    func loadActiveTasksForContext(contextID: Int)
+    {
+        myActiveTasks.removeAll()
+        
+        let myTaskContextList = myDatabaseConnection.getTasksForContext(contextID)
+        
+        for myTaskContext in myTaskContextList
+        {
+            // Get the context details
+            let myTaskList = myDatabaseConnection.getActiveTask(myTaskContext.taskID as Int)
+            
+            for myTask in myTaskList
+            {  //append project details to work array
+                // check the project to see if it is on hold
+                
+                let myProject = project(inProjectID: myTask.projectID as Int)
+                
+                if myProject.projectStatus != "On Hold"
+                {
+                    let tempTask = task(taskID: myTask.taskID as Int)
+                    myActiveTasks.append(tempTask)
+                }
+            }
+        }
+        
+        myActiveTasks.sortInPlace({$0.dueDate.timeIntervalSinceNow < $1.dueDate.timeIntervalSinceNow})
+    }
+    
+    func loadActiveTasksForProject(projectID: Int)
+    {
+        myActiveTasks.removeAll()
+        
+        var taskList = myDatabaseConnection.getActiveTasksForProject(projectID)
+        
+        taskList.sortInPlace({$0.dueDate.timeIntervalSinceNow < $1.dueDate.timeIntervalSinceNow})
+        
+        for myItem in taskList
+        {
+            let tempTask = task(taskID: myItem.taskID as Int)
+            
+            myActiveTasks.append(tempTask)
+        }
+    }
+    
+    func loadAllTasksForProject(projectID: Int)
+    {
+        myTasks.removeAll()
+        
+        var taskList = myDatabaseConnection.getTasksForProject(projectID)
+        
+        taskList.sortInPlace({$0.dueDate.timeIntervalSinceNow < $1.dueDate.timeIntervalSinceNow})
+        
+        for myItem in taskList
+        {
+            let tempTask = task(taskID: myItem.taskID as Int)
+            
+            myTasks.append(tempTask)
+        }
     }
 }
 

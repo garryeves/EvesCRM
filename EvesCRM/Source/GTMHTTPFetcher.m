@@ -458,6 +458,8 @@ static NSString *const kCallbackError = @"error";
     connection_ = [[connectionClass alloc] initWithRequest:request_
                                                   delegate:self
                                           startImmediately:NO];
+      
+      
     if (delegateQueue) {
       [connection_ performSelector:@selector(setDelegateQueue:)
                         withObject:delegateQueue];

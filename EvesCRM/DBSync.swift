@@ -11,6 +11,7 @@ import Foundation
 class DBSync: NSObject
 {
     var refreshRunning: Bool = false
+    var firstRun: Bool = true
     
     func startTimer()
     {
@@ -73,7 +74,7 @@ class DBSync: NSObject
                         let myCalendar = NSCalendar.currentCalendar()
                         
                         syncDate = myCalendar.dateByAddingUnit(
-                            .Day,
+                            .Hour,
                             value: -1,
                             toDate: tempSyncDate!,
                             options: [])!
@@ -99,6 +100,12 @@ class DBSync: NSObject
                     myDatabaseConnection.clearDeletedItems()
                     myDatabaseConnection.clearSyncedItems()
 
+                    if firstRun
+                    {
+                        myCloudDB.setupSubscriptions()
+                        firstRun = false
+                    }
+                    
                     NSNotificationCenter.defaultCenter().postNotificationName("NotificationDBSyncCompleted", object: nil)
                 }
 

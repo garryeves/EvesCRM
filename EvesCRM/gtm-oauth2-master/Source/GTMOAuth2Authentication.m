@@ -1218,17 +1218,25 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 #pragma mark Utility Routines
 
 + (NSString *)encodedOAuthValueForString:(NSString *)str {
-  CFStringRef originalString = (CFStringRef) str;
-  CFStringRef leaveUnescaped = NULL;
-  CFStringRef forceEscaped =  CFSTR("!*'();:@&=+$,/?%#[]");
+//  CFStringRef originalString = (CFStringRef) str;
+//  CFStringRef leaveUnescaped = NULL;
+//  CFStringRef forceEscaped =  CFSTR("!*'();:@&=+$,/?%#[]");
 
-  CFStringRef escapedStr = NULL;
+//  CFStringRef escapedStr = NULL;
+    NSString *escapedStr = NULL;
+    
+    NSString *resultStr = str;
+    
+    
   if (str) {
-    escapedStr = CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
-                                                         originalString,
-                                                         leaveUnescaped,
-                                                         forceEscaped,
-                                                         kCFStringEncodingUTF8);
+ //   escapedStr = CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault,
+ //                                                        originalString,
+ //                                                        leaveUnescaped,
+ //                                                        forceEscaped,
+ //                                                        kCFStringEncodingUTF8);
+      
+      escapedStr = [resultStr stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+      
     [(id)CFMakeCollectable(escapedStr) autorelease];
   }
 
@@ -1268,7 +1276,10 @@ finishedRefreshWithFetcher:(GTMOAuth2Fetcher *)fetcher
 }
 
 + (NSString *)unencodedOAuthParameterForString:(NSString *)str {
-  NSString *plainStr = [str stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+//  NSString *plainStr = [str stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    NSString *plainStr = [str stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];
+
   return plainStr;
 }
 
