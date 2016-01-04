@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import CloudKit
 
 
 @UIApplicationMain
@@ -51,9 +52,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         
         GIDSignIn.sharedInstance().delegate = self
         
+        UIApplication.sharedApplication().registerForRemoteNotifications()
+        
         return true
     }
 
+    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject])
+    {
+        NSLog("yep, a notificaton")
+        
+        let cloudKitNotification = CKNotification(fromRemoteNotificationDictionary: userInfo as! [String : NSObject])
+        
+        if cloudKitNotification.notificationType == .Query
+        {
+            let queryNotification = cloudKitNotification as! CKQueryNotification
+            let recordID = queryNotification.recordID!.recordName
+            
+            NSLog("initial record ID = \(recordID)")
+            
+            myCloudDB.getRecords(queryNotification.recordID!)
+        }
+    }
     
     func application(application: UIApplication, handleOpenURL url: NSURL) -> Bool
     {

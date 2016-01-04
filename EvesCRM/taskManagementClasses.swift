@@ -14,6 +14,7 @@ class workingGTDLevel: NSObject
     private var myTitle: String = "New"
     private var myTeamID: Int = 0
     private var myGTDLevel: Int = 0
+    private var saveCalled: Bool = false
     
     var GTDLevel: Int
     {
@@ -92,6 +93,21 @@ class workingGTDLevel: NSObject
     func save()
     {
         myDatabaseConnection.saveGTDLevel(myGTDLevel, inLevelName: myTitle, inTeamID: myTeamID)
+        
+        if !saveCalled
+        {
+            saveCalled = true
+            let _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "performSave", userInfo: nil, repeats: false)
+        }
+    }
+    
+    func performSave()
+    {
+        let myGTD = myDatabaseConnection.getGTDLevel(myGTDLevel, inTeamID: myTeamID)[0]
+    
+        myCloudDB.saveGTDLevelRecordToCloudKit(myGTD)
+        
+        saveCalled = false
     }
     
     func delete()
@@ -176,6 +192,7 @@ class workingGTDItem: NSObject
     private var myGTDID: Int = 0
     private var myGTDLevel: Int = 0
     private var myStoreGTDLevel: Int = 0
+    private var saveCalled: Bool = false
     
     var GTDItemID: Int
     {
@@ -429,6 +446,21 @@ class workingGTDItem: NSObject
     func save()
     {
         myDatabaseConnection.saveGTDItem(myGTDItemID, inParentID: myGTDParentID, inTitle: myTitle, inStatus: myStatus, inTeamID: myTeamID, inNote: myNote, inLastReviewDate: myLastReviewDate, inReviewFrequency: myReviewFrequency, inReviewPeriod: myReviewPeriod, inPredecessor: myPredecessor, inGTDLevel: myGTDLevel)
+        
+        if !saveCalled
+        {
+            saveCalled = true
+            let _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "performSave", userInfo: nil, repeats: false)
+        }
+    }
+    
+    func performSave()
+    {
+        let myGTDItem = myDatabaseConnection.checkGTDItem(myGTDItemID, inTeamID: myTeamID)[0]
+        
+        myCloudDB.saveGTDItemRecordToCloudKit(myGTDItem)
+        
+        saveCalled = false
     }
     
     func addChild(inChild: workingGTDItem)
@@ -522,7 +554,8 @@ class projectTeamMember: NSObject
     private var myRoleID: Int = 0
     private var myTeamMember: String = ""
     private var myTeamID: Int = 0
-
+    private var saveCalled: Bool = false
+    
     var projectID: Int
     {
         get
@@ -601,6 +634,21 @@ class projectTeamMember: NSObject
     func save()
     {
         myDatabaseConnection.saveTeamMember(myProjectID, inRoleID: myRoleID, inPersonName: myTeamMember, inNotes: myProjectMemberNotes)
+        
+        if !saveCalled
+        {
+            saveCalled = true
+            let _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "performSave", userInfo: nil, repeats: false)
+        }
+    }
+    
+    func performSave()
+    {
+        let myProjectTeamRecord = myDatabaseConnection.getTeamMemberRecord(myProjectID, inPersonName: myTeamMember)[0]
+        
+        myCloudDB.saveProjectTeamMembersRecordToCloudKit(myProjectTeamRecord)
+        
+        saveCalled = false
     }
     
     func delete()
@@ -628,7 +676,8 @@ class project: NSObject // 10k level
     private var myNote: String = ""
     private var myReviewPeriod: String = ""
     private var myPredecessor: Int = 0
-
+    private var saveCalled: Bool = false
+    
     var projectEndDate: NSDate
     {
         get
@@ -1034,8 +1083,6 @@ class project: NSObject // 10k level
     
     func save()
     {
-        // Save Project
-        
         myDatabaseConnection.saveProject(myProjectID, inProjectEndDate: myProjectEndDate, inProjectName: myProjectName, inProjectStartDate: myProjectStartDate, inProjectStatus: myProjectStatus, inReviewFrequency: myReviewFrequency, inLastReviewDate: myLastReviewDate, inGTDItemID: myGTDItemID, inRepeatInterval: myRepeatInterval, inRepeatType: myRepeatType, inRepeatBase: myRepeatBase, inTeamID: myTeamID)
         
         // Save Team Members
@@ -1055,6 +1102,27 @@ class project: NSObject // 10k level
         // save note
         
         myDatabaseConnection.saveProjectNote(myProjectID, inNote: myNote, inReviewPeriod: myReviewPeriod, inPredecessor: myPredecessor)
+        
+        if !saveCalled
+        {
+            saveCalled = true
+            let _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "performSave", userInfo: nil, repeats: false)
+        }
+    }
+    
+    func performSave()
+    {
+        // Save Project
+        
+        let myProject = myDatabaseConnection.getProjectDetails(myProjectID)[0]
+        
+        myCloudDB.saveProjectsRecordToCloudKit(myProject)
+  
+        let myProjectNote = myDatabaseConnection.getProjectNote(myProjectID)[0]
+        
+        myCloudDB.saveProjectNoteRecordToCloudKit(myProjectNote)
+        
+        saveCalled = false
     }
     
     func checkForRepeat()
@@ -1246,6 +1314,7 @@ class task: NSObject
     private var myUrgency: String = ""
     private var myTeamID: Int = 0
     private var myPredecessors: [taskPredecessor] = Array()
+    private var saveCalled: Bool = false
  
     var taskID: Int
     {
@@ -1667,6 +1736,21 @@ class task: NSObject
         {
             myDatabaseConnection.saveTaskContext(myContext.contextID as Int, inTaskID: myTaskID)
         }
+        
+        if !saveCalled
+        {
+            saveCalled = true
+            let _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "performSave", userInfo: nil, repeats: false)
+        }
+    }
+    
+    func performSave()
+    {
+        let myTask = myDatabaseConnection.getTask(myTaskID)[0]
+        
+        myCloudDB.saveTaskRecordToCloudKit(myTask)
+        
+        saveCalled = false
     }
     
     func addContext(contextID: Int)
@@ -2265,6 +2349,7 @@ class context: NSObject
     private var myTeamID: Int = 0
     private var myPredecessor: Int = 0
     private var myContextType: String = ""
+    private var saveCalled: Bool = false
     
     var contextID: Int
     {
@@ -2572,6 +2657,25 @@ class context: NSObject
         myDatabaseConnection.saveContext(myContextID, inName: myName, inEmail: myEmail, inAutoEmail: myAutoEmail, inParentContext: myParentContext, inStatus: myStatus, inPersonID: myPersonID, inTeamID: myTeamID)
         
         myDatabaseConnection.saveContext1_1(myContextID, predecessor: myPredecessor, contextType: myContextType)
+        
+        if !saveCalled
+        {
+            saveCalled = true
+            let _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "performSave", userInfo: nil, repeats: false)
+        }
+    }
+    
+    func performSave()
+    {
+        let myContext = myDatabaseConnection.getContextDetails(myContextID)[0]
+        
+        myCloudDB.saveContextRecordToCloudKit(myContext)
+        
+        let myContext1_1 = myDatabaseConnection.getContext1_1(myContextID)[0]
+        
+        myCloudDB.saveContext1_1RecordToCloudKit(myContext1_1)
+        
+        saveCalled = false
     }
     
     func delete() -> Bool
@@ -2596,6 +2700,7 @@ class taskUpdates: NSObject
     private var myUpdateDate: NSDate!
     private var myDetails: String = ""
     private var mySource: String = ""
+    private var saveCalled: Bool = false
 
     var updateDate: NSDate
     {
@@ -2677,6 +2782,21 @@ class taskUpdates: NSObject
     func save()
     {
         myDatabaseConnection.saveTaskUpdate(myTaskID, inDetails: myDetails, inSource: mySource)
+        
+        if !saveCalled
+        {
+            saveCalled = true
+            let _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "performSave", userInfo: nil, repeats: false)
+        }
+    }
+    
+    func performSave()
+    {
+        
+        let myUpdate = myDatabaseConnection.getTaskUpdates(myTaskID)[0]
+        
+        myCloudDB.saveTaskUpdatesRecordToCloudKit(myUpdate)
+        saveCalled = false
     }
 }
 

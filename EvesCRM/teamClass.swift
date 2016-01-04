@@ -22,6 +22,7 @@ class team: NSObject
     private var myGTD: [workingGTDLevel] = Array()
     private var myGTDTopLevel: [workingGTDItem] = Array()
     private var myContexts: [context] = Array()
+    private var saveCalled: Bool = false
     
     var teamID: Int
     {
@@ -292,5 +293,20 @@ class team: NSObject
     func save()
     {
         myDatabaseConnection.saveTeam(myTeamID, inName: myName, inStatus: myStatus, inNote: myNote, inType: myType, inPredecessor: myPredecessor, inExternalID: myExternalID)
+        
+        if !saveCalled
+        {
+            saveCalled = true
+            let _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "performSave", userInfo: nil, repeats: false)
+        }
+    }
+    
+    func performSave()
+    {
+        let myTeam = myDatabaseConnection.getTeam(myTeamID)[0]
+    
+        myCloudDB.saveTeamRecordToCloudKit(myTeam)
+        
+        saveCalled = false
     }
 }

@@ -25,6 +25,7 @@ class meetingAgendaItem
     private var myMeetingID: String = ""
     private var myUpdateAllowed: Bool = true
     private var myMeetingOrder: Int = 0
+    private var saveCalled: Bool = false
 
     var actualEndTime: NSDate?
     {
@@ -234,11 +235,26 @@ class meetingAgendaItem
     }
     
     func save()
-    {        
+    {
         if myUpdateAllowed
         {
             myDatabaseConnection.saveAgendaItem(myMeetingID, actualEndTime: myActualEndTime, actualStartTime: myActualStartTime, status: myStatus, decisionMade: myDecisionMade, discussionNotes: myDiscussionNotes, timeAllocation: myTimeAllocation, owner: myOwner, title: myTitle, agendaID: myAgendaID, meetingOrder: myMeetingOrder)
+        
+            if !saveCalled
+            {
+                saveCalled = true
+                let _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "performSave", userInfo: nil, repeats: false)
+            }
         }
+    }
+    
+    func performSave()
+    {        
+        let myAgendaItem = myDatabaseConnection.loadSpecificAgendaItem(myMeetingID, inAgendaID: myAgendaID)[0]
+        
+        myCloudDB.saveMeetingAgendaItemRecordToCloudKit(myAgendaItem)
+        
+        saveCalled = false
     }
     
     func delete()
@@ -295,6 +311,7 @@ class meetingAttendee
     private var myEmailAddress: String = ""
     private var myType: String = ""
     private var myStatus: String = ""
+    private var saveCalled: Bool = false
  
     var name: String
     {
@@ -381,6 +398,21 @@ class meetingAttendee
     func save()
     {
         myDatabaseConnection.saveAttendee(myMeetingID, name: myName, email: myEmailAddress,  type: myType, status: myStatus)
+        
+        if !saveCalled
+        {
+            saveCalled = true
+            let _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "performSave", userInfo: nil, repeats: false)
+        }
+    }
+    
+    func performSave()
+    {
+        let myMeeting = myDatabaseConnection.checkMeetingsForAttendee(myName, meetingID: myMeetingID)[0]
+        
+        myCloudDB.saveMeetingAttendeesRecordToCloudKit(myMeeting)
+        
+        saveCalled = false
     }
 }
 
@@ -420,6 +452,7 @@ class myCalendarItem
     // Flag to indicate if we have data saved in database as well
     
     private var mySavedData: Bool = false
+    private var saveCalled: Bool = false
 
     init(inEventStore: EKEventStore, inEvent: EKEvent, inAttendee: EKParticipant?, teamID: Int)
     {
@@ -999,8 +1032,6 @@ class myCalendarItem
     
     func save()
     {
-        // if this is for a repeating event then we need to add in the original startdate to the Notes
-
         if myEvent != nil
         {
             myEventID = "\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)"
@@ -1008,31 +1039,31 @@ class myCalendarItem
             /*
             if myEvent!.hasRecurrenceRules
             {  // recurring event
-                // if we do not have a "unique" id for this occurrence then we need to save the calendar event, with a small change, and then get the event ID again
+            // if we do not have a "unique" id for this occurrence then we need to save the calendar event, with a small change, and then get the event ID again
             
-                if myEvent!.isDetached
-                { // Event is already detached from the recurring event
-                    // Do nothing
-                }
-                else
-                { // Not found
-                    if myEvent!.hasNotes
-                    {
-                        myEvent!.notes = myEvent!.notes! + "."
-                    }
-                    else
-                    {
-                        myEvent!.notes = "."
-                    }
-                    do {
-                        try eventStore.saveEvent(myEvent!,span: .ThisEvent, commit: true)
-                    } catch _ {
-                    }
-                
-                    myEventID = myEvent!.eventIdentifier
-                }
+            if myEvent!.isDetached
+            { // Event is already detached from the recurring event
+            // Do nothing
             }
-*/
+            else
+            { // Not found
+            if myEvent!.hasNotes
+            {
+            myEvent!.notes = myEvent!.notes! + "."
+            }
+            else
+            {
+            myEvent!.notes = "."
+            }
+            do {
+            try eventStore.saveEvent(myEvent!,span: .ThisEvent, commit: true)
+            } catch _ {
+            }
+            
+            myEventID = myEvent!.eventIdentifier
+            }
+            }
+            */
         }
         
         //  Here we save the Agenda details
@@ -1048,6 +1079,24 @@ class myCalendarItem
         }
         
         mySavedData = true
+
+        
+        
+        if !saveCalled
+        {
+            saveCalled = true
+            let _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "performSave", userInfo: nil, repeats: false)
+        }
+    }
+    
+    func performSave()
+    {
+        // if this is for a repeating event then we need to add in the original startdate to the Notes
+        let myAgenda = myDatabaseConnection.loadAgenda(myEventID, inTeamID: myTeamID)[0]
+        
+        myCloudDB.saveMeetingAgendaRecordToCloudKit(myAgenda)
+        
+        saveCalled = false
     }
     
     func loadAgenda()
