@@ -2929,10 +2929,6 @@ class CloudKitInteraction
         let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as Int))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Task", predicate: predicate)
         
-        let sem = dispatch_semaphore_create(0);
-        let sem2 = dispatch_semaphore_create(0);
-        let sem3 = dispatch_semaphore_create(0);
-        
         privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
                 if error != nil
                 {
@@ -2978,9 +2974,7 @@ class CloudKitInteraction
                                     NSLog("Successfully updated record!")
                                 }
                             }
-                            dispatch_semaphore_signal(sem2)
                         })
-                        dispatch_semaphore_wait(sem2, DISPATCH_TIME_FOREVER)
                     }
                     else
                     {  // Insert
@@ -3018,14 +3012,10 @@ class CloudKitInteraction
                                     NSLog("Successfully saved record!")
                                 }
                             }
-                            dispatch_semaphore_signal(sem3)
                         })
-                        dispatch_semaphore_wait(sem3, DISPATCH_TIME_FOREVER)
                     }
                 }
-            dispatch_semaphore_signal(sem)
             })
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER)
     }
     
     func saveTaskAttachmentRecordToCloudKit(sourceRecord: TaskAttachment)
@@ -4053,15 +4043,15 @@ class CloudKitInteraction
     
     func getRecords(sourceID: CKRecordID)
     {
-        NSLog("source record = \(sourceID)")
+  //      NSLog("source record = \(sourceID)")
         
         privateDB.fetchRecordWithID(sourceID)
         { (record, error) -> Void in
             if error == nil
             {
-                NSLog("record = \(record)")
+//                NSLog("record = \(record)")
                 
-                NSLog("recordtype = \(record!.recordType)")
+//                NSLog("recordtype = \(record!.recordType)")
 
                 switch record!.recordType
                 {

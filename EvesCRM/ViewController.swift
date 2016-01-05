@@ -3173,6 +3173,32 @@ print("Nothing found")
             self.myWorkingTable = targetTable
         })
         
+        let myOption10 = UIAlertAction(title: "Delete Action", style: .Default, handler: { (action: UIAlertAction) -> () in
+            workingTask.delete()
+            
+            switch targetTable
+            {
+                case "Table1":
+                    self.table1Contents = Array()
+                    self.populateArraysForTables("Table1")
+                
+                case "Table2":
+                    self.table2Contents = Array()
+                    self.populateArraysForTables("Table2")
+                
+                case "Table3":
+                    self.table3Contents = Array()
+                    self.populateArraysForTables("Table3")
+                
+                case "Table4":
+                    self.table4Contents = Array()
+                    self.populateArraysForTables("Table4")
+                
+                default:print("displayTaskOptions - option 10: inTable hit default for some reason")
+            }
+
+        })
+        
         myOptions.addAction(myOption1)
         myOptions.addAction(myOption2)
         myOptions.addAction(myOption3)
@@ -3182,6 +3208,7 @@ print("Nothing found")
         myOptions.addAction(myOption7)
         myOptions.addAction(myOption8)
         myOptions.addAction(myOption9)
+        myOptions.addAction(myOption10)
         
         return myOptions
     }

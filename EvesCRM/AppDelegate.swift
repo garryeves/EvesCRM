@@ -52,7 +52,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         
         GIDSignIn.sharedInstance().delegate = self
         
+        let notificationSettings = UIUserNotificationSettings(forTypes: [.None, .Badge, .Alert, .Sound], categories: nil)
+        UIApplication.sharedApplication().registerUserNotificationSettings(notificationSettings)
         UIApplication.sharedApplication().registerForRemoteNotifications()
+        
+        
+       // UIApplication.sharedApplication().registerForRemoteNotifications()
         
         return true
     }

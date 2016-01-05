@@ -2571,6 +2571,23 @@ class coreDatabase: NSObject
         return fetchResults!
     }
     
+    func getTaskRegardlessOfStatus(taskID: Int)->[Task]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Task")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(taskID == \(taskID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Task]
+        
+        return fetchResults!
+    }
+    
     func getActiveTask(taskID: Int)->[Task]
     {
         let fetchRequest = NSFetchRequest(entityName: "Task")

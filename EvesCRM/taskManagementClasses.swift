@@ -1726,16 +1726,51 @@ class task: NSObject
         }
     }
     
+    init(oldTask: task, startDate: NSDate, dueDate: NSDate)
+    {
+        super.init()
+        
+        myTaskID = myDatabaseConnection.getNextID("Task")
+        myTitle = oldTask.title
+        myDetails = oldTask.details
+        myDueDate = dueDate
+        myStartDate = startDate
+        myStatus = "Open"
+        myPriority = oldTask.priority
+        myEnergyLevel = oldTask.energyLevel
+        myEstimatedTime = oldTask.estimatedTime as Int
+        myEstimatedTimeType = oldTask.estimatedTimeType
+        myProjectID = oldTask.projectID as Int
+        myCompletionDate = oldTask.completionDate
+        myRepeatInterval = oldTask.repeatInterval as Int
+        myRepeatType = oldTask.repeatType
+        myRepeatBase = oldTask.repeatBase
+        myFlagged = oldTask.flagged as Bool
+        myUrgency = oldTask.urgency
+        myTeamID = oldTask.teamID as Int
+        
+        save()
+        
+        // get contexts
+
+        myContexts.removeAll()
+            
+        for myContextItem in oldTask.contexts
+        {
+            myDatabaseConnection.saveTaskContext(myContextItem.contextID as Int, inTaskID: myTaskID)
+        }
+            
+        myPredecessors.removeAll()
+            
+        for myPredecessorItem in oldTask.predecessors
+        {
+            myDatabaseConnection.savePredecessorTask(myTaskID, inPredecessorID: myPredecessorItem.predecessorID, inPredecessorType: myPredecessorItem.predecessorType)
+        }
+    }
+    
     func save()
     {
         myDatabaseConnection.saveTask(myTaskID, inTitle: myTitle, inDetails: myDetails, inDueDate: myDueDate, inStartDate: myStartDate, inStatus: myStatus, inPriority: myPriority, inEnergyLevel: myEnergyLevel, inEstimatedTime: myEstimatedTime, inEstimatedTimeType: myEstimatedTimeType, inProjectID: myProjectID, inCompletionDate: myCompletionDate!, inRepeatInterval: myRepeatInterval, inRepeatType: myRepeatType, inRepeatBase: myRepeatBase, inFlagged: myFlagged, inUrgency: myUrgency, inTeamID: myTeamID)
-        
-        // Save context link
-        
-        for myContext in myContexts
-        {
-            myDatabaseConnection.saveTaskContext(myContext.contextID as Int, inTaskID: myTaskID)
-        }
         
         if !saveCalled
         {
@@ -1746,9 +1781,16 @@ class task: NSObject
     
     func performSave()
     {
-        let myTask = myDatabaseConnection.getTask(myTaskID)[0]
+        let myTask = myDatabaseConnection.getTaskRegardlessOfStatus(myTaskID)[0]
         
         myCloudDB.saveTaskRecordToCloudKit(myTask)
+        
+        // Save context link
+        
+        for myContext in myContexts
+        {
+            myDatabaseConnection.saveTaskContext(myContext.contextID as Int, inTaskID: myTaskID)
+        }
         
         saveCalled = false
     }
@@ -2097,7 +2139,7 @@ class task: NSObject
     {
         // Check to see if there is a repeat pattern
         var tempStartDate: NSDate = getDefaultDate()
-        var tempEndDate: NSDate = getDefaultDate()
+        var tempDueDate: NSDate = getDefaultDate()
         
         if myRepeatInterval != 0
         {
@@ -2150,42 +2192,12 @@ class task: NSObject
                         toDate: todayDate,
                         options: [])!
                     
-                    tempEndDate = calculateNewDate(tempDate, inDateBase:myRepeatBase, inInterval: myRepeatInterval, inPeriod: myRepeatType)
+                    tempDueDate = calculateNewDate(tempDate, inDateBase:myRepeatBase, inInterval: myRepeatInterval, inPeriod: myRepeatType)
                 }
             }
             
             // Create new task
-            
-            let newTask = task(inTeamID: myTeamID)
-            newTask.title = myTitle
-            newTask.details = myDetails
-            newTask.dueDate = tempEndDate
-            newTask.startDate = tempStartDate
-            newTask.status = "Open"
-            newTask.priority = myPriority
-            newTask.energyLevel = myEnergyLevel
-            newTask.estimatedTime = myEstimatedTime
-            newTask.estimatedTimeType = myEstimatedTimeType
-            newTask.projectID = myProjectID
-            newTask.repeatInterval = myRepeatInterval
-            newTask.repeatType = myRepeatType
-            newTask.repeatBase = myRepeatBase
-            newTask.flagged = myFlagged
-            newTask.urgency = myUrgency
-            
-            // Populate Contexts
-            
-            for myContext in myContexts
-            {
-                newTask.addContext(myContext.contextID)
-            }
-            
-            // populate Predecessors
-
-            for myPredecessor in myPredecessors
-            {
-                newTask.addPredecessor(myPredecessor.predecessorID, inPredecessorType: myPredecessor.predecessorType)
-            }
+            let _ = task(oldTask: self, startDate: tempStartDate, dueDate: tempDueDate)
         }
     }
 }

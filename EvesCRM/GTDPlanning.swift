@@ -1814,8 +1814,13 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             self.presentViewController(popoverContent, animated: true, completion: nil)
         })
         
+        let myOption3 = UIAlertAction(title: "Delete Action", style: .Default, handler: { (action: UIAlertAction) -> () in
+            workingTask.delete()
+        })
+
         myOptions.addAction(myOption1)
         myOptions.addAction(myOption2)
+        myOptions.addAction(myOption3)
         
         return myOptions
     }
