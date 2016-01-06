@@ -7571,44 +7571,48 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
 
     func saveOutline(outlineID: Int, parentID: Int, parentType: String, title: String, status: String, updateTime: NSDate = NSDate(), updateType: String = "CODE")
     {
-        var myEmail: ProcessedEmails!
+        var myOutline: Outline!
         
-        let myEmailItems = getProcessedEmail(emailID)
+        let myOutlineItems = getOutline(outlineID)
         
-        if myEmailItems.count == 0
+        if myOutlineItems.count == 0
         { // Add
-            myEmail = NSEntityDescription.insertNewObjectForEntityForName("ProcessedEmails", inManagedObjectContext: self.managedObjectContext!) as! ProcessedEmails
-            myEmail.emailID = emailID
-            myEmail.emailType = emailType
-            myEmail.processedDate = processedDate
+            myOutline = NSEntityDescription.insertNewObjectForEntityForName("Outline", inManagedObjectContext: self.managedObjectContext!) as! Outline
+            myOutline.outlineID = outlineID
+            myOutline.parentID = parentID
+            myOutline.parentType = parentType
+            myOutline.title = title
+            myOutline.status = status
             
             if updateType == "CODE"
             {
-                myEmail.updateTime = NSDate()
-                myEmail.updateType = "Add"
+                myOutline.updateTime = NSDate()
+                myOutline.updateType = "Add"
             }
             else
             {
-                myEmail.updateTime = updateTime
-                myEmail.updateType = updateType
+                myOutline.updateTime = updateTime
+                myOutline.updateType = updateType
             }
         }
         else
         { // Update
-            myEmail = myEmailItems[0]
-            myEmail.emailType = emailType
-            myEmail.processedDate = processedDate
+            myOutline = myOutlineItems[0]
+            myOutline.parentID = parentID
+            myOutline.parentType = parentType
+            myOutline.title = title
+            myOutline.status = status
             if updateType == "CODE"
             {
-                if myEmail.updateType != "Add"
+                if myOutline.updateType != "Add"
                 {
-                    myEmail.updateType = "Update"
+                    myOutline.updateType = "Update"
                 }
             }
             else
             {
-                myEmail.updateTime = updateTime
-                myEmail.updateType = updateType
+                myOutline.updateTime = updateTime
+                myOutline.updateType = updateType
             }
         }
         
@@ -7626,27 +7630,29 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        myCloudDB.saveProcessedEmailsRecordToCloudKit(myEmail)
+        myCloudDB.saveOutlineRecordToCloudKit(myOutline)
     }
     
-    func replaceProcessedEmail(emailID: String, emailType: String, processedDate: NSDate, updateTime: NSDate = NSDate(), updateType: String = "CODE")
+    func replaceOutline(outlineID: Int, parentID: Int, parentType: String, title: String, status: String, updateTime: NSDate = NSDate(), updateType: String = "CODE")
     {
         managedObjectContext!.performBlock
             {
-                let myEmail = NSEntityDescription.insertNewObjectForEntityForName("ProcessedEmails", inManagedObjectContext: self.managedObjectContext!) as! ProcessedEmails
-                myEmail.emailID = emailID
-                myEmail.emailType = emailType
-                myEmail.processedDate = processedDate
+                let myOutline = NSEntityDescription.insertNewObjectForEntityForName("Outline", inManagedObjectContext: self.managedObjectContext!) as! Outline
+                myOutline.outlineID = outlineID
+                myOutline.parentID = parentID
+                myOutline.parentType = parentType
+                myOutline.title = title
+                myOutline.status = status
                 
                 if updateType == "CODE"
                 {
-                    myEmail.updateTime = NSDate()
-                    myEmail.updateType = "Add"
+                    myOutline.updateTime = NSDate()
+                    myOutline.updateType = "Add"
                 }
                 else
                 {
-                    myEmail.updateTime = updateTime
-                    myEmail.updateType = updateType
+                    myOutline.updateTime = updateTime
+                    myOutline.updateType = updateType
                 }
                 
                 do
@@ -7662,17 +7668,17 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
     
-    func deleteProcessedEmail(emailID: String)
+    func deleteOutline(outlineID: Int)
     {
-        var myEmail: ProcessedEmails!
+        var myOutline: Outline!
         
-        let myEmailItems = getProcessedEmail(emailID)
+        let myOutlineItems = getOutline(outlineID)
         
-        if myEmailItems.count > 0
+        if myOutlineItems.count > 0
         { // Update
-            myEmail = myEmailItems[0]
-            myEmail.updateTime = NSDate()
-            myEmail.updateType = "Delete"
+            myOutline = myOutlineItems[0]
+            myOutline.updateTime = NSDate()
+            myOutline.updateType = "Delete"
         }
         
         managedObjectContext!.performBlockAndWait
@@ -7691,21 +7697,171 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         
     }
     
-    func getProcessedEmail(emailID: String)->[ProcessedEmails]
+    func getOutline(outlineID: Int)->[Outline]
     {
-        let fetchRequest = NSFetchRequest(entityName: "ProcessedEmails")
+        let fetchRequest = NSFetchRequest(entityName: "Outline")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(emailID == \"\(emailID)\")")
+        let predicate = NSPredicate(format: "(outlineID == \"\(outlineID)\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [ProcessedEmails]
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Outline]
         
         return fetchResults!
     }
 
+    func saveOutlineDetail(outlineID: Int, lineID: Int, lineOrder: Int, parentLine: Int, lineText: String, lineType: String, checkBoxValue: Bool, updateTime: NSDate = NSDate(), updateType: String = "CODE")
+    {
+        var myOutline: OutlineDetails!
+        
+        let myOutlineItems = getOutlineDetails(outlineID, lineID: lineID)
+        
+        if myOutlineItems.count == 0
+        { // Add
+            myOutline = NSEntityDescription.insertNewObjectForEntityForName("OutlineDetails", inManagedObjectContext: self.managedObjectContext!) as! OutlineDetails
+            myOutline.outlineID = outlineID
+            myOutline.lineID = lineID
+            myOutline.lineOrder = lineOrder
+            myOutline.parentLine = parentLine
+            myOutline.lineText = lineText
+            myOutline.lineType = lineType
+            myOutline.checkBoxValue = checkBoxValue
+
+            if updateType == "CODE"
+            {
+                myOutline.updateTime = NSDate()
+                myOutline.updateType = "Add"
+            }
+            else
+            {
+                myOutline.updateTime = updateTime
+                myOutline.updateType = updateType
+            }
+        }
+        else
+        { // Update
+            myOutline = myOutlineItems[0]
+            myOutline.lineOrder = lineOrder
+            myOutline.parentLine = parentLine
+            myOutline.lineText = lineText
+            myOutline.lineType = lineType
+            myOutline.checkBoxValue = checkBoxValue
+            
+            if updateType == "CODE"
+            {
+                if myOutline.updateType != "Add"
+                {
+                    myOutline.updateType = "Update"
+                }
+            }
+            else
+            {
+                myOutline.updateTime = updateTime
+                myOutline.updateType = updateType
+            }
+        }
+        
+        managedObjectContext!.performBlock
+            {
+                do
+                {
+                    try self.managedObjectContext!.save()
+                }
+                catch let error as NSError
+                {
+                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+                    
+                    print("Failure to save context: \(error)")
+                }
+        }
+        
+        myCloudDB.saveOutlineDetailsRecordToCloudKit(myOutline)
+    }
+    
+    func replaceOutline(outlineID: Int, lineID: Int, lineOrder: Int, parentLine: Int, lineText: String, lineType: String, checkBoxValue: Bool, updateTime: NSDate = NSDate(), updateType: String = "CODE")
+    {
+        managedObjectContext!.performBlock
+            {
+                let myOutline = NSEntityDescription.insertNewObjectForEntityForName("OutlineDetails", inManagedObjectContext: self.managedObjectContext!) as! OutlineDetails
+                myOutline.outlineID = outlineID
+                myOutline.lineID = lineID
+                myOutline.lineOrder = lineOrder
+                myOutline.parentLine = parentLine
+                myOutline.lineText = lineText
+                myOutline.lineType = lineType
+                myOutline.checkBoxValue = checkBoxValue
+                
+                if updateType == "CODE"
+                {
+                    myOutline.updateTime = NSDate()
+                    myOutline.updateType = "Add"
+                }
+                else
+                {
+                    myOutline.updateTime = updateTime
+                    myOutline.updateType = updateType
+                }
+                
+                do
+                {
+                    try self.managedObjectContext!.save()
+                }
+                catch let error as NSError
+                {
+                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+                    
+                    print("Failure to save context: \(error)")
+                }
+        }
+    }
+    
+    func deleteOutlineDetails(outlineID: Int, lineID: Int)
+    {
+        var myOutline: OutlineDetails!
+        
+        let myOutlineItems = getOutlineDetails(outlineID, lineID: lineID)
+        
+        if myOutlineItems.count > 0
+        { // Update
+            myOutline = myOutlineItems[0]
+            myOutline.updateTime = NSDate()
+            myOutline.updateType = "Delete"
+        }
+        
+        managedObjectContext!.performBlockAndWait
+            {
+                do
+                {
+                    try self.managedObjectContext!.save()
+                }
+                catch let error as NSError
+                {
+                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+                    
+                    print("Failure to save context: \(error)")
+                }
+        }
+        
+    }
+    
+    func getOutlineDetails(outlineID: Int, lineID: Int)->[OutlineDetails]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "OutlineDetails")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(outlineID == \"\(outlineID)\") && (lineID == \"\(lineID)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [OutlineDetails]
+        
+        return fetchResults!
+    }
 }
