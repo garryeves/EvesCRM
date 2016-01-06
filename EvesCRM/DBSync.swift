@@ -185,6 +185,11 @@ class DBSync: NSObject
         myCloudDB.saveTeamToCloudKit(inDate)
         progressMessage("syncToCloudKit ProcessedEmails")
         myCloudDB.saveProcessedEmailsToCloudKit(inDate)
+        progressMessage("syncToCloudKit Outline")
+        myCloudDB.saveProcessedEmailsToOutline(inDate)
+        progressMessage("syncToCloudKit OutlineDetails")
+        myCloudDB.saveProcessedEmailsToOutlineDetails(inDate)
+
 
         NSNotificationCenter.defaultCenter().postNotificationName("NotificationCloudSyncFinished", object: nil)
     }
@@ -233,6 +238,10 @@ class DBSync: NSObject
         myCloudDB.updateTeamInCoreData(inDate)
         progressMessage("syncFromCloudKit ProcessedEmails")
         myCloudDB.updateProcessedEmailsInCoreData(inDate)
+        progressMessage("syncFromCloudKit Outline")
+        myCloudDB.updateOutlineInCoreData(inDate)
+        progressMessage("syncFromCloudKit OutlineDetails")
+        myCloudDB.updateOutlineDetailsInCoreData(inDate)
         
         NSNotificationCenter.defaultCenter().postNotificationName("NotificationCloudSyncFinished", object: nil)
     }
@@ -281,6 +290,10 @@ class DBSync: NSObject
         myCloudDB.replaceTaskUpdatesInCoreData()
         progressMessage("replaceWithCloudKit ProcessedEmails")
         myCloudDB.replaceProcessedEmailsInCoreData()
+        progressMessage("replaceWithCloudKit Outline")
+        myCloudDB.replaceOutlineInCoreData()
+        progressMessage("replaceWithCloudKit OutlineDetails")
+        myCloudDB.replaceOutlineDetailsInCoreData()
         
   //      refreshObject()
         NSNotificationCenter.defaultCenter().postNotificationName("NotificationCloudSyncFinished", object: nil)
@@ -309,6 +322,8 @@ class DBSync: NSObject
         myCloudDB.deleteTaskUpdates()
         myCloudDB.deleteTeam()
         myCloudDB.deleteProcessedEmails()
+        myCloudDB.deleteOutline()
+        myCloudDB.deleteOutlineDetails()
     }
     
     func deleteAllFromCoreData()

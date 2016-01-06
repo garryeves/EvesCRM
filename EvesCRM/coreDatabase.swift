@@ -32,8 +32,6 @@ class coreDatabase: NSObject
     func refreshObject(objectID: NSManagedObject)
     {
         managedObjectContext!.refreshObject(objectID, mergeChanges: true)
-      //  managedObjectContext!.processPendingChanges()
-      //  managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
     }
     
     func getOpenProjectsForGTDItem(inGTDItemID: Int, inTeamID: Int)->[Projects]
@@ -57,7 +55,6 @@ class coreDatabase: NSObject
         return fetchResults!
     }
 
-    
     func getProjectDetails(projectID: Int)->[Projects]
     {
         
@@ -213,19 +210,6 @@ class coreDatabase: NSObject
             }
             
             myCloudDB.saveRolesRecordToCloudKit(myStage)
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-            
-         //   managedObjectContext!.deleteObject(myStage as NSManagedObject)
         }
     }
     
@@ -311,17 +295,6 @@ class coreDatabase: NSObject
         }
         
         myCloudDB.saveRolesRecordToCloudKit(mySelectedRole)
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
 
     func saveCloudRole(roleName: String, teamID: Int, inUpdateTime: NSDate, inUpdateType: String, roleID: Int = 0)
@@ -401,17 +374,6 @@ class coreDatabase: NSObject
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
 
     
@@ -476,18 +438,6 @@ class coreDatabase: NSObject
             }
             
             myCloudDB.saveRolesRecordToCloudKit(myStage)
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-           // managedObjectContext!.deleteObject(myStage as NSManagedObject)
         }
     }
     
@@ -547,17 +497,6 @@ class coreDatabase: NSObject
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
 
     func replaceTeamMember(inProjectID: Int, inRoleID: Int, inPersonName: String, inNotes: String, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
@@ -592,22 +531,8 @@ class coreDatabase: NSObject
                 }
                 self.refreshObject(myProjectTeam)
         }
-        
-        
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
 
-    
     func deleteTeamMember(inProjectID: Int, inPersonName: String)
     {
         let fetchRequest = NSFetchRequest(entityName: "ProjectTeamMembers")
@@ -637,18 +562,6 @@ class coreDatabase: NSObject
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-            // managedObjectContext!.deleteObject(myStage as NSManagedObject)
         }
     }
 
@@ -868,17 +781,6 @@ class coreDatabase: NSObject
         }
         
         myCloudDB.saveDecodesRecordToCloudKit(myDecode, syncName: myDBSync.getSyncID())
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
     
     func replaceDecodeValue(inCodeKey: String, inCodeValue: String, inCodeType: String, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
@@ -977,19 +879,6 @@ class coreDatabase: NSObject
             }
             
             myCloudDB.saveStagesRecordToCloudKit(myStage)
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
-        //    managedObjectContext!.deleteObject(myStage as NSManagedObject)
         }
     }
 
@@ -1092,17 +981,6 @@ class coreDatabase: NSObject
         }
         
         myCloudDB.saveStagesRecordToCloudKit(myStage)
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
     
     func replaceStage(stageDesc: String, teamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
@@ -1136,19 +1014,7 @@ class coreDatabase: NSObject
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
-
     
     func deleteStageEntry(inStageDesc: String, inTeamID: Int)
     {
@@ -1181,19 +1047,6 @@ class coreDatabase: NSObject
             }
             
             myCloudDB.saveStagesRecordToCloudKit(myStage)
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
-//            managedObjectContext!.deleteObject(myStage as NSManagedObject)
         }
     }
     
@@ -1416,17 +1269,6 @@ class coreDatabase: NSObject
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
 
     func replaceAgenda(inMeetingID: String, inPreviousMeetingID : String, inName: String, inChair: String, inMinutes: String, inLocation: String, inStartTime: NSDate, inEndTime: NSDate, inMinutesType: String, inTeamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
@@ -1467,19 +1309,7 @@ class coreDatabase: NSObject
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
-
     
     func loadPreviousAgenda(inMeetingID: String, inTeamID: Int)->[MeetingAgenda]
     {
@@ -1561,17 +1391,6 @@ class coreDatabase: NSObject
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
     
     func loadAgendaForProject(inProjectName: String, inTeamID: Int)->[MeetingAgenda]
@@ -1654,52 +1473,6 @@ class coreDatabase: NSObject
         return fetchResults!
     }
 
-/*    func saveAttendee(inMeetingID: String, inAttendees: [meetingAttendee])
-    {
-        var myPerson: MeetingAttendees
-        
-        // Before we can add attendees, we first need to clear out the existing entries
-        deleteAllAttendees(inMeetingID)
-        
-        for myAttendee in inAttendees
-        {
-            myPerson = NSEntityDescription.insertNewObjectForEntityForName("MeetingAttendees", inManagedObjectContext: managedObjectContext!) as! MeetingAttendees
-            myPerson.attendenceStatus = myAttendee.status
-            myPerson.meetingID = inMeetingID
-            myPerson.email = myAttendee.emailAddress
-            myPerson.name = myAttendee.name
-            myPerson.type = myAttendee.type
-            myPerson.updateTime = NSDate()
-            myPerson.updateType = "Add"
-            
-            managedObjectContext!.performBlock
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
-            }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
-        }
-    }
-*/
     func checkMeetingsForAttendee(attendeeName: String, meetingID: String)->[MeetingAttendees]
     {
         let fetchRequest = NSFetchRequest(entityName: "MeetingAttendees")
@@ -1720,7 +1493,6 @@ class coreDatabase: NSObject
         return fetchResults!
     }
 
-    
     func saveAttendee(meetingID: String, name: String, email: String,  type: String, status: String, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
         var myPerson: MeetingAttendees!
@@ -1780,17 +1552,6 @@ class coreDatabase: NSObject
                 print("Failure to save context: \(error)")
             }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
 
     func replaceAttendee(meetingID: String, name: String, email: String,  type: String, status: String, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
@@ -1825,65 +1586,8 @@ class coreDatabase: NSObject
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
-/*    func deleteAllAttendees(inMeetingID: String)
-    {
-        var predicate: NSPredicate
-        
-        let fetchRequest = NSFetchRequest(entityName: "MeetingAttendees")
-        predicate = NSPredicate(format: "(meetingID == \"\(inMeetingID)\") && (updateType != \"Delete\")")
-        
-        // Set the predicate on the fetch request
-        fetchRequest.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAttendees]
-        
-        for myMeeting in fetchResults!
-        {
-            myMeeting.updateTime = NSDate()
-            myMeeting.updateType = "Delete"
 
-            managedObjectContext!.performBlockAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
-            }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
-         //   managedObjectContext!.deleteObject(myMeeting as NSManagedObject)
-        }
-    }
-*/
     func deleteAttendee(meetingID: String, name: String)
     {
         var predicate: NSPredicate
@@ -2015,18 +1719,6 @@ class coreDatabase: NSObject
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
-        
     }
     
     func replaceAgendaItem(meetingID: String, actualEndTime: NSDate, actualStartTime: NSDate, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int, owner: String, title: String, agendaID: Int, meetingOrder: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
@@ -2069,20 +1761,7 @@ class coreDatabase: NSObject
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
-        
     }
-    
     
     func loadSpecificAgendaItem(inMeetingID: String, inAgendaID: Int)->[MeetingAgendaItem]
     {
@@ -2139,19 +1818,6 @@ class coreDatabase: NSObject
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
-           // managedObjectContext!.deleteObject(myMeeting as NSManagedObject)
         }
     }
     
@@ -2186,20 +1852,6 @@ class coreDatabase: NSObject
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
-
-           // managedObjectContext!.deleteObject(myMeeting as NSManagedObject)
         }
     }
 
@@ -2292,17 +1944,6 @@ class coreDatabase: NSObject
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
     
     func replaceTask(inTaskID: Int, inTitle: String, inDetails: String, inDueDate: NSDate, inStartDate: NSDate, inStatus: String, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int, inEstimatedTimeType: String, inProjectID: Int, inCompletionDate: NSDate, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inFlagged: Bool, inUrgency: String, inTeamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
@@ -2352,17 +1993,6 @@ class coreDatabase: NSObject
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
     
     func deleteTask(inTaskID: Int)
@@ -2394,19 +2024,6 @@ class coreDatabase: NSObject
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
-//            managedObjectContext!.deleteObject(myStage as NSManagedObject)
         }
     }
     
@@ -2689,17 +2306,6 @@ class coreDatabase: NSObject
         }
         
         myCloudDB.saveTaskPredecessorRecordToCloudKit(myTask)
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
     
     func replacePredecessorTask(inTaskID: Int, inPredecessorID: Int, inPredecessorType: String, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
@@ -2734,17 +2340,6 @@ class coreDatabase: NSObject
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
     
     func updatePredecessorTaskType(inTaskID: Int, inPredecessorID: Int, inPredecessorType: String)
@@ -2782,18 +2377,6 @@ class coreDatabase: NSObject
             }
             
             myCloudDB.saveTaskPredecessorRecordToCloudKit(myStage)
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
         }
     }
 
@@ -2828,18 +2411,6 @@ class coreDatabase: NSObject
             }
             
             myCloudDB.saveTaskPredecessorRecordToCloudKit(myStage)
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-            //            managedObjectContext!.deleteObject(myStage as NSManagedObject)
         }
     }
     
@@ -2918,17 +2489,6 @@ class coreDatabase: NSObject
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
 
     func replaceProject(inProjectID: Int, inProjectEndDate: NSDate, inProjectName: String, inProjectStartDate: NSDate, inProjectStatus: String, inReviewFrequency: Int, inLastReviewDate: NSDate, inGTDItemID: Int, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inTeamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
@@ -2972,17 +2532,6 @@ class coreDatabase: NSObject
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
 
     func deleteProject(inProjectID: Int, inTeamID: Int)
@@ -3012,17 +2561,6 @@ class coreDatabase: NSObject
                 }
         }
         
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
-        
         var myProjectNote: ProjectNote!
         
         let myTeams = getProjectNote(inProjectID)
@@ -3047,17 +2585,6 @@ class coreDatabase: NSObject
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
     
     func saveTaskUpdate(inTaskID: Int, inDetails: String, inSource: String, inUpdateDate: NSDate = NSDate(), inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
@@ -3095,17 +2622,6 @@ class coreDatabase: NSObject
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
         }
     }
     
@@ -3142,7 +2658,6 @@ class coreDatabase: NSObject
                 }
             }
     }
-
 
     func getTaskUpdate(taskID: Int, updateDate: NSDate)->[TaskUpdates]
     {
@@ -3253,17 +2768,6 @@ class coreDatabase: NSObject
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
     
     func replaceContext(inContextID: Int, inName: String, inEmail: String, inAutoEmail: String, inParentContext: Int, inStatus: String, inPersonID: Int, inTeamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
@@ -3301,17 +2805,6 @@ class coreDatabase: NSObject
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
 
     func deleteContext(inContextID: Int, inTeamID: Int)
@@ -3339,17 +2832,6 @@ class coreDatabase: NSObject
                 }
         }
         
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
-        
         let myContexts2 = getContext1_1(inContextID)
         
         if myContexts2.count > 0
@@ -3372,18 +2854,6 @@ class coreDatabase: NSObject
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
-
     }
     
     func getContexts(inTeamID: Int)->[Context]
@@ -3488,7 +2958,6 @@ class coreDatabase: NSObject
         return fetchResults!.count
     }
 
-    
     func saveTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
         var myContext: TaskContext!
@@ -3544,17 +3013,6 @@ class coreDatabase: NSObject
         }
         
         myCloudDB.saveTaskContextRecordToCloudKit(myContext)
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
 
 func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
@@ -3586,19 +3044,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 print("Failure to save context: \(error)")
             }
     }
-    
-    //       do
-    //       {
-    //            try managedObjectContext!.save()
-    //        }
-    //        catch let error as NSError
-    //        {
-    //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-    
-    //            print("Failure to save context: \(error)")
-    //       }
 }
-
 
     func deleteTaskContext(inContextID: Int, inTaskID: Int)
     {
@@ -3629,19 +3075,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
-          //  managedObjectContext!.deleteObject(myStage as NSManagedObject)
         }
     }
 
@@ -3752,17 +3185,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
     
     func replaceGTDLevel(inGTDLevel: Int, inLevelName: String, inTeamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
@@ -3796,17 +3218,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
     
     func getGTDLevel(inGTDLevel: Int, inTeamID: Int)->[GTDLevel]
@@ -3867,20 +3278,8 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
 
-    
     func deleteGTDLevel(inGTDLevel: Int, inTeamID: Int)
     {
         var myGTD: GTDLevel!
@@ -3907,20 +3306,8 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
 
-    
     func getGTDLevels(inTeamID: Int)->[GTDLevel]
     {
         let fetchRequest = NSFetchRequest(entityName: "GTDLevel")
@@ -4016,18 +3403,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 print("Failure to save context: \(error)")
             }
         }
-
-        
- //       do
- //       {
-//            try managedObjectContext!.save()
-//        }
-//        catch let error as NSError
-//        {
-//            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-//            print("Failure to save context: \(error)")
- //       }
     }
     
     func replaceGTDItem(inGTDItemID: Int, inParentID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String, inLastReviewDate: NSDate, inReviewFrequency: Int, inReviewPeriod: String, inPredecessor: Int, inGTDLevel: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
@@ -4068,17 +3443,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
     
     func deleteGTDItem(inGTDItemID: Int, inTeamID: Int)
@@ -4107,17 +3471,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
     
     func getGTDItem(inGTDItemID: Int, inTeamID: Int)->[GTDItem]
@@ -4222,19 +3575,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
-            //managedObjectContext!.deleteObject(myStage as NSManagedObject)
         }
 
         let fetchRequest2 = NSFetchRequest(entityName: "Projects")
@@ -4259,21 +3599,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
-          //  managedObjectContext!.deleteObject(myStage as NSManagedObject)
         }
-
     }
     
     func deleteAllPanes()
@@ -4300,19 +3626,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
-         //   managedObjectContext!.deleteObject(myPane as NSManagedObject)
         }
     }
 
@@ -4407,18 +3720,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
             
             myCloudDB.savePanesRecordToCloudKit(myPane)
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
         }
     }
 
@@ -4457,18 +3758,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
             
             myCloudDB.savePanesRecordToCloudKit(myPane)
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
         }
     }
     
@@ -4534,17 +3823,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
         
         myCloudDB.savePanesRecordToCloudKit(myPane)
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
     
     func replacePane(inPaneName:String, inPaneAvailable: Bool, inPaneVisible: Bool, inPaneOrder: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
@@ -4579,20 +3857,8 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
 
-    
     func resetMeetings()
     {
         let fetchRequest1 = NSFetchRequest(entityName: "MeetingAgenda")
@@ -4618,20 +3884,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
-
-          //  managedObjectContext!.deleteObject(myMeeting as NSManagedObject)
         }
         
         let fetchRequest2 = NSFetchRequest(entityName: "MeetingAttendees")
@@ -4657,19 +3909,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
-           // managedObjectContext!.deleteObject(myMeeting2 as NSManagedObject)
         }
         
         let fetchRequest3 = NSFetchRequest(entityName: "MeetingAgendaItem")
@@ -4694,20 +3933,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
-            
-           // managedObjectContext!.deleteObject(myMeeting3 as NSManagedObject)
         }
         
         let fetchRequest4 = NSFetchRequest(entityName: "MeetingTasks")
@@ -4732,19 +3957,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
-          //  managedObjectContext!.deleteObject(myMeeting4 as NSManagedObject)
         }
         
         let fetchRequest6 = NSFetchRequest(entityName: "MeetingSupportingDocs")
@@ -4769,19 +3981,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
-           // managedObjectContext!.deleteObject(myMeeting6 as NSManagedObject)
         }
     }
     
@@ -4810,20 +4009,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
-            
-           // managedObjectContext!.deleteObject(myMeeting as NSManagedObject)
         }
 
         let fetchRequest2 = NSFetchRequest(entityName: "Task")
@@ -4849,19 +4034,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
-        //    managedObjectContext!.deleteObject(myMeeting2 as NSManagedObject)
         }
         
         let fetchRequest3 = NSFetchRequest(entityName: "TaskContext")
@@ -4885,19 +4057,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
-           // managedObjectContext!.deleteObject(myMeeting3 as NSManagedObject)
         }
         
         let fetchRequest4 = NSFetchRequest(entityName: "TaskUpdates")
@@ -4922,19 +4081,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
-//            managedObjectContext!.deleteObject(myMeeting4 as NSManagedObject)
         }
     }
 
@@ -4998,17 +4144,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
         
         myCloudDB.saveMeetingTasksRecordToCloudKit(myTask)
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
     
     func replaceAgendaTask(inAgendaID: Int, inMeetingID: String, inTaskID: Int)
@@ -5033,17 +4168,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
 
     func checkMeetingTask(meetingID: String, agendaID: Int, taskID: Int)->[MeetingTasks]
@@ -5062,7 +4186,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         
         return fetchResults!
     }
-
     
     func saveMeetingTask(agendaID: Int, meetingID: String, taskID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
     {
@@ -5118,17 +4241,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
 
     func replaceMeetingTask(agendaID: Int, meetingID: String, taskID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
@@ -5161,17 +4273,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
     
     func deleteAgendaTask(inAgendaID: Int, inMeetingID: String, inTaskID: Int)
@@ -5205,19 +4306,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
-        //    managedObjectContext!.deleteObject(myItem as NSManagedObject)
         }
     }
     
@@ -5263,19 +4351,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
-           // managedObjectContext!.deleteObject(myItem as NSManagedObject)
         }
 
         let fetchRequest2 = NSFetchRequest(entityName: "TaskContext")
@@ -5300,19 +4375,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
-          //  managedObjectContext!.deleteObject(myItem2 as NSManagedObject)
         }
     }
     
@@ -5346,17 +4408,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
 
         let fetchRequest3 = NSFetchRequest(entityName: "Decodes")
         
@@ -5384,17 +4435,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
 
         let fetchRequest5 = NSFetchRequest(entityName: "MeetingAgenda")
         
@@ -5422,17 +4462,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
 
         let fetchRequest6 = NSFetchRequest(entityName: "MeetingAgendaItem")
         
@@ -5460,17 +4489,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
 
         let fetchRequest7 = NSFetchRequest(entityName: "MeetingAttendees")
         
@@ -5498,17 +4516,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
 
         let fetchRequest8 = NSFetchRequest(entityName: "MeetingSupportingDocs")
         
@@ -5536,17 +4543,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
 
         let fetchRequest9 = NSFetchRequest(entityName: "MeetingTasks")
         
@@ -5574,17 +4570,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
 
         let fetchRequest10 = NSFetchRequest(entityName: "Panes")
         
@@ -5612,17 +4597,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
 
         let fetchRequest11 = NSFetchRequest(entityName: "Projects")
         
@@ -5650,17 +4624,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
 
         let fetchRequest12 = NSFetchRequest(entityName: "ProjectTeamMembers")
         
@@ -5688,17 +4651,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
 
         let fetchRequest14 = NSFetchRequest(entityName: "Roles")
         
@@ -5726,17 +4678,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
 
         let fetchRequest15 = NSFetchRequest(entityName: "Stages")
         
@@ -5764,17 +4705,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
 
         let fetchRequest16 = NSFetchRequest(entityName: "Task")
         
@@ -5802,17 +4732,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
 
         let fetchRequest17 = NSFetchRequest(entityName: "TaskAttachment")
         
@@ -5840,17 +4759,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
 
         let fetchRequest18 = NSFetchRequest(entityName: "TaskContext")
         
@@ -5878,17 +4786,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
 
         let fetchRequest19 = NSFetchRequest(entityName: "TaskUpdates")
         
@@ -5916,17 +4813,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
 
         let fetchRequest21 = NSFetchRequest(entityName: "TaskPredecessor")
         
@@ -5953,17 +4839,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
-        
         let fetchRequest22 = NSFetchRequest(entityName: "Team")
         
         // Set the predicate on the fetch request
@@ -5988,17 +4863,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
 
         let fetchRequest23 = NSFetchRequest(entityName: "ProjectNote")
         
@@ -6025,17 +4889,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
-        
         let fetchRequest24 = NSFetchRequest(entityName: "Context1_1")
         
         // Set the predicate on the fetch request
@@ -6060,17 +4913,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
         
         let fetchRequest25 = NSFetchRequest(entityName: "GTDItem")
         
@@ -6097,17 +4939,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
-        
         let fetchRequest26 = NSFetchRequest(entityName: "GTDLevel")
         
         // Set the predicate on the fetch request
@@ -6132,17 +4963,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
 
         let fetchRequest27 = NSFetchRequest(entityName: "ProcessedEmails")
         
@@ -6168,6 +4988,57 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
+
+        let fetchRequest28 = NSFetchRequest(entityName: "Outline")
+        
+        // Set the predicate on the fetch request
+        fetchRequest28.predicate = predicate
+        let fetchResults28 = (try? managedObjectContext!.executeFetchRequest(fetchRequest28)) as? [Outline]
+        
+        for myItem28 in fetchResults28!
+        {
+            managedObjectContext!.deleteObject(myItem28 as NSManagedObject)
+        }
+        
+        managedObjectContext!.performBlockAndWait
+            {
+                do
+                {
+                    try self.managedObjectContext!.save()
+                }
+                catch let error as NSError
+                {
+                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+                    
+                    print("Failure to save context: \(error)")
+                }
+        }
+
+        let fetchRequest29 = NSFetchRequest(entityName: "OutlineDetails")
+        
+        // Set the predicate on the fetch request
+        fetchRequest29.predicate = predicate
+        let fetchResults29 = (try? managedObjectContext!.executeFetchRequest(fetchRequest29)) as? [OutlineDetails]
+        
+        for myItem29 in fetchResults29!
+        {
+            managedObjectContext!.deleteObject(myItem29 as NSManagedObject)
+        }
+        
+        managedObjectContext!.performBlockAndWait
+            {
+                do
+                {
+                    try self.managedObjectContext!.save()
+                }
+                catch let error as NSError
+                {
+                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+                    
+                    print("Failure to save context: \(error)")
+                }
+        }
+
     }
 
     func clearSyncedItems()
@@ -6199,18 +5070,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
         }
         
         let fetchRequest3 = NSFetchRequest(entityName: "Decodes")
@@ -6238,18 +5097,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
         }
         
         let fetchRequest5 = NSFetchRequest(entityName: "MeetingAgenda")
@@ -6277,18 +5124,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
         }
         
         let fetchRequest6 = NSFetchRequest(entityName: "MeetingAgendaItem")
@@ -6316,18 +5151,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
         }
        
         let fetchRequest7 = NSFetchRequest(entityName: "MeetingAttendees")
@@ -6355,18 +5178,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
         }
         
         let fetchRequest8 = NSFetchRequest(entityName: "MeetingSupportingDocs")
@@ -6394,18 +5205,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
         }
         
         let fetchRequest9 = NSFetchRequest(entityName: "MeetingTasks")
@@ -6433,18 +5232,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
         }
         
         let fetchRequest10 = NSFetchRequest(entityName: "Panes")
@@ -6472,17 +5259,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
         }
         
         let fetchRequest11 = NSFetchRequest(entityName: "Projects")
@@ -6510,18 +5286,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
         }
         
         let fetchRequest12 = NSFetchRequest(entityName: "ProjectTeamMembers")
@@ -6549,17 +5313,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
         }
         
         let fetchRequest14 = NSFetchRequest(entityName: "Roles")
@@ -6587,17 +5340,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
         }
         
         let fetchRequest15 = NSFetchRequest(entityName: "Stages")
@@ -6625,18 +5367,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
-
         }
         
         let fetchRequest16 = NSFetchRequest(entityName: "Task")
@@ -6664,17 +5394,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
         }
         
         let fetchRequest17 = NSFetchRequest(entityName: "TaskAttachment")
@@ -6702,17 +5421,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
         }
         
         let fetchRequest18 = NSFetchRequest(entityName: "TaskContext")
@@ -6740,17 +5448,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
         }
         
         let fetchRequest19 = NSFetchRequest(entityName: "TaskUpdates")
@@ -6778,17 +5475,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
         }
         
         let fetchRequest21 = NSFetchRequest(entityName: "TaskPredecessor")
@@ -6816,17 +5502,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
         }
         
         let fetchRequest22 = NSFetchRequest(entityName: "Team")
@@ -6853,17 +5528,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
         }
 
         let fetchRequest23 = NSFetchRequest(entityName: "ProjectNote")
@@ -6890,17 +5554,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
         }
         
         let fetchRequest24 = NSFetchRequest(entityName: "Context1_1")
@@ -6927,17 +5580,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
         }
         
         let fetchRequest25 = NSFetchRequest(entityName: "GTDItem")
@@ -6964,17 +5606,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
         }
 
         let fetchRequest26 = NSFetchRequest(entityName: "GTDLevel")
@@ -7001,17 +5632,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
         }
         
         let fetchRequest27 = NSFetchRequest(entityName: "ProcessedEmails")
@@ -7037,6 +5657,58 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         
                     print("Failure to save context: \(error)")
                 }
+            }
+        }
+        
+        let fetchRequest28 = NSFetchRequest(entityName: "Outline")
+        // Set the predicate on the fetch request
+        fetchRequest28.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults28 = (try? managedObjectContext!.executeFetchRequest(fetchRequest28)) as? [Outline]
+        
+        for myItem28 in fetchResults28!
+        {
+            myItem28.updateType = ""
+            
+            managedObjectContext!.performBlockAndWait
+                {
+                    do
+                    {
+                        try self.managedObjectContext!.save()
+                    }
+                    catch let error as NSError
+                    {
+                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+                        
+                        print("Failure to save context: \(error)")
+                    }
+            }
+        }
+        
+        let fetchRequest29 = NSFetchRequest(entityName: "OutlineDetails")
+        // Set the predicate on the fetch request
+        fetchRequest29.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults29 = (try? managedObjectContext!.executeFetchRequest(fetchRequest29)) as? [OutlineDetails]
+        
+        for myItem29 in fetchResults29!
+        {
+            myItem29.updateType = ""
+            
+            managedObjectContext!.performBlockAndWait
+                {
+                    do
+                    {
+                        try self.managedObjectContext!.save()
+                    }
+                    catch let error as NSError
+                    {
+                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+                        
+                        print("Failure to save context: \(error)")
+                    }
             }
         }
     }
@@ -7105,17 +5777,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
     
     func replaceTeam(inTeamID: Int, inName: String, inStatus: String, inNote: String, inType: String, inPredecessor: Int, inExternalID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
@@ -7153,20 +5814,8 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
                 self.refreshObject(myTeam)
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
 
-    
     func getTeam(inTeamID: Int)->[Team]
     {
         let fetchRequest = NSFetchRequest(entityName: "Team")
@@ -7262,17 +5911,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
 
         let fetchRequest2 = NSFetchRequest(entityName: "GTDLevel")
         
@@ -7297,17 +5935,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
     
     func saveProjectNote(inProjectID: Int, inNote: String, inReviewPeriod: String, inPredecessor: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
@@ -7369,17 +5996,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
  
     func replaceProjectNote(inProjectID: Int, inNote: String, inReviewPeriod: String, inPredecessor: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
@@ -7414,20 +6030,8 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
 
-    
     func getProjectNote(inProjectID: Int)->[ProjectNote]
     {
         let fetchRequest = NSFetchRequest(entityName: "ProjectNote")
@@ -7503,17 +6107,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
         }
     }
 
@@ -7551,17 +6144,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
         }
         
         // Now go and populate the Decode for this
@@ -7604,17 +6186,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
         }
         
         // Now go and populate the Decode for this
@@ -7657,17 +6228,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
         }
         
         // Now go and populate the Decode for this
@@ -7703,17 +6263,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
         }
     }
 
@@ -7751,17 +6300,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                         print("Failure to save context: \(error)")
                     }
             }
-            
-            //       do
-            //       {
-            //            try managedObjectContext!.save()
-            //        }
-            //        catch let error as NSError
-            //        {
-            //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-            
-            //            print("Failure to save context: \(error)")
-            //       }
         }
         
         // Now go and populate the Decode for this
@@ -7827,17 +6365,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
     
     func replaceContext1_1(contextID: Int, predecessor: Int, contextType: String, updateTime: NSDate = NSDate(), updateType: String = "CODE")
@@ -7870,20 +6397,8 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
 
-    
     func getContext1_1(inContextID: Int)->[Context1_1]
     {
         let fetchRequest = NSFetchRequest(entityName: "Context1_1")
@@ -7938,21 +6453,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
     }
-    
     
     func performTidyDecodes(inString: String)
     {
@@ -7987,18 +6488,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
-
     }
     
     func tidyDecodes()
@@ -8010,6 +6499,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         performTidyDecodes("(decode_name == \"PurposeAndCoreValue\")")
         performTidyDecodes("(decode_name == \"GoalAndObjective\")")
         performTidyDecodes("(decode_name == \"AreaOfResponsibility\")")
+        performTidyDecodes("(decode_name == \"Outline\")")
     }
     
     func getContextsForSync(inLastSyncDate: NSDate) -> [Context]
@@ -8370,8 +6860,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         {
             self.managedObjectContext!.deleteObject(myItem2 as NSManagedObject)
         }
-        
-
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -8383,31 +6871,18 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
         
         let fetchRequest3 = NSFetchRequest(entityName: "Decodes")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         managedObjectContext!.performBlockAndWait
             {
-                
                 let fetchResults3 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest3)) as? [Decodes]
 
         for myItem3 in fetchResults3!
         {
             self.managedObjectContext!.deleteObject(myItem3 as NSManagedObject)
         }
-        
 
                 do
                 {
@@ -8420,31 +6895,18 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
         
         let fetchRequest5 = NSFetchRequest(entityName: "MeetingAgenda")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         managedObjectContext!.performBlockAndWait
             {
-                
                 let fetchResults5 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest5)) as? [MeetingAgenda]
 
         for myItem5 in fetchResults5!
         {
             self.managedObjectContext!.deleteObject(myItem5 as NSManagedObject)
         }
-        
 
                 do
                 {
@@ -8457,32 +6919,19 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
         
         let fetchRequest6 = NSFetchRequest(entityName: "MeetingAgendaItem")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         managedObjectContext!.performBlockAndWait
             {
-                
                 let fetchResults6 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest6)) as? [MeetingAgendaItem]
 
         for myItem6 in fetchResults6!
         {
             self.managedObjectContext!.deleteObject(myItem6 as NSManagedObject)
         }
- 
-                
+
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -8494,31 +6943,18 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
         
         let fetchRequest7 = NSFetchRequest(entityName: "MeetingAttendees")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         managedObjectContext!.performBlockAndWait
             {
-                
                 let fetchResults7 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest7)) as? [MeetingAttendees]
 
         for myItem7 in fetchResults7!
         {
             self.managedObjectContext!.deleteObject(myItem7 as NSManagedObject)
         }
-        
 
                 do
                 {
@@ -8531,17 +6967,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
         
         let fetchRequest8 = NSFetchRequest(entityName: "MeetingSupportingDocs")
         
@@ -8549,13 +6974,11 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         managedObjectContext!.performBlockAndWait
             {
                 let fetchResults8 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest8)) as? [MeetingSupportingDocs]
-
                 
                 for myItem8 in fetchResults8!
         {
             self.managedObjectContext!.deleteObject(myItem8 as NSManagedObject)
         }
-        
 
                 do
                 {
@@ -8568,32 +6991,19 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
         
         let fetchRequest9 = NSFetchRequest(entityName: "MeetingTasks")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         managedObjectContext!.performBlockAndWait
             {
-                
                 let fetchResults9 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest9)) as? [MeetingTasks]
 
         for myItem9 in fetchResults9!
         {
             self.managedObjectContext!.deleteObject(myItem9 as NSManagedObject)
         }
-        
-        
+
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -8605,32 +7015,19 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
         
         let fetchRequest10 = NSFetchRequest(entityName: "Panes")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         managedObjectContext!.performBlockAndWait
             {
-
                 let fetchResults10 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest10)) as? [Panes]
 
             for myItem10 in fetchResults10!
         {
             self.managedObjectContext!.deleteObject(myItem10 as NSManagedObject)
         }
-        
-        
+
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -8642,17 +7039,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
         
         let fetchRequest11 = NSFetchRequest(entityName: "Projects")
         
@@ -8665,8 +7051,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         {
             self.managedObjectContext!.deleteObject(myItem11 as NSManagedObject)
         }
-        
-        
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -8678,17 +7062,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
         
         let fetchRequest12 = NSFetchRequest(entityName: "ProjectTeamMembers")
         
@@ -8701,8 +7074,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         {
             self.managedObjectContext!.deleteObject(myItem12 as NSManagedObject)
         }
-        
-        
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -8714,17 +7085,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
         
         let fetchRequest14 = NSFetchRequest(entityName: "Roles")
         
@@ -8751,17 +7111,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
-        
         let fetchRequest15 = NSFetchRequest(entityName: "Stages")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
@@ -8773,8 +7122,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         {
             self.managedObjectContext!.deleteObject(myItem15 as NSManagedObject)
         }
-        
-        
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -8786,17 +7133,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
         
         let fetchRequest16 = NSFetchRequest(entityName: "Task")
         
@@ -8809,8 +7145,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         {
             self.managedObjectContext!.deleteObject(myItem16 as NSManagedObject)
         }
-        
-        
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -8822,17 +7156,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
         
         let fetchRequest17 = NSFetchRequest(entityName: "TaskAttachment")
         
@@ -8845,8 +7168,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         {
             self.managedObjectContext!.deleteObject(myItem17 as NSManagedObject)
         }
-        
-        
+
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -8858,17 +7180,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
         
         let fetchRequest18 = NSFetchRequest(entityName: "TaskContext")
         
@@ -8881,8 +7192,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         {
             self.managedObjectContext!.deleteObject(myItem18 as NSManagedObject)
         }
-        
-        
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -8894,17 +7203,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
         
         let fetchRequest19 = NSFetchRequest(entityName: "TaskUpdates")
         
@@ -8917,8 +7215,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         {
             self.managedObjectContext!.deleteObject(myItem19 as NSManagedObject)
         }
-        
-        
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -8930,17 +7226,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
         
         let fetchRequest21 = NSFetchRequest(entityName: "TaskPredecessor")
         
@@ -8952,8 +7237,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         {
             self.managedObjectContext!.deleteObject(myItem21 as NSManagedObject)
         }
-        
-        
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -8965,17 +7248,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
         
         let fetchRequest22 = NSFetchRequest(entityName: "Team")
         
@@ -8987,8 +7259,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         {
             self.managedObjectContext!.deleteObject(myItem22 as NSManagedObject)
         }
-        
-       
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -9000,17 +7270,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
         
         let fetchRequest23 = NSFetchRequest(entityName: "ProjectNote")
         
@@ -9022,8 +7281,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         {
             self.managedObjectContext!.deleteObject(myItem23 as NSManagedObject)
         }
-        
-        
+
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -9035,17 +7293,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
         
         let fetchRequest24 = NSFetchRequest(entityName: "Context1_1")
         
@@ -9057,8 +7304,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         {
             self.managedObjectContext!.deleteObject(myItem24 as NSManagedObject)
         }
-        
-        
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -9070,17 +7315,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
         
         let fetchRequest25 = NSFetchRequest(entityName: "GTDItem")
         
@@ -9092,8 +7326,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         {
             self.managedObjectContext!.deleteObject(myItem25 as NSManagedObject)
         }
-        
-        
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -9105,17 +7337,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
         
         let fetchRequest26 = NSFetchRequest(entityName: "GTDLevel")
         
@@ -9127,8 +7348,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         {
             self.managedObjectContext!.deleteObject(myItem26 as NSManagedObject)
         }
-        
-        
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -9140,17 +7359,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     print("Failure to save context: \(error)")
                 }
         }
-        
-        //       do
-        //       {
-        //            try managedObjectContext!.save()
-        //        }
-        //        catch let error as NSError
-        //        {
-        //            NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-        
-        //            print("Failure to save context: \(error)")
-        //       }
         
         let fetchRequest27 = NSFetchRequest(entityName: "ProcessedEmails")
         
@@ -9163,7 +7371,6 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                     self.managedObjectContext!.deleteObject(myItem27 as NSManagedObject)
                 }
                 
-                
                 do
                 {
                     try self.managedObjectContext!.save()
@@ -9176,7 +7383,51 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
 
+        let fetchRequest28 = NSFetchRequest(entityName: "Outline")
         
+        managedObjectContext!.performBlockAndWait
+            {
+                let fetchResults28 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest28)) as? [Outline]
+                
+                for myItem28 in fetchResults28!
+                {
+                    self.managedObjectContext!.deleteObject(myItem28 as NSManagedObject)
+                }
+                
+                do
+                {
+                    try self.managedObjectContext!.save()
+                }
+                catch let error as NSError
+                {
+                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+                    
+                    print("Failure to save context: \(error)")
+                }
+        }
+        
+        let fetchRequest29 = NSFetchRequest(entityName: "OutlineDetails")
+        
+        managedObjectContext!.performBlockAndWait
+            {
+                let fetchResults29 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest29)) as? [OutlineDetails]
+                
+                for myItem29 in fetchResults29!
+                {
+                    self.managedObjectContext!.deleteObject(myItem29 as NSManagedObject)
+                }
+                
+                do
+                {
+                    try self.managedObjectContext!.save()
+                }
+                catch let error as NSError
+                {
+                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+                    
+                    print("Failure to save context: \(error)")
+                }
+        }
     }
 
     func saveProcessedEmail(emailID: String, emailType: String, processedDate: NSDate, updateTime: NSDate = NSDate(), updateType: String = "CODE")
@@ -9299,6 +7550,145 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
 
+    }
+    
+    func getProcessedEmail(emailID: String)->[ProcessedEmails]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "ProcessedEmails")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(emailID == \"\(emailID)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [ProcessedEmails]
+        
+        return fetchResults!
+    }
+
+    func saveOutline(outlineID: Int, parentID: Int, parentType: String, title: String, status: String, updateTime: NSDate = NSDate(), updateType: String = "CODE")
+    {
+        var myEmail: ProcessedEmails!
+        
+        let myEmailItems = getProcessedEmail(emailID)
+        
+        if myEmailItems.count == 0
+        { // Add
+            myEmail = NSEntityDescription.insertNewObjectForEntityForName("ProcessedEmails", inManagedObjectContext: self.managedObjectContext!) as! ProcessedEmails
+            myEmail.emailID = emailID
+            myEmail.emailType = emailType
+            myEmail.processedDate = processedDate
+            
+            if updateType == "CODE"
+            {
+                myEmail.updateTime = NSDate()
+                myEmail.updateType = "Add"
+            }
+            else
+            {
+                myEmail.updateTime = updateTime
+                myEmail.updateType = updateType
+            }
+        }
+        else
+        { // Update
+            myEmail = myEmailItems[0]
+            myEmail.emailType = emailType
+            myEmail.processedDate = processedDate
+            if updateType == "CODE"
+            {
+                if myEmail.updateType != "Add"
+                {
+                    myEmail.updateType = "Update"
+                }
+            }
+            else
+            {
+                myEmail.updateTime = updateTime
+                myEmail.updateType = updateType
+            }
+        }
+        
+        managedObjectContext!.performBlock
+            {
+                do
+                {
+                    try self.managedObjectContext!.save()
+                }
+                catch let error as NSError
+                {
+                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+                    
+                    print("Failure to save context: \(error)")
+                }
+        }
+        
+        myCloudDB.saveProcessedEmailsRecordToCloudKit(myEmail)
+    }
+    
+    func replaceProcessedEmail(emailID: String, emailType: String, processedDate: NSDate, updateTime: NSDate = NSDate(), updateType: String = "CODE")
+    {
+        managedObjectContext!.performBlock
+            {
+                let myEmail = NSEntityDescription.insertNewObjectForEntityForName("ProcessedEmails", inManagedObjectContext: self.managedObjectContext!) as! ProcessedEmails
+                myEmail.emailID = emailID
+                myEmail.emailType = emailType
+                myEmail.processedDate = processedDate
+                
+                if updateType == "CODE"
+                {
+                    myEmail.updateTime = NSDate()
+                    myEmail.updateType = "Add"
+                }
+                else
+                {
+                    myEmail.updateTime = updateTime
+                    myEmail.updateType = updateType
+                }
+                
+                do
+                {
+                    try self.managedObjectContext!.save()
+                }
+                catch let error as NSError
+                {
+                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+                    
+                    print("Failure to save context: \(error)")
+                }
+        }
+    }
+    
+    func deleteProcessedEmail(emailID: String)
+    {
+        var myEmail: ProcessedEmails!
+        
+        let myEmailItems = getProcessedEmail(emailID)
+        
+        if myEmailItems.count > 0
+        { // Update
+            myEmail = myEmailItems[0]
+            myEmail.updateTime = NSDate()
+            myEmail.updateType = "Delete"
+        }
+        
+        managedObjectContext!.performBlockAndWait
+            {
+                do
+                {
+                    try self.managedObjectContext!.save()
+                }
+                catch let error as NSError
+                {
+                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+                    
+                    print("Failure to save context: \(error)")
+                }
+        }
+        
     }
     
     func getProcessedEmail(emailID: String)->[ProcessedEmails]

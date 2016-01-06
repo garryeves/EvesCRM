@@ -64,7 +64,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
 
     func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject])
     {
-        NSLog("yep, a notificaton")
+   //     NSLog("yep, a notificaton")
         
         let cloudKitNotification = CKNotification(fromRemoteNotificationDictionary: userInfo as! [String : NSObject])
         
@@ -73,7 +73,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
             let queryNotification = cloudKitNotification as! CKQueryNotification
             let recordID = queryNotification.recordID!.recordName
             
-            NSLog("initial record ID = \(recordID)")
+//            NSLog("initial record ID = \(recordID)")
             
             myCloudDB.getRecords(queryNotification.recordID!)
         }
