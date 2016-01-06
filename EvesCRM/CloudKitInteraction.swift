@@ -614,6 +614,40 @@ class CloudKitInteraction
         dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     }
     
+    func updateOutlineInCoreData(inLastSyncDate: NSDate)
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let query: CKQuery = CKQuery(recordType: "Outline", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                self.updateOutlineRecord(record)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
+    func updateOutlineDetailsInCoreData(inLastSyncDate: NSDate)
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let query: CKQuery = CKQuery(recordType: "OutlineDetails", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                self.updateOutlineDetailsRecord(record)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+    
     func deleteContext()
     {
         let sem = dispatch_semaphore_create(0);
@@ -1019,7 +1053,42 @@ class CloudKitInteraction
         })
         dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     }
+ 
+    func deleteOutline()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "Outline", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performDelete(myRecordList)
+            dispatch_semaphore_signal(sem)
+        })
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
     
+    func deleteOutlineDetails()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "OutlineDetails", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performDelete(myRecordList)
+            dispatch_semaphore_signal(sem)
+        })
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
 
     func performDelete(inRecordSet: [CKRecordID])
     {
@@ -1683,6 +1752,75 @@ class CloudKitInteraction
         
         dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
     }
+    
+    func replaceOutlineInCoreData()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        let myDateFormatter = NSDateFormatter()
+        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let query: CKQuery = CKQuery(recordType: "Outline", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let outlineID = record.objectForKey("outlineID") as! Int
+                let parentID = record.objectForKey("parentID") as! Int
+                let parentType = record.objectForKey("parentType") as! String
+                let title = record.objectForKey("title") as! String
+                let status = record.objectForKey("status") as! String
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                
+                myDatabaseConnection.replaceOutline(outlineID, parentID: parentID, parentType: parentType, title: title, status: status, updateTime: updateTime, updateType: updateType)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+
+    func replaceOutlineDetailsInCoreData()
+    {
+        let sem = dispatch_semaphore_create(0);
+        
+        let myDateFormatter = NSDateFormatter()
+        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let query: CKQuery = CKQuery(recordType: "OutlineDetails", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+            for record in results!
+            {
+                let outlineID = record.objectForKey("outlineID") as! Int
+                let lineID = record.objectForKey("lineID") as! Int
+                let lineOrder = record.objectForKey("lineOrder") as! Int
+                let parentLine = record.objectForKey("parentLine") as! Int
+                let lineText = record.objectForKey("lineText") as! String
+                let lineType = record.objectForKey("lineType") as! String
+                
+                let checkBox = record.objectForKey("checkBoxValue") as! String
+                
+                var checkBoxValue: Bool = false
+                
+                if checkBox == "True"
+                {
+                    checkBoxValue = true
+                }
+                let updateTime = record.objectForKey("updateTime") as! NSDate
+                let updateType = record.objectForKey("updateType") as! String
+                
+                myDatabaseConnection.replaceOutlineDetails(outlineID, lineID: lineID, lineOrder: lineOrder, parentLine: parentLine, lineText: lineText, lineType: lineType, checkBoxValue: checkBoxValue, updateTime: updateTime, updateType: updateType)
+            }
+            dispatch_semaphore_signal(sem)
+        })
+        
+        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+    }
+
     
     func saveContextRecordToCloudKit(sourceRecord: Context)
     {
@@ -4110,6 +4248,62 @@ class CloudKitInteraction
         myDatabaseConnection.saveProcessedEmail(emailID, emailType: emailType, processedDate: processedDate, updateTime: updateTime, updateType: updateType)
     }
     
+    private func updateOutlineRecord(sourceRecord: CKRecord)
+    {
+        let outlineID = sourceRecord.objectForKey("outlineID") as! Int
+        var updateTime = NSDate()
+        if sourceRecord.objectForKey("updateTime") != nil
+        {
+            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+        }
+        
+        var updateType = ""
+        
+        if sourceRecord.objectForKey("updateType") != nil
+        {
+            updateType = sourceRecord.objectForKey("updateType") as! String
+        }
+        let parentID = sourceRecord.objectForKey("parentID") as! Int
+        let parentType = sourceRecord.objectForKey("parentType") as! String
+        let title = sourceRecord.objectForKey("title") as! String
+        let status = sourceRecord.objectForKey("status") as! String
+        
+        myDatabaseConnection.saveOutline(outlineID, parentID: parentID, parentType: parentType, title: title, status: status, updateTime: updateTime, updateType: updateType)
+    }
+    
+    private func updateOutlineDetailsRecord(sourceRecord: CKRecord)
+    {
+        let outlineID = sourceRecord.objectForKey("outlineID") as! Int
+        var updateTime = NSDate()
+        if sourceRecord.objectForKey("updateTime") != nil
+        {
+            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+        }
+        
+        var updateType = ""
+        
+        if sourceRecord.objectForKey("updateType") != nil
+        {
+            updateType = sourceRecord.objectForKey("updateType") as! String
+        }
+        let lineID = sourceRecord.objectForKey("lineID") as! Int
+        let lineOrder = sourceRecord.objectForKey("lineOrder") as! Int
+        let parentLine = sourceRecord.objectForKey("parentLine") as! Int
+        let lineText = sourceRecord.objectForKey("lineText") as! String
+        let lineType = sourceRecord.objectForKey("lineType") as! String
+        
+        let checkBox = sourceRecord.objectForKey("checkBoxValue") as! String
+        
+        var checkBoxValue: Bool = false
+        
+        if checkBox == "True"
+        {
+            checkBoxValue = true
+        }
+        
+        myDatabaseConnection.saveOutlineDetail(outlineID, lineID: lineID, lineOrder: lineOrder, parentLine: parentLine, lineText: lineText, lineType: lineType, checkBoxValue: checkBoxValue, updateTime: updateTime, updateType: updateType)
+    }
+    
     private func createSubscription(sourceTable:String, sourceQuery: String)
     {
         let predicate: NSPredicate = NSPredicate(format: sourceQuery)
@@ -4187,6 +4381,10 @@ class CloudKitInteraction
         
         createSubscription("MeetingSupportingDocs", sourceQuery: "meetingID != ''")
         
+        createSubscription("Outline", sourceQuery: "outlineID > -1")
+        
+        createSubscription("OutlineDetails", sourceQuery: "outlineID > -1")
+        
         createSubscription("Panes", sourceQuery: "pane_name != ''")
         
         createSubscription("ProcessedEmails", sourceQuery: "emailID != ''")
@@ -4258,6 +4456,12 @@ class CloudKitInteraction
                     
                     case "ProcessedEmails" :
                         self.updateProcessedEmailsRecord(record!)
+                
+                    case "Outline" :
+                        self.updateOutlineRecord(record!)
+                
+                    case "OutlineDetails" :
+                        self.updateOutlineDetailsRecord(record!)
                     
                     case "Projects" :
                         self.updateProjectsRecord(record!)

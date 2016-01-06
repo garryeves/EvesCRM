@@ -7812,7 +7812,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         myCloudDB.saveOutlineDetailsRecordToCloudKit(myOutline)
     }
     
-    func replaceOutline(outlineID: Int, lineID: Int, lineOrder: Int, parentLine: Int, lineText: String, lineType: String, checkBoxValue: Bool, updateTime: NSDate = NSDate(), updateType: String = "CODE")
+    func replaceOutlineDetails(outlineID: Int, lineID: Int, lineOrder: Int, parentLine: Int, lineText: String, lineType: String, checkBoxValue: Bool, updateTime: NSDate = NSDate(), updateType: String = "CODE")
     {
         managedObjectContext!.performBlock
             {
