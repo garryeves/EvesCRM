@@ -236,6 +236,24 @@ class CloudKitInteraction
         }
     }
     
+    func saveOutlineToCloudKit(inLastSyncDate: NSDate)
+    {
+        //        NSLog("Syncing ProcessedEmails")
+        for myItem in myDatabaseConnection.getOutlineForSync(inLastSyncDate)
+        {
+            saveOutlineRecordToCloudKit(myItem)
+        }
+    }
+    
+    func saveOutlineDetailsToCloudKit(inLastSyncDate: NSDate)
+    {
+        //        NSLog("Syncing ProcessedEmails")
+        for myItem in myDatabaseConnection.getOutlineDetailsForSync(inLastSyncDate)
+        {
+            saveOutlineDetailsRecordToCloudKit(myItem)
+        }
+    }
+    
     func updateContextInCoreData(inLastSyncDate: NSDate)
     {
         let sem = dispatch_semaphore_create(0);
@@ -3403,6 +3421,159 @@ class CloudKitInteraction
             })
     }
 
+    func saveOutlineRecordToCloudKit(sourceRecord: Outline)
+    {
+        let predicate = NSPredicate(format: "(outlineID == \(sourceRecord.outlineID!))") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "Outline", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+            if error != nil
+            {
+                NSLog("Error querying records: \(error!.localizedDescription)")
+            }
+            else
+            {
+                if records!.count > 0
+                {
+                    let record = records!.first// as! CKRecord
+                    // Now you have grabbed your existing record from iCloud
+                    // Apply whatever changes you want
+                    record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                    record!.setValue(sourceRecord.parentID, forKey: "parentID")
+                    record!.setValue(sourceRecord.parentType, forKey: "parentType")
+                    record!.setValue(sourceRecord.title, forKey: "title")
+                    record!.setValue(sourceRecord.status, forKey: "status")
+                    
+                    // Save this record again
+                    self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                        if saveError != nil
+                        {
+                            NSLog("Error saving record: \(saveError!.localizedDescription)")
+                        }
+                        else
+                        {
+                            if debugMessages
+                            {
+                                NSLog("Successfully updated record!")
+                            }
+                        }
+                    })
+                }
+                else
+                {  // Insert
+                    let record = CKRecord(recordType: "Outline")
+                    record.setValue(sourceRecord.outlineID, forKey: "outlineID")
+                    record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    record.setValue(sourceRecord.updateType, forKey: "updateType")
+                    record.setValue(sourceRecord.parentID, forKey: "parentID")
+                    record.setValue(sourceRecord.parentType, forKey: "parentType")
+                    record.setValue(sourceRecord.title, forKey: "title")
+                    record.setValue(sourceRecord.status, forKey: "status")
+                    
+                    self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                        if saveError != nil
+                        {
+                            NSLog("Error saving record: \(saveError!.localizedDescription)")
+                        }
+                        else
+                        {
+                            if debugMessages
+                            {
+                                NSLog("Successfully saved record!")
+                            }
+                        }
+                    })
+                }
+            }
+        })
+    }
+
+    func saveOutlineDetailsRecordToCloudKit(sourceRecord: OutlineDetails)
+    {
+        let predicate = NSPredicate(format: "(outlineID == \(sourceRecord.outlineID!)) && (lineID == \(sourceRecord.lineID!))") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "OutlineDetails", predicate: predicate)
+        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+            if error != nil
+            {
+                NSLog("Error querying records: \(error!.localizedDescription)")
+            }
+            else
+            {
+                if records!.count > 0
+                {
+                    let record = records!.first// as! CKRecord
+                    // Now you have grabbed your existing record from iCloud
+                    // Apply whatever changes you want
+                    record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                    record!.setValue(sourceRecord.lineOrder, forKey: "lineOrder")
+                    record!.setValue(sourceRecord.parentLine, forKey: "parentLine")
+                    record!.setValue(sourceRecord.lineText, forKey: "lineText")
+                    record!.setValue(sourceRecord.lineType, forKey: "lineType")
+                    
+                    if sourceRecord.checkBoxValue == true
+                    {
+                        record!.setValue("True", forKey: "checkBoxValue")
+                    }
+                    else
+                    {
+                        record!.setValue("False", forKey: "checkBoxValue")
+                    }
+                    
+                    // Save this record again
+                    self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                        if saveError != nil
+                        {
+                            NSLog("Error saving record: \(saveError!.localizedDescription)")
+                        }
+                        else
+                        {
+                            if debugMessages
+                            {
+                                NSLog("Successfully updated record!")
+                            }
+                        }
+                    })
+                }
+                else
+                {  // Insert
+                    let record = CKRecord(recordType: "OutlineDetails")
+                    record.setValue(sourceRecord.outlineID, forKey: "outlineID")
+                    record.setValue(sourceRecord.lineID, forKey: "lineID")
+                    record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    record.setValue(sourceRecord.updateType, forKey: "updateType")
+                    record.setValue(sourceRecord.lineOrder, forKey: "lineOrder")
+                    record.setValue(sourceRecord.parentLine, forKey: "parentLine")
+                    record.setValue(sourceRecord.lineText, forKey: "lineText")
+                    record.setValue(sourceRecord.lineType, forKey: "lineType")
+                    
+                    if sourceRecord.checkBoxValue == true
+                    {
+                        record.setValue("True", forKey: "checkBoxValue")
+                    }
+                    else
+                    {
+                        record.setValue("False", forKey: "checkBoxValue")
+                    }
+                    
+                    self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                        if saveError != nil
+                        {
+                            NSLog("Error saving record: \(saveError!.localizedDescription)")
+                        }
+                        else
+                        {
+                            if debugMessages
+                            {
+                                NSLog("Successfully saved record!")
+                            }
+                        }
+                    })
+                }
+            }
+        })
+    }
+    
     private func updateContextRecord(sourceRecord: CKRecord)
     {
         var predecessor: Int = 0

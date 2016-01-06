@@ -6846,6 +6846,36 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         
         return fetchResults!
     }
+
+    func getOutlineForSync(inLastSyncDate: NSDate) -> [Outline]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "Outline")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Outline]
+        
+        return fetchResults!
+    }
+    
+    func getOutlineDetailsForSync(inLastSyncDate: NSDate) -> [OutlineDetails]
+    {
+        let fetchRequest = NSFetchRequest(entityName: "OutlineDetails")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [OutlineDetails]
+        
+        return fetchResults!
+    }
     
     func deleteAllCoreData()
     {

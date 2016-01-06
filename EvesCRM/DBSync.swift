@@ -186,9 +186,9 @@ class DBSync: NSObject
         progressMessage("syncToCloudKit ProcessedEmails")
         myCloudDB.saveProcessedEmailsToCloudKit(inDate)
         progressMessage("syncToCloudKit Outline")
-        myCloudDB.saveProcessedEmailsToOutline(inDate)
+        myCloudDB.saveOutlineToCloudKit(inDate)
         progressMessage("syncToCloudKit OutlineDetails")
-        myCloudDB.saveProcessedEmailsToOutlineDetails(inDate)
+        myCloudDB.saveOutlineDetailsToCloudKit(inDate)
 
 
         NSNotificationCenter.defaultCenter().postNotificationName("NotificationCloudSyncFinished", object: nil)
