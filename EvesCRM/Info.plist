@@ -77,6 +77,14 @@
 				<string>tetouch</string>
 			</array>
 		</dict>
+		<dict>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>db-1qayzo6cmw8v6nr</string>
+            </array>
+            <key>CFBundleURLName</key>
+            <string></string>
+        </dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>24</string>
@@ -90,6 +98,8 @@
 		<string>tetouch</string>
 		<string>onenote</string>
 		<string>evernote</string>
+		<string>dbapi-8-emm</string>
+		<string>dbapi-2</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>

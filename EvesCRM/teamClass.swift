@@ -10,19 +10,19 @@ import Foundation
 
 class team: NSObject
 {
-    private var myTeamID: Int = 0
-    private var myName: String = "New"
-    private var myNote: String = ""
-    private var myStatus: String = ""
-    private var myType: String = ""
-    private var myPredecessor: Int = 0
-    private var myExternalID: Int = 0
-    private var myRoles: [Roles]!
-    private var myStages:[Stages]!
-    private var myGTD: [workingGTDLevel] = Array()
-    private var myGTDTopLevel: [workingGTDItem] = Array()
-    private var myContexts: [context] = Array()
-    private var saveCalled: Bool = false
+    fileprivate var myTeamID: Int = 0
+    fileprivate var myName: String = "New"
+    fileprivate var myNote: String = ""
+    fileprivate var myStatus: String = ""
+    fileprivate var myType: String = ""
+    fileprivate var myPredecessor: Int = 0
+    fileprivate var myExternalID: Int = 0
+    fileprivate var myRoles: [Roles]!
+    fileprivate var myStages:[Stages]!
+    fileprivate var myGTD: [workingGTDLevel] = Array()
+    fileprivate var myGTDTopLevel: [workingGTDItem] = Array()
+    fileprivate var myContexts: [context] = Array()
+    fileprivate var saveCalled: Bool = false
     
     var teamID: Int
     {
@@ -218,7 +218,7 @@ class team: NSObject
         loadGTDLevels()
     }
     
-    private func createGTDLevels()
+    fileprivate func createGTDLevels()
     {
         // Create Initial GTD Levels
         
@@ -228,7 +228,7 @@ class team: NSObject
         myDatabaseConnection.saveGTDLevel(4, inLevelName: "Areas of Responsibility", inTeamID: myTeamID)
     }
     
-    private func createRoles()
+    fileprivate func createRoles()
     {
         if myDatabaseConnection.getRoles(myTeamID).count == 0
         {
@@ -238,7 +238,7 @@ class team: NSObject
         }
     }
     
-    private func createStages()
+    fileprivate func createStages()
     {
         if myDatabaseConnection.getStages(myTeamID).count == 0
         {
@@ -297,7 +297,7 @@ class team: NSObject
         if !saveCalled
         {
             saveCalled = true
-            let _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "performSave", userInfo: nil, repeats: false)
+            let _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(team.performSave), userInfo: nil, repeats: false)
         }
     }
     

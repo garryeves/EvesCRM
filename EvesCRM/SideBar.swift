@@ -11,9 +11,9 @@
     
     @objc protocol SideBarDelegate
     {
-        func sideBarDidSelectButtonAtIndex(passedItem:menuObject)
-        optional func sideBarWillClose()
-        optional func sideBarWillOpen(target: UIView)
+        func sideBarDidSelectButtonAtIndex(_ passedItem:menuObject)
+        @objc optional func sideBarWillClose()
+        @objc optional func sideBarWillOpen(_ target: UIView)
     }
 #elseif os(OSX)
     import AppKit
@@ -66,12 +66,12 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
         
             animator = UIDynamicAnimator(referenceView: originView)
         
-            let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-            showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
+            let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(SideBar.handleSwipe(_:)))
+            showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.right
             originView.addGestureRecognizer(showGestureRecognizer)
         
-            let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-            hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
+            let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(SideBar.handleSwipe(_:)))
+            hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.left
             originView.addGestureRecognizer(hideGestureRecognizer)
         }
     #endif
@@ -88,17 +88,17 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
 
         fullArray.removeAll()
         
-        let planningObject = createMenuItem("Planning", inType: "Header", inObject: "Projects")
+        let planningObject = createMenuItem("Planning", inType: "Header", inObject: "Projects" as NSObject)
         planningObject.section = "Header"
         
         headerArray.append(planningObject)
 
-        let inboxObject = createMenuItem("Inbox", inType: "Header", inObject: "Inbox")
+        let inboxObject = createMenuItem("Inbox", inType: "Header", inObject: "Inbox" as NSObject)
         inboxObject.section = "Header"
         
         headerArray.append(inboxObject)
 
-        let doingObject = createMenuItem("Doing", inType: "Header", inObject: "Doing")
+        let doingObject = createMenuItem("Doing", inType: "Header", inObject: "Doing" as NSObject)
         doingObject.type = "disclosure"
         doingObject.section = "Header"
         doingObject.childSection = "Doing"
@@ -137,7 +137,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
         let myContextList = contexts()
         // Get list of People Contexts
         
-        let peopleObject = createMenuItem("People", inType: "Header", inObject: "People")
+        let peopleObject = createMenuItem("People", inType: "Header", inObject: "People" as NSObject)
         peopleObject.type = "disclosure"
         peopleObject.section = "Header"
         peopleObject.childSection = "People"
@@ -159,7 +159,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
 
  //       peopleArray.append(addressObject)
 
-        let contextMaintenceObject1 = createMenuItem("Maintain People", inType: "MaintainContexts", inObject: "Contexts")
+        let contextMaintenceObject1 = createMenuItem("Maintain People", inType: "MaintainContexts", inObject: "Contexts" as NSObject)
         contextMaintenceObject1.section = peopleObject.childSection
         
         peopleArray.append(contextMaintenceObject1)
@@ -168,7 +168,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
         fullArray.append(peopleEntry)
         // Get list of Non People Contexts
         
-        let placeObject = createMenuItem("Places", inType: "Header", inObject: "Places")
+        let placeObject = createMenuItem("Places", inType: "Header", inObject: "Places" as NSObject)
         placeObject.type = "disclosure"
         placeObject.section = "Header"
         placeObject.childSection = "Place"
@@ -185,7 +185,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
             placeArray.append(displayObject)
         }
         
-        let contextMaintenceObject2 = createMenuItem("Maintain Places", inType: "MaintainContexts", inObject: "Contexts")
+        let contextMaintenceObject2 = createMenuItem("Maintain Places", inType: "MaintainContexts", inObject: "Contexts" as NSObject)
         contextMaintenceObject2.section = placeObject.childSection
         
         placeArray.append(contextMaintenceObject2)
@@ -193,7 +193,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
         let placeEntry = menuEntry(menuType: placeObject.childSection, menuEntries: placeArray)
         fullArray.append(placeEntry)
         
-        let toolObject = createMenuItem("Tools", inType: "Header", inObject: "Tools")
+        let toolObject = createMenuItem("Tools", inType: "Header", inObject: "Tools" as NSObject)
         toolObject.type = "disclosure"
         toolObject.section = "Header"
         toolObject.childSection = "Tool"
@@ -208,7 +208,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
             toolArray.append(displayObject)
         }
         
-        let contextMaintenceObject3 = createMenuItem("Maintain Tools", inType: "MaintainContexts", inObject: "Contexts")
+        let contextMaintenceObject3 = createMenuItem("Maintain Tools", inType: "MaintainContexts", inObject: "Contexts" as NSObject)
         contextMaintenceObject3.section = toolObject.childSection
         
         toolArray.append(contextMaintenceObject3)
@@ -218,24 +218,24 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
         let toolEntry = menuEntry(menuType: toolObject.childSection, menuEntries: toolArray)
         fullArray.append(toolEntry)
         
-        let actionsObject = createMenuItem("Options", inType: "Header", inObject: "Options")
+        let actionsObject = createMenuItem("Options", inType: "Header", inObject: "Options" as NSObject)
         actionsObject.type = "disclosure"
         actionsObject.section = "Header"
         actionsObject.childSection = "Options"
 
         headerArray.append(actionsObject)
         
-        let displayPanesObject = createMenuItem("Maintain Display Panes", inType: "Action", inObject: "Maintain Display Panes")
+        let displayPanesObject = createMenuItem("Maintain Display Panes", inType: "Action", inObject: "Maintain Display Panes" as NSObject)
         displayPanesObject.section = actionsObject.childSection
 
         optionArray.append(displayPanesObject)
        
-        let textExpanderObject = createMenuItem("Load TextExpander Snippets", inType: "Action", inObject: "Load TextExpander Snippets")
+        let textExpanderObject = createMenuItem("Load TextExpander Snippets", inType: "Action", inObject: "Load TextExpander Snippets" as NSObject)
         textExpanderObject.section = actionsObject.childSection
 
         optionArray.append(textExpanderObject)
         
-        let settingObject = createMenuItem("Settings", inType: "Action", inObject: "Settings")
+        let settingObject = createMenuItem("Settings", inType: "Action", inObject: "Settings" as NSObject)
         settingObject.section = actionsObject.childSection
 
         optionArray.append(settingObject)
@@ -253,7 +253,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
         #endif
     }
     
-    func createMenuItem(inName: String, inType: String, inObject: NSObject) -> menuObject
+    func createMenuItem(_ inName: String, inType: String, inObject: NSObject) -> menuObject
     {
         let myNewObject = menuObject()
         myNewObject.displayString = inName
@@ -266,21 +266,21 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
     #if os(iOS)
         func setupSideBar()
         {
-            sideBarContainerView.frame = CGRectMake(-barWidth - 1, originView.frame.origin.y, barWidth, originView.frame.size.height)
-            sideBarContainerView.backgroundColor = UIColor.grayColor()
+            sideBarContainerView.frame = CGRect(x: -barWidth - 1, y: originView.frame.origin.y, width: barWidth, height: originView.frame.size.height)
+            sideBarContainerView.backgroundColor = UIColor.gray
             sideBarContainerView.clipsToBounds = false
     
             originView.addSubview(sideBarContainerView)
         
-            blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Light))
+            blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.light))
             blurView.frame = sideBarContainerView.bounds
             sideBarContainerView.addSubview(blurView)
 
             sideBarTableViewController.delegate = self
             sideBarTableViewController.tableView.frame = sideBarContainerView.bounds
             sideBarTableViewController.tableView.clipsToBounds = false
-            sideBarTableViewController.tableView.separatorStyle = UITableViewCellSeparatorStyle.None
-            sideBarTableViewController.tableView.backgroundColor = UIColor.clearColor()
+            sideBarTableViewController.tableView.separatorStyle = UITableViewCellSeparatorStyle.none
+            sideBarTableViewController.tableView.backgroundColor = UIColor.clear
             sideBarTableViewController.tableView.scrollsToTop  = false
             sideBarTableViewController.tableView.contentInset = UIEdgeInsetsMake(sideBarTableViewTopInset, 0, 0, 0)
         
@@ -289,9 +289,9 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
             sideBarContainerView.addSubview(sideBarTableViewController.tableView)
         }
     
-        func handleSwipe(recognizer:UISwipeGestureRecognizer)
+        func handleSwipe(_ recognizer:UISwipeGestureRecognizer)
         {
-            if recognizer.direction == UISwipeGestureRecognizerDirection.Left
+            if recognizer.direction == UISwipeGestureRecognizerDirection.left
             {
                 showSideBar(false)
                 delegate?.sideBarWillClose?()
@@ -304,7 +304,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
             }
         }
     
-        func showSideBar(shouldOpen:Bool)
+        func showSideBar(_ shouldOpen:Bool)
         {
             animator.removeAllBehaviors()
             isSideBarOpen = shouldOpen
@@ -318,14 +318,14 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
             let boundaryX:CGFloat = (shouldOpen) ? barWidth : -barWidth - 1
         
             let gravityBehavior:UIGravityBehavior = UIGravityBehavior(items: [sideBarContainerView])
-            gravityBehavior.gravityDirection = CGVectorMake(gravityX, 0)
+            gravityBehavior.gravityDirection = CGVector(dx: gravityX, dy: 0)
             animator.addBehavior(gravityBehavior)
         
             let collisionBehavior:UICollisionBehavior = UICollisionBehavior(items: [sideBarContainerView])
-            collisionBehavior.addBoundaryWithIdentifier("sideBarBoundary", fromPoint: CGPointMake(boundaryX, 20), toPoint: CGPointMake(boundaryX, originView.frame.size.height))
+            collisionBehavior.addBoundary(withIdentifier: "sideBarBoundary" as NSCopying, from: CGPoint(x: boundaryX, y: 20), to: CGPoint(x: boundaryX, y: originView.frame.size.height))
             animator.addBehavior(collisionBehavior)
         
-            let pushBehavior:UIPushBehavior = UIPushBehavior(items: [sideBarContainerView], mode: UIPushBehaviorMode.Instantaneous)
+            let pushBehavior:UIPushBehavior = UIPushBehavior(items: [sideBarContainerView], mode: UIPushBehaviorMode.instantaneous)
             pushBehavior.magnitude = magnitude
             animator.addBehavior(pushBehavior)
         
@@ -334,7 +334,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
             animator.addBehavior(sideBarBehavior)
         }
     
-        func sideBarControlDidSelectRow(passedItem: menuObject)
+        func sideBarControlDidSelectRow(_ passedItem: menuObject)
         {
             delegate?.sideBarDidSelectButtonAtIndex(passedItem)
             showSideBar(false)
@@ -343,7 +343,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
     
     #endif
     
-    func getContextCount(contextID: Int) -> Int
+    func getContextCount(_ contextID: Int) -> Int
     {
         var retVal: Int = 0
         
@@ -353,7 +353,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
             // get items that are open
             if myDatabaseConnection.getActiveTask(myItem.taskID as Int).count > 0
             {
-                retVal++
+                retVal += 1
             }
         }
         

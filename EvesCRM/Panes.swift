@@ -15,7 +15,7 @@ class Panes: NSManagedObject {
     @NSManaged var pane_name: String
     @NSManaged var pane_order: NSNumber
     @NSManaged var pane_visible: NSNumber
-    @NSManaged var updateTime: NSDate
+    @NSManaged var updateTime: Date
     @NSManaged var updateType: String
 
 }

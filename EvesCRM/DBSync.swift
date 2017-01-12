@@ -19,9 +19,9 @@ class DBSync: NSObject
 //         NSTimer.scheduledTimerWithTimeInterval(300, target: self, selector: Selector("timerSync:"), userInfo: nil, repeats: true)
     }
     
-    func timerSync(timer:NSTimer)
+    func timerSync(_ timer:Timer)
     {
-        dispatch_async(dispatch_get_main_queue())
+        DispatchQueue.main.async
         {
             self.sync()
         }
@@ -34,20 +34,20 @@ class DBSync: NSObject
         {
             let iCloudConnected = myCloudDB.userInfo.loggedInToICloud()
         
-            if iCloudConnected == .Available
+            if iCloudConnected == .available
             {
                 if myDatabaseConnection.getTeamsCount() == 0
                 {  // Nothing in teams table so lets do a full sync
-                    NSNotificationCenter.defaultCenter().addObserver(self, selector: "DBReplaceDone", name:"NotificationDBReplaceDone", object: nil)
+                    notificationCenter.addObserver(self, selector: #selector(DBSync.DBReplaceDone), name: NotificationDBReplaceDone, object: nil)
                     replaceWithCloudKit()
                     
-                    NSNotificationCenter.defaultCenter().postNotificationName("NotificationDBReplaceDone", object: nil)
+                    notificationCenter.post(name: NotificationDBReplaceDone, object: nil)
 
                 }
                 else
                 {
-                    var syncDate: NSDate!
-                    let syncStart = NSDate()
+                    var syncDate: Date!
+                    let syncStart = Date()
         
                     // Get the last sync date
         
@@ -55,29 +55,28 @@ class DBSync: NSObject
         
                     if lastSyncDate == "" || lastSyncDate == "nil" 
                     {
-                        let myDateFormatter = NSDateFormatter()
-                        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+                        let myDateFormatter = DateFormatter()
+                        myDateFormatter.dateStyle = DateFormatter.Style.short
             
-                        syncDate = myDateFormatter.dateFromString("01/01/15")
+                        syncDate = myDateFormatter.date(from: "01/01/15")
                     }
                     else
                     {
                         // Convert string to date
             
-                        let myDateFormatter = NSDateFormatter()
+                        let myDateFormatter = DateFormatter()
                         myDateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZZ"
             
-                        let tempSyncDate = myDateFormatter.dateFromString(lastSyncDate)
+                        let tempSyncDate = myDateFormatter.date(from: lastSyncDate)
                         
                         // We want to sync everything changes in the last month so need to do some date math
                         
-                        let myCalendar = NSCalendar.currentCalendar()
+                        let myCalendar = Calendar.current
                         
-                        syncDate = myCalendar.dateByAddingUnit(
-                            .Hour,
+                        syncDate = myCalendar.date(
+                            byAdding: .hour,
                             value: -1,
-                            toDate: tempSyncDate!,
-                            options: [])!
+                            to: tempSyncDate!)!
                     }
 
                     // Load
@@ -106,11 +105,11 @@ class DBSync: NSObject
                         firstRun = false
                     }
                     
-                    NSNotificationCenter.defaultCenter().postNotificationName("NotificationDBSyncCompleted", object: nil)
+                    notificationCenter.post(name: NotificationDBSyncCompleted, object: nil)
                 }
 
             }
-            else if iCloudConnected == .CouldNotDetermine
+            else if iCloudConnected == .couldNotDetermine
             {
                 NSLog("CouldNotDetermine")
             }
@@ -123,14 +122,14 @@ class DBSync: NSObject
 
     func DBReplaceDone()
     {
-        NSNotificationCenter.defaultCenter().removeObserver(self, name:"NotificationDBReplaceDone", object: nil)
+        notificationCenter.removeObserver(self, name: NotificationDBReplaceDone, object: nil)
         
         // Convert string to date
         
-        let myDateFormatter = NSDateFormatter()
-        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = DateFormatter.Style.short
         
-        let syncDate: NSDate = myDateFormatter.dateFromString("01/01/15")!
+        let syncDate: Date = myDateFormatter.date(from: "01/01/15")!
         let dateString = "\(syncDate)"
         
         myDatabaseConnection.updateDecodeValue("CloudKit Sync", inCodeValue: dateString, inCodeType: "hidden")
@@ -138,10 +137,10 @@ class DBSync: NSObject
         myDatabaseConnection.clearDeletedItems()
         myDatabaseConnection.clearSyncedItems()
         
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationDBSyncCompleted", object: nil)
+        notificationCenter.post(name: NotificationDBSyncCompleted, object: nil)
     }
     
-    func syncToCloudKit(inDate: NSDate)
+    func syncToCloudKit(_ inDate: Date)
     {
         progressMessage("syncToCloudKit Context")
         myCloudDB.saveContextToCloudKit(inDate)
@@ -191,10 +190,10 @@ class DBSync: NSObject
         myCloudDB.saveOutlineDetailsToCloudKit(inDate)
 
 
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationCloudSyncFinished", object: nil)
+        notificationCenter.post(name: NotificationCloudSyncFinished, object: nil)
     }
     
-    func syncFromCloudKit(inDate: NSDate)
+    func syncFromCloudKit(_ inDate: Date)
     {
         progressMessage("syncFromCloudKit Context")
         myCloudDB.updateContextInCoreData(inDate)
@@ -243,7 +242,7 @@ class DBSync: NSObject
         progressMessage("syncFromCloudKit OutlineDetails")
         myCloudDB.updateOutlineDetailsInCoreData(inDate)
         
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationCloudSyncFinished", object: nil)
+        notificationCenter.post(name: NotificationCloudSyncFinished, object: nil)
     }
     
     func replaceWithCloudKit()
@@ -296,7 +295,7 @@ class DBSync: NSObject
         myCloudDB.replaceOutlineDetailsInCoreData()
         
   //      refreshObject()
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationCloudSyncFinished", object: nil)
+        notificationCenter.post(name: NotificationCloudSyncFinished, object: nil)
     }
     
     func deleteAllFromCloudKit()
@@ -331,22 +330,22 @@ class DBSync: NSObject
         myDatabaseConnection.deleteAllCoreData()
     }
     
-    func progressMessage(displayString: String)
+    func progressMessage(_ displayString: String)
     {
         NSLog(displayString)
         
 //        let selectedDictionary = ["displayMessage" : displayString]
         
-//        NSNotificationCenter.defaultCenter().postNotificationName("NotificationSyncMessage", object: nil, userInfo:selectedDictionary)
+//        NSnotificationCenterCenter().postNotificationName("NotificationSyncMessage", object: nil, userInfo:selectedDictionary)
         
 //        sleep(1)
     }
     
     func getSyncID() -> String
     {
-        let defaults = NSUserDefaults.standardUserDefaults()
+        let defaults = UserDefaults.standard
         
-        if let name = defaults.stringForKey("EvesCRM")
+        if let name = defaults.string(forKey: "EvesCRM")
         {
             return name
         }
@@ -357,7 +356,7 @@ class DBSync: NSObject
             
             let myValue = "CloudKit Sync \(myNewID)"
             
-            defaults.setObject(myValue, forKey: "EvesCRM")
+            defaults.set(myValue, forKey: "EvesCRM")
             
             return myValue
         }

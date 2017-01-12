@@ -17,7 +17,7 @@ extension GTDLevel {
     @NSManaged var teamID: NSNumber?
     @NSManaged var levelName: String?
     @NSManaged var gTDLevel: NSNumber?
-    @NSManaged var updateTime: NSDate?
+    @NSManaged var updateTime: Date?
     @NSManaged var updateType: String?
 
 }

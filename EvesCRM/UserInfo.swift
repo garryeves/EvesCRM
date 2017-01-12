@@ -42,60 +42,60 @@ class UserInfo {
     {
         var returnStatus: CKAccountStatus!
         
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        container.accountStatusWithCompletionHandler({(accountStatus: CKAccountStatus, error: NSError? ) in
+        container.accountStatus(completionHandler: {(accountStatus: CKAccountStatus, error: NSError? ) in
             returnStatus = accountStatus
             
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! (CKAccountStatus, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
         
         return returnStatus
     }
 
   
-  func userID(completion: (userRecordID: CKRecordID!, error: NSError!)->()) {
+  func userID(_ completion: @escaping (_ userRecordID: CKRecordID?, _ error: NSError?)->()) {
     if userRecordID != nil {
-      completion(userRecordID: userRecordID, error: nil)
+      completion(userRecordID, nil)
     } else {
-      self.container.fetchUserRecordIDWithCompletionHandler() {
+      self.container.fetchUserRecordID() {
         recordID, error in
         if recordID != nil {
           self.userRecordID = recordID
         }
-        completion(userRecordID: recordID, error: error)
+        completion(recordID, error as NSError?)
       }
     }
   }
   
-  func userInfo(recordID: CKRecordID!,
-    completion:(userInfo: CKDiscoveredUserInfo!, error: NSError!)->()) {
+  func userInfo(_ recordID: CKRecordID!,
+    completion:(_ userInfo: CKUserIdentity?, _ error: Error?)->()) {
       //replace this stub
-      completion(userInfo: nil, error: nil)
+      completion(nil, nil)
   }
   
-  func requestDiscoverability(completion: (discoverable: Bool) -> ()) {
+  func requestDiscoverability(_ completion: (_ discoverable: Bool) -> ()) {
     //replace this stub
-    completion(discoverable: false)
+    completion(false)
   }
   
-  func userInfo(completion: (userInfo: CKDiscoveredUserInfo!, error: NSError!)->()) {
+  func userInfo(_ completion: @escaping (_ userInfo: CKUserIdentity?, _ error: Error?)->()) {
 NSLog("gre userinfo")
     requestDiscoverability() { discoverable in
       self.userID() { recordID, error in
         if error != nil {
-          completion(userInfo: nil, error: error)
+          completion(nil, error)
         } else {
-          self.userInfo(recordID, completion: completion)
+          self.userInfo(recordID, completion: completion )
         }
       }
     }
   }
   
-  func findContacts(completion: (userInfos:[AnyObject]!, error: NSError!)->()) {
-    completion(userInfos: [CKRecordID](), error: nil)
+  func findContacts(_ completion: (_ userInfos:[AnyObject]?, _ error: NSError?)->()) {
+    completion([CKRecordID](), nil)
   }
 }
 

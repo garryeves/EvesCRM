@@ -22,17 +22,17 @@ class startViewController: UIViewController
         myDatabaseConnection = coreDatabase()
         myCloudDB = CloudKitInteraction()
 
-        NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: Selector("performInitialSync"), userInfo: nil, repeats: false)
+        Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(startViewController.performInitialSync), userInfo: nil, repeats: false)
 
     }
     
     func performInitialSync()
     {
-        NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: Selector("initialPopulationOfTables"), userInfo: nil, repeats: false)
+        Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(startViewController.initialPopulationOfTables), userInfo: nil, repeats: false)
         myDBSync.sync()
     }
     
-    func DBUpdateMessage(notification: NSNotification)
+    func DBUpdateMessage(_ notification: Notification)
     {
         let workingText = notification.userInfo!["displayMessage"] as! String
         NSLog("working text = \(workingText)")
@@ -94,15 +94,15 @@ class startViewController: UIViewController
             myDatabaseConnection.updateDecodeValue("Calendar - Weeks after current date", inCodeValue: "4", inCodeType: "stepper")
         }
         
-        let deviceIdiom = UIDevice.currentDevice().userInterfaceIdiom
+        let deviceIdiom = UIDevice.current.userInterfaceIdiom
         
-        if deviceIdiom == UIUserInterfaceIdiom.Pad
+        if deviceIdiom == UIUserInterfaceIdiom.pad
         {
-            let myStart = self.storyboard?.instantiateViewControllerWithIdentifier("iPadStart") as! ViewController
+            let myStart = self.storyboard?.instantiateViewController(withIdentifier: "iPadStart") as! ViewController
             
-            self.presentViewController(myStart, animated: true, completion: nil)
+            self.present(myStart, animated: true, completion: nil)
         }
-        else if  deviceIdiom == UIUserInterfaceIdiom.Pad
+        else if  deviceIdiom == UIUserInterfaceIdiom.pad
         {
             NSLog("Phone")
         }

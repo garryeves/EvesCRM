@@ -10,28 +10,28 @@ import Foundation
 
 protocol MyDropboxCoreDelegate
 {
-    func myDropboxFileDidLoad(fileName: String)
-    func myDropboxFileLoadFailed(error:NSError)
-    func myDropboxFileProgress(fileName: String, progress:CGFloat)
-    func myDropboxMetadataLoaded(metadata:DBMetadata)
-    func myDropboxMetadataFailed(error:NSError)
-    func myDropboxLoadAccountInfo(info:DBAccountInfo)
-    func myDropboxLoadAccountInfoFailed(error:NSError)
-    func myDropboxFileDidUpload(destPath:String, srcPath:String, metadata:DBMetadata)
-    func myDropboxFileUploadFailed(error:NSError)
-    func myDropboxUploadProgress(progress:CGFloat, destPath:String, srcPath:String)
-    func myDropboxFileLoadRevisions(revisions:NSArray, path:String)
-    func myDropboxFileLoadRevisionsFailed(error:NSError)
-    func myDropboxCreateFolder(folder:DBMetadata)
-    func myDropboxCreateFolderFailed(error:NSError)
-    func myDropboxFileDeleted(path:String)
-    func myDropboxFileDeleteFailed(error:NSError)
-    func myDropboxFileCopiedLoad(fromPath:String, toPath:DBMetadata)
-    func myDropboxFileCopyFailed(error:NSError)
-    func myDropboxFileMoved(fromPath:String, toPath:DBMetadata)
-    func myDropboxFileMoveFailed(error:NSError)
-    func myDropboxFileDidLoadSearch(results:NSArray, path:String, keyword:String)
-    func myDropboxFileLoadSearchFailed(error:NSError)
+    func myDropboxFileDidLoad(_ fileName: String)
+    func myDropboxFileLoadFailed(_ error:NSError)
+    func myDropboxFileProgress(_ fileName: String, progress:CGFloat)
+    func myDropboxMetadataLoaded(_ metadata:DBMetadata)
+    func myDropboxMetadataFailed(_ error:NSError)
+    func myDropboxLoadAccountInfo(_ info:DBAccountInfo)
+    func myDropboxLoadAccountInfoFailed(_ error:NSError)
+    func myDropboxFileDidUpload(_ destPath:String, srcPath:String, metadata:DBMetadata)
+    func myDropboxFileUploadFailed(_ error:NSError)
+    func myDropboxUploadProgress(_ progress:CGFloat, destPath:String, srcPath:String)
+    func myDropboxFileLoadRevisions(_ revisions:NSArray, path:String)
+    func myDropboxFileLoadRevisionsFailed(_ error:NSError)
+    func myDropboxCreateFolder(_ folder:DBMetadata)
+    func myDropboxCreateFolderFailed(_ error:NSError)
+    func myDropboxFileDeleted(_ path:String)
+    func myDropboxFileDeleteFailed(_ error:NSError)
+    func myDropboxFileCopiedLoad(_ fromPath:String, toPath:DBMetadata)
+    func myDropboxFileCopyFailed(_ error:NSError)
+    func myDropboxFileMoved(_ fromPath:String, toPath:DBMetadata)
+    func myDropboxFileMoveFailed(_ error:NSError)
+    func myDropboxFileDidLoadSearch(_ results:NSArray, path:String, keyword:String)
+    func myDropboxFileLoadSearchFailed(_ error:NSError)
 }
 
 class DropboxCoreService: UIViewController, DBRestClientDelegate
@@ -40,7 +40,7 @@ class DropboxCoreService: UIViewController, DBRestClientDelegate
 Note that a DBSession can be linked with more than one Dropbox, for example you could allow users to connect with both their work and personal Dropboxes. In that case, you'll want to use the -[DBRestClient initWithSession:userId:] method to specify the account. You can get an array of all connected accounts from [DBSession sharedSession].userIds.
 
 */
-    private var dbRestClient: DBRestClient?
+    fileprivate var dbRestClient: DBRestClient?
     var delegate: MyDropboxCoreDelegate?
     
     func setup()
@@ -52,12 +52,12 @@ Note that a DBSession can be linked with more than one Dropbox, for example you 
         //   DBAccountManager.setSharedManager(accountManager)
     }
     
-    func initiateAuthentication(viewController: UIViewController)
+    func initiateAuthentication(_ viewController: UIViewController)
     {
         DBSession.sharedSession().linkFromController(viewController)
     }
     
-    func finalizeAuthentication(url: NSURL) -> Bool
+    func finalizeAuthentication(_ url: URL) -> Bool
     {
         var retVal: Bool = false
         
@@ -76,7 +76,7 @@ Note that a DBSession can be linked with more than one Dropbox, for example you 
         return DBSession.sharedSession().isLinked()
     }
     
-    func listFolders(inPath: String)
+    func listFolders(_ inPath: String)
     {
         
         if dbRestClient == nil
@@ -89,7 +89,7 @@ Note that a DBSession can be linked with more than one Dropbox, for example you 
         
     }
     
-    func loadFile(inFile: String, targetFile: String)
+    func loadFile(_ inFile: String, targetFile: String)
     {
         if dbRestClient == nil
         {
@@ -100,7 +100,7 @@ Note that a DBSession can be linked with more than one Dropbox, for example you 
         dbRestClient!.loadFile(inFile, intoPath: targetFile)
     }
     
-    func uploadFile(inFile:String, toPath:String, fromPath:String)
+    func uploadFile(_ inFile:String, toPath:String, fromPath:String)
     {  // Untested
         if dbRestClient == nil
         {
@@ -116,7 +116,7 @@ Note that a DBSession can be linked with more than one Dropbox, for example you 
         
     }
 
-    func loadRevisionsForFile(inFile:String)
+    func loadRevisionsForFile(_ inFile:String)
     {  // Untested
         if dbRestClient == nil
         {
@@ -129,7 +129,7 @@ Note that a DBSession can be linked with more than one Dropbox, for example you 
     }
     
     
-      func createFolder(inPath: String)
+      func createFolder(_ inPath: String)
     {  // Untested
         if dbRestClient == nil
         {
@@ -141,7 +141,7 @@ Note that a DBSession can be linked with more than one Dropbox, for example you 
         
     }
     
-    func deletePath(inPath: String)
+    func deletePath(_ inPath: String)
     {  // Untested
         if dbRestClient == nil
         {
@@ -153,7 +153,7 @@ Note that a DBSession can be linked with more than one Dropbox, for example you 
         
     }
     
-    func copyFrom (fromPath: String, toPath:String)
+    func copyFrom (_ fromPath: String, toPath:String)
     {  // Untested
         if dbRestClient == nil
         {
@@ -165,7 +165,7 @@ Note that a DBSession can be linked with more than one Dropbox, for example you 
         
     }
     
-    func moveFrom(fromPath: String, toPath:String)
+    func moveFrom(_ fromPath: String, toPath:String)
     {  // Untested
         if dbRestClient == nil
         {
@@ -189,7 +189,7 @@ Note that a DBSession can be linked with more than one Dropbox, for example you 
         
     }
     
-    func searchPath(inPath:String, forKeyword: String)
+    func searchPath(_ inPath:String, forKeyword: String)
     {  // Untested
         if dbRestClient == nil
         {
@@ -201,113 +201,113 @@ Note that a DBSession can be linked with more than one Dropbox, for example you 
     }
  
 
-    func restClient(client:DBRestClient, loadedMetadata metadata:DBMetadata)
+    func restClient(_ client:DBRestClient, loadedMetadata metadata:DBMetadata)
     {
         delegate?.myDropboxMetadataLoaded(metadata)
     }
     
-    func restClient(client:DBRestClient, loadMetadataFailedWithError error:NSError)
+    func restClient(_ client:DBRestClient, loadMetadataFailedWithError error:NSError)
     {
         delegate?.myDropboxMetadataFailed(error)
     }
     
    // func restClient(client:DBRestClient, loadedFile destPath:String)
-    func restClient(client:DBRestClient, loadedFile destPath:String, contentType:String, metadata:DBMetadata)
+    func restClient(_ client:DBRestClient, loadedFile destPath:String, contentType:String, metadata:DBMetadata)
     {
         delegate?.myDropboxFileDidLoad(destPath)
     }
     
-    func restClient(client:DBRestClient, loadFileFailedWithError error:NSError)
+    func restClient(_ client:DBRestClient, loadFileFailedWithError error:NSError)
     {
         delegate?.myDropboxFileLoadFailed(error)
     }
     
-    func restClient(client:DBRestClient, loadProgress progress:CGFloat, destPath:String)
+    func restClient(_ client:DBRestClient, loadProgress progress:CGFloat, destPath:String)
     {
         delegate?.myDropboxFileProgress(destPath, progress: progress)
     }
     
-    func restClient(client:DBRestClient, loadedAccountInfo info:DBAccountInfo)
+    func restClient(_ client:DBRestClient, loadedAccountInfo info:DBAccountInfo)
     {
         delegate?.myDropboxLoadAccountInfo(info)
     }
     
-    func restClient(client:DBRestClient, loadAccountInfoFailedWithError error:NSError)
+    func restClient(_ client:DBRestClient, loadAccountInfoFailedWithError error:NSError)
     {
         delegate?.myDropboxLoadAccountInfoFailed(error)
     }
     
-    func restClient(client:DBRestClient, uploadedFile destPath:String, srcPath:String, metadata:DBMetadata)
+    func restClient(_ client:DBRestClient, uploadedFile destPath:String, srcPath:String, metadata:DBMetadata)
     {
         delegate?.myDropboxFileDidUpload(destPath, srcPath: srcPath, metadata: metadata)
     }
     
-    func restClient(client:DBRestClient, uploadFileFailedWithError error:NSError)
+    func restClient(_ client:DBRestClient, uploadFileFailedWithError error:NSError)
     {
         delegate?.myDropboxFileUploadFailed(error)
     }
     
-    func restClient(client:DBRestClient, uploadProgress progress:CGFloat, destPath:String, srcPath:String)
+    func restClient(_ client:DBRestClient, uploadProgress progress:CGFloat, destPath:String, srcPath:String)
     {
         delegate?.myDropboxUploadProgress(progress, destPath: destPath, srcPath: srcPath)
     }
    
-    func restClient(client:DBRestClient, loadedRevisions revisions:NSArray, path:String)
+    func restClient(_ client:DBRestClient, loadedRevisions revisions:NSArray, path:String)
     {
         delegate?.myDropboxFileLoadRevisions(revisions, path: path)
     }
     
-    func restClient(client:DBRestClient, loadRevisionsFailedWithError error:NSError)
+    func restClient(_ client:DBRestClient, loadRevisionsFailedWithError error:NSError)
     {
         delegate?.myDropboxFileLoadRevisionsFailed(error)
     }
     
-    func restClient(client:DBRestClient, createdFolder folder:DBMetadata)
+    func restClient(_ client:DBRestClient, createdFolder folder:DBMetadata)
     {
         delegate?.myDropboxCreateFolder(folder)
     }
     
-    func restClient(client:DBRestClient, createFolderFailedWithError error:NSError)
+    func restClient(_ client:DBRestClient, createFolderFailedWithError error:NSError)
     {
         delegate?.myDropboxCreateFolderFailed(error)
     }
     
-    func restClient(client:DBRestClient, deletedPath path:String)
+    func restClient(_ client:DBRestClient, deletedPath path:String)
     {
         delegate?.myDropboxFileDeleted(path)
     }
     
-    func restClient(client:DBRestClient, deletePathFailedWithError error:NSError)
+    func restClient(_ client:DBRestClient, deletePathFailedWithError error:NSError)
     {
         delegate?.myDropboxFileDeleteFailed(error)
     }
 
-    func restClient(client:DBRestClient, copiedPath fromPath:String, to:DBMetadata)
+    func restClient(_ client:DBRestClient, copiedPath fromPath:String, to:DBMetadata)
     {
         delegate?.myDropboxFileCopiedLoad(fromPath, toPath: to)
     }
     
-    func restClient(client:DBRestClient, copyPathFailedWithError error:NSError)
+    func restClient(_ client:DBRestClient, copyPathFailedWithError error:NSError)
     {
         delegate?.myDropboxFileCopyFailed(error)
     }
 
-    func restClient(client:DBRestClient, movedPath fromPath:String, to:DBMetadata)
+    func restClient(_ client:DBRestClient, movedPath fromPath:String, to:DBMetadata)
     {
         delegate?.myDropboxFileMoved(fromPath, toPath: to)
     }
     
-    func restClient(client:DBRestClient, movePathFailedWithError error:NSError)
+    func restClient(_ client:DBRestClient, movePathFailedWithError error:NSError)
     {
         delegate?.myDropboxFileMoveFailed(error)
     }
  
-    func restClient(client:DBRestClient, loadedSearchResults results:NSArray, path:String, keyword:String)
+    func restClient(_ client:DBRestClient, loadedSearchResults results:NSArray, path:String, keyword:String)
     {
         delegate?.myDropboxFileDidLoadSearch(results, path: path, keyword: keyword)
     }
     
-    func restClient(client:DBRestClient, searchFailedWithError error:NSError)
+    func restClient(_ client:DBRestClient, searchFailedWithError error:NSError)
     {
         delegate?.myDropboxFileLoadSearchFailed(error)
     }

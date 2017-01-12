@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import TextExpander
 
 class teamDecodesViewController: UIViewController, SMTEFillDelegate
 {
@@ -21,14 +22,14 @@ class teamDecodesViewController: UIViewController, SMTEFillDelegate
     @IBOutlet weak var btnResetRoles: UIButton!
     @IBOutlet weak var btnResetStages: UIButton!
     
-    private var myRoles: [Roles]!
-    private var myStages: [Stages]!
+    fileprivate var myRoles: [Roles]!
+    fileprivate var myStages: [Stages]!
     
     var myWorkingTeam: team!
     
     // Textexpander
     
-    private var snippetExpanded: Bool = false
+    fileprivate var snippetExpanded: Bool = false
     
     var textExpander: SMTEDelegateController!
     
@@ -44,7 +45,7 @@ class teamDecodesViewController: UIViewController, SMTEFillDelegate
         
         // Load GTD
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "changeSettings:", name:"NotificationTeamDecodeChangeSettings", object: nil)
+        notificationCenter.addObserver(self, selector: #selector(teamDecodesViewController.changeSettings(_:)), name: NotificationTeamDecodeChangeSettings, object: nil)
         
         // TextExpander
         textExpander = SMTEDelegateController()
@@ -75,12 +76,12 @@ class teamDecodesViewController: UIViewController, SMTEFillDelegate
         colStages.reloadData()
     }
     
-    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
+    func numberOfSectionsInCollectionView(_ collectionView: UICollectionView) -> Int
     {
         return 1
     }
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
         if collectionView == colRoles
         {
@@ -92,11 +93,12 @@ class teamDecodesViewController: UIViewController, SMTEFillDelegate
         }
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
+    //    func collectionView(_ collectionView: UICollectionView, cellForItemAtIndexPath indexPath: IndexPath) -> UICollectionViewCell
+    func collectionView(_ collectionView: UICollectionView, cellForItem indexPath: IndexPath) -> UICollectionViewCell
     {
         if collectionView == colRoles
         {
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellRoles", forIndexPath: indexPath) as! mySettingRoles
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellRoles", for: indexPath as IndexPath) as! mySettingRoles
             cell.lblRole.text = myRoles[indexPath.row].roleDescription
             cell.teamID = myWorkingTeam.teamID
             
@@ -106,7 +108,7 @@ class teamDecodesViewController: UIViewController, SMTEFillDelegate
             }
             else
             {
-                cell.backgroundColor = UIColor.clearColor()
+                cell.backgroundColor = UIColor.clear
             }
             
             cell.layoutSubviews()
@@ -114,7 +116,7 @@ class teamDecodesViewController: UIViewController, SMTEFillDelegate
         }
         else
         {
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellStages", forIndexPath: indexPath) as! mySettingStages
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellStages", for: indexPath as IndexPath) as! mySettingStages
             cell.lblRole.text  = myStages[indexPath.row].stageDescription
             cell.teamID = myWorkingTeam.teamID
             
@@ -124,7 +126,7 @@ class teamDecodesViewController: UIViewController, SMTEFillDelegate
             }
             else
             {
-                cell.backgroundColor = UIColor.clearColor()
+                cell.backgroundColor = UIColor.clear
             }
             
             cell.layoutSubviews()
@@ -132,7 +134,7 @@ class teamDecodesViewController: UIViewController, SMTEFillDelegate
         }
     }
     
-    func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
+    func collectionView(_ collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
     {
         var retVal: CGSize!
         
@@ -148,16 +150,16 @@ class teamDecodesViewController: UIViewController, SMTEFillDelegate
         return retVal
     }
     
-    @IBAction func btnRole(sender: UIButton)
+    @IBAction func btnRole(_ sender: UIButton)
     {
         if txtRoles.text == ""
         {
             let alert = UIAlertController(title: "Add Role", message:
-                "You need to enter a role name before you can add it", preferredStyle: UIAlertControllerStyle.Alert)
+                "You need to enter a role name before you can add it", preferredStyle: UIAlertControllerStyle.alert)
             
-            self.presentViewController(alert, animated: false, completion: nil)
+            self.present(alert, animated: false, completion: nil)
             
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
                 handler: nil))
             
             txtRoles.becomeFirstResponder()
@@ -174,16 +176,16 @@ class teamDecodesViewController: UIViewController, SMTEFillDelegate
         }
     }
     
-    @IBAction func btnStage(sender: UIButton)
+    @IBAction func btnStage(_ sender: UIButton)
     {
         if txtStage.text == ""
         {
             let alert = UIAlertController(title: "Add Stage", message:
-                "You need to enter a stage name before you can add it", preferredStyle: UIAlertControllerStyle.Alert)
+                "You need to enter a stage name before you can add it", preferredStyle: UIAlertControllerStyle.alert)
             
-            self.presentViewController(alert, animated: false, completion: nil)
+            self.present(alert, animated: false, completion: nil)
             
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
                 handler: nil))
             
             txtStage.becomeFirstResponder()
@@ -200,7 +202,7 @@ class teamDecodesViewController: UIViewController, SMTEFillDelegate
         }
     }
     
-    @IBAction func buttonResetRolesClick(sender: UIButton)
+    @IBAction func buttonResetRolesClick(_ sender: UIButton)
     {
         myDatabaseConnection.deleteAllRoles(myWorkingTeam.teamID)
         populateRoles(myWorkingTeam.teamID)
@@ -211,7 +213,7 @@ class teamDecodesViewController: UIViewController, SMTEFillDelegate
         txtRoles.text = ""
     }
     
-    @IBAction func buttonResetStagesClick(sender: UIButton)
+    @IBAction func buttonResetStagesClick(_ sender: UIButton)
     {
         myDatabaseConnection.deleteAllStages(myWorkingTeam.teamID)
         populateStages(myWorkingTeam.teamID)
@@ -223,33 +225,33 @@ class teamDecodesViewController: UIViewController, SMTEFillDelegate
     
     func showFields()
     {
-        lblRoles.hidden = false
-        lblStages.hidden = false
-        colRoles.hidden = false
-        colStages.hidden = false
-        txtRoles.hidden = false
-        txtStage.hidden = false
-        btnRole.hidden = false
-        btnStage.hidden = false
-        btnResetRoles.hidden = false
-        btnResetStages.hidden = false
+        lblRoles.isHidden = false
+        lblStages.isHidden = false
+        colRoles.isHidden = false
+        colStages.isHidden = false
+        txtRoles.isHidden = false
+        txtStage.isHidden = false
+        btnRole.isHidden = false
+        btnStage.isHidden = false
+        btnResetRoles.isHidden = false
+        btnResetStages.isHidden = false
     }
     
     func hideFields()
     {
-        lblRoles.hidden = true
-        lblStages.hidden = true
-        colRoles.hidden = true
-        colStages.hidden = true
-        txtRoles.hidden = true
-        txtStage.hidden = true
-        btnRole.hidden = true
-        btnStage.hidden = true
-        btnResetRoles.hidden = true
-        btnResetStages.hidden = true
+        lblRoles.isHidden = true
+        lblStages.isHidden = true
+        colRoles.isHidden = true
+        colStages.isHidden = true
+        txtRoles.isHidden = true
+        txtStage.isHidden = true
+        btnRole.isHidden = true
+        btnStage.isHidden = true
+        btnResetRoles.isHidden = true
+        btnResetStages.isHidden = true
     }
     
-    func changeSettings(notification: NSNotification)
+    func changeSettings(_ notification: Notification)
     {
         let settingChanged = notification.userInfo!["setting"] as! String
         
@@ -288,23 +290,24 @@ class teamDecodesViewController: UIViewController, SMTEFillDelegate
     * identifier string needs to include element id/name information. Eg. "webview-field2".
     */
     
-    func identifierForTextArea(uiTextObject: AnyObject) -> String
+    //func identifierForTextArea(_ uiTextObject: AnyObject) -> String
+    func identifier(forTextArea uiTextObject: Any) -> String
     {
         var result: String = ""
         
-        if uiTextObject.isKindOfClass(UITextField)
+        if uiTextObject is UITextField
         {
-            if uiTextObject.tag == 1
+            if (uiTextObject as AnyObject).tag == 1
             {
                 result = "txtRoles"
             }
-            if uiTextObject.tag == 2
+            if (uiTextObject as AnyObject).tag == 2
             {
                 result = "txtStage"
             }
         }
         
-        if uiTextObject.isKindOfClass(UISearchBar)
+        if uiTextObject is UISearchBar
         {
             result =  "mySearchBar"
         }
@@ -320,7 +323,7 @@ class teamDecodesViewController: UIViewController, SMTEFillDelegate
     * Return NO to cancel the process.
     */
     
-    func prepareForFillSwitch(textIdentifier: String) -> Bool
+    func prepare(forFillSwitch textIdentifier: String) -> Bool
     {
         // At this point the app should save state since TextExpander touch is about
         // to activate.
@@ -355,29 +358,30 @@ class teamDecodesViewController: UIViewController, SMTEFillDelegate
     * expect the identified text object to become the first responder.
     */
     
-    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>) -> AnyObject
+    // func makeIdentifiedTextObjectFirstResponder(_ textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>) -> AnyObject
+    public func makeIdentifiedTextObjectFirstResponder(_ textIdentifier: String!, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>!) -> Any!
     {
         snippetExpanded = true
         
-        let intIoInsertionPointLocation:Int = ioInsertionPointLocation.memory
+        let intIoInsertionPointLocation:Int = ioInsertionPointLocation.pointee
         
         if "txtRoles" == textIdentifier
         {
             txtRoles.becomeFirstResponder()
-            let theLoc = txtRoles.positionFromPosition(txtRoles.beginningOfDocument, offset: intIoInsertionPointLocation)
+            let theLoc = txtRoles.position(from: txtRoles.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtRoles.selectedTextRange = txtRoles.textRangeFromPosition(theLoc!, toPosition: theLoc!)
+                txtRoles.selectedTextRange = txtRoles.textRange(from: theLoc!, to: theLoc!)
             }
             return txtRoles
         }
         else if "txtStage" == textIdentifier
         {
             txtStage.becomeFirstResponder()
-            let theLoc = txtStage.positionFromPosition(txtStage.beginningOfDocument, offset: intIoInsertionPointLocation)
+            let theLoc = txtStage.position(from: txtStage.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtStage.selectedTextRange = txtStage.textRangeFromPosition(theLoc!, toPosition: theLoc!)
+                txtStage.selectedTextRange = txtStage.textRange(from: theLoc!, to: theLoc!)
             }
             return txtStage
         }
@@ -401,11 +405,11 @@ class teamDecodesViewController: UIViewController, SMTEFillDelegate
             
             //return nil
             
-            return ""
+            return "" as AnyObject
         }
     }
     
-    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool
+    func textView(_ textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool
     {
         if (textExpander.isAttemptingToExpandText)
         {
@@ -423,16 +427,16 @@ class teamDecodesViewController: UIViewController, SMTEFillDelegate
     // of workaround into the SDK, so instead we provide an example here.
     // If you have a better workaround suggestion, we'd love to hear it.
     
-    func twiddleText(textView: UITextView)
+    func twiddleText(_ textView: UITextView)
     {
-        let SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO = UIDevice.currentDevice().systemVersion
+        let SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO = UIDevice.current.systemVersion
         if SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO >= "7.0"
         {
-            textView.textStorage.edited(NSTextStorageEditActions.EditedCharacters,range:NSMakeRange(0, textView.textStorage.length),changeInLength:0)
+            textView.textStorage.edited(NSTextStorageEditActions.editedCharacters,range:NSMakeRange(0, textView.textStorage.length),changeInLength:0)
         }
     }
     
-    func textViewDidChange(textView: UITextView)
+    func textViewDidChange(_ textView: UITextView)
     {
         if snippetExpanded
         {
@@ -530,10 +534,10 @@ class mySettingRoles: UICollectionViewCell
         super.layoutSubviews()
     }
     
-    @IBAction func btnRemove(sender: UIButton)
+    @IBAction func btnRemove(_ sender: UIButton)
     {
         myDatabaseConnection.deleteRoleEntry(lblRole.text!, inTeamID: teamID)
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationTeamDecodeChangeSettings", object: nil, userInfo:["setting":"Role"])
+        notificationCenter.post(name: NotificationTeamDecodeChangeSettings, object: nil, userInfo:["setting":"Role"])
     }
 }
 
@@ -549,9 +553,9 @@ class mySettingStages: UICollectionViewCell
         super.layoutSubviews()
     }
     
-    @IBAction func btnRemove(sender: UIButton)
+    @IBAction func btnRemove(_ sender: UIButton)
     {
         myDatabaseConnection.deleteStageEntry(lblRole.text!, inTeamID: teamID)
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationTeamDecodeChangeSettings", object: nil, userInfo:["setting":"Stage"])
+        notificationCenter.post(name: NotificationTeamDecodeChangeSettings, object: nil, userInfo:["setting":"Stage"])
     }
 }

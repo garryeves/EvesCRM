@@ -14,7 +14,7 @@ class Roles: NSManagedObject {
     @NSManaged var roleDescription: String
     @NSManaged var roleID: NSNumber
     @NSManaged var teamID: NSNumber
-    @NSManaged var updateTime: NSDate
+    @NSManaged var updateTime: Date
     @NSManaged var updateType: String
 
 }

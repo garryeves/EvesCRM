@@ -12,18 +12,18 @@ import CoreData
 class Projects: NSManagedObject {
 
     @NSManaged var areaID: NSNumber
-    @NSManaged var lastReviewDate: NSDate
-    @NSManaged var projectEndDate: NSDate
+    @NSManaged var lastReviewDate: Date
+    @NSManaged var projectEndDate: Date
     @NSManaged var projectID: NSNumber
     @NSManaged var projectName: String
-    @NSManaged var projectStartDate: NSDate
+    @NSManaged var projectStartDate: Date
     @NSManaged var projectStatus: String
     @NSManaged var repeatBase: String
     @NSManaged var repeatInterval: NSNumber
     @NSManaged var repeatType: String
     @NSManaged var reviewFrequency: NSNumber
     @NSManaged var teamID: NSNumber
-    @NSManaged var updateTime: NSDate
+    @NSManaged var updateTime: Date
     @NSManaged var updateType: String
 
 }

@@ -19,7 +19,7 @@ class Context: NSManagedObject {
     @NSManaged var personID: NSNumber
     @NSManaged var status: String
     @NSManaged var teamID: NSNumber
-    @NSManaged var updateTime: NSDate
+    @NSManaged var updateTime: Date
     @NSManaged var updateType: String
 
 }

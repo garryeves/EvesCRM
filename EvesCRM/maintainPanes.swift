@@ -11,7 +11,7 @@ import CoreData
 
 protocol MyMaintainPanesDelegate
 {
-    func MaintainPanesDidFinish(controller:MaintainPanesViewController)
+    func MaintainPanesDidFinish(_ controller:MaintainPanesViewController)
 }
 
 class MaintainPanesViewController: UIViewController
@@ -24,13 +24,13 @@ class MaintainPanesViewController: UIViewController
     @IBOutlet weak var colPanes: UICollectionView!
     
     var delegate: MyMaintainPanesDelegate?
-    private var myPanes: [displayPane]!
-    private var mySelectedPane: String = ""
-    private var mySelectedCurrentState: Bool = false
-    private var myPicker1: [String]!
-    private var myPicker2: [String]!
-    private var myPicker3: [String]!
-    private var myPicker4: [String]!
+    fileprivate var myPanes: [displayPane]!
+    fileprivate var mySelectedPane: String = ""
+    fileprivate var mySelectedCurrentState: Bool = false
+    fileprivate var myPicker1: [String]!
+    fileprivate var myPicker2: [String]!
+    fileprivate var myPicker3: [String]!
+    fileprivate var myPicker4: [String]!
     
     let cellReuse = "reusePane"
 
@@ -50,14 +50,14 @@ class MaintainPanesViewController: UIViewController
         
         // Go and get the initial state for the pickers (i.e what is in the table.  If no initial statedefined, then default
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "removePane", name:"NotificationRemovePane", object: nil)
+        notificationCenter.addObserver(self, selector: #selector(MaintainPanesViewController.removePane), name: NotificationRemovePane, object: nil)
         
-        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
+        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(MaintainPanesViewController.handleSwipe(_:)))
+        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.right
         self.view.addGestureRecognizer(showGestureRecognizer)
         
-        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
+        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(MaintainPanesViewController.handleSwipe(_:)))
+        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.left
         self.view.addGestureRecognizer(hideGestureRecognizer)
     }
     
@@ -75,9 +75,9 @@ class MaintainPanesViewController: UIViewController
         colPanes.reloadData()
     }
     
-    func handleSwipe(recognizer:UISwipeGestureRecognizer)
+    func handleSwipe(_ recognizer:UISwipeGestureRecognizer)
     {
-        if recognizer.direction == UISwipeGestureRecognizerDirection.Left
+        if recognizer.direction == UISwipeGestureRecognizerDirection.left
         {
             // Do nothing
         }
@@ -87,12 +87,12 @@ class MaintainPanesViewController: UIViewController
         }
     }
     
-    func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int
+    func numberOfComponentsInPickerView(_ pickerView: UIPickerView) -> Int
     {
         return 1
     }
     
-    func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int
     {
         var retVal: Int = 0
         
@@ -115,7 +115,7 @@ class MaintainPanesViewController: UIViewController
         return retVal
     }
     
-    func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String!
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String!
     {
         var retVal: String = ""
         
@@ -138,7 +138,7 @@ class MaintainPanesViewController: UIViewController
         return retVal
     }
     
-    func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int)
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int)
     {
         let myUpdatePanes = displayPanes()
         
@@ -161,31 +161,32 @@ class MaintainPanesViewController: UIViewController
     }
 
     
-    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
+    func numberOfSectionsInCollectionView(_ collectionView: UICollectionView) -> Int
     {
         return 1
     }
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
-        return myPanes.count ?? 0
+        return myPanes.count 
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
+    //    func collectionView(_ collectionView: UICollectionView, cellForItemAtIndexPath indexPath: IndexPath) -> UICollectionViewCell
+    func collectionView(_ collectionView: UICollectionView, cellForItem indexPath: IndexPath) -> UICollectionViewCell
     {
         var cell : myPaneItem!
         
-        cell = collectionView.dequeueReusableCellWithReuseIdentifier(cellReuse, forIndexPath: indexPath) as! myPaneItem
+        cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellReuse, for: indexPath as IndexPath) as! myPaneItem
         
         cell.lblPaneName.text = myPanes[indexPath.row].paneName
         
         if myPanes[indexPath.row].paneVisible
         {
-            cell.btnHide.setTitle("Hide", forState: UIControlState.Normal)
+            cell.btnHide.setTitle("Hide", for: UIControlState.normal)
         }
         else
         {
-            cell.btnHide.setTitle("Show", forState: UIControlState.Normal)
+            cell.btnHide.setTitle("Show", for: UIControlState.normal)
         }
         
         if (indexPath.row % 2 == 0)
@@ -194,7 +195,7 @@ class MaintainPanesViewController: UIViewController
         }
         else
         {
-            cell.backgroundColor = UIColor.clearColor()
+            cell.backgroundColor = UIColor.clear
         }
         
         cell.layoutSubviews()
@@ -202,7 +203,7 @@ class MaintainPanesViewController: UIViewController
         return cell
     }
     
-    func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
+    func collectionView(_ collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
     {
         var retVal: CGSize!
         
@@ -232,10 +233,10 @@ class MaintainPanesViewController: UIViewController
         var myIndex3: Int = 0
         var myIndex4: Int = 0
         
-        myPicker1.removeAll(keepCapacity: false)
-        myPicker2.removeAll(keepCapacity: false)
-        myPicker3.removeAll(keepCapacity: false)
-        myPicker4.removeAll(keepCapacity: false)
+        myPicker1.removeAll(keepingCapacity: false)
+        myPicker2.removeAll(keepingCapacity: false)
+        myPicker3.removeAll(keepingCapacity: false)
+        myPicker4.removeAll(keepingCapacity: false)
         
         var loopCount: Int = 0
         for myPane in displayPanes().listVisiblePanes
@@ -278,7 +279,7 @@ class MaintainPanesViewController: UIViewController
                 default:   NSLog("Do nothing")
             }
             
-            loopCount++
+            loopCount += 1
         }
         
         if myIndex1 == 0
@@ -318,7 +319,7 @@ class MaintainPanesViewController: UIViewController
         }
     }
     
-    @IBAction func btnResetPanes(sender: UIButton)
+    @IBAction func btnResetPanes(_ sender: UIButton)
     {
         // this is to allow cleaning of panes if needed
         
@@ -350,7 +351,7 @@ class myPaneItem: UICollectionViewCell
         super.layoutSubviews()
     }
     
-    @IBAction func btnHide(sender: UIButton)
+    @IBAction func btnHide(_ sender: UIButton)
     {
         // Lets update the table
         
@@ -358,7 +359,7 @@ class myPaneItem: UICollectionViewCell
         
         myUpdatePanes.toogleVisibleStatus(lblPaneName.text!)
         
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationRemovePane", object: nil)
+        notificationCenter.post(name: NotificationRemovePane, object: nil)
     }
 }
 

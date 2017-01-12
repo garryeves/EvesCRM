@@ -12,22 +12,22 @@ import EventKit
 
 class meetingAgendaItem
 {
-    private var myActualEndTime: NSDate!
-    private var myActualStartTime: NSDate!
-    private var myStatus: String = ""
-    private var myDecisionMade: String = ""
-    private var myDiscussionNotes: String = ""
-    private var myTimeAllocation: Int = 0
-    private var myOwner: String = ""
-    private var myTitle: String = ""
-    private var myAgendaID: Int = 0
-    private var myTasks: [task] = Array()
-    private var myMeetingID: String = ""
-    private var myUpdateAllowed: Bool = true
-    private var myMeetingOrder: Int = 0
-    private var saveCalled: Bool = false
+    fileprivate var myActualEndTime: Date!
+    fileprivate var myActualStartTime: Date!
+    fileprivate var myStatus: String = ""
+    fileprivate var myDecisionMade: String = ""
+    fileprivate var myDiscussionNotes: String = ""
+    fileprivate var myTimeAllocation: Int = 0
+    fileprivate var myOwner: String = ""
+    fileprivate var myTitle: String = ""
+    fileprivate var myAgendaID: Int = 0
+    fileprivate var myTasks: [task] = Array()
+    fileprivate var myMeetingID: String = ""
+    fileprivate var myUpdateAllowed: Bool = true
+    fileprivate var myMeetingOrder: Int = 0
+    fileprivate var saveCalled: Bool = false
 
-    var actualEndTime: NSDate?
+    var actualEndTime: Date?
     {
         get
         {
@@ -40,7 +40,7 @@ class meetingAgendaItem
         }
     }
     
-    var actualStartTime: NSDate?
+    var actualStartTime: Date?
     {
         get
         {
@@ -170,8 +170,8 @@ class meetingAgendaItem
         myMeetingID = inMeetingID
         myTitle = "New Item"
         myTimeAllocation = 10
-        myActualEndTime = getDefaultDate()
-        myActualStartTime = getDefaultDate()
+        myActualEndTime = getDefaultDate() as Date!
+        myActualStartTime = getDefaultDate() as Date!
         
         let tempAgendaItems = myDatabaseConnection.loadAgendaItem(myMeetingID)
         
@@ -243,12 +243,12 @@ class meetingAgendaItem
             if !saveCalled
             {
                 saveCalled = true
-                let _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "performSave", userInfo: nil, repeats: false)
+                let _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.performSave), userInfo: nil, repeats: false)
             }
         }
     }
     
-    func performSave()
+    @objc func performSave()
     {        
         let myAgendaItem = myDatabaseConnection.loadSpecificAgendaItem(myMeetingID, inAgendaID: myAgendaID)[0]
         
@@ -279,7 +279,7 @@ class meetingAgendaItem
         }
     }
     
-    func addTask(inTask: task)
+    func addTask(_ inTask: task)
     {
         // Is there ale=ready a link between the agenda and the task, if there is then no need to save
         let myCheck = myDatabaseConnection.getAgendaTask(myAgendaID, inMeetingID: myMeetingID, inTaskID: inTask.taskID)
@@ -294,7 +294,7 @@ class meetingAgendaItem
         loadTasks()
     }
     
-    func removeTask(inTask: task)
+    func removeTask(_ inTask: task)
     {
         // Associate Agenda to Task
         myDatabaseConnection.deleteAgendaTask(myAgendaID, inMeetingID: myMeetingID, inTaskID: inTask.taskID)
@@ -306,12 +306,12 @@ class meetingAgendaItem
 
 class meetingAttendee
 {
-    private var myMeetingID: String = ""
-    private var myName: String = ""
-    private var myEmailAddress: String = ""
-    private var myType: String = ""
-    private var myStatus: String = ""
-    private var saveCalled: Bool = false
+    fileprivate var myMeetingID: String = ""
+    fileprivate var myName: String = ""
+    fileprivate var myEmailAddress: String = ""
+    fileprivate var myType: String = ""
+    fileprivate var myStatus: String = ""
+    fileprivate var saveCalled: Bool = false
  
     var name: String
     {
@@ -373,7 +373,7 @@ class meetingAttendee
         }
     }
     
-    func load(meetingID: String, name: String)
+    func load(_ meetingID: String, name: String)
     {
         let myAttendees = myDatabaseConnection.checkMeetingsForAttendee(name, meetingID: meetingID)
         
@@ -402,11 +402,11 @@ class meetingAttendee
         if !saveCalled
         {
             saveCalled = true
-            let _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "performSave", userInfo: nil, repeats: false)
+            let _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.performSave), userInfo: nil, repeats: false)
         }
     }
     
-    func performSave()
+    @objc func performSave()
     {
         let myMeeting = myDatabaseConnection.checkMeetingsForAttendee(myName, meetingID: myMeetingID)[0]
         
@@ -418,41 +418,41 @@ class meetingAttendee
 
 class myCalendarItem
 {
-    private var myTitle: String = ""
-    private var myStartDate: NSDate!
-    private var myEndDate: NSDate!
-    private var myRecurrence: Int = -1
-    private var myRecurrenceFrequency: Int = -1
-    private var myLocation: String = ""
-    private var myStatus: Int = -1
-    private var myType: Int = -1
-    private var myRole: Int = -1
-    private var myEventID: String = ""
-    private var myEvent: EKEvent?
-    private var myAttendees: [meetingAttendee] = Array()
-    private var myChair: String = ""
-    private var myMinutes: String = ""
-    private var myPreviousMinutes: String = ""
-    private var myNextMeeting: String = ""
-    private var myMinutesType: String = ""
-    private var myAgendaItems: [meetingAgendaItem] = Array()
-    private var myTeamID: Int = 0
+    fileprivate var myTitle: String = ""
+    fileprivate var myStartDate: Date!
+    fileprivate var myEndDate: Date!
+    fileprivate var myRecurrence: Int = -1
+    fileprivate var myRecurrenceFrequency: Int = -1
+    fileprivate var myLocation: String = ""
+    fileprivate var myStatus: Int = -1
+    fileprivate var myType: Int = -1
+    fileprivate var myRole: Int = -1
+    fileprivate var myEventID: String = ""
+    fileprivate var myEvent: EKEvent?
+    fileprivate var myAttendees: [meetingAttendee] = Array()
+    fileprivate var myChair: String = ""
+    fileprivate var myMinutes: String = ""
+    fileprivate var myPreviousMinutes: String = ""
+    fileprivate var myNextMeeting: String = ""
+    fileprivate var myMinutesType: String = ""
+    fileprivate var myAgendaItems: [meetingAgendaItem] = Array()
+    fileprivate var myTeamID: Int = 0
 
     // Seup Date format for display
-    private var startDateFormatter = NSDateFormatter()
-    private var endDateFormatter = NSDateFormatter()
-    private var dateFormat = NSDateFormatterStyle.MediumStyle
-    private var timeFormat = NSDateFormatterStyle.ShortStyle
+    fileprivate var startDateFormatter = DateFormatter()
+    fileprivate var endDateFormatter = DateFormatter()
+    fileprivate var dateFormat = DateFormatter.Style.medium
+    fileprivate var timeFormat = DateFormatter.Style.short
     
     // This is used in order to allow to identify unique instances of a repeating Event
     
-    private var myUniqueIdentifier: String = ""
-    private var myEventStore: EKEventStore!
+    fileprivate var myUniqueIdentifier: String = ""
+    fileprivate var myEventStore: EKEventStore!
     
     // Flag to indicate if we have data saved in database as well
     
-    private var mySavedData: Bool = false
-    private var saveCalled: Bool = false
+    fileprivate var mySavedData: Bool = false
+    fileprivate var saveCalled: Bool = false
 
     init(inEventStore: EKEventStore, inEvent: EKEvent, inAttendee: EKParticipant?, teamID: Int)
     {
@@ -499,12 +499,12 @@ class myCalendarItem
             if inEvent.recurrenceRules != nil
             {
                 // This is a recurring event
-                let myWorkingRecur: NSArray = inEvent.recurrenceRules!
+                let myWorkingRecur: NSArray = inEvent.recurrenceRules! as NSArray
             
                 for myItem in myWorkingRecur
                 {
-                    myRecurrenceFrequency = myItem.interval
-                    let testFrequency: EKRecurrenceFrequency = myItem.frequency
+                    myRecurrenceFrequency = (myItem as AnyObject).interval
+                    let testFrequency: EKRecurrenceFrequency = (myItem as AnyObject).frequency
                     myRecurrence = Int(testFrequency.rawValue)
                 }
             }
@@ -528,8 +528,8 @@ class myCalendarItem
         myEventStore = inEventStore
         
         myTitle = inMeetingAgenda.name
-        myStartDate = inMeetingAgenda.startTime
-        myEndDate = inMeetingAgenda.endTime
+        myStartDate = inMeetingAgenda.startTime as Date!
+        myEndDate = inMeetingAgenda.endTime as Date!
         myLocation = inMeetingAgenda.location
         myPreviousMinutes = inMeetingAgenda.previousMeetingID
         myEventID = inMeetingAgenda.meetingID
@@ -627,7 +627,7 @@ class myCalendarItem
         }
     }
     
-    var startDate: NSDate
+    var startDate: Date
     {
         get
         {
@@ -645,7 +645,7 @@ class myCalendarItem
         get
         {
             startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-            return startDateFormatter.stringFromDate(myStartDate)
+            return startDateFormatter.string(from: myStartDate)
         }
     }
     
@@ -656,15 +656,15 @@ class myCalendarItem
             var myString: String = ""
             startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
             
-            myString = startDateFormatter.stringFromDate(myStartDate)
+            myString = startDateFormatter.string(from: myStartDate)
             myString += " - "
-            myString += endDateFormatter.stringFromDate(myEndDate)
+            myString += endDateFormatter.string(from: myEndDate)
             
             return myString
         }
     }
     
-    var endDate: NSDate
+    var endDate: Date
     {
         get
         {
@@ -681,7 +681,7 @@ class myCalendarItem
     {
         get
         {
-            return endDateFormatter.stringFromDate(myEndDate)
+            return endDateFormatter.string(from: myEndDate)
         }
     }
     
@@ -971,7 +971,7 @@ class myCalendarItem
         }
     }
     
-    func addAttendee(inName: String, inEmailAddress: String, inType: String, inStatus: String)
+    func addAttendee(_ inName: String, inEmailAddress: String, inType: String, inStatus: String)
     {
         // make sure we have saved the Agenda
         
@@ -988,7 +988,7 @@ class myCalendarItem
         myAttendees.append(attendee)
     }
     
-    private func initaliseAttendee(inName: String, inEmailAddress: String, inType: String, inStatus: String)
+    fileprivate func initaliseAttendee(_ inName: String, inEmailAddress: String, inType: String, inStatus: String)
     {
         let attendee: meetingAttendee = meetingAttendee()
         attendee.name = inName
@@ -1000,10 +1000,10 @@ class myCalendarItem
         myAttendees.append(attendee)
     }
 
-    func removeAttendee(inIndex: Int)
+    func removeAttendee(_ inIndex: Int)
     {
         // we should know the index of the item we want to delete from the control, so only need its index in order to perform the required action
-        myAttendees.removeAtIndex(inIndex)
+        myAttendees.remove(at: inIndex)
         
         // Save Attendees
         
@@ -1016,14 +1016,14 @@ class myCalendarItem
         
         for attendee in event!.attendees!
         {
-            let emailText: String = "\(attendee.URL)"
-            let emailStartPos = emailText.characters.indexOf(":")
-            let nextPlace = emailStartPos?.successor()
+            let emailText: String = "\(attendee.url)"
+            let emailStartPos = emailText.characters.index(of: ":")
+            let nextPlace = emailText.index(after: (emailStartPos)!)
             var emailAddress: String = ""
             if nextPlace != nil
             {
-                let emailEndPos = emailText.endIndex.predecessor()
-                emailAddress = emailText[nextPlace!...emailEndPos]
+                let emailEndPos = emailText.characters.index(before: emailText.endIndex)
+                emailAddress = emailText[nextPlace...emailEndPos]
             }
             
             addAttendee(attendee.name!, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
@@ -1085,11 +1085,11 @@ class myCalendarItem
         if !saveCalled
         {
             saveCalled = true
-            let _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "performSave", userInfo: nil, repeats: false)
+            let _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.performSave), userInfo: nil, repeats: false)
         }
     }
     
-    func performSave()
+    @objc func performSave()
     {
         // if this is for a repeating event then we need to add in the original startdate to the Notes
         let myAgenda = myDatabaseConnection.loadAgenda(myEventID, inTeamID: myTeamID)[0]
@@ -1151,7 +1151,7 @@ class myCalendarItem
             mySavedValues = myDatabaseConnection.loadAttendees(myEventID)
         }
         
-        myAttendees.removeAll(keepCapacity: false)
+        myAttendees.removeAll(keepingCapacity: false)
         
         if myEvent == nil
         { // No calendar event has been loaded, so go straight from table
@@ -1162,7 +1162,7 @@ class myCalendarItem
         }
         else
         {
-            if myStartDate.compare(NSDate()) == NSComparisonResult.OrderedDescending
+            if myStartDate.compare(Date()) == ComparisonResult.orderedDescending
             { // Start date is in the future, so we need to check the meeting invite attendeees
             
                 if mySavedValues.count > 0
@@ -1185,14 +1185,14 @@ class myCalendarItem
                                 {
                                     // Invitee found
                     
-                                    let emailText: String = "\(invitee.URL)"
-                                    let emailStartPos = emailText.characters.indexOf(":")
-                                    let nextPlace = emailStartPos?.successor()
+                                    let emailText: String = "\(invitee.url)"
+                                    let emailStartPos = emailText.characters.index(of: ":")
+                                    let nextPlace = emailText.index(after: (emailStartPos)!)
                                     var emailAddress: String = ""
                                     if nextPlace != nil
                                     {
-                                        let emailEndPos = emailText.endIndex.predecessor()
-                                        emailAddress = emailText[nextPlace!...emailEndPos]
+                                        let emailEndPos = emailText.characters.index(before: emailText.endIndex)
+                                        emailAddress = emailText[nextPlace...emailEndPos]
                                     }
                     
                                     initaliseAttendee(invitee.name!, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
@@ -1271,14 +1271,14 @@ class myCalendarItem
                             {
                                 // New invitee so add into table
                 
-                                let emailText: String = "\(invitee.URL)"
-                                let emailStartPos = emailText.characters.indexOf(":")
-                                let nextPlace = emailStartPos?.successor()
+                                let emailText: String = "\(invitee.url)"
+                                let emailStartPos = emailText.characters.index(of: ":")
+                                let nextPlace = emailText.index(after: (emailStartPos)!)
                                 var emailAddress: String = ""
                                 if nextPlace != nil
                                 {
-                                    let emailEndPos = emailText.endIndex.predecessor()
-                                    emailAddress = emailText[nextPlace!...emailEndPos]
+                                    let emailEndPos = emailText.characters.index(before: emailText.endIndex)
+                                    emailAddress = emailText[nextPlace...emailEndPos]
                                 }
                 
                                 addAttendee(invitee.name!, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
@@ -1292,14 +1292,14 @@ class myCalendarItem
                     {
                         for invitee in myEvent!.attendees!
                         {
-                            let emailText: String = "\(invitee.URL)"
-                            let emailStartPos = emailText.characters.indexOf(":")
-                            let nextPlace = emailStartPos?.successor()
+                            let emailText: String = "\(invitee.url)"
+                            let emailStartPos = emailText.characters.index(of: ":")
+                            let nextPlace = emailText.index(after: (emailStartPos)!)
                             var emailAddress: String = ""
                             if nextPlace != nil
                             {
-                                let emailEndPos = emailText.endIndex.predecessor()
-                                emailAddress = emailText[nextPlace!...emailEndPos]
+                                let emailEndPos = emailText.characters.index(before: emailText.endIndex)
+                                emailAddress = emailText[nextPlace...emailEndPos]
                             }
                     
                             addAttendee(invitee.name!, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
@@ -1330,7 +1330,7 @@ class myCalendarItem
             mySavedValues = myDatabaseConnection.loadAgendaItem(myEventID)
         }
         
-        myAgendaItems.removeAll(keepCapacity: false)
+        myAgendaItems.removeAll(keepingCapacity: false)
         
         if mySavedValues.count > 0
         {
@@ -1341,7 +1341,7 @@ class myCalendarItem
                 let myAgendaItem =  meetingAgendaItem(inMeetingID: savedAgenda.meetingID!, inAgendaID:savedAgenda.agendaID as! Int)
                 if myAgendaItem.meetingOrder == 0
                 {
-                    myAgendaItem.meetingOrder = ++runningMeetingOrder
+                    myAgendaItem.meetingOrder += runningMeetingOrder
                 }
                 else
                 {
@@ -1353,7 +1353,7 @@ class myCalendarItem
         }
     }
         
-    func updateAgendaItems(inAgendaID: Int, inTitle: String, inOwner: String, inStatus: String, inDecisionMade: String, inDiscussionNotes: String, inTimeAllocation: Int, inActualStartTime: NSDate, inActualEndTime: NSDate)
+    func updateAgendaItems(_ inAgendaID: Int, inTitle: String, inOwner: String, inStatus: String, inDecisionMade: String, inDiscussionNotes: String, inTimeAllocation: Int, inActualStartTime: Date, inActualEndTime: Date)
     {
         for myAgendaItem in myAgendaItems
         {
@@ -1372,7 +1372,7 @@ class myCalendarItem
         }
     }
     
-    private func writeLine(inTargetString: String, inLineString: String) -> String
+    fileprivate func writeLine(_ inTargetString: String, inLineString: String) -> String
     {
         var myString = inTargetString
         
@@ -1391,14 +1391,14 @@ class myCalendarItem
     {
         var myExportString: String = ""
         var myLine: String = ""
-        let myDateFormatter = NSDateFormatter()
-        myDateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.timeStyle = DateFormatter.Style.short
         
-        let myCalendar = NSCalendar.currentCalendar()
+        let myCalendar = Calendar.current
         
         var myWorkingTime = myStartDate
         
-        if myStartDate.compare(NSDate()) == NSComparisonResult.OrderedAscending
+        if myStartDate.compare(Date()) == ComparisonResult.orderedAscending
         {  // Historical so show Minutes
             myLine = "                Minutes"
         }
@@ -1449,9 +1449,9 @@ class myCalendarItem
             
             for myItem in myItems
             {
-                let startDateFormatter = NSDateFormatter()
+                let startDateFormatter = DateFormatter()
                 startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+                let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
                 
                 let myDisplayString = "\(myItem.name) - \(myDisplayDate)"
                 
@@ -1542,7 +1542,7 @@ class myCalendarItem
                                 myLine += ", "
                             }
                             myLine += "\(myItem4.name)"
-                            itemCount++
+                            itemCount += 1
                         }
                         myLine += "||"
                     }
@@ -1618,7 +1618,7 @@ class myCalendarItem
                                 myLine += ", "
                             }
                             myLine += "\(myItem4.name)"
-                            itemCount++
+                            itemCount += 1
                         }
                         myLine += "||"
                     }
@@ -1634,7 +1634,7 @@ class myCalendarItem
         myExportString = writeLine(myExportString, inLineString: myLine)
         myExportString = writeLine(myExportString, inLineString: "")
         
-        if myStartDate.compare(NSDate()) == NSComparisonResult.OrderedAscending
+        if myStartDate.compare(Date()) == ComparisonResult.orderedAscending
         {  // Historical so show Minutes
             
             for myItem in myAgendaItems
@@ -1725,7 +1725,7 @@ class myCalendarItem
                                     myLine += ", "
                                 }
                                 myLine += "\(myItem4.name)"
-                                itemCount++
+                                itemCount += 1
                             }
                             myLine += "||"
                         }
@@ -1750,16 +1750,15 @@ class myCalendarItem
                 
                 if myData.count > 0
                 {  // There are tasks for the previous meeting
-                    myLine = "||\(myDateFormatter.stringFromDate(myWorkingTime))"
+                    myLine = "||\(myDateFormatter.string(from: myWorkingTime!))"
                     myLine += "||Actions from Previous Meeting"
                     myLine += "||All||"
                     myExportString = writeLine(myExportString, inLineString: myLine)
                     
-                    myWorkingTime = myCalendar.dateByAddingUnit(
-                        .Minute,
+                    myWorkingTime = myCalendar.date(
+                        byAdding: .minute,
                         value: 10,
-                        toDate: myWorkingTime,
-                        options: [])!
+                        to: myWorkingTime!)!
                 }
             }
             
@@ -1767,20 +1766,19 @@ class myCalendarItem
             
             for myItem in myAgendaItems
             {
-                myLine = "||\(myDateFormatter.stringFromDate(myWorkingTime))"
+                myLine = "||\(myDateFormatter.string(from: myWorkingTime!))"
                 myLine += "||\(myItem.title)"
                 myLine += "||\(myItem.owner)||"
                 myExportString = writeLine(myExportString, inLineString: myLine)
                 
-                myWorkingTime = myCalendar.dateByAddingUnit(
-                    .Minute,
+                myWorkingTime = myCalendar.date(
+                    byAdding: .minute,
                     value: myItem.timeAllocation,
-                    toDate: myWorkingTime,
-                    options: [])!
+                    to: myWorkingTime!)!
                 
             }
             
-            myLine = "||\(myDateFormatter.stringFromDate(myWorkingTime))"
+            myLine = "||\(myDateFormatter.string(from: myWorkingTime!))"
             myLine += "||Meeting Close"
             myLine += "||||"
             
@@ -1795,9 +1793,9 @@ class myCalendarItem
             
             for myItem in myItems
             {
-                let startDateFormatter = NSDateFormatter()
+                let startDateFormatter = DateFormatter()
                 startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+                let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
                 
                 let myDisplayString = "\(myItem.name) - \(myDisplayDate)"
                 
@@ -1812,7 +1810,7 @@ class myCalendarItem
         return myExportString
     }
     
-    private func writeHTMLLine(inTargetString: String, inLineString: String) -> String
+    fileprivate func writeHTMLLine(_ inTargetString: String, inLineString: String) -> String
     {
         var myString = inTargetString
         
@@ -1831,16 +1829,16 @@ class myCalendarItem
         var myExportString: String = ""
         var myLine: String = ""
         var myTaskTable: String = ""
-        let myDateFormatter = NSDateFormatter()
-        myDateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.timeStyle = DateFormatter.Style.short
         
-        let myCalendar = NSCalendar.currentCalendar()
+        let myCalendar = Calendar.current
         
         var myWorkingTime = myStartDate
         
         myLine = "<html><body>"
         
-        if myStartDate.compare(NSDate()) == NSComparisonResult.OrderedAscending
+        if myStartDate.compare(Date()) == ComparisonResult.orderedAscending
         {  // Historical so show Minutes
             myLine += "<center><h1>Minutes</h1></center>"
         }
@@ -1889,9 +1887,9 @@ class myCalendarItem
             
             for myItem in myItems
             {
-                let startDateFormatter = NSDateFormatter()
+                let startDateFormatter = DateFormatter()
                 startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+                let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
                 
                 let myDisplayString = "\(myItem.name) - \(myDisplayDate)"
                 
@@ -1980,7 +1978,7 @@ class myCalendarItem
                                 myTaskTable += "<p>"
                             }
                             myTaskTable += "\(myItem4.name)"
-                            itemCount++
+                            itemCount += 1
                         }
                         myTaskTable += "</td>"
                     }
@@ -2057,7 +2055,7 @@ class myCalendarItem
                                 myTaskTable += "<p>"
                             }
                             myTaskTable += "\(myItem4.name)"
-                            itemCount++
+                            itemCount += 1
                         }
                         myTaskTable += "</td>"
                     }
@@ -2072,7 +2070,7 @@ class myCalendarItem
         myLine = "<center><h3>Agenda Items</h3></center>"
         myExportString = writeHTMLLine(myExportString, inLineString: myLine)
         
-        if myStartDate.compare(NSDate()) == NSComparisonResult.OrderedAscending
+        if myStartDate.compare(Date()) == ComparisonResult.orderedAscending
         {  // Historical so show Minutes
 
             for myItem in myAgendaItems
@@ -2165,7 +2163,7 @@ class myCalendarItem
                                     myTaskTable += "<p>"
                                 }
                                 myTaskTable += "\(myItem4.name)"
-                                itemCount++
+                                itemCount += 1
                             }
                             myTaskTable += "</td>"
                         }
@@ -2195,37 +2193,35 @@ class myCalendarItem
                 if myData.count > 0
                 {  // There are tasks for the previous meeting
                     myTaskTable += "<tr>"
-                    myTaskTable += "<td>\(myDateFormatter.stringFromDate(myWorkingTime))</td>"
+                    myTaskTable += "<td>\(myDateFormatter.string(from: myWorkingTime!))</td>"
                     myTaskTable += "<td>Actions from Previous Meeting</td>"
                     myTaskTable += "<td>All</td>"
                     myTaskTable += "</tr>"
                     
-                    myWorkingTime = myCalendar.dateByAddingUnit(
-                        .Minute,
+                    myWorkingTime = myCalendar.date(
+                        byAdding: .minute,
                         value: 10,
-                        toDate: myWorkingTime,
-                        options: [])!
+                        to: myWorkingTime!)!
                 }
             }
             
             for myItem in myAgendaItems
             {
                 myTaskTable += "<tr>"
-                myTaskTable += "<td>\(myDateFormatter.stringFromDate(myWorkingTime))</td>"
+                myTaskTable += "<td>\(myDateFormatter.string(from: myWorkingTime!))</td>"
                 myTaskTable += "<td>\(myItem.title)</td>"
                 myTaskTable += "<td>\(myItem.owner)</td>"
                 myTaskTable += "</tr>"
                 
-                myWorkingTime = myCalendar.dateByAddingUnit(
-                    .Minute,
+                myWorkingTime = myCalendar.date(
+                    byAdding: .minute,
                     value: myItem.timeAllocation,
-                    toDate: myWorkingTime,
-                    options: [])!
+                    to: myWorkingTime!)!
                 
             }
             
             myTaskTable += "<tr>"
-            myTaskTable += "<td>\(myDateFormatter.stringFromDate(myWorkingTime))</td>"
+            myTaskTable += "<td>\(myDateFormatter.string(from: myWorkingTime!))</td>"
             myTaskTable += "<td>Meeting Close</td>"
             myTaskTable += "<td></td>"
             myTaskTable += "</tr>"
@@ -2241,9 +2237,9 @@ class myCalendarItem
             
             for myItem in myItems
             {
-                let startDateFormatter = NSDateFormatter()
+                let startDateFormatter = DateFormatter()
                 startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+                let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
                 
                 let myDisplayString = "\(myItem.name) - \(myDisplayDate)"
                 
@@ -2259,7 +2255,7 @@ class myCalendarItem
         return myExportString
     }
     
-    func setNextMeeting(inCalendarItem: myCalendarItem)
+    func setNextMeeting(_ inCalendarItem: myCalendarItem)
     {
         // Need to update the "next meeting", to sets its previous meeting ID to be this one
             
@@ -2317,7 +2313,7 @@ class myCalendarItem
         return true
     }
     
-    func updateEventForNewEventDate(newEvent: EKEvent)
+    func updateEventForNewEventDate(_ newEvent: EKEvent)
     {
         NSLog("Do code to chnage the event details")
     }
@@ -2325,9 +2321,9 @@ class myCalendarItem
 
 class iOSCalendar
 {
-    private var myEventStore: EKEventStore!
-    private var eventDetails: [myCalendarItem] = Array()
-    private var eventRecords: [EKEvent] = Array()
+    fileprivate var myEventStore: EKEventStore!
+    fileprivate var eventDetails: [myCalendarItem] = Array()
+    fileprivate var eventRecords: [EKEvent] = Array()
 
     init(inEventStore: EKEventStore)
     {
@@ -2350,7 +2346,7 @@ class iOSCalendar
         }
     }
     
-    func loadCalendarDetails(emailAddresses: [String], teamID: Int)
+    func loadCalendarDetails(_ emailAddresses: [String], teamID: Int)
     {
         for myEmail in emailAddresses
         {
@@ -2360,29 +2356,29 @@ class iOSCalendar
         
         // Now sort the array into date order
         
-         eventDetails.sortInPlace({$0.startDate.timeIntervalSinceNow < $1.startDate.timeIntervalSinceNow})
+         eventDetails.sort(by: {$0.startDate.timeIntervalSinceNow < $1.startDate.timeIntervalSinceNow})
     }
     
-    func loadCalendarForEvent(inEventID: String, inStartDate: NSDate, teamID: Int)
+    func loadCalendarForEvent(_ inEventID: String, inStartDate: Date, teamID: Int)
     {
         /* The end date */
         //Calculate - Days * hours * mins * secs
         
-        let myEndDateValue:NSTimeInterval = 60 * 60
+        let myEndDateValue:TimeInterval = 60 * 60
         
-        let endDate = inStartDate.dateByAddingTimeInterval(myEndDateValue)
+        let endDate = inStartDate.addingTimeInterval(myEndDateValue)
         
         /* Create the predicate that we can later pass to the event store in order to fetch the events */
-        let searchPredicate = myEventStore.predicateForEventsWithStartDate(
-            inStartDate,
-            endDate: endDate,
+        let searchPredicate = myEventStore.predicateForEvents(
+            withStart: inStartDate,
+            end: endDate,
             calendars: nil)
         
         /* Fetch all the events that fall between the starting and the ending dates */
         
         if myEventStore.sources.count > 0
         {
-            let calItems = myEventStore.eventsMatchingPredicate(searchPredicate)
+            let calItems = myEventStore.events(matching: searchPredicate)
             
             for calItem in calItems
             {
@@ -2398,7 +2394,7 @@ class iOSCalendar
         }
     }
     
-    func loadCalendarDetails(projectName: String, teamID: Int)
+    func loadCalendarDetails(_ projectName: String, teamID: Int)
     {
         parseCalendarByProject(projectName, teamID: teamID)
         
@@ -2406,10 +2402,10 @@ class iOSCalendar
         
         // now sort the array into date order
         
-        eventDetails.sortInPlace({$0.startDate.timeIntervalSinceNow < $1.startDate.timeIntervalSinceNow})
+        eventDetails.sort(by: {$0.startDate.timeIntervalSinceNow < $1.startDate.timeIntervalSinceNow})
     }
 
-    private func loadMeetingsForContext(inSearchString: String)
+    fileprivate func loadMeetingsForContext(_ inSearchString: String)
     {
         var meetingFound: Bool = false
         
@@ -2448,7 +2444,7 @@ class iOSCalendar
         }
     }
     
-    private func loadMeetingsForProject(inSearchString: String)
+    fileprivate func loadMeetingsForProject(_ inSearchString: String)
     {
         var meetingFound: Bool = false
         var dateMatch: Bool = false
@@ -2459,7 +2455,7 @@ class iOSCalendar
         
         for myMeeting in myMeetingArray
         {
-            if myMeeting.name.lowercaseString.rangeOfString(inSearchString.lowercaseString) != nil
+            if myMeeting.name.lowercased().range(of: inSearchString.lowercased()) != nil
             {
                 // Check to see if there is already an entry for this meeting, as if there is we do not need to add it
                 meetingFound = false
@@ -2474,7 +2470,7 @@ class iOSCalendar
                     
                     if myCheck.title == myMeeting.name
                     {  // Meeting names are the same
-                        if myCheck.startDate == myMeeting.startTime
+                        if myCheck.startDate == myMeeting.startTime as Date
                         { // Dates are the same
                             dateMatch = true
                             break
@@ -2502,7 +2498,7 @@ class iOSCalendar
         }
     }
     
-    private func parseCalendarByEmail(inEmail: String, teamID: Int)
+    fileprivate func parseCalendarByEmail(_ inEmail: String, teamID: Int)
     {
         let events = getEventsForDateRange()
         
@@ -2517,14 +2513,14 @@ class iOSCalendar
                     {
                         for attendee in event.attendees!
                         {
-                            let emailText: String = "\(attendee.URL)"
-                            let emailStartPos = emailText.characters.indexOf(":")
-                            let nextPlace = emailStartPos?.successor()
+                            let emailText: String = "\(attendee.url)"
+                            let emailStartPos = emailText.characters.index(of: ":")
+                            let nextPlace = emailText.index(after: (emailStartPos)!)
                             var emailAddress: String = ""
                             if nextPlace != nil
                             {
-                                let emailEndPos = emailText.endIndex.predecessor()
-                                emailAddress = emailText[nextPlace!...emailEndPos]
+                                let emailEndPos = emailText.characters.index(before: emailText.endIndex)
+                                emailAddress = emailText[nextPlace...emailEndPos]
                             }
                             if emailAddress == inEmail
                             {
@@ -2537,7 +2533,7 @@ class iOSCalendar
         }
     }
     
-    private func parseCalendarByProject(inProject: String, teamID: Int)
+    fileprivate func parseCalendarByProject(_ inProject: String, teamID: Int)
     {
         let events = getEventsForDateRange()
         
@@ -2548,7 +2544,7 @@ class iOSCalendar
             {
                 let myTitle = event.title
                         
-                if myTitle.lowercaseString.rangeOfString(inProject.lowercaseString) != nil
+                if myTitle.lowercased().range(of: inProject.lowercased()) != nil
                 {
                     storeEvent(event, inAttendee: nil, teamID: teamID)
                 }
@@ -2556,11 +2552,11 @@ class iOSCalendar
         }
     }
     
-    private func getEventsForDateRange() -> [EKEvent]
+    fileprivate func getEventsForDateRange() -> [EKEvent]
     {
         var events: [EKEvent] = []
         
-        let baseDate = NSDate()
+        let baseDate = Date()
         
         /* The event starts date */
         //Calculate - Days * hours * mins * secs
@@ -2568,9 +2564,9 @@ class iOSCalendar
         let myStartDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date")
         // This is string value so need to convert to integer, and subtract from 0 to get a negative
         
-        let myStartDateValue:NSTimeInterval = 0 - ((((myStartDateString as NSString).doubleValue * 7) + 1) * 24 * 60 * 60)
+        let myStartDateValue:TimeInterval = 0 - ((((myStartDateString as NSString).doubleValue * 7) + 1) * 24 * 60 * 60)
         
-        let startDate = baseDate.dateByAddingTimeInterval(myStartDateValue)
+        let startDate = baseDate.addingTimeInterval(myStartDateValue)
         
         /* The end date */
         //Calculate - Days * hours * mins * secs
@@ -2578,28 +2574,28 @@ class iOSCalendar
         let myEndDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date")
         // This is string value so need to convert to integer
         
-        let myEndDateValue:NSTimeInterval = (myEndDateString as NSString).doubleValue * 7 * 24 * 60 * 60
+        let myEndDateValue:TimeInterval = (myEndDateString as NSString).doubleValue * 7 * 24 * 60 * 60
         
-        let endDate = baseDate.dateByAddingTimeInterval(myEndDateValue)
+        let endDate = baseDate.addingTimeInterval(myEndDateValue)
         
         /* Create the predicate that we can later pass to the event store in order to fetch the events */
-        let searchPredicate = myEventStore.predicateForEventsWithStartDate(
-            startDate,
-            endDate: endDate,
+        let searchPredicate = myEventStore.predicateForEvents(
+            withStart: startDate,
+            end: endDate,
             calendars: nil)
         
         /* Fetch all the events that fall between the starting and the ending dates */
         
         if myEventStore.sources.count > 0
         {
-            events = myEventStore.eventsMatchingPredicate(searchPredicate)
+            events = myEventStore.events(matching: searchPredicate)
         }
         return events
     }
 
-    private func getMeetingsForDateRange() -> [MeetingAgenda]
+    fileprivate func getMeetingsForDateRange() -> [MeetingAgenda]
     {
-        let baseDate = NSDate()
+        let baseDate = Date()
         
         /* The event starts date */
         //Calculate - Days * hours * mins * secs
@@ -2607,9 +2603,9 @@ class iOSCalendar
         let myStartDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date")
         // This is string value so need to convert to integer, and subtract from 0 to get a negative
         
-        let myStartDateValue:NSTimeInterval = 0 - ((((myStartDateString as NSString).doubleValue * 7) + 1) * 24 * 60 * 60)
+        let myStartDateValue:TimeInterval = 0 - ((((myStartDateString as NSString).doubleValue * 7) + 1) * 24 * 60 * 60)
         
-        let startDate = baseDate.dateByAddingTimeInterval(myStartDateValue)
+        let startDate = baseDate.addingTimeInterval(myStartDateValue)
         
         /* The end date */
         //Calculate - Days * hours * mins * secs
@@ -2617,14 +2613,14 @@ class iOSCalendar
         let myEndDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date")
         // This is string value so need to convert to integer
         
-        let myEndDateValue:NSTimeInterval = (myEndDateString as NSString).doubleValue * 7 * 24 * 60 * 60
+        let myEndDateValue:TimeInterval = (myEndDateString as NSString).doubleValue * 7 * 24 * 60 * 60
         
-        let endDate = baseDate.dateByAddingTimeInterval(myEndDateValue)
+        let endDate = baseDate.addingTimeInterval(myEndDateValue)
         
         /* Create the predicate that we can later pass to the event store in order to fetch the events */
-        _ = myEventStore.predicateForEventsWithStartDate(
-            startDate,
-            endDate: endDate,
+        _ = myEventStore.predicateForEvents(
+            withStart: startDate,
+            end: endDate,
             calendars: nil)
         
         /* Fetch all the meetings that fall between the starting and the ending dates */
@@ -2632,7 +2628,7 @@ class iOSCalendar
         return myDatabaseConnection.getAgendaForDateRange(startDate, inEndDate: endDate, inTeamID: myCurrentTeam.teamID)
     }
     
-    private func storeEvent(inEvent: EKEvent, inAttendee: EKParticipant?, teamID: Int)
+    fileprivate func storeEvent(_ inEvent: EKEvent, inAttendee: EKParticipant?, teamID: Int)
     {
         let calendarEntry = myCalendarItem(inEventStore: myEventStore, inEvent: inEvent, inAttendee: inAttendee, teamID: teamID)
         
@@ -2666,7 +2662,7 @@ class iOSCalendar
                 myString += "Status = \(event.displayStatus)"
             }
             
-            if event.startDate.compare(NSDate()) == NSComparisonResult.OrderedAscending
+            if event.startDate.compare(Date()) == ComparisonResult.orderedAscending
             {
                 // Event is in the past
                 writeRowToArray(myString, table: &tableContents, targetEvent: event, displayFormat: "Gray")
@@ -2683,10 +2679,10 @@ class iOSCalendar
 class ReminderData
 {
     var reminderText: String
-    private var myDisplayFormat: String
-    private var myPriority: Int
-    private var myNotes: String!
-    private var mycalendarItemIdentifier: String!
+    fileprivate var myDisplayFormat: String
+    fileprivate var myPriority: Int
+    fileprivate var myNotes: String!
+    fileprivate var mycalendarItemIdentifier: String!
     
     var reminderCalendar: EKCalendar?
     
@@ -2754,20 +2750,20 @@ class ReminderData
 
 class iOSReminder
 {
-    private var reminderStore: EKEventStore!
-    private var targetReminderCal: EKCalendar!
-    private var reminderDetails: [ReminderData] = Array()
-    private var reminderRecords: [EKReminder] = Array()
+    fileprivate var reminderStore: EKEventStore!
+    fileprivate var targetReminderCal: EKCalendar!
+    fileprivate var reminderDetails: [ReminderData] = Array()
+    fileprivate var reminderRecords: [EKReminder] = Array()
     
     init()
     {
         reminderStore = EKEventStore()
-        reminderStore.requestAccessToEntityType(EKEntityType.Reminder,
+        reminderStore.requestAccess(to: EKEntityType.reminder,
             completion: {(granted: Bool, error:NSError?) in
                 if !granted {
                     print("Access to reminder store not granted")
                 }
-        })
+        } as! EKEventStoreRequestAccessCompletionHandler)
     }
     
     var reminders: [EKReminder]
@@ -2778,9 +2774,9 @@ class iOSReminder
         }
     }
     
-    func parseReminderDetails (inSearch: String)
+    func parseReminderDetails (_ inSearch: String)
     {
-        let cals = reminderStore.calendarsForEntityType(EKEntityType.Reminder)
+        let cals = reminderStore.calendars(for: EKEntityType.reminder)
         var myCalFound = false
     
         for cal in cals
@@ -2794,11 +2790,11 @@ class iOSReminder
     
         if myCalFound
         {
-            let predicate = reminderStore.predicateForIncompleteRemindersWithDueDateStarting(nil, ending: nil, calendars: [targetReminderCal])
+            let predicate = reminderStore.predicateForIncompleteReminders(withDueDateStarting: nil, ending: nil, calendars: [targetReminderCal])
 
             var asyncDone = false
         
-            reminderStore.fetchRemindersMatchingPredicate(predicate, completion: {reminders in
+            reminderStore.fetchReminders(matching: predicate, completion: {reminders in
                 for reminder in reminders!
                 {
                     let workingString: ReminderData = ReminderData(reminderText: reminder.title, reminderCalendar: reminder.calendar)
@@ -2857,9 +2853,9 @@ class iOSReminder
 
 class MeetingModel: NSObject
 {
-    private var myDelegate: MyMeetingsDelegate!
-    private var myEvent: myCalendarItem!
-    private var myActionType: String = ""
+    fileprivate var myDelegate: MyMeetingsDelegate!
+    fileprivate var myEvent: myCalendarItem!
+    fileprivate var myActionType: String = ""
         
     var delegate: MyMeetingsDelegate
     {
@@ -2899,7 +2895,7 @@ class MeetingModel: NSObject
 }
 
 
-func parsePastMeeting(inMeetingID: String) -> [task]
+func parsePastMeeting(_ inMeetingID: String) -> [task]
 {
     // Get the the details for the meeting, in order to determine the previous task ID
     var myReturnArray: [task] = Array()

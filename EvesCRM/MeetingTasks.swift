@@ -14,7 +14,7 @@ class MeetingTasks: NSManagedObject {
     @NSManaged var agendaID: NSNumber
     @NSManaged var meetingID: String
     @NSManaged var taskID: NSNumber
-    @NSManaged var updateTime: NSDate
+    @NSManaged var updateTime: Date
     @NSManaged var updateType: String
 
 }

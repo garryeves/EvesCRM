@@ -26,7 +26,7 @@
 
 @implementation GTLDateTimeTest
 - (void)testGTLDateTime {
-  const NSCalendarUnit kComponents =
+  const CalendarUnit kComponents =
     NSEraCalendarUnit
     | NSYearCalendarUnit
     | NSMonthCalendarUnit
@@ -81,8 +81,8 @@
 
     NSDate *outputDate = dateTime.date;
 
-    NSCalendar *cal = dateTime.calendar;
-    NSDateComponents *outputComponents = [cal components:kComponents
+    Calendar *cal = dateTime.calendar;
+    DateComponents *outputComponents = [cal components:kComponents
                                                 fromDate:outputDate];
     XCTAssertEqual([outputComponents year], tests[idx].year, @"bad year");
     XCTAssertEqual([outputComponents month], tests[idx].month, @"bad month");
@@ -158,7 +158,7 @@
 
 - (void)testTimeZonePreservation {
   NSTimeZone *denverTZ = [NSTimeZone timeZoneWithName:@"America/Denver"];
-  NSCalendarDate *date = [NSCalendarDate dateWithYear:2007 month:01 day:01
+  CalendarDate *date = [CalendarDate dateWithYear:2007 month:01 day:01
                                                  hour:01 minute:01 second:01
                                              timeZone:denverTZ];
 
@@ -170,7 +170,7 @@
 
 - (void)testCalendarCaching {
   NSTimeZone *denverTZ = [NSTimeZone timeZoneWithName:@"America/Denver"];
-  NSCalendarDate *date = [NSCalendarDate dateWithYear:2007 month:01 day:01
+  CalendarDate *date = [CalendarDate dateWithYear:2007 month:01 day:01
                                                  hour:01 minute:01 second:01
                                              timeZone:denverTZ];
 

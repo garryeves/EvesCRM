@@ -8,17 +8,18 @@
 
 import Foundation
 import EventKit
+import TextExpander
 
 protocol MyMeetingsDelegate
 {
-    func myMeetingsDidFinish(controller:meetingsViewController)
-    func myMeetingsAgendaDidFinish(controller:meetingAgendaViewController)
+    func myMeetingsDidFinish(_ controller:meetingsViewController)
+    func myMeetingsAgendaDidFinish(_ controller:meetingAgendaViewController)
 
 }
 
 class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDelegate
 {
-    private var passedMeeting: MeetingModel!
+    fileprivate var passedMeeting: MeetingModel!
     
     @IBOutlet weak var lblMeetingHead: UILabel!
     @IBOutlet weak var lblLocationHead: UILabel!
@@ -48,16 +49,16 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
     @IBOutlet weak var btnDisplayPreviousMeeting: UIButton!
     @IBOutlet weak var btnDisplayNextMeeting: UIButton!
     
-    private let reuseAttendeeIdentifier = "AttendeeCell"
-    private let reuseAttendeeStatusIdentifier = "AttendeeStatusCell"
-    private let reuseAttendeeAction = "AttendeeActionCell"
+    fileprivate let reuseAttendeeIdentifier = "AttendeeCell"
+    fileprivate let reuseAttendeeStatusIdentifier = "AttendeeStatusCell"
+    fileprivate let reuseAttendeeAction = "AttendeeActionCell"
     
-    private var pickerOptions: [String] = Array()
-    private var pickerEventArray: [String] = Array()
-    private var pickerStartDateArray: [NSDate] = Array()
-    private var pickerTarget: String = ""
-    private var mySelectedRow: Int = 0
-    private var rowToAction: Int = 0
+    fileprivate var pickerOptions: [String] = Array()
+    fileprivate var pickerEventArray: [String] = Array()
+    fileprivate var pickerStartDateArray: [Date] = Array()
+    fileprivate var pickerTarget: String = ""
+    fileprivate var mySelectedRow: Int = 0
+    fileprivate var rowToAction: Int = 0
     
 //    lazy var activityPopover:UIViewController = {
 //        return self.activityViewController
@@ -69,7 +70,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
     
     // Textexpander
     
-    private var snippetExpanded: Bool = false
+    fileprivate var snippetExpanded: Bool = false
     
     var textExpander: SMTEDelegateController!
 
@@ -81,36 +82,36 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
         
         lblMeetingHead.text = passedMeeting.actionType
         
-        toolbar.translucent = false
+        toolbar.isTranslucent = false
         
-        let spacer = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace,
+        let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
             target: self, action: nil)
         
-        let share = UIBarButtonItem(barButtonSystemItem: .Action, target: self, action: "share:")
+        let share = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(meetingsViewController.share(_:)))
         
-        let pageHead = UIBarButtonItem(title: passedMeeting.actionType, style: UIBarButtonItemStyle.Plain, target: self, action: "doNothing")
-        pageHead.tintColor = UIColor.blackColor()
+        let pageHead = UIBarButtonItem(title: passedMeeting.actionType, style: UIBarButtonItemStyle.plain, target: self, action: #selector(meetingsViewController.doNothing))
+        pageHead.tintColor = UIColor.black
         
-        let spacer2 = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace,
+        let spacer2 = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
             target: self, action: nil)
         self.toolbar.items=[spacer,pageHead, spacer2, share]
         
         lblLocation.text = passedMeeting.event.location
         lblStartTime.text = passedMeeting.event.displayScheduledDate
         lblMeetingName.text = passedMeeting.event.title
-        myPicker.hidden = true
-        btnSelect.hidden = true
+        myPicker.isHidden = true
+        btnSelect.isHidden = true
         
  //       passedMeeting.event.loadAgenda()
         
         if passedMeeting.event.chair != ""
         {
-            btnChair.setTitle(passedMeeting.event.chair, forState: .Normal)
+            btnChair.setTitle(passedMeeting.event.chair, for: .normal)
         }
         
         if passedMeeting.event.minutes != ""
         {
-            btnMinutes.setTitle(passedMeeting.event.minutes, forState: .Normal)
+            btnMinutes.setTitle(passedMeeting.event.minutes, for: .normal)
         }
 
         if passedMeeting.event.previousMinutes != ""
@@ -121,13 +122,13 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
            
             for myItem in myItems
             {
-                let startDateFormatter = NSDateFormatter()
+                let startDateFormatter = DateFormatter()
                 startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+                let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
             
                 let myDisplayString = "\(myItem.name) - \(myDisplayDate)"
             
-                btnPreviousMinutes.setTitle(myDisplayString, forState: .Normal)
+                btnPreviousMinutes.setTitle(myDisplayString, for: .normal)
             }
         }
 
@@ -139,43 +140,43 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
             
             for myItem in myItems
             {
-                let startDateFormatter = NSDateFormatter()
+                let startDateFormatter = DateFormatter()
                 startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+                let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
                 
                 let myDisplayString = "\(myItem.name) - \(myDisplayDate)"
                 
-                btnNextMeeting.setTitle(myDisplayString, forState: .Normal)
+                btnNextMeeting.setTitle(myDisplayString, for: .normal)
             }
         }
         
         if passedMeeting.event.previousMinutes != ""
         {
-            btnDisplayPreviousMeeting.hidden = false
+            btnDisplayPreviousMeeting.isHidden = false
         }
         else
         {
-            btnDisplayPreviousMeeting.hidden = true
+            btnDisplayPreviousMeeting.isHidden = true
         }
         
         if passedMeeting.event.nextMeeting != ""
         {
-            btnDisplayNextMeeting.hidden = false
+            btnDisplayNextMeeting.isHidden = false
         }
         else
         {
-            btnDisplayNextMeeting.hidden = true
+            btnDisplayNextMeeting.isHidden = true
         }
         
-        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
+        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(meetingsViewController.handleSwipe(_:)))
+        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.right
         self.view.addGestureRecognizer(showGestureRecognizer)
         
-        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
+        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(meetingsViewController.handleSwipe(_:)))
+        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.left
         self.view.addGestureRecognizer(hideGestureRecognizer)
 
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "attendeeRemoved:", name:"NotificationAttendeeRemoved", object: nil)
+        notificationCenter.addObserver(self, selector: #selector(meetingsViewController.attendeeRemoved(_:)), name: NotificationAttendeeRemoved, object: nil)
 
         // TextExpander
         textExpander = SMTEDelegateController()
@@ -203,9 +204,9 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
         colAttendees.reloadData()
     }
     
-    func handleSwipe(recognizer:UISwipeGestureRecognizer)
+    func handleSwipe(_ recognizer:UISwipeGestureRecognizer)
     {
-        if recognizer.direction == UISwipeGestureRecognizerDirection.Left
+        if recognizer.direction == UISwipeGestureRecognizerDirection.left
         {
            // Move to next item in tab hierarchy
             
@@ -219,48 +220,49 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
         }
     }
     
-    func numberOfComponentsInPickerView(TableTypeSelection1: UIPickerView) -> Int {
+    func numberOfComponentsInPickerView(_ TableTypeSelection1: UIPickerView) -> Int {
         return 1
     }
     
-    func pickerView(TableTypeSelection1: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+    func pickerView(_ TableTypeSelection1: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         return pickerOptions.count
     }
     
-    func pickerView(TableTypeSelection1: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String! {
+    func pickerView(_ TableTypeSelection1: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String! {
         return pickerOptions[row]
     }
     
-    func pickerView(TableTypeSelection1: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+    func pickerView(_ TableTypeSelection1: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         // Write code for select
 
         mySelectedRow = row
     }
     
-    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
+    func numberOfSectionsInCollectionView(_ collectionView: UICollectionView) -> Int
     {
         return 1
     }
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
         return passedMeeting.event.attendees.count
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
+    //    func collectionView(_ collectionView: UICollectionView, cellForItemAtIndexPath indexPath: IndexPath) -> UICollectionViewCell
+    func collectionView(_ collectionView: UICollectionView, cellForItem indexPath: IndexPath) -> UICollectionViewCell
     {
         var cell : myAttendeeDisplayItem!
             
-        cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseAttendeeIdentifier, forIndexPath: indexPath) as! myAttendeeDisplayItem
+        cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseAttendeeIdentifier, for: indexPath as IndexPath) as! myAttendeeDisplayItem
         cell.lblName.text = passedMeeting.event.attendees[indexPath.row].name
         cell.lblStatus.text = passedMeeting.event.attendees[indexPath.row].status
         if passedMeeting.actionType == "Agenda"
         {
-            cell.btnAction.setTitle("Remove", forState: .Normal)
+            cell.btnAction.setTitle("Remove", for: .normal)
         }
         else
         {
-            cell.btnAction.setTitle("Record Attendence", forState: .Normal)
+            cell.btnAction.setTitle("Record Attendence", for: .normal)
         }
         cell.btnAction.tag = indexPath.row
             
@@ -270,7 +272,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
         }
         else
         {
-            cell.backgroundColor = UIColor.clearColor()
+            cell.backgroundColor = UIColor.clear
         }
         
         cell.layoutSubviews()
@@ -278,67 +280,67 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
         return cell
     }
     
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: IndexPath)
     {  // Leaving stub in here for use in other collections
 
     }
 
-    func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView
     {
         var headerView:UICollectionReusableView!
         if kind == UICollectionElementKindSectionHeader
         {
-            headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: "attendeeHeader", forIndexPath: indexPath) 
+            headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "attendeeHeader", for: indexPath as IndexPath) 
         }
         
         return headerView
     }
     
-    func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
+    func collectionView(_ collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:IndexPath) -> CGSize
     {
         return CGSize(width: collectionView.frame.size.width, height: 39)
     }
     
-    @IBAction func btnChairClick(sender: UIButton)
+    @IBAction func btnChairClick(_ sender: UIButton)
     {
-        pickerOptions.removeAll(keepCapacity: false)
+        pickerOptions.removeAll(keepingCapacity: false)
         for attendee in passedMeeting.event.attendees
         {
             pickerOptions.append(attendee.name)
         }
         hideFields()
-        myPicker.hidden = false
-        btnSelect.hidden = false
-        btnSelect.setTitle("Set Chairperson", forState: .Normal)
+        myPicker.isHidden = false
+        btnSelect.isHidden = false
+        btnSelect.setTitle("Set Chairperson", for: .normal)
         myPicker.reloadAllComponents()
         pickerTarget = "chair"
     }
     
-    @IBAction func btnMinutes(sender: UIButton)
+    @IBAction func btnMinutes(_ sender: UIButton)
     {
-        pickerOptions.removeAll(keepCapacity: false)
+        pickerOptions.removeAll(keepingCapacity: false)
         for attendee in passedMeeting.event.attendees
         {
             pickerOptions.append(attendee.name)
         }
         hideFields()
-        myPicker.hidden = false
-        btnSelect.setTitle("Set Minutes taker", forState: .Normal)
-        btnSelect.hidden = false
+        myPicker.isHidden = false
+        btnSelect.setTitle("Set Minutes taker", for: .normal)
+        btnSelect.isHidden = false
         myPicker.reloadAllComponents()
         pickerTarget = "minutes"
     }
     
-    @IBAction func btnAddAttendee(sender: UIButton)
+    @IBAction func btnAddAttendee(_ sender: UIButton)
     {
         if txtAttendeeName.text == ""
         {
             let alert = UIAlertController(title: "Agenda", message:
-                "You need to enter the name of the attendee", preferredStyle: UIAlertControllerStyle.Alert)
+                "You need to enter the name of the attendee", preferredStyle: UIAlertControllerStyle.alert)
             
-            self.presentViewController(alert, animated: false, completion: nil)
+            self.present(alert, animated: false, completion: nil)
             
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
         }
         else
         {
@@ -350,29 +352,29 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
         }
     }
     
-    @IBAction func btnPreviousMinutes(sender: UIButton)
+    @IBAction func btnPreviousMinutes(_ sender: UIButton)
     {
         getPreviousMeeting()
     }
     
-    @IBAction func btnNextMeeting(sender: UIButton)
+    @IBAction func btnNextMeeting(_ sender: UIButton)
     {
         getNextMeeting()
     }
     
-    @IBAction func btnSelect(sender: UIButton)
+    @IBAction func btnSelect(_ sender: UIButton)
     {
         if pickerOptions.count > 0
         {
             if pickerTarget == "chair"
             {
-                btnChair.setTitle(pickerOptions[mySelectedRow], forState: .Normal)
+                btnChair.setTitle(pickerOptions[mySelectedRow], for: .normal)
                 passedMeeting.event.chair = pickerOptions[mySelectedRow]
             }
         
             if pickerTarget == "minutes"
             {
-                btnMinutes.setTitle(pickerOptions[mySelectedRow], forState: .Normal)
+                btnMinutes.setTitle(pickerOptions[mySelectedRow], for: .normal)
                 passedMeeting.event.minutes = pickerOptions[mySelectedRow]
             }
         
@@ -386,13 +388,13 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                 { // Existing meeting found
                     for myItem in myItems
                     {
-                        let startDateFormatter = NSDateFormatter()
+                        let startDateFormatter = DateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                        let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+                        let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
                     
-                        let calendarOption: UIAlertController = UIAlertController(title: "Existing meeting found", message: "A meeting \(myItem.name) - \(myDisplayDate) has this set as previous meeting.  Do you want to continue, which will clear the previous meeting from the original meeting?  ", preferredStyle: .ActionSheet)
+                        let calendarOption: UIAlertController = UIAlertController(title: "Existing meeting found", message: "A meeting \(myItem.name) - \(myDisplayDate) has this set as previous meeting.  Do you want to continue, which will clear the previous meeting from the original meeting?  ", preferredStyle: .actionSheet)
                     
-                        let myYes = UIAlertAction(title: "Yes, update the details", style: .Default, handler: { (action: UIAlertAction) -> () in
+                        let myYes = UIAlertAction(title: "Yes, update the details", style: .default, handler: { (action: UIAlertAction) -> () in
                             // go and update the previous meeting
                         
                             myDatabaseConnection.updatePreviousAgendaID("", inMeetingID: myItem.meetingID, inTeamID: myCurrentTeam.teamID)
@@ -407,19 +409,19 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                             
                                 for myDisplayItem in myDisplayItems
                                 {
-                                    let startDateFormatter = NSDateFormatter()
+                                    let startDateFormatter = DateFormatter()
                                     startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                                    let myDisplayDate = startDateFormatter.stringFromDate(myDisplayItem.startTime)
+                                    let myDisplayDate = startDateFormatter.string(from: myDisplayItem.startTime)
                                 
                                     let myDisplayString = "\(myDisplayItem.name) - \(myDisplayDate)"
                                 
-                                    self.btnPreviousMinutes.setTitle(myDisplayString, forState: .Normal)
-                                    self.btnDisplayPreviousMeeting.hidden = false
+                                    self.btnPreviousMinutes.setTitle(myDisplayString, for: .normal)
+                                    self.btnDisplayPreviousMeeting.isHidden = false
                                 }
                             }
                         })
                     
-                        let myNo = UIAlertAction(title: "No, leave the existing details", style: .Default, handler: { (action: UIAlertAction) -> () in
+                        let myNo = UIAlertAction(title: "No, leave the existing details", style: .default, handler: { (action: UIAlertAction) -> () in
                             // do nothing
                         })
                     
@@ -427,9 +429,9 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                         calendarOption.addAction(myNo)
                     
                         calendarOption.popoverPresentationController?.sourceView = self.view
-                        calendarOption.popoverPresentationController?.sourceRect = CGRectMake(self.view.bounds.width / 2.0, self.view.bounds.height / 2.0, 1.0, 1.0)
+                        calendarOption.popoverPresentationController?.sourceRect = CGRect(x: self.view.bounds.width / 2.0, y: self.view.bounds.height / 2.0, width: 1.0, height: 1.0)
                     
-                        self.presentViewController(calendarOption, animated: true, completion: nil)
+                        self.present(calendarOption, animated: true, completion: nil)
                     }
                 }
                 else
@@ -444,15 +446,15 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                     
                         for myDisplayItem in myDisplayItems
                         {
-                            let startDateFormatter = NSDateFormatter()
+                            let startDateFormatter = DateFormatter()
                             startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                            let myDisplayDate = startDateFormatter.stringFromDate(myDisplayItem.startTime)
+                            let myDisplayDate = startDateFormatter.string(from: myDisplayItem.startTime)
                         
                             let myDisplayString = "\(myDisplayItem.name) - \(myDisplayDate)"
                         
-                            btnPreviousMinutes.setTitle(myDisplayString, forState: .Normal)
+                            btnPreviousMinutes.setTitle(myDisplayString, for: .normal)
                             
-                            btnDisplayPreviousMeeting.hidden = false
+                            btnDisplayPreviousMeeting.isHidden = false
                         }
                     }
                 }
@@ -471,13 +473,13 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                     {
                         if myItem.previousMeetingID != ""
                         {
-                            let startDateFormatter = NSDateFormatter()
+                            let startDateFormatter = DateFormatter()
                             startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                            let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+                            let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
                         
-                            let calendarOption: UIAlertController = UIAlertController(title: "Existing meeting found", message: "A meeting \(myItem.name) - \(myDisplayDate) has this set as next meeting.  Do you want to continue, which will clear the next meeting from the original meeting?  ", preferredStyle: .ActionSheet)
+                            let calendarOption: UIAlertController = UIAlertController(title: "Existing meeting found", message: "A meeting \(myItem.name) - \(myDisplayDate) has this set as next meeting.  Do you want to continue, which will clear the next meeting from the original meeting?  ", preferredStyle: .actionSheet)
                         
-                            let myYes = UIAlertAction(title: "Yes, update the details", style: .Default, handler: { (action: UIAlertAction) -> () in
+                            let myYes = UIAlertAction(title: "Yes, update the details", style: .default, handler: { (action: UIAlertAction) -> () in
                             // go and update the previous meeting
                             
                                 let myOriginalNextMeeting = self.passedMeeting.event.nextMeeting
@@ -511,15 +513,15 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                                     
                                     for myItem in myItems
                                     {
-                                        let startDateFormatter = NSDateFormatter()
+                                        let startDateFormatter = DateFormatter()
                                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                                        let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+                                        let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
                                     
                                         let myDisplayString = "\(myItem.name) - \(myDisplayDate)"
                                     
-                                        self.btnNextMeeting.setTitle(myDisplayString, forState: .Normal)
+                                        self.btnNextMeeting.setTitle(myDisplayString, for: .normal)
                                         
-                                        self.btnDisplayNextMeeting.hidden = false
+                                        self.btnDisplayNextMeeting.isHidden = false
 
                                     }
                                 }
@@ -529,7 +531,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                                 }
                             })
                         
-                            let myNo = UIAlertAction(title: "No, leave the existing details", style: .Default, handler: { (action: UIAlertAction) -> () in
+                            let myNo = UIAlertAction(title: "No, leave the existing details", style: .default, handler: { (action: UIAlertAction) -> () in
                                 // do nothing
                             })
                         
@@ -537,9 +539,9 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                             calendarOption.addAction(myNo)
                         
                             calendarOption.popoverPresentationController?.sourceView = self.view
-                            calendarOption.popoverPresentationController?.sourceRect = CGRectMake(self.view.bounds.width / 2.0, self.view.bounds.height / 2.0, 1.0, 1.0)
+                            calendarOption.popoverPresentationController?.sourceRect = CGRect(x: self.view.bounds.width / 2.0, y: self.view.bounds.height / 2.0, width: 1.0, height: 1.0)
                         
-                            self.presentViewController(calendarOption, animated: true, completion: nil)
+                            self.present(calendarOption, animated: true, completion: nil)
                         }
                         else
                         {
@@ -574,14 +576,14 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                             
                                 for myItem in myItems
                                 {
-                                    let startDateFormatter = NSDateFormatter()
+                                    let startDateFormatter = DateFormatter()
                                     startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                                    let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+                                    let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
                                 
                                     let myDisplayString = "\(myItem.name) - \(myDisplayDate)"
                                 
-                                    btnNextMeeting.setTitle(myDisplayString, forState: .Normal)
-                                    btnDisplayNextMeeting.hidden = false
+                                    btnNextMeeting.setTitle(myDisplayString, for: .normal)
+                                    btnDisplayNextMeeting.isHidden = false
                                 }
                             }
                             else
@@ -624,13 +626,13 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                     
                         for myItem in myItems
                         {
-                            let startDateFormatter = NSDateFormatter()
+                            let startDateFormatter = DateFormatter()
                             startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                            let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+                            let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
                         
                             let myDisplayString = "\(myItem.name) - \(myDisplayDate)"
                         
-                            btnNextMeeting.setTitle(myDisplayString, forState: .Normal)
+                            btnNextMeeting.setTitle(myDisplayString, for: .normal)
                         }
                     }
                     else
@@ -654,14 +656,14 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
             rowToAction = 0
         }
 
-        myPicker.hidden = true
-        btnSelect.hidden = true
+        myPicker.isHidden = true
+        btnSelect.isHidden = true
         showFields()
     }
     
-    @IBAction func btnDisplayPreviousMeeting(sender: UIButton)
+    @IBAction func btnDisplayPreviousMeeting(_ sender: UIButton)
     {
-        let meetingViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("MeetingsTab") as! meetingTabViewController
+        let meetingViewControl = self.storyboard!.instantiateViewController(withIdentifier: "MeetingsTab") as! meetingTabViewController
         
         let targetPassedMeeting = MeetingModel()
         targetPassedMeeting.actionType = passedMeeting.actionType
@@ -671,11 +673,11 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
         if myItems.count == 0
         {
             let alert = UIAlertController(title: "Meeting", message:
-                "Can not retrieve details for previous meeting", preferredStyle: UIAlertControllerStyle.Alert)
+                "Can not retrieve details for previous meeting", preferredStyle: UIAlertControllerStyle.alert)
             
-            self.presentViewController(alert, animated: false, completion: nil)
+            self.present(alert, animated: false, completion: nil)
             
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
         }
         else
         {
@@ -690,12 +692,12 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
         
         meetingViewControl.myPassedMeeting = targetPassedMeeting
         
-        self.presentViewController(meetingViewControl, animated: true, completion: nil)
+        self.present(meetingViewControl, animated: true, completion: nil)
     }
     
-    @IBAction func btnDisplayNextMeeting(sender: UIButton)
+    @IBAction func btnDisplayNextMeeting(_ sender: UIButton)
     {
-        let meetingViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("MeetingsTab") as! meetingTabViewController
+        let meetingViewControl = self.storyboard!.instantiateViewController(withIdentifier: "MeetingsTab") as! meetingTabViewController
         
         let targetPassedMeeting = MeetingModel()
         targetPassedMeeting.actionType = passedMeeting.actionType
@@ -705,11 +707,11 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
         if myItems.count == 0
         {
             let alert = UIAlertController(title: "Meeting", message:
-                "Can not retrieve details for next meeting", preferredStyle: UIAlertControllerStyle.Alert)
+                "Can not retrieve details for next meeting", preferredStyle: UIAlertControllerStyle.alert)
             
-            self.presentViewController(alert, animated: false, completion: nil)
+            self.present(alert, animated: false, completion: nil)
             
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
         }
         else
         {
@@ -724,79 +726,79 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
         
         meetingViewControl.myPassedMeeting = targetPassedMeeting
         
-        self.presentViewController(meetingViewControl, animated: true, completion: nil)
+        self.present(meetingViewControl, animated: true, completion: nil)
     }
     
     func hideFields()
     {
-        lblMeetingHead.hidden = true
-        lblLocationHead.hidden = true
-        lblLocation.hidden = true
-        lblAT.hidden = true
-        lblStartTime.hidden = true
-        lblMeetingName.hidden = true
-        lblChairHead.hidden = true
-        lblMinutesHead.hidden = true
-        lblAttendeesHead.hidden = true
-        colAttendees.hidden = true
-        btnChair.hidden = true
-        btnMinutes.hidden = true
-        txtAttendeeName.hidden = true
-        txtAttendeeEmail.hidden = true
-        btnAddAttendee.hidden = true
-        lblName.hidden = true
-        lblEmail.hidden = true
-        btnPreviousMinutes.hidden = true
-        lblPreviousMeeting.hidden = true
-        lblNextMeeting.hidden = true
-        btnNextMeeting.hidden = true
-        btnDisplayPreviousMeeting.hidden = true
-        btnDisplayNextMeeting.hidden = true
+        lblMeetingHead.isHidden = true
+        lblLocationHead.isHidden = true
+        lblLocation.isHidden = true
+        lblAT.isHidden = true
+        lblStartTime.isHidden = true
+        lblMeetingName.isHidden = true
+        lblChairHead.isHidden = true
+        lblMinutesHead.isHidden = true
+        lblAttendeesHead.isHidden = true
+        colAttendees.isHidden = true
+        btnChair.isHidden = true
+        btnMinutes.isHidden = true
+        txtAttendeeName.isHidden = true
+        txtAttendeeEmail.isHidden = true
+        btnAddAttendee.isHidden = true
+        lblName.isHidden = true
+        lblEmail.isHidden = true
+        btnPreviousMinutes.isHidden = true
+        lblPreviousMeeting.isHidden = true
+        lblNextMeeting.isHidden = true
+        btnNextMeeting.isHidden = true
+        btnDisplayPreviousMeeting.isHidden = true
+        btnDisplayNextMeeting.isHidden = true
     }
     
     func showFields()
     {
-        lblMeetingHead.hidden = false
-        lblLocationHead.hidden = false
-        lblLocation.hidden = false
-        lblAT.hidden = false
-        lblStartTime.hidden = false
-        lblMeetingName.hidden = false
-        lblChairHead.hidden = false
-        lblMinutesHead.hidden = false
-        lblAttendeesHead.hidden = false
-        colAttendees.hidden = false
-        btnChair.hidden = false
-        btnMinutes.hidden = false
-        txtAttendeeName.hidden = false
-        txtAttendeeEmail.hidden = false
-        btnAddAttendee.hidden = false
-        lblName.hidden = false
-        lblEmail.hidden = false
-        btnPreviousMinutes.hidden = false
-        lblPreviousMeeting.hidden = false
-        lblNextMeeting.hidden = false
-        btnNextMeeting.hidden = false
+        lblMeetingHead.isHidden = false
+        lblLocationHead.isHidden = false
+        lblLocation.isHidden = false
+        lblAT.isHidden = false
+        lblStartTime.isHidden = false
+        lblMeetingName.isHidden = false
+        lblChairHead.isHidden = false
+        lblMinutesHead.isHidden = false
+        lblAttendeesHead.isHidden = false
+        colAttendees.isHidden = false
+        btnChair.isHidden = false
+        btnMinutes.isHidden = false
+        txtAttendeeName.isHidden = false
+        txtAttendeeEmail.isHidden = false
+        btnAddAttendee.isHidden = false
+        lblName.isHidden = false
+        lblEmail.isHidden = false
+        btnPreviousMinutes.isHidden = false
+        lblPreviousMeeting.isHidden = false
+        lblNextMeeting.isHidden = false
+        btnNextMeeting.isHidden = false
         if passedMeeting.event.previousMinutes != ""
         {
-            btnDisplayPreviousMeeting.hidden = false
+            btnDisplayPreviousMeeting.isHidden = false
         }
         else
         {
-            btnDisplayPreviousMeeting.hidden = true
+            btnDisplayPreviousMeeting.isHidden = true
         }
         
         if passedMeeting.event.nextMeeting != ""
         {
-            btnDisplayNextMeeting.hidden = false
+            btnDisplayNextMeeting.isHidden = false
         }
         else
         {
-            btnDisplayNextMeeting.hidden = true
+            btnDisplayNextMeeting.isHidden = true
         }
     }
     
-    func attendeeRemoved(notification: NSNotification)
+    func attendeeRemoved(_ notification: Notification)
     {
         
         let action = notification.userInfo!["Action"] as! String
@@ -817,9 +819,9 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
             }
             
             hideFields()
-            myPicker.hidden = false
-            btnSelect.setTitle("Set Attendence", forState: .Normal)
-            btnSelect.hidden = false
+            myPicker.isHidden = false
+            btnSelect.setTitle("Set Attendence", for: .normal)
+            btnSelect.isHidden = false
             myPicker.reloadAllComponents()
             pickerTarget = "attendence"
             rowToAction = itemToRemove
@@ -832,9 +834,9 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
         
         // if a recurring meeting invite then display previous occurances at the top of the list
         
-        pickerOptions.removeAll(keepCapacity: false)
-        pickerEventArray.removeAll(keepCapacity: false)
-        pickerStartDateArray.removeAll(keepCapacity: false)
+        pickerOptions.removeAll(keepingCapacity: false)
+        pickerEventArray.removeAll(keepingCapacity: false)
+        pickerStartDateArray.removeAll(keepingCapacity: false)
         
         if passedMeeting.event.event!.recurrenceRules != nil
         {
@@ -850,9 +852,9 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                 {
                     if myItem.meetingID != passedMeeting.event.eventID
                     { // Not this meeting meeting
-                        let startDateFormatter = NSDateFormatter()
+                        let startDateFormatter = DateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                        let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+                        let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
                         
                         pickerOptions.append("\(myItem.name) - \(myDisplayDate)")
                         pickerEventArray.append(myItem.meetingID)
@@ -871,9 +873,9 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                 {
                     if myItem.meetingID != passedMeeting.event.eventID
                     { // Not this meeting meeting
-                        let startDateFormatter = NSDateFormatter()
+                        let startDateFormatter = DateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                        let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+                        let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
                         
                         pickerOptions.append("\(myItem.name) - \(myDisplayDate)")
                         pickerEventArray.append(myItem.meetingID)
@@ -898,9 +900,9 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                 {
                     if myItem.meetingID != passedMeeting.event.eventID
                     { // Not this meeting meeting
-                        let startDateFormatter = NSDateFormatter()
+                        let startDateFormatter = DateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                        let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+                        let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
                         
                         pickerOptions.append("\(myItem.name) - \(myDisplayDate)")
                         pickerEventArray.append(myItem.meetingID)
@@ -913,9 +915,9 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
         if pickerOptions.count > 0
         {
             hideFields()
-            myPicker.hidden = false
-            btnSelect.setTitle("Set previous meeting", forState: .Normal)
-            btnSelect.hidden = false
+            myPicker.isHidden = false
+            btnSelect.setTitle("Set previous meeting", for: .normal)
+            btnSelect.isHidden = false
             myPicker.reloadAllComponents()
             pickerTarget = "previousMeeting"
         }
@@ -923,34 +925,34 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
     
     func getNextMeeting()
     {
-        pickerOptions.removeAll(keepCapacity: false)
-        pickerEventArray.removeAll(keepCapacity: false)
-        pickerStartDateArray.removeAll(keepCapacity: false)
+        pickerOptions.removeAll(keepingCapacity: false)
+        pickerEventArray.removeAll(keepingCapacity: false)
+        pickerStartDateArray.removeAll(keepingCapacity: false)
 
         var calItems: [EKEvent] = []
         
-        let baseDate = NSDate()
+        let baseDate = Date()
         
         let startDate = passedMeeting.event.startDate
         
         let myEndDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date")
         // This is string value so need to convert to integer
         
-        let myEndDateValue:NSTimeInterval = (myEndDateString as NSString).doubleValue * 7 * 24 * 60 * 60
+        let myEndDateValue:TimeInterval = (myEndDateString as NSString).doubleValue * 7 * 24 * 60 * 60
         
-        let endDate = baseDate.dateByAddingTimeInterval(myEndDateValue)
+        let endDate = baseDate.addingTimeInterval(myEndDateValue)
         
         /* Create the predicate that we can later pass to the event store in order to fetch the events */
-        let searchPredicate = globalEventStore.predicateForEventsWithStartDate(
-            startDate,
-            endDate: endDate,
+        let searchPredicate = globalEventStore.predicateForEvents(
+            withStart: startDate as Date,
+            end: endDate,
             calendars: nil)
         
         /* Fetch all the events that fall between the starting and the ending dates */
         
         if globalEventStore.sources.count > 0
         {
-            calItems = globalEventStore.eventsMatchingPredicate(searchPredicate)
+            calItems = globalEventStore.events(matching: searchPredicate)
         }
         
         if calItems.count >  0
@@ -960,9 +962,9 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
             {
                 if passedMeeting.event.eventID != "\(calItem.calendarItemExternalIdentifier) Date: \(calItem.startDate)"
                 {
-                    let startDateFormatter = NSDateFormatter()
+                    let startDateFormatter = DateFormatter()
                     startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                    let myDisplayDate = startDateFormatter.stringFromDate(calItem.startDate)
+                    let myDisplayDate = startDateFormatter.string(from: calItem.startDate)
                 
                     pickerOptions.append("\(calItem.title) - \(myDisplayDate)")
                     pickerEventArray.append("\(calItem.calendarItemExternalIdentifier) Date: \(calItem.startDate)")
@@ -980,9 +982,9 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
             var myItems: [MeetingAgenda]!
             
             let tempEventID = passedMeeting.event.eventID
-            if tempEventID.rangeOfString("/") != nil
+            if tempEventID.range(of: "/") != nil
             {
-                let myStringArr = tempEventID.componentsSeparatedByString("/")
+                let myStringArr = tempEventID.components(separatedBy: "/")
                 myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(myStringArr[0], inMeetingStartDate: passedMeeting.event.startDate, inTeamID: myCurrentTeam.teamID)
             }
             else
@@ -996,13 +998,13 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                 {
                     if myItem.meetingID != passedMeeting.event.eventID
                     { // Not this meeting meeting
-                        let startDateFormatter = NSDateFormatter()
+                        let startDateFormatter = DateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                        let myDisplayDate = startDateFormatter.stringFromDate(myItem.startTime)
+                        let myDisplayDate = startDateFormatter.string(from: myItem.startTime as Date)
                         
                         pickerOptions.append("\(myItem.name) - \(myDisplayDate)")
                         pickerEventArray.append(myItem.meetingID)
-                        pickerStartDateArray.append(myItem.startTime)
+                        pickerStartDateArray.append(myItem.startTime as Date)
                     }
                 }
             }
@@ -1011,9 +1013,9 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
         if pickerOptions.count > 0
         {
             hideFields()
-            myPicker.hidden = false
-            btnSelect.setTitle("Set next meeting", forState: .Normal)
-            btnSelect.hidden = false
+            myPicker.isHidden = false
+            btnSelect.setTitle("Set next meeting", for: .normal)
+            btnSelect.isHidden = false
             myPicker.reloadAllComponents()
             pickerTarget = "nextMeeting"
         }
@@ -1025,11 +1027,11 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
         let inString: String = ""
         let sharingActivityProvider: SharingActivityProvider = SharingActivityProvider(placeholderItem: inString)
         
-        let myTmp1 = passedMeeting.event.buildShareHTMLString().stringByReplacingOccurrencesOfString("\n", withString: "<p>")
+        let myTmp1 = passedMeeting.event.buildShareHTMLString().replacingOccurrences(of: "\n", with: "<p>")
         sharingActivityProvider.HTMLString = myTmp1
         sharingActivityProvider.plainString = passedMeeting.event.buildShareString()
         
-        if passedMeeting.event.startDate.compare(NSDate()) == NSComparisonResult.OrderedAscending
+        if passedMeeting.event.startDate.compare(Date()) == ComparisonResult.orderedAscending
         {  // Historical so show Minutes
             sharingActivityProvider.messageSubject = "Minutes for meeting: \(passedMeeting.event.title)"
         }
@@ -1044,19 +1046,19 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
         
             // you can specify these if you'd like.
         activityViewController.excludedActivityTypes =  [
-                UIActivityTypePostToTwitter,
-                UIActivityTypePostToFacebook,
-                UIActivityTypePostToWeibo,
-                UIActivityTypeMessage,
+                UIActivityType.postToTwitter,
+                UIActivityType.postToFacebook,
+                UIActivityType.postToWeibo,
+                UIActivityType.message,
             //        UIActivityTypeMail,
             //        UIActivityTypePrint,
             //        UIActivityTypeCopyToPasteboard,
-                UIActivityTypeAssignToContact,
-                UIActivityTypeSaveToCameraRoll,
-                UIActivityTypeAddToReadingList,
-                UIActivityTypePostToFlickr,
-                UIActivityTypePostToVimeo,
-                UIActivityTypePostToTencentWeibo
+                UIActivityType.assignToContact,
+                UIActivityType.saveToCameraRoll,
+                UIActivityType.addToReadingList,
+                UIActivityType.postToFlickr,
+                UIActivityType.postToVimeo,
+                UIActivityType.postToTencentWeibo
             ]
 
         return activityViewController
@@ -1067,29 +1069,29 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
         // as it says, do nothing
     }
 
-    func share(sender: AnyObject)
+    func share(_ sender: AnyObject)
     {
-        if UIDevice.currentDevice().userInterfaceIdiom == .Phone
+        if UIDevice.current.userInterfaceIdiom == .phone
         {
             let activityViewController: UIActivityViewController = createActivityController()
             activityViewController.popoverPresentationController!.sourceView = sender.view
-            presentViewController(activityViewController, animated:true, completion:nil)
+            present(activityViewController, animated:true, completion:nil)
         }
-        else if UIDevice.currentDevice().userInterfaceIdiom == .Pad
+        else if UIDevice.current.userInterfaceIdiom == .pad
         {
             // actually, you don't have to do this. But if you do want a popover, this is how to do it.
             iPad(sender)
         }
     }
     
-    func iPad(sender: AnyObject)
+    func iPad(_ sender: AnyObject)
     {
         
         let activityViewController: UIActivityViewController = createActivityController()
-        activityViewController.modalPresentationStyle = UIModalPresentationStyle.Popover
+        activityViewController.modalPresentationStyle = UIModalPresentationStyle.popover
         activityViewController.popoverPresentationController!.sourceView = sender.view
             
-        presentViewController(activityViewController, animated:true, completion:nil)
+        present(activityViewController, animated:true, completion:nil)
         
         
 //        if !self.activityPopover.isViewLoaded()
@@ -1123,14 +1125,14 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
 //        }
     }
     
-    func myMeetingsAgendaDidFinish(controller:meetingAgendaViewController)
+    func myMeetingsAgendaDidFinish(_ controller:meetingAgendaViewController)
     {
-        controller.dismissViewControllerAnimated(true, completion: nil)
+        controller.dismiss(animated: true, completion: nil)
     }
     
-    func myMeetingsDidFinish(controller:meetingsViewController)
+    func myMeetingsDidFinish(_ controller:meetingsViewController)
     {
-        controller.dismissViewControllerAnimated(true, completion: nil)
+        controller.dismiss(animated: true, completion: nil)
     }
     
     //---------------------------------------------------------------
@@ -1155,32 +1157,33 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
     * identifier string needs to include element id/name information. Eg. "webview-field2".
     */
     
-    func identifierForTextArea(uiTextObject: AnyObject) -> String
+    //func identifierForTextArea(_ uiTextObject: AnyObject) -> String
+    func identifier(forTextArea uiTextObject: Any) -> String
     {
         var result: String = ""
 
-        if uiTextObject.isKindOfClass(UITextField)
+        if uiTextObject is UITextField
         {
-            if uiTextObject.tag == 1
+            if (uiTextObject as AnyObject).tag == 1
             {
                 result = "txtAttendeeName"
             }
             
-            if uiTextObject.tag == 2
+            if (uiTextObject as AnyObject).tag == 2
             {
                 result = "txtAttendeeEmail"
             }
         }
         
-        if uiTextObject.isKindOfClass(UITextView)
+        if uiTextObject is UITextView
         {
-            if uiTextObject.tag == 1
+            if (uiTextObject as AnyObject).tag == 1
             {
                 result = "unused"
             }
         }
         
-        if uiTextObject.isKindOfClass(UISearchBar)
+        if uiTextObject is UISearchBar
         {
             result =  "mySearchBar"
         }
@@ -1196,7 +1199,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
     * Return NO to cancel the process.
     */
 
-    func prepareForFillSwitch(textIdentifier: String) -> Bool
+    func prepare(forFillSwitch textIdentifier: String) -> Bool
     {
         // At this point the app should save state since TextExpander touch is about
         // to activate.
@@ -1231,29 +1234,30 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
     * expect the identified text object to become the first responder.
     */
     
-    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>) -> AnyObject
+    // func makeIdentifiedTextObjectFirstResponder(_ textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>) -> AnyObject
+    public func makeIdentifiedTextObjectFirstResponder(_ textIdentifier: String!, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>!) -> Any!
     {
         snippetExpanded = true   
         
-        let intIoInsertionPointLocation:Int = ioInsertionPointLocation.memory
+        let intIoInsertionPointLocation:Int = ioInsertionPointLocation.pointee
         
         if "txtAttendeeName" == textIdentifier
         {
             txtAttendeeName.becomeFirstResponder()
-            let theLoc = txtAttendeeName.positionFromPosition(txtAttendeeName.beginningOfDocument, offset: intIoInsertionPointLocation)
+            let theLoc = txtAttendeeName.position(from: txtAttendeeName.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtAttendeeName.selectedTextRange = txtAttendeeName.textRangeFromPosition(theLoc!, toPosition: theLoc!)
+                txtAttendeeName.selectedTextRange = txtAttendeeName.textRange(from: theLoc!, to: theLoc!)
             }
             return txtAttendeeName
         }
         else if "txtAttendeeEmail" == textIdentifier
         {
             txtAttendeeEmail.becomeFirstResponder()
-            let theLoc = txtAttendeeEmail.positionFromPosition(txtAttendeeEmail.beginningOfDocument, offset: intIoInsertionPointLocation)
+            let theLoc = txtAttendeeEmail.position(from: txtAttendeeEmail.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtAttendeeEmail.selectedTextRange = txtAttendeeEmail.textRangeFromPosition(theLoc!, toPosition: theLoc!)
+                txtAttendeeEmail.selectedTextRange = txtAttendeeEmail.textRange(from: theLoc!, to: theLoc!)
             }
             return txtAttendeeEmail
         }
@@ -1277,11 +1281,11 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
             
             //return nil
             
-            return ""
+            return "" as AnyObject
         }
     }
     
-    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool
+    func textView(_ textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool
     {
         if (textExpander.isAttemptingToExpandText)
         {
@@ -1299,16 +1303,16 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
     // of workaround into the SDK, so instead we provide an example here.
     // If you have a better workaround suggestion, we'd love to hear it.
     
-    func twiddleText(textView: UITextView)
+    func twiddleText(_ textView: UITextView)
     {
-        let SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO = UIDevice.currentDevice().systemVersion
+        let SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO = UIDevice.current.systemVersion
         if SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO >= "7.0"
         {
-            textView.textStorage.edited(NSTextStorageEditActions.EditedCharacters,range:NSMakeRange(0, textView.textStorage.length),changeInLength:0)
+            textView.textStorage.edited(NSTextStorageEditActions.editedCharacters,range:NSMakeRange(0, textView.textStorage.length),changeInLength:0)
         }
     }
     
-    func textViewDidChange(textView: UITextView)
+    func textViewDidChange(_ textView: UITextView)
     {
         if snippetExpanded
         {
@@ -1414,15 +1418,15 @@ class myAttendeeDisplayItem: UICollectionViewCell
         super.layoutSubviews()
     }
     
-    @IBAction func btnAction(sender: UIButton)
+    @IBAction func btnAction(_ sender: UIButton)
     {
         if btnAction.currentTitle == "Remove"
         {
-            NSNotificationCenter.defaultCenter().postNotificationName("NotificationAttendeeRemoved", object: nil, userInfo:["Action":"Remove","itemNo":btnAction.tag])
+            notificationCenter.post(name: NotificationAttendeeRemoved, object: nil, userInfo:["Action":"Remove","itemNo":btnAction.tag])
         }
         else
         {
-            NSNotificationCenter.defaultCenter().postNotificationName("NotificationAttendeeRemoved", object: nil, userInfo:["Action":"Attendence","itemNo":btnAction.tag])
+            notificationCenter.post(name: NotificationAttendeeRemoved, object: nil, userInfo:["Action":"Attendence","itemNo":btnAction.tag])
         }
     }
 }

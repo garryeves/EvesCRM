@@ -7,10 +7,11 @@
 //
 
 import Foundation
+import TextExpander
 
 protocol MyAgendaItemDelegate
 {
-    func myAgendaItemDidFinish(controller:agendaItemViewController, actionType: String)
+    func myAgendaItemDidFinish(_ controller:agendaItemViewController, actionType: String)
 }
 
 class agendaItemViewController: UIViewController, UITextViewDelegate, SMTEFillDelegate, UIPopoverPresentationControllerDelegate
@@ -34,24 +35,24 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, SMTEFillDe
     @IBOutlet weak var colActions: UICollectionView!
     @IBOutlet weak var myPicker: UIPickerView!
     
-    private let cellTaskName = "cellTaskName"
+    fileprivate let cellTaskName = "cellTaskName"
     
     var event: myCalendarItem!
     var agendaItem: meetingAgendaItem!
     var actionType: String = ""
     
-    private var pickerOptions: [String] = Array()
-    private var pickerTarget: String = ""
-    private var myCells: [cellDetails] = Array()
-    private var headerSize: CGFloat = 0.0
+    fileprivate var pickerOptions: [String] = Array()
+    fileprivate var pickerTarget: String = ""
+    fileprivate var myCells: [cellDetails] = Array()
+    fileprivate var headerSize: CGFloat = 0.0
     
     // Textexpander
     
-    private var snippetExpanded: Bool = false
+    fileprivate var snippetExpanded: Bool = false
     
     var textExpander: SMTEDelegateController!
     
-    private var currentEditingField: String = ""
+    fileprivate var currentEditingField: String = ""
 
     override func viewDidLoad()
     {
@@ -59,45 +60,45 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, SMTEFillDe
         
         if actionType == "Agenda"
         {
-            txtDiscussionNotes.editable = false
-            txtDecisionMade.editable = false
-            btnAddAction.enabled = false
+            txtDiscussionNotes.isEditable = false
+            txtDecisionMade.isEditable = false
+            btnAddAction.isEnabled = false
         }
         
         if agendaItem.agendaID != 0
         {
-            btnStatus.setTitle(agendaItem.status, forState: .Normal)
+            btnStatus.setTitle(agendaItem.status, for: .normal)
             txtDecisionMade.text = agendaItem.decisionMade
             txtDiscussionNotes.text = agendaItem.discussionNotes
             txtTimeAllocation.text = "\(agendaItem.timeAllocation)"
             if agendaItem.owner == ""
             {
-                btnOwner.setTitle("Select Item Owner", forState: .Normal)
+                btnOwner.setTitle("Select Item Owner", for: .normal)
             }
             else
             {
-                btnOwner.setTitle(agendaItem.owner, forState: .Normal)
+                btnOwner.setTitle(agendaItem.owner, for: .normal)
             }
             txtTitle.text = agendaItem.title
         }
         
-        myPicker.hidden = true
+        myPicker.isHidden = true
         
-        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
+        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(agendaItemViewController.handleSwipe(_:)))
+        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.right
         self.view.addGestureRecognizer(showGestureRecognizer)
         
-        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
+        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(agendaItemViewController.handleSwipe(_:)))
+        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.left
         self.view.addGestureRecognizer(hideGestureRecognizer)
 
-        txtDiscussionNotes.layer.borderColor = UIColor.lightGrayColor().CGColor
+        txtDiscussionNotes.layer.borderColor = UIColor.lightGray.cgColor
         txtDiscussionNotes.layer.borderWidth = 0.5
         txtDiscussionNotes.layer.cornerRadius = 5.0
         txtDiscussionNotes.layer.masksToBounds = true
         txtDiscussionNotes.delegate = self
         
-        txtDecisionMade.layer.borderColor = UIColor.lightGrayColor().CGColor
+        txtDecisionMade.layer.borderColor = UIColor.lightGray.cgColor
         txtDecisionMade.layer.borderWidth = 0.5
         txtDecisionMade.layer.cornerRadius = 5.0
         txtDecisionMade.layer.masksToBounds = true
@@ -130,9 +131,9 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, SMTEFillDe
         colActions.reloadData()
     }
 
-    func handleSwipe(recognizer:UISwipeGestureRecognizer)
+    func handleSwipe(_ recognizer:UISwipeGestureRecognizer)
     {
-        if recognizer.direction == UISwipeGestureRecognizerDirection.Left
+        if recognizer.direction == UISwipeGestureRecognizerDirection.left
         {
             // Do nothing
         }
@@ -142,22 +143,23 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, SMTEFillDe
         }
     }
     
-    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
+    func numberOfSectionsInCollectionView(_ collectionView: UICollectionView) -> Int
     {
         myCells.removeAll()
         return 1
     }
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
         return agendaItem.tasks.count
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
+    //    func collectionView(_ collectionView: UICollectionView, cellForItemAtIndexPath indexPath: IndexPath) -> UICollectionViewCell
+    func collectionView(_ collectionView: UICollectionView, cellForItem indexPath: IndexPath) -> UICollectionViewCell
     {
         var cell : myTaskItem!
  
-        cell = collectionView.dequeueReusableCellWithReuseIdentifier(cellTaskName, forIndexPath: indexPath) as! myTaskItem
+        cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellTaskName, for: indexPath as IndexPath) as! myTaskItem
 
         if agendaItem.tasks.count == 0
         {
@@ -180,7 +182,7 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, SMTEFillDe
         }
         else
         {
-            cell.backgroundColor = UIColor.clearColor()
+            cell.backgroundColor = UIColor.clear
         }
        
         cell.layoutSubviews()
@@ -188,27 +190,27 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, SMTEFillDe
         return cell
     }
 
-    func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView
     {
         var headerView:UICollectionReusableView!
         if kind == UICollectionElementKindSectionHeader
         {
-            headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: "taskItemHeader", forIndexPath: indexPath) 
+            headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "taskItemHeader", for: indexPath as IndexPath) 
         }
 
         return headerView
     }
     
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: IndexPath)
     {
         let myOptions = displayTaskOptions(collectionView, workingTask: agendaItem.tasks[indexPath.row])
         myOptions.popoverPresentationController!.sourceView = collectionView
         
-        self.presentViewController(myOptions, animated: true, completion: nil)
+        self.present(myOptions, animated: true, completion: nil)
     }
 
     
-    func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
+    func collectionView(_ collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
     {
         var retVal: CGSize!
         
@@ -217,55 +219,55 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, SMTEFillDe
         return retVal
     }
 
-    func numberOfComponentsInPickerView(TableTypeSelection1: UIPickerView) -> Int {
+    func numberOfComponentsInPickerView(_ TableTypeSelection1: UIPickerView) -> Int {
         return 1
     }
     
-    func pickerView(TableTypeSelection1: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+    func pickerView(_ TableTypeSelection1: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         return pickerOptions.count
     }
     
-    func pickerView(TableTypeSelection1: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String! {
+    func pickerView(_ TableTypeSelection1: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String! {
         return pickerOptions[row]
     }
     
-    func pickerView(TableTypeSelection1: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+    func pickerView(_ TableTypeSelection1: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         // Write code for select
         if pickerTarget == "Owner"
         {
-            btnOwner.setTitle(pickerOptions[row], forState: .Normal)
+            btnOwner.setTitle(pickerOptions[row], for: .normal)
             agendaItem.owner = btnOwner.currentTitle!
         }
         
         if pickerTarget == "Status"
         {
-            btnStatus.setTitle(pickerOptions[row], forState: .Normal)
+            btnStatus.setTitle(pickerOptions[row], for: .normal)
             agendaItem.status = btnStatus.currentTitle!
         }
         
-        myPicker.hidden = true
+        myPicker.isHidden = true
         showFields()
     }
     
-    @IBAction func btnAddAction(sender: UIButton)
+    @IBAction func btnAddAction(_ sender: UIButton)
     {
-        let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("tasks") as! taskViewController
-        popoverContent.modalPresentationStyle = .Popover
+        let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "tasks") as! taskViewController
+        popoverContent.modalPresentationStyle = .popover
         let popover = popoverContent.popoverPresentationController
         popover!.sourceView = sender
-        popover!.sourceRect = CGRectMake(700,700,0,0)
+        popover!.sourceRect = CGRect(x: 700,y: 700,width: 0,height: 0)
         
         let newTask = task(inTeamID: myCurrentTeam.teamID)
         popoverContent.passedTask = newTask
         
-        popoverContent.preferredContentSize = CGSizeMake(700,700)
+        popoverContent.preferredContentSize = CGSize(width: 700,height: 700)
         
-        presentViewController(popoverContent, animated: true, completion: nil)
+        present(popoverContent, animated: true, completion: nil)
     }
     
-    @IBAction func btnOwner(sender: UIButton)
+    @IBAction func btnOwner(_ sender: UIButton)
     {
-        pickerOptions.removeAll(keepCapacity: false)
+        pickerOptions.removeAll(keepingCapacity: false)
 
         pickerOptions.append("")
         for attendee in event.attendees
@@ -273,23 +275,23 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, SMTEFillDe
             pickerOptions.append(attendee.name)
         }
         hideFields()
-        myPicker.hidden = false
+        myPicker.isHidden = false
         myPicker.reloadAllComponents()
         pickerTarget = "Owner"
     }
     
-    @IBAction func btnStatus(sender: UIButton)
+    @IBAction func btnStatus(_ sender: UIButton)
     {
-        pickerOptions.removeAll(keepCapacity: false)
+        pickerOptions.removeAll(keepingCapacity: false)
         pickerOptions.append("Open")
         pickerOptions.append("Closed")
         hideFields()
-        myPicker.hidden = false
+        myPicker.isHidden = false
         myPicker.reloadAllComponents()
         pickerTarget = "Status"
     }
     
-    @IBAction func txtTitle(sender: UITextField)
+    @IBAction func txtTitle(_ sender: UITextField)
     {
         if txtTitle.text != ""
         {
@@ -297,12 +299,12 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, SMTEFillDe
         }
     }
     
-    @IBAction func txtTimeAllocation(sender: UITextField)
+    @IBAction func txtTimeAllocation(_ sender: UITextField)
     {
         agendaItem.timeAllocation = Int(txtTimeAllocation.text!)!
     }
     
-    func textViewDidEndEditing(textView: UITextView)
+    func textViewDidEndEditing(_ textView: UITextView)
     { //Handle the text changes here
         if textView == txtDiscussionNotes
         {
@@ -316,76 +318,76 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, SMTEFillDe
     
     func hideFields()
     {
-        lblDescription.hidden = true
-        txtTitle.hidden = true
-        lblOwner.hidden = true
-        btnOwner.hidden = true
-        lblTimeAllocation.hidden = true
-        txtTimeAllocation.hidden = true
-        lblStatus.hidden = true
-        btnStatus.hidden = true
-        lblNotes.hidden = true
-        txtDiscussionNotes.hidden = true
-        lblDecisionMade.hidden = true
-        txtDecisionMade.hidden = true
-        lblActions.hidden = true
-        btnAddAction.hidden = true
-        colActions.hidden = true
+        lblDescription.isHidden = true
+        txtTitle.isHidden = true
+        lblOwner.isHidden = true
+        btnOwner.isHidden = true
+        lblTimeAllocation.isHidden = true
+        txtTimeAllocation.isHidden = true
+        lblStatus.isHidden = true
+        btnStatus.isHidden = true
+        lblNotes.isHidden = true
+        txtDiscussionNotes.isHidden = true
+        lblDecisionMade.isHidden = true
+        txtDecisionMade.isHidden = true
+        lblActions.isHidden = true
+        btnAddAction.isHidden = true
+        colActions.isHidden = true
     }
     
     func showFields()
     {
-        lblDescription.hidden = false
-        txtTitle.hidden = false
-        lblOwner.hidden = false
-        btnOwner.hidden = false
-        lblTimeAllocation.hidden = false
-        txtTimeAllocation.hidden = false
-        lblStatus.hidden = false
-        btnStatus.hidden = false
-        lblNotes.hidden = false
-        txtDiscussionNotes.hidden = false
-        lblDecisionMade.hidden = false
-        txtDecisionMade.hidden = false
-        lblActions.hidden = false
-        btnAddAction.hidden = false
-        colActions.hidden = false
+        lblDescription.isHidden = false
+        txtTitle.isHidden = false
+        lblOwner.isHidden = false
+        btnOwner.isHidden = false
+        lblTimeAllocation.isHidden = false
+        txtTimeAllocation.isHidden = false
+        lblStatus.isHidden = false
+        btnStatus.isHidden = false
+        lblNotes.isHidden = false
+        txtDiscussionNotes.isHidden = false
+        lblDecisionMade.isHidden = false
+        txtDecisionMade.isHidden = false
+        lblActions.isHidden = false
+        btnAddAction.isHidden = false
+        colActions.isHidden = false
     }
     
-    func displayTaskOptions(sourceView: UIView, workingTask: task) -> UIAlertController
+    func displayTaskOptions(_ sourceView: UIView, workingTask: task) -> UIAlertController
     {
-        let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .ActionSheet)
+        let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .actionSheet)
         
-        let myOption1 = UIAlertAction(title: "Edit Action", style: .Default, handler: { (action: UIAlertAction) -> () in
-            let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("tasks") as! taskViewController
-            popoverContent.modalPresentationStyle = .Popover
+        let myOption1 = UIAlertAction(title: "Edit Action", style: .default, handler: { (action: UIAlertAction) -> () in
+            let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "tasks") as! taskViewController
+            popoverContent.modalPresentationStyle = .popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
             popover!.sourceView = sourceView
-            popover!.sourceRect = CGRectMake(700,700,0,0)
+            popover!.sourceRect = CGRect(x: 700,y: 700,width: 0,height: 0)
             
             popoverContent.passedTaskType = "minutes"
             popoverContent.passedEvent = self.event
             popoverContent.passedTask = workingTask
             
-            popoverContent.preferredContentSize = CGSizeMake(700,700)
+            popoverContent.preferredContentSize = CGSize(width: 700,height: 700)
             
-            self.presentViewController(popoverContent, animated: true, completion: nil)
+            self.present(popoverContent, animated: true, completion: nil)
         })
         
-        let myOption2 = UIAlertAction(title: "Action Updates", style: .Default, handler: { (action: UIAlertAction) -> () in
-            let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("taskUpdate") as! taskUpdatesViewController
-            popoverContent.modalPresentationStyle = .Popover
+        let myOption2 = UIAlertAction(title: "Action Updates", style: .default, handler: { (action: UIAlertAction) -> () in
+            let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "taskUpdate") as! taskUpdatesViewController
+            popoverContent.modalPresentationStyle = .popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
             popover!.sourceView = sourceView
-            popover!.sourceRect = CGRectMake(700,700,0,0)
+            popover!.sourceRect = CGRect(x: 700,y: 700,width: 0,height: 0)
             
             popoverContent.passedTask = workingTask
             
-            popoverContent.preferredContentSize = CGSizeMake(700,700)
+            popoverContent.preferredContentSize = CGSize(width: 700,height: 700)
             
-            self.presentViewController(popoverContent, animated: true, completion: nil)
+            self.present(popoverContent, animated: true, completion: nil)
         })
         
         myOptions.addAction(myOption1)
@@ -416,34 +418,35 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, SMTEFillDe
     * identifier string needs to include element id/name information. Eg. "webview-field2".
     */
     
-    func identifierForTextArea(uiTextObject: AnyObject) -> String
+   // func identifierForTextArea(_ uiTextObject: AnyObject) -> String
+    func identifier(forTextArea uiTextObject: Any) -> String
     {
         var result: String = ""
 
         
-        if uiTextObject.isKindOfClass(UITextField)
+        if uiTextObject is UITextField
         {
-            if uiTextObject.tag == 1
+            if (uiTextObject as AnyObject).tag == 1
             {
                 result = "txtTitle"
             }
         }
         
-        if uiTextObject.isKindOfClass(UITextView)
+        if uiTextObject is UITextView
         {
-            if uiTextObject.tag == 1
+            if (uiTextObject as AnyObject).tag == 1
             {
                 result = "txtDiscussionNotes"
             }
             
-            if uiTextObject.tag == 2
+            if (uiTextObject as AnyObject).tag == 2
             {
                 result = "txtDecisionMade"
             }
 
         }
 
-        if uiTextObject.isKindOfClass(UISearchBar)
+        if uiTextObject is UISearchBar
         {
             result =  "mySearchBar"
         }
@@ -460,7 +463,7 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, SMTEFillDe
     * Return NO to cancel the process.
     */
     
-    func prepareForFillSwitch(textIdentifier: String) -> Bool
+    func prepare(forFillSwitch textIdentifier: String) -> Bool
     {
     // At this point the app should save state since TextExpander touch is about
     // to activate.
@@ -498,40 +501,42 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, SMTEFillDe
     * at this point unless userCanceledFill is set. Even in the cancel case, they will likely
     * expect the identified text object to become the first responder.
     */
- 
-    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>) -> AnyObject
+
+//    func makeIdentifiedTextObjectFirstResponder(_ textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>) -> AnyObject
+
+    public func makeIdentifiedTextObjectFirstResponder(_ textIdentifier: String!, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>!) -> Any!
     {
         snippetExpanded = true
 
-        let intIoInsertionPointLocation:Int = ioInsertionPointLocation.memory
+        let intIoInsertionPointLocation:Int = ioInsertionPointLocation.pointee
         
         if "txtDiscussionNotes" == textIdentifier
         {
             txtDiscussionNotes.becomeFirstResponder()
-            let theLoc = txtDiscussionNotes.positionFromPosition(txtDiscussionNotes.beginningOfDocument, offset: intIoInsertionPointLocation)
+            let theLoc = txtDiscussionNotes.position(from: txtDiscussionNotes.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtDiscussionNotes.selectedTextRange = txtDiscussionNotes.textRangeFromPosition(theLoc!, toPosition: theLoc!)
+                txtDiscussionNotes.selectedTextRange = txtDiscussionNotes.textRange(from: theLoc!, to: theLoc!)
             }
             return txtDiscussionNotes
         }
         else if "txtDecisionMade" == textIdentifier
         {
             txtDecisionMade.becomeFirstResponder()
-            let theLoc = txtDecisionMade.positionFromPosition(txtDecisionMade.beginningOfDocument, offset: intIoInsertionPointLocation)
+            let theLoc = txtDecisionMade.position(from: txtDecisionMade.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtDecisionMade.selectedTextRange = txtDecisionMade.textRangeFromPosition(theLoc!, toPosition: theLoc!)
+                txtDecisionMade.selectedTextRange = txtDecisionMade.textRange(from: theLoc!, to: theLoc!)
             }
             return txtDecisionMade
         }
         else if "txtTitle" == textIdentifier
         {
             txtTitle.becomeFirstResponder()
-            let theLoc = txtTitle.positionFromPosition(txtTitle.beginningOfDocument, offset: intIoInsertionPointLocation)
+            let theLoc = txtTitle.position(from: txtTitle.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtTitle.selectedTextRange = txtTitle.textRangeFromPosition(theLoc!, toPosition: theLoc!)
+                txtTitle.selectedTextRange = txtTitle.textRange(from: theLoc!, to: theLoc!)
             }
             return txtTitle
         }
@@ -554,11 +559,11 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, SMTEFillDe
 
             //return nil
 
-            return ""
+            return "" as AnyObject
         }
     }
     
-    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool
     {
         if (textExpander.isAttemptingToExpandText)
         {
@@ -576,16 +581,16 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, SMTEFillDe
     // of workaround into the SDK, so instead we provide an example here.
     // If you have a better workaround suggestion, we'd love to hear it.
     
-    func twiddleText(textView: UITextView)
+    func twiddleText(_ textView: UITextView)
     {
-        let SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO = UIDevice.currentDevice().systemVersion
+        let SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO = UIDevice.current.systemVersion
         if SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO >= "7.0"
         {
-            textView.textStorage.edited(NSTextStorageEditActions.EditedCharacters,range:NSMakeRange(0, textView.textStorage.length),changeInLength:0)
+            textView.textStorage.edited(NSTextStorageEditActions.editedCharacters,range:NSMakeRange(0, textView.textStorage.length),changeInLength:0)
         }
     }
     
-    func textViewDidChange(textView: UITextView)
+    func textViewDidChange(_ textView: UITextView)
     {
         if snippetExpanded
         {

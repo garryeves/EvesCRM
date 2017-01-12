@@ -16,12 +16,12 @@ import CoreData
 
 class coreDatabase: NSObject
 {
-    private var managedObjectContext: NSManagedObjectContext!
+    fileprivate var managedObjectContext: NSManagedObjectContext!
     
     override init()
     {
         #if os(iOS)
-            managedObjectContext = (UIApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
+            managedObjectContext = (UIApplication.shared.delegate as! AppDelegate).managedObjectContext
         #elseif os(OSX)
             managedObjectContext = (NSApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
         #else
@@ -29,14 +29,14 @@ class coreDatabase: NSObject
         #endif
     }
     
-    func refreshObject(objectID: NSManagedObject)
+    func refreshObject(_ objectID: NSManagedObject)
     {
-        managedObjectContext!.refreshObject(objectID, mergeChanges: true)
+        managedObjectContext!.refresh(objectID, mergeChanges: true)
     }
     
-    func getOpenProjectsForGTDItem(inGTDItemID: Int, inTeamID: Int)->[Projects]
+    func getOpenProjectsForGTDItem(_ inGTDItemID: Int, inTeamID: Int)->[Projects]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Projects")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Projects")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -50,15 +50,15 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
 
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Projects]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Projects]
         
         return fetchResults!
     }
 
-    func getProjectDetails(projectID: Int)->[Projects]
+    func getProjectDetails(_ projectID: Int)->[Projects]
     {
         
-        let fetchRequest = NSFetchRequest(entityName: "Projects")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Projects")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -70,15 +70,15 @@ class coreDatabase: NSObject
         // Create a new fetch request using the entity
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Projects]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Projects]
         
         return fetchResults!
     }
     
-    func getProjectSuccessor(projectID: Int)->Int
+    func getProjectSuccessor(_ projectID: Int)->Int
     {
         
-        let fetchRequest = NSFetchRequest(entityName: "ProjectNote")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectNote")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -90,7 +90,7 @@ class coreDatabase: NSObject
         // Create a new fetch request using the entity
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [ProjectNote]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [ProjectNote]
         
         var retVal: Int = 0
         
@@ -106,10 +106,10 @@ class coreDatabase: NSObject
         return retVal
     }
 
-    func getGTDItemSuccessor(projectID: Int)->Int
+    func getGTDItemSuccessor(_ projectID: Int)->Int
     {
         
-        let fetchRequest = NSFetchRequest(entityName: "GTDItem")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDItem")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -121,7 +121,7 @@ class coreDatabase: NSObject
         // Create a new fetch request using the entity
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [GTDItem]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [GTDItem]
         
         var retVal: Int = 0
         
@@ -137,9 +137,9 @@ class coreDatabase: NSObject
         return retVal
     }
   
-    func getAllProjects(inTeamID: Int)->[Projects]
+    func getAllProjects(_ inTeamID: Int)->[Projects]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Projects")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Projects")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -149,24 +149,24 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
 
         // Execute the fetch request, and cast the results to an array of objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Projects]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Projects]
         
         return fetchResults!
     }
     
     func getProjectCount()->Int
     {
-        let fetchRequest = NSFetchRequest(entityName: "Projects")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Projects")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Projects]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Projects]
         
         return fetchResults!.count
     }
     
-    func getRoles(inTeamID: Int)->[Roles]
+    func getRoles(_ inTeamID: Int)->[Roles]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Roles")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Roles")
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(inTeamID))")
@@ -174,14 +174,14 @@ class coreDatabase: NSObject
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Roles]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Roles]
         
         return fetchResults!
     }
     
-    func deleteAllRoles(inTeamID: Int)
+    func deleteAllRoles(_ inTeamID: Int)
     {
-        let fetchRequest = NSFetchRequest(entityName: "Roles")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Roles")
 
         let predicate = NSPredicate(format: "(teamID == \(inTeamID))")
         
@@ -189,13 +189,13 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
 
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Roles]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Roles]
         for myStage in fetchResults!
         {
-            myStage.updateTime = NSDate()
+            myStage.updateTime = Date()
             myStage.updateType = "Delete"
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -217,7 +217,7 @@ class coreDatabase: NSObject
     {
         var retVal: Int = 0
         
-        let fetchRequest = NSFetchRequest(entityName: "Roles")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Roles")
         
         fetchRequest.propertiesToFetch = ["roleID"]
         
@@ -226,7 +226,7 @@ class coreDatabase: NSObject
         fetchRequest.sortDescriptors = sortDescriptors
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Roles]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Roles]
         
         for myItem in fetchResults!
         {
@@ -236,7 +236,7 @@ class coreDatabase: NSObject
         return retVal + 1
     }
     
-    func saveRole(roleName: String, teamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE", roleID: Int = 0)
+    func saveRole(_ roleName: String, teamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE", roleID: Int = 0)
     {
         let myRoles = getRole(roleID)
  
@@ -244,15 +244,15 @@ class coreDatabase: NSObject
         if myRoles.count == 0
         {
             
-            mySelectedRole = NSEntityDescription.insertNewObjectForEntityForName("Roles", inManagedObjectContext: self.managedObjectContext!) as! Roles
+            mySelectedRole = NSEntityDescription.insertNewObject(forEntityName: "Roles", into: self.managedObjectContext!) as! Roles
         
             // Get the role number
-            mySelectedRole.roleID = self.getNextID("Roles")
+            mySelectedRole.roleID = NSNumber(value: getNextID("Roles"))
             mySelectedRole.roleDescription = roleName
-            mySelectedRole.teamID = teamID
+            mySelectedRole.teamID = NSNumber(value: teamID)
             if inUpdateType == "CODE"
             {
-                mySelectedRole.updateTime = NSDate()
+                mySelectedRole.updateTime = Date()
                 mySelectedRole.updateType = "Add"
             }
             else
@@ -267,7 +267,7 @@ class coreDatabase: NSObject
             mySelectedRole.roleDescription = roleName
             if inUpdateType == "CODE"
             {
-                mySelectedRole.updateTime = NSDate()
+                mySelectedRole.updateTime = Date()
                 if mySelectedRole.updateType != "Add"
                 {
                     mySelectedRole.updateType = "Update"
@@ -280,7 +280,7 @@ class coreDatabase: NSObject
             }
         }
         
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
                 do
                 {
@@ -297,7 +297,7 @@ class coreDatabase: NSObject
         myCloudDB.saveRolesRecordToCloudKit(mySelectedRole)
     }
 
-    func saveCloudRole(roleName: String, teamID: Int, inUpdateTime: NSDate, inUpdateType: String, roleID: Int = 0)
+    func saveCloudRole(_ roleName: String, teamID: Int, inUpdateTime: Date, inUpdateType: String, roleID: Int = 0)
     {
         
         
@@ -308,12 +308,12 @@ class coreDatabase: NSObject
         if myRoles.count == 0
         {
             
-            mySelectedRole = NSEntityDescription.insertNewObjectForEntityForName("Roles", inManagedObjectContext: self.managedObjectContext!) as! Roles
+            mySelectedRole = NSEntityDescription.insertNewObject(forEntityName: "Roles", into: self.managedObjectContext!) as! Roles
             
             // Get the role number
-            mySelectedRole.roleID = roleID
+            mySelectedRole.roleID = NSNumber(value: roleID)
             mySelectedRole.roleDescription = roleName
-            mySelectedRole.teamID = teamID
+            mySelectedRole.teamID = NSNumber(value: teamID)
             mySelectedRole.updateTime = inUpdateTime
             mySelectedRole.updateType = inUpdateType
         }
@@ -325,7 +325,7 @@ class coreDatabase: NSObject
             mySelectedRole.updateType = inUpdateType
         }
         
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
                 do
                 {
@@ -340,19 +340,19 @@ class coreDatabase: NSObject
         }
     }
 
-    func replaceRole(roleName: String, teamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE", roleID: Int = 0)
+    func replaceRole(_ roleName: String, teamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE", roleID: Int = 0)
     {
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
-        let mySelectedRole = NSEntityDescription.insertNewObjectForEntityForName("Roles", inManagedObjectContext: self.managedObjectContext!) as! Roles
+        let mySelectedRole = NSEntityDescription.insertNewObject(forEntityName: "Roles", into: self.managedObjectContext!) as! Roles
                     
                     // Get the role number
-                    mySelectedRole.roleID = roleID
+                    mySelectedRole.roleID = NSNumber(value: roleID)
                     mySelectedRole.roleDescription = roleName
-                    mySelectedRole.teamID = teamID
+                    mySelectedRole.teamID = NSNumber(value: teamID)
                     if inUpdateType == "CODE"
                     {
-                        mySelectedRole.updateTime = NSDate()
+                        mySelectedRole.updateTime = Date()
                         mySelectedRole.updateType = "Add"
                     }
                     else
@@ -377,9 +377,9 @@ class coreDatabase: NSObject
     }
 
     
-    func getRole(roleID: Int, teamID: Int)->[Roles]
+    func getRole(_ roleID: Int, teamID: Int)->[Roles]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Roles")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Roles")
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(teamID)) && (roleID == \(roleID))")
@@ -387,14 +387,14 @@ class coreDatabase: NSObject
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Roles]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Roles]
         
         return fetchResults!
     }
     
-    func getRole(roleID: Int)->[Roles]
+    func getRole(_ roleID: Int)->[Roles]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Roles")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Roles")
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         let predicate = NSPredicate(format: "(updateType != \"Delete\") && (roleID == \(roleID))")
@@ -402,14 +402,14 @@ class coreDatabase: NSObject
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Roles]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Roles]
         
         return fetchResults!
     }
     
-    func deleteRoleEntry(inRoleName: String, inTeamID: Int)
+    func deleteRoleEntry(_ inRoleName: String, inTeamID: Int)
     {
-        let fetchRequest = NSFetchRequest(entityName: "Roles")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Roles")
         
         let predicate = NSPredicate(format: "(roleDescription == \"\(inRoleName)\") && (teamID == \(inTeamID))")
         
@@ -417,13 +417,13 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Roles]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Roles]
         for myStage in fetchResults!
         {
-            myStage.updateTime = NSDate()
+            myStage.updateTime = Date()
             myStage.updateType = "Delete"
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -441,21 +441,21 @@ class coreDatabase: NSObject
         }
     }
     
-    func saveTeamMember(inProjectID: Int, inRoleID: Int, inPersonName: String, inNotes: String, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func saveTeamMember(_ inProjectID: Int, inRoleID: Int, inPersonName: String, inNotes: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
         var myProjectTeam: ProjectTeamMembers!
         
         let myProjectTeamRecords = getTeamMemberRecord(inProjectID, inPersonName: inPersonName)
         if myProjectTeamRecords.count == 0
         { // Add
-            myProjectTeam = NSEntityDescription.insertNewObjectForEntityForName("ProjectTeamMembers", inManagedObjectContext: self.managedObjectContext!) as! ProjectTeamMembers
-            myProjectTeam.projectID = inProjectID
+            myProjectTeam = NSEntityDescription.insertNewObject(forEntityName: "ProjectTeamMembers", into: self.managedObjectContext!) as! ProjectTeamMembers
+            myProjectTeam.projectID = NSNumber(value: inProjectID)
             myProjectTeam.teamMember = inPersonName
-            myProjectTeam.roleID = inRoleID
+            myProjectTeam.roleID = NSNumber(value: inRoleID)
             myProjectTeam.projectMemberNotes = inNotes
             if inUpdateType == "CODE"
             {
-                myProjectTeam.updateTime = NSDate()
+                myProjectTeam.updateTime = Date()
                 myProjectTeam.updateType = "Add"
             }
             else
@@ -467,11 +467,11 @@ class coreDatabase: NSObject
         else
         { // Update
             myProjectTeam = myProjectTeamRecords[0]
-            myProjectTeam.roleID = inRoleID
+            myProjectTeam.roleID = NSNumber(value: inRoleID)
             myProjectTeam.projectMemberNotes = inNotes
             if inUpdateType == "CODE"
             {
-                myProjectTeam.updateTime = NSDate()
+                myProjectTeam.updateTime = Date()
                 if myProjectTeam.updateType != "Add"
                 {
                     myProjectTeam.updateType = "Update"
@@ -484,7 +484,7 @@ class coreDatabase: NSObject
             }
         }
         
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
                 do
                 {
@@ -499,18 +499,18 @@ class coreDatabase: NSObject
         }
     }
 
-    func replaceTeamMember(inProjectID: Int, inRoleID: Int, inPersonName: String, inNotes: String, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func replaceTeamMember(_ inProjectID: Int, inRoleID: Int, inPersonName: String, inNotes: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
-        let myProjectTeam = NSEntityDescription.insertNewObjectForEntityForName("ProjectTeamMembers", inManagedObjectContext: self.managedObjectContext!) as! ProjectTeamMembers
-            myProjectTeam.projectID = inProjectID
+        let myProjectTeam = NSEntityDescription.insertNewObject(forEntityName: "ProjectTeamMembers", into: self.managedObjectContext!) as! ProjectTeamMembers
+            myProjectTeam.projectID = NSNumber(value: inProjectID)
             myProjectTeam.teamMember = inPersonName
-            myProjectTeam.roleID = inRoleID
+            myProjectTeam.roleID = NSNumber(value: inRoleID)
             myProjectTeam.projectMemberNotes = inNotes
             if inUpdateType == "CODE"
             {
-                myProjectTeam.updateTime = NSDate()
+                myProjectTeam.updateTime = Date()
                 myProjectTeam.updateType = "Add"
             }
             else
@@ -533,9 +533,9 @@ class coreDatabase: NSObject
         }
     }
 
-    func deleteTeamMember(inProjectID: Int, inPersonName: String)
+    func deleteTeamMember(_ inProjectID: Int, inPersonName: String)
     {
-        let fetchRequest = NSFetchRequest(entityName: "ProjectTeamMembers")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectTeamMembers")
         
         let predicate = NSPredicate(format: "(projectID == \(inProjectID)) AND (teamMember == \"\(inPersonName)\")")
         
@@ -543,13 +543,13 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [ProjectTeamMembers]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [ProjectTeamMembers]
         for myStage in fetchResults!
         {
-            myStage.updateTime = NSDate()
+            myStage.updateTime = Date()
             myStage.updateType = "Delete"
 
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -565,9 +565,9 @@ class coreDatabase: NSObject
         }
     }
 
-    func getTeamMemberRecord(inProjectID: Int, inPersonName: String)->[ProjectTeamMembers]
+    func getTeamMemberRecord(_ inProjectID: Int, inPersonName: String)->[ProjectTeamMembers]
     {
-        let fetchRequest = NSFetchRequest(entityName: "ProjectTeamMembers")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectTeamMembers")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -577,14 +577,14 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [ProjectTeamMembers]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [ProjectTeamMembers]
         
         return fetchResults!
     }
     
-    func getTeamMembers(inProjectID: NSNumber)->[ProjectTeamMembers]
+    func getTeamMembers(_ inProjectID: NSNumber)->[ProjectTeamMembers]
     {
-        let fetchRequest = NSFetchRequest(entityName: "ProjectTeamMembers")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectTeamMembers")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -594,14 +594,14 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [ProjectTeamMembers]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [ProjectTeamMembers]
         
         return fetchResults!
     }
     
-    func getProjects(inTeamID: Int, inArchiveFlag: Bool = false) -> [Projects]
+    func getProjects(_ inTeamID: Int, inArchiveFlag: Bool = false) -> [Projects]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Projects")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Projects")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -630,15 +630,15 @@ class coreDatabase: NSObject
         fetchRequest.sortDescriptors = sortDescriptors
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Projects]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Projects]
         
         return fetchResults!
 
     }
     
-    func getProjectsForPerson(inPersonName: String)->[ProjectTeamMembers]
+    func getProjectsForPerson(_ inPersonName: String)->[ProjectTeamMembers]
     {
-        let fetchRequest = NSFetchRequest(entityName: "ProjectTeamMembers")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectTeamMembers")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -651,21 +651,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [ProjectTeamMembers]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [ProjectTeamMembers]
         
         return fetchResults!
     }
     
-    func getRoleDescription(inRoleID: NSNumber, inTeamID: Int)->String
+    func getRoleDescription(_ inRoleID: NSNumber, inTeamID: Int)->String
     {
-        let fetchRequest = NSFetchRequest(entityName: "Roles")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Roles")
         let predicate = NSPredicate(format: "(roleID == \(inRoleID)) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Roles]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Roles]
         
         if fetchResults!.count == 0
         {
@@ -677,9 +677,9 @@ class coreDatabase: NSObject
         }
     }
     
-    func getDecodeValue(inCodeKey: String) -> String
+    func getDecodeValue(_ inCodeKey: String) -> String
     {
-        let fetchRequest = NSFetchRequest(entityName: "Decodes")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Decodes")
    //     let predicate = NSPredicate(format: "(decode_name == \"\(inCodeKey)\") && (updateType != \"Delete\")")
         let predicate = NSPredicate(format: "(decode_name == \"\(inCodeKey)\")")
         
@@ -687,7 +687,7 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Decodes]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Decodes]
         
         if fetchResults!.count == 0
         {
@@ -701,7 +701,7 @@ class coreDatabase: NSObject
     
     func getVisibleDecodes() -> [Decodes]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Decodes")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Decodes")
         
         let predicate = NSPredicate(format: "(decodeType != \"hidden\") && (updateType != \"Delete\")")
    //     let predicate = NSPredicate(format: "(updateType != \"Delete\")")
@@ -710,26 +710,26 @@ class coreDatabase: NSObject
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Decodes]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Decodes]
         
         return fetchResults!
     }
     
-    func updateDecodeValue(inCodeKey: String, inCodeValue: String, inCodeType: String, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func updateDecodeValue(_ inCodeKey: String, inCodeValue: String, inCodeType: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
         // first check to see if decode exists, if not we create
         var myDecode: Decodes!
 
         if getDecodeValue(inCodeKey) == ""
         { // Add
-            myDecode = NSEntityDescription.insertNewObjectForEntityForName("Decodes", inManagedObjectContext: managedObjectContext!) as! Decodes
+            myDecode = NSEntityDescription.insertNewObject(forEntityName: "Decodes", into: managedObjectContext!) as! Decodes
             
             myDecode.decode_name = inCodeKey
             myDecode.decode_value = inCodeValue
             myDecode.decodeType = inCodeType
             if inUpdateType == "CODE"
             {
-                myDecode.updateTime = NSDate()
+                myDecode.updateTime = Date()
                 myDecode.updateType = "Add"
             }
             else
@@ -740,20 +740,20 @@ class coreDatabase: NSObject
         }
         else
         { // Update
-            let fetchRequest = NSFetchRequest(entityName: "Decodes")
+            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Decodes")
             let predicate = NSPredicate(format: "(decode_name == \"\(inCodeKey)\") && (updateType != \"Delete\")")
             
             // Set the predicate on the fetch request
             fetchRequest.predicate = predicate
             
             // Execute the fetch request, and cast the results to an array of  objects
-            let myDecodes = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Decodes]
+            let myDecodes = (try? managedObjectContext!.fetch(fetchRequest)) as? [Decodes]
             myDecode = myDecodes![0]
             myDecode.decode_value = inCodeValue
             myDecode.decodeType = inCodeType
             if inUpdateType == "CODE"
             {
-                myDecode.updateTime = NSDate()
+                myDecode.updateTime = Date()
                 if myDecode.updateType != "Add"
                 {
                     myDecode.updateType = "Update"
@@ -766,7 +766,7 @@ class coreDatabase: NSObject
             }
         }
         
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
                 do
                 {
@@ -783,18 +783,18 @@ class coreDatabase: NSObject
         myCloudDB.saveDecodesRecordToCloudKit(myDecode, syncName: myDBSync.getSyncID())
     }
     
-    func replaceDecodeValue(inCodeKey: String, inCodeValue: String, inCodeType: String, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func replaceDecodeValue(_ inCodeKey: String, inCodeValue: String, inCodeType: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
-        let myDecode = NSEntityDescription.insertNewObjectForEntityForName("Decodes", inManagedObjectContext: self.managedObjectContext!) as! Decodes
+        let myDecode = NSEntityDescription.insertNewObject(forEntityName: "Decodes", into: self.managedObjectContext!) as! Decodes
             
         myDecode.decode_name = inCodeKey
         myDecode.decode_value = inCodeValue
         myDecode.decodeType = inCodeType
         if inUpdateType == "CODE"
         {
-            myDecode.updateTime = NSDate()
+            myDecode.updateTime = Date()
             myDecode.updateType = "Add"
         }
         else
@@ -818,9 +818,9 @@ class coreDatabase: NSObject
         }
     }
     
-    func getStages(inTeamID: Int)->[Stages]
+    func getStages(_ inTeamID: Int)->[Stages]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Stages")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Stages")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -830,14 +830,14 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
 
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Stages]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Stages]
         
         return fetchResults!
     }
     
-    func getVisibleStages(inTeamID: Int)->[Stages]
+    func getVisibleStages(_ inTeamID: Int)->[Stages]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Stages")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Stages")
     
         let predicate = NSPredicate(format: "(stageDescription != \"Archived\") && (updateType != \"Delete\") && (teamID == \(inTeamID))")
     
@@ -845,26 +845,26 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
 
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Stages]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Stages]
         
         return fetchResults!
     }
     
-    func deleteAllStages(inTeamID: Int)
+    func deleteAllStages(_ inTeamID: Int)
     {
-        let fetchRequest = NSFetchRequest(entityName: "Stages")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Stages")
         let predicate = NSPredicate(format: "(teamID == \(inTeamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Stages]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Stages]
         for myStage in fetchResults!
         {
-            myStage.updateTime = NSDate()
+            myStage.updateTime = Date()
             myStage.updateType = "Delete"
 
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -882,9 +882,9 @@ class coreDatabase: NSObject
         }
     }
 
-    func stageExists(inStageDesc:String, inTeamID: Int)-> Bool
+    func stageExists(_ inStageDesc:String, inTeamID: Int)-> Bool
     {
-        let fetchRequest = NSFetchRequest(entityName: "Stages")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Stages")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -896,7 +896,7 @@ class coreDatabase: NSObject
         // Create a new fetch request using the entity
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Stages]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Stages]
         
         if fetchResults!.count > 0
         {
@@ -908,9 +908,9 @@ class coreDatabase: NSObject
         }
     }
     
-    func getStage(stageDesc:String, teamID: Int)->[Stages]
+    func getStage(_ stageDesc:String, teamID: Int)->[Stages]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Stages")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Stages")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -920,12 +920,12 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Stages]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Stages]
         
         return fetchResults!
     }
     
-    func saveStage(stageDesc: String, teamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func saveStage(_ stageDesc: String, teamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
         var myStage: Stages!
         
@@ -933,13 +933,13 @@ class coreDatabase: NSObject
         
         if myStages.count == 0
         {
-            myStage = NSEntityDescription.insertNewObjectForEntityForName("Stages", inManagedObjectContext: managedObjectContext!) as! Stages
+            myStage = NSEntityDescription.insertNewObject(forEntityName: "Stages", into: managedObjectContext!) as! Stages
         
             myStage.stageDescription = stageDesc
-            myStage.teamID = teamID
+            myStage.teamID = NSNumber(value: teamID)
             if inUpdateType == "CODE"
             {
-                myStage.updateTime = NSDate()
+                myStage.updateTime = Date()
                 myStage.updateType = "Add"
             }
             else
@@ -953,7 +953,7 @@ class coreDatabase: NSObject
             myStage = myStages[0]
             if inUpdateType == "CODE"
             {
-                myStage.updateTime = NSDate()
+                myStage.updateTime = Date()
                 if myStage.updateType != "Add"
                 {
                     myStage.updateType = "Update"
@@ -966,7 +966,7 @@ class coreDatabase: NSObject
             }
         }
         
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
                 do
                 {
@@ -983,17 +983,17 @@ class coreDatabase: NSObject
         myCloudDB.saveStagesRecordToCloudKit(myStage)
     }
     
-    func replaceStage(stageDesc: String, teamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func replaceStage(_ stageDesc: String, teamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
-        let myStage = NSEntityDescription.insertNewObjectForEntityForName("Stages", inManagedObjectContext: self.managedObjectContext!) as! Stages
+        let myStage = NSEntityDescription.insertNewObject(forEntityName: "Stages", into: self.managedObjectContext!) as! Stages
             
             myStage.stageDescription = stageDesc
-            myStage.teamID = teamID
+            myStage.teamID = NSNumber(value: teamID)
             if inUpdateType == "CODE"
             {
-                myStage.updateTime = NSDate()
+                myStage.updateTime = Date()
                 myStage.updateType = "Add"
             }
             else
@@ -1016,9 +1016,9 @@ class coreDatabase: NSObject
         }
     }
     
-    func deleteStageEntry(inStageDesc: String, inTeamID: Int)
+    func deleteStageEntry(_ inStageDesc: String, inTeamID: Int)
     {
-        let fetchRequest = NSFetchRequest(entityName: "Stages")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Stages")
         
         let predicate = NSPredicate(format: "(stageDescription == \"\(inStageDesc)\") && (teamID == \(inTeamID)) && (updateType != \"Delete\")")
         
@@ -1026,13 +1026,13 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Stages]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Stages]
         for myStage in fetchResults!
         {
-            myStage.updateTime = NSDate()
+            myStage.updateTime = Date()
             myStage.updateType = "Delete"
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -1050,16 +1050,16 @@ class coreDatabase: NSObject
         }
     }
     
-    func searchPastAgendaByPartialMeetingIDBeforeStart(inSearchText: String, inMeetingStartDate: NSDate, inTeamID: Int)->[MeetingAgenda]
+    func searchPastAgendaByPartialMeetingIDBeforeStart(_ inSearchText: String, inMeetingStartDate: Date, inTeamID: Int)->[MeetingAgenda]
     {
-        let fetchRequest = NSFetchRequest(entityName: "MeetingAgenda")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         
         var predicate: NSPredicate
         
-        predicate = NSPredicate(format: "(meetingID contains \"\(inSearchText)\") && (startTime <= %@) && (updateType != \"Delete\") && (teamID == \(inTeamID))", inMeetingStartDate)
+        predicate = NSPredicate(format: "(meetingID contains \"\(inSearchText)\") && (startTime <= %@) && (updateType != \"Delete\") && (teamID == \(inTeamID))", inMeetingStartDate as CVarArg)
         
         let sortDescriptor = NSSortDescriptor(key: "startTime", ascending: false)
         let sortDescriptors = [sortDescriptor]
@@ -1069,21 +1069,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAgenda]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgenda]
         
         return fetchResults!
     }
     
-    func searchPastAgendaWithoutPartialMeetingIDBeforeStart(inSearchText: String, inMeetingStartDate: NSDate, inTeamID: Int)->[MeetingAgenda]
+    func searchPastAgendaWithoutPartialMeetingIDBeforeStart(_ inSearchText: String, inMeetingStartDate: Date, inTeamID: Int)->[MeetingAgenda]
     {
-        let fetchRequest = NSFetchRequest(entityName: "MeetingAgenda")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         
         var predicate: NSPredicate
         
-        predicate = NSPredicate(format: "(teamID == \(inTeamID))  && (updateType != \"Delete\") && (startTime <= %@) && (not meetingID contains \"\(inSearchText)\") ", inMeetingStartDate)
+        predicate = NSPredicate(format: "(teamID == \(inTeamID))  && (updateType != \"Delete\") && (startTime <= %@) && (not meetingID contains \"\(inSearchText)\") ", inMeetingStartDate as CVarArg)
         
         let sortDescriptor = NSSortDescriptor(key: "startTime", ascending: false)
         let sortDescriptors = [sortDescriptor]
@@ -1093,21 +1093,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAgenda]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgenda]
         
         return fetchResults!
     }
 
-    func listAgendaReverseDateBeforeStart(inMeetingStartDate: NSDate, inTeamID: Int)->[MeetingAgenda]
+    func listAgendaReverseDateBeforeStart(_ inMeetingStartDate: Date, inTeamID: Int)->[MeetingAgenda]
     {
-        let fetchRequest = NSFetchRequest(entityName: "MeetingAgenda")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         
         var predicate: NSPredicate
         
-        predicate = NSPredicate(format: "(startTime <= %@) && (updateType != \"Delete\") && (teamID == \(inTeamID))", inMeetingStartDate)
+        predicate = NSPredicate(format: "(startTime <= %@) && (updateType != \"Delete\") && (teamID == \(inTeamID))", inMeetingStartDate as CVarArg)
         
         let sortDescriptor = NSSortDescriptor(key: "startTime", ascending: false)
         let sortDescriptors = [sortDescriptor]
@@ -1117,21 +1117,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAgenda]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgenda]
         
         return fetchResults!
     }
     
-    func searchPastAgendaByPartialMeetingIDAfterStart(inSearchText: String, inMeetingStartDate: NSDate, inTeamID: Int)->[MeetingAgenda]
+    func searchPastAgendaByPartialMeetingIDAfterStart(_ inSearchText: String, inMeetingStartDate: Date, inTeamID: Int)->[MeetingAgenda]
     {
-        let fetchRequest = NSFetchRequest(entityName: "MeetingAgenda")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         
         var predicate: NSPredicate
         
-        predicate = NSPredicate(format: "(meetingID contains \"\(inSearchText)\") && (startTime >= %@) && (updateType != \"Delete\") && (teamID == \(inTeamID))", inMeetingStartDate)
+        predicate = NSPredicate(format: "(meetingID contains \"\(inSearchText)\") && (startTime >= %@) && (updateType != \"Delete\") && (teamID == \(inTeamID))", inMeetingStartDate as CVarArg)
         
         let sortDescriptor = NSSortDescriptor(key: "startTime", ascending: false)
         let sortDescriptors = [sortDescriptor]
@@ -1141,21 +1141,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAgenda]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgenda]
         
         return fetchResults!
     }
     
-    func searchPastAgendaWithoutPartialMeetingIDAfterStart(inSearchText: String, inMeetingStartDate: NSDate, inTeamID: Int)->[MeetingAgenda]
+    func searchPastAgendaWithoutPartialMeetingIDAfterStart(_ inSearchText: String, inMeetingStartDate: Date, inTeamID: Int)->[MeetingAgenda]
     {
-        let fetchRequest = NSFetchRequest(entityName: "MeetingAgenda")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         
         var predicate: NSPredicate
  
-        predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(inTeamID)) && NOT (meetingID contains \"\(inSearchText)\") && (startTime >= %@)", inMeetingStartDate)
+        predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(inTeamID)) && NOT (meetingID contains \"\(inSearchText)\") && (startTime >= %@)", inMeetingStartDate as CVarArg)
         
         let sortDescriptor = NSSortDescriptor(key: "startTime", ascending: false)
         let sortDescriptors = [sortDescriptor]
@@ -1165,21 +1165,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAgenda]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgenda]
         
         return fetchResults!
     }
     
-    func listAgendaReverseDateAfterStart(inMeetingStartDate: NSDate, inTeamID: Int)->[MeetingAgenda]
+    func listAgendaReverseDateAfterStart(_ inMeetingStartDate: Date, inTeamID: Int)->[MeetingAgenda]
     {
-        let fetchRequest = NSFetchRequest(entityName: "MeetingAgenda")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         
         var predicate: NSPredicate
         
-        predicate = NSPredicate(format: "(startTime >= %@) && (updateType != \"Delete\") && (teamID == \(inTeamID))", inMeetingStartDate)
+        predicate = NSPredicate(format: "(startTime >= %@) && (updateType != \"Delete\") && (teamID == \(inTeamID))", inMeetingStartDate as CVarArg)
         
         let sortDescriptor = NSSortDescriptor(key: "startTime", ascending: false)
         let sortDescriptors = [sortDescriptor]
@@ -1189,17 +1189,17 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAgenda]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgenda]
         
         return fetchResults!
     }
     
-    func createAgenda(inEvent: myCalendarItem)
+    func createAgenda(_ inEvent: myCalendarItem)
     {
-        saveAgenda(inEvent.eventID, inPreviousMeetingID : inEvent.previousMinutes, inName: inEvent.title, inChair: inEvent.chair, inMinutes: inEvent.minutes, inLocation: inEvent.location, inStartTime: inEvent.startDate, inEndTime: inEvent.endDate, inMinutesType: inEvent.minutesType, inTeamID: inEvent.teamID)
+        saveAgenda(inEvent.eventID, inPreviousMeetingID : inEvent.previousMinutes, inName: inEvent.title, inChair: inEvent.chair, inMinutes: inEvent.minutes, inLocation: inEvent.location, inStartTime: inEvent.startDate as Date, inEndTime: inEvent.endDate as Date, inMinutesType: inEvent.minutesType, inTeamID: inEvent.teamID)
     }
     
-    func saveAgenda(inMeetingID: String, inPreviousMeetingID : String, inName: String, inChair: String, inMinutes: String, inLocation: String, inStartTime: NSDate, inEndTime: NSDate, inMinutesType: String, inTeamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func saveAgenda(_ inMeetingID: String, inPreviousMeetingID : String, inName: String, inChair: String, inMinutes: String, inLocation: String, inStartTime: Date, inEndTime: Date, inMinutesType: String, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
         var myAgenda: MeetingAgenda
         
@@ -1207,7 +1207,7 @@ class coreDatabase: NSObject
         
         if myAgendas.count == 0
         {
-            myAgenda = NSEntityDescription.insertNewObjectForEntityForName("MeetingAgenda", inManagedObjectContext: managedObjectContext!) as! MeetingAgenda
+            myAgenda = NSEntityDescription.insertNewObject(forEntityName: "MeetingAgenda", into: managedObjectContext!) as! MeetingAgenda
             myAgenda.meetingID = inMeetingID
             myAgenda.previousMeetingID = inPreviousMeetingID
             myAgenda.name = inName
@@ -1217,10 +1217,10 @@ class coreDatabase: NSObject
             myAgenda.startTime = inStartTime
             myAgenda.endTime = inEndTime
             myAgenda.minutesType = inMinutesType
-            myAgenda.teamID = inTeamID
+            myAgenda.teamID = NSNumber(value: inTeamID)
             if inUpdateType == "CODE"
             {
-                myAgenda.updateTime = NSDate()
+                myAgenda.updateTime = Date()
                 myAgenda.updateType = "Add"
             }
             else
@@ -1240,10 +1240,10 @@ class coreDatabase: NSObject
             myAgenda.startTime = inStartTime
             myAgenda.endTime = inEndTime
             myAgenda.minutesType = inMinutesType
-            myAgenda.teamID = inTeamID
+            myAgenda.teamID = NSNumber(value: inTeamID)
             if inUpdateType == "CODE"
             {
-                myAgenda.updateTime = NSDate()
+                myAgenda.updateTime = Date()
                 if myAgenda.updateType != "Add"
                 {
                     myAgenda.updateType = "Update"
@@ -1256,7 +1256,7 @@ class coreDatabase: NSObject
             }
         }
         
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
                 do
                 {
@@ -1271,11 +1271,11 @@ class coreDatabase: NSObject
         }
     }
 
-    func replaceAgenda(inMeetingID: String, inPreviousMeetingID : String, inName: String, inChair: String, inMinutes: String, inLocation: String, inStartTime: NSDate, inEndTime: NSDate, inMinutesType: String, inTeamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func replaceAgenda(_ inMeetingID: String, inPreviousMeetingID : String, inName: String, inChair: String, inMinutes: String, inLocation: String, inStartTime: Date, inEndTime: Date, inMinutesType: String, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
-        let myAgenda = NSEntityDescription.insertNewObjectForEntityForName("MeetingAgenda", inManagedObjectContext: self.managedObjectContext!) as! MeetingAgenda
+        let myAgenda = NSEntityDescription.insertNewObject(forEntityName: "MeetingAgenda", into: self.managedObjectContext!) as! MeetingAgenda
             myAgenda.meetingID = inMeetingID
             myAgenda.previousMeetingID = inPreviousMeetingID
             myAgenda.name = inName
@@ -1285,10 +1285,10 @@ class coreDatabase: NSObject
             myAgenda.startTime = inStartTime
             myAgenda.endTime = inEndTime
             myAgenda.minutesType = inMinutesType
-            myAgenda.teamID = inTeamID
+            myAgenda.teamID = NSNumber(value: inTeamID)
             if inUpdateType == "CODE"
             {
-                myAgenda.updateTime = NSDate()
+                myAgenda.updateTime = Date()
                 myAgenda.updateType = "Add"
             }
             else
@@ -1311,9 +1311,9 @@ class coreDatabase: NSObject
         }
     }
     
-    func loadPreviousAgenda(inMeetingID: String, inTeamID: Int)->[MeetingAgenda]
+    func loadPreviousAgenda(_ inMeetingID: String, inTeamID: Int)->[MeetingAgenda]
     {
-        let fetchRequest = NSFetchRequest(entityName: "MeetingAgenda")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -1326,14 +1326,14 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAgenda]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgenda]
         
         return fetchResults!
     }
     
-    func loadAgenda(inMeetingID: String, inTeamID: Int)->[MeetingAgenda]
+    func loadAgenda(_ inMeetingID: String, inTeamID: Int)->[MeetingAgenda]
     {
-        let fetchRequest = NSFetchRequest(entityName: "MeetingAgenda")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -1346,14 +1346,14 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAgenda]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgenda]
         
         return fetchResults!
     }
 
-    func updatePreviousAgendaID(inPreviousMeetingID: String, inMeetingID: String, inTeamID: Int)
+    func updatePreviousAgendaID(_ inPreviousMeetingID: String, inMeetingID: String, inTeamID: Int)
     {
-        let fetchRequest = NSFetchRequest(entityName: "MeetingAgenda")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -1366,19 +1366,19 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAgenda]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgenda]
         
         for myResult in fetchResults!
         {
             myResult.previousMeetingID = inPreviousMeetingID
-            myResult.updateTime = NSDate()
+            myResult.updateTime = Date()
             if myResult.updateType != "Add"
             {
                 myResult.updateType = "Update"
             }
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -1393,9 +1393,9 @@ class coreDatabase: NSObject
         }
     }
     
-    func loadAgendaForProject(inProjectName: String, inTeamID: Int)->[MeetingAgenda]
+    func loadAgendaForProject(_ inProjectName: String, inTeamID: Int)->[MeetingAgenda]
     {
-        let fetchRequest = NSFetchRequest(entityName: "MeetingAgenda")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -1408,34 +1408,34 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAgenda]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgenda]
         
         return fetchResults!
     }
    
-    func getAgendaForDateRange(inStartDate: NSDate, inEndDate: NSDate, inTeamID: Int)->[MeetingAgenda]
+    func getAgendaForDateRange(_ inStartDate: Date, inEndDate: Date, inTeamID: Int)->[MeetingAgenda]
     {
-        let fetchRequest = NSFetchRequest(entityName: "MeetingAgenda")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         
         var predicate: NSPredicate
         
-        predicate = NSPredicate(format: "(startTime >= %@) && (endTime <= %@) && (updateType != \"Delete\") && (teamID == \(inTeamID))", inStartDate, inEndDate)
+        predicate = NSPredicate(format: "(startTime >= %@) && (endTime <= %@) && (updateType != \"Delete\") && (teamID == \(inTeamID))", inStartDate as CVarArg, inEndDate as CVarArg)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAgenda]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgenda]
         
         return fetchResults!
     }
     
-    func loadAttendees(inMeetingID: String)->[MeetingAttendees]
+    func loadAttendees(_ inMeetingID: String)->[MeetingAttendees]
     {
-        let fetchRequest = NSFetchRequest(entityName: "MeetingAttendees")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAttendees")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -1448,14 +1448,14 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAttendees]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAttendees]
         
         return fetchResults!
     }
     
-    func loadMeetingsForAttendee(inAttendeeName: String)->[MeetingAttendees]
+    func loadMeetingsForAttendee(_ inAttendeeName: String)->[MeetingAttendees]
     {
-        let fetchRequest = NSFetchRequest(entityName: "MeetingAttendees")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAttendees")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -1468,14 +1468,14 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAttendees]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAttendees]
         
         return fetchResults!
     }
 
-    func checkMeetingsForAttendee(attendeeName: String, meetingID: String)->[MeetingAttendees]
+    func checkMeetingsForAttendee(_ attendeeName: String, meetingID: String)->[MeetingAttendees]
     {
-        let fetchRequest = NSFetchRequest(entityName: "MeetingAttendees")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAttendees")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -1488,12 +1488,12 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAttendees]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAttendees]
         
         return fetchResults!
     }
 
-    func saveAttendee(meetingID: String, name: String, email: String,  type: String, status: String, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func saveAttendee(_ meetingID: String, name: String, email: String,  type: String, status: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
         var myPerson: MeetingAttendees!
         
@@ -1501,7 +1501,7 @@ class coreDatabase: NSObject
         
         if myMeeting.count == 0
         {
-            myPerson = NSEntityDescription.insertNewObjectForEntityForName("MeetingAttendees", inManagedObjectContext: managedObjectContext!) as! MeetingAttendees
+            myPerson = NSEntityDescription.insertNewObject(forEntityName: "MeetingAttendees", into: managedObjectContext!) as! MeetingAttendees
             myPerson.meetingID = meetingID
             myPerson.name = name
             myPerson.attendenceStatus = status
@@ -1509,7 +1509,7 @@ class coreDatabase: NSObject
             myPerson.type = type
             if inUpdateType == "CODE"
             {
-                myPerson.updateTime = NSDate()
+                myPerson.updateTime = Date()
                 myPerson.updateType = "Add"
             }
             else
@@ -1526,7 +1526,7 @@ class coreDatabase: NSObject
             myPerson.type = type
             if inUpdateType == "CODE"
             {
-                myPerson.updateTime = NSDate()
+                myPerson.updateTime = Date()
                 if myPerson.updateType != "Add"
                 {
                     myPerson.updateType = "Update"
@@ -1539,7 +1539,7 @@ class coreDatabase: NSObject
             }
         }
             
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
         {
             do
             {
@@ -1554,11 +1554,11 @@ class coreDatabase: NSObject
         }
     }
 
-    func replaceAttendee(meetingID: String, name: String, email: String,  type: String, status: String, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func replaceAttendee(_ meetingID: String, name: String, email: String,  type: String, status: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
-        let myPerson = NSEntityDescription.insertNewObjectForEntityForName("MeetingAttendees", inManagedObjectContext: self.managedObjectContext!) as! MeetingAttendees
+        let myPerson = NSEntityDescription.insertNewObject(forEntityName: "MeetingAttendees", into: self.managedObjectContext!) as! MeetingAttendees
             myPerson.meetingID = meetingID
             myPerson.name = name
             myPerson.attendenceStatus = status
@@ -1566,7 +1566,7 @@ class coreDatabase: NSObject
             myPerson.type = type
             if inUpdateType == "CODE"
             {
-                myPerson.updateTime = NSDate()
+                myPerson.updateTime = Date()
                 myPerson.updateType = "Add"
             }
             else
@@ -1588,25 +1588,25 @@ class coreDatabase: NSObject
         }
     }
 
-    func deleteAttendee(meetingID: String, name: String)
+    func deleteAttendee(_ meetingID: String, name: String)
     {
         var predicate: NSPredicate
         
-        let fetchRequest = NSFetchRequest(entityName: "MeetingAttendees")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAttendees")
         predicate = NSPredicate(format: "(meetingID == \"\(meetingID)\") && (name == \"\(name)\") && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAttendees]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAttendees]
         
         for myMeeting in fetchResults!
         {
-            myMeeting.updateTime = NSDate()
+            myMeeting.updateTime = Date()
             myMeeting.updateType = "Delete"
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -1622,9 +1622,9 @@ class coreDatabase: NSObject
         }
     }
 
-    func loadAgendaItem(inMeetingID: String)->[MeetingAgendaItem]
+    func loadAgendaItem(_ inMeetingID: String)->[MeetingAgendaItem]
     {
-        let fetchRequest = NSFetchRequest(entityName: "MeetingAgendaItem")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgendaItem")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -1641,12 +1641,12 @@ class coreDatabase: NSObject
         fetchRequest.sortDescriptors = sortDescriptors
 
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAgendaItem]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgendaItem]
         
         return fetchResults!
     }
     
-    func saveAgendaItem(meetingID: String, actualEndTime: NSDate, actualStartTime: NSDate, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int, owner: String, title: String, agendaID: Int, meetingOrder: Int,  inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func saveAgendaItem(_ meetingID: String, actualEndTime: Date, actualStartTime: Date, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int, owner: String, title: String, agendaID: Int, meetingOrder: Int,  inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
         var mySavedItem: MeetingAgendaItem
         
@@ -1654,22 +1654,22 @@ class coreDatabase: NSObject
         
         if myAgendaItem.count == 0
         {
-            mySavedItem = NSEntityDescription.insertNewObjectForEntityForName("MeetingAgendaItem", inManagedObjectContext: managedObjectContext!) as! MeetingAgendaItem
+            mySavedItem = NSEntityDescription.insertNewObject(forEntityName: "MeetingAgendaItem", into: managedObjectContext!) as! MeetingAgendaItem
             mySavedItem.meetingID = meetingID
-            mySavedItem.agendaID = agendaID
+            mySavedItem.agendaID = agendaID as NSNumber?
             mySavedItem.actualEndTime = actualEndTime
             mySavedItem.actualStartTime = actualStartTime
             mySavedItem.status = status
             mySavedItem.decisionMade = decisionMade
             mySavedItem.discussionNotes = discussionNotes
-            mySavedItem.timeAllocation = timeAllocation
+            mySavedItem.timeAllocation = timeAllocation as NSNumber?
             mySavedItem.owner = owner
             mySavedItem.title = title
-            mySavedItem.meetingOrder = meetingOrder
+            mySavedItem.meetingOrder = meetingOrder as NSNumber?
             
             if inUpdateType == "CODE"
             {
-                mySavedItem.updateTime = NSDate()
+                mySavedItem.updateTime = Date()
                 mySavedItem.updateType = "Add"
             }
             else
@@ -1686,14 +1686,14 @@ class coreDatabase: NSObject
             mySavedItem.status = status
             mySavedItem.decisionMade = decisionMade
             mySavedItem.discussionNotes = discussionNotes
-            mySavedItem.timeAllocation = timeAllocation
+            mySavedItem.timeAllocation = timeAllocation as NSNumber?
             mySavedItem.owner = owner
             mySavedItem.title = title
-            mySavedItem.meetingOrder = meetingOrder
+            mySavedItem.meetingOrder = meetingOrder as NSNumber?
 
             if inUpdateType == "CODE"
             {
-                mySavedItem.updateTime = NSDate()
+                mySavedItem.updateTime = Date()
                 if mySavedItem.updateType != "Add"
                 {
                     mySavedItem.updateType = "Update"
@@ -1706,7 +1706,7 @@ class coreDatabase: NSObject
             }
         }
         
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
                 do
                 {
@@ -1721,26 +1721,26 @@ class coreDatabase: NSObject
         }
     }
     
-    func replaceAgendaItem(meetingID: String, actualEndTime: NSDate, actualStartTime: NSDate, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int, owner: String, title: String, agendaID: Int, meetingOrder: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func replaceAgendaItem(_ meetingID: String, actualEndTime: Date, actualStartTime: Date, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int, owner: String, title: String, agendaID: Int, meetingOrder: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
-        let mySavedItem = NSEntityDescription.insertNewObjectForEntityForName("MeetingAgendaItem", inManagedObjectContext: self.managedObjectContext!) as! MeetingAgendaItem
+        let mySavedItem = NSEntityDescription.insertNewObject(forEntityName: "MeetingAgendaItem", into: self.managedObjectContext!) as! MeetingAgendaItem
             mySavedItem.meetingID = meetingID
-            mySavedItem.agendaID = agendaID
+            mySavedItem.agendaID = agendaID as NSNumber?
             mySavedItem.actualEndTime = actualEndTime
             mySavedItem.actualStartTime = actualStartTime
             mySavedItem.status = status
             mySavedItem.decisionMade = decisionMade
             mySavedItem.discussionNotes = discussionNotes
-            mySavedItem.timeAllocation = timeAllocation
+            mySavedItem.timeAllocation = timeAllocation as NSNumber?
             mySavedItem.owner = owner
             mySavedItem.title = title
-            mySavedItem.meetingOrder = meetingOrder
+            mySavedItem.meetingOrder = meetingOrder as NSNumber?
 
             if inUpdateType == "CODE"
             {
-                mySavedItem.updateTime = NSDate()
+                mySavedItem.updateTime = Date()
                 mySavedItem.updateType = "Add"
             }
             else
@@ -1763,9 +1763,9 @@ class coreDatabase: NSObject
         }
     }
     
-    func loadSpecificAgendaItem(inMeetingID: String, inAgendaID: Int)->[MeetingAgendaItem]
+    func loadSpecificAgendaItem(_ inMeetingID: String, inAgendaID: Int)->[MeetingAgendaItem]
     {
-        let fetchRequest = NSFetchRequest(entityName: "MeetingAgendaItem")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgendaItem")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -1782,30 +1782,30 @@ class coreDatabase: NSObject
         fetchRequest.sortDescriptors = sortDescriptors
 
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAgendaItem]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgendaItem]
         
         return fetchResults!
     }
     
-    func deleteAgendaItem(meetingID: String, agendaID: Int)
+    func deleteAgendaItem(_ meetingID: String, agendaID: Int)
     {
         var predicate: NSPredicate
         
-        let fetchRequest = NSFetchRequest(entityName: "MeetingAgendaItem")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgendaItem")
         predicate = NSPredicate(format: "(meetingID == \"\(meetingID)\") AND (agendaID == \(agendaID)) && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAgendaItem]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgendaItem]
         
         for myMeeting in fetchResults!
         {
-            myMeeting.updateTime = NSDate()
+            myMeeting.updateTime = Date()
             myMeeting.updateType = "Delete"
 
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -1821,25 +1821,25 @@ class coreDatabase: NSObject
         }
     }
     
-    func deleteAllAgendaItems(inMeetingID: String)
+    func deleteAllAgendaItems(_ inMeetingID: String)
     {
         var predicate: NSPredicate
         
-        let fetchRequest = NSFetchRequest(entityName: "MeetingAgendaItem")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgendaItem")
         predicate = NSPredicate(format: "meetingID == \"\(inMeetingID)\"")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAgendaItem]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgendaItem]
         
         for myMeeting in fetchResults!
         {
-            myMeeting.updateTime = NSDate()
+            myMeeting.updateTime = Date()
             myMeeting.updateType = "Delete"
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -1855,7 +1855,7 @@ class coreDatabase: NSObject
         }
     }
 
-    func saveTask(inTaskID: Int, inTitle: String, inDetails: String, inDueDate: NSDate, inStartDate: NSDate, inStatus: String, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int, inEstimatedTimeType: String, inProjectID: Int, inCompletionDate: NSDate, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inFlagged: Bool, inUrgency: String, inTeamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func saveTask(_ inTaskID: Int, inTitle: String, inDetails: String, inDueDate: Date, inStartDate: Date, inStatus: String, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int, inEstimatedTimeType: String, inProjectID: Int, inCompletionDate: Date, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inFlagged: Bool, inUrgency: String, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
         var myTask: Task!
         
@@ -1863,8 +1863,8 @@ class coreDatabase: NSObject
         
         if myTasks.count == 0
         { // Add
-            myTask = NSEntityDescription.insertNewObjectForEntityForName("Task", inManagedObjectContext: self.managedObjectContext!) as! Task
-            myTask.taskID = inTaskID
+            myTask = NSEntityDescription.insertNewObject(forEntityName: "Task", into: self.managedObjectContext!) as! Task
+            myTask.taskID = NSNumber(value: inTaskID)
             myTask.title = inTitle
             myTask.details = inDetails
             myTask.dueDate = inDueDate
@@ -1872,20 +1872,20 @@ class coreDatabase: NSObject
             myTask.status = inStatus
             myTask.priority = inPriority
             myTask.energyLevel = inEnergyLevel
-            myTask.estimatedTime = inEstimatedTime
+            myTask.estimatedTime = NSNumber(value: inEstimatedTime)
             myTask.estimatedTimeType = inEstimatedTimeType
-            myTask.projectID = inProjectID
+            myTask.projectID = NSNumber(value: inProjectID)
             myTask.completionDate = inCompletionDate
-            myTask.repeatInterval = inRepeatInterval
+            myTask.repeatInterval = NSNumber(value: inRepeatInterval)
             myTask.repeatType = inRepeatType
             myTask.repeatBase = inRepeatBase
-            myTask.flagged = inFlagged
+            myTask.flagged = inFlagged as NSNumber
             myTask.urgency = inUrgency
-            myTask.teamID = inTeamID
+            myTask.teamID = NSNumber(value: inTeamID)
             
             if inUpdateType == "CODE"
             {
-                myTask.updateTime = NSDate()
+                myTask.updateTime = Date()
                 myTask.updateType = "Add"
             }
             else
@@ -1904,20 +1904,20 @@ class coreDatabase: NSObject
             myTask.status = inStatus
             myTask.priority = inPriority
             myTask.energyLevel = inEnergyLevel
-            myTask.estimatedTime = inEstimatedTime
+            myTask.estimatedTime = NSNumber(value: inEstimatedTime)
             myTask.estimatedTimeType = inEstimatedTimeType
-            myTask.projectID = inProjectID
+            myTask.projectID = NSNumber(value: inProjectID)
             myTask.completionDate = inCompletionDate
-            myTask.repeatInterval = inRepeatInterval
+            myTask.repeatInterval = NSNumber(value: inRepeatInterval)
             myTask.repeatType = inRepeatType
             myTask.repeatBase = inRepeatBase
-            myTask.flagged = inFlagged
+            myTask.flagged = inFlagged as NSNumber
             myTask.urgency = inUrgency
-            myTask.teamID = inTeamID
+            myTask.teamID = NSNumber(value: inTeamID)
             
             if inUpdateType == "CODE"
             {
-                myTask.updateTime = NSDate()
+                myTask.updateTime = Date()
                 if myTask.updateType != "Add"
                 {
                     myTask.updateType = "Update"
@@ -1931,7 +1931,7 @@ class coreDatabase: NSObject
             
         }
         
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
                 do
                 {
@@ -1946,12 +1946,12 @@ class coreDatabase: NSObject
         }
     }
     
-    func replaceTask(inTaskID: Int, inTitle: String, inDetails: String, inDueDate: NSDate, inStartDate: NSDate, inStatus: String, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int, inEstimatedTimeType: String, inProjectID: Int, inCompletionDate: NSDate, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inFlagged: Bool, inUrgency: String, inTeamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func replaceTask(_ inTaskID: Int, inTitle: String, inDetails: String, inDueDate: Date, inStartDate: Date, inStatus: String, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int, inEstimatedTimeType: String, inProjectID: Int, inCompletionDate: Date, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inFlagged: Bool, inUrgency: String, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
-        let myTask = NSEntityDescription.insertNewObjectForEntityForName("Task", inManagedObjectContext: self.managedObjectContext!) as! Task
-            myTask.taskID = inTaskID
+        let myTask = NSEntityDescription.insertNewObject(forEntityName: "Task", into: self.managedObjectContext!) as! Task
+            myTask.taskID = NSNumber(value: inTaskID)
             myTask.title = inTitle
             myTask.details = inDetails
             myTask.dueDate = inDueDate
@@ -1959,20 +1959,20 @@ class coreDatabase: NSObject
             myTask.status = inStatus
             myTask.priority = inPriority
             myTask.energyLevel = inEnergyLevel
-            myTask.estimatedTime = inEstimatedTime
+            myTask.estimatedTime = NSNumber(value: inEstimatedTime)
             myTask.estimatedTimeType = inEstimatedTimeType
-            myTask.projectID = inProjectID
+            myTask.projectID = NSNumber(value: inProjectID)
             myTask.completionDate = inCompletionDate
-            myTask.repeatInterval = inRepeatInterval
+            myTask.repeatInterval = NSNumber(value: inRepeatInterval)
             myTask.repeatType = inRepeatType
             myTask.repeatBase = inRepeatBase
-            myTask.flagged = inFlagged
+            myTask.flagged = inFlagged as NSNumber
             myTask.urgency = inUrgency
-            myTask.teamID = inTeamID
+            myTask.teamID = NSNumber(value: inTeamID)
             
             if inUpdateType == "CODE"
             {
-                myTask.updateTime = NSDate()
+                myTask.updateTime = Date()
                 myTask.updateType = "Add"
             }
             else
@@ -1995,9 +1995,9 @@ class coreDatabase: NSObject
         }
     }
     
-    func deleteTask(inTaskID: Int)
+    func deleteTask(_ inTaskID: Int)
     {
-        let fetchRequest = NSFetchRequest(entityName: "Task")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
         
         let predicate = NSPredicate(format: "taskID == \(inTaskID)")
         
@@ -2005,13 +2005,13 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Task]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Task]
         for myStage in fetchResults!
         {
-            myStage.updateTime = NSDate()
+            myStage.updateTime = Date()
             myStage.updateType = "Delete"
 
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -2027,9 +2027,9 @@ class coreDatabase: NSObject
         }
     }
     
-    func getTasksNotDeleted(inTeamID: Int)->[Task]
+    func getTasksNotDeleted(_ inTeamID: Int)->[Task]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Task")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2043,14 +2043,14 @@ class coreDatabase: NSObject
         fetchRequest.sortDescriptors = sortDescriptors
 
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Task]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Task]
         
         return fetchResults!
     }
 
-    func getAllTasksForProject(inProjectID: Int, inTeamID: Int)->[Task]
+    func getAllTasksForProject(_ inProjectID: Int, inTeamID: Int)->[Task]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Task")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2060,14 +2060,14 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Task]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Task]
         
         return fetchResults!
     }
     
-    func getTasksForProject(projectID: Int)->[Task]
+    func getTasksForProject(_ projectID: Int)->[Task]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Task")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2077,31 +2077,31 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Task]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Task]
         
         return fetchResults!
     }
     
-    func getActiveTasksForProject(projectID: Int)->[Task]
+    func getActiveTasksForProject(_ projectID: Int)->[Task]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Task")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-       let predicate = NSPredicate(format: "(projectID = \(projectID)) && (updateType != \"Delete\") && (status != \"Deleted\") && (status != \"Complete\") && (status != \"Pause\") && ((startDate == %@) || (startDate <= %@))", getDefaultDate(), NSDate())
+       let predicate = NSPredicate(format: "(projectID = \(projectID)) && (updateType != \"Delete\") && (status != \"Deleted\") && (status != \"Complete\") && (status != \"Pause\") && ((startDate == %@) || (startDate <= %@))", getDefaultDate() as CVarArg, Date() as CVarArg)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Task]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Task]
         
         return fetchResults!
     }
 
-    func getTasksWithoutProject(teamID: Int)->[Task]
+    func getTasksWithoutProject(_ teamID: Int)->[Task]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Task")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
 
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2111,16 +2111,16 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Task]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Task]
         
         return fetchResults!
     }
     
-    func getTaskWithoutContext(teamID: Int)->[Task]
+    func getTaskWithoutContext(_ teamID: Int)->[Task]
     {
         // first get a list of all tasks that have a context
         
-        let fetchContext = NSFetchRequest(entityName: "TaskContext")
+        let fetchContext = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskContext")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2130,10 +2130,10 @@ class coreDatabase: NSObject
         fetchContext.predicate = predicate1
 
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchContextResults = (try? managedObjectContext!.executeFetchRequest(fetchContext)) as? [TaskContext]
+        let fetchContextResults = (try? managedObjectContext!.fetch(fetchContext)) as? [TaskContext]
         
         // Get the list of all current tasks
-        let fetchTask = NSFetchRequest(entityName: "Task")
+        let fetchTask = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
         
         
         // Create a new predicate that filters out any object that
@@ -2144,7 +2144,7 @@ class coreDatabase: NSObject
         fetchTask.predicate = predicate2
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchTaskResults = (try? managedObjectContext!.executeFetchRequest(fetchTask)) as? [Task]
+        let fetchTaskResults = (try? managedObjectContext!.fetch(fetchTask)) as? [Task]
 
         var myTaskArray: [Task] = Array()
         var taskFound: Bool = false
@@ -2171,9 +2171,9 @@ class coreDatabase: NSObject
         return myTaskArray
     }
     
-    func getTask(taskID: Int)->[Task]
+    func getTask(_ taskID: Int)->[Task]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Task")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2183,14 +2183,14 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Task]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Task]
         
         return fetchResults!
     }
     
-    func getTaskRegardlessOfStatus(taskID: Int)->[Task]
+    func getTaskRegardlessOfStatus(_ taskID: Int)->[Task]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Task")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2200,41 +2200,41 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Task]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Task]
         
         return fetchResults!
     }
     
-    func getActiveTask(taskID: Int)->[Task]
+    func getActiveTask(_ taskID: Int)->[Task]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Task")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(taskID == \(taskID)) && (updateType != \"Delete\") && (status != \"Deleted\") && (status != \"Complete\") && ((startDate == %@) || (startDate <= %@))", getDefaultDate(), NSDate())
+        let predicate = NSPredicate(format: "(taskID == \(taskID)) && (updateType != \"Delete\") && (status != \"Deleted\") && (status != \"Complete\") && ((startDate == %@) || (startDate <= %@))", getDefaultDate() as CVarArg, Date() as CVarArg)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Task]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Task]
         
         return fetchResults!
     }
 
     func getTaskCount()->Int
     {
-        let fetchRequest = NSFetchRequest(entityName: "Task")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Task]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Task]
         
         return fetchResults!.count
     }
     
-    func getTaskPredecessors(inTaskID: Int)->[TaskPredecessor]
+    func getTaskPredecessors(_ inTaskID: Int)->[TaskPredecessor]
     {
-        let fetchRequest = NSFetchRequest(entityName: "TaskPredecessor")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskPredecessor")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2244,12 +2244,12 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [TaskPredecessor]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [TaskPredecessor]
         
         return fetchResults!
     }
    
-    func savePredecessorTask(inTaskID: Int, inPredecessorID: Int, inPredecessorType: String, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func savePredecessorTask(_ inTaskID: Int, inPredecessorID: Int, inPredecessorType: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
         var myTask: TaskPredecessor!
         
@@ -2257,13 +2257,13 @@ class coreDatabase: NSObject
         
         if myTasks.count == 0
         { // Add
-            myTask = NSEntityDescription.insertNewObjectForEntityForName("TaskPredecessor", inManagedObjectContext: self.managedObjectContext!) as! TaskPredecessor
-            myTask.taskID = inTaskID
-            myTask.predecessorID = inPredecessorID
+            myTask = NSEntityDescription.insertNewObject(forEntityName: "TaskPredecessor", into: self.managedObjectContext!) as! TaskPredecessor
+            myTask.taskID = NSNumber(value: inTaskID)
+            myTask.predecessorID = NSNumber(value: inPredecessorID)
             myTask.predecessorType = inPredecessorType
             if inUpdateType == "CODE"
             {
-                myTask.updateTime = NSDate()
+                myTask.updateTime = Date()
                 myTask.updateType = "Add"
             }
             else
@@ -2274,11 +2274,11 @@ class coreDatabase: NSObject
         }
         else
         { // Update
-            myTask.predecessorID = inPredecessorID
+            myTask.predecessorID = NSNumber(value: inPredecessorID)
             myTask.predecessorType = inPredecessorType
             if inUpdateType == "CODE"
             {
-                myTask.updateTime = NSDate()
+                myTask.updateTime = Date()
                 if myTask.updateType != "Add"
                 {
                     myTask.updateType = "Update"
@@ -2291,7 +2291,7 @@ class coreDatabase: NSObject
             }
         }
 
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
                 do
                 {
@@ -2308,17 +2308,17 @@ class coreDatabase: NSObject
         myCloudDB.saveTaskPredecessorRecordToCloudKit(myTask)
     }
     
-    func replacePredecessorTask(inTaskID: Int, inPredecessorID: Int, inPredecessorType: String, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func replacePredecessorTask(_ inTaskID: Int, inPredecessorID: Int, inPredecessorType: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
-        let myTask = NSEntityDescription.insertNewObjectForEntityForName("TaskPredecessor", inManagedObjectContext: self.managedObjectContext!) as! TaskPredecessor
-            myTask.taskID = inTaskID
-            myTask.predecessorID = inPredecessorID
+        let myTask = NSEntityDescription.insertNewObject(forEntityName: "TaskPredecessor", into: self.managedObjectContext!) as! TaskPredecessor
+            myTask.taskID = NSNumber(value: inTaskID)
+            myTask.predecessorID = NSNumber(value: inPredecessorID)
             myTask.predecessorType = inPredecessorType
             if inUpdateType == "CODE"
             {
-                myTask.updateTime = NSDate()
+                myTask.updateTime = Date()
                 myTask.updateType = "Add"
             }
             else
@@ -2342,9 +2342,9 @@ class coreDatabase: NSObject
         }
     }
     
-    func updatePredecessorTaskType(inTaskID: Int, inPredecessorID: Int, inPredecessorType: String)
+    func updatePredecessorTaskType(_ inTaskID: Int, inPredecessorID: Int, inPredecessorType: String)
     {
-        let fetchRequest = NSFetchRequest(entityName: "TaskPredecessor")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskPredecessor")
         
         let predicate = NSPredicate(format: "(taskID == \(inTaskID)) && (predecessorID == \(inPredecessorID))")
         
@@ -2352,17 +2352,17 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [TaskPredecessor]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [TaskPredecessor]
         for myStage in fetchResults!
         {
             myStage.predecessorType = inPredecessorType
-            myStage.updateTime = NSDate()
+            myStage.updateTime = Date()
             if myStage.updateType != "Add"
             {
                 myStage.updateType = "Update"
             }
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -2380,9 +2380,9 @@ class coreDatabase: NSObject
         }
     }
 
-    func deleteTaskPredecessor(inTaskID: Int, inPredecessorID: Int)
+    func deleteTaskPredecessor(_ inTaskID: Int, inPredecessorID: Int)
     {
-        let fetchRequest = NSFetchRequest(entityName: "TaskPredecessor")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskPredecessor")
         
         let predicate = NSPredicate(format: "(taskID == \(inTaskID)) && (predecessorID == \(inPredecessorID))")
         
@@ -2390,13 +2390,13 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [TaskPredecessor]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [TaskPredecessor]
         for myStage in fetchResults!
         {
-            myStage.updateTime = NSDate()
+            myStage.updateTime = Date()
             myStage.updateType = "Delete"
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -2414,7 +2414,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func saveProject(inProjectID: Int, inProjectEndDate: NSDate, inProjectName: String, inProjectStartDate: NSDate, inProjectStatus: String, inReviewFrequency: Int, inLastReviewDate: NSDate, inGTDItemID: Int, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inTeamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func saveProject(_ inProjectID: Int, inProjectEndDate: Date, inProjectName: String, inProjectStartDate: Date, inProjectStatus: String, inReviewFrequency: Int, inLastReviewDate: Date, inGTDItemID: Int, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
         var myProject: Projects!
         
@@ -2422,23 +2422,23 @@ class coreDatabase: NSObject
         
         if myProjects.count == 0
         { // Add
-            myProject = NSEntityDescription.insertNewObjectForEntityForName("Projects", inManagedObjectContext: self.managedObjectContext!) as! Projects
-            myProject.projectID = inProjectID
+            myProject = NSEntityDescription.insertNewObject(forEntityName: "Projects", into: self.managedObjectContext!) as! Projects
+            myProject.projectID = NSNumber(value: inProjectID)
             myProject.projectEndDate = inProjectEndDate
             myProject.projectName = inProjectName
             myProject.projectStartDate = inProjectStartDate
             myProject.projectStatus = inProjectStatus
-            myProject.reviewFrequency = inReviewFrequency
+            myProject.reviewFrequency = NSNumber(value: inReviewFrequency)
             myProject.lastReviewDate = inLastReviewDate
-            myProject.areaID = inGTDItemID
-            myProject.repeatInterval = inRepeatInterval
+            myProject.areaID = NSNumber(value: inGTDItemID)
+            myProject.repeatInterval = NSNumber(value: inRepeatInterval)
             myProject.repeatType = inRepeatType
             myProject.repeatBase = inRepeatBase
-            myProject.teamID = inTeamID
+            myProject.teamID = NSNumber(value: inTeamID)
             
             if inUpdateType == "CODE"
             {
-                myProject.updateTime = NSDate()
+                myProject.updateTime = Date()
                 myProject.updateType = "Add"
             }
             else
@@ -2454,16 +2454,16 @@ class coreDatabase: NSObject
             myProject.projectName = inProjectName
             myProject.projectStartDate = inProjectStartDate
             myProject.projectStatus = inProjectStatus
-            myProject.reviewFrequency = inReviewFrequency
+            myProject.reviewFrequency = NSNumber(value: inReviewFrequency)
             myProject.lastReviewDate = inLastReviewDate
-            myProject.areaID = inGTDItemID
-            myProject.repeatInterval = inRepeatInterval
+            myProject.areaID = NSNumber(value: inGTDItemID)
+            myProject.repeatInterval = NSNumber(value: inRepeatInterval)
             myProject.repeatType = inRepeatType
             myProject.repeatBase = inRepeatBase
-            myProject.teamID = inTeamID
+            myProject.teamID = NSNumber(value: inTeamID)
             if inUpdateType == "CODE"
             {
-                myProject.updateTime = NSDate()
+                myProject.updateTime = Date()
                 if myProject.updateType != "Add"
                 {
                     myProject.updateType = "Update"
@@ -2476,7 +2476,7 @@ class coreDatabase: NSObject
             }
         }
         
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
                 do
                 {
@@ -2491,27 +2491,27 @@ class coreDatabase: NSObject
         }
     }
 
-    func replaceProject(inProjectID: Int, inProjectEndDate: NSDate, inProjectName: String, inProjectStartDate: NSDate, inProjectStatus: String, inReviewFrequency: Int, inLastReviewDate: NSDate, inGTDItemID: Int, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inTeamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func replaceProject(_ inProjectID: Int, inProjectEndDate: Date, inProjectName: String, inProjectStartDate: Date, inProjectStatus: String, inReviewFrequency: Int, inLastReviewDate: Date, inGTDItemID: Int, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
-        let myProject = NSEntityDescription.insertNewObjectForEntityForName("Projects", inManagedObjectContext: self.managedObjectContext!) as! Projects
-            myProject.projectID = inProjectID
+        let myProject = NSEntityDescription.insertNewObject(forEntityName: "Projects", into: self.managedObjectContext!) as! Projects
+            myProject.projectID = NSNumber(value: inProjectID)
             myProject.projectEndDate = inProjectEndDate
             myProject.projectName = inProjectName
             myProject.projectStartDate = inProjectStartDate
             myProject.projectStatus = inProjectStatus
-            myProject.reviewFrequency = inReviewFrequency
+            myProject.reviewFrequency = NSNumber(value: inReviewFrequency)
             myProject.lastReviewDate = inLastReviewDate
-            myProject.areaID = inGTDItemID
-            myProject.repeatInterval = inRepeatInterval
+            myProject.areaID = NSNumber(value: inGTDItemID)
+            myProject.repeatInterval = NSNumber(value: inRepeatInterval)
             myProject.repeatType = inRepeatType
             myProject.repeatBase = inRepeatBase
-            myProject.teamID = inTeamID
+            myProject.teamID = NSNumber(value: inTeamID)
             
             if inUpdateType == "CODE"
             {
-                myProject.updateTime = NSDate()
+                myProject.updateTime = Date()
                 myProject.updateType = "Add"
             }
             else
@@ -2534,7 +2534,7 @@ class coreDatabase: NSObject
         }
     }
 
-    func deleteProject(inProjectID: Int, inTeamID: Int)
+    func deleteProject(_ inProjectID: Int, inTeamID: Int)
     {
         var myProject: Projects!
         
@@ -2543,11 +2543,11 @@ class coreDatabase: NSObject
         if myProjects.count > 0
         { // Update
             myProject = myProjects[0]
-            myProject.updateTime = NSDate()
+            myProject.updateTime = Date()
             myProject.updateType = "Delete"
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -2569,10 +2569,10 @@ class coreDatabase: NSObject
         { // Update
             myProjectNote = myTeams[0]
             myProjectNote.updateType = "Delete"
-            myProjectNote.updateTime = NSDate()
+            myProjectNote.updateTime = Date()
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -2587,20 +2587,20 @@ class coreDatabase: NSObject
         }
     }
     
-    func saveTaskUpdate(inTaskID: Int, inDetails: String, inSource: String, inUpdateDate: NSDate = NSDate(), inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func saveTaskUpdate(_ inTaskID: Int, inDetails: String, inSource: String, inUpdateDate: Date = Date(), inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
         var myTaskUpdate: TaskUpdates!
 
         if getTaskUpdate(inTaskID, updateDate: inUpdateDate).count == 0
         {
-            myTaskUpdate = NSEntityDescription.insertNewObjectForEntityForName("TaskUpdates", inManagedObjectContext: self.managedObjectContext!) as! TaskUpdates
-            myTaskUpdate.taskID = inTaskID
+            myTaskUpdate = NSEntityDescription.insertNewObject(forEntityName: "TaskUpdates", into: self.managedObjectContext!) as! TaskUpdates
+            myTaskUpdate.taskID = NSNumber(value: inTaskID)
             myTaskUpdate.updateDate = inUpdateDate
             myTaskUpdate.details = inDetails
             myTaskUpdate.source = inSource
             if inUpdateType == "CODE"
             {
-                myTaskUpdate.updateTime = NSDate()
+                myTaskUpdate.updateTime = Date()
                 myTaskUpdate.updateType = "Add"
             }
             else
@@ -2609,7 +2609,7 @@ class coreDatabase: NSObject
                 myTaskUpdate.updateType = inUpdateType
             }
         
-            managedObjectContext!.performBlock
+            managedObjectContext!.perform
                 {
                     do
                     {
@@ -2625,18 +2625,18 @@ class coreDatabase: NSObject
         }
     }
     
-    func replaceTaskUpdate(inTaskID: Int, inDetails: String, inSource: String, inUpdateDate: NSDate = NSDate(), inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func replaceTaskUpdate(_ inTaskID: Int, inDetails: String, inSource: String, inUpdateDate: Date = Date(), inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
-        let myTaskUpdate = NSEntityDescription.insertNewObjectForEntityForName("TaskUpdates", inManagedObjectContext: self.managedObjectContext!) as! TaskUpdates
-            myTaskUpdate.taskID = inTaskID
+        let myTaskUpdate = NSEntityDescription.insertNewObject(forEntityName: "TaskUpdates", into: self.managedObjectContext!) as! TaskUpdates
+            myTaskUpdate.taskID = NSNumber(value: inTaskID)
             myTaskUpdate.updateDate = inUpdateDate
             myTaskUpdate.details = inDetails
             myTaskUpdate.source = inSource
             if inUpdateType == "CODE"
             {
-                myTaskUpdate.updateTime = NSDate()
+                myTaskUpdate.updateTime = Date()
                 myTaskUpdate.updateType = "Add"
             }
             else
@@ -2659,13 +2659,13 @@ class coreDatabase: NSObject
             }
     }
 
-    func getTaskUpdate(taskID: Int, updateDate: NSDate)->[TaskUpdates]
+    func getTaskUpdate(_ taskID: Int, updateDate: Date)->[TaskUpdates]
     {
-        let fetchRequest = NSFetchRequest(entityName: "TaskUpdates")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskUpdates")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(taskID == \(taskID)) && (updateType != \"Delete\") && (updateDate == %@)", updateDate)
+        let predicate = NSPredicate(format: "(taskID == \(taskID)) && (updateType != \"Delete\") && (updateDate == %@)", updateDate as CVarArg)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -2675,14 +2675,14 @@ class coreDatabase: NSObject
         fetchRequest.sortDescriptors = sortDescriptors
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [TaskUpdates]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [TaskUpdates]
         
         return fetchResults!
     }
     
-    func getTaskUpdates(inTaskID: Int)->[TaskUpdates]
+    func getTaskUpdates(_ inTaskID: Int)->[TaskUpdates]
     {
-        let fetchRequest = NSFetchRequest(entityName: "TaskUpdates")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskUpdates")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2696,12 +2696,12 @@ class coreDatabase: NSObject
         fetchRequest.sortDescriptors = sortDescriptors
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [TaskUpdates]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [TaskUpdates]
         
         return fetchResults!
     }
 
-    func saveContext(inContextID: Int, inName: String, inEmail: String, inAutoEmail: String, inParentContext: Int, inStatus: String, inPersonID: Int, inTeamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func saveContext(_ inContextID: Int, inName: String, inEmail: String, inAutoEmail: String, inParentContext: Int, inStatus: String, inPersonID: Int, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
         var myContext: Context!
         
@@ -2709,18 +2709,18 @@ class coreDatabase: NSObject
         
         if myContexts.count == 0
         { // Add
-            myContext = NSEntityDescription.insertNewObjectForEntityForName("Context", inManagedObjectContext: self.managedObjectContext!) as! Context
-            myContext.contextID = inContextID
+            myContext = NSEntityDescription.insertNewObject(forEntityName: "Context", into: self.managedObjectContext!) as! Context
+            myContext.contextID = NSNumber(value: inContextID)
             myContext.name = inName
             myContext.email = inEmail
             myContext.autoEmail = inAutoEmail
-            myContext.parentContext = inParentContext
+            myContext.parentContext = NSNumber(value: inParentContext)
             myContext.status = inStatus
-            myContext.personID = inPersonID
-            myContext.teamID = inTeamID
+            myContext.personID = NSNumber(value: inPersonID)
+            myContext.teamID = NSNumber(value: inTeamID)
             if inUpdateType == "CODE"
             {
-                myContext.updateTime = NSDate()
+                myContext.updateTime = Date()
 
                 myContext.updateType = "Add"
             }
@@ -2736,13 +2736,13 @@ class coreDatabase: NSObject
             myContext.name = inName
             myContext.email = inEmail
             myContext.autoEmail = inAutoEmail
-            myContext.parentContext = inParentContext
+            myContext.parentContext = NSNumber(value: inParentContext)
             myContext.status = inStatus
-            myContext.personID = inPersonID
-            myContext.teamID = inTeamID
+            myContext.personID = NSNumber(value: inPersonID)
+            myContext.teamID = NSNumber(value: inTeamID)
             if inUpdateType == "CODE"
             {
-                myContext.updateTime = NSDate()
+                myContext.updateTime = Date()
                 if myContext.updateType != "Add"
                 {
                     myContext.updateType = "Update"
@@ -2755,7 +2755,7 @@ class coreDatabase: NSObject
             }
         }
         
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
                 do
                 {
@@ -2770,22 +2770,22 @@ class coreDatabase: NSObject
         }
     }
     
-    func replaceContext(inContextID: Int, inName: String, inEmail: String, inAutoEmail: String, inParentContext: Int, inStatus: String, inPersonID: Int, inTeamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func replaceContext(_ inContextID: Int, inName: String, inEmail: String, inAutoEmail: String, inParentContext: Int, inStatus: String, inPersonID: Int, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
-        let myContext = NSEntityDescription.insertNewObjectForEntityForName("Context", inManagedObjectContext: self.managedObjectContext!) as! Context
-        myContext.contextID = inContextID
+        let myContext = NSEntityDescription.insertNewObject(forEntityName: "Context", into: self.managedObjectContext!) as! Context
+        myContext.contextID = NSNumber(value: inContextID)
         myContext.name = inName
         myContext.email = inEmail
         myContext.autoEmail = inAutoEmail
-        myContext.parentContext = inParentContext
+        myContext.parentContext = NSNumber(value: inParentContext)
         myContext.status = inStatus
-        myContext.personID = inPersonID
-        myContext.teamID = inTeamID
+        myContext.personID = NSNumber(value: inPersonID)
+        myContext.teamID = NSNumber(value: inTeamID)
         if inUpdateType == "CODE"
         {
-            myContext.updateTime = NSDate()
+            myContext.updateTime = Date()
             myContext.updateType = "Add"
         }
         else
@@ -2807,18 +2807,18 @@ class coreDatabase: NSObject
         }
     }
 
-    func deleteContext(inContextID: Int, inTeamID: Int)
+    func deleteContext(_ inContextID: Int, inTeamID: Int)
     {
         let myContexts = getContextDetails(inContextID)
         
         if myContexts.count > 0
        {
             let myContext = myContexts[0]
-            myContext.updateTime = NSDate()
+            myContext.updateTime = Date()
             myContext.updateType = "Delete"
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -2837,11 +2837,11 @@ class coreDatabase: NSObject
         if myContexts2.count > 0
         {
             let myContext = myContexts[0]
-            myContext.updateTime = NSDate()
+            myContext.updateTime = Date()
             myContext.updateType = "Delete"
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -2856,9 +2856,9 @@ class coreDatabase: NSObject
         }
     }
     
-    func getContexts(inTeamID: Int)->[Context]
+    func getContexts(_ inTeamID: Int)->[Context]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Context")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Context")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2872,14 +2872,14 @@ class coreDatabase: NSObject
         fetchRequest.sortDescriptors = sortDescriptors
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Context]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Context]
         
         return fetchResults!
     }
 
-    func getContextsForType(contextType: String)->[Context1_1]
+    func getContextsForType(_ contextType: String)->[Context1_1]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Context1_1")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Context1_1")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2889,14 +2889,14 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Context1_1]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Context1_1]
         
         return fetchResults!
     }
     
-    func getContextByName(contextName: String)->[Context]
+    func getContextByName(_ contextName: String)->[Context]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Context")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Context")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2906,14 +2906,14 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Context]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Context]
         
         return fetchResults!
     }
     
-    func getContextDetails(contextID: Int)->[Context]
+    func getContextDetails(_ contextID: Int)->[Context]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Context")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Context")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2923,14 +2923,14 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Context]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Context]
         
         return fetchResults!
     }
 
-    func getAllContexts(inTeamID: Int)->[Context]
+    func getAllContexts(_ inTeamID: Int)->[Context]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Context")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Context")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2943,22 +2943,22 @@ class coreDatabase: NSObject
         // doesn't have a title of "Best Language" exactly.
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Context]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Context]
         
         return fetchResults!
     }
     
     func getContextCount()->Int
     {
-        let fetchRequest = NSFetchRequest(entityName: "Context")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Context")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Context]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Context]
         
         return fetchResults!.count
     }
 
-    func saveTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func saveTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
         var myContext: TaskContext!
         
@@ -2966,12 +2966,12 @@ class coreDatabase: NSObject
         
         if myContexts.count == 0
         { // Add
-            myContext = NSEntityDescription.insertNewObjectForEntityForName("TaskContext", inManagedObjectContext: self.managedObjectContext!) as! TaskContext
-            myContext.contextID = inContextID
-            myContext.taskID = inTaskID
+            myContext = NSEntityDescription.insertNewObject(forEntityName: "TaskContext", into: self.managedObjectContext!) as! TaskContext
+            myContext.contextID = NSNumber(value: inContextID)
+            myContext.taskID = NSNumber(value: inTaskID)
             if inUpdateType == "CODE"
             {
-                myContext.updateTime = NSDate()
+                myContext.updateTime = Date()
                 myContext.updateType = "Add"
             }
             else
@@ -2985,7 +2985,7 @@ class coreDatabase: NSObject
             myContext = myContexts[0]
             if inUpdateType == "CODE"
             {
-                myContext.updateTime = NSDate()
+                myContext.updateTime = Date()
                 if myContext.updateType != "Add"
                 {
                     myContext.updateType = "Update"
@@ -2998,7 +2998,7 @@ class coreDatabase: NSObject
             }
         }
         
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
                 do
                 {
@@ -3015,16 +3015,16 @@ class coreDatabase: NSObject
         myCloudDB.saveTaskContextRecordToCloudKit(myContext)
     }
 
-func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
 {
-    managedObjectContext!.performBlock
+    managedObjectContext!.perform
         {
-    let myContext = NSEntityDescription.insertNewObjectForEntityForName("TaskContext", inManagedObjectContext: self.managedObjectContext!) as! TaskContext
-        myContext.contextID = inContextID
-        myContext.taskID = inTaskID
+    let myContext = NSEntityDescription.insertNewObject(forEntityName: "TaskContext", into: self.managedObjectContext!) as! TaskContext
+        myContext.contextID = NSNumber(value: inContextID)
+        myContext.taskID = NSNumber(value: inTaskID)
         if inUpdateType == "CODE"
         {
-            myContext.updateTime = NSDate()
+            myContext.updateTime = Date()
             myContext.updateType = "Add"
         }
         else
@@ -3046,9 +3046,9 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
     }
 }
 
-    func deleteTaskContext(inContextID: Int, inTaskID: Int)
+    func deleteTaskContext(_ inContextID: Int, inTaskID: Int)
     {
-        let fetchRequest = NSFetchRequest(entityName: "TaskContext")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskContext")
         
         let predicate = NSPredicate(format: "(contextID == \(inContextID)) AND (taskID = \(inTaskID))")
         
@@ -3056,13 +3056,13 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [TaskContext]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [TaskContext]
         for myStage in fetchResults!
         {
-            myStage.updateTime = NSDate()
+            myStage.updateTime = Date()
             myStage.updateType = "Delete"
 
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -3078,9 +3078,9 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
 
-    private func getTaskContext(inContextID: Int, inTaskID: Int)->[TaskContext]
+    fileprivate func getTaskContext(_ inContextID: Int, inTaskID: Int)->[TaskContext]
     {
-        let fetchRequest = NSFetchRequest(entityName: "TaskContext")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskContext")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -3090,14 +3090,14 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [TaskContext]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [TaskContext]
         
         return fetchResults!
     }
 
-    func getContextsForTask(inTaskID: Int)->[TaskContext]
+    func getContextsForTask(_ inTaskID: Int)->[TaskContext]
     {
-        let fetchRequest = NSFetchRequest(entityName: "TaskContext")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskContext")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -3107,14 +3107,14 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [TaskContext]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [TaskContext]
         
         return fetchResults!
     }
 
-    func getTasksForContext(inContextID: Int)->[TaskContext]
+    func getTasksForContext(_ inContextID: Int)->[TaskContext]
     {
-        let fetchRequest = NSFetchRequest(entityName: "TaskContext")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskContext")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -3124,12 +3124,12 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [TaskContext]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [TaskContext]
         
         return fetchResults!
     }
 
-    func saveGTDLevel(inGTDLevel: Int, inLevelName: String, inTeamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func saveGTDLevel(_ inGTDLevel: Int, inLevelName: String, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
         var myGTD: GTDLevel!
         
@@ -3137,15 +3137,15 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         
         if myGTDItems.count == 0
         { // Add
-            myGTD = NSEntityDescription.insertNewObjectForEntityForName("GTDLevel", inManagedObjectContext: self.managedObjectContext!) as! GTDLevel
-            myGTD.gTDLevel = inGTDLevel
+            myGTD = NSEntityDescription.insertNewObject(forEntityName: "GTDLevel", into: self.managedObjectContext!) as! GTDLevel
+            myGTD.gTDLevel = inGTDLevel as NSNumber?
             myGTD.levelName = inLevelName
-            myGTD.teamID = inTeamID
+            myGTD.teamID = inTeamID as NSNumber?
             
             if inUpdateType == "CODE"
             {
                 myGTD.updateType = "Add"
-                myGTD.updateTime = NSDate()
+                myGTD.updateTime = Date()
             }
             else
             {
@@ -3159,7 +3159,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             myGTD.levelName = inLevelName
             if inUpdateType == "CODE"
             {
-                myGTD.updateTime = NSDate()
+                myGTD.updateTime = Date()
                 if myGTD.updateType != "Add"
                 {
                     myGTD.updateType = "Update"
@@ -3172,7 +3172,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
                 do
                 {
@@ -3187,19 +3187,19 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
     
-    func replaceGTDLevel(inGTDLevel: Int, inLevelName: String, inTeamID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func replaceGTDLevel(_ inGTDLevel: Int, inLevelName: String, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
-        let myGTD = NSEntityDescription.insertNewObjectForEntityForName("GTDLevel", inManagedObjectContext: self.managedObjectContext!) as! GTDLevel
-            myGTD.gTDLevel = inGTDLevel
+        let myGTD = NSEntityDescription.insertNewObject(forEntityName: "GTDLevel", into: self.managedObjectContext!) as! GTDLevel
+            myGTD.gTDLevel = inGTDLevel as NSNumber?
             myGTD.levelName = inLevelName
-            myGTD.teamID = inTeamID
+            myGTD.teamID = inTeamID as NSNumber?
             
             if inUpdateType == "CODE"
             {
                 myGTD.updateType = "Add"
-                myGTD.updateTime = NSDate()
+                myGTD.updateTime = Date()
             }
             else
             {
@@ -3220,9 +3220,9 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
     
-    func getGTDLevel(inGTDLevel: Int, inTeamID: Int)->[GTDLevel]
+    func getGTDLevel(_ inGTDLevel: Int, inTeamID: Int)->[GTDLevel]
     {
-        let fetchRequest = NSFetchRequest(entityName: "GTDLevel")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDLevel")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -3232,16 +3232,16 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [GTDLevel]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [GTDLevel]
         
         return fetchResults!
     }
     
-    func changeGTDLevel(oldGTDLevel: Int, newGTDLevel: Int, inTeamID: Int)
+    func changeGTDLevel(_ oldGTDLevel: Int, newGTDLevel: Int, inTeamID: Int)
     {
         var myGTD: GTDLevel!
         
-        let fetchRequest = NSFetchRequest(entityName: "GTDLevel")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDLevel")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -3251,21 +3251,21 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [GTDLevel]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [GTDLevel]
         
         if fetchResults!.count > 0
         { // Update
             myGTD = fetchResults![0]
          //   myGTD.gTDLevel = newGTDLevel
             myGTD.setValue(newGTDLevel, forKey: "gTDLevel")
-            myGTD.updateTime = NSDate()
+            myGTD.updateTime = Date()
             if myGTD.updateType != "Add"
             {
                 myGTD.updateType = "Update"
             }
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -3280,7 +3280,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
 
-    func deleteGTDLevel(inGTDLevel: Int, inTeamID: Int)
+    func deleteGTDLevel(_ inGTDLevel: Int, inTeamID: Int)
     {
         var myGTD: GTDLevel!
         
@@ -3289,11 +3289,11 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         if myGTDItems.count > 0
         { // Update
             myGTD = myGTDItems[0]
-            myGTD.updateTime = NSDate()
+            myGTD.updateTime = Date()
             myGTD.updateType = "Delete"
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -3308,9 +3308,9 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
 
-    func getGTDLevels(inTeamID: Int)->[GTDLevel]
+    func getGTDLevels(_ inTeamID: Int)->[GTDLevel]
     {
-        let fetchRequest = NSFetchRequest(entityName: "GTDLevel")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDLevel")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -3326,12 +3326,12 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         fetchRequest.sortDescriptors = [sortDescriptor]
 
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [GTDLevel]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [GTDLevel]
         
         return fetchResults!
     }
     
-    func saveGTDItem(inGTDItemID: Int, inParentID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String, inLastReviewDate: NSDate, inReviewFrequency: Int, inReviewPeriod: String, inPredecessor: Int, inGTDLevel: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func saveGTDItem(_ inGTDItemID: Int, inParentID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String, inLastReviewDate: Date, inReviewFrequency: Int, inReviewPeriod: String, inPredecessor: Int, inGTDLevel: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
         var myGTD: GTDItem!
         
@@ -3339,21 +3339,21 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         
         if myGTDItems.count == 0
         { // Add
-            myGTD = NSEntityDescription.insertNewObjectForEntityForName("GTDItem", inManagedObjectContext: self.managedObjectContext!) as! GTDItem
-            myGTD.gTDItemID = inGTDItemID
-            myGTD.gTDParentID = inParentID
+            myGTD = NSEntityDescription.insertNewObject(forEntityName: "GTDItem", into: self.managedObjectContext!) as! GTDItem
+            myGTD.gTDItemID = inGTDItemID as NSNumber?
+            myGTD.gTDParentID = inParentID as NSNumber?
             myGTD.title = inTitle
             myGTD.status = inStatus
-            myGTD.teamID = inTeamID
+            myGTD.teamID = inTeamID as NSNumber?
             myGTD.note = inNote
             myGTD.lastReviewDate = inLastReviewDate
-            myGTD.reviewFrequency = inReviewFrequency
+            myGTD.reviewFrequency = inReviewFrequency as NSNumber?
             myGTD.reviewPeriod = inReviewPeriod
-            myGTD.predecessor = inPredecessor
-            myGTD.gTDLevel = inGTDLevel
+            myGTD.predecessor = inPredecessor as NSNumber?
+            myGTD.gTDLevel = inGTDLevel as NSNumber?
             if inUpdateType == "CODE"
             {
-                myGTD.updateTime = NSDate()
+                myGTD.updateTime = Date()
                 myGTD.updateType = "Add"
             }
             else
@@ -3365,17 +3365,17 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         else
         { // Update
             myGTD = myGTDItems[0]
-            myGTD.gTDParentID = inParentID
+            myGTD.gTDParentID = inParentID as NSNumber?
             myGTD.title = inTitle
             myGTD.status = inStatus
-            myGTD.updateTime = NSDate()
-            myGTD.teamID = inTeamID
+            myGTD.updateTime = Date()
+            myGTD.teamID = inTeamID as NSNumber?
             myGTD.note = inNote
             myGTD.lastReviewDate = inLastReviewDate
-            myGTD.reviewFrequency = inReviewFrequency
+            myGTD.reviewFrequency = inReviewFrequency as NSNumber?
             myGTD.reviewPeriod = inReviewPeriod
-            myGTD.predecessor = inPredecessor
-            myGTD.gTDLevel = inGTDLevel
+            myGTD.predecessor = inPredecessor as NSNumber?
+            myGTD.gTDLevel = inGTDLevel as NSNumber?
             if inUpdateType == "CODE"
             {
                 if myGTD.updateType != "Add"
@@ -3390,7 +3390,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
       
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
         {
             do
             {
@@ -3405,25 +3405,25 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
     
-    func replaceGTDItem(inGTDItemID: Int, inParentID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String, inLastReviewDate: NSDate, inReviewFrequency: Int, inReviewPeriod: String, inPredecessor: Int, inGTDLevel: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func replaceGTDItem(_ inGTDItemID: Int, inParentID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String, inLastReviewDate: Date, inReviewFrequency: Int, inReviewPeriod: String, inPredecessor: Int, inGTDLevel: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
-        let myGTD = NSEntityDescription.insertNewObjectForEntityForName("GTDItem", inManagedObjectContext: self.managedObjectContext!) as! GTDItem
-            myGTD.gTDItemID = inGTDItemID
-            myGTD.gTDParentID = inParentID
+        let myGTD = NSEntityDescription.insertNewObject(forEntityName: "GTDItem", into: self.managedObjectContext!) as! GTDItem
+            myGTD.gTDItemID = inGTDItemID as NSNumber?
+            myGTD.gTDParentID = inParentID as NSNumber?
             myGTD.title = inTitle
             myGTD.status = inStatus
-            myGTD.teamID = inTeamID
+            myGTD.teamID = inTeamID as NSNumber?
             myGTD.note = inNote
             myGTD.lastReviewDate = inLastReviewDate
-            myGTD.reviewFrequency = inReviewFrequency
+            myGTD.reviewFrequency = inReviewFrequency as NSNumber?
             myGTD.reviewPeriod = inReviewPeriod
-            myGTD.predecessor = inPredecessor
-            myGTD.gTDLevel = inGTDLevel
+            myGTD.predecessor = inPredecessor as NSNumber?
+            myGTD.gTDLevel = inGTDLevel as NSNumber?
             if inUpdateType == "CODE"
             {
-                myGTD.updateTime = NSDate()
+                myGTD.updateTime = Date()
                 myGTD.updateType = "Add"
             }
             else
@@ -3445,7 +3445,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
     
-    func deleteGTDItem(inGTDItemID: Int, inTeamID: Int)
+    func deleteGTDItem(_ inGTDItemID: Int, inTeamID: Int)
     {
         var myGTD: GTDItem!
         
@@ -3454,11 +3454,11 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         if myGTDItems.count > 0
         { // Update
             myGTD = myGTDItems[0]
-            myGTD.updateTime = NSDate()
+            myGTD.updateTime = Date()
             myGTD.updateType = "Delete"
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -3473,9 +3473,9 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
     
-    func getGTDItem(inGTDItemID: Int, inTeamID: Int)->[GTDItem]
+    func getGTDItem(_ inGTDItemID: Int, inTeamID: Int)->[GTDItem]
     {
-        let fetchRequest = NSFetchRequest(entityName: "GTDItem")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDItem")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -3485,14 +3485,14 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [GTDItem]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [GTDItem]
         
         return fetchResults!
     }
     
-    func getGTDItemsForLevel(inGTDLevel: Int, inTeamID: Int)->[GTDItem]
+    func getGTDItemsForLevel(_ inGTDLevel: Int, inTeamID: Int)->[GTDItem]
     {
-        let fetchRequest = NSFetchRequest(entityName: "GTDItem")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDItem")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -3502,24 +3502,24 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [GTDItem]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [GTDItem]
         
         return fetchResults!
     }
     
     func getGTDItemCount() -> Int
     {
-        let fetchRequest = NSFetchRequest(entityName: "GTDItem")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDItem")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [GTDItem]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [GTDItem]
         
         return fetchResults!.count
     }
     
-    func getOpenGTDChildItems(inGTDItemID: Int, inTeamID: Int)->[GTDItem]
+    func getOpenGTDChildItems(_ inGTDItemID: Int, inTeamID: Int)->[GTDItem]
     {
-        let fetchRequest = NSFetchRequest(entityName: "GTDItem")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDItem")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -3529,14 +3529,14 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [GTDItem]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [GTDItem]
         
         return fetchResults!
     }
     
-    func checkGTDItem(inGTDItemID: Int, inTeamID: Int)->[GTDItem]
+    func checkGTDItem(_ inGTDItemID: Int, inTeamID: Int)->[GTDItem]
     {
-        let fetchRequest = NSFetchRequest(entityName: "GTDItem")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDItem")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -3546,23 +3546,23 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest)) as? [GTDItem]
+        let fetchResults = (try? self.managedObjectContext!.fetch(fetchRequest)) as? [GTDItem]
         
         return fetchResults!
     }
     
     func resetprojects()
     {
-        let fetchRequest = NSFetchRequest(entityName: "ProjectTeamMembers")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectTeamMembers")
     
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [ProjectTeamMembers]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [ProjectTeamMembers]
         for myStage in fetchResults!
         {
-            myStage.updateTime = NSDate()
+            myStage.updateTime = Date()
             myStage.updateType = "Delete"
 
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -3577,16 +3577,16 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
 
-        let fetchRequest2 = NSFetchRequest(entityName: "Projects")
+        let fetchRequest2 = NSFetchRequest<NSFetchRequestResult>(entityName: "Projects")
             
         // Execute the fetch request, and cast the results to an array of objects
-        let fetchResults2 = (try? managedObjectContext!.executeFetchRequest(fetchRequest2)) as? [Projects]
+        let fetchResults2 = (try? managedObjectContext!.fetch(fetchRequest2)) as? [Projects]
         for myStage in fetchResults2!
         {
-            myStage.updateTime = NSDate()
+            myStage.updateTime = Date()
             myStage.updateType = "Delete"
 
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -3604,16 +3604,16 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
     
     func deleteAllPanes()
     {  // This is used to allow for testing of pane creation, so can delete all the panes if needed
-        let fetchRequest = NSFetchRequest(entityName: "Panes")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Panes")
 
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Panes]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Panes]
         for myPane in fetchResults!
         {
-            myPane.updateTime = NSDate()
+            myPane.updateTime = Date()
             myPane.updateType = "Delete"
 
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -3631,7 +3631,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
 
     func getPanes() -> [Panes]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Panes")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Panes")
         
         let sortDescriptor = NSSortDescriptor(key: "pane_name", ascending: true)
         
@@ -3649,14 +3649,14 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         // Create a new fetch request using the entity
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Panes]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Panes]
         
         return fetchResults!
     }
 
-    func getPane(paneName:String) -> [Panes]
+    func getPane(_ paneName:String) -> [Panes]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Panes")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Panes")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -3672,14 +3672,14 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         // Create a new fetch request using the entity
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Panes]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Panes]
         
         return fetchResults!
     }
     
-    func togglePaneVisible(paneName: String)
+    func togglePaneVisible(_ paneName: String)
     {
-        let fetchRequest = NSFetchRequest(entityName: "Panes")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Panes")
         
         let predicate = NSPredicate(format: "(pane_name == \"\(paneName)\") && (updateType != \"Delete\")")
         
@@ -3687,7 +3687,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Panes]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Panes]
         for myPane in fetchResults!
         {
             if myPane.pane_visible == true
@@ -3699,13 +3699,13 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 myPane.pane_visible = true
             }
             
-            myPane.updateTime = NSDate()
+            myPane.updateTime = Date()
             if myPane.updateType != "Add"
             {
                 myPane.updateType = "Update"
             }
 
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -3723,9 +3723,9 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
 
-    func setPaneOrder(paneName: String, paneOrder: Int)
+    func setPaneOrder(_ paneName: String, paneOrder: Int)
     {
-        let fetchRequest = NSFetchRequest(entityName: "Panes")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Panes")
         
         let predicate = NSPredicate(format: "(pane_name == \"\(paneName)\") && (updateType != \"Delete\")")
         
@@ -3733,17 +3733,17 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Panes]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Panes]
         for myPane in fetchResults!
         {
-            myPane.pane_order = paneOrder
-            myPane.updateTime = NSDate()
+            myPane.pane_order = NSNumber(value: paneOrder)
+            myPane.updateTime = Date()
             if myPane.updateType != "Add"
             {
                 myPane.updateType = "Update"
             }
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -3761,7 +3761,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
     
-    func savePane(inPaneName:String, inPaneAvailable: Bool, inPaneVisible: Bool, inPaneOrder: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func savePane(_ inPaneName:String, inPaneAvailable: Bool, inPaneVisible: Bool, inPaneOrder: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
         var myPane: Panes!
         
@@ -3770,15 +3770,15 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         if myPanes.count == 0
         {
             // Save the details of this pane to the database
-            myPane = NSEntityDescription.insertNewObjectForEntityForName("Panes", inManagedObjectContext: self.managedObjectContext!) as! Panes
+            myPane = NSEntityDescription.insertNewObject(forEntityName: "Panes", into: self.managedObjectContext!) as! Panes
         
             myPane.pane_name = inPaneName
-            myPane.pane_available = inPaneAvailable
-            myPane.pane_visible = inPaneVisible
-            myPane.pane_order = inPaneOrder
+            myPane.pane_available = inPaneAvailable as NSNumber
+            myPane.pane_visible = inPaneVisible as NSNumber
+            myPane.pane_order = NSNumber(value: inPaneOrder)
             if inUpdateType == "CODE"
             {
-                myPane.updateTime = NSDate()
+                myPane.updateTime = Date()
                 myPane.updateType = "Add"
             }
             else
@@ -3790,12 +3790,12 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         else
         {
             myPane = myPanes[0]
-            myPane.pane_available = inPaneAvailable
-            myPane.pane_visible = inPaneVisible
-            myPane.pane_order = inPaneOrder
+            myPane.pane_available = inPaneAvailable as NSNumber
+            myPane.pane_visible = inPaneVisible as NSNumber
+            myPane.pane_order = NSNumber(value: inPaneOrder)
             if inUpdateType == "CODE"
             {
-                myPane.updateTime = NSDate()
+                myPane.updateTime = Date()
                 if myPane.updateType != "Add"
                 {
                     myPane.updateType = "Update"
@@ -3808,7 +3808,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
                 do
                 {
@@ -3825,19 +3825,19 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         myCloudDB.savePanesRecordToCloudKit(myPane)
     }
     
-    func replacePane(inPaneName:String, inPaneAvailable: Bool, inPaneVisible: Bool, inPaneOrder: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func replacePane(_ inPaneName:String, inPaneAvailable: Bool, inPaneVisible: Bool, inPaneOrder: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
-        let myPane = NSEntityDescription.insertNewObjectForEntityForName("Panes", inManagedObjectContext: self.managedObjectContext!) as! Panes
+        let myPane = NSEntityDescription.insertNewObject(forEntityName: "Panes", into: self.managedObjectContext!) as! Panes
             
             myPane.pane_name = inPaneName
-            myPane.pane_available = inPaneAvailable
-            myPane.pane_visible = inPaneVisible
-            myPane.pane_order = inPaneOrder
+            myPane.pane_available = inPaneAvailable as NSNumber
+            myPane.pane_visible = inPaneVisible as NSNumber
+            myPane.pane_order = NSNumber(value: inPaneOrder)
             if inUpdateType == "CODE"
             {
-                myPane.updateTime = NSDate()
+                myPane.updateTime = Date()
                 myPane.updateType = "Add"
             }
             else
@@ -3861,17 +3861,17 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
 
     func resetMeetings()
     {
-        let fetchRequest1 = NSFetchRequest(entityName: "MeetingAgenda")
+        let fetchRequest1 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults1 = (try? managedObjectContext!.executeFetchRequest(fetchRequest1)) as? [MeetingAgenda]
+        let fetchResults1 = (try? managedObjectContext!.fetch(fetchRequest1)) as? [MeetingAgenda]
         
         for myMeeting in fetchResults1!
         {
-            myMeeting.updateTime = NSDate()
+            myMeeting.updateTime = Date()
             myMeeting.updateType = "Delete"
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -3886,17 +3886,17 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        let fetchRequest2 = NSFetchRequest(entityName: "MeetingAttendees")
+        let fetchRequest2 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAttendees")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults2 = (try? managedObjectContext!.executeFetchRequest(fetchRequest2)) as? [MeetingAttendees]
+        let fetchResults2 = (try? managedObjectContext!.fetch(fetchRequest2)) as? [MeetingAttendees]
         
         for myMeeting2 in fetchResults2!
         {
-            myMeeting2.updateTime = NSDate()
+            myMeeting2.updateTime = Date()
             myMeeting2.updateType = "Delete"
 
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -3911,16 +3911,16 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        let fetchRequest3 = NSFetchRequest(entityName: "MeetingAgendaItem")
+        let fetchRequest3 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgendaItem")
 
-        let fetchResults3 = (try? managedObjectContext!.executeFetchRequest(fetchRequest3)) as? [MeetingAgendaItem]
+        let fetchResults3 = (try? managedObjectContext!.fetch(fetchRequest3)) as? [MeetingAgendaItem]
         
         for myMeeting3 in fetchResults3!
         {
-            myMeeting3.updateTime = NSDate()
+            myMeeting3.updateTime = Date()
             myMeeting3.updateType = "Delete"
 
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -3935,16 +3935,16 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        let fetchRequest4 = NSFetchRequest(entityName: "MeetingTasks")
+        let fetchRequest4 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingTasks")
         
-        let fetchResults4 = (try? managedObjectContext!.executeFetchRequest(fetchRequest4)) as? [MeetingTasks]
+        let fetchResults4 = (try? managedObjectContext!.fetch(fetchRequest4)) as? [MeetingTasks]
         
         for myMeeting4 in fetchResults4!
         {
-            myMeeting4.updateTime = NSDate()
+            myMeeting4.updateTime = Date()
             myMeeting4.updateType = "Delete"
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -3959,16 +3959,16 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        let fetchRequest6 = NSFetchRequest(entityName: "MeetingSupportingDocs")
+        let fetchRequest6 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingSupportingDocs")
         
-        let fetchResults6 = (try? managedObjectContext!.executeFetchRequest(fetchRequest6)) as? [MeetingSupportingDocs]
+        let fetchResults6 = (try? managedObjectContext!.fetch(fetchRequest6)) as? [MeetingSupportingDocs]
         
         for myMeeting6 in fetchResults6!
         {
-            myMeeting6.updateTime = NSDate()
+            myMeeting6.updateTime = Date()
             myMeeting6.updateType = "Delete"
 
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -3986,17 +3986,17 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
     
     func resetTasks()
     {
-        let fetchRequest1 = NSFetchRequest(entityName: "MeetingTasks")
+        let fetchRequest1 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingTasks")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults1 = (try? managedObjectContext!.executeFetchRequest(fetchRequest1)) as? [MeetingTasks]
+        let fetchResults1 = (try? managedObjectContext!.fetch(fetchRequest1)) as? [MeetingTasks]
         
         for myMeeting in fetchResults1!
         {
-            myMeeting.updateTime = NSDate()
+            myMeeting.updateTime = Date()
             myMeeting.updateType = "Delete"
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -4011,17 +4011,17 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
 
-        let fetchRequest2 = NSFetchRequest(entityName: "Task")
+        let fetchRequest2 = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults2 = (try? managedObjectContext!.executeFetchRequest(fetchRequest2)) as? [Task]
+        let fetchResults2 = (try? managedObjectContext!.fetch(fetchRequest2)) as? [Task]
         
         for myMeeting2 in fetchResults2!
         {
-            myMeeting2.updateTime = NSDate()
+            myMeeting2.updateTime = Date()
             myMeeting2.updateType = "Delete"
 
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -4036,15 +4036,15 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        let fetchRequest3 = NSFetchRequest(entityName: "TaskContext")
+        let fetchRequest3 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskContext")
         
-        let fetchResults3 = (try? managedObjectContext!.executeFetchRequest(fetchRequest3)) as? [TaskContext]
+        let fetchResults3 = (try? managedObjectContext!.fetch(fetchRequest3)) as? [TaskContext]
         
         for myMeeting3 in fetchResults3!
         {
-            myMeeting3.updateTime = NSDate()
+            myMeeting3.updateTime = Date()
             myMeeting3.updateType = "Delete"
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -4059,16 +4059,16 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        let fetchRequest4 = NSFetchRequest(entityName: "TaskUpdates")
+        let fetchRequest4 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskUpdates")
         
-        let fetchResults4 = (try? managedObjectContext!.executeFetchRequest(fetchRequest4)) as? [TaskUpdates]
+        let fetchResults4 = (try? managedObjectContext!.fetch(fetchRequest4)) as? [TaskUpdates]
         
         for myMeeting4 in fetchResults4!
         {
-            myMeeting4.updateTime = NSDate()
+            myMeeting4.updateTime = Date()
             myMeeting4.updateType = "Delete"
 
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -4084,9 +4084,9 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
 
-    func getAgendaTasks(inMeetingID: String, inAgendaID: Int)->[MeetingTasks]
+    func getAgendaTasks(_ inMeetingID: String, inAgendaID: Int)->[MeetingTasks]
     {
-        let fetchRequest = NSFetchRequest(entityName: "MeetingTasks")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingTasks")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -4096,14 +4096,14 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingTasks]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingTasks]
         
         return fetchResults!
     }
     
-    func getMeetingsTasks(inMeetingID: String)->[MeetingTasks]
+    func getMeetingsTasks(_ inMeetingID: String)->[MeetingTasks]
     {
-        let fetchRequest = NSFetchRequest(entityName: "MeetingTasks")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingTasks")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -4113,23 +4113,23 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingTasks]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingTasks]
         
         return fetchResults!
     }
     
-    func saveAgendaTask(inAgendaID: Int, inMeetingID: String, inTaskID: Int)
+    func saveAgendaTask(_ inAgendaID: Int, inMeetingID: String, inTaskID: Int)
     {
         var myTask: MeetingTasks
         
-        myTask = NSEntityDescription.insertNewObjectForEntityForName("MeetingTasks", inManagedObjectContext: managedObjectContext!) as! MeetingTasks
-        myTask.agendaID = inAgendaID
+        myTask = NSEntityDescription.insertNewObject(forEntityName: "MeetingTasks", into: managedObjectContext!) as! MeetingTasks
+        myTask.agendaID = NSNumber(value: inAgendaID)
         myTask.meetingID = inMeetingID
-        myTask.taskID = inTaskID
-        myTask.updateTime = NSDate()
+        myTask.taskID = NSNumber(value: inTaskID)
+        myTask.updateTime = Date()
         myTask.updateType = "Add"
         
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
                 do
                 {
@@ -4146,15 +4146,15 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         myCloudDB.saveMeetingTasksRecordToCloudKit(myTask)
     }
     
-    func replaceAgendaTask(inAgendaID: Int, inMeetingID: String, inTaskID: Int)
+    func replaceAgendaTask(_ inAgendaID: Int, inMeetingID: String, inTaskID: Int)
     {
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
-        let myTask = NSEntityDescription.insertNewObjectForEntityForName("MeetingTasks", inManagedObjectContext: self.managedObjectContext!) as! MeetingTasks
-        myTask.agendaID = inAgendaID
+        let myTask = NSEntityDescription.insertNewObject(forEntityName: "MeetingTasks", into: self.managedObjectContext!) as! MeetingTasks
+        myTask.agendaID = NSNumber(value: inAgendaID)
         myTask.meetingID = inMeetingID
-        myTask.taskID = inTaskID
-        myTask.updateTime = NSDate()
+        myTask.taskID = NSNumber(value: inTaskID)
+        myTask.updateTime = Date()
         myTask.updateType = "Add"
 
                 do
@@ -4170,9 +4170,9 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
 
-    func checkMeetingTask(meetingID: String, agendaID: Int, taskID: Int)->[MeetingTasks]
+    func checkMeetingTask(_ meetingID: String, agendaID: Int, taskID: Int)->[MeetingTasks]
     {
-        let fetchRequest = NSFetchRequest(entityName: "MeetingTasks")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingTasks")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -4182,12 +4182,12 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingTasks]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingTasks]
         
         return fetchResults!
     }
     
-    func saveMeetingTask(agendaID: Int, meetingID: String, taskID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func saveMeetingTask(_ agendaID: Int, meetingID: String, taskID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
         var myTask: MeetingTasks
         
@@ -4195,13 +4195,13 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         
         if myTaskList.count == 0
         {
-            myTask = NSEntityDescription.insertNewObjectForEntityForName("MeetingTasks", inManagedObjectContext: managedObjectContext!) as! MeetingTasks
-            myTask.agendaID = agendaID
+            myTask = NSEntityDescription.insertNewObject(forEntityName: "MeetingTasks", into: managedObjectContext!) as! MeetingTasks
+            myTask.agendaID = NSNumber(value: agendaID)
             myTask.meetingID = meetingID
-            myTask.taskID = taskID
+            myTask.taskID = NSNumber(value: taskID)
             if inUpdateType == "CODE"
             {
-                myTask.updateTime = NSDate()
+                myTask.updateTime = Date()
                 myTask.updateType = "Add"
             }
             else
@@ -4215,7 +4215,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             myTask = myTaskList[0]
             if inUpdateType == "CODE"
             {
-                myTask.updateTime = NSDate()
+                myTask.updateTime = Date()
                 if myTask.updateType != "Add"
                 {
                     myTask.updateType = "Update"
@@ -4228,7 +4228,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
                 do
                 {
@@ -4243,17 +4243,17 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
 
-    func replaceMeetingTask(agendaID: Int, meetingID: String, taskID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func replaceMeetingTask(_ agendaID: Int, meetingID: String, taskID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
-        let myTask = NSEntityDescription.insertNewObjectForEntityForName("MeetingTasks", inManagedObjectContext: self.managedObjectContext!) as! MeetingTasks
-            myTask.agendaID = agendaID
+        let myTask = NSEntityDescription.insertNewObject(forEntityName: "MeetingTasks", into: self.managedObjectContext!) as! MeetingTasks
+            myTask.agendaID = NSNumber(value: agendaID)
             myTask.meetingID = meetingID
-            myTask.taskID = taskID
+            myTask.taskID = NSNumber(value: taskID)
             if inUpdateType == "CODE"
             {
-                myTask.updateTime = NSDate()
+                myTask.updateTime = Date()
                 myTask.updateType = "Add"
             }
             else
@@ -4275,9 +4275,9 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
     
-    func deleteAgendaTask(inAgendaID: Int, inMeetingID: String, inTaskID: Int)
+    func deleteAgendaTask(_ inAgendaID: Int, inMeetingID: String, inTaskID: Int)
     {
-        let fetchRequest = NSFetchRequest(entityName: "MeetingTasks")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingTasks")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -4287,13 +4287,13 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingTasks]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingTasks]
         
         for myItem in fetchResults!
         {
-            myItem.updateTime = NSDate()
+            myItem.updateTime = Date()
             myItem.updateType = "Delete"
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -4309,9 +4309,9 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
     
-    func getAgendaTask(inAgendaID: Int, inMeetingID: String, inTaskID: Int)->[MeetingTasks]
+    func getAgendaTask(_ inAgendaID: Int, inMeetingID: String, inTaskID: Int)->[MeetingTasks]
     {
-        let fetchRequest = NSFetchRequest(entityName: "MeetingTasks")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingTasks")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -4321,24 +4321,24 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingTasks]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingTasks]
         
         return fetchResults!
     }
     
     func resetContexts()
     {
-        let fetchRequest = NSFetchRequest(entityName: "Context")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Context")
         
                 // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Context]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Context]
         
         for myItem in fetchResults!
         {
-            myItem.updateTime = NSDate()
+            myItem.updateTime = Date()
             myItem.updateType = "Delete"
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -4353,16 +4353,16 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
 
-        let fetchRequest2 = NSFetchRequest(entityName: "TaskContext")
+        let fetchRequest2 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskContext")
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults2 = (try? managedObjectContext!.executeFetchRequest(fetchRequest2)) as? [TaskContext]
+        let fetchResults2 = (try? managedObjectContext!.fetch(fetchRequest2)) as? [TaskContext]
         for myItem2 in fetchResults2!
         {
-            myItem2.updateTime = NSDate()
+            myItem2.updateTime = Date()
             myItem2.updateType = "Delete"
 
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -4382,20 +4382,20 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
     {
         let predicate = NSPredicate(format: "(updateType == \"Delete\")")
 
-        let fetchRequest2 = NSFetchRequest(entityName: "Context")
+        let fetchRequest2 = NSFetchRequest<NSFetchRequestResult>(entityName: "Context")
         
         // Set the predicate on the fetch request
         fetchRequest2.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults2 = (try? managedObjectContext!.executeFetchRequest(fetchRequest2)) as? [Context]
+        let fetchResults2 = (try? managedObjectContext!.fetch(fetchRequest2)) as? [Context]
         
         for myItem2 in fetchResults2!
         {
-            managedObjectContext!.deleteObject(myItem2 as NSManagedObject)
+            managedObjectContext!.delete(myItem2 as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -4409,20 +4409,20 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
 
-        let fetchRequest3 = NSFetchRequest(entityName: "Decodes")
+        let fetchRequest3 = NSFetchRequest<NSFetchRequestResult>(entityName: "Decodes")
         
         // Set the predicate on the fetch request
         fetchRequest3.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults3 = (try? managedObjectContext!.executeFetchRequest(fetchRequest3)) as? [Decodes]
+        let fetchResults3 = (try? managedObjectContext!.fetch(fetchRequest3)) as? [Decodes]
         
         for myItem3 in fetchResults3!
         {
-            managedObjectContext!.deleteObject(myItem3 as NSManagedObject)
+            managedObjectContext!.delete(myItem3 as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -4436,20 +4436,20 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
 
-        let fetchRequest5 = NSFetchRequest(entityName: "MeetingAgenda")
+        let fetchRequest5 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
         
         // Set the predicate on the fetch request
         fetchRequest5.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults5 = (try? managedObjectContext!.executeFetchRequest(fetchRequest5)) as? [MeetingAgenda]
+        let fetchResults5 = (try? managedObjectContext!.fetch(fetchRequest5)) as? [MeetingAgenda]
         
         for myItem5 in fetchResults5!
         {
-            managedObjectContext!.deleteObject(myItem5 as NSManagedObject)
+            managedObjectContext!.delete(myItem5 as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -4463,20 +4463,20 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
 
-        let fetchRequest6 = NSFetchRequest(entityName: "MeetingAgendaItem")
+        let fetchRequest6 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgendaItem")
         
         // Set the predicate on the fetch request
         fetchRequest6.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults6 = (try? managedObjectContext!.executeFetchRequest(fetchRequest6)) as? [MeetingAgendaItem]
+        let fetchResults6 = (try? managedObjectContext!.fetch(fetchRequest6)) as? [MeetingAgendaItem]
         
         for myItem6 in fetchResults6!
         {
-            managedObjectContext!.deleteObject(myItem6 as NSManagedObject)
+            managedObjectContext!.delete(myItem6 as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -4490,20 +4490,20 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
 
-        let fetchRequest7 = NSFetchRequest(entityName: "MeetingAttendees")
+        let fetchRequest7 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAttendees")
         
         // Set the predicate on the fetch request
         fetchRequest7.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults7 = (try? managedObjectContext!.executeFetchRequest(fetchRequest7)) as? [MeetingAttendees]
+        let fetchResults7 = (try? managedObjectContext!.fetch(fetchRequest7)) as? [MeetingAttendees]
         
         for myItem7 in fetchResults7!
         {
-            managedObjectContext!.deleteObject(myItem7 as NSManagedObject)
+            managedObjectContext!.delete(myItem7 as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -4517,20 +4517,20 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
 
-        let fetchRequest8 = NSFetchRequest(entityName: "MeetingSupportingDocs")
+        let fetchRequest8 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingSupportingDocs")
         
         // Set the predicate on the fetch request
         fetchRequest8.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults8 = (try? managedObjectContext!.executeFetchRequest(fetchRequest8)) as? [MeetingSupportingDocs]
+        let fetchResults8 = (try? managedObjectContext!.fetch(fetchRequest8)) as? [MeetingSupportingDocs]
         
         for myItem8 in fetchResults8!
         {
-            managedObjectContext!.deleteObject(myItem8 as NSManagedObject)
+            managedObjectContext!.delete(myItem8 as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -4544,20 +4544,20 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
 
-        let fetchRequest9 = NSFetchRequest(entityName: "MeetingTasks")
+        let fetchRequest9 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingTasks")
         
         // Set the predicate on the fetch request
         fetchRequest9.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults9 = (try? managedObjectContext!.executeFetchRequest(fetchRequest9)) as? [MeetingTasks]
+        let fetchResults9 = (try? managedObjectContext!.fetch(fetchRequest9)) as? [MeetingTasks]
         
         for myItem9 in fetchResults9!
         {
-            managedObjectContext!.deleteObject(myItem9 as NSManagedObject)
+            managedObjectContext!.delete(myItem9 as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -4571,20 +4571,20 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
 
-        let fetchRequest10 = NSFetchRequest(entityName: "Panes")
+        let fetchRequest10 = NSFetchRequest<NSFetchRequestResult>(entityName: "Panes")
         
         // Set the predicate on the fetch request
         fetchRequest10.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults10 = (try? managedObjectContext!.executeFetchRequest(fetchRequest10)) as? [Panes]
+        let fetchResults10 = (try? managedObjectContext!.fetch(fetchRequest10)) as? [Panes]
         
         for myItem10 in fetchResults10!
         {
-            managedObjectContext!.deleteObject(myItem10 as NSManagedObject)
+            managedObjectContext!.delete(myItem10 as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -4598,20 +4598,20 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
 
-        let fetchRequest11 = NSFetchRequest(entityName: "Projects")
+        let fetchRequest11 = NSFetchRequest<NSFetchRequestResult>(entityName: "Projects")
         
         // Set the predicate on the fetch request
         fetchRequest11.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults11 = (try? managedObjectContext!.executeFetchRequest(fetchRequest11)) as? [Projects]
+        let fetchResults11 = (try? managedObjectContext!.fetch(fetchRequest11)) as? [Projects]
         
         for myItem11 in fetchResults11!
         {
-            managedObjectContext!.deleteObject(myItem11 as NSManagedObject)
+            managedObjectContext!.delete(myItem11 as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -4625,20 +4625,20 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
 
-        let fetchRequest12 = NSFetchRequest(entityName: "ProjectTeamMembers")
+        let fetchRequest12 = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectTeamMembers")
         
         // Set the predicate on the fetch request
         fetchRequest12.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults12 = (try? managedObjectContext!.executeFetchRequest(fetchRequest12)) as? [ProjectTeamMembers]
+        let fetchResults12 = (try? managedObjectContext!.fetch(fetchRequest12)) as? [ProjectTeamMembers]
         
         for myItem12 in fetchResults12!
         {
-            managedObjectContext!.deleteObject(myItem12 as NSManagedObject)
+            managedObjectContext!.delete(myItem12 as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -4652,20 +4652,20 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
 
-        let fetchRequest14 = NSFetchRequest(entityName: "Roles")
+        let fetchRequest14 = NSFetchRequest<NSFetchRequestResult>(entityName: "Roles")
         
         // Set the predicate on the fetch request
         fetchRequest14.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults14 = (try? managedObjectContext!.executeFetchRequest(fetchRequest14)) as? [Roles]
+        let fetchResults14 = (try? managedObjectContext!.fetch(fetchRequest14)) as? [Roles]
         
         for myItem14 in fetchResults14!
         {
-            managedObjectContext!.deleteObject(myItem14 as NSManagedObject)
+            managedObjectContext!.delete(myItem14 as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -4679,20 +4679,20 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
 
-        let fetchRequest15 = NSFetchRequest(entityName: "Stages")
+        let fetchRequest15 = NSFetchRequest<NSFetchRequestResult>(entityName: "Stages")
         
         // Set the predicate on the fetch request
         fetchRequest15.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults15 = (try? managedObjectContext!.executeFetchRequest(fetchRequest15)) as? [Stages]
+        let fetchResults15 = (try? managedObjectContext!.fetch(fetchRequest15)) as? [Stages]
         
         for myItem15 in fetchResults15!
         {
-            managedObjectContext!.deleteObject(myItem15 as NSManagedObject)
+            managedObjectContext!.delete(myItem15 as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -4706,20 +4706,20 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
 
-        let fetchRequest16 = NSFetchRequest(entityName: "Task")
+        let fetchRequest16 = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
         
         // Set the predicate on the fetch request
         fetchRequest16.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults16 = (try? managedObjectContext!.executeFetchRequest(fetchRequest16)) as? [Task]
+        let fetchResults16 = (try? managedObjectContext!.fetch(fetchRequest16)) as? [Task]
         
         for myItem16 in fetchResults16!
         {
-            managedObjectContext!.deleteObject(myItem16 as NSManagedObject)
+            managedObjectContext!.delete(myItem16 as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -4733,20 +4733,20 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
 
-        let fetchRequest17 = NSFetchRequest(entityName: "TaskAttachment")
+        let fetchRequest17 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskAttachment")
         
         // Set the predicate on the fetch request
         fetchRequest17.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults17 = (try? managedObjectContext!.executeFetchRequest(fetchRequest17)) as? [TaskAttachment]
+        let fetchResults17 = (try? managedObjectContext!.fetch(fetchRequest17)) as? [TaskAttachment]
         
         for myItem17 in fetchResults17!
         {
-            managedObjectContext!.deleteObject(myItem17 as NSManagedObject)
+            managedObjectContext!.delete(myItem17 as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -4760,20 +4760,20 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
 
-        let fetchRequest18 = NSFetchRequest(entityName: "TaskContext")
+        let fetchRequest18 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskContext")
         
         // Set the predicate on the fetch request
         fetchRequest18.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults18 = (try? managedObjectContext!.executeFetchRequest(fetchRequest18)) as? [TaskContext]
+        let fetchResults18 = (try? managedObjectContext!.fetch(fetchRequest18)) as? [TaskContext]
         
         for myItem18 in fetchResults18!
         {
-            managedObjectContext!.deleteObject(myItem18 as NSManagedObject)
+            managedObjectContext!.delete(myItem18 as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -4787,20 +4787,20 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
 
-        let fetchRequest19 = NSFetchRequest(entityName: "TaskUpdates")
+        let fetchRequest19 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskUpdates")
         
         // Set the predicate on the fetch request
         fetchRequest19.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults19 = (try? managedObjectContext!.executeFetchRequest(fetchRequest19)) as? [TaskUpdates]
+        let fetchResults19 = (try? managedObjectContext!.fetch(fetchRequest19)) as? [TaskUpdates]
         
         for myItem19 in fetchResults19!
         {
-            managedObjectContext!.deleteObject(myItem19 as NSManagedObject)
+            managedObjectContext!.delete(myItem19 as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -4814,18 +4814,18 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
 
-        let fetchRequest21 = NSFetchRequest(entityName: "TaskPredecessor")
+        let fetchRequest21 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskPredecessor")
         
         // Set the predicate on the fetch request
         fetchRequest21.predicate = predicate
-        let fetchResults21 = (try? managedObjectContext!.executeFetchRequest(fetchRequest21)) as? [TaskPredecessor]
+        let fetchResults21 = (try? managedObjectContext!.fetch(fetchRequest21)) as? [TaskPredecessor]
         
         for myItem21 in fetchResults21!
         {
-            managedObjectContext!.deleteObject(myItem21 as NSManagedObject)
+            managedObjectContext!.delete(myItem21 as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -4839,18 +4839,18 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        let fetchRequest22 = NSFetchRequest(entityName: "Team")
+        let fetchRequest22 = NSFetchRequest<NSFetchRequestResult>(entityName: "Team")
         
         // Set the predicate on the fetch request
         fetchRequest22.predicate = predicate
-        let fetchResults22 = (try? managedObjectContext!.executeFetchRequest(fetchRequest22)) as? [Team]
+        let fetchResults22 = (try? managedObjectContext!.fetch(fetchRequest22)) as? [Team]
         
         for myItem22 in fetchResults22!
         {
-            managedObjectContext!.deleteObject(myItem22 as NSManagedObject)
+            managedObjectContext!.delete(myItem22 as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -4864,18 +4864,18 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
 
-        let fetchRequest23 = NSFetchRequest(entityName: "ProjectNote")
+        let fetchRequest23 = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectNote")
         
         // Set the predicate on the fetch request
         fetchRequest23.predicate = predicate
-        let fetchResults23 = (try? managedObjectContext!.executeFetchRequest(fetchRequest23)) as? [ProjectNote]
+        let fetchResults23 = (try? managedObjectContext!.fetch(fetchRequest23)) as? [ProjectNote]
         
         for myItem23 in fetchResults23!
         {
-            managedObjectContext!.deleteObject(myItem23 as NSManagedObject)
+            managedObjectContext!.delete(myItem23 as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -4889,18 +4889,18 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        let fetchRequest24 = NSFetchRequest(entityName: "Context1_1")
+        let fetchRequest24 = NSFetchRequest<NSFetchRequestResult>(entityName: "Context1_1")
         
         // Set the predicate on the fetch request
         fetchRequest24.predicate = predicate
-        let fetchResults24 = (try? managedObjectContext!.executeFetchRequest(fetchRequest24)) as? [Context1_1]
+        let fetchResults24 = (try? managedObjectContext!.fetch(fetchRequest24)) as? [Context1_1]
         
         for myItem24 in fetchResults24!
         {
-            managedObjectContext!.deleteObject(myItem24 as NSManagedObject)
+            managedObjectContext!.delete(myItem24 as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -4914,18 +4914,18 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        let fetchRequest25 = NSFetchRequest(entityName: "GTDItem")
+        let fetchRequest25 = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDItem")
         
         // Set the predicate on the fetch request
         fetchRequest25.predicate = predicate
-        let fetchResults25 = (try? managedObjectContext!.executeFetchRequest(fetchRequest25)) as? [GTDItem]
+        let fetchResults25 = (try? managedObjectContext!.fetch(fetchRequest25)) as? [GTDItem]
         
         for myItem25 in fetchResults25!
         {
-            managedObjectContext!.deleteObject(myItem25 as NSManagedObject)
+            managedObjectContext!.delete(myItem25 as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -4939,18 +4939,18 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        let fetchRequest26 = NSFetchRequest(entityName: "GTDLevel")
+        let fetchRequest26 = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDLevel")
         
         // Set the predicate on the fetch request
         fetchRequest26.predicate = predicate
-        let fetchResults26 = (try? managedObjectContext!.executeFetchRequest(fetchRequest26)) as? [GTDLevel]
+        let fetchResults26 = (try? managedObjectContext!.fetch(fetchRequest26)) as? [GTDLevel]
         
         for myItem26 in fetchResults26!
         {
-            managedObjectContext!.deleteObject(myItem26 as NSManagedObject)
+            managedObjectContext!.delete(myItem26 as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -4964,18 +4964,18 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
 
-        let fetchRequest27 = NSFetchRequest(entityName: "ProcessedEmails")
+        let fetchRequest27 = NSFetchRequest<NSFetchRequestResult>(entityName: "ProcessedEmails")
         
         // Set the predicate on the fetch request
         fetchRequest27.predicate = predicate
-        let fetchResults27 = (try? managedObjectContext!.executeFetchRequest(fetchRequest27)) as? [ProcessedEmails]
+        let fetchResults27 = (try? managedObjectContext!.fetch(fetchRequest27)) as? [ProcessedEmails]
         
         for myItem27 in fetchResults27!
         {
-            managedObjectContext!.deleteObject(myItem27 as NSManagedObject)
+            managedObjectContext!.delete(myItem27 as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -4989,18 +4989,18 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
 
-        let fetchRequest28 = NSFetchRequest(entityName: "Outline")
+        let fetchRequest28 = NSFetchRequest<NSFetchRequestResult>(entityName: "Outline")
         
         // Set the predicate on the fetch request
         fetchRequest28.predicate = predicate
-        let fetchResults28 = (try? managedObjectContext!.executeFetchRequest(fetchRequest28)) as? [Outline]
+        let fetchResults28 = (try? managedObjectContext!.fetch(fetchRequest28)) as? [Outline]
         
         for myItem28 in fetchResults28!
         {
-            managedObjectContext!.deleteObject(myItem28 as NSManagedObject)
+            managedObjectContext!.delete(myItem28 as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -5014,18 +5014,18 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
 
-        let fetchRequest29 = NSFetchRequest(entityName: "OutlineDetails")
+        let fetchRequest29 = NSFetchRequest<NSFetchRequestResult>(entityName: "OutlineDetails")
         
         // Set the predicate on the fetch request
         fetchRequest29.predicate = predicate
-        let fetchResults29 = (try? managedObjectContext!.executeFetchRequest(fetchRequest29)) as? [OutlineDetails]
+        let fetchResults29 = (try? managedObjectContext!.fetch(fetchRequest29)) as? [OutlineDetails]
         
         for myItem29 in fetchResults29!
         {
-            managedObjectContext!.deleteObject(myItem29 as NSManagedObject)
+            managedObjectContext!.delete(myItem29 as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -5045,19 +5045,19 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
     {
         let predicate = NSPredicate(format: "(updateType != \"\")")
         
-        let fetchRequest2 = NSFetchRequest(entityName: "Context")
+        let fetchRequest2 = NSFetchRequest<NSFetchRequestResult>(entityName: "Context")
         
         // Set the predicate on the fetch request
         fetchRequest2.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults2 = (try? managedObjectContext!.executeFetchRequest(fetchRequest2)) as? [Context]
+        let fetchResults2 = (try? managedObjectContext!.fetch(fetchRequest2)) as? [Context]
         
         for myItem2 in fetchResults2!
         {
             myItem2.updateType = ""
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -5072,19 +5072,19 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        let fetchRequest3 = NSFetchRequest(entityName: "Decodes")
+        let fetchRequest3 = NSFetchRequest<NSFetchRequestResult>(entityName: "Decodes")
         
         // Set the predicate on the fetch request
         fetchRequest3.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults3 = (try? managedObjectContext!.executeFetchRequest(fetchRequest3)) as? [Decodes]
+        let fetchResults3 = (try? managedObjectContext!.fetch(fetchRequest3)) as? [Decodes]
         
         for myItem3 in fetchResults3!
         {
             myItem3.updateType = ""
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -5099,19 +5099,19 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        let fetchRequest5 = NSFetchRequest(entityName: "MeetingAgenda")
+        let fetchRequest5 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
         
         // Set the predicate on the fetch request
         fetchRequest5.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults5 = (try? managedObjectContext!.executeFetchRequest(fetchRequest5)) as? [MeetingAgenda]
+        let fetchResults5 = (try? managedObjectContext!.fetch(fetchRequest5)) as? [MeetingAgenda]
         
         for myItem5 in fetchResults5!
         {
             myItem5.updateType = ""
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -5126,19 +5126,19 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        let fetchRequest6 = NSFetchRequest(entityName: "MeetingAgendaItem")
+        let fetchRequest6 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgendaItem")
         
         // Set the predicate on the fetch request
         fetchRequest6.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults6 = (try? managedObjectContext!.executeFetchRequest(fetchRequest6)) as? [MeetingAgendaItem]
+        let fetchResults6 = (try? managedObjectContext!.fetch(fetchRequest6)) as? [MeetingAgendaItem]
         
         for myItem6 in fetchResults6!
         {
             myItem6.updateType = ""
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -5153,19 +5153,19 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
        
-        let fetchRequest7 = NSFetchRequest(entityName: "MeetingAttendees")
+        let fetchRequest7 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAttendees")
         
         // Set the predicate on the fetch request
         fetchRequest7.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults7 = (try? managedObjectContext!.executeFetchRequest(fetchRequest7)) as? [MeetingAttendees]
+        let fetchResults7 = (try? managedObjectContext!.fetch(fetchRequest7)) as? [MeetingAttendees]
         
         for myItem7 in fetchResults7!
         {
             myItem7.updateType = ""
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -5180,19 +5180,19 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        let fetchRequest8 = NSFetchRequest(entityName: "MeetingSupportingDocs")
+        let fetchRequest8 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingSupportingDocs")
         
         // Set the predicate on the fetch request
         fetchRequest8.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults8 = (try? managedObjectContext!.executeFetchRequest(fetchRequest8)) as? [MeetingSupportingDocs]
+        let fetchResults8 = (try? managedObjectContext!.fetch(fetchRequest8)) as? [MeetingSupportingDocs]
         
         for myItem8 in fetchResults8!
         {
             myItem8.updateType = ""
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -5207,19 +5207,19 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        let fetchRequest9 = NSFetchRequest(entityName: "MeetingTasks")
+        let fetchRequest9 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingTasks")
         
         // Set the predicate on the fetch request
         fetchRequest9.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults9 = (try? managedObjectContext!.executeFetchRequest(fetchRequest9)) as? [MeetingTasks]
+        let fetchResults9 = (try? managedObjectContext!.fetch(fetchRequest9)) as? [MeetingTasks]
         
         for myItem9 in fetchResults9!
         {
             myItem9.updateType = ""
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -5234,19 +5234,19 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        let fetchRequest10 = NSFetchRequest(entityName: "Panes")
+        let fetchRequest10 = NSFetchRequest<NSFetchRequestResult>(entityName: "Panes")
         
         // Set the predicate on the fetch request
         fetchRequest10.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults10 = (try? managedObjectContext!.executeFetchRequest(fetchRequest10)) as? [Panes]
+        let fetchResults10 = (try? managedObjectContext!.fetch(fetchRequest10)) as? [Panes]
         
         for myItem10 in fetchResults10!
         {
             myItem10.updateType = ""
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -5261,19 +5261,19 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        let fetchRequest11 = NSFetchRequest(entityName: "Projects")
+        let fetchRequest11 = NSFetchRequest<NSFetchRequestResult>(entityName: "Projects")
         
         // Set the predicate on the fetch request
         fetchRequest11.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults11 = (try? managedObjectContext!.executeFetchRequest(fetchRequest11)) as? [Projects]
+        let fetchResults11 = (try? managedObjectContext!.fetch(fetchRequest11)) as? [Projects]
         
         for myItem11 in fetchResults11!
         {
             myItem11.updateType = ""
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -5288,19 +5288,19 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        let fetchRequest12 = NSFetchRequest(entityName: "ProjectTeamMembers")
+        let fetchRequest12 = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectTeamMembers")
         
         // Set the predicate on the fetch request
         fetchRequest12.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults12 = (try? managedObjectContext!.executeFetchRequest(fetchRequest12)) as? [ProjectTeamMembers]
+        let fetchResults12 = (try? managedObjectContext!.fetch(fetchRequest12)) as? [ProjectTeamMembers]
         
         for myItem12 in fetchResults12!
         {
             myItem12.updateType = ""
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -5315,19 +5315,19 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        let fetchRequest14 = NSFetchRequest(entityName: "Roles")
+        let fetchRequest14 = NSFetchRequest<NSFetchRequestResult>(entityName: "Roles")
         
         // Set the predicate on the fetch request
         fetchRequest14.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults14 = (try? managedObjectContext!.executeFetchRequest(fetchRequest14)) as? [Roles]
+        let fetchResults14 = (try? managedObjectContext!.fetch(fetchRequest14)) as? [Roles]
         
         for myItem14 in fetchResults14!
         {
             myItem14.updateType = ""
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -5342,19 +5342,19 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        let fetchRequest15 = NSFetchRequest(entityName: "Stages")
+        let fetchRequest15 = NSFetchRequest<NSFetchRequestResult>(entityName: "Stages")
         
         // Set the predicate on the fetch request
         fetchRequest15.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults15 = (try? managedObjectContext!.executeFetchRequest(fetchRequest15)) as? [Stages]
+        let fetchResults15 = (try? managedObjectContext!.fetch(fetchRequest15)) as? [Stages]
         
         for myItem15 in fetchResults15!
         {
             myItem15.updateType = ""
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -5369,19 +5369,19 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        let fetchRequest16 = NSFetchRequest(entityName: "Task")
+        let fetchRequest16 = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
         
         // Set the predicate on the fetch request
         fetchRequest16.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults16 = (try? managedObjectContext!.executeFetchRequest(fetchRequest16)) as? [Task]
+        let fetchResults16 = (try? managedObjectContext!.fetch(fetchRequest16)) as? [Task]
         
         for myItem16 in fetchResults16!
         {
             myItem16.updateType = ""
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -5396,19 +5396,19 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        let fetchRequest17 = NSFetchRequest(entityName: "TaskAttachment")
+        let fetchRequest17 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskAttachment")
         
         // Set the predicate on the fetch request
         fetchRequest17.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults17 = (try? managedObjectContext!.executeFetchRequest(fetchRequest17)) as? [TaskAttachment]
+        let fetchResults17 = (try? managedObjectContext!.fetch(fetchRequest17)) as? [TaskAttachment]
         
         for myItem17 in fetchResults17!
         {
             myItem17.updateType = ""
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -5423,19 +5423,19 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        let fetchRequest18 = NSFetchRequest(entityName: "TaskContext")
+        let fetchRequest18 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskContext")
         
         // Set the predicate on the fetch request
         fetchRequest18.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults18 = (try? managedObjectContext!.executeFetchRequest(fetchRequest18)) as? [TaskContext]
+        let fetchResults18 = (try? managedObjectContext!.fetch(fetchRequest18)) as? [TaskContext]
         
         for myItem18 in fetchResults18!
         {
             myItem18.updateType = ""
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -5450,19 +5450,19 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        let fetchRequest19 = NSFetchRequest(entityName: "TaskUpdates")
+        let fetchRequest19 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskUpdates")
         
         // Set the predicate on the fetch request
         fetchRequest19.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults19 = (try? managedObjectContext!.executeFetchRequest(fetchRequest19)) as? [TaskUpdates]
+        let fetchResults19 = (try? managedObjectContext!.fetch(fetchRequest19)) as? [TaskUpdates]
         
         for myItem19 in fetchResults19!
         {
             myItem19.updateType = ""
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -5477,19 +5477,19 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        let fetchRequest21 = NSFetchRequest(entityName: "TaskPredecessor")
+        let fetchRequest21 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskPredecessor")
         
         // Set the predicate on the fetch request
         fetchRequest21.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults21 = (try? managedObjectContext!.executeFetchRequest(fetchRequest21)) as? [TaskPredecessor]
+        let fetchResults21 = (try? managedObjectContext!.fetch(fetchRequest21)) as? [TaskPredecessor]
         
         for myItem21 in fetchResults21!
         {
             myItem21.updateType = ""
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -5504,18 +5504,18 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        let fetchRequest22 = NSFetchRequest(entityName: "Team")
+        let fetchRequest22 = NSFetchRequest<NSFetchRequestResult>(entityName: "Team")
         // Set the predicate on the fetch request
         fetchRequest22.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults22 = (try? managedObjectContext!.executeFetchRequest(fetchRequest22)) as? [Team]
+        let fetchResults22 = (try? managedObjectContext!.fetch(fetchRequest22)) as? [Team]
         
         for myItem22 in fetchResults22!
         {
             myItem22.updateType = ""
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -5530,18 +5530,18 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
 
-        let fetchRequest23 = NSFetchRequest(entityName: "ProjectNote")
+        let fetchRequest23 = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectNote")
         // Set the predicate on the fetch request
         fetchRequest23.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults23 = (try? managedObjectContext!.executeFetchRequest(fetchRequest23)) as? [ProjectNote]
+        let fetchResults23 = (try? managedObjectContext!.fetch(fetchRequest23)) as? [ProjectNote]
         
         for myItem23 in fetchResults23!
         {
             myItem23.updateType = ""
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -5556,18 +5556,18 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        let fetchRequest24 = NSFetchRequest(entityName: "Context1_1")
+        let fetchRequest24 = NSFetchRequest<NSFetchRequestResult>(entityName: "Context1_1")
         // Set the predicate on the fetch request
         fetchRequest24.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults24 = (try? managedObjectContext!.executeFetchRequest(fetchRequest24)) as? [Context1_1]
+        let fetchResults24 = (try? managedObjectContext!.fetch(fetchRequest24)) as? [Context1_1]
         
         for myItem24 in fetchResults24!
         {
             myItem24.updateType = ""
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -5582,18 +5582,18 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        let fetchRequest25 = NSFetchRequest(entityName: "GTDItem")
+        let fetchRequest25 = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDItem")
         // Set the predicate on the fetch request
         fetchRequest25.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults25 = (try? managedObjectContext!.executeFetchRequest(fetchRequest25)) as? [GTDItem]
+        let fetchResults25 = (try? managedObjectContext!.fetch(fetchRequest25)) as? [GTDItem]
         
         for myItem25 in fetchResults25!
         {
             myItem25.updateType = ""
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -5608,18 +5608,18 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
 
-        let fetchRequest26 = NSFetchRequest(entityName: "GTDLevel")
+        let fetchRequest26 = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDLevel")
         // Set the predicate on the fetch request
         fetchRequest26.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults26 = (try? managedObjectContext!.executeFetchRequest(fetchRequest26)) as? [GTDLevel]
+        let fetchResults26 = (try? managedObjectContext!.fetch(fetchRequest26)) as? [GTDLevel]
         
         for myItem26 in fetchResults26!
         {
             myItem26.updateType = ""
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -5634,18 +5634,18 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        let fetchRequest27 = NSFetchRequest(entityName: "ProcessedEmails")
+        let fetchRequest27 = NSFetchRequest<NSFetchRequestResult>(entityName: "ProcessedEmails")
         // Set the predicate on the fetch request
         fetchRequest27.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults27 = (try? managedObjectContext!.executeFetchRequest(fetchRequest27)) as? [ProcessedEmails]
+        let fetchResults27 = (try? managedObjectContext!.fetch(fetchRequest27)) as? [ProcessedEmails]
         
         for myItem27 in fetchResults27!
         {
             myItem27.updateType = ""
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -5660,18 +5660,18 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        let fetchRequest28 = NSFetchRequest(entityName: "Outline")
+        let fetchRequest28 = NSFetchRequest<NSFetchRequestResult>(entityName: "Outline")
         // Set the predicate on the fetch request
         fetchRequest28.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults28 = (try? managedObjectContext!.executeFetchRequest(fetchRequest28)) as? [Outline]
+        let fetchResults28 = (try? managedObjectContext!.fetch(fetchRequest28)) as? [Outline]
         
         for myItem28 in fetchResults28!
         {
             myItem28.updateType = ""
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -5686,18 +5686,18 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        let fetchRequest29 = NSFetchRequest(entityName: "OutlineDetails")
+        let fetchRequest29 = NSFetchRequest<NSFetchRequestResult>(entityName: "OutlineDetails")
         // Set the predicate on the fetch request
         fetchRequest29.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults29 = (try? managedObjectContext!.executeFetchRequest(fetchRequest29)) as? [OutlineDetails]
+        let fetchResults29 = (try? managedObjectContext!.fetch(fetchRequest29)) as? [OutlineDetails]
         
         for myItem29 in fetchResults29!
         {
             myItem29.updateType = ""
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -5713,7 +5713,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
     
-    func saveTeam(inTeamID: Int, inName: String, inStatus: String, inNote: String, inType: String, inPredecessor: Int, inExternalID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func saveTeam(_ inTeamID: Int, inName: String, inStatus: String, inNote: String, inType: String, inPredecessor: Int, inExternalID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
         var myTeam: Team!
         
@@ -5721,17 +5721,17 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         
         if myTeams.count == 0
         { // Add
-            myTeam = NSEntityDescription.insertNewObjectForEntityForName("Team", inManagedObjectContext: self.managedObjectContext!) as! Team
-            myTeam.teamID = inTeamID
+            myTeam = NSEntityDescription.insertNewObject(forEntityName: "Team", into: self.managedObjectContext!) as! Team
+            myTeam.teamID = NSNumber(value: inTeamID)
             myTeam.name = inName
             myTeam.status = inStatus
             myTeam.note = inNote
             myTeam.type = inType
-            myTeam.predecessor = inPredecessor
-            myTeam.externalID = inExternalID
+            myTeam.predecessor = NSNumber(value: inPredecessor)
+            myTeam.externalID = NSNumber(value: inExternalID)
             if inUpdateType == "CODE"
             {
-                myTeam.updateTime = NSDate()
+                myTeam.updateTime = Date()
                 myTeam.updateType = "Add"
             }
             else
@@ -5747,15 +5747,15 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             myTeam.status = inStatus
             myTeam.note = inNote
             myTeam.type = inType
-            myTeam.predecessor = inPredecessor
-            myTeam.externalID = inExternalID
+            myTeam.predecessor = NSNumber(value: inPredecessor)
+            myTeam.externalID = NSNumber(value: inExternalID)
             if inUpdateType == "CODE"
             {
                 if myTeam.updateType != "Add"
                 {
                     myTeam.updateType = "Update"
                 }
-                myTeam.updateTime = NSDate()
+                myTeam.updateTime = Date()
             }
             else
             {
@@ -5764,7 +5764,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
                 do
                 {
@@ -5779,21 +5779,21 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
     
-    func replaceTeam(inTeamID: Int, inName: String, inStatus: String, inNote: String, inType: String, inPredecessor: Int, inExternalID: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func replaceTeam(_ inTeamID: Int, inName: String, inStatus: String, inNote: String, inType: String, inPredecessor: Int, inExternalID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
-        let myTeam = NSEntityDescription.insertNewObjectForEntityForName("Team", inManagedObjectContext: self.managedObjectContext!) as! Team
-            myTeam.teamID = inTeamID
+        let myTeam = NSEntityDescription.insertNewObject(forEntityName: "Team", into: self.managedObjectContext!) as! Team
+            myTeam.teamID = NSNumber(value: inTeamID)
             myTeam.name = inName
             myTeam.status = inStatus
             myTeam.note = inNote
             myTeam.type = inType
-            myTeam.predecessor = inPredecessor
-            myTeam.externalID = inExternalID
+            myTeam.predecessor = NSNumber(value: inPredecessor)
+            myTeam.externalID = NSNumber(value: inExternalID)
             if inUpdateType == "CODE"
             {
-                myTeam.updateTime = NSDate()
+                myTeam.updateTime = Date()
                 myTeam.updateType = "Add"
             }
             else
@@ -5816,9 +5816,9 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
 
-    func getTeam(inTeamID: Int)->[Team]
+    func getTeam(_ inTeamID: Int)->[Team]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Team")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Team")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -5828,14 +5828,14 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Team]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Team]
         
         return fetchResults!
     }
     
     func getAllTeams()->[Team]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Team")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Team")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -5849,14 +5849,14 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         fetchRequest.sortDescriptors = sortDescriptors
 
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Team]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Team]
     
         return fetchResults!
     }
     
-    func getMyTeams(myID: String)->[Team]
+    func getMyTeams(_ myID: String)->[Team]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Team")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Team")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -5870,35 +5870,35 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         fetchRequest.sortDescriptors = sortDescriptors
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Team]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Team]
         
         return fetchResults!
     }
     
     func getTeamsCount() -> Int
     {
-        let fetchRequest = NSFetchRequest(entityName: "Team")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Team")
         fetchRequest.shouldRefreshRefetchedObjects = true
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Team]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Team]
         
         return fetchResults!.count
     }
     
     func deleteAllTeams()
     {
-        let fetchRequest = NSFetchRequest(entityName: "Team")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Team")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Team]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Team]
         
         for myItem in fetchResults!
         {
-            managedObjectContext!.deleteObject(myItem as NSManagedObject)
+            managedObjectContext!.delete(myItem as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -5912,17 +5912,17 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
 
-        let fetchRequest2 = NSFetchRequest(entityName: "GTDLevel")
+        let fetchRequest2 = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDLevel")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults2 = (try? managedObjectContext!.executeFetchRequest(fetchRequest2)) as? [GTDLevel]
+        let fetchResults2 = (try? managedObjectContext!.fetch(fetchRequest2)) as? [GTDLevel]
         
         for myItem2 in fetchResults2!
         {
-            managedObjectContext!.deleteObject(myItem2 as NSManagedObject)
+            managedObjectContext!.delete(myItem2 as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -5937,7 +5937,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
     
-    func saveProjectNote(inProjectID: Int, inNote: String, inReviewPeriod: String, inPredecessor: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func saveProjectNote(_ inProjectID: Int, inNote: String, inReviewPeriod: String, inPredecessor: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
         var myProjectNote: ProjectNote!
         
@@ -5945,15 +5945,15 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         
         if myTeams.count == 0
         { // Add
-            myProjectNote = NSEntityDescription.insertNewObjectForEntityForName("ProjectNote", inManagedObjectContext: self.managedObjectContext!) as! ProjectNote
-            myProjectNote.projectID = inProjectID
+            myProjectNote = NSEntityDescription.insertNewObject(forEntityName: "ProjectNote", into: self.managedObjectContext!) as! ProjectNote
+            myProjectNote.projectID = NSNumber(value: inProjectID)
             myProjectNote.note = inNote
 
             myProjectNote.reviewPeriod = inReviewPeriod
-            myProjectNote.predecessor = inPredecessor
+            myProjectNote.predecessor = NSNumber(value: inPredecessor)
             if inUpdateType == "CODE"
             {
-                myProjectNote.updateTime = NSDate()
+                myProjectNote.updateTime = Date()
                 myProjectNote.updateType = "Add"
             }
             else
@@ -5967,14 +5967,14 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             myProjectNote = myTeams[0]
             myProjectNote.note = inNote
             myProjectNote.reviewPeriod = inReviewPeriod
-            myProjectNote.predecessor = inPredecessor
+            myProjectNote.predecessor = NSNumber(value: inPredecessor)
             if inUpdateType == "CODE"
             {
                 if myProjectNote.updateType != "Add"
                 {
                     myProjectNote.updateType = "Update"
                 }
-                myProjectNote.updateTime = NSDate()
+                myProjectNote.updateTime = Date()
             }
             else
             {
@@ -5983,7 +5983,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
                 do
                 {
@@ -5998,19 +5998,19 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
  
-    func replaceProjectNote(inProjectID: Int, inNote: String, inReviewPeriod: String, inPredecessor: Int, inUpdateTime: NSDate = NSDate(), inUpdateType: String = "CODE")
+    func replaceProjectNote(_ inProjectID: Int, inNote: String, inReviewPeriod: String, inPredecessor: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
-        let myProjectNote = NSEntityDescription.insertNewObjectForEntityForName("ProjectNote", inManagedObjectContext: self.managedObjectContext!) as! ProjectNote
-            myProjectNote.projectID = inProjectID
+        let myProjectNote = NSEntityDescription.insertNewObject(forEntityName: "ProjectNote", into: self.managedObjectContext!) as! ProjectNote
+            myProjectNote.projectID = NSNumber(value: inProjectID)
             myProjectNote.note = inNote
             
             myProjectNote.reviewPeriod = inReviewPeriod
-            myProjectNote.predecessor = inPredecessor
+            myProjectNote.predecessor = NSNumber(value: inPredecessor)
             if inUpdateType == "CODE"
             {
-                myProjectNote.updateTime = NSDate()
+                myProjectNote.updateTime = Date()
                 myProjectNote.updateType = "Add"
             }
             else
@@ -6032,9 +6032,9 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
 
-    func getProjectNote(inProjectID: Int)->[ProjectNote]
+    func getProjectNote(_ inProjectID: Int)->[ProjectNote]
     {
-        let fetchRequest = NSFetchRequest(entityName: "ProjectNote")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectNote")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -6044,21 +6044,21 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [ProjectNote]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [ProjectNote]
         
         return fetchResults!
     }
 
-    func getNextID(inTableName: String, inInitialValue: Int = 1) -> Int
+    func getNextID(_ inTableName: String, inInitialValue: Int = 1) -> Int
     {
-        let fetchRequest = NSFetchRequest(entityName: "Decodes")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Decodes")
         let predicate = NSPredicate(format: "(decode_name == \"\(inTableName)\") && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Decodes]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Decodes]
         
         if fetchResults!.count == 0
         {
@@ -6080,21 +6080,21 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
     
-    func initialiseTeamForMeetingAgenda(inTeamID: Int)
+    func initialiseTeamForMeetingAgenda(_ inTeamID: Int)
     {
-        let fetchRequest = NSFetchRequest(entityName: "MeetingAgenda")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAgenda]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgenda]
         
         if fetchResults!.count > 0
         {
             for myItem in fetchResults!
             {
-                myItem.teamID = inTeamID
+                myItem.teamID = NSNumber(value: inTeamID)
             }
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -6110,28 +6110,28 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
 
-    func initialiseTeamForContext(inTeamID: Int)
+    func initialiseTeamForContext(_ inTeamID: Int)
     {
         var maxID: Int = 1
         
-        let fetchRequest = NSFetchRequest(entityName: "Context")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Context")
         
         let sortDescriptor = NSSortDescriptor(key: "contextID", ascending: true)
         let sortDescriptors = [sortDescriptor]
         fetchRequest.sortDescriptors = sortDescriptors
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Context]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Context]
         
         if fetchResults!.count > 0
         {
             for myItem in fetchResults!
             {
-                myItem.teamID = inTeamID
+                myItem.teamID = NSNumber(value: inTeamID)
                 maxID = myItem.contextID as Int
             }
         
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -6152,28 +6152,28 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         updateDecodeValue("Context", inCodeValue: tempInt, inCodeType: "hidden")
     }
 
-    func initialiseTeamForProject(inTeamID: Int)
+    func initialiseTeamForProject(_ inTeamID: Int)
     {
         var maxID: Int = 1
         
-        let fetchRequest = NSFetchRequest(entityName: "Projects")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Projects")
         
         let sortDescriptor = NSSortDescriptor(key: "projectID", ascending: true)
         let sortDescriptors = [sortDescriptor]
         fetchRequest.sortDescriptors = sortDescriptors
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Projects]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Projects]
         
         if fetchResults!.count > 0
         {
             for myItem in fetchResults!
             {
-                myItem.teamID = inTeamID
+                myItem.teamID = NSNumber(value: inTeamID)
                 maxID = myItem.projectID as Int
             }
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -6194,28 +6194,28 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         updateDecodeValue("Projects", inCodeValue: tempInt, inCodeType: "hidden")
     }
 
-    func initialiseTeamForRoles(inTeamID: Int)
+    func initialiseTeamForRoles(_ inTeamID: Int)
     {
         var maxID: Int = 1
         
-        let fetchRequest = NSFetchRequest(entityName: "Roles")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Roles")
         
         let sortDescriptor = NSSortDescriptor(key: "roleID", ascending: true)
         let sortDescriptors = [sortDescriptor]
         fetchRequest.sortDescriptors = sortDescriptors
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Roles]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Roles]
         
         if fetchResults!.count > 0
         {
             for myItem in fetchResults!
             {
-                myItem.teamID = inTeamID
+                myItem.teamID = NSNumber(value: inTeamID)
                 maxID = myItem.roleID as Int
             }
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -6236,21 +6236,21 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         updateDecodeValue("Roles", inCodeValue: tempInt, inCodeType: "hidden")
     }
 
-    func initialiseTeamForStages(inTeamID: Int)
+    func initialiseTeamForStages(_ inTeamID: Int)
     {
-        let fetchRequest = NSFetchRequest(entityName: "Stages")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Stages")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Stages]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Stages]
         
         if fetchResults!.count > 0
         {
             for myItem in fetchResults!
             {
-                myItem.teamID = inTeamID
+                myItem.teamID = NSNumber(value: inTeamID)
             }
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -6266,28 +6266,28 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
 
-    func initialiseTeamForTask(inTeamID: Int)
+    func initialiseTeamForTask(_ inTeamID: Int)
     {
         var maxID: Int = 1
         
-        let fetchRequest = NSFetchRequest(entityName: "Task")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
         
         let sortDescriptor = NSSortDescriptor(key: "taskID", ascending: true)
         let sortDescriptors = [sortDescriptor]
         fetchRequest.sortDescriptors = sortDescriptors
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Task]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Task]
         
         if fetchResults!.count > 0
         {
             for myItem in fetchResults!
             {
-                myItem.teamID = inTeamID
+                myItem.teamID = NSNumber(value: inTeamID)
                 maxID = myItem.taskID as Int
             }
             
-            managedObjectContext!.performBlockAndWait
+            managedObjectContext!.performAndWait
                 {
                     do
                     {
@@ -6308,7 +6308,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         updateDecodeValue("Task", inCodeValue: tempInt, inCodeType: "hidden")
     }
 
-    func saveContext1_1(contextID: Int, predecessor: Int, contextType: String, updateTime: NSDate = NSDate(), updateType: String = "CODE")
+    func saveContext1_1(_ contextID: Int, predecessor: Int, contextType: String, updateTime: Date = Date(), updateType: String = "CODE")
     {
         var myContext: Context1_1!
         
@@ -6316,13 +6316,13 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         
         if myContexts.count == 0
         { // Add
-            myContext = NSEntityDescription.insertNewObjectForEntityForName("Context1_1", inManagedObjectContext: self.managedObjectContext!) as! Context1_1
-            myContext.contextID = contextID
-            myContext.predecessor = predecessor
+            myContext = NSEntityDescription.insertNewObject(forEntityName: "Context1_1", into: self.managedObjectContext!) as! Context1_1
+            myContext.contextID = contextID as NSNumber?
+            myContext.predecessor = predecessor as NSNumber?
             myContext.contextType = contextType
             if updateType == "CODE"
             {
-                myContext.updateTime = NSDate()
+                myContext.updateTime = Date()
                 myContext.updateType = "Add"
 
             }
@@ -6335,11 +6335,11 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         else
         {
             myContext = myContexts[0]
-            myContext.predecessor = predecessor
+            myContext.predecessor = predecessor as NSNumber?
             myContext.contextType = contextType
             if updateType == "CODE"
             {
-                myContext.updateTime = NSDate()
+                myContext.updateTime = Date()
                 if myContext.updateType != "Add"
                 {
                     myContext.updateType = "Update"
@@ -6352,7 +6352,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
                 do
                 {
@@ -6367,17 +6367,17 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
     
-    func replaceContext1_1(contextID: Int, predecessor: Int, contextType: String, updateTime: NSDate = NSDate(), updateType: String = "CODE")
+    func replaceContext1_1(_ contextID: Int, predecessor: Int, contextType: String, updateTime: Date = Date(), updateType: String = "CODE")
     {
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
-        let myContext = NSEntityDescription.insertNewObjectForEntityForName("Context1_1", inManagedObjectContext: self.managedObjectContext!) as! Context1_1
-        myContext.contextID = contextID
-        myContext.predecessor = predecessor
+        let myContext = NSEntityDescription.insertNewObject(forEntityName: "Context1_1", into: self.managedObjectContext!) as! Context1_1
+        myContext.contextID = contextID as NSNumber?
+        myContext.predecessor = predecessor as NSNumber?
         myContext.contextType = contextType
         if updateType == "CODE"
         {
-            myContext.updateTime = NSDate()
+            myContext.updateTime = Date()
             myContext.updateType = "Add"
         }
         else
@@ -6399,9 +6399,9 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
 
-    func getContext1_1(inContextID: Int)->[Context1_1]
+    func getContext1_1(_ inContextID: Int)->[Context1_1]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Context1_1")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Context1_1")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -6415,14 +6415,14 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         fetchRequest.sortDescriptors = sortDescriptors
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Context1_1]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Context1_1]
         
         return fetchResults!
     }
     
     func resetDecodes()
     {
-        let fetchRequest = NSFetchRequest(entityName: "Decodes")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Decodes")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -6433,14 +6433,14 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Decodes]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Decodes]
         
         for myItem in fetchResults!
         {
-            managedObjectContext!.deleteObject(myItem as NSManagedObject)
+            managedObjectContext!.delete(myItem as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -6455,9 +6455,9 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
     
-    func performTidyDecodes(inString: String)
+    func performTidyDecodes(_ inString: String)
     {
-        let fetchRequest = NSFetchRequest(entityName: "Decodes")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Decodes")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -6468,14 +6468,14 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Decodes]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Decodes]
         
         for myItem in fetchResults!
         {
-            managedObjectContext!.deleteObject(myItem as NSManagedObject)
+            managedObjectContext!.delete(myItem as NSManagedObject)
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -6502,393 +6502,393 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         performTidyDecodes("(decode_name == \"Outline\")")
     }
     
-    func getContextsForSync(inLastSyncDate: NSDate) -> [Context]
+    func getContextsForSync(_ inLastSyncDate: Date) -> [Context]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Context")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Context")
 
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Context]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Context]
         
         return fetchResults!
     }
 
-    func getContexts1_1ForSync(inLastSyncDate: NSDate) -> [Context1_1]
+    func getContexts1_1ForSync(_ inLastSyncDate: Date) -> [Context1_1]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Context1_1")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Context1_1")
      
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Context1_1]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Context1_1]
         
         return fetchResults!
     }
 
-    func getDecodesForSync(inLastSyncDate: NSDate) -> [Decodes]
+    func getDecodesForSync(_ inLastSyncDate: Date) -> [Decodes]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Decodes")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Decodes")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Decodes]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Decodes]
         
         return fetchResults!
     }
 
-    func getGTDItemsForSync(inLastSyncDate: NSDate) -> [GTDItem]
+    func getGTDItemsForSync(_ inLastSyncDate: Date) -> [GTDItem]
     {
-        let fetchRequest = NSFetchRequest(entityName: "GTDItem")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDItem")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [GTDItem]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [GTDItem]
         
         return fetchResults!
     }
     
-    func getGTDLevelsForSync(inLastSyncDate: NSDate) -> [GTDLevel]
+    func getGTDLevelsForSync(_ inLastSyncDate: Date) -> [GTDLevel]
     {
-        let fetchRequest = NSFetchRequest(entityName: "GTDLevel")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDLevel")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [GTDLevel]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [GTDLevel]
         
         return fetchResults!
     }
     
-    func getMeetingAgendasForSync(inLastSyncDate: NSDate) -> [MeetingAgenda]
+    func getMeetingAgendasForSync(_ inLastSyncDate: Date) -> [MeetingAgenda]
     {
-        let fetchRequest = NSFetchRequest(entityName: "MeetingAgenda")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAgenda]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgenda]
         
         return fetchResults!
     }
     
-    func getMeetingAgendaItemsForSync(inLastSyncDate: NSDate) -> [MeetingAgendaItem]
+    func getMeetingAgendaItemsForSync(_ inLastSyncDate: Date) -> [MeetingAgendaItem]
     {
-        let fetchRequest = NSFetchRequest(entityName: "MeetingAgendaItem")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgendaItem")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAgendaItem]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgendaItem]
         
         return fetchResults!
     }
     
-    func getMeetingAttendeesForSync(inLastSyncDate: NSDate) -> [MeetingAttendees]
+    func getMeetingAttendeesForSync(_ inLastSyncDate: Date) -> [MeetingAttendees]
     {
-        let fetchRequest = NSFetchRequest(entityName: "MeetingAttendees")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAttendees")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingAttendees]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAttendees]
         
         return fetchResults!
     }
     
-    func getMeetingSupportingDocsForSync(inLastSyncDate: NSDate) -> [MeetingSupportingDocs]
+    func getMeetingSupportingDocsForSync(_ inLastSyncDate: Date) -> [MeetingSupportingDocs]
     {
-        let fetchRequest = NSFetchRequest(entityName: "MeetingSupportingDocs")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingSupportingDocs")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingSupportingDocs]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingSupportingDocs]
         
         return fetchResults!
     }
     
-    func getMeetingTasksForSync(inLastSyncDate: NSDate) -> [MeetingTasks]
+    func getMeetingTasksForSync(_ inLastSyncDate: Date) -> [MeetingTasks]
     {
-        let fetchRequest = NSFetchRequest(entityName: "MeetingTasks")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingTasks")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [MeetingTasks]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingTasks]
         
         return fetchResults!
     }
     
-    func getPanesForSync(inLastSyncDate: NSDate) -> [Panes]
+    func getPanesForSync(_ inLastSyncDate: Date) -> [Panes]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Panes")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Panes")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Panes]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Panes]
         
         return fetchResults!
     }
     
-    func getProjectsForSync(inLastSyncDate: NSDate) -> [Projects]
+    func getProjectsForSync(_ inLastSyncDate: Date) -> [Projects]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Projects")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Projects")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Projects]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Projects]
         
         return fetchResults!
     }
     
-    func getProjectNotesForSync(inLastSyncDate: NSDate) -> [ProjectNote]
+    func getProjectNotesForSync(_ inLastSyncDate: Date) -> [ProjectNote]
     {
-        let fetchRequest = NSFetchRequest(entityName: "ProjectNote")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectNote")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [ProjectNote]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [ProjectNote]
         
         return fetchResults!
     }
     
-    func getProjectTeamMembersForSync(inLastSyncDate: NSDate) -> [ProjectTeamMembers]
+    func getProjectTeamMembersForSync(_ inLastSyncDate: Date) -> [ProjectTeamMembers]
     {
-        let fetchRequest = NSFetchRequest(entityName: "ProjectTeamMembers")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectTeamMembers")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [ProjectTeamMembers]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [ProjectTeamMembers]
         
         return fetchResults!
     }
 
-    func getRolesForSync(inLastSyncDate: NSDate) -> [Roles]
+    func getRolesForSync(_ inLastSyncDate: Date) -> [Roles]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Roles")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Roles")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Roles]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Roles]
         
         return fetchResults!
     }
     
-    func getStagesForSync(inLastSyncDate: NSDate) -> [Stages]
+    func getStagesForSync(_ inLastSyncDate: Date) -> [Stages]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Stages")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Stages")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Stages]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Stages]
         
         return fetchResults!
     }
 
-    func getTaskForSync(inLastSyncDate: NSDate) -> [Task]
+    func getTaskForSync(_ inLastSyncDate: Date) -> [Task]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Task")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Task]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Task]
         
         return fetchResults!
     }
 
-    func getTaskAttachmentsForSync(inLastSyncDate: NSDate) -> [TaskAttachment]
+    func getTaskAttachmentsForSync(_ inLastSyncDate: Date) -> [TaskAttachment]
     {
-        let fetchRequest = NSFetchRequest(entityName: "TaskAttachment")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskAttachment")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [TaskAttachment]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [TaskAttachment]
         
         return fetchResults!
     }
     
-    func getTaskContextsForSync(inLastSyncDate: NSDate) -> [TaskContext]
+    func getTaskContextsForSync(_ inLastSyncDate: Date) -> [TaskContext]
     {
-        let fetchRequest = NSFetchRequest(entityName: "TaskContext")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskContext")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [TaskContext]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [TaskContext]
         
         return fetchResults!
     }
     
-    func getTaskPredecessorsForSync(inLastSyncDate: NSDate) -> [TaskPredecessor]
+    func getTaskPredecessorsForSync(_ inLastSyncDate: Date) -> [TaskPredecessor]
     {
-        let fetchRequest = NSFetchRequest(entityName: "TaskPredecessor")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskPredecessor")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [TaskPredecessor]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [TaskPredecessor]
         
         return fetchResults!
     }
     
-    func getTaskUpdatesForSync(inLastSyncDate: NSDate) -> [TaskUpdates]
+    func getTaskUpdatesForSync(_ inLastSyncDate: Date) -> [TaskUpdates]
     {
-        let fetchRequest = NSFetchRequest(entityName: "TaskUpdates")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskUpdates")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [TaskUpdates]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [TaskUpdates]
         
         return fetchResults!
     }
     
-    func getTeamsForSync(inLastSyncDate: NSDate) -> [Team]
+    func getTeamsForSync(_ inLastSyncDate: Date) -> [Team]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Team")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Team")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Team]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Team]
         
         return fetchResults!
     }
     
-    func getProcessedEmailsForSync(inLastSyncDate: NSDate) -> [ProcessedEmails]
+    func getProcessedEmailsForSync(_ inLastSyncDate: Date) -> [ProcessedEmails]
     {
-        let fetchRequest = NSFetchRequest(entityName: "ProcessedEmails")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ProcessedEmails")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [ProcessedEmails]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [ProcessedEmails]
         
         return fetchResults!
     }
 
-    func getOutlineForSync(inLastSyncDate: NSDate) -> [Outline]
+    func getOutlineForSync(_ inLastSyncDate: Date) -> [Outline]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Outline")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Outline")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Outline]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Outline]
         
         return fetchResults!
     }
     
-    func getOutlineDetailsForSync(inLastSyncDate: NSDate) -> [OutlineDetails]
+    func getOutlineDetailsForSync(_ inLastSyncDate: Date) -> [OutlineDetails]
     {
-        let fetchRequest = NSFetchRequest(entityName: "OutlineDetails")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "OutlineDetails")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [OutlineDetails]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [OutlineDetails]
         
         return fetchResults!
     }
     
     func deleteAllCoreData()
     {
-        let fetchRequest2 = NSFetchRequest(entityName: "Context")
-        managedObjectContext!.performBlockAndWait
+        let fetchRequest2 = NSFetchRequest<NSFetchRequestResult>(entityName: "Context")
+        managedObjectContext!.performAndWait
             {
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults2 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest2)) as? [Context]
+        let fetchResults2 = (try? self.managedObjectContext!.fetch(fetchRequest2)) as? [Context]
  
 
         for myItem2 in fetchResults2!
         {
-            self.managedObjectContext!.deleteObject(myItem2 as NSManagedObject)
+            self.managedObjectContext!.delete(myItem2 as NSManagedObject)
         }
                 do
                 {
@@ -6902,16 +6902,16 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        let fetchRequest3 = NSFetchRequest(entityName: "Decodes")
+        let fetchRequest3 = NSFetchRequest<NSFetchRequestResult>(entityName: "Decodes")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
-                let fetchResults3 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest3)) as? [Decodes]
+                let fetchResults3 = (try? self.managedObjectContext!.fetch(fetchRequest3)) as? [Decodes]
 
         for myItem3 in fetchResults3!
         {
-            self.managedObjectContext!.deleteObject(myItem3 as NSManagedObject)
+            self.managedObjectContext!.delete(myItem3 as NSManagedObject)
         }
 
                 do
@@ -6926,16 +6926,16 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        let fetchRequest5 = NSFetchRequest(entityName: "MeetingAgenda")
+        let fetchRequest5 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
-                let fetchResults5 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest5)) as? [MeetingAgenda]
+                let fetchResults5 = (try? self.managedObjectContext!.fetch(fetchRequest5)) as? [MeetingAgenda]
 
         for myItem5 in fetchResults5!
         {
-            self.managedObjectContext!.deleteObject(myItem5 as NSManagedObject)
+            self.managedObjectContext!.delete(myItem5 as NSManagedObject)
         }
 
                 do
@@ -6950,16 +6950,16 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        let fetchRequest6 = NSFetchRequest(entityName: "MeetingAgendaItem")
+        let fetchRequest6 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgendaItem")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
-                let fetchResults6 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest6)) as? [MeetingAgendaItem]
+                let fetchResults6 = (try? self.managedObjectContext!.fetch(fetchRequest6)) as? [MeetingAgendaItem]
 
         for myItem6 in fetchResults6!
         {
-            self.managedObjectContext!.deleteObject(myItem6 as NSManagedObject)
+            self.managedObjectContext!.delete(myItem6 as NSManagedObject)
         }
 
                 do
@@ -6974,16 +6974,16 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        let fetchRequest7 = NSFetchRequest(entityName: "MeetingAttendees")
+        let fetchRequest7 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAttendees")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
-                let fetchResults7 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest7)) as? [MeetingAttendees]
+                let fetchResults7 = (try? self.managedObjectContext!.fetch(fetchRequest7)) as? [MeetingAttendees]
 
         for myItem7 in fetchResults7!
         {
-            self.managedObjectContext!.deleteObject(myItem7 as NSManagedObject)
+            self.managedObjectContext!.delete(myItem7 as NSManagedObject)
         }
 
                 do
@@ -6998,16 +6998,16 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        let fetchRequest8 = NSFetchRequest(entityName: "MeetingSupportingDocs")
+        let fetchRequest8 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingSupportingDocs")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
-                let fetchResults8 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest8)) as? [MeetingSupportingDocs]
+                let fetchResults8 = (try? self.managedObjectContext!.fetch(fetchRequest8)) as? [MeetingSupportingDocs]
                 
                 for myItem8 in fetchResults8!
         {
-            self.managedObjectContext!.deleteObject(myItem8 as NSManagedObject)
+            self.managedObjectContext!.delete(myItem8 as NSManagedObject)
         }
 
                 do
@@ -7022,16 +7022,16 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        let fetchRequest9 = NSFetchRequest(entityName: "MeetingTasks")
+        let fetchRequest9 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingTasks")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
-                let fetchResults9 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest9)) as? [MeetingTasks]
+                let fetchResults9 = (try? self.managedObjectContext!.fetch(fetchRequest9)) as? [MeetingTasks]
 
         for myItem9 in fetchResults9!
         {
-            self.managedObjectContext!.deleteObject(myItem9 as NSManagedObject)
+            self.managedObjectContext!.delete(myItem9 as NSManagedObject)
         }
 
                 do
@@ -7046,16 +7046,16 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        let fetchRequest10 = NSFetchRequest(entityName: "Panes")
+        let fetchRequest10 = NSFetchRequest<NSFetchRequestResult>(entityName: "Panes")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
-                let fetchResults10 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest10)) as? [Panes]
+                let fetchResults10 = (try? self.managedObjectContext!.fetch(fetchRequest10)) as? [Panes]
 
             for myItem10 in fetchResults10!
         {
-            self.managedObjectContext!.deleteObject(myItem10 as NSManagedObject)
+            self.managedObjectContext!.delete(myItem10 as NSManagedObject)
         }
 
                 do
@@ -7070,16 +7070,16 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        let fetchRequest11 = NSFetchRequest(entityName: "Projects")
+        let fetchRequest11 = NSFetchRequest<NSFetchRequestResult>(entityName: "Projects")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
-                let fetchResults11 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest11)) as? [Projects]
+                let fetchResults11 = (try? self.managedObjectContext!.fetch(fetchRequest11)) as? [Projects]
 
         for myItem11 in fetchResults11!
         {
-            self.managedObjectContext!.deleteObject(myItem11 as NSManagedObject)
+            self.managedObjectContext!.delete(myItem11 as NSManagedObject)
         }
                 do
                 {
@@ -7093,16 +7093,16 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        let fetchRequest12 = NSFetchRequest(entityName: "ProjectTeamMembers")
+        let fetchRequest12 = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectTeamMembers")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
-                let fetchResults12 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest12)) as? [ProjectTeamMembers]
+                let fetchResults12 = (try? self.managedObjectContext!.fetch(fetchRequest12)) as? [ProjectTeamMembers]
 
         for myItem12 in fetchResults12!
         {
-            self.managedObjectContext!.deleteObject(myItem12 as NSManagedObject)
+            self.managedObjectContext!.delete(myItem12 as NSManagedObject)
         }
                 do
                 {
@@ -7116,17 +7116,17 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        let fetchRequest14 = NSFetchRequest(entityName: "Roles")
+        let fetchRequest14 = NSFetchRequest<NSFetchRequestResult>(entityName: "Roles")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
         {
-            let fetchResults14 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest14)) as? [Roles]
+            let fetchResults14 = (try? self.managedObjectContext!.fetch(fetchRequest14)) as? [Roles]
 
             for myItem14 in fetchResults14!
             {
-                self.managedObjectContext!.deleteObject(myItem14 as NSManagedObject)
+                self.managedObjectContext!.delete(myItem14 as NSManagedObject)
             }
     
                 do
@@ -7141,16 +7141,16 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        let fetchRequest15 = NSFetchRequest(entityName: "Stages")
+        let fetchRequest15 = NSFetchRequest<NSFetchRequestResult>(entityName: "Stages")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
-                let fetchResults15 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest15)) as? [Stages]
+                let fetchResults15 = (try? self.managedObjectContext!.fetch(fetchRequest15)) as? [Stages]
 
         for myItem15 in fetchResults15!
         {
-            self.managedObjectContext!.deleteObject(myItem15 as NSManagedObject)
+            self.managedObjectContext!.delete(myItem15 as NSManagedObject)
         }
                 do
                 {
@@ -7164,16 +7164,16 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        let fetchRequest16 = NSFetchRequest(entityName: "Task")
+        let fetchRequest16 = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
-                let fetchResults16 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest16)) as? [Task]
+                let fetchResults16 = (try? self.managedObjectContext!.fetch(fetchRequest16)) as? [Task]
 
         for myItem16 in fetchResults16!
         {
-            self.managedObjectContext!.deleteObject(myItem16 as NSManagedObject)
+            self.managedObjectContext!.delete(myItem16 as NSManagedObject)
         }
                 do
                 {
@@ -7187,16 +7187,16 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        let fetchRequest17 = NSFetchRequest(entityName: "TaskAttachment")
+        let fetchRequest17 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskAttachment")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
-                let fetchResults17 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest17)) as? [TaskAttachment]
+                let fetchResults17 = (try? self.managedObjectContext!.fetch(fetchRequest17)) as? [TaskAttachment]
 
         for myItem17 in fetchResults17!
         {
-            self.managedObjectContext!.deleteObject(myItem17 as NSManagedObject)
+            self.managedObjectContext!.delete(myItem17 as NSManagedObject)
         }
 
                 do
@@ -7211,16 +7211,16 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        let fetchRequest18 = NSFetchRequest(entityName: "TaskContext")
+        let fetchRequest18 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskContext")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
-                let fetchResults18 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest18)) as? [TaskContext]
+                let fetchResults18 = (try? self.managedObjectContext!.fetch(fetchRequest18)) as? [TaskContext]
 
         for myItem18 in fetchResults18!
         {
-            self.managedObjectContext!.deleteObject(myItem18 as NSManagedObject)
+            self.managedObjectContext!.delete(myItem18 as NSManagedObject)
         }
                 do
                 {
@@ -7234,16 +7234,16 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        let fetchRequest19 = NSFetchRequest(entityName: "TaskUpdates")
+        let fetchRequest19 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskUpdates")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
-                let fetchResults19 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest19)) as? [TaskUpdates]
+                let fetchResults19 = (try? self.managedObjectContext!.fetch(fetchRequest19)) as? [TaskUpdates]
 
         for myItem19 in fetchResults19!
         {
-            self.managedObjectContext!.deleteObject(myItem19 as NSManagedObject)
+            self.managedObjectContext!.delete(myItem19 as NSManagedObject)
         }
                 do
                 {
@@ -7257,15 +7257,15 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        let fetchRequest21 = NSFetchRequest(entityName: "TaskPredecessor")
+        let fetchRequest21 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskPredecessor")
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
-                let fetchResults21 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest21)) as? [TaskPredecessor]
+                let fetchResults21 = (try? self.managedObjectContext!.fetch(fetchRequest21)) as? [TaskPredecessor]
 
         for myItem21 in fetchResults21!
         {
-            self.managedObjectContext!.deleteObject(myItem21 as NSManagedObject)
+            self.managedObjectContext!.delete(myItem21 as NSManagedObject)
         }
                 do
                 {
@@ -7279,15 +7279,15 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        let fetchRequest22 = NSFetchRequest(entityName: "Team")
+        let fetchRequest22 = NSFetchRequest<NSFetchRequestResult>(entityName: "Team")
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
-                let fetchResults22 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest22)) as? [Team]
+                let fetchResults22 = (try? self.managedObjectContext!.fetch(fetchRequest22)) as? [Team]
 
         for myItem22 in fetchResults22!
         {
-            self.managedObjectContext!.deleteObject(myItem22 as NSManagedObject)
+            self.managedObjectContext!.delete(myItem22 as NSManagedObject)
         }
                 do
                 {
@@ -7301,15 +7301,15 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        let fetchRequest23 = NSFetchRequest(entityName: "ProjectNote")
+        let fetchRequest23 = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectNote")
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
-                let fetchResults23 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest23)) as? [ProjectNote]
+                let fetchResults23 = (try? self.managedObjectContext!.fetch(fetchRequest23)) as? [ProjectNote]
 
         for myItem23 in fetchResults23!
         {
-            self.managedObjectContext!.deleteObject(myItem23 as NSManagedObject)
+            self.managedObjectContext!.delete(myItem23 as NSManagedObject)
         }
 
                 do
@@ -7324,15 +7324,15 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        let fetchRequest24 = NSFetchRequest(entityName: "Context1_1")
+        let fetchRequest24 = NSFetchRequest<NSFetchRequestResult>(entityName: "Context1_1")
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
-                let fetchResults24 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest24)) as? [Context1_1]
+                let fetchResults24 = (try? self.managedObjectContext!.fetch(fetchRequest24)) as? [Context1_1]
                 
         for myItem24 in fetchResults24!
         {
-            self.managedObjectContext!.deleteObject(myItem24 as NSManagedObject)
+            self.managedObjectContext!.delete(myItem24 as NSManagedObject)
         }
                 do
                 {
@@ -7346,15 +7346,15 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        let fetchRequest25 = NSFetchRequest(entityName: "GTDItem")
+        let fetchRequest25 = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDItem")
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
-                let fetchResults25 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest25)) as? [GTDItem]
+                let fetchResults25 = (try? self.managedObjectContext!.fetch(fetchRequest25)) as? [GTDItem]
 
         for myItem25 in fetchResults25!
         {
-            self.managedObjectContext!.deleteObject(myItem25 as NSManagedObject)
+            self.managedObjectContext!.delete(myItem25 as NSManagedObject)
         }
                 do
                 {
@@ -7368,15 +7368,15 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        let fetchRequest26 = NSFetchRequest(entityName: "GTDLevel")
+        let fetchRequest26 = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDLevel")
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
-                let fetchResults26 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest26)) as? [GTDLevel]
+                let fetchResults26 = (try? self.managedObjectContext!.fetch(fetchRequest26)) as? [GTDLevel]
 
         for myItem26 in fetchResults26!
         {
-            self.managedObjectContext!.deleteObject(myItem26 as NSManagedObject)
+            self.managedObjectContext!.delete(myItem26 as NSManagedObject)
         }
                 do
                 {
@@ -7390,15 +7390,15 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        let fetchRequest27 = NSFetchRequest(entityName: "ProcessedEmails")
+        let fetchRequest27 = NSFetchRequest<NSFetchRequestResult>(entityName: "ProcessedEmails")
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
-                let fetchResults27 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest27)) as? [ProcessedEmails]
+                let fetchResults27 = (try? self.managedObjectContext!.fetch(fetchRequest27)) as? [ProcessedEmails]
                 
                 for myItem27 in fetchResults27!
                 {
-                    self.managedObjectContext!.deleteObject(myItem27 as NSManagedObject)
+                    self.managedObjectContext!.delete(myItem27 as NSManagedObject)
                 }
                 
                 do
@@ -7413,15 +7413,15 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
 
-        let fetchRequest28 = NSFetchRequest(entityName: "Outline")
+        let fetchRequest28 = NSFetchRequest<NSFetchRequestResult>(entityName: "Outline")
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
-                let fetchResults28 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest28)) as? [Outline]
+                let fetchResults28 = (try? self.managedObjectContext!.fetch(fetchRequest28)) as? [Outline]
                 
                 for myItem28 in fetchResults28!
                 {
-                    self.managedObjectContext!.deleteObject(myItem28 as NSManagedObject)
+                    self.managedObjectContext!.delete(myItem28 as NSManagedObject)
                 }
                 
                 do
@@ -7436,15 +7436,15 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
                 }
         }
         
-        let fetchRequest29 = NSFetchRequest(entityName: "OutlineDetails")
+        let fetchRequest29 = NSFetchRequest<NSFetchRequestResult>(entityName: "OutlineDetails")
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
-                let fetchResults29 = (try? self.managedObjectContext!.executeFetchRequest(fetchRequest29)) as? [OutlineDetails]
+                let fetchResults29 = (try? self.managedObjectContext!.fetch(fetchRequest29)) as? [OutlineDetails]
                 
                 for myItem29 in fetchResults29!
                 {
-                    self.managedObjectContext!.deleteObject(myItem29 as NSManagedObject)
+                    self.managedObjectContext!.delete(myItem29 as NSManagedObject)
                 }
                 
                 do
@@ -7460,7 +7460,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
 
-    func saveProcessedEmail(emailID: String, emailType: String, processedDate: NSDate, updateTime: NSDate = NSDate(), updateType: String = "CODE")
+    func saveProcessedEmail(_ emailID: String, emailType: String, processedDate: Date, updateTime: Date = Date(), updateType: String = "CODE")
     {
         var myEmail: ProcessedEmails!
         
@@ -7468,14 +7468,14 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         
         if myEmailItems.count == 0
         { // Add
-            myEmail = NSEntityDescription.insertNewObjectForEntityForName("ProcessedEmails", inManagedObjectContext: self.managedObjectContext!) as! ProcessedEmails
+            myEmail = NSEntityDescription.insertNewObject(forEntityName: "ProcessedEmails", into: self.managedObjectContext!) as! ProcessedEmails
             myEmail.emailID = emailID
             myEmail.emailType = emailType
             myEmail.processedDate = processedDate
 
             if updateType == "CODE"
             {
-                myEmail.updateTime = NSDate()
+                myEmail.updateTime = Date()
                 myEmail.updateType = "Add"
             }
             else
@@ -7503,7 +7503,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
                 do
                 {
@@ -7520,18 +7520,18 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         myCloudDB.saveProcessedEmailsRecordToCloudKit(myEmail)
     }
     
-    func replaceProcessedEmail(emailID: String, emailType: String, processedDate: NSDate, updateTime: NSDate = NSDate(), updateType: String = "CODE")
+    func replaceProcessedEmail(_ emailID: String, emailType: String, processedDate: Date, updateTime: Date = Date(), updateType: String = "CODE")
     {
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
-        let myEmail = NSEntityDescription.insertNewObjectForEntityForName("ProcessedEmails", inManagedObjectContext: self.managedObjectContext!) as! ProcessedEmails
+        let myEmail = NSEntityDescription.insertNewObject(forEntityName: "ProcessedEmails", into: self.managedObjectContext!) as! ProcessedEmails
         myEmail.emailID = emailID
         myEmail.emailType = emailType
         myEmail.processedDate = processedDate
         
         if updateType == "CODE"
         {
-            myEmail.updateTime = NSDate()
+            myEmail.updateTime = Date()
             myEmail.updateType = "Add"
         }
         else
@@ -7553,7 +7553,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
     
-    func deleteProcessedEmail(emailID: String)
+    func deleteProcessedEmail(_ emailID: String)
     {
         var myEmail: ProcessedEmails!
         
@@ -7562,11 +7562,11 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         if myEmailItems.count > 0
         { // Update
             myEmail = myEmailItems[0]
-            myEmail.updateTime = NSDate()
+            myEmail.updateTime = Date()
             myEmail.updateType = "Delete"
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -7582,9 +7582,9 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
 
     }
     
-    func getProcessedEmail(emailID: String)->[ProcessedEmails]
+    func getProcessedEmail(_ emailID: String)->[ProcessedEmails]
     {
-        let fetchRequest = NSFetchRequest(entityName: "ProcessedEmails")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ProcessedEmails")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -7594,12 +7594,12 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [ProcessedEmails]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [ProcessedEmails]
         
         return fetchResults!
     }
 
-    func saveOutline(outlineID: Int, parentID: Int, parentType: String, title: String, status: String, updateTime: NSDate = NSDate(), updateType: String = "CODE")
+    func saveOutline(_ outlineID: Int, parentID: Int, parentType: String, title: String, status: String, updateTime: Date = Date(), updateType: String = "CODE")
     {
         var myOutline: Outline!
         
@@ -7607,16 +7607,16 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         
         if myOutlineItems.count == 0
         { // Add
-            myOutline = NSEntityDescription.insertNewObjectForEntityForName("Outline", inManagedObjectContext: self.managedObjectContext!) as! Outline
-            myOutline.outlineID = outlineID
-            myOutline.parentID = parentID
+            myOutline = NSEntityDescription.insertNewObject(forEntityName: "Outline", into: self.managedObjectContext!) as! Outline
+            myOutline.outlineID = outlineID as NSNumber?
+            myOutline.parentID = parentID as NSNumber?
             myOutline.parentType = parentType
             myOutline.title = title
             myOutline.status = status
             
             if updateType == "CODE"
             {
-                myOutline.updateTime = NSDate()
+                myOutline.updateTime = Date()
                 myOutline.updateType = "Add"
             }
             else
@@ -7628,7 +7628,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         else
         { // Update
             myOutline = myOutlineItems[0]
-            myOutline.parentID = parentID
+            myOutline.parentID = parentID as NSNumber?
             myOutline.parentType = parentType
             myOutline.title = title
             myOutline.status = status
@@ -7646,7 +7646,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
                 do
                 {
@@ -7663,20 +7663,20 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         myCloudDB.saveOutlineRecordToCloudKit(myOutline)
     }
     
-    func replaceOutline(outlineID: Int, parentID: Int, parentType: String, title: String, status: String, updateTime: NSDate = NSDate(), updateType: String = "CODE")
+    func replaceOutline(_ outlineID: Int, parentID: Int, parentType: String, title: String, status: String, updateTime: Date = Date(), updateType: String = "CODE")
     {
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
-                let myOutline = NSEntityDescription.insertNewObjectForEntityForName("Outline", inManagedObjectContext: self.managedObjectContext!) as! Outline
-                myOutline.outlineID = outlineID
-                myOutline.parentID = parentID
+                let myOutline = NSEntityDescription.insertNewObject(forEntityName: "Outline", into: self.managedObjectContext!) as! Outline
+                myOutline.outlineID = outlineID as NSNumber?
+                myOutline.parentID = parentID as NSNumber?
                 myOutline.parentType = parentType
                 myOutline.title = title
                 myOutline.status = status
                 
                 if updateType == "CODE"
                 {
-                    myOutline.updateTime = NSDate()
+                    myOutline.updateTime = Date()
                     myOutline.updateType = "Add"
                 }
                 else
@@ -7698,7 +7698,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
     
-    func deleteOutline(outlineID: Int)
+    func deleteOutline(_ outlineID: Int)
     {
         var myOutline: Outline!
         
@@ -7707,11 +7707,11 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         if myOutlineItems.count > 0
         { // Update
             myOutline = myOutlineItems[0]
-            myOutline.updateTime = NSDate()
+            myOutline.updateTime = Date()
             myOutline.updateType = "Delete"
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -7727,9 +7727,9 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         
     }
     
-    func getOutline(outlineID: Int)->[Outline]
+    func getOutline(_ outlineID: Int)->[Outline]
     {
-        let fetchRequest = NSFetchRequest(entityName: "Outline")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Outline")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -7739,12 +7739,12 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [Outline]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Outline]
         
         return fetchResults!
     }
 
-    func saveOutlineDetail(outlineID: Int, lineID: Int, lineOrder: Int, parentLine: Int, lineText: String, lineType: String, checkBoxValue: Bool, updateTime: NSDate = NSDate(), updateType: String = "CODE")
+    func saveOutlineDetail(_ outlineID: Int, lineID: Int, lineOrder: Int, parentLine: Int, lineText: String, lineType: String, checkBoxValue: Bool, updateTime: Date = Date(), updateType: String = "CODE")
     {
         var myOutline: OutlineDetails!
         
@@ -7752,18 +7752,18 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         
         if myOutlineItems.count == 0
         { // Add
-            myOutline = NSEntityDescription.insertNewObjectForEntityForName("OutlineDetails", inManagedObjectContext: self.managedObjectContext!) as! OutlineDetails
-            myOutline.outlineID = outlineID
-            myOutline.lineID = lineID
-            myOutline.lineOrder = lineOrder
-            myOutline.parentLine = parentLine
+            myOutline = NSEntityDescription.insertNewObject(forEntityName: "OutlineDetails", into: self.managedObjectContext!) as! OutlineDetails
+            myOutline.outlineID = outlineID as NSNumber?
+            myOutline.lineID = lineID as NSNumber?
+            myOutline.lineOrder = lineOrder as NSNumber?
+            myOutline.parentLine = parentLine as NSNumber?
             myOutline.lineText = lineText
             myOutline.lineType = lineType
-            myOutline.checkBoxValue = checkBoxValue
+            myOutline.checkBoxValue = checkBoxValue as NSNumber?
 
             if updateType == "CODE"
             {
-                myOutline.updateTime = NSDate()
+                myOutline.updateTime = Date()
                 myOutline.updateType = "Add"
             }
             else
@@ -7775,11 +7775,11 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         else
         { // Update
             myOutline = myOutlineItems[0]
-            myOutline.lineOrder = lineOrder
-            myOutline.parentLine = parentLine
+            myOutline.lineOrder = lineOrder as NSNumber?
+            myOutline.parentLine = parentLine as NSNumber?
             myOutline.lineText = lineText
             myOutline.lineType = lineType
-            myOutline.checkBoxValue = checkBoxValue
+            myOutline.checkBoxValue = checkBoxValue as NSNumber?
             
             if updateType == "CODE"
             {
@@ -7795,7 +7795,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
             }
         }
         
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
                 do
                 {
@@ -7812,22 +7812,22 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         myCloudDB.saveOutlineDetailsRecordToCloudKit(myOutline)
     }
     
-    func replaceOutlineDetails(outlineID: Int, lineID: Int, lineOrder: Int, parentLine: Int, lineText: String, lineType: String, checkBoxValue: Bool, updateTime: NSDate = NSDate(), updateType: String = "CODE")
+    func replaceOutlineDetails(_ outlineID: Int, lineID: Int, lineOrder: Int, parentLine: Int, lineText: String, lineType: String, checkBoxValue: Bool, updateTime: Date = Date(), updateType: String = "CODE")
     {
-        managedObjectContext!.performBlock
+        managedObjectContext!.perform
             {
-                let myOutline = NSEntityDescription.insertNewObjectForEntityForName("OutlineDetails", inManagedObjectContext: self.managedObjectContext!) as! OutlineDetails
-                myOutline.outlineID = outlineID
-                myOutline.lineID = lineID
-                myOutline.lineOrder = lineOrder
-                myOutline.parentLine = parentLine
+                let myOutline = NSEntityDescription.insertNewObject(forEntityName: "OutlineDetails", into: self.managedObjectContext!) as! OutlineDetails
+                myOutline.outlineID = outlineID as NSNumber?
+                myOutline.lineID = lineID as NSNumber?
+                myOutline.lineOrder = lineOrder as NSNumber?
+                myOutline.parentLine = parentLine as NSNumber?
                 myOutline.lineText = lineText
                 myOutline.lineType = lineType
-                myOutline.checkBoxValue = checkBoxValue
+                myOutline.checkBoxValue = checkBoxValue as NSNumber?
                 
                 if updateType == "CODE"
                 {
-                    myOutline.updateTime = NSDate()
+                    myOutline.updateTime = Date()
                     myOutline.updateType = "Add"
                 }
                 else
@@ -7849,7 +7849,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         }
     }
     
-    func deleteOutlineDetails(outlineID: Int, lineID: Int)
+    func deleteOutlineDetails(_ outlineID: Int, lineID: Int)
     {
         var myOutline: OutlineDetails!
         
@@ -7858,11 +7858,11 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         if myOutlineItems.count > 0
         { // Update
             myOutline = myOutlineItems[0]
-            myOutline.updateTime = NSDate()
+            myOutline.updateTime = Date()
             myOutline.updateType = "Delete"
         }
         
-        managedObjectContext!.performBlockAndWait
+        managedObjectContext!.performAndWait
             {
                 do
                 {
@@ -7878,9 +7878,9 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         
     }
     
-    func getOutlineDetails(outlineID: Int, lineID: Int)->[OutlineDetails]
+    func getOutlineDetails(_ outlineID: Int, lineID: Int)->[OutlineDetails]
     {
-        let fetchRequest = NSFetchRequest(entityName: "OutlineDetails")
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "OutlineDetails")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -7890,7 +7890,7 @@ func replaceTaskContext(inContextID: Int, inTaskID: Int, inUpdateTime: NSDate = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.executeFetchRequest(fetchRequest)) as? [OutlineDetails]
+        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [OutlineDetails]
         
         return fetchResults!
     }

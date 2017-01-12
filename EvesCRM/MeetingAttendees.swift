@@ -16,7 +16,7 @@ class MeetingAttendees: NSManagedObject {
     @NSManaged var meetingID: String
     @NSManaged var name: String
     @NSManaged var type: String
-    @NSManaged var updateTime: NSDate
+    @NSManaged var updateTime: Date
     @NSManaged var updateType: String
 
 }

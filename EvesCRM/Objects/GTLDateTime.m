@@ -39,7 +39,7 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
 - (void)setFromRFC3339String:(NSString *)str;
 
 @property (nonatomic, retain, readwrite) NSTimeZone *timeZone;
-@property (nonatomic, copy, readwrite) NSDateComponents *dateComponents;
+@property (nonatomic, copy, readwrite) DateComponents *dateComponents;
 @property (nonatomic, assign, readwrite) NSInteger milliseconds;
 
 @property (nonatomic, assign, readwrite) BOOL hasTime;
@@ -51,12 +51,12 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
 @implementation GTLDateTime
 
 // A note about milliseconds_:
-// RFC 3339 has support for fractions of a second.  NSDateComponents is all
+// RFC 3339 has support for fractions of a second.  DateComponents is all
 // NSInteger based, so it can't handle a fraction of a second.  NSDate is
 // built on NSTimeInterval so it has sub-millisecond precision.  GTL takes
 // the compromise of supporting the RFC's optional fractional second support
 // by maintaining a number of milliseconds past what fits in the
-// NSDateComponents.  The parsing and string conversions will include
+// DateComponents.  The parsing and string conversions will include
 // 3 decimal digits (hence milliseconds).  When going to a string, the decimal
 // digits are only included if the milliseconds are non zero.
 
@@ -97,18 +97,18 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
   return result;
 }
 
-+ (GTLDateTime *)dateTimeWithDateComponents:(NSDateComponents *)components {
++ (GTLDateTime *)dateTimeWithDateComponents:(DateComponents *)components {
 #if GTL_NEW_CALENDAR_ENUMS
-  NSString *calendarID = NSCalendarIdentifierGregorian;
+  NSString *calendarID = CalendarIdentifierGregorian;
 #else
   NSString *calendarID = NSGregorianCalendar;
 #endif
-  NSCalendar *cal = [[[NSCalendar alloc] initWithCalendarIdentifier:calendarID] autorelease];
+  Calendar *cal = [[[Calendar alloc] initWithCalendarIdentifier:calendarID] autorelease];
   NSDate *date = [cal dateFromComponents:components];
 #if GTL_IPHONE
   NSTimeZone *tz = [components timeZone];
 #else
-  // NSDateComponents added timeZone: in Mac OS X 10.7.
+  // DateComponents added timeZone: in Mac OS X 10.7.
   NSTimeZone *tz = nil;
 
 #if defined(MAC_OS_X_VERSION_10_7) && MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_7
@@ -136,7 +136,7 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
   return [self retain];
 }
 
-// On 10.9 and iOS 7 (and possibly earlier systems) NSDateComponents isEqual: works; check if
+// On 10.9 and iOS 7 (and possibly earlier systems) DateComponents isEqual: works; check if
 // we're guaranteed to be running on those systems or later.
 #if (!TARGET_OS_IPHONE && defined(MAC_OS_X_VERSION_10_9) && MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_9) \
     || (TARGET_OS_IPHONE && defined(__IPHONE_7_0) && __IPHONE_OS_VERSION_MIN_REQUIRED >= __IPHONE_7_0)
@@ -165,8 +165,8 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
 
 // until NSDateComponent implements isEqual, we'll use this
 #if !GTL_CAN_TRUST_DATE_COMPONENTS_ISEQUAL
-- (BOOL)doesDateComponents:(NSDateComponents *)dc1
-       equalDateComponents:(NSDateComponents *)dc2 {
+- (BOOL)doesDateComponents:(DateComponents *)dc1
+       equalDateComponents:(DateComponents *)dc2 {
 
   return [dc1 era] == [dc2 era]
           && [dc1 year] == [dc2 year]
@@ -251,7 +251,7 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
   }
 }
 
-- (NSCalendar *)calendarForTimeZone:(NSTimeZone *)tz {
+- (Calendar *)calendarForTimeZone:(NSTimeZone *)tz {
   static NSMutableDictionary *gCalendarsForTimeZones;
 
   static dispatch_once_t onceToken;
@@ -259,17 +259,17 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
     gCalendarsForTimeZones = [[NSMutableDictionary alloc] init];
   });
 
-  NSCalendar *cal = nil;
+  Calendar *cal = nil;
   @synchronized(gCalendarsForTimeZones) {
     id tzKey = (tz ? tz : [NSNull null]);
     cal = [gCalendarsForTimeZones objectForKey:tzKey];
     if (cal == nil) {
 #if GTL_NEW_CALENDAR_ENUMS
-      NSString *calendarID = NSCalendarIdentifierGregorian;
+      NSString *calendarID = CalendarIdentifierGregorian;
 #else
       NSString *calendarID = NSGregorianCalendar;
 #endif
-      cal = [[[NSCalendar alloc] initWithCalendarIdentifier:calendarID] autorelease];
+      cal = [[[Calendar alloc] initWithCalendarIdentifier:calendarID] autorelease];
       if (tz) {
         [cal setTimeZone:tz];
       }
@@ -279,7 +279,7 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
   return cal;
 }
 
-- (NSCalendar *)calendar {
+- (Calendar *)calendar {
   NSTimeZone *tz = self.timeZone;
   return [self calendarForTimeZone:tz];
 }
@@ -289,9 +289,9 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
     if (cachedDate_) return cachedDate_;
   }
 
-  NSDateComponents *dateComponents = self.dateComponents;
+  DateComponents *dateComponents = self.dateComponents;
   NSTimeInterval extraMillisecondsAsSeconds = 0.0;
-  NSCalendar *cal;
+  Calendar *cal;
 
   if (!self.hasTime) {
     // We're not keeping track of a time, but NSDate always is based on
@@ -302,7 +302,7 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
     // We'll make a copy of the date components, setting the time on our
     // copy to noon GMT, since that ensures the date renders correctly for
     // any time zone.
-    NSDateComponents *noonDateComponents = [[dateComponents copy] autorelease];
+    DateComponents *noonDateComponents = [[dateComponents copy] autorelease];
     [noonDateComponents setHour:12];
     [noonDateComponents setMinute:0];
     [noonDateComponents setSecond:0];
@@ -313,7 +313,7 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
   } else {
     cal = self.calendar;
 
-    // Add in the fractional seconds that don't fit into NSDateComponents.
+    // Add in the fractional seconds that don't fit into DateComponents.
     extraMillisecondsAsSeconds = ((NSTimeInterval)self.milliseconds) / 1000.0;
   }
 
@@ -344,7 +344,7 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
     if (cachedRFC3339String_) return cachedRFC3339String_;
   }
 
-  NSDateComponents *dateComponents = self.dateComponents;
+  DateComponents *dateComponents = self.dateComponents;
   NSInteger offset = self.offsetSeconds;
 
   NSString *timeString = @""; // timeString like "T15:10:46-08:00"
@@ -392,19 +392,19 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
 }
 
 - (void)setFromDate:(NSDate *)date timeZone:(NSTimeZone *)tz {
-  NSCalendar *cal = [self calendarForTimeZone:tz];
+  Calendar *cal = [self calendarForTimeZone:tz];
 
 #if GTL_NEW_CALENDAR_ENUMS
-  NSUInteger const kComponentBits = (NSCalendarUnitYear | NSCalendarUnitMonth
-    | NSCalendarUnitDay | NSCalendarUnitHour | NSCalendarUnitMinute
-    | NSCalendarUnitSecond);
+  NSUInteger const kComponentBits = (CalendarUnitYear | CalendarUnitMonth
+    | CalendarUnitDay | CalendarUnitHour | CalendarUnitMinute
+    | CalendarUnitSecond);
 #else
   NSUInteger const kComponentBits = (NSYearCalendarUnit | NSMonthCalendarUnit
     | NSDayCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit
     | NSSecondCalendarUnit);
 #endif
 
-  NSDateComponents *components = [cal components:kComponentBits fromDate:date];
+  DateComponents *components = [cal components:kComponentBits fromDate:date];
   self.dateComponents = components;
 
   // Extract the fractional seconds.
@@ -492,7 +492,7 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
     }
   }
 
-  NSDateComponents *dateComponents = [[[NSDateComponents alloc] init] autorelease];
+  DateComponents *dateComponents = [[[DateComponents alloc] init] autorelease];
   [dateComponents setYear:year];
   [dateComponents setMonth:month];
   [dateComponents setDay:day];
@@ -534,7 +534,7 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
 }
 
 - (BOOL)hasTime {
-  NSDateComponents *dateComponents = self.dateComponents;
+  DateComponents *dateComponents = self.dateComponents;
 
   BOOL hasTime = ([dateComponents hour] != kGTLUndefinedDateComponent
                   && [dateComponents minute] != kGTLUndefinedDateComponent);

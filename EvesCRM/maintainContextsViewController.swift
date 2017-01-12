@@ -11,7 +11,7 @@ import Contacts
 import ContactsUI
 
 protocol MyMaintainContextsDelegate{
-    func myMaintainContextsDidFinish(controller:MaintainContextsViewController)
+    func myMaintainContextsDidFinish(_ controller:MaintainContextsViewController)
 }
 
 class MaintainContextsViewController: UIViewController, CNContactPickerDelegate//, SMTEFillDelegate, UITextViewDelegate, UITextFieldDelegate
@@ -33,25 +33,25 @@ class MaintainContextsViewController: UIViewController, CNContactPickerDelegate/
     
     var delegate: MyMaintainContextsDelegate?
     
-    private var peopleArray: [context] = Array()
-    private var placeArray: [context] = Array()
-    private var toolArray: [context] = Array()
+    fileprivate var peopleArray: [context] = Array()
+    fileprivate var placeArray: [context] = Array()
+    fileprivate var toolArray: [context] = Array()
     
-    private var kbHeight: CGFloat!
+    fileprivate var kbHeight: CGFloat!
     
     override func viewDidLoad()
     {
         super.viewDidLoad()
         
-        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
+        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(MaintainContextsViewController.handleSwipe(_:)))
+        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.right
         self.view.addGestureRecognizer(showGestureRecognizer)
         
-        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
+        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(MaintainContextsViewController.handleSwipe(_:)))
+        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.left
         self.view.addGestureRecognizer(hideGestureRecognizer)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "deleteContext:", name:"NotificationMaintainContextsDeleteContext", object: nil)
+        notificationCenter.addObserver(self, selector: #selector(MaintainContextsViewController.deleteContext(_:)), name:NotificationMaintainContextsDeleteContext, object: nil)
         
         let contextList = contexts()
         
@@ -66,19 +66,19 @@ class MaintainContextsViewController: UIViewController, CNContactPickerDelegate/
         // Dispose of any resources that can be recreated.
     }
     
-    override func viewWillAppear(animated:Bool)
+    override func viewWillAppear(_ animated:Bool)
     {
         super.viewWillAppear(animated)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillShow:"), name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillHide:"), name: UIKeyboardWillHideNotification, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(MaintainContextsViewController.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(MaintainContextsViewController.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
     
-    override func viewWillDisappear(animated: Bool)
+    override func viewWillDisappear(_ animated: Bool)
     {
         super.viewWillDisappear(animated)
         
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        notificationCenter.removeObserver(self)
     }
 
     
@@ -96,12 +96,12 @@ class MaintainContextsViewController: UIViewController, CNContactPickerDelegate/
         colTool.reloadData()
     }
     
-    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
+    func numberOfSectionsInCollectionView(_ collectionView: UICollectionView) -> Int
     {
         return 1
     }
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
         if collectionView == colPeople
         {
@@ -121,13 +121,14 @@ class MaintainContextsViewController: UIViewController, CNContactPickerDelegate/
         }
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
+    //    func collectionView(_ collectionView: UICollectionView, cellForItemAtIndexPath indexPath: IndexPath) -> UICollectionViewCell
+    func collectionView(_ collectionView: UICollectionView, cellForItem indexPath: IndexPath) -> UICollectionViewCell
     {
         
         
         if collectionView == colPeople
         {
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellPeople", forIndexPath: indexPath) as! myContextDetails
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellPeople", for: indexPath) as! myContextDetails
             
             cell.lblName.text = peopleArray[indexPath.row].name
             cell.rowID = indexPath.row
@@ -139,7 +140,7 @@ class MaintainContextsViewController: UIViewController, CNContactPickerDelegate/
             }
             else
             {
-                cell.backgroundColor = UIColor.clearColor()
+                cell.backgroundColor = UIColor.clear
             }
             
             cell.layoutSubviews()
@@ -148,7 +149,7 @@ class MaintainContextsViewController: UIViewController, CNContactPickerDelegate/
         }
         else if collectionView == colPlace
         {
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellPlace", forIndexPath: indexPath) as! myContextDetails
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellPlace", for: indexPath) as! myContextDetails
             
             cell.lblName.text = placeArray[indexPath.row].name
             cell.rowID = indexPath.row
@@ -160,7 +161,7 @@ class MaintainContextsViewController: UIViewController, CNContactPickerDelegate/
             }
             else
             {
-                cell.backgroundColor = UIColor.clearColor()
+                cell.backgroundColor = UIColor.clear
             }
             
             cell.layoutSubviews()
@@ -169,7 +170,7 @@ class MaintainContextsViewController: UIViewController, CNContactPickerDelegate/
         }
         else // collectionView == colTool
         {
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellTool", forIndexPath: indexPath) as! myContextDetails
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellTool", for: indexPath) as! myContextDetails
             
             cell.lblName.text = toolArray[indexPath.row].name
             cell.rowID = indexPath.row
@@ -181,7 +182,7 @@ class MaintainContextsViewController: UIViewController, CNContactPickerDelegate/
             }
             else
             {
-                cell.backgroundColor = UIColor.clearColor()
+                cell.backgroundColor = UIColor.clear
             }
             
             cell.layoutSubviews()
@@ -190,7 +191,7 @@ class MaintainContextsViewController: UIViewController, CNContactPickerDelegate/
         }
     }
     
-    func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
+    func collectionView(_ collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:IndexPath) -> CGSize
     {
         var retVal: CGSize!
         
@@ -210,16 +211,16 @@ class MaintainContextsViewController: UIViewController, CNContactPickerDelegate/
         return retVal
     }
     
-    func contactPickerDidCancel(picker: CNContactPickerViewController)
+    func contactPickerDidCancel(_ picker: CNContactPickerViewController)
     {
-        picker.dismissViewControllerAnimated(true, completion: nil)
+        picker.dismiss(animated: true, completion: nil)
     }
     
-    func contactPicker(picker: CNContactPickerViewController, didSelectContact contact: CNContact)
+    func contactPicker(_ picker: CNContactPickerViewController, didSelect contact: CNContact)
     {
-        picker.dismissViewControllerAnimated(true, completion: nil)
+        picker.dismiss(animated: true, completion: nil)
         
-        let fullname = CNContactFormatter.stringFromContact(contact, style: CNContactFormatterStyle.FullName)
+        let fullname = CNContactFormatter.string(from: contact, style: CNContactFormatterStyle.fullName)
         
         let newContext = context(inTeamID: myCurrentTeam.teamID)
         
@@ -235,9 +236,9 @@ class MaintainContextsViewController: UIViewController, CNContactPickerDelegate/
         colPeople.reloadData()
     }
     
-    func handleSwipe(recognizer:UISwipeGestureRecognizer)
+    func handleSwipe(_ recognizer:UISwipeGestureRecognizer)
     {
-        if recognizer.direction == UISwipeGestureRecognizerDirection.Left
+        if recognizer.direction == UISwipeGestureRecognizerDirection.left
         {
             // Do nothing
         }
@@ -247,7 +248,7 @@ class MaintainContextsViewController: UIViewController, CNContactPickerDelegate/
         }
     }
     
-    @IBAction func btnAddPerson(sender: UIButton)
+    @IBAction func btnAddPerson(_ sender: UIButton)
     {
         if txtName.text != ""
         {
@@ -266,7 +267,7 @@ class MaintainContextsViewController: UIViewController, CNContactPickerDelegate/
         }
     }
     
-    @IBAction func btnAddPlace(sender: UIButton)
+    @IBAction func btnAddPlace(_ sender: UIButton)
     {
         if txtName.text != ""
         {
@@ -285,7 +286,7 @@ class MaintainContextsViewController: UIViewController, CNContactPickerDelegate/
         }
     }
     
-    @IBAction func btnAddTool(sender: UIButton)
+    @IBAction func btnAddTool(_ sender: UIButton)
     {
         if txtName.text != ""
         {
@@ -304,15 +305,15 @@ class MaintainContextsViewController: UIViewController, CNContactPickerDelegate/
         }
     }
     
-    @IBAction func btnSelectPerson(sender: UIButton)
+    @IBAction func btnSelectPerson(_ sender: UIButton)
     {
         let picker = CNContactPickerViewController()
         
         picker.delegate = self
-        presentViewController(picker, animated: true, completion: nil)
+        present(picker, animated: true, completion: nil)
     }
     
-    func deleteContext(notification: NSNotification)
+    func deleteContext(_ notification: Notification)
     {
         let rowID = notification.userInfo!["rowID"] as! Int
         let contextType = notification.userInfo!["contextType"] as! String
@@ -320,13 +321,13 @@ class MaintainContextsViewController: UIViewController, CNContactPickerDelegate/
         switch contextType
         {
             case "Person" :
-                peopleArray[rowID].delete()
+                let _ = peopleArray[rowID].delete()
             
             case "Place":
-                placeArray[rowID].delete()
+                let _ = placeArray[rowID].delete()
             
             case "Tool" :
-                toolArray[rowID].delete()
+                let _ = toolArray[rowID].delete()
             
             default :
                 let _ = 1
@@ -343,26 +344,26 @@ class MaintainContextsViewController: UIViewController, CNContactPickerDelegate/
         colTool.reloadData()
     }
     
-    func keyboardWillShow(notification: NSNotification)
+    func keyboardWillShow(_ notification: Notification)
     {
         if let userInfo = notification.userInfo {
-            if let keyboardSize =  (userInfo[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
+            if let keyboardSize =  (userInfo[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
                 kbHeight = keyboardSize.height
                 self.animateTextField(true)
             }
         }
     }
     
-    func keyboardWillHide(notification: NSNotification)
+    func keyboardWillHide(_ notification: Notification)
     {
         self.animateTextField(false)
     }
     
-    func animateTextField(up: Bool)
+    func animateTextField(_ up: Bool)
     {
         let movement = (up ? -kbHeight : kbHeight)
         
-        UIView.animateWithDuration(0.3, animations: { self.view.frame = CGRectOffset(self.view.frame, 0, movement)
+        UIView.animate(withDuration: 0.3, animations: { self.view.frame = self.view.frame.offsetBy(dx: 0, dy: movement!)
         })
             
         if up
@@ -384,8 +385,8 @@ class myContextDetails: UICollectionViewCell
     var rowID: Int = 0
     var contextType: String = ""
     
-    @IBAction func btnRemove(sender: UIButton)
+    @IBAction func btnRemove(_ sender: UIButton)
     {
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationMaintainContextsDeleteContext", object: nil, userInfo:["rowID":rowID, "contextType":contextType])
+        notificationCenter.post(name: NotificationMaintainContextsDeleteContext, object: nil, userInfo:["rowID":rowID, "contextType":contextType])
     }
 }

@@ -393,7 +393,7 @@ static GTMOAuth2Keychain* gGTMOAuth2DefaultKeychain = nil;
 #endif
 
   if (popViewBlock || self.navigationController.topViewController == self) {
-    if (!self.view.hidden) {
+    if (!self.view.isHidden) {
       // Set the flag to our viewWillDisappear method so it knows
       // this is a disappearance initiated by the sign-in object,
       // not the user cancelling via the navigation controller
@@ -407,7 +407,7 @@ static GTMOAuth2Keychain* gGTMOAuth2DefaultKeychain = nil;
       } else {
         [self.navigationController popViewControllerAnimated:YES];
       }
-      self.view.hidden = YES;
+      self.view.isHidden = YES;
     }
   }
 }

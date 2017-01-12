@@ -10,7 +10,7 @@ import Foundation
 
 protocol MyGTDInboxDelegate
 {
-    func myGTDInboxDidFinish(controller:GTDInboxViewController)
+    func myGTDInboxDidFinish(_ controller:GTDInboxViewController)
 }
 
 class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerDelegate
@@ -22,36 +22,36 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
     @IBOutlet weak var colEmailInbox: UICollectionView!
     @IBOutlet weak var myPicker: UIPickerView!
     
-    private var myTaskList: [task] = Array()
+    fileprivate var myTaskList: [task] = Array()
     
-    private let cellGTDInbox = "cellGTDInbox"
-    private let cellEmailInbox = "cellEmailInbox"
-    private var myGmailMessages: gmailMessages!
-    private var myGmailData: gmailData!
+    fileprivate let cellGTDInbox = "cellGTDInbox"
+    fileprivate let cellEmailInbox = "cellEmailInbox"
+    fileprivate var myGmailMessages: gmailMessages!
+    fileprivate var myGmailData: gmailData!
     
-    private var myGmailEmails: [gmailMessage] = Array()
-    private var gmailDisplayMessage: String = ""
+    fileprivate var myGmailEmails: [gmailMessage] = Array()
+    fileprivate var gmailDisplayMessage: String = ""
     
-    private var myPickerOptions = ["Select Email Inbox", "GMail Inbox"]
+    fileprivate var myPickerOptions = ["Select Email Inbox", "GMail Inbox"]
     
     override func viewDidLoad()
     {
         super.viewDidLoad()
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "gmailSignedIn:", name:"NotificationGmailInboxConnected", object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "myGmailDidFinish", name:"NotificationGmailInboxLoadDidFinish", object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "displayTask:", name:"NotificationGTDInboxDisplayTask", object: nil)
+        notificationCenter.addObserver(self, selector: #selector(GTDInboxViewController.gmailSignedIn(_:)), name: NotificationGmailInboxConnected, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(GTDInboxViewController.myGmailDidFinish), name: NotificationGmailInboxLoadDidFinish, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(GTDInboxViewController.displayTask(_:)), name: NotificationGTDInboxDisplayTask, object: nil)
         
         loadDataArray()
         
-        myPicker.hidden = true
+        myPicker.isHidden = true
         
-        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
+        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(GTDInboxViewController.handleSwipe(_:)))
+        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.right
         self.view.addGestureRecognizer(showGestureRecognizer)
         
-        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
+        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(GTDInboxViewController.handleSwipe(_:)))
+        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.left
         self.view.addGestureRecognizer(hideGestureRecognizer)
     }
     
@@ -70,9 +70,9 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
         colEmailInbox.reloadData()
     }
     
-    func handleSwipe(recognizer:UISwipeGestureRecognizer)
+    func handleSwipe(_ recognizer:UISwipeGestureRecognizer)
     {
-        if recognizer.direction == UISwipeGestureRecognizerDirection.Left
+        if recognizer.direction == UISwipeGestureRecognizerDirection.left
         {
             // Do nothing
         }
@@ -82,24 +82,24 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
         }
     }
     
-    func numberOfComponentsInPickerView(pickerView: UIPickerView) -> Int
+    func numberOfComponentsInPickerView(_ pickerView: UIPickerView) -> Int
     {
         return 1
     }
     
-    func pickerView(pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int
     {
         return myPickerOptions.count
     }
     
-    func pickerView(pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String!
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String!
     {
         return myPickerOptions[row]
     }
     
-    func pickerView(pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int)
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int)
     {
-        btnEmail.setTitle(myPickerOptions[row], forState: .Normal)
+        btnEmail.setTitle(myPickerOptions[row], for: .normal)
         
         hidePicker()
         
@@ -123,12 +123,12 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
         
     }
     
-    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
+    func numberOfSectionsInCollectionView(_ collectionView: UICollectionView) -> Int
     {
         return 1
     }
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
         if collectionView == colGTDInbox
         {
@@ -147,11 +147,12 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
         }
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
+    //    func collectionView(_ collectionView: UICollectionView, cellForItemAtIndexPath indexPath: IndexPath) -> UICollectionViewCell
+    func collectionView(_ collectionView: UICollectionView, cellForItem indexPath: IndexPath) -> UICollectionViewCell
     {
         if collectionView == colGTDInbox
         {
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier(cellGTDInbox, forIndexPath: indexPath) as! myGTDInboxItem
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellGTDInbox, for: indexPath as IndexPath) as! myGTDInboxItem
         
             cell.lblName.text = myTaskList[indexPath.row].title
         
@@ -161,7 +162,7 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
             }
             else
             {
-                cell.backgroundColor = UIColor.clearColor()
+                cell.backgroundColor = UIColor.clear
             }
         
             cell.layoutSubviews()
@@ -170,14 +171,14 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
         }
         else
         {
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier(cellEmailInbox, forIndexPath: indexPath) as! myEmailInboxItem
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellEmailInbox, for: indexPath as IndexPath) as! myEmailInboxItem
             
             if myGmailEmails.count > 0
             {
                 cell.lblDate.text = myGmailEmails[indexPath.row].dateReceived
                 cell.lblFrom.text = myGmailEmails[indexPath.row].from
                 cell.lblSubject.text = myGmailEmails[indexPath.row].subject
-                cell.btnCreate.hidden = false
+                cell.btnCreate.isHidden = false
                 cell.emailMessage = myGmailEmails[indexPath.row]
             }
             else
@@ -185,7 +186,7 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
                 cell.lblDate.text = ""
                 cell.lblFrom.text = ""
                 cell.lblSubject.text = gmailDisplayMessage
-                cell.btnCreate.hidden = true
+                cell.btnCreate.isHidden = true
             }
             
             if (indexPath.row % 2 == 0)
@@ -194,7 +195,7 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
             }
             else
             {
-                cell.backgroundColor = UIColor.clearColor()
+                cell.backgroundColor = UIColor.clear
             }
             
             cell.layoutSubviews()
@@ -203,25 +204,25 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
         }
     }
     
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: IndexPath)
     {
         if collectionView == colGTDInbox
         {
-            let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("tasks") as! taskViewController
-            popoverContent.modalPresentationStyle = .Popover
+            let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "tasks") as! taskViewController
+            popoverContent.modalPresentationStyle = .popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
             popover!.sourceView = self.view
         
             popoverContent.passedTask = myTaskList[indexPath.row]
-            popoverContent.preferredContentSize = CGSizeMake(700,700)
-            popover!.sourceRect = CGRectMake(0, 0, 700, 700)
+            popoverContent.preferredContentSize = CGSize(width: 700,height: 700)
+            popover!.sourceRect = CGRect(x: 0, y: 0, width: 700, height: 700)
         
-            self.presentViewController(popoverContent, animated: true, completion: nil)
+            self.present(popoverContent, animated: true, completion: nil)
         }
     }
     
-    func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
+    func collectionView(_ collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
     {
         var retVal: CGSize!
      
@@ -236,35 +237,35 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
         return retVal
     }
     
-    func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView
     {
         if collectionView == colGTDInbox
         {
-            let headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: "cellGTDItemHeader", forIndexPath: indexPath) as! myGTDInboxHeaderItem
+            let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "cellGTDItemHeader", for: indexPath as IndexPath) as! myGTDInboxHeaderItem
             
             return headerView
         }
         else
         {
-            let headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: "cellEmailInboxHeader", forIndexPath: indexPath) as! myEmailInboxHeaderItem
+            let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "cellEmailInboxHeader", for: indexPath as IndexPath) as! myEmailInboxHeaderItem
             
             return headerView
         }
     }
     
     // MARK: - UIPopoverPresentationControllerDelegate
-    func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle
+    func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle
     {
-        return .FullScreen
+        return .fullScreen
         // return .None
     }
     
-    func presentationController(controller: UIPresentationController, viewControllerForAdaptivePresentationStyle style: UIModalPresentationStyle) -> UIViewController?
+    func presentationController(_ controller: UIPresentationController, viewControllerForAdaptivePresentationStyle style: UIModalPresentationStyle) -> UIViewController?
     {
         return UINavigationController(rootViewController: controller.presentedViewController)
     }
     
-    func popoverPresentationControllerDidDismissPopover(popoverPresentationController: UIPopoverPresentationController)
+    func popoverPresentationControllerDidDismissPopover(_ popoverPresentationController: UIPopoverPresentationController)
     {
         if btnEmail.currentTitle == "GMail Inbox"
         {
@@ -326,7 +327,7 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
             myGmailMessages = gmailMessages(inGmailData: myGmailData)
         }
         
-        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.rawValue), 0))
+        DispatchQueue.global(qos: .userInitiated).async
         {
             self.myGmailMessages.getInbox()
         }
@@ -352,55 +353,55 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
             }
         }
         
-        dispatch_async(dispatch_get_main_queue())
+        DispatchQueue.main.async
         {
             self.colEmailInbox.reloadData() // reload table/data or whatever here. However you want.
         }
 
     }
     
-    func gmailSignedIn(notification: NSNotification)
+    func gmailSignedIn(_ notification: Notification)
     {
         loadEmailArray()
     }
     
-    @IBAction func btnEmail(sender: UIButton)
+    @IBAction func btnEmail(_ sender: UIButton)
     {
         displayPicker()
     }
     
-    func displayTask(notification: NSNotification)
+    func displayTask(_ notification: Notification)
     {
         let newTask = notification.userInfo!["task"] as! task
         
-        let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("tasks") as! taskViewController
-        popoverContent.modalPresentationStyle = .Popover
+        let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "tasks") as! taskViewController
+        popoverContent.modalPresentationStyle = .popover
         let popover = popoverContent.popoverPresentationController
         popover!.delegate = self
         popover!.sourceView = self.view
         
         popoverContent.passedTask = newTask
         
-        popoverContent.preferredContentSize = CGSizeMake(700,700)
+        popoverContent.preferredContentSize = CGSize(width: 700,height: 700)
         
-        popover!.sourceRect = CGRectMake(0, 0, 700, 700)
-        self.presentViewController(popoverContent, animated: true, completion: nil)
+        popover!.sourceRect = CGRect(x: 0, y: 0, width: 700, height: 700)
+        self.present(popoverContent, animated: true, completion: nil)
     }
     
     func displayPicker()
     {
-        colGTDInbox.hidden = true
-        btnEmail.hidden = true
-        colEmailInbox.hidden = true
-        myPicker.hidden = false
+        colGTDInbox.isHidden = true
+        btnEmail.isHidden = true
+        colEmailInbox.isHidden = true
+        myPicker.isHidden = false
     }
     
     func hidePicker()
     {
-        colGTDInbox.hidden = false
-        btnEmail.hidden = false
-        colEmailInbox.hidden = false
-        myPicker.hidden = true
+        colGTDInbox.isHidden = false
+        btnEmail.isHidden = false
+        colEmailInbox.isHidden = false
+        myPicker.isHidden = true
     }
 }
 
@@ -451,7 +452,7 @@ class myEmailInboxItem: UICollectionViewCell
         super.layoutSubviews()
     }
     
-    @IBAction func btnCreate(sender: UIButton)
+    @IBAction func btnCreate(_ sender: UIButton)
     {
         let newTask = task(inTeamID: myCurrentTeam.teamID)
         newTask.title = emailMessage.subject
@@ -474,9 +475,9 @@ class myEmailInboxItem: UICollectionViewCell
         
         newTask.details = myBody
         
-        myDatabaseConnection.saveProcessedEmail(emailMessage.id, emailType: "GMail", processedDate: NSDate())
+        myDatabaseConnection.saveProcessedEmail(emailMessage.id, emailType: "GMail", processedDate: Date())
         NSLog("need something here to do the context")
 
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationGTDInboxDisplayTask", object: nil, userInfo:["task":newTask])
+        notificationCenter.post(name: NotificationGTDInboxDisplayTask, object: nil, userInfo:["task":newTask])
     }
  }

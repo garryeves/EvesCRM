@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "A7FCE84C4AC37B7DCE1FBFB3F285F606C1A376DF",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "A7FCE84C4AC37B7DCE1FBFB3F285F606C1A376DF" : 9223372036854775807,
+    "DBB3EF050B5AE2C5AD59707919EAD7E15F408B52" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "2A71C53F-1BCA-4180-8D1A-BBA477181C1E",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "A7FCE84C4AC37B7DCE1FBFB3F285F606C1A376DF" : "EvesCRM\/",
+    "DBB3EF050B5AE2C5AD59707919EAD7E15F408B52" : ""
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "Contacts Dashboard",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "Contacts Dashboard.xcworkspace",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/garryeves\/EvesCRM.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "A7FCE84C4AC37B7DCE1FBFB3F285F606C1A376DF"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/garryeves\/GroupFitness.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "DBB3EF050B5AE2C5AD59707919EAD7E15F408B52"
+    }
+  ]
+}

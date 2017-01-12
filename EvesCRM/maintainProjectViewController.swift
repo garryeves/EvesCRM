@@ -10,15 +10,16 @@ import Foundation
 import CoreData
 import Contacts
 import ContactsUI
+import TextExpander
 
 protocol MyMaintainProjectDelegate{
-    func myMaintainProjectDidFinish(controller:MaintainProjectViewController, actionType: String)
-    func myGTDPlanningDidFinish(controller:MaintainGTDPlanningViewController)
+    func myMaintainProjectDidFinish(_ controller:MaintainProjectViewController, actionType: String)
+    func myGTDPlanningDidFinish(_ controller:MaintainGTDPlanningViewController)
 }
 
 class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, MyMaintainProjectDelegate, SMTEFillDelegate, UITextViewDelegate, UITextFieldDelegate
 {
-   private var passedGTD: GTDModel!
+   fileprivate var passedGTD: GTDModel!
     
     @IBOutlet weak var projectNameLabel: UILabel!
     @IBOutlet weak var startDateLabel: UILabel!
@@ -53,26 +54,26 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
     var inProjectObject: project!
     var mySelectedTeam: team!
     
-    private var statusSelected: String = ""
-    private var roleSelected: Int = 0
-    private var myProjects: [project] = Array()
-    private let reuseIdentifierProject = "ProjectCell"
-    private let reuseIdentifierTeam = "TeamMemberCell"
-    private var myRoles: [Roles]!
-    private var myStages: [Stages]!
-    private var mySelectedRoles: [projectTeamMember] = Array()
-    private var mySelectedTeamMember: projectTeamMember!
-    private var personSelected: CNContact!
-    private var teamMemberAction: String = ""
-    private var workingCell: Int = -1
-    private var pickerTarget: String = ""
-    private var pickerDisplayArray: [String] = Array()
-    private var mySelectedRow: Int = -1
-    private var kbHeight: CGFloat!
+    fileprivate var statusSelected: String = ""
+    fileprivate var roleSelected: Int = 0
+    fileprivate var myProjects: [project] = Array()
+    fileprivate let reuseIdentifierProject = "ProjectCell"
+    fileprivate let reuseIdentifierTeam = "TeamMemberCell"
+    fileprivate var myRoles: [Roles]!
+    fileprivate var myStages: [Stages]!
+    fileprivate var mySelectedRoles: [projectTeamMember] = Array()
+    fileprivate var mySelectedTeamMember: projectTeamMember!
+    fileprivate var personSelected: CNContact!
+    fileprivate var teamMemberAction: String = ""
+    fileprivate var workingCell: Int = -1
+    fileprivate var pickerTarget: String = ""
+    fileprivate var pickerDisplayArray: [String] = Array()
+    fileprivate var mySelectedRow: Int = -1
+    fileprivate var kbHeight: CGFloat!
     
     // Textexpander
     
-    private var snippetExpanded: Bool = false
+    fileprivate var snippetExpanded: Bool = false
     
     var textExpander: SMTEDelegateController!
 
@@ -83,18 +84,18 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         let statusOptions = mySelectedTeam.stages
         
         statusSelected = statusOptions[0].stageDescription
-        teamMembersLabel.hidden = false
+        teamMembersLabel.isHidden = false
 
         
-        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
+        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(MaintainProjectViewController.handleSwipe(_:)))
+        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.right
         self.view.addGestureRecognizer(showGestureRecognizer)
         
-        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
+        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(MaintainProjectViewController.handleSwipe(_:)))
+        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.left
         self.view.addGestureRecognizer(hideGestureRecognizer)
 
-        txtNotes.layer.borderColor = UIColor.lightGrayColor().CGColor
+        txtNotes.layer.borderColor = UIColor.lightGray.cgColor
         txtNotes.layer.borderWidth = 0.5
         txtNotes.layer.cornerRadius = 5.0
         txtNotes.layer.masksToBounds = true
@@ -103,35 +104,35 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         
         // Set the initial values
 
-        startDatePicker.hidden = true
-        btnSelectPicker.hidden = true
-        statusPicker.hidden = true
+        startDatePicker.isHidden = true
+        btnSelectPicker.isHidden = true
+        statusPicker.isHidden = true
         
         if inProjectObject.displayProjectStartDate == ""
         {
-            btnStartDate.setTitle("Set Start Date", forState: UIControlState.Normal)
+            btnStartDate.setTitle("Set Start Date", for: UIControlState())
         }
         else
         {
-            btnStartDate.setTitle(inProjectObject.displayProjectStartDate, forState: UIControlState.Normal)
+            btnStartDate.setTitle(inProjectObject.displayProjectStartDate, for: UIControlState())
         }
         
         if inProjectObject.displayProjectEndDate == ""
         {
-            btnEndDate.setTitle("Set End Date", forState: UIControlState.Normal)
+            btnEndDate.setTitle("Set End Date", for: UIControlState())
         }
         else
         {
-            btnEndDate.setTitle(inProjectObject.displayProjectEndDate, forState: UIControlState.Normal)
+            btnEndDate.setTitle(inProjectObject.displayProjectEndDate, for: UIControlState())
         }
         
         if inProjectObject.projectStatus == ""
         {
-            btnProjectStage.setTitle("Set Project Stage", forState: UIControlState.Normal)
+            btnProjectStage.setTitle("Set Project Stage", for: UIControlState())
         }
         else
         {
-            btnProjectStage.setTitle(inProjectObject.projectStatus, forState: UIControlState.Normal)
+            btnProjectStage.setTitle(inProjectObject.projectStatus, for: UIControlState())
         }
         
         txtNotes.text = inProjectObject.note
@@ -150,34 +151,34 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         
         if inProjectObject.repeatType == ""
         {
-            btnRepeatPeriod.setTitle("Set Period", forState: UIControlState.Normal)
+            btnRepeatPeriod.setTitle("Set Period", for: UIControlState())
         }
         else
         {
-            btnRepeatPeriod.setTitle(inProjectObject.repeatType, forState: UIControlState.Normal)
+            btnRepeatPeriod.setTitle(inProjectObject.repeatType, for: UIControlState())
         }
         
         if inProjectObject.repeatBase == ""
         {
-            btnRepeastBase.setTitle("Set Base", forState: UIControlState.Normal)
+            btnRepeastBase.setTitle("Set Base", for: UIControlState())
         }
         else
         {
-            btnRepeastBase.setTitle(inProjectObject.repeatBase, forState: UIControlState.Normal)
+            btnRepeastBase.setTitle(inProjectObject.repeatBase, for: UIControlState())
         }
  
         if inProjectObject.reviewPeriod == ""
         {
-            btnReviewPeriod.setTitle("Set Period", forState: UIControlState.Normal)
+            btnReviewPeriod.setTitle("Set Period", for: UIControlState())
         }
         else
         {
-            btnReviewPeriod.setTitle(inProjectObject.reviewPeriod, forState: UIControlState.Normal)
+            btnReviewPeriod.setTitle(inProjectObject.reviewPeriod, for: UIControlState())
         }
 
         mySelectedRoles = inProjectObject.teamMembers
         
-        colTeamMembers.hidden = false
+        colTeamMembers.isHidden = false
         
         txtRepeatInterval.delegate = self
         txtReviewFrquency.delegate = self
@@ -193,25 +194,25 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         myCurrentViewController = MaintainProjectViewController()
         myCurrentViewController = self
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "addTeamMember:", name:"NotificationAddTeamMember", object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "changeRole:", name:"NotificationChangeRole", object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "performDeleteTeamMember:", name:"NotificationPerformDelete", object: nil)
+        notificationCenter.addObserver(self, selector: #selector(MaintainProjectViewController.addTeamMember(_:)), name: NotificationAddTeamMember, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(MaintainProjectViewController.changeRole(_:)), name: NotificationChangeRole, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(MaintainProjectViewController.performDeleteTeamMember(_:)), name: NotificationPerformDelete, object: nil)
 
     }
     
-    override func viewWillAppear(animated:Bool)
+    override func viewWillAppear(_ animated:Bool)
     {
         super.viewWillAppear(animated)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillShow:"), name: UIKeyboardWillShowNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: Selector("keyboardWillHide:"), name: UIKeyboardWillHideNotification, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(MaintainProjectViewController.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(MaintainProjectViewController.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
     
-    override func viewWillDisappear(animated: Bool)
+    override func viewWillDisappear(_ animated: Bool)
     {
         super.viewWillDisappear(animated)
         
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        notificationCenter.removeObserver(self)
     }
     
     override func didReceiveMemoryWarning()
@@ -220,14 +221,14 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         // Dispose of any resources that can be recreated.
     }
  
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?)
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
     {
         txtTitle.endEditing(true)
     }
     
-    func handleSwipe(recognizer:UISwipeGestureRecognizer)
+    func handleSwipe(_ recognizer:UISwipeGestureRecognizer)
     {
-        if recognizer.direction == UISwipeGestureRecognizerDirection.Left
+        if recognizer.direction == UISwipeGestureRecognizerDirection.left
         {
             // Do nothing
         }
@@ -237,65 +238,66 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         }
     }
 
-    func numberOfComponentsInPickerView(inPicker: UIPickerView) -> Int
+    func numberOfComponentsInPickerView(_ inPicker: UIPickerView) -> Int
     {
         return 1
     }
     
-    func pickerView(inPicker: UIPickerView, numberOfRowsInComponent component: Int) -> Int
+    func pickerView(_ inPicker: UIPickerView, numberOfRowsInComponent component: Int) -> Int
     {
         return pickerDisplayArray.count
     }
     
-    func pickerView(inPicker: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String!
+    func pickerView(_ inPicker: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String!
     {
         return pickerDisplayArray[row]
     }
 
-    func pickerView(inPicker: UIPickerView, didSelectRow row: Int, inComponent component: Int)
+    func pickerView(_ inPicker: UIPickerView, didSelectRow row: Int, inComponent component: Int)
     {
         mySelectedRow = row
     }
 
-    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
+    func numberOfSectionsInCollectionView(_ collectionView: UICollectionView) -> Int
     {
         return 1
     }
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
         return mySelectedRoles.count + 1
     }
  
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
+    //    func collectionView(_ collectionView: UICollectionView, cellForItemAtIndexPath indexPath: IndexPath) -> UICollectionViewCell
+    func collectionView(_ collectionView: UICollectionView, cellForItem indexPath: IndexPath) -> UICollectionViewCell
     {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellTeamMembers", forIndexPath: indexPath) as! myProjectItem
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellTeamMembers", for: indexPath) as! myProjectItem
         cell.btnAction.tag = indexPath.row
         
         if indexPath.row < mySelectedRoles.count
         {
-            cell.btnTeamMember.setTitle(mySelectedRoles[indexPath.row].teamMember, forState: UIControlState.Normal)
+            cell.btnTeamMember.setTitle(mySelectedRoles[indexPath.row].teamMember, for: UIControlState())
             if mySelectedRoles[indexPath.row].roleName == ""
             {
-                cell.btnRole.setTitle("Select Role", forState: UIControlState.Normal)
+                cell.btnRole.setTitle("Select Role", for: UIControlState())
             }
             else
             {
-                cell.btnRole.setTitle(mySelectedRoles[indexPath.row].roleName, forState: UIControlState.Normal)
+                cell.btnRole.setTitle(mySelectedRoles[indexPath.row].roleName, for: UIControlState())
             }
-            cell.btnAction.setTitle("Delete", forState: UIControlState.Normal)
+            cell.btnAction.setTitle("Delete", for: UIControlState())
             
             cell.mySelectedTeamMember = mySelectedRoles[indexPath.row]
-            cell.btnRole.hidden = false
-            cell.btnAction.hidden = false
+            cell.btnRole.isHidden = false
+            cell.btnAction.isHidden = false
         }
         else
         {
-            cell.btnTeamMember.setTitle("Select Person", forState: UIControlState.Normal)
-            cell.btnRole.setTitle("Select Role", forState: UIControlState.Normal)
-            cell.btnAction.setTitle("Add", forState: UIControlState.Normal)
-            cell.btnRole.hidden = true
-            cell.btnAction.hidden = true
+            cell.btnTeamMember.setTitle("Select Person", for: UIControlState())
+            cell.btnRole.setTitle("Select Role", for: UIControlState())
+            cell.btnAction.setTitle("Add", for: UIControlState())
+            cell.btnRole.isHidden = true
+            cell.btnAction.isHidden = true
             cell.mySelectedTeamMember = nil
         }
         
@@ -305,7 +307,7 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         }
         else
         {
-            cell.backgroundColor = UIColor.clearColor()
+            cell.backgroundColor = UIColor.clear
         }
         
         cell.layoutSubviews()
@@ -313,7 +315,7 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         return cell
     }
     
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: IndexPath)
     {
         if indexPath.row < mySelectedRoles.count
         {
@@ -321,12 +323,12 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         }
     }
 
-    func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
+    func collectionView(_ collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:IndexPath) -> CGSize
     {
         return CGSize(width: colTeamMembers.bounds.size.width, height: 39)
     }
 
-    func addTeamMember(notification: NSNotification)
+    func addTeamMember(_ notification: Notification)
     {
         workingCell = notification.userInfo!["WorkingCell"] as! Int
 
@@ -335,10 +337,10 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         let picker = CNContactPickerViewController()
         
         picker.delegate = self
-        presentViewController(picker, animated: true, completion: nil)
+        present(picker, animated: true, completion: nil)
     }
 
-    func changeRole(notification: NSNotification)
+    func changeRole(_ notification: Notification)
     {
         workingCell = notification.userInfo!["WorkingCell"] as! Int
         let workingObject = notification.userInfo!["Object"] as! projectTeamMember
@@ -353,16 +355,16 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
             pickerDisplayArray.append(myItem.roleDescription)
         }
         
-        btnSelectPicker.setTitle("Select Role", forState: .Normal)
+        btnSelectPicker.setTitle("Select Role", for: UIControlState())
         pickerTarget = "Role"
         statusPicker.reloadAllComponents()
-        btnSelectPicker.hidden = false
-        statusPicker.hidden = false
+        btnSelectPicker.isHidden = false
+        statusPicker.isHidden = false
         mySelectedRow = -1
         hideFields()
     }
     
-    func performDeleteTeamMember(notification: NSNotification)
+    func performDeleteTeamMember(_ notification: Notification)
     {
         let workingObject = notification.userInfo!["Object"] as! projectTeamMember
         
@@ -379,16 +381,16 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
 
     // Peoplepicker code
     
-    func contactPickerDidCancel(picker: CNContactPickerViewController)
+    func contactPickerDidCancel(_ picker: CNContactPickerViewController)
     {
-        picker.dismissViewControllerAnimated(true, completion: nil)
+        picker.dismiss(animated: true, completion: nil)
     }
     
-    func contactPicker(picker: CNContactPickerViewController, didSelectContact contact: CNContact)
+    func contactPicker(_ picker: CNContactPickerViewController, didSelect contact: CNContact)
     {
         personSelected = contact
      
-        let myFullName = CNContactFormatter.stringFromContact(contact, style: CNContactFormatterStyle.FullName)
+        let myFullName = CNContactFormatter.string(from: contact, style: CNContactFormatterStyle.fullName)
         
         _ = projectTeamMember(inProjectID: inProjectObject.projectID, inTeamMember: myFullName!, inRoleID: 0, inTeamID: mySelectedTeam.teamID)
         
@@ -397,7 +399,7 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         colTeamMembers.reloadData()
     }
     
-    @IBAction func txtTitle(sender: UITextField)
+    @IBAction func txtTitle(_ sender: UITextField)
     {
         if txtTitle.text != ""
         {
@@ -406,16 +408,16 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
     }
     
     
-    @IBAction func txtProjectName(sender: UITextField)
+    @IBAction func txtProjectName(_ sender: UITextField)
     {
         if txtTitle.text == ""
         {
             let alert = UIAlertController(title: "Project Maintenance", message:
-                "You need to provide a Project Name", preferredStyle: UIAlertControllerStyle.Alert)
+                "You need to provide a Project Name", preferredStyle: UIAlertControllerStyle.alert)
             
-            self.presentViewController(alert, animated: false, completion: nil)
+            self.present(alert, animated: false, completion: nil)
             
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
                 handler: nil))
             
             txtTitle.becomeFirstResponder()
@@ -427,7 +429,7 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         }
     }
     
-    @IBAction func btnProjectStage(sender: UIButton)
+    @IBAction func btnProjectStage(_ sender: UIButton)
     {
         var selectedRow: Int = 0
         var rowCount: Int = 0
@@ -444,14 +446,14 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
             {
                 selectedRow = rowCount
             }
-            rowCount++
+            rowCount += 1
         }
         
-        btnSelectPicker.setTitle("Select Stage", forState: .Normal)
+        btnSelectPicker.setTitle("Select Stage", for: UIControlState())
         pickerTarget = "Stage"
         statusPicker.reloadAllComponents()
-        btnSelectPicker.hidden = false
-        statusPicker.hidden = false
+        btnSelectPicker.isHidden = false
+        statusPicker.isHidden = false
         mySelectedRow = -1
         if selectedRow > 0
         {
@@ -465,16 +467,16 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
 
     }
     
-    @IBAction func btnStartDate(sender: UIButton)
+    @IBAction func btnStartDate(_ sender: UIButton)
     {
         if txtTitle.text == ""
         {
             let alert = UIAlertController(title: "Project Maintenance", message:
-                "You need to provide a Project Name", preferredStyle: UIAlertControllerStyle.Alert)
+                "You need to provide a Project Name", preferredStyle: UIAlertControllerStyle.alert)
             
-            self.presentViewController(alert, animated: false, completion: nil)
+            self.present(alert, animated: false, completion: nil)
             
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
                 handler: nil))
             
             txtTitle.becomeFirstResponder()
@@ -482,32 +484,32 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         else
         {
             pickerTarget = "StartDate"
-            btnSelectPicker.setTitle("Set Start Date", forState: .Normal)
-            startDatePicker.datePickerMode = UIDatePickerMode.Date
+            btnSelectPicker.setTitle("Set Start Date", for: UIControlState())
+            startDatePicker.datePickerMode = UIDatePickerMode.date
             if inProjectObject.displayProjectStartDate != ""
             {
-                startDatePicker.date = inProjectObject.projectStartDate
+                startDatePicker.date = inProjectObject.projectStartDate as Date
             }
             else
             {
-                startDatePicker.date = NSDate()
+                startDatePicker.date = Date()
             }
-            startDatePicker.hidden = false
-            btnSelectPicker.hidden = false
+            startDatePicker.isHidden = false
+            btnSelectPicker.isHidden = false
             hideFields()
         }
     }
     
-    @IBAction func btnEndDate(sender: UIButton)
+    @IBAction func btnEndDate(_ sender: UIButton)
     {
         if txtTitle.text == ""
         {
             let alert = UIAlertController(title: "Project Maintenance", message:
-                "You need to provide a Project Name", preferredStyle: UIAlertControllerStyle.Alert)
+                "You need to provide a Project Name", preferredStyle: UIAlertControllerStyle.alert)
             
-            self.presentViewController(alert, animated: false, completion: nil)
+            self.present(alert, animated: false, completion: nil)
             
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
                 handler: nil))
             
             txtTitle.becomeFirstResponder()
@@ -515,23 +517,23 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         else
         {
             pickerTarget = "EndDate"
-            btnSelectPicker.setTitle("Set End Date", forState: .Normal)
-            startDatePicker.datePickerMode = UIDatePickerMode.Date
+            btnSelectPicker.setTitle("Set End Date", for: UIControlState())
+            startDatePicker.datePickerMode = UIDatePickerMode.date
             if inProjectObject.displayProjectEndDate != ""
             {
-                startDatePicker.date = inProjectObject.projectEndDate
+                startDatePicker.date = inProjectObject.projectEndDate as Date
             }
             else
             {
-                startDatePicker.date = NSDate()
+                startDatePicker.date = Date()
             }
-            startDatePicker.hidden = false
-            btnSelectPicker.hidden = false
+            startDatePicker.isHidden = false
+            btnSelectPicker.isHidden = false
             hideFields()
         }
     }
     
-    @IBAction func btnRepeatPeriod(sender: UIButton)
+    @IBAction func btnRepeatPeriod(_ sender: UIButton)
     {
         var selectedRow: Int = 0
         var rowCount: Int = 0
@@ -545,19 +547,19 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
             {
                 selectedRow = rowCount
             }
-            rowCount++
+            rowCount += 1
         }
-        btnSelectPicker.setTitle("Select Repeating type", forState: .Normal)
+        btnSelectPicker.setTitle("Select Repeating type", for: UIControlState())
         pickerTarget = "RepeatPeriod"
         statusPicker.reloadAllComponents()
-        btnSelectPicker.hidden = false
-        statusPicker.hidden = false
+        btnSelectPicker.isHidden = false
+        statusPicker.isHidden = false
         mySelectedRow = -1
         statusPicker.selectRow(selectedRow, inComponent: 0, animated: true)
         hideFields()
     }
     
-    @IBAction func btnRepeatBase(sender: UIButton)
+    @IBAction func btnRepeatBase(_ sender: UIButton)
     {
         var selectedRow: Int = 0
         var rowCount: Int = 0
@@ -571,19 +573,19 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
             {
                 selectedRow = rowCount
             }
-            rowCount++
+            rowCount += 1
         }
-        btnSelectPicker.setTitle("Select Repeating base", forState: .Normal)
+        btnSelectPicker.setTitle("Select Repeating base", for: UIControlState())
         pickerTarget = "RepeatBase"
         statusPicker.reloadAllComponents()
-        btnSelectPicker.hidden = false
-        statusPicker.hidden = false
+        btnSelectPicker.isHidden = false
+        statusPicker.isHidden = false
         mySelectedRow = -1
         statusPicker.selectRow(selectedRow, inComponent: 0, animated: true)
         hideFields()
     }
     
-    @IBAction func btnReviewPeriod(sender: UIButton)
+    @IBAction func btnReviewPeriod(_ sender: UIButton)
     {
         var selectedRow: Int = 0
         var rowCount: Int = 0
@@ -597,35 +599,35 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
             {
                 selectedRow = rowCount
             }
-            rowCount++
+            rowCount += 1
         }
-        btnSelectPicker.setTitle("Select Review Period", forState: .Normal)
+        btnSelectPicker.setTitle("Select Review Period", for: UIControlState())
         pickerTarget = "ReviewPeriod"
         statusPicker.reloadAllComponents()
-        btnSelectPicker.hidden = false
-        statusPicker.hidden = false
+        btnSelectPicker.isHidden = false
+        statusPicker.isHidden = false
         mySelectedRow = -1
         statusPicker.selectRow(selectedRow, inComponent: 0, animated: true)
         hideFields()
     }
     
-    @IBAction func btnMarkReviewed(sender: UIButton)
+    @IBAction func btnMarkReviewed(_ sender: UIButton)
     {
-        inProjectObject.lastReviewDate = NSDate()
+        inProjectObject.lastReviewDate = Date()
         lblLastReviewedDate.text = inProjectObject.displayLastReviewDate
     }
     
-    @IBAction func txtRepeatInterval(sender: UITextField)
+    @IBAction func txtRepeatInterval(_ sender: UITextField)
     {
         inProjectObject.repeatInterval = Int(txtRepeatInterval.text!)!
     }
     
-    @IBAction func txtReviewFrequency(sender: UITextField)
+    @IBAction func txtReviewFrequency(_ sender: UITextField)
     {
         inProjectObject.reviewFrequency = Int(txtReviewFrquency.text!)!
     }
     
-    @IBAction func btnSelectPicker(sender: UIButton)
+    @IBAction func btnSelectPicker(_ sender: UIButton)
     {
         if mySelectedRow >= 0
         {
@@ -643,24 +645,24 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
             if pickerTarget == "Stage"
             {
                 inProjectObject.projectStatus = myStages[mySelectedRow - 1].stageDescription
-                btnProjectStage.setTitle(inProjectObject.projectStatus, forState: UIControlState.Normal)
+                btnProjectStage.setTitle(inProjectObject.projectStatus, for: UIControlState())
             }
             
             if pickerTarget == "RepeatPeriod"
             {
                 inProjectObject.repeatType = myRepeatPeriods[mySelectedRow]
-                btnRepeatPeriod.setTitle(inProjectObject.repeatType, forState: UIControlState.Normal)
+                btnRepeatPeriod.setTitle(inProjectObject.repeatType, for: UIControlState())
             }
             
             if pickerTarget == "RepeatBase"
             {
                 inProjectObject.repeatBase = myRepeatBases[mySelectedRow]
-                btnRepeastBase.setTitle(inProjectObject.repeatBase, forState: UIControlState.Normal)
+                btnRepeastBase.setTitle(inProjectObject.repeatBase, for: UIControlState())
             }
             if pickerTarget == "ReviewPeriod"
             {
                 inProjectObject.reviewPeriod = myRepeatPeriods[mySelectedRow]
-                btnReviewPeriod.setTitle(inProjectObject.reviewPeriod, forState: UIControlState.Normal)
+                btnReviewPeriod.setTitle(inProjectObject.reviewPeriod, for: UIControlState())
             }
             
             statusPicker.selectRow(0, inComponent: 0, animated: true)
@@ -669,76 +671,76 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         if pickerTarget == "StartDate"
         {
             inProjectObject.projectStartDate = startDatePicker.date
-            btnStartDate.setTitle(inProjectObject.displayProjectStartDate, forState: UIControlState.Normal)
+            btnStartDate.setTitle(inProjectObject.displayProjectStartDate, for: UIControlState())
         }
         
         if pickerTarget == "EndDate"
         {
             inProjectObject.projectEndDate = startDatePicker.date
-            btnEndDate.setTitle(inProjectObject.displayProjectEndDate, forState: UIControlState.Normal)
+            btnEndDate.setTitle(inProjectObject.displayProjectEndDate, for: UIControlState())
         }
         
-        startDatePicker.hidden = true
-        statusPicker.hidden = true
-        btnSelectPicker.hidden = true
+        startDatePicker.isHidden = true
+        statusPicker.isHidden = true
+        btnSelectPicker.isHidden = true
         showFields()
     }
     
     func hideFields()
     {
-        projectNameLabel.hidden = true
-        startDateLabel.hidden = true
-        endDateLabel.hidden = true
-        statusLabel.hidden = true
-        teamMembersLabel.hidden = true
-        btnStartDate.hidden = true
-        btnEndDate.hidden = true
-        btnProjectStage.hidden = true
-        colTeamMembers.hidden = true
-        lblNotes.hidden = true
-        txtNotes.hidden = true
-        txtTitle.hidden = true
-        lblRepeatEvery.hidden = true
-        lblReviewEvery.hidden = true
-        lblFromActivity.hidden = true
-        lblLastReviewed.hidden = true
-        lblLastReviewedDate.hidden = true
-        txtRepeatInterval.hidden = true
-        btnRepeatPeriod.hidden = true
-        btnRepeastBase.hidden = true
-        txtReviewFrquency.hidden = true
-        btnReviewPeriod.hidden = true
-        btnMarkReviewed.hidden = true
+        projectNameLabel.isHidden = true
+        startDateLabel.isHidden = true
+        endDateLabel.isHidden = true
+        statusLabel.isHidden = true
+        teamMembersLabel.isHidden = true
+        btnStartDate.isHidden = true
+        btnEndDate.isHidden = true
+        btnProjectStage.isHidden = true
+        colTeamMembers.isHidden = true
+        lblNotes.isHidden = true
+        txtNotes.isHidden = true
+        txtTitle.isHidden = true
+        lblRepeatEvery.isHidden = true
+        lblReviewEvery.isHidden = true
+        lblFromActivity.isHidden = true
+        lblLastReviewed.isHidden = true
+        lblLastReviewedDate.isHidden = true
+        txtRepeatInterval.isHidden = true
+        btnRepeatPeriod.isHidden = true
+        btnRepeastBase.isHidden = true
+        txtReviewFrquency.isHidden = true
+        btnReviewPeriod.isHidden = true
+        btnMarkReviewed.isHidden = true
     }
     
     func showFields()
     {
-        projectNameLabel.hidden = false
-        startDateLabel.hidden = false
-        endDateLabel.hidden = false
-        statusLabel.hidden = false
-        teamMembersLabel.hidden = false
-        btnStartDate.hidden = false
-        btnEndDate.hidden = false
-        btnProjectStage.hidden = false
-        colTeamMembers.hidden = false
-        lblNotes.hidden = false
-        txtNotes.hidden = false
-        txtTitle.hidden = false
-        lblRepeatEvery.hidden = false
-        lblReviewEvery.hidden = false
-        lblFromActivity.hidden = false
-        lblLastReviewed.hidden = false
-        lblLastReviewedDate.hidden = false
-        txtRepeatInterval.hidden = false
-        btnRepeatPeriod.hidden = false
-        btnRepeastBase.hidden = false
-        txtReviewFrquency.hidden = false
-        btnReviewPeriod.hidden = false
-        btnMarkReviewed.hidden = false
+        projectNameLabel.isHidden = false
+        startDateLabel.isHidden = false
+        endDateLabel.isHidden = false
+        statusLabel.isHidden = false
+        teamMembersLabel.isHidden = false
+        btnStartDate.isHidden = false
+        btnEndDate.isHidden = false
+        btnProjectStage.isHidden = false
+        colTeamMembers.isHidden = false
+        lblNotes.isHidden = false
+        txtNotes.isHidden = false
+        txtTitle.isHidden = false
+        lblRepeatEvery.isHidden = false
+        lblReviewEvery.isHidden = false
+        lblFromActivity.isHidden = false
+        lblLastReviewed.isHidden = false
+        lblLastReviewedDate.isHidden = false
+        txtRepeatInterval.isHidden = false
+        btnRepeatPeriod.isHidden = false
+        btnRepeastBase.isHidden = false
+        txtReviewFrquency.isHidden = false
+        btnReviewPeriod.isHidden = false
+        btnMarkReviewed.isHidden = false
     }
     
-    func textViewDidEndEditing(textView: UITextView)
+    func textViewDidEndEditing(_ textView: UITextView)
     { //Handle the text changes here
         if textView == txtNotes
         {
@@ -746,14 +748,14 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         }
     }
     
-    func myGTDPlanningDidFinish(controller:MaintainGTDPlanningViewController)
+    func myGTDPlanningDidFinish(_ controller:MaintainGTDPlanningViewController)
     {
-        controller.dismissViewControllerAnimated(true, completion: nil)
+        controller.dismiss(animated: true, completion: nil)
     }
     
-    func myMaintainProjectDidFinish(controller:MaintainProjectViewController, actionType: String)
+    func myMaintainProjectDidFinish(_ controller:MaintainProjectViewController, actionType: String)
     {
-        controller.dismissViewControllerAnimated(true, completion: nil)
+        controller.dismiss(animated: true, completion: nil)
     }
     
     
@@ -764,48 +766,48 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
  //       return true
  //   }
     
-    func keyboardWillShow(notification: NSNotification)
+    func keyboardWillShow(_ notification: Notification)
     {
         if let userInfo = notification.userInfo {
-            if let keyboardSize =  (userInfo[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue() {
+            if let keyboardSize =  (userInfo[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
                 kbHeight = keyboardSize.height
                 self.animateTextField(true)
             }
         }
     }
     
-    func keyboardWillHide(notification: NSNotification)
+    func keyboardWillHide(_ notification: Notification)
     {
         self.animateTextField(false)
     }
     
-    func animateTextField(up: Bool)
+    func animateTextField(_ up: Bool)
     {
         var boolActionMove = false
         let movement = (up ? -kbHeight : kbHeight)
         
-        if txtTitle.isFirstResponder()
+        if txtTitle.isFirstResponder
         {
             //  This is at the top, so we do not need to do anything
             boolActionMove = false
         }
-        else if txtRepeatInterval.isFirstResponder()
+        else if txtRepeatInterval.isFirstResponder
         {
             boolActionMove = true
         }
-        else if txtReviewFrquency.isFirstResponder()
+        else if txtReviewFrquency.isFirstResponder
         {
             boolActionMove = true
         }
-        else if txtNotes.isFirstResponder()
+        else if txtNotes.isFirstResponder
         {
             boolActionMove = true
         }
         
         if boolActionMove
         {
-            UIView.animateWithDuration(0.3, animations: {
-                self.view.frame = CGRectOffset(self.view.frame, 0, movement)
+            UIView.animate(withDuration: 0.3, animations: {
+                self.view.frame = self.view.frame.offsetBy(dx: 0, dy: movement!)
 
             })
 
@@ -813,7 +815,7 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
             {
                 for myItem in colTeamMembers.constraints
                 {
-                    if myItem.firstAttribute == NSLayoutAttribute.Height && myItem.firstItem.isKindOfClass(UICollectionView)
+                    if myItem.firstAttribute == NSLayoutAttribute.height && myItem.firstItem is UICollectionView
                     {
                         myItem.constant = 0
                         colTeamMembers.layoutIfNeeded()
@@ -824,7 +826,7 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
             {
                 for myItem in colTeamMembers.constraints
                 {
-                    if myItem.firstAttribute == NSLayoutAttribute.Height && myItem.firstItem.isKindOfClass(UICollectionView)
+                    if myItem.firstAttribute == NSLayoutAttribute.height && myItem.firstItem is UICollectionView
                     {
                         myItem.constant = 250
                         colTeamMembers.layoutIfNeeded()
@@ -858,27 +860,28 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
     * identifier string needs to include element id/name information. Eg. "webview-field2".
     */
     
-    func identifierForTextArea(uiTextObject: AnyObject) -> String
+   // func identifierForTextArea(_ uiTextObject: AnyObject) -> String
+    func identifier(forTextArea uiTextObject: Any) -> String
     {
         var result: String = ""
         
-        if uiTextObject.isKindOfClass(UITextField)
+        if uiTextObject is UITextField
         {
-            if uiTextObject.tag == 1
+            if (uiTextObject as AnyObject).tag == 1
             {
                 result = "txtTitle"
             }
         }
         
-        if uiTextObject.isKindOfClass(UITextView)
+        if uiTextObject is UITextView
         {
-            if uiTextObject.tag == 1
+            if (uiTextObject as AnyObject).tag == 1
             {
                 result = "txtNotes"
             }
         }
         
-        if uiTextObject.isKindOfClass(UISearchBar)
+        if uiTextObject is UISearchBar
         {
             result =  "mySearchBar"
         }
@@ -894,7 +897,7 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
     * Return NO to cancel the process.
     */
 
-    func prepareForFillSwitch(textIdentifier: String) -> Bool
+    func prepare(forFillSwitch textIdentifier: String) -> Bool
     {
         // At this point the app should save state since TextExpander touch is about
         // to activate.
@@ -929,29 +932,30 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
     * expect the identified text object to become the first responder.
     */
     
-    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>) -> AnyObject
+    // func makeIdentifiedTextObjectFirstResponder(_ textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>) -> AnyObject
+    public func makeIdentifiedTextObjectFirstResponder(_ textIdentifier: String!, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>!) -> Any!
     {
         snippetExpanded = true
 
-        let intIoInsertionPointLocation:Int = ioInsertionPointLocation.memory
+        let intIoInsertionPointLocation:Int = ioInsertionPointLocation.pointee
         
         if "txtTitle" == textIdentifier
         {
             txtTitle.becomeFirstResponder()
-            let theLoc = txtTitle.positionFromPosition(txtTitle.beginningOfDocument, offset: intIoInsertionPointLocation)
+            let theLoc = txtTitle.position(from: txtTitle.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtTitle.selectedTextRange = txtTitle.textRangeFromPosition(theLoc!, toPosition: theLoc!)
+                txtTitle.selectedTextRange = txtTitle.textRange(from: theLoc!, to: theLoc!)
             }
             return txtTitle
         }
         else if "txtNotes" == textIdentifier
         {
             txtNotes.becomeFirstResponder()
-            let theLoc = txtNotes.positionFromPosition(txtNotes.beginningOfDocument, offset: intIoInsertionPointLocation)
+            let theLoc = txtNotes.position(from: txtNotes.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtNotes.selectedTextRange = txtNotes.textRangeFromPosition(theLoc!, toPosition: theLoc!)
+                txtNotes.selectedTextRange = txtNotes.textRange(from: theLoc!, to: theLoc!)
             }
             return txtNotes
         }
@@ -974,11 +978,11 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
             
             //return nil
             
-            return ""
+            return "" as AnyObject
         }
     }
     
-    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool
     {
         if (textExpander.isAttemptingToExpandText)
         {
@@ -996,16 +1000,16 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
     // of workaround into the SDK, so instead we provide an example here.
     // If you have a better workaround suggestion, we'd love to hear it.
     
-    func twiddleText(textView: UITextView)
+    func twiddleText(_ textView: UITextView)
     {
-        let SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO = UIDevice.currentDevice().systemVersion
+        let SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO = UIDevice.current.systemVersion
         if SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO >= "7.0"
         {
-            textView.textStorage.edited(NSTextStorageEditActions.EditedCharacters,range:NSMakeRange(0, textView.textStorage.length),changeInLength:0)
+            textView.textStorage.edited(NSTextStorageEditActions.editedCharacters,range:NSMakeRange(0, textView.textStorage.length),changeInLength:0)
         }
     }
     
-    func textViewDidChange(textView: UITextView)
+    func textViewDidChange(_ textView: UITextView)
     {
         if snippetExpanded
         {
@@ -1103,25 +1107,25 @@ class myProjectItem: UICollectionViewCell
         super.layoutSubviews()
     }
     
-    @IBAction func btnAction(sender: UIButton)
+    @IBAction func btnAction(_ sender: UIButton)
     {
-        let selectedDictionary = ["Action" : btnAction.currentTitle!, "Object": mySelectedTeamMember]
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationPerformDelete", object: nil, userInfo:selectedDictionary)
+        let selectedDictionary = ["Action" : btnAction.currentTitle!, "Object": mySelectedTeamMember] as [String : Any]
+        notificationCenter.post(name: NotificationPerformDelete, object: nil, userInfo:selectedDictionary)
     }
     
-    @IBAction func btnTeamMember(sender: UIButton)
+    @IBAction func btnTeamMember(_ sender: UIButton)
     {
         if btnAction.currentTitle == "Add"
         {
             let selectedDictionary = ["WorkingCell" : btnAction.tag]
-            NSNotificationCenter.defaultCenter().postNotificationName("NotificationAddTeamMember", object: nil, userInfo:selectedDictionary)
+            notificationCenter.post(name: NotificationAddTeamMember, object: nil, userInfo:selectedDictionary)
         }
     }
     
-    @IBAction func btnRole(sender: UIButton)
+    @IBAction func btnRole(_ sender: UIButton)
     {
-        let selectedDictionary = ["WorkingCell" : btnAction.tag, "Object": mySelectedTeamMember]
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeRole", object: nil, userInfo:selectedDictionary)
+        let selectedDictionary = ["WorkingCell" : btnAction.tag, "Object": mySelectedTeamMember] as [String : Any]
+        notificationCenter.post(name: NotificationChangeRole, object: nil, userInfo:selectedDictionary)
     }
     
 }

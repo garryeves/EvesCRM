@@ -15,7 +15,7 @@ class MeetingSupportingDocs: NSManagedObject {
     @NSManaged var attachmentPath: String
     @NSManaged var meetingID: String
     @NSManaged var title: String
-    @NSManaged var updateTime: NSDate
+    @NSManaged var updateTime: Date
     @NSManaged var updateType: String
 
 }

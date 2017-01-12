@@ -17,7 +17,7 @@ extension Context1_1 {
     @NSManaged var contextID: NSNumber?
     @NSManaged var contextType: String?
     @NSManaged var predecessor: NSNumber?
-    @NSManaged var updateTime: NSDate?
+    @NSManaged var updateTime: Date?
     @NSManaged var updateType: String?
 
 }

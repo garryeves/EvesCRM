@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 
 protocol MySettingsDelegate{
-    func mySettingsDidFinish(controller:settingsViewController)
+    func mySettingsDidFinish(_ controller:settingsViewController)
 }
 
 class settingsViewController: UIViewController
@@ -24,17 +24,17 @@ class settingsViewController: UIViewController
     
     var delegate: MySettingsDelegate?
     
-    private var myDecodes: [Decodes]!
+    fileprivate var myDecodes: [Decodes]!
     
-    private var evernotePass1: Bool = false
-    private var EvernoteAuthenticationDone: Bool = false
+    fileprivate var evernotePass1: Bool = false
+    fileprivate var EvernoteAuthenticationDone: Bool = false
     var evernoteSession: ENSession!
-    private var myEvernote: EvernoteDetails!
-    var dropboxCoreService: DropboxCoreService!
+    fileprivate var myEvernote: EvernoteDetails!
+//GRE    var dropboxCoreService: DropboxCoreService!
     
-    private var syncDate: NSDate!
-    private var syncStart: NSDate!
-    private var firstLoadflag: Bool = true
+    fileprivate var syncDate: Date!
+    fileprivate var syncStart: Date!
+    fileprivate var firstLoadflag: Bool = true
 
     override func viewDidLoad()
     {
@@ -48,38 +48,38 @@ class settingsViewController: UIViewController
     
     func firstLoad()
     {
-        lblRefreshMessage.hidden = true
+        lblRefreshMessage.isHidden = true
         
         // Load the decodes
         myDecodes = myDatabaseConnection.getVisibleDecodes()
         
         if evernoteSession.isAuthenticated
         {
-            buttonConnectEvernote.hidden = true
+            buttonConnectEvernote.isHidden = true
         }
         
-        if dropboxCoreService.isAlreadyInitialised()
-        {
-            ButtonConnectDropbox.hidden = true
-        }
+//GRE        if dropboxCoreService.isAlreadyInitialised()
+ //GRE       {
+//GRE            ButtonConnectDropbox.isHidden = true
+//GRE        }
         
-        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
+        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(settingsViewController.handleSwipe(_:)))
+        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.right
         self.view.addGestureRecognizer(showGestureRecognizer)
         
-        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
+        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(settingsViewController.handleSwipe(_:)))
+        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.left
         self.view.addGestureRecognizer(hideGestureRecognizer)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "myEvernoteAuthenticationDidFinish", name:"NotificationEvernoteAuthenticationDidFinish", object: nil)
+        notificationCenter.addObserver(self, selector: #selector(settingsViewController.myEvernoteAuthenticationDidFinish), name: NotificationEvernoteAuthenticationDidFinish, object: nil)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "changeSettings:", name:"NotificationChangeSettings", object: nil)
+        notificationCenter.addObserver(self, selector: #selector(settingsViewController.changeSettings(_:)), name: NotificationChangeSettings, object: nil)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "syncToCloud", name:"NotificationCloudSyncStart", object: nil)
+        notificationCenter.addObserver(self, selector: #selector(settingsViewController.syncToCloud), name: NotificationCloudSyncStart, object: nil)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "syncToCloudDone", name:"NotificationCloudSyncFinished", object: nil)
+        notificationCenter.addObserver(self, selector: #selector(settingsViewController.syncToCloudDone), name: NotificationCloudSyncFinished, object: nil)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "syncFromCloud", name:"NotificationCloudReLoadStart", object: nil)
+        notificationCenter.addObserver(self, selector: #selector(settingsViewController.syncFromCloud), name: NotificationCloudReLoadStart, object: nil)
         
         firstLoadflag = false
     }
@@ -98,9 +98,9 @@ class settingsViewController: UIViewController
         colDecodes.reloadData()
     }
     
-    func handleSwipe(recognizer:UISwipeGestureRecognizer)
+    func handleSwipe(_ recognizer:UISwipeGestureRecognizer)
     {
-        if recognizer.direction == UISwipeGestureRecognizerDirection.Left
+        if recognizer.direction == UISwipeGestureRecognizerDirection.left
         {
             // Do nothing
         }
@@ -110,21 +110,22 @@ class settingsViewController: UIViewController
         }
     }
 
-    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
+    func numberOfSectionsInCollectionView(_ collectionView: UICollectionView) -> Int
     {
         return 1
     }
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
         return myDecodes.count
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
+    //    func collectionView(_ collectionView: UICollectionView, cellForItemAtIndexPath indexPath: IndexPath) -> UICollectionViewCell
+    func collectionView(_ collectionView: UICollectionView, cellForItem indexPath: IndexPath) -> UICollectionViewCell
     {
         if myDecodes[indexPath.row].decodeType == "stepper"
             {
-                let cell = collectionView.dequeueReusableCellWithReuseIdentifier("reuseStepper", forIndexPath: indexPath) as! mySettingStepper
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "reuseStepper", for: indexPath as IndexPath) as! mySettingStepper
                 cell.lblKey.text = myDecodes[indexPath.row].decode_name
                 cell.lblValue.text = myDecodes[indexPath.row].decode_value
                 cell.myStepper.value = NSString(string: myDecodes[indexPath.row].decode_value).doubleValue
@@ -136,7 +137,7 @@ class settingsViewController: UIViewController
                 }
                 else
                 {
-                    cell.backgroundColor = UIColor.clearColor()
+                    cell.backgroundColor = UIColor.clear
                 }
                 
                 cell.layoutSubviews()
@@ -144,7 +145,7 @@ class settingsViewController: UIViewController
             }
             else if myDecodes[indexPath.row].decodeType == "number"
             {
-                let cell = collectionView.dequeueReusableCellWithReuseIdentifier("reuseNumber", forIndexPath: indexPath) as! mySettingNumber
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "reuseNumber", for: indexPath as IndexPath) as! mySettingNumber
                 cell.lblKey.text = myDecodes[indexPath.row].decode_name
                 cell.txtValue.text = myDecodes[indexPath.row].decode_value
                 cell.lookupKey = myDecodes[indexPath.row].decodeType
@@ -155,7 +156,7 @@ class settingsViewController: UIViewController
                 }
                 else
                 {
-                    cell.backgroundColor = UIColor.clearColor()
+                    cell.backgroundColor = UIColor.clear
                 }
                 
                 cell.layoutSubviews()
@@ -163,7 +164,7 @@ class settingsViewController: UIViewController
             }
             else
             {
-                let cell = collectionView.dequeueReusableCellWithReuseIdentifier("reuseString", forIndexPath: indexPath) as! mySettingString
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "reuseString", for: indexPath as IndexPath) as! mySettingString
                 cell.lblKey.text = myDecodes[indexPath.row].decode_name
                 cell.txtValue.text = myDecodes[indexPath.row].decode_value
                 cell.lookupKey = myDecodes[indexPath.row].decodeType
@@ -174,7 +175,7 @@ class settingsViewController: UIViewController
                 }
                 else
                 {
-                    cell.backgroundColor = UIColor.clearColor()
+                    cell.backgroundColor = UIColor.clear
                 }
                 
                 cell.layoutSubviews()
@@ -182,7 +183,7 @@ class settingsViewController: UIViewController
             }
     }
     
-    func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
+    func collectionView(_ collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
     {
         var retVal: CGSize!
         
@@ -191,12 +192,12 @@ class settingsViewController: UIViewController
         return retVal
     }
     
-    @IBAction func ButtonConnectDropboxClick(sender: UIButton)
+    @IBAction func ButtonConnectDropboxClick(_ sender: UIButton)
     {
         connectToDropbox()
     }
     
-    @IBAction func buttonConnectEvernoteClick(sender: UIButton)
+    @IBAction func buttonConnectEvernoteClick(_ sender: UIButton)
     {
         connectToEvernote()
     }
@@ -209,8 +210,8 @@ class settingsViewController: UIViewController
         
         if !evernotePass1
         {
-            evernoteSession.authenticateWithViewController (self, preferRegistration:false, completion: {
-                (error: NSError?) in
+            evernoteSession.authenticate (with: self, preferRegistration:false, completion: {
+                (error: Error?) in
                 if error != nil
                 {
                     // authentication failed
@@ -224,7 +225,7 @@ class settingsViewController: UIViewController
                     // ...
                     self.myEvernote = EvernoteDetails(inSession: self.evernoteSession)
                 }
-                NSNotificationCenter.defaultCenter().postNotificationName("NotificationEvernoteAuthenticationDidFinish", object: nil)
+                notificationCenter.post(name: NotificationEvernoteAuthenticationDidFinish, object: nil)
             })
         }
         
@@ -238,41 +239,41 @@ class settingsViewController: UIViewController
     
     func connectToDropbox()
     {
-        if !dropboxCoreService.isAlreadyInitialised()
-        {
-            dropboxCoreService.initiateAuthentication(self)
-        }
+ //GRE       if !dropboxCoreService.isAlreadyInitialised()
+  //GRE      {
+   //GRE         dropboxCoreService.initiateAuthentication(self)
+ //GRE       }
     }
         
-    func changeSettings(notification: NSNotification)
+    func changeSettings(_ notification: Notification)
     {
         myDecodes = myDatabaseConnection.getVisibleDecodes()
         colDecodes.reloadData()
     }
     
-    @IBAction func btnSyncFromCloud(sender: UIButton)
+    @IBAction func btnSyncFromCloud(_ sender: UIButton)
     {
         // Display message that may take some time
-        lblRefreshMessage.hidden = false
-        colDecodes.hidden = true
-        btnSyncFromCloud.hidden = true
-        btnSyncToCloud.hidden = true
+        lblRefreshMessage.isHidden = false
+        colDecodes.isHidden = true
+        btnSyncFromCloud.isHidden = true
+        btnSyncToCloud.isHidden = true
         
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationCloudReLoadStart", object: nil)
+        notificationCenter.post(name: NotificationCloudReLoadStart, object: nil)
     }
     
     func syncFromCloud()
     {
-        let qualityOfServiceClass = QOS_CLASS_USER_INITIATED
-        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-        dispatch_async(backgroundQueue, {
+        let qualityOfServiceClass = DispatchQoS.QoSClass.userInitiated
+        let backgroundQueue = DispatchQueue.global(qos: qualityOfServiceClass)
+        backgroundQueue.async(execute: {
             
-            self.syncStart = NSDate()
+            self.syncStart = Date()
             
-            let myDateFormatter = NSDateFormatter()
-            myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+            let myDateFormatter = DateFormatter()
+            myDateFormatter.dateStyle = DateFormatter.Style.short
                 
-            self.syncDate = myDateFormatter.dateFromString("01/01/15")
+            self.syncDate = myDateFormatter.date(from: "01/01/15")
             
             myDBSync.refreshRunning = true
             // Delete the entries from the current tables
@@ -285,32 +286,32 @@ class settingsViewController: UIViewController
         })
     }
     
-    @IBAction func btnSyncToCloud(sender: UIButton)
+    @IBAction func btnSyncToCloud(_ sender: UIButton)
     {
         // Display message that may take some time
         
-        lblRefreshMessage.hidden = false
-        colDecodes.hidden = true
-        btnSyncFromCloud.hidden = true
-        btnSyncToCloud.hidden = true
+        lblRefreshMessage.isHidden = false
+        colDecodes.isHidden = true
+        btnSyncFromCloud.isHidden = true
+        btnSyncToCloud.isHidden = true
         
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationCloudSyncStart", object: nil)
+        notificationCenter.post(name: NotificationCloudSyncStart, object: nil)
     }
     
     func syncToCloud()
     {
-        let qualityOfServiceClass = QOS_CLASS_USER_INITIATED
-        let backgroundQueue = dispatch_get_global_queue(qualityOfServiceClass, 0)
-        dispatch_async(backgroundQueue, {
+        let qualityOfServiceClass = DispatchQoS.QoSClass.userInitiated
+        let backgroundQueue = DispatchQueue.global(qos: qualityOfServiceClass)
+        backgroundQueue.async(execute: {
         
-            self.syncStart = NSDate()
+            self.syncStart = Date()
         
             // Get the last sync date
         
-            let myDateFormatter = NSDateFormatter()
-            myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
+            let myDateFormatter = DateFormatter()
+            myDateFormatter.dateStyle = DateFormatter.Style.short
         
-            self.syncDate = myDateFormatter.dateFromString("01/01/15")
+            self.syncDate = myDateFormatter.date(from: "01/01/15")
 
             myDBSync.refreshRunning = true
             // Delete the entries from the current tables
@@ -332,10 +333,10 @@ class settingsViewController: UIViewController
         
         myDatabaseConnection.updateDecodeValue("CloudKit Sync", inCodeValue: dateString, inCodeType: "hidden")
         
-        lblRefreshMessage.hidden = true
-        colDecodes.hidden = false
-        btnSyncFromCloud.hidden = false
-        btnSyncToCloud.hidden = false
+        lblRefreshMessage.isHidden = true
+        colDecodes.isHidden = false
+        btnSyncFromCloud.isHidden = false
+        btnSyncToCloud.isHidden = false
     }
     
 }
@@ -353,11 +354,11 @@ class mySettingStepper: UICollectionViewCell
         super.layoutSubviews()
     }
     
-    @IBAction func myStepper(sender: UIStepper)
+    @IBAction func myStepper(_ sender: UIStepper)
     {
         myDatabaseConnection.updateDecodeValue(lblKey.text!, inCodeValue: "\(Int(myStepper.value))", inCodeType: lookupKey)
         lblValue.text = "\(myStepper.value)"
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeSettings", object: nil, userInfo:["setting":"Decode"])
+        notificationCenter.post(name: NotificationChangeSettings, object: nil, userInfo:["setting":"Decode"])
     }
 }
 
@@ -373,16 +374,16 @@ class mySettingString: UICollectionViewCell
         super.layoutSubviews()
     }
     
-    @IBAction func txtValue(sender: UITextField)
+    @IBAction func txtValue(_ sender: UITextField)
     {
-        if txtValue == ""
+        if txtValue.text == ""
         {
             // Do nothing as can not have blannk string
         }
         else
         {
             myDatabaseConnection.updateDecodeValue(lblKey.text!, inCodeValue: txtValue.text!, inCodeType: lookupKey)
-            NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeSettings", object: nil, userInfo:["setting":"Decode"])
+            notificationCenter.post(name: NotificationChangeSettings, object: nil, userInfo:["setting":"Decode"])
         }
     }
 }
@@ -399,16 +400,16 @@ class mySettingNumber: UICollectionViewCell
         super.layoutSubviews()
     }
     
-    @IBAction func txtValue(sender: UITextField)
+    @IBAction func txtValue(_ sender: UITextField)
     {
-        if txtValue == ""
+        if txtValue.text == ""
         {
             // Do nothing as can not have blannk string
         }
         else
         {
             myDatabaseConnection.updateDecodeValue(lblKey.text!, inCodeValue: txtValue.text!, inCodeType: lookupKey)
-            NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeSettings", object: nil, userInfo:["setting":"Decode"])
+            notificationCenter.post(name: NotificationChangeSettings, object: nil, userInfo:["setting":"Decode"])
         }
 
     }

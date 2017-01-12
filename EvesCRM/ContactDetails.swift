@@ -36,18 +36,18 @@ let contactDataArray = [
       CNContactPhoneticGivenNameKey,
       CNContactPhoneticMiddleNameKey,
       CNContactPhoneticFamilyNameKey,
-      CNContactFormatter.descriptorForRequiredKeysForStyle(.FullName)
-    ]
+      CNContactFormatter.descriptorForRequiredKeys(for: .fullName)
+    ] as [Any]
 
 class iOSContact
 {
-    private var myFacebookID: String = ""
-    private var myLinkedInID: String = ""
-    private var myTwitterID: String = ""
-    private var tableContents:[TableData] = [TableData]()
-    private var myContactRecord: CNContact!
-    private var myEmailAddresses: [String]!
-    private var myFullName: String = ""
+    fileprivate var myFacebookID: String = ""
+    fileprivate var myLinkedInID: String = ""
+    fileprivate var myTwitterID: String = ""
+    fileprivate var tableContents:[TableData] = [TableData]()
+    fileprivate var myContactRecord: CNContact!
+    fileprivate var myEmailAddresses: [String]!
+    fileprivate var myFullName: String = ""
     
     var facebookID: String
         {
@@ -113,7 +113,7 @@ class iOSContact
         tableContents.removeAll()
         myEmailAddresses = Array()
 
-        myFullName = CNContactFormatter.stringFromContact(contactRecord, style: CNContactFormatterStyle.FullName)!
+        myFullName = CNContactFormatter.string(from: contactRecord, style: CNContactFormatterStyle.fullName)!
         
 /*        myFullName = "\(myContactRecord.givenName)"
         
@@ -132,7 +132,7 @@ class iOSContact
 
         for myAddress in myContactRecord.postalAddresses
         {
-            switch myAddress.label
+            switch myAddress.label!
             {
                 case CNLabelHome :
                     myString = "Home : "
@@ -147,7 +147,7 @@ class iOSContact
                     myString = "Unknown Address : \(myAddress.label) : "
             }
             
-            let myAddressValue = myAddress.value as! CNPostalAddress
+            let myAddressValue = myAddress.value 
             if myAddressValue.street != ""
             {
                 myString += "\(myAddressValue.street)"
@@ -193,7 +193,7 @@ class iOSContact
         
         for myPhone in myContactRecord.phoneNumbers
         {
-            switch myPhone.label
+            switch myPhone.label!
             {
                 case CNLabelPhoneNumberiPhone :
                     myString = "iPhone : "
@@ -219,7 +219,7 @@ class iOSContact
                 default :
                     myString = "Unknown phone number : \(myPhone.label) : "
             }
-            let myPhoneValue = myPhone.value as! CNPhoneNumber
+            let myPhoneValue = myPhone.value 
             myString += "\(myPhoneValue.stringValue)"
             
             writeRowToArray(myString, inTable: &tableContents)
@@ -227,7 +227,7 @@ class iOSContact
 
         for myEmail in myContactRecord.emailAddresses
         {
-            switch myEmail.label
+            switch myEmail.label!
             {
                 case CNLabelEmailiCloud :
                     myString = "iCloud : "
@@ -235,7 +235,7 @@ class iOSContact
                 default :
                     myString = "Unknown email address : \(myEmail.label) : "
             }
-            let myEmailValue = myEmail.value as! String
+            let myEmailValue = myEmail.value as String
             myString += "\(myEmailValue)"
             
             writeRowToArray(myString, inTable: &tableContents)
@@ -249,7 +249,7 @@ class iOSContact
             writeRowToArray(myString, inTable: &tableContents)
         }
         
-        if myContactRecord.birthday != ""
+        if myContactRecord.birthday?.date != nil
         {
             myString = "Birthday : \(myContactRecord.birthday)"
             writeRowToArray(myString, inTable: &tableContents)
@@ -257,7 +257,7 @@ class iOSContact
         
         for myIM in myContactRecord.instantMessageAddresses
         {
-            switch myIM.label
+            switch myIM.label!
             {
                 case CNInstantMessageServiceAIM :
                     myString = "AIM : "
@@ -292,7 +292,7 @@ class iOSContact
                 default :
                     myString = "Unknown IM address : \(myIM.label) : "
             }
-            let myIMValue = myIM.value as! CNInstantMessageAddress
+            let myIMValue = myIM.value 
             myString += "\(myIMValue.username)"
             
             writeRowToArray(myString, inTable: &tableContents)
@@ -300,7 +300,7 @@ class iOSContact
 
         for mySocial in myContactRecord.socialProfiles
         {
-            switch mySocial.label
+            switch mySocial.label!
             {
                 case CNSocialProfileServiceFacebook :
                     myString = "Facebook : "
@@ -332,7 +332,7 @@ class iOSContact
                 default :
                     myString = "Unknown Social address : \(mySocial.label) : "
             }
-            let mySocialValue = mySocial.value as! CNSocialProfile
+            let mySocialValue = mySocial.value 
             myString += "\(mySocialValue.username)"
             
             writeRowToArray(myString, inTable: &tableContents)
@@ -340,7 +340,7 @@ class iOSContact
 
         for myURL in myContactRecord.urlAddresses
         {
-            switch myURL.label
+            switch myURL.label!
             {
                 case CNLabelURLAddressHomePage :
                     myString = "Home Page : "
@@ -348,7 +348,7 @@ class iOSContact
                 default :
                     myString = "Unknown URL address : \(myURL.label) : "
             }
-            let myURLValue = myURL.value as! String
+            let myURLValue = myURL.value as String
             myString += "\(myURLValue)"
             
             writeRowToArray(myString, inTable: &tableContents)
@@ -362,14 +362,14 @@ class iOSContact
     }
 }
 
-func findPersonRecordByID(recordID: String) -> CNContact!
+func findPersonRecordByID(_ recordID: String) -> CNContact!
 {
     var person: CNContact!
     
     //  there may be a better way to do this, but it works.
     do
     {
-        let myPeople = try adbk.unifiedContactsMatchingPredicate(CNContact.predicateForContactsWithIdentifiers([recordID]), keysToFetch: contactDataArray)
+        let myPeople = try adbk.unifiedContacts(matching: CNContact.predicateForContacts(withIdentifiers: [recordID]), keysToFetch: contactDataArray as! [CNKeyDescriptor])
         
         if myPeople.count > 0
         {
@@ -388,14 +388,14 @@ func findPersonRecordByID(recordID: String) -> CNContact!
 }
 
 
-func findPersonRecord(name: String) -> CNContact!
+func findPersonRecord(_ name: String) -> CNContact!
 {
     var person: CNContact!
 
     //  there may be a better way to do this, but it works.
     do
     {
-        let myPeople = try adbk.unifiedContactsMatchingPredicate(CNContact.predicateForContactsMatchingName(name), keysToFetch: contactDataArray)
+        let myPeople = try adbk.unifiedContacts(matching: CNContact.predicateForContacts(matchingName: name), keysToFetch: contactDataArray as! [CNKeyDescriptor])
         
         if myPeople.count > 0
         {
@@ -413,18 +413,18 @@ func findPersonRecord(name: String) -> CNContact!
     return person
 }
 
-func findPersonbyEmail(searchEmail: String) -> CNContact!
+func findPersonbyEmail(_ searchEmail: String) -> CNContact!
 {
     //  there may be a better way to do this, but it works.
     var person: CNContact!
     
-    let fetch = CNContactFetchRequest(keysToFetch: contactDataArray)
+    let fetch = CNContactFetchRequest(keysToFetch: contactDataArray as! [CNKeyDescriptor])
   //  fetch.keysToFetch = [CNContactEmailAddressesKey] // Enter the keys for the values you want to fetch here
     fetch.unifyResults = true
     fetch.predicate = nil // Set this to nil will give you all Contacts
     do
     {
-        _ = try adbk.enumerateContactsWithFetchRequest(fetch, usingBlock:
+        _ = try adbk.enumerateContacts(with: fetch, usingBlock:
                 {
                     contact, cursor in
                     // Do something with the result...for example put it in an array of CNContacts as shown below
@@ -432,7 +432,7 @@ func findPersonbyEmail(searchEmail: String) -> CNContact!
                     
                     for myEmail in contact.emailAddresses
                     {
-                        if myEmail.value as! String == searchEmail
+                        if myEmail.value as String == searchEmail
                         {
                             person = theContact
                             break
@@ -455,14 +455,16 @@ func createAddressBook() -> Bool
     {
         return true
     }
-    let sem = dispatch_semaphore_create(0);
+    
+    let sem = DispatchSemaphore(value: 0)
 
     let myAdbk = CNContactStore()
-    myAdbk.requestAccessForEntityType(CNEntityType.Contacts, completionHandler:  {(granted: Bool, error: NSError?) in
+    myAdbk.requestAccess(for: CNEntityType.contacts) { (isGranted, error) in
 
-        dispatch_semaphore_signal(sem)
-    })
-    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.signal()
+    }
+    
+    sem.wait()
 
     adbk = myAdbk
         
@@ -473,17 +475,17 @@ func determineAddressBookStatus() -> Bool
 {
     var retVal: Bool = false
     
-    let authorizationStatus = CNContactStore.authorizationStatusForEntityType(CNEntityType.Contacts)
+    let authorizationStatus = CNContactStore.authorizationStatus(for: CNEntityType.contacts)
     
     switch authorizationStatus
     {
-        case .Authorized:
+        case .authorized:
             retVal = true
         
-        case .Denied:
+        case .denied:
             retVal = false
         
-        case .NotDetermined:
+        case .notDetermined:
             retVal = false
         
         default:

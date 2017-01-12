@@ -11,7 +11,7 @@ import CoreData
 
 class displayPanes
 {
-    private var myPanes: [displayPane]!
+    fileprivate var myPanes: [displayPane]!
     
     init()
     {
@@ -38,7 +38,7 @@ class displayPanes
         }
     }
         
-    private func populatePanes()
+    fileprivate func populatePanes()
     {
         // Populate roles with initial values
         //  Do this by checking to see if it exists already, if it does then do nothing otherwise create the pane
@@ -85,7 +85,7 @@ class displayPanes
             }
     }
     
-    func toogleVisibleStatus(inPane: String)
+    func toogleVisibleStatus(_ inPane: String)
     {
         // find the pane
         
@@ -99,7 +99,7 @@ class displayPanes
 
     }
     
-    func setDisplayPane(inPane: String, inPaneOrder: Int)
+    func setDisplayPane(_ inPane: String, inPaneOrder: Int)
     {
         // find the pane
         
@@ -124,11 +124,11 @@ class displayPane
 {
     // This is for an instance of a pane
      
-    private var myPaneName: String = ""
-    private var myPaneAvailable: Bool = true
-    private var myPaneVisible: Bool = true
-    private var myPaneOrder: Int = 0
-    private var paneLoaded: Bool = false
+    fileprivate var myPaneName: String = ""
+    fileprivate var myPaneAvailable: Bool = true
+    fileprivate var myPaneVisible: Bool = true
+    fileprivate var myPaneOrder: Int = 0
+    fileprivate var paneLoaded: Bool = false
     
     func savePane()
     {
@@ -137,7 +137,7 @@ class displayPane
         paneLoaded = true
     }
     
-    func createPane(paneName:String)
+    func createPane(_ paneName:String)
     {
         // Check to see if the pane exists
         if !paneLoaded
@@ -159,7 +159,7 @@ class displayPane
         }
     }
     
-    func loadPane(paneName:String)
+    func loadPane(_ paneName:String)
     {
         paneLoaded = false
         let fetchResults = myDatabaseConnection.getPane(paneName)

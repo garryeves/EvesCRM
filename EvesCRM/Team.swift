@@ -16,7 +16,7 @@ class Team: NSManagedObject {
     @NSManaged var status: String
     @NSManaged var teamID: NSNumber
     @NSManaged var type: String
-    @NSManaged var updateTime: NSDate
+    @NSManaged var updateTime: Date
     @NSManaged var updateType: String
     @NSManaged var predecessor: NSNumber
     @NSManaged var externalID: NSNumber

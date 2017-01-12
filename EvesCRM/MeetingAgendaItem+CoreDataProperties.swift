@@ -14,8 +14,8 @@ import CoreData
 
 extension MeetingAgendaItem {
 
-    @NSManaged var actualEndTime: NSDate?
-    @NSManaged var actualStartTime: NSDate?
+    @NSManaged var actualEndTime: Date?
+    @NSManaged var actualStartTime: Date?
     @NSManaged var agendaID: NSNumber?
     @NSManaged var decisionMade: String?
     @NSManaged var discussionNotes: String?
@@ -24,7 +24,7 @@ extension MeetingAgendaItem {
     @NSManaged var status: String?
     @NSManaged var timeAllocation: NSNumber?
     @NSManaged var title: String?
-    @NSManaged var updateTime: NSDate?
+    @NSManaged var updateTime: Date?
     @NSManaged var updateType: String?
     @NSManaged var meetingOrder: NSNumber?
 

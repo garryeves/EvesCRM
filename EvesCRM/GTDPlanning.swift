@@ -11,9 +11,9 @@ import Foundation
 
 enum AdaptiveMode
 {
-    case Default
-    case LandscapePopover
-    case AlwaysPopover
+    case `default`
+    case landscapePopover
+    case alwaysPopover
 }
 
 class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, UIPopoverPresentationControllerDelegate, KDRearrangeableCollectionViewDelegate, UIGestureRecognizerDelegate
@@ -26,27 +26,27 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
     @IBOutlet weak var btnUp: UIButton!
     @IBOutlet weak var colBody: UICollectionView!
 
-    private var myDisplayHeadArray: [AnyObject] = Array()
-    private var myDisplayBodyArray: [AnyObject] = Array()
-    private var highlightID: Int = 0
+    fileprivate var myDisplayHeadArray: [AnyObject] = Array()
+    fileprivate var myDisplayBodyArray: [AnyObject] = Array()
+    fileprivate var highlightID: Int = 0
 //    private var myParentObject: AnyObject!
-    private var mySelectedTeam: team!
-    private var myHeadObjectType: String = ""
-    private var mySavedParentObject: AnyObject!
-    private var myHeadCells: [cellDetails] = Array()
-    private var myBodyCells: [cellDetails] = Array()
-    private var headerSize: CGFloat = 0.0
+    fileprivate var mySelectedTeam: team!
+    fileprivate var myHeadObjectType: String = ""
+    fileprivate var mySavedParentObject: AnyObject!
+    fileprivate var myHeadCells: [cellDetails] = Array()
+    fileprivate var myBodyCells: [cellDetails] = Array()
+    fileprivate var headerSize: CGFloat = 0.0
     
     override func viewDidLoad()
     {
         super.viewDidLoad()
         
-        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
+        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(MaintainGTDPlanningViewController.handleSwipe(_:)))
+        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.right
         self.view.addGestureRecognizer(showGestureRecognizer)
         
-        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
+        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(MaintainGTDPlanningViewController.handleSwipe(_:)))
+        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.left
         self.view.addGestureRecognizer(hideGestureRecognizer)
         
         myDisplayHeadArray.removeAll()
@@ -62,7 +62,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         mySelectedTeam = myCurrentTeam
         buildHead(myCurrentTeam.teamID)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "displaySubmenu:", name:"NotificationDisplayGTDSubmenu", object: nil)
+        notificationCenter.addObserver(self, selector: #selector(MaintainGTDPlanningViewController.displaySubmenu(_:)), name:NotificationDisplayGTDSubmenu, object: nil)
     }
     
     override func didReceiveMemoryWarning()
@@ -79,14 +79,14 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         colBody.reloadData()
     }
     
-    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
+    func numberOfSectionsInCollectionView(_ collectionView: UICollectionView) -> Int
     {
         myHeadCells.removeAll()
         myBodyCells.removeAll()
         return 2
     }
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
         if section == 0
         {
@@ -102,13 +102,14 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         }
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
+//    func collectionView(_ collectionView: UICollectionView, cellForItemAtIndexPath indexPath: IndexPath) -> UICollectionViewCell
+    func collectionView(_ collectionView: UICollectionView, cellForItem indexPath: IndexPath) -> UICollectionViewCell
     {
         if indexPath.section == 0
         {  // Head
-            if myDisplayHeadArray[indexPath.row].isKindOfClass(task)
+            if myDisplayHeadArray[indexPath.row] is task
             {
-                let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellTask", forIndexPath: indexPath) as! myGTDTaskDisplay
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellTask", for: indexPath as IndexPath) as! myGTDTaskDisplay
                 cell.sectionType = "head"
                 cell.rowNumber = indexPath.row
 
@@ -143,10 +144,10 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                 }
                 else
                 {
-                    cell.backgroundColor = UIColor.clearColor()
+                    cell.backgroundColor = UIColor.clear
                 }
                 
-                cell.layer.borderColor = UIColor.lightGrayColor().CGColor
+                cell.layer.borderColor = UIColor.lightGray.cgColor
                 cell.layer.borderWidth = 0.5
                 cell.layer.cornerRadius = 5.0
                 cell.layer.masksToBounds = true
@@ -162,11 +163,11 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             }
             else
             {
-                let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellBody", forIndexPath: indexPath) as! myGTDDisplay
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellBody", for: indexPath as IndexPath) as! myGTDDisplay
 
                 cell.sectionType = "head"
                 cell.rowNumber = indexPath.row
-                if myDisplayHeadArray[indexPath.row].isKindOfClass(team)
+                if myDisplayHeadArray[indexPath.row] is team
                 {
                     let tempObject = myDisplayHeadArray[indexPath.row] as! team
                     cell.lblName.text = tempObject.name
@@ -189,10 +190,10 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     }
                     else
                     {
-                        cell.backgroundColor = UIColor.clearColor()
+                        cell.backgroundColor = UIColor.clear
                     }
                 }
-                else if myDisplayHeadArray[indexPath.row].isKindOfClass(workingGTDItem)
+                else if myDisplayHeadArray[indexPath.row] is workingGTDItem
                 {
                     let tempObject = myDisplayHeadArray[indexPath.row] as! workingGTDItem
                 
@@ -218,10 +219,10 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     }
                     else
                     {
-                        cell.backgroundColor = UIColor.clearColor()
+                        cell.backgroundColor = UIColor.clear
                     }
                 }
-                else if myDisplayHeadArray[indexPath.row].isKindOfClass(project)
+                else if myDisplayHeadArray[indexPath.row] is project
                 {
                     let tempObject = myDisplayHeadArray[indexPath.row] as! project
                     cell.lblName.text = tempObject.projectName
@@ -246,10 +247,10 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     }
                     else
                     {
-                        cell.backgroundColor = UIColor.clearColor()
+                        cell.backgroundColor = UIColor.clear
                     }
                 }
-                else if myDisplayHeadArray[indexPath.row].isKindOfClass(context)
+                else if myDisplayHeadArray[indexPath.row] is context
                 {
                     let tempObject = myDisplayBodyArray[indexPath.row] as! context
                     cell.lblName.text = tempObject.name
@@ -261,7 +262,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     }
                     else
                     {
-                        cell.backgroundColor = UIColor.clearColor()
+                        cell.backgroundColor = UIColor.clear
                     }
                 }
                 else if myDisplayHeadArray[indexPath.row] is String
@@ -270,7 +271,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     cell.lblChildren.text = ""
                 }
 
-                cell.layer.borderColor = UIColor.lightGrayColor().CGColor
+                cell.layer.borderColor = UIColor.lightGray.cgColor
                 cell.layer.borderWidth = 0.5
                 cell.layer.cornerRadius = 5.0
                 cell.layer.masksToBounds = true
@@ -287,9 +288,9 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         }
         else
         {  // Body
-            if myDisplayBodyArray[indexPath.row].isKindOfClass(task)
+            if myDisplayBodyArray[indexPath.row] is task
             {
-                let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellTask", forIndexPath: indexPath) as! myGTDTaskDisplay
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellTask", for: indexPath as IndexPath) as! myGTDTaskDisplay
                 cell.sectionType = "body"
                 cell.rowNumber = indexPath.row
               
@@ -318,7 +319,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                 }
                 cell.lblContexts.text = contextList
                 
-                cell.layer.borderColor = UIColor.lightGrayColor().CGColor
+                cell.layer.borderColor = UIColor.lightGray.cgColor
                 cell.layer.borderWidth = 0.5
                 cell.layer.cornerRadius = 5.0
                 cell.layer.masksToBounds = true
@@ -335,12 +336,12 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             }
             else
             {
-                let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellBody", forIndexPath: indexPath) as! myGTDDisplay
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellBody", for: indexPath as IndexPath) as! myGTDDisplay
 
                 cell.sectionType = "body"
                 cell.rowNumber = indexPath.row
             
-                if myDisplayBodyArray[indexPath.row].isKindOfClass(workingGTDItem)
+                if myDisplayBodyArray[indexPath.row] is workingGTDItem
                 {
                     let tempObject = myDisplayBodyArray[indexPath.row] as! workingGTDItem
                 
@@ -360,7 +361,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                         cell.lblChildren.text = "\(myChildRecords) child records"
                     }
                 }
-                else if myDisplayBodyArray[indexPath.row].isKindOfClass(project)
+                else if myDisplayBodyArray[indexPath.row] is project
                 {
                     let tempObject = myDisplayBodyArray[indexPath.row] as! project
                     cell.lblName.text = tempObject.projectName
@@ -379,7 +380,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                         cell.lblChildren.text = "\(myChildRecords) child records"
                     }
                 }
-                else if myDisplayBodyArray[indexPath.row].isKindOfClass(context)
+                else if myDisplayBodyArray[indexPath.row] is context
                 {
                     let tempObject = myDisplayBodyArray[indexPath.row] as! context
                     cell.lblName.text = tempObject.name
@@ -391,8 +392,8 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     cell.lblChildren.text = ""
                 }
             
-                cell.backgroundColor = UIColor.clearColor()
-                cell.layer.borderColor = UIColor.lightGrayColor().CGColor
+                cell.backgroundColor = UIColor.clear
+                cell.layer.borderColor = UIColor.lightGray.cgColor
                 cell.layer.borderWidth = 0.5
                 cell.layer.cornerRadius = 5.0
                 cell.layer.masksToBounds = true
@@ -409,7 +410,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         }
     }
     
-    func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
+    func collectionView(_ collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
     {
         var retVal: CGSize!
         
@@ -418,7 +419,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             if indexPath.section == 0
             {
                 // Head
-                if myDisplayHeadArray[indexPath.row].isKindOfClass(task)
+                if myDisplayHeadArray[indexPath.row] is task
                 {
                     retVal = CGSize(width: 310, height: 125)
                 }
@@ -429,7 +430,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             }
             else
             {  // Body
-                if myDisplayBodyArray[indexPath.row].isKindOfClass(task)
+                if myDisplayBodyArray[indexPath.row] is task
                 {
                     retVal = CGSize(width: 310, height: 125)
                 }
@@ -443,36 +444,36 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         return retVal
     }
     
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath)
     {
         if indexPath.section == 0
         { // Head
-            if myDisplayHeadArray[indexPath.row].isKindOfClass(team)
+            if myDisplayHeadArray[indexPath.row] is team
             {
                 let tempObject = myDisplayHeadArray[indexPath.row] as! team
                 highlightID = tempObject.teamID
                 mySelectedTeam = tempObject
                 buildBody(tempObject)
             }
-            else if myDisplayHeadArray[indexPath.row].isKindOfClass(workingGTDItem)
+            else if myDisplayHeadArray[indexPath.row] is workingGTDItem
             {
                 let tempObject = myDisplayHeadArray[indexPath.row] as! workingGTDItem
                 highlightID = tempObject.GTDItemID
                 buildBody(tempObject)
             }
-            else if myDisplayHeadArray[indexPath.row].isKindOfClass(project)
+            else if myDisplayHeadArray[indexPath.row] is project
             {
                 let tempObject = myDisplayHeadArray[indexPath.row] as! project
                 highlightID = tempObject.projectID
                 buildBody(tempObject)
             }
-            else if myDisplayHeadArray[indexPath.row].isKindOfClass(task)
+            else if myDisplayHeadArray[indexPath.row] is task
             {
                 let tempObject = myDisplayHeadArray[indexPath.row] as! task
                 highlightID = tempObject.taskID
                 buildBody(tempObject)
             }
-            else if myDisplayHeadArray[indexPath.row].isKindOfClass(context)
+            else if myDisplayHeadArray[indexPath.row] is context
             {
                 let tempObject = myDisplayHeadArray[indexPath.row] as! context
                 highlightID = tempObject.contextID
@@ -485,7 +486,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         }
         else 
         {  // Body
-            if myDisplayBodyArray[indexPath.row].isKindOfClass(workingGTDItem)
+            if myDisplayBodyArray[indexPath.row] is workingGTDItem
             {
                 myDisplayHeadArray = myDisplayBodyArray
                 
@@ -503,7 +504,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     buildBody(myObject)
                 }
             }
-            else if myDisplayBodyArray[indexPath.row].isKindOfClass(project)
+            else if myDisplayBodyArray[indexPath.row] is project
             {
                 myDisplayHeadArray = myDisplayBodyArray
                 
@@ -516,25 +517,25 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         }
     }
 
-    func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView
     {
-        let headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: "cellSectionHeader", forIndexPath: indexPath) as! GTDHeaderView
+        let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "cellSectionHeader", for: indexPath as IndexPath) as! GTDHeaderView
         
         if indexPath.section == 0
         {
-            if myDisplayHeadArray[indexPath.row].isKindOfClass(team)
+            if myDisplayHeadArray[indexPath.row] is team
             {
                 headerView.lblTitle.text = "My Teams"
             }
-            else if myDisplayHeadArray[indexPath.row].isKindOfClass(project)
+            else if myDisplayHeadArray[indexPath.row] is project
             {
                 headerView.lblTitle.text = "My Activities"
             }
-            else if myDisplayHeadArray[indexPath.row].isKindOfClass(task)
+            else if myDisplayHeadArray[indexPath.row] is task
             {
                 headerView.lblTitle.text = "My Actions"
             }
-            else if myDisplayHeadArray[indexPath.row].isKindOfClass(context)
+            else if myDisplayHeadArray[indexPath.row] is context
             {
                 headerView.lblTitle.text = "My Contexts"
             }
@@ -551,19 +552,19 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         {
             if myDisplayBodyArray.count > 0
             {
-                if myDisplayBodyArray[indexPath.row].isKindOfClass(team)
+                if myDisplayBodyArray[indexPath.row] is team
                 {
                     headerView.lblTitle.text = "My Teams"
                 }
-                else if myDisplayBodyArray[indexPath.row].isKindOfClass(project)
+                else if myDisplayBodyArray[indexPath.row] is project
                 {
                     headerView.lblTitle.text = "My Activities"
                 }
-                else if myDisplayBodyArray[indexPath.row].isKindOfClass(task)
+                else if myDisplayBodyArray[indexPath.row] is task
                 {
                     headerView.lblTitle.text = "My Actions"
                 }
-                else if myDisplayBodyArray[indexPath.row].isKindOfClass(context)
+                else if myDisplayBodyArray[indexPath.row] is context
                 {
                     headerView.lblTitle.text = "My Contexts"
                 }
@@ -589,7 +590,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
     
     // Start move
 
-    func moveDataItem(toIndexPath : NSIndexPath, fromIndexPath: NSIndexPath) -> Void
+    func moveDataItem(_ toIndexPath : IndexPath, fromIndexPath: IndexPath) -> Void
     {
         var fromID: Int = 0
         var fromCurrentPredecessor: Int = 0
@@ -609,7 +610,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             {
                 if fromIndexPath.item < toIndexPath.item
                 {
-                    if myDisplayBodyArray[fromIndexPath.item].isKindOfClass(workingGTDItem)
+                    if myDisplayBodyArray[fromIndexPath.item] is workingGTDItem
                     {
                         let fromItem = myDisplayBodyArray[fromIndexPath.item] as! workingGTDItem
                         
@@ -618,7 +619,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                         fromCurrentPredecessor = myDatabaseConnection.getGTDItemSuccessor(fromItem.GTDItemID)
                     }
 
-                    if myDisplayBodyArray[fromIndexPath.item].isKindOfClass(project)
+                    if myDisplayBodyArray[fromIndexPath.item] is project
                     {
                         let fromItem = myDisplayBodyArray[fromIndexPath.item] as! project
 
@@ -627,7 +628,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                         fromCurrentPredecessor = myDatabaseConnection.getProjectSuccessor(fromItem.projectID)
                     }
 
-                    if myDisplayBodyArray[toIndexPath.item].isKindOfClass(workingGTDItem)
+                    if myDisplayBodyArray[toIndexPath.item] is workingGTDItem
                     {
                         let toItem = myDisplayBodyArray[toIndexPath.item] as! workingGTDItem
                         
@@ -647,14 +648,14 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                         else
                         {
                             let alert = UIAlertController(title: "Move item", message:
-                                "Unable to move item as the item being moved is already in the predecessor chain", preferredStyle: UIAlertControllerStyle.Alert)
+                                "Unable to move item as the item being moved is already in the predecessor chain", preferredStyle: UIAlertControllerStyle.alert)
                             
-                            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
-                            self.presentViewController(alert, animated: false, completion: nil)
+                            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
+                            self.present(alert, animated: false, completion: nil)
                         }
                     }
 
-                    if myDisplayBodyArray[toIndexPath.item].isKindOfClass(project)
+                    if myDisplayBodyArray[toIndexPath.item] is project
                     {
                         let toItem = myDisplayBodyArray[toIndexPath.item] as! project
 
@@ -674,16 +675,16 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                         else
                         {
                             let alert = UIAlertController(title: "Move item", message:
-                                "Unable to move item as the item being moved is already in the predecessor chain", preferredStyle: UIAlertControllerStyle.Alert)
+                                "Unable to move item as the item being moved is already in the predecessor chain", preferredStyle: UIAlertControllerStyle.alert)
                             
-                            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
-                            self.presentViewController(alert, animated: false, completion: nil)
+                            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
+                            self.present(alert, animated: false, completion: nil)
                         }
                     }
                 }
                 else
                 {
-                    if myDisplayBodyArray[fromIndexPath.item].isKindOfClass(workingGTDItem)
+                    if myDisplayBodyArray[fromIndexPath.item] is workingGTDItem
                     {
                         let fromItem = myDisplayBodyArray[fromIndexPath.item] as! workingGTDItem
                         fromID = fromItem.GTDItemID
@@ -693,7 +694,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                         fromCurrentPredecessor = myDatabaseConnection.getGTDItemSuccessor(fromItem.GTDItemID)
                     }
 
-                    if myDisplayBodyArray[fromIndexPath.item].isKindOfClass(project)
+                    if myDisplayBodyArray[fromIndexPath.item] is project
                     {
                         let fromItem = myDisplayBodyArray[fromIndexPath.item] as! project
                         fromID = fromItem.projectID
@@ -703,7 +704,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                         fromCurrentPredecessor = myDatabaseConnection.getProjectSuccessor(fromItem.projectID)
                     }
                     
-                    if myDisplayBodyArray[toIndexPath.item].isKindOfClass(workingGTDItem)
+                    if myDisplayBodyArray[toIndexPath.item] is workingGTDItem
                     {
                         let toItem = myDisplayBodyArray[toIndexPath.item] as! workingGTDItem
                         
@@ -721,14 +722,14 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                         else
                         {
                             let alert = UIAlertController(title: "Move item", message:
-                                "Unable to move item as the item being moved is already in the predecessor chain", preferredStyle: UIAlertControllerStyle.Alert)
+                                "Unable to move item as the item being moved is already in the predecessor chain", preferredStyle: UIAlertControllerStyle.alert)
                             
-                            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
-                            self.presentViewController(alert, animated: false, completion: nil)
+                            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
+                            self.present(alert, animated: false, completion: nil)
                         }
                     }
                     
-                    if myDisplayBodyArray[toIndexPath.item].isKindOfClass(project)
+                    if myDisplayBodyArray[toIndexPath.item] is project
                     {
                         let toItem = myDisplayBodyArray[toIndexPath.item] as! project
                         
@@ -746,10 +747,10 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                         else
                         {
                             let alert = UIAlertController(title: "Move item", message:
-                                "Unable to move item as the item being moved is already in the predecessor chain", preferredStyle: UIAlertControllerStyle.Alert)
+                                "Unable to move item as the item being moved is already in the predecessor chain", preferredStyle: UIAlertControllerStyle.alert)
                             
-                            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
-                            self.presentViewController(alert, animated: false, completion: nil)
+                            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
+                            self.present(alert, animated: false, completion: nil)
                         }
                     }
                 }
@@ -761,7 +762,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
     //    colBody.reloadData()  this is called in buildbody
     }
 
-    func parseForCircularReference(referenceArray: [AnyObject], movingID: Int, predecessorID: Int) -> Bool
+    func parseForCircularReference(_ referenceArray: [AnyObject], movingID: Int, predecessorID: Int) -> Bool
     {
         var foundCircularReference: Bool = false
         var checkItemID: Int = 0
@@ -769,7 +770,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
 
         for myItem in referenceArray
         {
-            if myItem.isKindOfClass(project)
+            if myItem is project
             {
                 let tempProject = myItem as! project
                 checkItemID = tempProject.projectID
@@ -795,7 +796,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
     
     // End move
 
-    @IBAction func btnUp(sender: UIButton)
+    @IBAction func btnUp(_ sender: UIButton)
     {
         switch myHeadObjectType
         {
@@ -895,14 +896,14 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         }
     }
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?)
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
     {
         //       projectNameText.endEditing(true)
     }
     
-    func handleSwipe(recognizer:UISwipeGestureRecognizer)
+    func handleSwipe(_ recognizer:UISwipeGestureRecognizer)
     {
-        if recognizer.direction == UISwipeGestureRecognizerDirection.Left
+        if recognizer.direction == UISwipeGestureRecognizerDirection.left
         {
             // Do nothing
         }
@@ -912,16 +913,16 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         }
     }
     
-    func buildHead(inHighlightedID: Int)
+    func buildHead(_ inHighlightedID: Int)
     {
         var upSet: Bool = false
         
         for myItem in myDisplayHeadArray
         {
-            if myItem.isKindOfClass(team)
+            if myItem is team
             {
                 myHeadObjectType = "Team"
-                btnUp.hidden = true
+                btnUp.isHidden = true
                 let myObject = myItem as! team
                     
                 if myObject.teamID == inHighlightedID
@@ -930,7 +931,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     buildBody(myObject)
                 }
             }
-            else if myItem.isKindOfClass(workingGTDItem)
+            else if myItem is workingGTDItem
             {
                 myHeadObjectType = "GTDItem"
                 
@@ -940,8 +941,8 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                 {
                     if myObject.GTDLevel == 1
                     {
-                        btnUp.hidden = false
-                        btnUp.setTitle("Up to Team", forState: .Normal)
+                        btnUp.isHidden = false
+                        btnUp.setTitle("Up to Team", for: .normal)
                     }
                     else
                     {
@@ -949,12 +950,12 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                             
                         if tempGTD.title == ""
                         {
-                            btnUp.hidden = true
+                            btnUp.isHidden = true
                         }
                         else
                         {
-                            btnUp.hidden = false
-                            btnUp.setTitle("Up to \(tempGTD.title)", forState: .Normal)
+                            btnUp.isHidden = false
+                            btnUp.setTitle("Up to \(tempGTD.title)", for: .normal)
                         }
                     }
                     upSet = true
@@ -967,12 +968,12 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     }
                 }
             }
-            else if myItem.isKindOfClass(project)
+            else if myItem is project
             {
                 myHeadObjectType = "project"
                 
-                btnUp.hidden = false
-                btnUp.setTitle("Up to Area of Responsibility", forState: .Normal)
+                btnUp.isHidden = false
+                btnUp.setTitle("Up to Area of Responsibility", for: .normal)
                 
                 let myObject = myItem as! project
                     
@@ -982,20 +983,20 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     buildBody(myObject)
                 }
             }
-            else if myItem.isKindOfClass(task)
+            else if myItem is task
             {
                 myHeadObjectType = "task"
                 
-                btnUp.hidden = false
-                btnUp.setTitle("Up to Activity", forState: .Normal)
+                btnUp.isHidden = false
+                btnUp.setTitle("Up to Activity", for: .normal)
                 // todo
             }
-            else if myItem.isKindOfClass(context)
+            else if myItem is context
             {
                 myHeadObjectType = "context"
                 
-                btnUp.hidden = false
-                btnUp.setTitle("Up to Team", forState: .Normal)
+                btnUp.isHidden = false
+                btnUp.setTitle("Up to Team", for: .normal)
                 
                 // todo, also should there be an option for a context as a child of team??
             }
@@ -1007,7 +1008,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         }
     }
     
-    func buildBody(inParentObject: AnyObject)
+    func buildBody(_ inParentObject: AnyObject)
     {
         var myBodyObjectType: String = ""
         
@@ -1015,7 +1016,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         
         myDisplayBodyArray.removeAll()
         
-        if inParentObject.isKindOfClass(team)
+        if inParentObject is team
         {
             myBodyObjectType = "GTDItem"
             
@@ -1023,7 +1024,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             myObject.loadGTDTopLevel()
             myWorkingArray = myObject.GTDTopLevel
         }
-        else if inParentObject.isKindOfClass(workingGTDItem)
+        else if inParentObject is workingGTDItem
         {
             let myObject = inParentObject as! workingGTDItem
             myObject.loadChildren()
@@ -1031,7 +1032,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             
             if myWorkingArray.count > 0
             {
-                if myWorkingArray[0].isKindOfClass(workingGTDItem)
+                if myWorkingArray[0] is workingGTDItem
                 {
                     myBodyObjectType = "GTDItem"
                 }
@@ -1041,7 +1042,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                 }
             }
         }
-        else if inParentObject.isKindOfClass(project)
+        else if inParentObject is project
         {
             myBodyObjectType = "task"
             
@@ -1051,13 +1052,13 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             
             // todo
         }
-        else if inParentObject.isKindOfClass(task)
+        else if inParentObject is task
         {
             myBodyObjectType = "task"
             
             // todo
         }
-        else if inParentObject.isKindOfClass(context)
+        else if inParentObject is context
         {
             myBodyObjectType = "context"
             
@@ -1096,7 +1097,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         colBody.reloadData()
     }
     
-    func buildGTDItemArray(myWorkingArray: [AnyObject]) -> [workingGTDItem]
+    func buildGTDItemArray(_ myWorkingArray: [AnyObject]) -> [workingGTDItem]
     {
         var predecessorArray: [workingGTDItem] = Array()
         var returnArray: [workingGTDItem] = Array()
@@ -1141,7 +1142,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                         if indexCount < returnArray.count
                         {
                             
-                            returnArray.insert(myItem, atIndex: indexCount + 1)
+                            returnArray.insert(myItem, at: indexCount + 1)
                         }
                         else
                         {
@@ -1149,7 +1150,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                             returnArray.append(myItem)
                         }
                     }
-                    indexCount++
+                    indexCount += 1
                 }
                 
                 // if we have gone through the array an not found a match for the precessor, then we need to store for another go round
@@ -1162,7 +1163,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         return returnArray
     }
     
-    func buildProjectArray(myWorkingArray: [AnyObject]) -> [project]
+    func buildProjectArray(_ myWorkingArray: [AnyObject]) -> [project]
     {
         var returnArray: [project] = Array()
         var predecessorArray: [project] = Array()
@@ -1207,7 +1208,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                         if indexCount < returnArray.count
                         {
                             
-                            returnArray.insert(myItem, atIndex: indexCount + 1)
+                            returnArray.insert(myItem, at: indexCount + 1)
                         }
                         else
                         {
@@ -1215,7 +1216,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                             returnArray.append(myItem)
                         }
                     }
-                    indexCount++
+                    indexCount += 1
                 }
                 
                 // if we have gone through the array an not found a match for the precessor, then we need to store for another go round
@@ -1229,7 +1230,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         return returnArray
     }
     
-    func buildTaskArray(myWorkingArray: [AnyObject]) -> [task]
+    func buildTaskArray(_ myWorkingArray: [AnyObject]) -> [task]
     {
         var returnArray: [task] = Array()
         var predecessorArray: [task] = Array()
@@ -1275,7 +1276,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                             itemFound = true
                             if indexCount < returnArray.count
                             {
-                                returnArray.insert(myItem, atIndex: indexCount + 1)
+                                returnArray.insert(myItem, at: indexCount + 1)
                             }
                             else
                             {
@@ -1283,7 +1284,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                             }
                         }
                     }
-                    indexCount++
+                    indexCount += 1
                 }
                 
                 // if we have gone through the array an not found a match for the precessor, then we need to store for another go round
@@ -1298,18 +1299,18 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
     }
 
     // MARK: - UIPopoverPresentationControllerDelegate
-    func adaptivePresentationStyleForPresentationController(controller: UIPresentationController) -> UIModalPresentationStyle
+    func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle
     {
-        return .FullScreen
+        return .fullScreen
        // return .None
     }
     
-    func presentationController(controller: UIPresentationController, viewControllerForAdaptivePresentationStyle style: UIModalPresentationStyle) -> UIViewController?
+    func presentationController(_ controller: UIPresentationController, viewControllerForAdaptivePresentationStyle style: UIModalPresentationStyle) -> UIViewController?
     {
         return UINavigationController(rootViewController: controller.presentedViewController)
     }
     
-    func popoverPresentationControllerDidDismissPopover(popoverPresentationController: UIPopoverPresentationController)
+    func popoverPresentationControllerDidDismissPopover(_ popoverPresentationController: UIPopoverPresentationController)
     {
         refreshBody()
     }
@@ -1376,9 +1377,9 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         }
     }
     
-    func displayTeamOptions(inTeam: team) -> UIAlertController
+    func displayTeamOptions(_ inTeam: team) -> UIAlertController
     {
-        let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .ActionSheet)
+        let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .actionSheet)
         
         var myMessage: String = ""
 
@@ -1395,9 +1396,9 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             myMessage = "Add \(tempGTD.title)"
         }
         
-        let myOption1 = UIAlertAction(title: myMessage, style: .Default, handler: { (action: UIAlertAction) -> () in
-            let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("GTDEditController") as! GTDEditViewController
-            popoverContent.modalPresentationStyle = .Popover
+        let myOption1 = UIAlertAction(title: myMessage, style: .default, handler: { (action: UIAlertAction) -> () in
+            let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "GTDEditController") as! GTDEditViewController
+            popoverContent.modalPresentationStyle = .popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
             
@@ -1413,18 +1414,18 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             //            let arrowRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 10, 10)
             
             //            popover!.sourceRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 500, 400)
-            popover!.sourceRect = CGRectMake(0, 0, 500, 400)
+            popover!.sourceRect = CGRect(x: 0, y: 0, width: 500, height: 400)
             
-            popoverContent.preferredContentSize = CGSizeMake(500,400)
+            popoverContent.preferredContentSize = CGSize(width: 500,height: 400)
             
             //      let aPopover =  UIPopoverController(contentViewController: popoverContent)
             //      aPopover.presentPopoverFromRect(arrowRect, inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
-            self.presentViewController(popoverContent, animated: true, completion: nil)
+            self.present(popoverContent, animated: true, completion: nil)
         })
         
-        let myOption2 = UIAlertAction(title: "Edit Team", style: .Default, handler: { (action: UIAlertAction) -> () in
-            let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("TeamMaintenance") as! teamMaintenanceViewController
-            popoverContent.modalPresentationStyle = .Popover
+        let myOption2 = UIAlertAction(title: "Edit Team", style: .default, handler: { (action: UIAlertAction) -> () in
+            let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "TeamMaintenance") as! teamMaintenanceViewController
+            popoverContent.modalPresentationStyle = .popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
             
@@ -1439,18 +1440,18 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             //            let arrowRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 10, 10)
             
             //            popover!.sourceRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 700, 700)
-            popover!.sourceRect = CGRectMake(0, 0, 800, 700)
+            popover!.sourceRect = CGRect(x: 0, y: 0, width: 800, height: 700)
             
-            popoverContent.preferredContentSize = CGSizeMake(800,700)
+            popoverContent.preferredContentSize = CGSize(width: 800,height: 700)
             
             //      let aPopover =  UIPopoverController(contentViewController: popoverContent)
             //      aPopover.presentPopoverFromRect(arrowRect, inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
-            self.presentViewController(popoverContent, animated: true, completion: nil)
+            self.present(popoverContent, animated: true, completion: nil)
         })
         
-        let myOption3 = UIAlertAction(title: "Maintain Team Settings", style: .Default, handler: { (action: UIAlertAction) -> () in
-            let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("MaintainTeamDecodes") as! teamDecodesViewController
-            popoverContent.modalPresentationStyle = .Popover
+        let myOption3 = UIAlertAction(title: "Maintain Team Settings", style: .default, handler: { (action: UIAlertAction) -> () in
+            let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "MaintainTeamDecodes") as! teamDecodesViewController
+            popoverContent.modalPresentationStyle = .popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
             
@@ -1465,18 +1466,18 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             //            let arrowRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 10, 10)
             
             //            popover!.sourceRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 700, 700)
-            popover!.sourceRect = CGRectMake(0, 0, 600, 400)
+            popover!.sourceRect = CGRect(x: 0, y: 0, width: 600, height: 400)
             
-            popoverContent.preferredContentSize = CGSizeMake(600,400)
+            popoverContent.preferredContentSize = CGSize(width: 600,height: 400)
             
             //      let aPopover =  UIPopoverController(contentViewController: popoverContent)
             //      aPopover.presentPopoverFromRect(arrowRect, inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
-            self.presentViewController(popoverContent, animated: true, completion: nil)
+            self.present(popoverContent, animated: true, completion: nil)
         })
         
-        let myOption4 = UIAlertAction(title: "New Team", style: .Default, handler: { (action: UIAlertAction) -> () in
-            let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("TeamMaintenance") as! teamMaintenanceViewController
-            popoverContent.modalPresentationStyle = .Popover
+        let myOption4 = UIAlertAction(title: "New Team", style: .default, handler: { (action: UIAlertAction) -> () in
+            let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "TeamMaintenance") as! teamMaintenanceViewController
+            popoverContent.modalPresentationStyle = .popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
             
@@ -1492,13 +1493,13 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             //            let arrowRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 10, 10)
             
             //            popover!.sourceRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 700, 700)
-            popover!.sourceRect = CGRectMake(0, 0, 800, 700)
+            popover!.sourceRect = CGRect(x: 0, y: 0, width: 800, height: 700)
             
-            popoverContent.preferredContentSize = CGSizeMake(800,700)
+            popoverContent.preferredContentSize = CGSize(width: 800,height: 700)
             
             //      let aPopover =  UIPopoverController(contentViewController: popoverContent)
             //      aPopover.presentPopoverFromRect(arrowRect, inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
-            self.presentViewController(popoverContent, animated: true, completion: nil)
+            self.present(popoverContent, animated: true, completion: nil)
 
         })
         
@@ -1510,7 +1511,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         return myOptions
     }
     
-    func displayGTDOptions(inGTDItem: workingGTDItem, inDisplayType: String, xPos: CGFloat, yPos: CGFloat) -> UIAlertController
+    func displayGTDOptions(_ inGTDItem: workingGTDItem, inDisplayType: String, xPos: CGFloat, yPos: CGFloat) -> UIAlertController
     {
         // Need to get the name of the GTD Level
         
@@ -1550,18 +1551,18 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             actionType = "GTDItem"
         }
         
-        let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .ActionSheet)
+        let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .actionSheet)
         
-        let myOption1 = UIAlertAction(title: "Edit \(myLevelType)", style: .Default, handler: { (action: UIAlertAction) -> () in
-            let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("GTDEditController") as! GTDEditViewController
-            popoverContent.modalPresentationStyle = .Popover
+        let myOption1 = UIAlertAction(title: "Edit \(myLevelType)", style: .default, handler: { (action: UIAlertAction) -> () in
+            let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "GTDEditController") as! GTDEditViewController
+            popoverContent.modalPresentationStyle = .popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
             popover!.sourceView = self.view
             
             popoverContent.inGTDObject = inGTDItem
                 
-            popoverContent.preferredContentSize = CGSizeMake(500,400)
+            popoverContent.preferredContentSize = CGSize(width: 500,height: 400)
             
             //  Calculate the start position based on screen width and position of the item
             //            let myXPos = xPos
@@ -1569,21 +1570,21 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             //            let arrowRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 10, 10)
             
             //            popover!.sourceRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 500, 400)
-            popover!.sourceRect = CGRectMake(0, 0, 500, 400)
+            popover!.sourceRect = CGRect(x: 0, y: 0, width: 500, height: 400)
             
       //      let aPopover =  UIPopoverController(contentViewController: popoverContent)
       //      aPopover.presentPopoverFromRect(arrowRect, inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
-            self.presentViewController(popoverContent, animated: true, completion: nil)
+            self.present(popoverContent, animated: true, completion: nil)
             })
             
-        let myOption2 = UIAlertAction(title: "Delete entry", style: .Default, handler: { (action: UIAlertAction) -> () in
+        let myOption2 = UIAlertAction(title: "Delete entry", style: .default, handler: { (action: UIAlertAction) -> () in
             if !inGTDItem.delete()
             {
                 let alert = UIAlertController(title: "Delete item", message:
-                    "Unable to delete item.  Check that there are no child records", preferredStyle: UIAlertControllerStyle.Alert)
+                    "Unable to delete item.  Check that there are no child records", preferredStyle: UIAlertControllerStyle.alert)
                 
-                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
-                self.presentViewController(alert, animated: false, completion: nil)
+                alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
+                self.present(alert, animated: false, completion: nil)
             }
             else
             {
@@ -1596,11 +1597,11 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         
         if inDisplayType == "Head"
         {
-            myOption0 = UIAlertAction(title: "Add \(myChildType)", style: .Default, handler: { (action: UIAlertAction) -> () in
+            myOption0 = UIAlertAction(title: "Add \(myChildType)", style: .default, handler: { (action: UIAlertAction) -> () in
                 if actionType == "GTDItem"
                 { // GTDItem
-                    let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("GTDEditController") as! GTDEditViewController
-                    popoverContent.modalPresentationStyle = .Popover
+                    let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "GTDEditController") as! GTDEditViewController
+                    popoverContent.modalPresentationStyle = .popover
                     let popover = popoverContent.popoverPresentationController
                     popover!.delegate = self
                     popover!.sourceView = self.view
@@ -1609,7 +1610,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     tempChild.GTDLevel = inGTDItem.GTDLevel + 1
                     popoverContent.inGTDObject = tempChild
                 
-                    popoverContent.preferredContentSize = CGSizeMake(500,400)
+                    popoverContent.preferredContentSize = CGSize(width: 500,height: 400)
                     
                     //  Calculate the start position based on screen width and position of the item
                     //            let myXPos = xPos
@@ -1617,17 +1618,17 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     //            let arrowRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 10, 10)
                     
                     //            popover!.sourceRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 500, 400)
-                    popover!.sourceRect = CGRectMake(0, 0, 500, 400)
+                    popover!.sourceRect = CGRect(x: 0, y: 0, width: 500, height: 400)
                     
                     //      let aPopover =  UIPopoverController(contentViewController: popoverContent)
                     //      aPopover.presentPopoverFromRect(arrowRect, inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
-                    self.presentViewController(popoverContent, animated: true, completion: nil)
+                    self.present(popoverContent, animated: true, completion: nil)
 
                 }
                 else
                 {  // Project
-                    let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("MaintainProject") as! MaintainProjectViewController
-                    popoverContent.modalPresentationStyle = .Popover
+                    let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "MaintainProject") as! MaintainProjectViewController
+                    popoverContent.modalPresentationStyle = .popover
                     let popover = popoverContent.popoverPresentationController
                     popover!.delegate = self
                     popover!.sourceView = self.view
@@ -1639,7 +1640,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     popoverContent.myActionType = "Add"
                     popoverContent.mySelectedTeam = self.mySelectedTeam
                         
-                    popoverContent.preferredContentSize = CGSizeMake(700,700)
+                    popoverContent.preferredContentSize = CGSize(width: 700,height: 700)
                         
                     //  Calculate the start position based on screen width and position of the item
                     //            let myXPos = xPos
@@ -1647,18 +1648,18 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     //            let arrowRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 10, 10)
                     
                     //            popover!.sourceRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 700, 700)
-                    popover!.sourceRect = CGRectMake(0, 0, 700, 700)
+                    popover!.sourceRect = CGRect(x: 0, y: 0, width: 700, height: 700)
                     
                     //      let aPopover =  UIPopoverController(contentViewController: popoverContent)
                     //      aPopover.presentPopoverFromRect(arrowRect, inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
-                    self.presentViewController(popoverContent, animated: true, completion: nil)
+                    self.present(popoverContent, animated: true, completion: nil)
                 }
             })
             myOptions.addAction(myOption0)
         }
         else if inDisplayType == "Body"
         {
-            myOption0 = UIAlertAction(title: "Zoom", style: .Default, handler: { (action: UIAlertAction) -> () in
+            myOption0 = UIAlertAction(title: "Zoom", style: .default, handler: { (action: UIAlertAction) -> () in
                 self.myDisplayHeadArray = self.myDisplayBodyArray
                 self.highlightID = inGTDItem.GTDItemID as Int
                 self.buildHead(self.highlightID)
@@ -1674,13 +1675,13 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         return myOptions
     }
     
-    func displayProjectOptions(inProjectItem: project, inDisplayType: String, xPos: CGFloat, yPos: CGFloat) -> UIAlertController
+    func displayProjectOptions(_ inProjectItem: project, inDisplayType: String, xPos: CGFloat, yPos: CGFloat) -> UIAlertController
     {
-        let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .ActionSheet)
+        let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .actionSheet)
         
-        let myOption1 = UIAlertAction(title: "Edit", style: .Default, handler: { (action: UIAlertAction) -> () in
-            let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("MaintainProject") as! MaintainProjectViewController
-            popoverContent.modalPresentationStyle = .Popover
+        let myOption1 = UIAlertAction(title: "Edit", style: .default, handler: { (action: UIAlertAction) -> () in
+            let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "MaintainProject") as! MaintainProjectViewController
+            popoverContent.modalPresentationStyle = .popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
             popover!.sourceView = self.view
@@ -1689,7 +1690,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             popoverContent.myActionType = "Edit"
             popoverContent.mySelectedTeam = self.mySelectedTeam
             
-            popoverContent.preferredContentSize = CGSizeMake(700,700)
+            popoverContent.preferredContentSize = CGSize(width: 700,height: 700)
             
             //  Calculate the start position based on screen width and position of the item
             //            let myXPos = xPos
@@ -1697,16 +1698,16 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             //            let arrowRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 10, 10)
             
             //            popover!.sourceRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 700, 700)
-            popover!.sourceRect = CGRectMake(0, 0, 700, 700)
+            popover!.sourceRect = CGRect(x: 0, y: 0, width: 700, height: 700)
             
             //      let aPopover =  UIPopoverController(contentViewController: popoverContent)
             //      aPopover.presentPopoverFromRect(arrowRect, inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
-            self.presentViewController(popoverContent, animated: true, completion: nil)
+            self.present(popoverContent, animated: true, completion: nil)
         })
         
         if inDisplayType == "Body"
         {
-            let myOption0 = UIAlertAction(title: "Zoom", style: .Default, handler: { (action: UIAlertAction) -> () in
+            let myOption0 = UIAlertAction(title: "Zoom", style: .default, handler: { (action: UIAlertAction) -> () in
                 self.myDisplayHeadArray = self.myDisplayBodyArray
                 self.highlightID = inProjectItem.projectID as Int
                 self.buildHead(self.highlightID)
@@ -1715,14 +1716,14 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             })
             myOptions.addAction(myOption0)
             
-            let myOption2 = UIAlertAction(title: "Delete Activity", style: .Default, handler: { (action: UIAlertAction) -> () in
+            let myOption2 = UIAlertAction(title: "Delete Activity", style: .default, handler: { (action: UIAlertAction) -> () in
                 if !inProjectItem.delete()
                 {
                     let alert = UIAlertController(title: "Delete Activity", message:
-                        "Unable to delete Activity.  Check that there are no Actions", preferredStyle: UIAlertControllerStyle.Alert)
+                        "Unable to delete Activity.  Check that there are no Actions", preferredStyle: UIAlertControllerStyle.alert)
                     
-                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
-                    self.presentViewController(alert, animated: false, completion: nil)
+                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
+                    self.present(alert, animated: false, completion: nil)
                 }
                 else
                 {
@@ -1733,9 +1734,9 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             myOptions.addAction(myOption2)
         }
         
-        let myOption3 = UIAlertAction(title: "Add Action", style: .Default, handler: { (action: UIAlertAction) -> () in
-            let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("tasks") as! taskViewController
-            popoverContent.modalPresentationStyle = .Popover
+        let myOption3 = UIAlertAction(title: "Add Action", style: .default, handler: { (action: UIAlertAction) -> () in
+            let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "tasks") as! taskViewController
+            popoverContent.modalPresentationStyle = .popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
             popover!.sourceView = self.view
@@ -1744,18 +1745,18 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             newTask.projectID = inProjectItem.projectID
             popoverContent.passedTask = newTask
             
-            popoverContent.preferredContentSize = CGSizeMake(700,700)
+            popoverContent.preferredContentSize = CGSize(width: 700,height: 700)
             //  Calculate the start position based on screen width and position of the item
             //            let myXPos = xPos
             //            let myYPos = yPos
             //            let arrowRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 10, 10)
             
             //            popover!.sourceRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 700, 700)
-            popover!.sourceRect = CGRectMake(0, 0, 700, 700)
+            popover!.sourceRect = CGRect(x: 0, y: 0, width: 700, height: 700)
             
             //      let aPopover =  UIPopoverController(contentViewController: popoverContent)
             //      aPopover.presentPopoverFromRect(arrowRect, inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
-            self.presentViewController(popoverContent, animated: true, completion: nil)
+            self.present(popoverContent, animated: true, completion: nil)
         })
 
         myOptions.addAction(myOption1)
@@ -1764,19 +1765,19 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         return myOptions
     }
     
-    func displayTaskOptions(workingTask: task, displayType: String, xPos: CGFloat, yPos: CGFloat) -> UIAlertController
+    func displayTaskOptions(_ workingTask: task, displayType: String, xPos: CGFloat, yPos: CGFloat) -> UIAlertController
     {
-        let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .ActionSheet)
+        let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .actionSheet)
 
-        let myOption1 = UIAlertAction(title: "Edit Action", style: .Default, handler: { (action: UIAlertAction) -> () in
-            let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("tasks") as! taskViewController
-            popoverContent.modalPresentationStyle = .Popover
+        let myOption1 = UIAlertAction(title: "Edit Action", style: .default, handler: { (action: UIAlertAction) -> () in
+            let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "tasks") as! taskViewController
+            popoverContent.modalPresentationStyle = .popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
             popover!.sourceView = self.view
             
             popoverContent.passedTask = workingTask
-            popoverContent.preferredContentSize = CGSizeMake(700,700)
+            popoverContent.preferredContentSize = CGSize(width: 700,height: 700)
             
             //  Calculate the start position based on screen width and position of the item
             //            let myXPos = xPos
@@ -1784,16 +1785,16 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             //            let arrowRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 10, 10)
             
             //            popover!.sourceRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 700, 700)
-            popover!.sourceRect = CGRectMake(0, 0, 700, 700)
+            popover!.sourceRect = CGRect(x: 0, y: 0, width: 700, height: 700)
             
             //      let aPopover =  UIPopoverController(contentViewController: popoverContent)
             //      aPopover.presentPopoverFromRect(arrowRect, inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
-            self.presentViewController(popoverContent, animated: true, completion: nil)
+            self.present(popoverContent, animated: true, completion: nil)
         })
         
-        let myOption2 = UIAlertAction(title: "Action Updates", style: .Default, handler: { (action: UIAlertAction) -> () in
-            let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("taskUpdate") as! taskUpdatesViewController
-            popoverContent.modalPresentationStyle = .Popover
+        let myOption2 = UIAlertAction(title: "Action Updates", style: .default, handler: { (action: UIAlertAction) -> () in
+            let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "taskUpdate") as! taskUpdatesViewController
+            popoverContent.modalPresentationStyle = .popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
             popover!.sourceView = self.view
@@ -1804,18 +1805,18 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
 //            let arrowRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 10, 10)
             
 //            popover!.sourceRect = CGRectMake(myXPos + 20, myYPos + self.headerSize, 700, 700)
-            popover!.sourceRect = CGRectMake(0, 0, 700, 700)
+            popover!.sourceRect = CGRect(x: 0, y: 0, width: 700, height: 700)
  
             popoverContent.passedTask = workingTask
-            popoverContent.preferredContentSize = CGSizeMake(700,700)
+            popoverContent.preferredContentSize = CGSize(width: 700,height: 700)
             
             //      let aPopover =  UIPopoverController(contentViewController: popoverContent)
             //      aPopover.presentPopoverFromRect(arrowRect, inView: self.view, permittedArrowDirections: UIPopoverArrowDirection.Any, animated: true)
-            self.presentViewController(popoverContent, animated: true, completion: nil)
+            self.present(popoverContent, animated: true, completion: nil)
         })
         
-        let myOption3 = UIAlertAction(title: "Delete Action", style: .Default, handler: { (action: UIAlertAction) -> () in
-            workingTask.delete()
+        let myOption3 = UIAlertAction(title: "Delete Action", style: .default, handler: { (action: UIAlertAction) -> () in
+            let _ = workingTask.delete()
         })
 
         myOptions.addAction(myOption1)
@@ -1825,7 +1826,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         return myOptions
     }
     
-    func displaySubmenu(notification: NSNotification)
+    func displaySubmenu(_ notification: Notification)
     {
         let sectionType = notification.userInfo!["sectionType"] as! String
         let rowString = notification.userInfo!["rowNumber"] as! String
@@ -1836,20 +1837,20 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         { // Head
             var myOptions: UIAlertController!
                     
-            if myDisplayHeadArray[rowNumber!].isKindOfClass(team)
+            if myDisplayHeadArray[rowNumber!] is team
             {
                 let tempObject = myDisplayHeadArray[rowNumber!] as! team
                 highlightID = tempObject.teamID
                         
                 myOptions = displayTeamOptions(myDisplayHeadArray[rowNumber!] as! team)
             }
-            else if myDisplayHeadArray[rowNumber!].isKindOfClass(workingGTDItem)
+            else if myDisplayHeadArray[rowNumber!] is workingGTDItem
             {
                 let tempObject = myDisplayHeadArray[rowNumber!] as! workingGTDItem
                 highlightID = tempObject.GTDItemID
                 myOptions = displayGTDOptions(myDisplayHeadArray[rowNumber!] as! workingGTDItem, inDisplayType: "Head", xPos: myHeadCells[rowNumber!].displayX, yPos: myHeadCells[rowNumber!].displayY)
             }
-            else if myDisplayHeadArray[rowNumber!].isKindOfClass(project)
+            else if myDisplayHeadArray[rowNumber!] is project
             {
                 let tempObject = myDisplayHeadArray[rowNumber!] as! project
                 highlightID = tempObject.projectID
@@ -1858,37 +1859,37 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             }
             myOptions.popoverPresentationController!.sourceView = self.view
                     
-            myOptions.popoverPresentationController!.sourceRect = CGRectMake(myHeadCells[rowNumber!].displayX + 20, myHeadCells[rowNumber!].displayY + headerSize, 0, 0)
+            myOptions.popoverPresentationController!.sourceRect = CGRect(x: myHeadCells[rowNumber!].displayX + 20,y:  myHeadCells[rowNumber!].displayY + headerSize, width: 0, height: 0)
                     
-            self.presentViewController(myOptions, animated: true, completion: nil)
+            self.present(myOptions, animated: true, completion: nil)
         }
         else
         { // Body
             var myOptions: UIAlertController!
-            if myDisplayBodyArray[rowNumber!].isKindOfClass(workingGTDItem)
+            if myDisplayBodyArray[rowNumber!] is workingGTDItem
             {
                 let tempObject = myDisplayBodyArray[rowNumber!] as! workingGTDItem
                 highlightID = tempObject.GTDItemID
                         
                 myOptions = displayGTDOptions(myDisplayBodyArray[rowNumber!] as! workingGTDItem, inDisplayType: "Body", xPos: myBodyCells[rowNumber!].displayX, yPos: myBodyCells[rowNumber!].displayY)
             }
-            else if myDisplayBodyArray[rowNumber!].isKindOfClass(project)
+            else if myDisplayBodyArray[rowNumber!] is project
             {
                 let tempObject = myDisplayBodyArray[rowNumber!] as! project
                 highlightID = tempObject.projectID
                         
                 myOptions = displayProjectOptions(myDisplayBodyArray[rowNumber!] as! project, inDisplayType: "Body", xPos: myBodyCells[rowNumber!].displayX, yPos: myBodyCells[rowNumber!].displayY)
             }
-            else if myDisplayBodyArray[rowNumber!].isKindOfClass(task)
+            else if myDisplayBodyArray[rowNumber!] is task
             {
                 myOptions = displayTaskOptions(myDisplayBodyArray[rowNumber!] as! task, displayType: "Body", xPos: myBodyCells[rowNumber!].displayX, yPos: myBodyCells[rowNumber!].displayY)
             }
                     
             myOptions.popoverPresentationController!.sourceView = self.view
                     
-            myOptions.popoverPresentationController!.sourceRect = CGRectMake(myBodyCells[rowNumber!].displayX + 20, myBodyCells[rowNumber!].displayY + headerSize, 0, 0)
+            myOptions.popoverPresentationController!.sourceRect = CGRect(x: myBodyCells[rowNumber!].displayX + 20, y: myBodyCells[rowNumber!].displayY + headerSize, width: 0, height: 0)
                     
-            self.presentViewController(myOptions, animated: true, completion: nil)
+            self.present(myOptions, animated: true, completion: nil)
         }
 
         colBody.reloadData()
@@ -1935,10 +1936,10 @@ class KDRearrangeableGTDDisplayHierarchy: UICollectionViewCell
         super.layoutSubviews()
     }
     
-    @IBAction func btnDetails(sender: UIButton)
+    @IBAction func btnDetails(_ sender: UIButton)
     {
         let selectedDictionary = ["sectionType" : sectionType, "rowNumber": "\(rowNumber)"]
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationDisplayGTDSubmenu", object: nil, userInfo:selectedDictionary as [String : String])
+        notificationCenter.post(name: NotificationDisplayGTDSubmenu, object: nil, userInfo:selectedDictionary as [String : String])
     }
 }
 
@@ -2001,10 +2002,10 @@ class KDRearrangeableGTDTaskDisplay: UICollectionViewCell
         super.layoutSubviews()
     }
     
-    @IBAction func btnDetails(sender: UIButton)
+    @IBAction func btnDetails(_ sender: UIButton)
     {
         let selectedDictionary = ["sectionType" : sectionType, "rowNumber": "\(rowNumber)"]
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationDisplayGTDSubmenu", object: nil, userInfo:selectedDictionary as [String : String])
+        notificationCenter.post(name: NotificationDisplayGTDSubmenu, object: nil, userInfo:selectedDictionary as [String : String])
     }
 }
 

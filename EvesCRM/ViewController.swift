@@ -13,11 +13,12 @@ import EventKit
 import EventKitUI
 import Social
 import Accounts
+import TextExpander
 
 //import "ENSDK/Headers/ENSDK.h"
 
 // PeoplePicker code
-class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDelegate, MyMaintainProjectDelegate, MyDropboxCoreDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate, MyMeetingsDelegate, SideBarDelegate, MyMaintainPanesDelegate, UIPopoverPresentationControllerDelegate, MyGTDInboxDelegate, MyMaintainContextsDelegate
+class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDelegate, MyMaintainProjectDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate, MyMeetingsDelegate, SideBarDelegate, MyMaintainPanesDelegate, UIPopoverPresentationControllerDelegate, MyGTDInboxDelegate, MyMaintainContextsDelegate   //MyDropboxCoreDelegate
 {
     
     @IBOutlet weak var TableTypeSelection1: UIPickerView!
@@ -91,8 +92,8 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
     var omniLinkArray: [String] = Array()
     
     var document: MyDocument?
-    var documentURL: NSURL?
-    var ubiquityURL: NSURL?
+    var documentURL: URL?
+    var ubiquityURL: URL?
     var metaDataQuery: NSMetadataQuery?
     
     var dropboxConnected: Bool = false
@@ -144,21 +145,21 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
         
         globalEventStore = EKEventStore()
         
-        switch EKEventStore.authorizationStatusForEntityType(EKEntityType.Event) {
-        case .Authorized:
+        switch EKEventStore.authorizationStatus(for: EKEntityType.event) {
+        case .authorized:
             print("Calendar Access granted")
-        case .Denied:
+        case .denied:
             print("Calendar Access denied")
-        case .NotDetermined:
+        case .notDetermined:
             // 3
-            globalEventStore.requestAccessToEntityType(EKEntityType.Event, completion:
+            globalEventStore.requestAccess(to: EKEntityType.event, completion:
                 {(granted: Bool, error: NSError?) -> Void in
                     if granted {
                         print("Calendar Access granted")
                     } else {
                         print("Calendar Access denied")
                     }
-                })
+                } as! EKEventStoreRequestAccessCompletionHandler)
         default:
             print("Calendar Case Default")
         }
@@ -166,27 +167,27 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
         // Now we will try and open Evernote
         
 
-        evernoteSession = ENSession.sharedSession()
+        evernoteSession = ENSession.shared()
 
 //        connectToEvernote()
         
        // Initial population of contact list
-        self.dataTable1.registerClass(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
-        self.dataTable2.registerClass(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
-        self.dataTable3.registerClass(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
-        self.dataTable4.registerClass(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
+        self.dataTable1.register(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
+        self.dataTable2.register(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
+        self.dataTable3.register(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
+        self.dataTable4.register(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
         
         hideFields()
-        buttonAdd1.hidden = true
-        buttonAdd2.hidden = true
-        buttonAdd3.hidden = true
-        buttonAdd4.hidden = true
-        StartLabel.hidden = false
+        buttonAdd1.isHidden = true
+        buttonAdd2.isHidden = true
+        buttonAdd3.isHidden = true
+        buttonAdd4.isHidden = true
+        StartLabel.isHidden = false
         
-        dataTable1.tableFooterView = UIView(frame:CGRectZero)
-        dataTable2.tableFooterView = UIView(frame:CGRectZero)
-        dataTable3.tableFooterView = UIView(frame:CGRectZero)
-        dataTable4.tableFooterView = UIView(frame:CGRectZero)
+        dataTable1.tableFooterView = UIView(frame:CGRect.zero)
+        dataTable2.tableFooterView = UIView(frame:CGRect.zero)
+        dataTable3.tableFooterView = UIView(frame:CGRect.zero)
+        dataTable4.tableFooterView = UIView(frame:CGRect.zero)
 
         populateContactList()
     
@@ -213,11 +214,11 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
         
         // Default the buttons
         
-        TableTypeButton1.setTitle("Calendar", forState: .Normal)
+        TableTypeButton1.setTitle("Calendar", for: UIControlState())
         itemSelected = "Calendar"
-        TableTypeButton2.setTitle("Details", forState: .Normal)
-        TableTypeButton3.setTitle("Project Membership", forState: .Normal)
-        TableTypeButton4.setTitle("Tasks", forState: .Normal)
+        TableTypeButton2.setTitle("Details", for: UIControlState())
+        TableTypeButton3.setTitle("Project Membership", for: UIControlState())
+        TableTypeButton4.setTitle("Tasks", for: UIControlState())
        
         TableOptions = Array()
 
@@ -230,16 +231,16 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
 
         labelName.text = ""
     
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "OneNoteNotebookGetSections", name:"NotificationOneNoteNotebooksLoaded", object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "OneNotePagesReady:", name:"NotificationOneNotePagesReady", object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "OneNoteNoNotebookFound", name:"NotificationOneNoteNoNotebookFound", object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "EvernoteComplete", name:"NotificationEvernoteComplete", object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "myEvernoteUserDidFinish", name:"NotificationEvernoteUserDidFinish", object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "myGmailDidFinish", name:"NotificationGmailDidFinish", object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "myHangoutsDidFinish", name:"NotificationHangoutsDidFinish", object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "gmailSignedIn:", name:"NotificationGmailConnected", object: nil)
+        notificationCenter.addObserver(self, selector: #selector(ViewController.OneNoteNotebookGetSections), name: NotificationOneNoteNotebooksLoaded, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(ViewController.OneNotePagesReady(_:)), name: NotificationOneNotePagesReady, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(ViewController.OneNoteNoNotebookFound), name: NotificationOneNoteNoNotebookFound, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(ViewController.EvernoteComplete), name: NotificationEvernoteComplete, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(ViewController.myEvernoteUserDidFinish), name: NotificationEvernoteUserDidFinish, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(ViewController.myGmailDidFinish), name: NotificationGmailDidFinish, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(ViewController.myHangoutsDidFinish), name: NotificationHangoutsDidFinish, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(ViewController.gmailSignedIn(_:)), name: NotificationGmailConnected, object: nil)
         
-        myWebView.hidden = true
+        myWebView.isHidden = true
         
         sideBar = SideBar()
         
@@ -265,7 +266,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
         }
     }
 
-    func timerTest(timer:NSTimer)
+    func timerTest(_ timer:Timer)
     {
         NSLog("trigger")
     }
@@ -276,32 +277,32 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
     }
     
     
-    func numberOfComponentsInPickerView(TableTypeSelection1: UIPickerView) -> Int {
+    func numberOfComponentsInPickerView(_ TableTypeSelection1: UIPickerView) -> Int {
         return 1
     }
     
-    func pickerView(TableTypeSelection1: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+    func pickerView(_ TableTypeSelection1: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         return TableOptions.count
     }
   
-    func pickerView(TableTypeSelection1: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String! {
+    func pickerView(_ TableTypeSelection1: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String! {
         return TableOptions[row]
     }
 
-    func pickerView(TableTypeSelection1: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+    func pickerView(_ TableTypeSelection1: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         actionSelection()
     }
     
     func actionSelection(){
-        itemSelected = TableOptions[TableTypeSelection1.selectedRowInComponent(0)]
+        itemSelected = TableOptions[TableTypeSelection1.selectedRow(inComponent: 0)]
     }
     
-    @IBAction func TableTypeButton1TouchUp(sender: UIButton) {
+    @IBAction func TableTypeButton1TouchUp(_ sender: UIButton) {
         // Show the Picker and hide the button
    
         let myPanes = displayPanes()
         
-        TableOptions.removeAll(keepCapacity: false)
+        TableOptions.removeAll(keepingCapacity: false)
  
         for myPane in myPanes.listVisiblePanes
         {
@@ -312,17 +313,17 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
         
         callingTable = sender.tag
         
-        TableTypeSelection1.hidden = false
-        setSelectionButton.hidden = false
+        TableTypeSelection1.isHidden = false
+        setSelectionButton.isHidden = false
 
         hideFields()
         
-        let myIndex = TableOptions.indexOf(getFirstPartofString(sender.currentTitle!))
+        let myIndex = TableOptions.index(of: getFirstPartofString(sender.currentTitle!))
 
         TableTypeSelection1.selectRow(myIndex!, inComponent: 0, animated: true)
     }
 
-    @IBAction func setSelectionButtonTouchUp(sender: UIButton) {
+    @IBAction func setSelectionButtonTouchUp(_ sender: UIButton) {
         
         if itemSelected == ""
         {
@@ -347,26 +348,26 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
             switch callingTable
             {
                 case 1:
-                    TableTypeButton1.setTitle(itemSelected, forState: .Normal)
-                    TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: myFullName), forState: .Normal)
+                    TableTypeButton1.setTitle(itemSelected, for: UIControlState())
+                    TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: myFullName), for: UIControlState())
                     setAddButtonState(1)
                     populateArraysForTables("Table1")
             
                 case 2:
-                    TableTypeButton2.setTitle(itemSelected, forState: .Normal)
-                    TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myFullName), forState: .Normal)
+                    TableTypeButton2.setTitle(itemSelected, for: UIControlState())
+                    TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myFullName), for: UIControlState())
                     setAddButtonState(2)
                     populateArraysForTables("Table2")
 
                 case 3:
-                    TableTypeButton3.setTitle(itemSelected, forState: .Normal)
-                    TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myFullName), forState: .Normal)
+                    TableTypeButton3.setTitle(itemSelected, for: UIControlState())
+                    TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myFullName), for: UIControlState())
                     setAddButtonState(3)
                     populateArraysForTables("Table3")
             
                 case 4:
-                    TableTypeButton4.setTitle(itemSelected, forState: .Normal)
-                    TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myFullName), forState: .Normal)
+                    TableTypeButton4.setTitle(itemSelected, for: UIControlState())
+                    TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myFullName), for: UIControlState())
                     setAddButtonState(4)
                     populateArraysForTables("Table4")
             
@@ -375,65 +376,65 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
             }
             
             showFields()
-            TableTypeSelection1.hidden = true
-            setSelectionButton.hidden = true
+            TableTypeSelection1.isHidden = true
+            setSelectionButton.isHidden = true
         }
     }
  
     func populateContactList()
     {
-        createAddressBook()
-        determineAddressBookStatus()
+        _ = createAddressBook()
+        _ = determineAddressBookStatus()
     }
 
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         var retVal: Int = 0
         
         if (tableView == dataTable1)
         {
-            retVal = self.table1Contents.count ?? 0
+            retVal = self.table1Contents.count 
         }
         else if (tableView == dataTable2)
         {
-            retVal = self.table2Contents.count ?? 0
+            retVal = self.table2Contents.count 
         }
         else if (tableView == dataTable3)
         {
-            retVal = self.table3Contents.count ?? 0
+            retVal = self.table3Contents.count 
         }
         else if (tableView == dataTable4)
         {
-            retVal = self.table4Contents.count ?? 0
+            retVal = self.table4Contents.count 
         }
         return retVal
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+    func tableView(_ tableView: UITableView, cellForRowAtIndexPath indexPath: IndexPath) -> UITableViewCell
     {
         if (tableView == dataTable1)
         {
-            let cell = dataTable1.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER)! 
+            let cell = dataTable1.dequeueReusableCell(withIdentifier: CONTACT_CELL_IDENTIFER)! 
             cell.textLabel!.text = table1Contents[indexPath.row].displayText
             return setCellFormatting(cell,inDisplayFormat: table1Contents[indexPath.row].displaySpecialFormat)
 
         }
         else if (tableView == dataTable2)
         {
-            let cell = dataTable2.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER)!
+            let cell = dataTable2.dequeueReusableCell(withIdentifier: CONTACT_CELL_IDENTIFER)!
             cell.textLabel!.text = table2Contents[indexPath.row].displayText
             return setCellFormatting(cell, inDisplayFormat: table2Contents[indexPath.row].displaySpecialFormat)
         }
         else if (tableView == dataTable3)
         {
-            let cell = dataTable3.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER)!
+            let cell = dataTable3.dequeueReusableCell(withIdentifier: CONTACT_CELL_IDENTIFER)!
             cell.textLabel!.text = table3Contents[indexPath.row].displayText
             return setCellFormatting(cell,inDisplayFormat: table3Contents[indexPath.row].displaySpecialFormat)
 
         }
         else if (tableView == dataTable4)
         {
-            let cell = dataTable4.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER)!
+            let cell = dataTable4.dequeueReusableCell(withIdentifier: CONTACT_CELL_IDENTIFER)!
             cell.textLabel!.text = table4Contents[indexPath.row].displayText
             return setCellFormatting(cell,inDisplayFormat: table4Contents[indexPath.row].displaySpecialFormat)
 
@@ -441,33 +442,33 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
         else
         {
             // Dummy statements to allow use of else
-            let cell = dataTable3.dequeueReusableCellWithIdentifier(CONTACT_CELL_IDENTIFER)!
+            let cell = dataTable3.dequeueReusableCell(withIdentifier: CONTACT_CELL_IDENTIFER)!
             return cell
         }
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAtIndexPath indexPath: IndexPath) {
 
         if tableView == dataTable1
         {
-            dataCellClicked(indexPath.row, table: "Table1", viewClicked: tableView.cellForRowAtIndexPath(indexPath)!)
+            dataCellClicked(indexPath.row, table: "Table1", viewClicked: tableView.cellForRow(at: indexPath)!)
         }
         else if tableView == dataTable2
         {
-            dataCellClicked(indexPath.row, table: "Table2", viewClicked: tableView.cellForRowAtIndexPath(indexPath)!)
+            dataCellClicked(indexPath.row, table: "Table2", viewClicked: tableView.cellForRow(at: indexPath)!)
         }
         else if tableView == dataTable3
         {
-            dataCellClicked(indexPath.row, table: "Table3", viewClicked: tableView.cellForRowAtIndexPath(indexPath)!)
+            dataCellClicked(indexPath.row, table: "Table3", viewClicked: tableView.cellForRow(at: indexPath)!)
         }
         else if tableView == dataTable4
         {
-            dataCellClicked(indexPath.row, table: "Table4", viewClicked: tableView.cellForRowAtIndexPath(indexPath)!)
+            dataCellClicked(indexPath.row, table: "Table4", viewClicked: tableView.cellForRow(at: indexPath)!)
         }
         
     }
   
-    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath)
+    func tableView(_ tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: IndexPath)
     {
         if (indexPath.row % 2 == 0)
         {
@@ -475,11 +476,11 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
         }
         else
         {
-            cell.backgroundColor = UIColor.whiteColor()
+            cell.backgroundColor = UIColor.white
         }
     }
     
-    func populateArraysForTables(inTable : String)
+    func populateArraysForTables(_ inTable : String)
     {
         
         // work out the table we are populating so we can then use this later
@@ -487,28 +488,28 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
         {
         case "Table1":
             table1Contents = populateArrayDetails(inTable)
-            dispatch_async(dispatch_get_main_queue())
+            DispatchQueue.main.async
             {
                 self.dataTable1.reloadData()
             }
             
         case "Table2":
             table2Contents = populateArrayDetails(inTable)
-            dispatch_async(dispatch_get_main_queue())
+            DispatchQueue.main.async
             {
                 self.dataTable2.reloadData()
             }
             
         case "Table3":
             table3Contents = populateArrayDetails(inTable)
-            dispatch_async(dispatch_get_main_queue())
+            DispatchQueue.main.async
             {
                 self.dataTable3.reloadData()
             }
             
         case "Table4":
             table4Contents = populateArrayDetails(inTable)
-            dispatch_async(dispatch_get_main_queue())
+            DispatchQueue.main.async
             {
                 self.dataTable4.reloadData()
             }
@@ -519,7 +520,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
         }
     }
     
-    func populateArrayDetails(inTable: String) -> [TableData]
+    func populateArrayDetails(_ inTable: String) -> [TableData]
     {
         var workArray: [TableData] = [TableData]()
         var dataType: String = ""
@@ -715,7 +716,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
             }
 
         case "Tasks":
-            myTaskItems.removeAll(keepCapacity: false)
+            myTaskItems.removeAll(keepingCapacity: false)
             
             var myReturnedData: [Task] = Array()
             if myDisplayType == "Project"
@@ -759,7 +760,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
             }
             
             // Sort workarray by dueDate, with oldest first
-            myReturnedData.sortInPlace({$0.dueDate.timeIntervalSinceNow < $1.dueDate.timeIntervalSinceNow})
+            myReturnedData.sort(by: {$0.dueDate.timeIntervalSinceNow < $1.dueDate.timeIntervalSinceNow})
             
             // Load calendar items array based on return array
             
@@ -899,7 +900,7 @@ println("facebook ID = \(myFacebookID)")
         return workArray
     }
     
-    func dataCellClicked(rowID: Int, table: String, viewClicked: UITableViewCell)
+    func dataCellClicked(_ rowID: Int, table: String, viewClicked: UITableViewCell)
     {
         var dataType: String = ""
         // First we need to work out the type of data in the table, we get this from the button
@@ -972,45 +973,49 @@ println("facebook ID = \(myFacebookID)")
             case "Omnifocus":
                 let myOmniUrlPath = omniLinkArray[rowID]
                
-                let myOmniUrl: NSURL = NSURL(string: myOmniUrlPath)!
+                let myOmniUrl: URL = URL(string: myOmniUrlPath)!
                 
-                if UIApplication.sharedApplication().canOpenURL(myOmniUrl) == true
+                if UIApplication.shared.canOpenURL(myOmniUrl) == true
                 {
-                    UIApplication.sharedApplication().openURL(myOmniUrl)
+                    UIApplication.shared.open(myOmniUrl, options: [:],
+                                              completionHandler: {
+                                                (success) in
+                                                print("Open myOmniUrl - \(myOmniUrl): \(success)")
+                    })
                 }
             
             case "Calendar":
                 
-                let calendarOption: UIAlertController = UIAlertController(title: "Calendar Options", message: "Select action to take", preferredStyle: .ActionSheet)
+                let calendarOption: UIAlertController = UIAlertController(title: "Calendar Options", message: "Select action to take", preferredStyle: .actionSheet)
 
-                let edit = UIAlertAction(title: "Edit Meeting", style: .Default, handler: { (action: UIAlertAction) -> () in
+                let edit = UIAlertAction(title: "Edit Meeting", style: .default, handler: { (action: UIAlertAction) -> () in
                     // doing something for "product page
                     let evc = EKEventEditViewController()
                     evc.eventStore = globalEventStore
                     evc.editViewDelegate = self
                     evc.event = self.eventDetails.events[rowID]
-                    self.presentViewController(evc, animated: true, completion: nil)
+                    self.present(evc, animated: true, completion: nil)
                 })
                 
-                let agenda = UIAlertAction(title: "Agenda", style: .Default, handler: { (action: UIAlertAction) -> () in
+                let agenda = UIAlertAction(title: "Agenda", style: .default, handler: { (action: UIAlertAction) -> () in
                     // doing something for "product page"
                     self.openMeetings("Agenda", workingTask: self.eventDetails.calendarItems[rowID])
                 })
                 
-                let minutes = UIAlertAction(title: "Minutes", style: .Default, handler: { (action: UIAlertAction) -> () in
+                let minutes = UIAlertAction(title: "Minutes", style: .default, handler: { (action: UIAlertAction) -> () in
                     // doing something for "product page"
                     self.openMeetings("Minutes", workingTask: self.eventDetails.calendarItems[rowID])
 
                 })
                 
-                let personNotes = UIAlertAction(title: "Personal Notes", style: .Default, handler: { (action: UIAlertAction) -> () in
+                let personNotes = UIAlertAction(title: "Personal Notes", style: .default, handler: { (action: UIAlertAction) -> () in
                     // doing something for "product page"
                     self.openMeetings("Personal Notes", workingTask: self.eventDetails.calendarItems[rowID])
 
                 })
 
                 var agendaDisplay: Bool = false
-                if eventDetails.calendarItems[myRowClicked].startDate.compare(NSDate()) == NSComparisonResult.OrderedDescending
+                if eventDetails.calendarItems[myRowClicked].startDate.compare(Date()) == ComparisonResult.orderedDescending
                 { // Start date is in the future
                     calendarOption.addAction(edit)
                     calendarOption.addAction(agenda)
@@ -1031,9 +1036,9 @@ println("facebook ID = \(myFacebookID)")
                 if agendaDisplay || minutesDisplay
                 {
                     calendarOption.popoverPresentationController?.sourceView = self.view
-                    calendarOption.popoverPresentationController?.sourceRect = CGRectMake(self.view.bounds.width / 2.0, self.view.bounds.height / 2.0, 1.0, 1.0)
+                    calendarOption.popoverPresentationController?.sourceRect = CGRect(x: self.view.bounds.width / 2.0, y: self.view.bounds.height / 2.0, width: 1.0, height: 1.0)
 
-                    self.presentViewController(calendarOption, animated: true, completion: nil)
+                    self.present(calendarOption, animated: true, completion: nil)
                 }
                 calendarTable = table
 
@@ -1042,7 +1047,7 @@ println("facebook ID = \(myFacebookID)")
                 if myDisplayType == "Project"
                 {
                     let myPerson = findPersonRecord(projectMemberArray[rowID])
-                    loadPerson(myPerson)
+                    loadPerson(myPerson!)
                 }
                 else
                 {
@@ -1053,29 +1058,32 @@ println("facebook ID = \(myFacebookID)")
             let myOneNoteUrlPath = myOneNoteNotebooks.pages[rowID].urlCallback
   
           //  let myEnUrlPath = stringByChangingChars(myTempPath, " ", "%20")
-            let myOneNoteUrl: NSURL = NSURL(string: myOneNoteUrlPath)!
+            let myOneNoteUrl: URL = URL(string: myOneNoteUrlPath)!
             
-            if UIApplication.sharedApplication().canOpenURL(myOneNoteUrl) == true
+            if UIApplication.shared.canOpenURL(myOneNoteUrl) == true
             {
-                UIApplication.sharedApplication().openURL(myOneNoteUrl)
+                UIApplication.shared.open(myOneNoteUrl, options: [:],
+                                          completionHandler: {
+                                            (success) in
+                                            print("Open myOneNoteUrl - \(myOneNoteUrl): \(success)")})
             }
 
         case "GMail":
             hideFields()
             
-            myWebView.hidden = false
-            btnSendToInbox.hidden = false
-            btnCloseWindow.hidden = false
+            myWebView.isHidden = false
+            btnSendToInbox.isHidden = false
+            btnCloseWindow.isHidden = false
             myWorkingGmailMessage = myGmailMessages.messages[rowID]
             myWebView.loadHTMLString(myGmailMessages.messages[rowID].body, baseURL: nil)
   
         case "Hangouts":
             showFields()
             
-            myWebView.hidden = false
-            btnSendToInbox.hidden = false
+            myWebView.isHidden = false
+            btnSendToInbox.isHidden = false
 
-            btnCloseWindow.hidden = false
+            btnCloseWindow.isHidden = false
             myWorkingGmailMessage = myHangoutsMessages.messages[rowID]
             myWebView.loadHTMLString(myHangoutsMessages.messages[rowID].body, baseURL: nil)
         
@@ -1083,14 +1091,14 @@ println("facebook ID = \(myFacebookID)")
             let myOptions = displayTaskOptions(myTaskItems[rowID], targetTable: table)
             myOptions.popoverPresentationController!.sourceView = viewClicked
             
-            self.presentViewController(myOptions, animated: true, completion: nil)
+            self.present(myOptions, animated: true, completion: nil)
             
         default:
             NSLog("Do nothing")
         }
     }
     
-    func setButtonTitle(inButton: UIButton, inTitle: String) -> String
+    func setButtonTitle(_ inButton: UIButton, inTitle: String) -> String
     {
         var workString: String = ""
         
@@ -1140,7 +1148,7 @@ println("facebook ID = \(myFacebookID)")
         return workString
     }
 
-    func returnFromSecondaryView(inTable: String, inRowID: Int)
+    func returnFromSecondaryView(_ inTable: String, inRowID: Int)
     {
         displayScreen()
         populateArraysForTables(inTable)
@@ -1148,43 +1156,43 @@ println("facebook ID = \(myFacebookID)")
     }
 
     
-    func openReminderEditView(inReminderID: String, inCalendarName: String)
+    func openReminderEditView(_ inReminderID: String, inCalendarName: String)
     {
 
-        let reminderViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("Reminders") as! reminderViewController
+        let reminderViewControl = self.storyboard!.instantiateViewController(withIdentifier: "Reminders") as! reminderViewController
         
         reminderViewControl.inAction = "Edit"
         reminderViewControl.inReminderID = inReminderID
         reminderViewControl.delegate = self
         reminderViewControl.inCalendarName = inCalendarName
  
-        self.presentViewController(reminderViewControl, animated: true, completion: nil)
+        self.present(reminderViewControl, animated: true, completion: nil)
     }
     
     
-    func openReminderAddView(inCalendarName: String)
+    func openReminderAddView(_ inCalendarName: String)
     {
         
-        let reminderViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("Reminders") as! reminderViewController
+        let reminderViewControl = self.storyboard!.instantiateViewController(withIdentifier: "Reminders") as! reminderViewController
         
         reminderViewControl.inAction = "Add"
         reminderViewControl.delegate = self
         reminderViewControl.inCalendarName = inCalendarName
         
-        self.presentViewController(reminderViewControl, animated: true, completion: nil)
+        self.present(reminderViewControl, animated: true, completion: nil)
     }
 
     
-    func myReminderDidFinish(controller:reminderViewController, actionType: String)
+    func myReminderDidFinish(_ controller:reminderViewController, actionType: String)
     {
         if actionType == "Changed"
         {
             populateArraysForTables(reBuildTableName)
         }
-        controller.dismissViewControllerAnimated(true, completion: nil)
+        controller.dismiss(animated: true, completion: nil)
     }
     
-    @IBAction func buttonAddClicked(sender: UIButton) {
+    @IBAction func buttonAddClicked(_ sender: UIButton) {
         var dataType: String = ""
         
         // First we need to work out the type of data in the table, we get this from the button
@@ -1273,20 +1281,23 @@ println("facebook ID = \(myFacebookID)")
                     myOmniUrlPath = "omnifocus:///add?name=Set Context to '\(myFullName)'"
                 }
 
-                let escapedURL = myOmniUrlPath.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())
+                let escapedURL = myOmniUrlPath.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)
                 
-                let myOmniUrl: NSURL = NSURL(string: escapedURL!)!
+                let myOmniUrl: URL = URL(string: escapedURL!)!
                 
-                if UIApplication.sharedApplication().canOpenURL(myOmniUrl) == true
+                if UIApplication.shared.canOpenURL(myOmniUrl) == true
                 {
-                    UIApplication.sharedApplication().openURL(myOmniUrl)
+                    UIApplication.shared.open(myOmniUrl, options: [:],
+                                              completionHandler: {
+                                                (success) in
+                                                print("Open myOmniUrl - \(myOmniUrl): \(success)")})
                 }
             
             case "Calendar":
                 let evc = EKEventEditViewController()
                 evc.eventStore = globalEventStore
                 evc.editViewDelegate = self
-                self.presentViewController(evc, animated: true, completion: nil)
+                self.present(evc, animated: true, completion: nil)
           
             case "OneNote":
                 var myItemFound: Bool = false
@@ -1297,22 +1308,22 @@ println("facebook ID = \(myFacebookID)")
                 if myDisplayType == "Project"
                 {
                     let alert = UIAlertController(title: "OneNote", message:
-                        "Creating OneNote Notebook for this Project.  OneNote will open when complete.", preferredStyle: UIAlertControllerStyle.Alert)
+                        "Creating OneNote Notebook for this Project.  OneNote will open when complete.", preferredStyle: UIAlertControllerStyle.alert)
                     
-                    self.presentViewController(alert, animated: false, completion: nil)
+                    self.present(alert, animated: false, completion: nil)
                     
-                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
                     
 
                     myItemFound = myOneNoteNotebooks.checkExistenceOfNotebook(mySelectedProject.projectName)
                     if myItemFound
                     {
                         let alert = UIAlertController(title: "OneNote", message:
-                            "Notebook already exists for this Project", preferredStyle: UIAlertControllerStyle.Alert)
+                            "Notebook already exists for this Project", preferredStyle: UIAlertControllerStyle.alert)
                     
-                        self.presentViewController(alert, animated: false, completion: nil)
+                        self.present(alert, animated: false, completion: nil)
                     
-                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
                     }
                     else
                     {
@@ -1334,21 +1345,21 @@ println("facebook ID = \(myFacebookID)")
                     if myFullName != ""
                     {
                         let alert = UIAlertController(title: "OneNote", message:
-                            "Creating OneNote Section for this Person.  OneNote will open when complete.", preferredStyle: UIAlertControllerStyle.Alert)
+                            "Creating OneNote Section for this Person.  OneNote will open when complete.", preferredStyle: UIAlertControllerStyle.alert)
                         
-                        self.presentViewController(alert, animated: false, completion: nil)
+                        self.present(alert, animated: false, completion: nil)
                         
-                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
                         
                         myItemFound = myOneNoteNotebooks.checkExistenceOfPerson(myFullName)
                         if myItemFound
                         {
                             let alert = UIAlertController(title: "OneNote", message:
-                                "Entry already exists for this Person", preferredStyle: UIAlertControllerStyle.Alert)
+                                "Entry already exists for this Person", preferredStyle: UIAlertControllerStyle.alert)
                         
-                            self.presentViewController(alert, animated: false, completion: nil)
+                            self.present(alert, animated: false, completion: nil)
                         
-                            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,handler: nil))
+                            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
                         }
                         else
                         {
@@ -1361,11 +1372,14 @@ println("facebook ID = \(myFacebookID)")
             
                 let myOneNoteUrlPath = myStartPage
             
-                let myOneNoteUrl: NSURL = NSURL(string: myOneNoteUrlPath)!
+                let myOneNoteUrl: URL = URL(string: myOneNoteUrlPath)!
             
-                if UIApplication.sharedApplication().canOpenURL(myOneNoteUrl) == true
+                if UIApplication.shared.canOpenURL(myOneNoteUrl) == true
                 {
-                    UIApplication.sharedApplication().openURL(myOneNoteUrl)
+                    UIApplication.shared.open(myOneNoteUrl, options: [:],
+                                              completionHandler: {
+                                                (success) in
+                                                print("Open myOneNoteUrl - \(myOneNoteUrl): \(success)")})
                 }
             
             default:
@@ -1374,24 +1388,24 @@ println("facebook ID = \(myFacebookID)")
 
     }
     
-    func myMaintainProjectDidFinish(controller:MaintainProjectViewController, actionType: String)
+    func myMaintainProjectDidFinish(_ controller:MaintainProjectViewController, actionType: String)
     {
         populateArraysForTables(reBuildTableName)
         
-        controller.dismissViewControllerAnimated(true, completion: nil)
+        controller.dismiss(animated: true, completion: nil)
     }
     
-    func myGTDInboxDidFinish(controller:GTDInboxViewController)
+    func myGTDInboxDidFinish(_ controller:GTDInboxViewController)
     {
-        controller.dismissViewControllerAnimated(true, completion: nil)
+        controller.dismiss(animated: true, completion: nil)
     }
     
-    func myMaintainContextsDidFinish(controller:MaintainContextsViewController)
+    func myMaintainContextsDidFinish(_ controller:MaintainContextsViewController)
     {
-        controller.dismissViewControllerAnimated(true, completion: nil)
+        controller.dismiss(animated: true, completion: nil)
     }
 
-    func setAddButtonState(inTable: Int)
+    func setAddButtonState(_ inTable: Int)
     {
         // Hide all of the buttons
         // Decide which buttons to show
@@ -1407,22 +1421,22 @@ println("facebook ID = \(myFacebookID)")
                 {
                     case "Reminders":
                 
-                        buttonAdd1.hidden = false
+                        buttonAdd1.isHidden = false
 
                     case "Evernote":
-                        buttonAdd1.hidden = false
+                        buttonAdd1.isHidden = false
 
                     case "Omnifocus":
-                        buttonAdd1.hidden = false
+                        buttonAdd1.isHidden = false
 
                     case "Calendar":
-                        buttonAdd1.hidden = false
+                        buttonAdd1.isHidden = false
                     
                     case "OneNote":
-                        buttonAdd1.hidden = false
+                        buttonAdd1.isHidden = false
 
                     default:
-                        buttonAdd1.hidden = true
+                        buttonAdd1.isHidden = true
                 }
             
             case 2:
@@ -1431,22 +1445,22 @@ println("facebook ID = \(myFacebookID)")
                 switch selectedType
                 {
                     case "Reminders":
-                        buttonAdd2.hidden = false
+                        buttonAdd2.isHidden = false
 
                     case "Evernote":
-                        buttonAdd2.hidden = false
+                        buttonAdd2.isHidden = false
                     
                     case "Omnifocus":
-                        buttonAdd2.hidden = false
+                        buttonAdd2.isHidden = false
                     
                     case "Calendar":
-                        buttonAdd2.hidden = false
+                        buttonAdd2.isHidden = false
                     
                     case "OneNote":
-                        buttonAdd2.hidden = false
+                        buttonAdd2.isHidden = false
                     
                     default:
-                        buttonAdd2.hidden = true
+                        buttonAdd2.isHidden = true
                 }
             
             case 3:
@@ -1455,23 +1469,23 @@ println("facebook ID = \(myFacebookID)")
                 switch selectedType
                 {
                     case "Reminders":
-                        buttonAdd3.hidden = false
+                        buttonAdd3.isHidden = false
                     
                     case "Evernote":
-                        buttonAdd3.hidden = false
+                        buttonAdd3.isHidden = false
                     
                     case "Omnifocus":
-                        buttonAdd3.hidden = false
+                        buttonAdd3.isHidden = false
                     
                     case "Calendar":
-                        buttonAdd3.hidden = false
+                        buttonAdd3.isHidden = false
                     
                     
                     case "OneNote":
-                        buttonAdd3.hidden = false
+                        buttonAdd3.isHidden = false
                     
                     default:
-                        buttonAdd3.hidden = true
+                        buttonAdd3.isHidden = true
                 }
             
             case 4:
@@ -1480,39 +1494,39 @@ println("facebook ID = \(myFacebookID)")
                 switch selectedType
                 {
                     case "Reminders":
-                        buttonAdd4.hidden = false
+                        buttonAdd4.isHidden = false
                     
                     case "Evernote":
-                        buttonAdd4.hidden = false
+                        buttonAdd4.isHidden = false
                     
                     case "Omnifocus":
-                        buttonAdd4.hidden = false
+                        buttonAdd4.isHidden = false
                     
                     case "Calendar":
-                        buttonAdd4.hidden = false
+                        buttonAdd4.isHidden = false
                 
                     
                     case "OneNote":
-                        buttonAdd4.hidden = false
+                        buttonAdd4.isHidden = false
                     
                     default:
-                        buttonAdd4.hidden = true
+                        buttonAdd4.isHidden = true
                 }
             
             default: break
         }
     }
     
-    func contactPicker(picker: CNContactPickerViewController, didSelectContact contact: CNContact)
+    func contactPicker(_ picker: CNContactPickerViewController, didSelect contact: CNContact)
     {
-        picker.dismissViewControllerAnimated(true, completion: nil)
+        picker.dismiss(animated: true, completion: nil)
         
         loadPerson(contact)
     }
 
-    func contactPickerDidCancel(picker: CNContactPickerViewController)
+    func contactPickerDidCancel(_ picker: CNContactPickerViewController)
     {
-        picker.dismissViewControllerAnimated(true, completion: nil)
+        picker.dismiss(animated: true, completion: nil)
     }
 
     func EvernoteComplete()
@@ -1544,54 +1558,60 @@ println("facebook ID = \(myFacebookID)")
         }
     }
     
-    func openEvernoteEditView(inGUID: String, inNoteRef:ENNoteRef)
+    func openEvernoteEditView(_ inGUID: String, inNoteRef:ENNoteRef)
     {
         if myEvernoteShard != ""
         {
             let myEnUrlPath = "evernote:///view/\(myEvernoteUserID)/\(myEvernoteShard)/\(inGUID)/\(inGUID)/"
 
-            let myEnUrl: NSURL = NSURL(string: myEnUrlPath)!
+            let myEnUrl: URL = URL(string: myEnUrlPath)!
             
-            if UIApplication.sharedApplication().canOpenURL(myEnUrl) == true
+            if UIApplication.shared.canOpenURL(myEnUrl) == true
             {
-                UIApplication.sharedApplication().openURL(myEnUrl)
+                UIApplication.shared.open(myEnUrl, options: [:],
+                                          completionHandler: {
+                                            (success) in
+                                            print("Open myEnUrl - \(myEnUrl): \(success)")})
             }
         }
         else
         {
             let alert = UIAlertController(title: "Evernote", message:
-                "Unable to load Evernote for this Note", preferredStyle: UIAlertControllerStyle.Alert)
+                "Unable to load Evernote for this Note", preferredStyle: UIAlertControllerStyle.alert)
             
-            self.presentViewController(alert, animated: false, completion: nil)
+            self.present(alert, animated: false, completion: nil)
             
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
                 handler: nil))
         }
     }
 
-    func openEvernoteAddView(inFullName: String)
+    func openEvernoteAddView(_ inFullName: String)
     {
         // Lets build the date string
-        let myDateFormatter = NSDateFormatter()
+        let myDateFormatter = DateFormatter()
         
-        let dateFormat = NSDateFormatterStyle.MediumStyle
-        let timeFormat = NSDateFormatterStyle.ShortStyle
+        let dateFormat = DateFormatter.Style.medium
+        let timeFormat = DateFormatter.Style.short
         myDateFormatter.dateStyle = dateFormat
         myDateFormatter.timeStyle = timeFormat
         
         /* Instantiate the event store */
-        let myDate = myDateFormatter.stringFromDate(NSDate())
+        let myDate = myDateFormatter.string(from: Date())
 
         
         let myTempPath = "evernote://x-callback-url/new-note?type=text&title=\(inFullName) : \(myDate)"
   
         let myEnUrlPath = stringByChangingChars(myTempPath, inOldChar: " ", inNewChar: "%20")
 
-        let myEnUrl: NSURL = NSURL(string: myEnUrlPath)!
+        let myEnUrl: URL = URL(string: myEnUrlPath)!
         
-        if UIApplication.sharedApplication().canOpenURL(myEnUrl) == true
+        if UIApplication.shared.canOpenURL(myEnUrl) == true
         {
-            UIApplication.sharedApplication().openURL(myEnUrl)
+            UIApplication.shared.open(myEnUrl, options: [:],
+                                      completionHandler: {
+                                        (success) in
+                                        print("Open myEnUrl - \(myEnUrl): \(success)")})
         }
     }
         
@@ -1602,50 +1622,50 @@ println("facebook ID = \(myFacebookID)")
     
     func openOmnifocusDropbox()
     {
-        dropboxCoreService.delegate = self
+//GRE        dropboxCoreService.delegate = self
         
         let fileName = "OmniOutput.txt"
         
-        let dirPaths:[String]? = NSSearchPathForDirectoriesInDomains(NSSearchPathDirectory.DocumentDirectory, NSSearchPathDomainMask.AllDomainsMask, true) as [String]
+        let dirPaths:[String]? = NSSearchPathForDirectoriesInDomains(FileManager.SearchPathDirectory.documentDirectory, FileManager.SearchPathDomainMask.allDomainsMask, true) as [String]
         
         let directories:[String] = dirPaths!
         let docsDir = directories[0]
-        let docsDirDAT = docsDir + "/" + fileName
-        let dropboxPath = "/EvesCRM/" + fileName
+        _ = docsDir + "/" + fileName
+        _ = "/EvesCRM/" + fileName
         
      //   dropboxCoreService.listFolders("/")
         
-        dropboxCoreService.loadFile(dropboxPath, targetFile: docsDirDAT)
+//GRE        dropboxCoreService.loadFile(dropboxPath, targetFile: docsDirDAT)
     }
     
-    func myDropboxFileDidLoad(fileName: String)
+    func myDropboxFileDidLoad(_ fileName: String)
     {
         readOmnifocusFileContents(fileName)
     }
     
-    func myDropboxFileLoadFailed(error:NSError)
+    func myDropboxFileLoadFailed(_ error:NSError)
     {
         let alert = UIAlertController(title: "Dropbox", message:
-            "Unable to load Dropbox file.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
+            "Unable to load Dropbox file.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
         
-        self.presentViewController(alert, animated: false, completion: nil)
+        self.present(alert, animated: false, completion: nil)
         
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
             handler: nil))
     }
     
-    func myDropboxFileProgress(fileName: String, progress:CGFloat)
+    func myDropboxFileProgress(_ fileName: String, progress:CGFloat)
     {
 print("Dropbox status = \(progress)")
     }
     
-    func myDropboxMetadataLoaded(metadata:DBMetadata)
+    func myDropboxMetadataLoaded(_ metadata:DBMetadata)
     {
         if metadata.contents != nil
         {
                 for myEntry in metadata.contents
                 {
-        print("Entry = \(myEntry.filename)")
+        print("Entry = \((myEntry as AnyObject).filename)")
                 }
         }
         else
@@ -1654,164 +1674,164 @@ print("Nothing found")
         }
     }
     
-    func myDropboxMetadataFailed(error:NSError)
+    func myDropboxMetadataFailed(_ error:NSError)
     {
         let alert = UIAlertController(title: "Dropbox", message:
-            "Unable to load Dropbox directory list.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
+            "Unable to load Dropbox directory list.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
         
-        self.presentViewController(alert, animated: false, completion: nil)
+        self.present(alert, animated: false, completion: nil)
         
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
             handler: nil))
     }
     
-    func myDropboxLoadAccountInfo(info:DBAccountInfo)
+    func myDropboxLoadAccountInfo(_ info:DBAccountInfo)
     {
         print("Dropbox Account Info = \(info)")
     }
 
-    func myDropboxLoadAccountInfoFailed(error:NSError)
+    func myDropboxLoadAccountInfoFailed(_ error:NSError)
     {
         let alert = UIAlertController(title: "Dropbox", message:
-            "Unable to load Dropbox account info.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
+            "Unable to load Dropbox account info.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
         
-        self.presentViewController(alert, animated: false, completion: nil)
+        self.present(alert, animated: false, completion: nil)
         
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
             handler: nil))
     }
 
-    func myDropboxFileDidUpload(destPath:String, srcPath:String, metadata:DBMetadata)
+    func myDropboxFileDidUpload(_ destPath:String, srcPath:String, metadata:DBMetadata)
     {
         print("Dropbox Upload = \(destPath), \(srcPath)")
     }
 
-    func myDropboxFileUploadFailed(error:NSError)
+    func myDropboxFileUploadFailed(_ error:NSError)
     {
         let alert = UIAlertController(title: "Dropbox", message:
-            "Unable to upload file to Dropbox.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
+            "Unable to upload file to Dropbox.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
         
-        self.presentViewController(alert, animated: false, completion: nil)
+        self.present(alert, animated: false, completion: nil)
         
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
             handler: nil))
     }
 
-    func myDropboxUploadProgress(progress:CGFloat, destPath:String, srcPath:String)
+    func myDropboxUploadProgress(_ progress:CGFloat, destPath:String, srcPath:String)
     {
         print("Dropbox upload status = \(progress)")
     }
 
-    func myDropboxFileLoadRevisions(revisions:NSArray, path:String)
+    func myDropboxFileLoadRevisions(_ revisions:NSArray, path:String)
     {
         print("Dropbox File revision = \(path)")
     }
 
-    func myDropboxFileLoadRevisionsFailed(error:NSError)
+    func myDropboxFileLoadRevisionsFailed(_ error:NSError)
     {
         let alert = UIAlertController(title: "Dropbox", message:
-            "Unable to load Dropbox file revisions.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
+            "Unable to load Dropbox file revisions.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
         
-        self.presentViewController(alert, animated: false, completion: nil)
+        self.present(alert, animated: false, completion: nil)
         
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
             handler: nil))
     }
 
-    func myDropboxCreateFolder(folder:DBMetadata)
+    func myDropboxCreateFolder(_ folder:DBMetadata)
     {
         print("Dropbox Create folder")
     }
 
-    func myDropboxCreateFolderFailed(error:NSError)
+    func myDropboxCreateFolderFailed(_ error:NSError)
     {
         let alert = UIAlertController(title: "Dropbox", message:
-            "Unable to load create Dropbox folder.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
+            "Unable to load create Dropbox folder.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
         
-        self.presentViewController(alert, animated: false, completion: nil)
+        self.present(alert, animated: false, completion: nil)
         
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
             handler: nil))
     }
 
-    func myDropboxFileDeleted(path:String)
+    func myDropboxFileDeleted(_ path:String)
     {
         print("Dropbox File Deleted = \(path)")
     }
 
-    func myDropboxFileDeleteFailed(error:NSError)
+    func myDropboxFileDeleteFailed(_ error:NSError)
     {
         let alert = UIAlertController(title: "Dropbox", message:
-            "Unable to delete Dropbox file.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
+            "Unable to delete Dropbox file.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
         
-        self.presentViewController(alert, animated: false, completion: nil)
+        self.present(alert, animated: false, completion: nil)
         
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
             handler: nil))
     }
 
-    func myDropboxFileCopiedLoad(fromPath:String, toPath:DBMetadata)
+    func myDropboxFileCopiedLoad(_ fromPath:String, toPath:DBMetadata)
     {
         print("Dropbox file copied = \(fromPath)")
     }
 
-    func myDropboxFileCopyFailed(error:NSError)
+    func myDropboxFileCopyFailed(_ error:NSError)
     {
         let alert = UIAlertController(title: "Dropbox", message:
-            "Unable to copy Dropbox file.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
+            "Unable to copy Dropbox file.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
         
-        self.presentViewController(alert, animated: false, completion: nil)
+        self.present(alert, animated: false, completion: nil)
         
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
             handler: nil))
     }
 
-    func myDropboxFileMoved(fromPath:String, toPath:DBMetadata)
+    func myDropboxFileMoved(_ fromPath:String, toPath:DBMetadata)
     {
         print("Dropbox file moved = \(fromPath)")
     }
 
-    func myDropboxFileMoveFailed(error:NSError)
+    func myDropboxFileMoveFailed(_ error:NSError)
     {
         let alert = UIAlertController(title: "Dropbox", message:
-            "Unable to move Dropbox file.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
+            "Unable to move Dropbox file.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
         
-        self.presentViewController(alert, animated: false, completion: nil)
+        self.present(alert, animated: false, completion: nil)
         
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
             handler: nil))
     }
 
-    func myDropboxFileDidLoadSearch(results:NSArray, path:String, keyword:String)
+    func myDropboxFileDidLoadSearch(_ results:NSArray, path:String, keyword:String)
     {
         print("Dropbox search = \(path), \(keyword)")
     }
 
-    func myDropboxFileLoadSearchFailed(error:NSError)
+    func myDropboxFileLoadSearchFailed(_ error:NSError)
     {
         let alert = UIAlertController(title: "Dropbox", message:
-            "Unable to search Dropbox.  Error = \(error)", preferredStyle: UIAlertControllerStyle.Alert)
+            "Unable to search Dropbox.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
         
-        self.presentViewController(alert, animated: false, completion: nil)
+        self.present(alert, animated: false, completion: nil)
         
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
             handler: nil))
     }
     
     
-    func readOmnifocusFileContents(inPath: String)
+    func readOmnifocusFileContents(_ inPath: String)
     {
         var myFullName: String = ""
         var workArray: [TableData] = [TableData]()
         var myDisplayString: String = ""
         var myFormatString: String = ""
-        let myCalendar = NSCalendar.currentCalendar()
-        var myEndDate: NSDate
-        var myStartDate: NSDate
-        var myModDate: NSDate
+        let myCalendar = Calendar.current
+        var myEndDate: Date
+        var myStartDate: Date
+        var myModDate: Date
         var myEntryFound: Bool = false
         
-        omniLinkArray.removeAll(keepCapacity: false)
+        omniLinkArray.removeAll(keepingCapacity: false)
         
         if let aStreamReader = StreamReader(path: inPath)
         {
@@ -1829,11 +1849,11 @@ print("Nothing found")
                 {
                     myFullName = personContact.fullName
                 }
-                if line.lowercaseString.rangeOfString(myFullName.lowercaseString) != nil
+                if line.lowercased().range(of: myFullName.lowercased()) != nil
                 {
                     // need to format the string into the approriate format
                     myEntryFound = true
-                    let splitText = line.componentsSeparatedByString(":::")
+                    let splitText = line.components(separatedBy: ":::")
                     
                     omniLinkArray.append(splitText[5])
 
@@ -1841,30 +1861,30 @@ print("Nothing found")
                     myDisplayString += "Project: \(splitText[1])"
                     myDisplayString += "    Context: \(splitText[2])"
               
-                    let myDateFormatter = NSDateFormatter()
+                    let myDateFormatter = DateFormatter()
                     
                     if splitText[6] != ""  // Modification date
                     {
-                        if splitText[6].lowercaseString.rangeOfString(" at ") == nil
+                        if splitText[6].lowercased().range(of: " at ") == nil
                         {
                             // Date does not contain at
-                            let dateFormat = NSDateFormatterStyle.FullStyle
-                            let timeFormat = NSDateFormatterStyle.MediumStyle
+                            let dateFormat = DateFormatter.Style.full
+                            let timeFormat = DateFormatter.Style.medium
                             myDateFormatter.dateStyle = dateFormat
                             myDateFormatter.timeStyle = timeFormat
                             
-                            myModDate = myDateFormatter.dateFromString(splitText[6])!
+                            myModDate = myDateFormatter.date(from: splitText[6])!
                         }
                         else
                         {
                             // Date contains at
                             
                             // Only interested in the date part for this piece so lets split the string up and get the date (need to do this as date has word at in it sso not a standard format
-                            let splitDate = splitText[6].componentsSeparatedByString(" at ")
+                            let splitDate = splitText[6].components(separatedBy: " at ")
                             
                             myDateFormatter.dateFormat = "EEEE, MMMM d, yyyy"
                             
-                            myModDate = myDateFormatter.dateFromString(splitDate[0])!
+                            myModDate = myDateFormatter.date(from: splitDate[0])!
                         }
                         
                         // Work out the comparision date we need to use, so we can flag items not updated in last 2 weeks
@@ -1874,13 +1894,12 @@ print("Nothing found")
                         
                         let myLastUpdateValue = 0 - (myLastUpdateString as NSString).integerValue
  
-                        let myComparisonDate = myCalendar.dateByAddingUnit(
-                            .Day,
+                        let myComparisonDate = myCalendar.date(
+                            byAdding: .day,
                             value: myLastUpdateValue,
-                            toDate: NSDate(),
-                            options: [])!
+                            to: Date())!
                         
-                        if myModDate.compare(myComparisonDate) == NSComparisonResult.OrderedAscending
+                        if myModDate.compare(myComparisonDate) == ComparisonResult.orderedAscending
                         {
                             myFormatString = "Purple"
                         }
@@ -1890,30 +1909,30 @@ print("Nothing found")
                     {
                         myDisplayString += "\nStart: \(splitText[3])"
     
-                        if splitText[3].lowercaseString.rangeOfString(" at ") == nil
+                        if splitText[3].lowercased().range(of: " at ") == nil
                         {
                             // Date does not contain at
 
-                            let dateFormat = NSDateFormatterStyle.FullStyle
-                            let timeFormat = NSDateFormatterStyle.MediumStyle
+                            let dateFormat = DateFormatter.Style.full
+                            let timeFormat = DateFormatter.Style.medium
                             myDateFormatter.dateStyle = dateFormat
                             myDateFormatter.timeStyle = timeFormat
                             
-                            myStartDate = myDateFormatter.dateFromString(splitText[3])!
+                            myStartDate = myDateFormatter.date(from: splitText[3])!
                         }
                         else
                         {
                             // Date contains at
 
                             // Only interested in the date part for this piece so lets split the string up and get the date (need to do this as date has word at in it sso not a standard format
-                            let splitDate = splitText[3].componentsSeparatedByString(" at ")
+                            let splitDate = splitText[3].components(separatedBy: " at ")
                         
                             myDateFormatter.dateFormat = "EEEE, MMMM d, yyyy"
                         
-                            myStartDate = myDateFormatter.dateFromString(splitDate[0])!
+                            myStartDate = myDateFormatter.date(from: splitDate[0])!
                         }
 
-                        if myStartDate.compare(NSDate()) == NSComparisonResult.OrderedDescending
+                        if myStartDate.compare(Date()) == ComparisonResult.orderedDescending
                         {
                             myFormatString = "Gray"
                         }
@@ -1921,26 +1940,26 @@ print("Nothing found")
                     
                     if splitText[4] != ""  // End date
                     {
-                        if splitText[4].lowercaseString.rangeOfString(" at ") == nil
+                        if splitText[4].lowercased().range(of: " at ") == nil
                         {
                             // Date does not contain at
-                            let dateFormat = NSDateFormatterStyle.FullStyle
-                            let timeFormat = NSDateFormatterStyle.MediumStyle
+                            let dateFormat = DateFormatter.Style.full
+                            let timeFormat = DateFormatter.Style.medium
                             myDateFormatter.dateStyle = dateFormat
                             myDateFormatter.timeStyle = timeFormat
                             
-                            myEndDate = myDateFormatter.dateFromString(splitText[4])!
+                            myEndDate = myDateFormatter.date(from: splitText[4])!
                         }
                         else
                         {
                             // Date contains at
                     
                             // Only interested in the date part for this piece so lets split the string up and get the date (need to do this as date has word at in it sso not a standard format
-                            let splitDate = splitText[4].componentsSeparatedByString(" at ")
+                            let splitDate = splitText[4].components(separatedBy: " at ")
                             
                             myDateFormatter.dateFormat = "EEEE, MMMM d, yyyy"
                             
-                            myEndDate = myDateFormatter.dateFromString(splitDate[0])!
+                            myEndDate = myDateFormatter.date(from: splitDate[0])!
                         }
                         
                         myDisplayString += "\nDue: \(splitText[4])"
@@ -1951,13 +1970,12 @@ print("Nothing found")
                         
                         let myDueDateValue = (myDueDateString as NSString).integerValue
                        
-                        let myComparisonDate = myCalendar.dateByAddingUnit(
-                            .Day,
+                        let myComparisonDate = myCalendar.date(
+                            byAdding: .day,
                             value: myDueDateValue,
-                            toDate: NSDate(),
-                            options: [])!
+                            to: Date())!
                         
-                        if myEndDate.compare(myComparisonDate) == NSComparisonResult.OrderedAscending
+                        if myEndDate.compare(myComparisonDate) == ComparisonResult.orderedAscending
                         {
                              myFormatString = "Orange"
                         }
@@ -1968,13 +1986,12 @@ print("Nothing found")
                         
                         let myOverdueDateValue = (myOverdueDateString as NSString).integerValue
                        
-                        let myComparisonDateRed = myCalendar.dateByAddingUnit(
-                            .Day,
+                        let myComparisonDateRed = myCalendar.date(
+                            byAdding: .day,
                             value: myOverdueDateValue,
-                            toDate: NSDate(),
-                            options: [])!
+                            to: Date())!
                         
-                        if myEndDate.compare(myComparisonDateRed) == NSComparisonResult.OrderedAscending
+                        if myEndDate.compare(myComparisonDateRed) == ComparisonResult.orderedAscending
                         {
                             myFormatString = "Red"
                         }
@@ -2027,9 +2044,9 @@ print("Nothing found")
         }
     }
     
-    func mySettingsDidFinish(controller:settingsViewController)
+    func mySettingsDidFinish(_ controller:settingsViewController)
     {
-        controller.dismissViewControllerAnimated(true, completion: nil)
+        controller.dismiss(animated: true, completion: nil)
         
         if myDisplayType != ""
         { // only reload if a selection has been made
@@ -2047,9 +2064,9 @@ print("Nothing found")
         }
     }
     
-    func openMeetings(inType: String, workingTask: myCalendarItem)
+    func openMeetings(_ inType: String, workingTask: myCalendarItem)
     {
-        let meetingViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("MeetingsTab") as! meetingTabViewController
+        let meetingViewControl = self.storyboard!.instantiateViewController(withIdentifier: "MeetingsTab") as! meetingTabViewController
         
         let myPassedMeeting = MeetingModel()
         myPassedMeeting.actionType = inType
@@ -2059,13 +2076,13 @@ print("Nothing found")
         
         meetingViewControl.myPassedMeeting = myPassedMeeting
         
-        self.presentViewController(meetingViewControl, animated: true, completion: nil)
+        self.present(meetingViewControl, animated: true, completion: nil)
     }
     
-    func myMeetingsAgendaDidFinish(controller:meetingAgendaViewController)
+    func myMeetingsAgendaDidFinish(_ controller:meetingAgendaViewController)
     {
-        controller.dismissViewControllerAnimated(true, completion: nil)
-        populateArrayDetails(calendarTable)
+        controller.dismiss(animated: true, completion: nil)
+        _ = populateArrayDetails(calendarTable)
         
         switch calendarTable
         {
@@ -2086,10 +2103,10 @@ print("Nothing found")
         }
     }
 
-    func myMeetingsDidFinish(controller:meetingsViewController)
+    func myMeetingsDidFinish(_ controller:meetingsViewController)
     {
-        controller.dismissViewControllerAnimated(true, completion: nil)
-        populateArrayDetails(calendarTable)
+        controller.dismiss(animated: true, completion: nil)
+        _ = populateArrayDetails(calendarTable)
         
         switch calendarTable
         {
@@ -2133,7 +2150,7 @@ print("Nothing found")
         
         labelName.text = myButtonName
         
-        TableOptions.removeAll(keepCapacity: false)
+        TableOptions.removeAll(keepingCapacity: false)
         
         for myPane in myPanes.listVisiblePanes
         {
@@ -2141,27 +2158,27 @@ print("Nothing found")
 
             if myPane.paneOrder == 1
             {
-                TableTypeButton1.setTitle(myPane.paneName, forState: .Normal)
-                TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: myButtonName), forState: .Normal)
+                TableTypeButton1.setTitle(myPane.paneName, for: UIControlState())
+                TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: myButtonName), for: UIControlState())
                 itemSelected = myPane.paneName
             }
             
             if myPane.paneOrder == 2
             {
-                TableTypeButton2.setTitle(myPane.paneName, forState: .Normal)
-                TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myButtonName), forState: .Normal)
+                TableTypeButton2.setTitle(myPane.paneName, for: UIControlState())
+                TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myButtonName), for: UIControlState())
             }
             
             if myPane.paneOrder == 3
             {
-                TableTypeButton3.setTitle(myPane.paneName, forState: .Normal)
-                TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myButtonName), forState: .Normal)
+                TableTypeButton3.setTitle(myPane.paneName, for: UIControlState())
+                TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myButtonName), for: UIControlState())
             }
             
             if myPane.paneOrder == 4
             {
-                TableTypeButton4.setTitle(myPane.paneName, forState: .Normal)
-                TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myButtonName), forState: .Normal)
+                TableTypeButton4.setTitle(myPane.paneName, for: UIControlState())
+                TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myButtonName), for: UIControlState())
             }
         }
     }
@@ -2170,12 +2187,12 @@ print("Nothing found")
     {
         //Now we are authenticated we can get the used id and shard details
         let myEnUserStore = evernoteSession.userStore
-        myEnUserStore.getUserWithSuccess({
+        myEnUserStore?.getUserWithSuccess({
             (findNotesResults) in
-            self.myEvernoteShard = findNotesResults.shardId
-            self.myEvernoteUserID = findNotesResults.id as Int
+            self.myEvernoteShard = (findNotesResults?.shardId)!
+            self.myEvernoteUserID = findNotesResults?.id as! Int
             self.EvernoteUserDone = true
-            NSNotificationCenter.defaultCenter().postNotificationName("NotificationEvernoteUserDidFinish", object: nil)
+            notificationCenter.post(name: NotificationEvernoteUserDidFinish, object: nil)
             }
             , failure: {
                 (findNotesError) in
@@ -2183,11 +2200,11 @@ print("Nothing found")
                 self.EvernoteUserDone = true
                 self.myEvernoteShard = ""
                 self.myEvernoteUserID = 0
-                NSNotificationCenter.defaultCenter().postNotificationName("NotificationEvernoteUserDidFinish", object: nil)
+                notificationCenter.post(name: NotificationEvernoteUserDidFinish, object: nil)
         })
     }
     
-    func eventViewController(controller: EKEventViewController, didCompleteWithAction action: EKEventViewAction)
+    func eventViewController(_ controller: EKEventViewController, didCompleteWith action: EKEventViewAction)
     {
         if myDisplayType != ""
         { // only reload if a selection has been made
@@ -2204,10 +2221,10 @@ print("Nothing found")
             populateArraysForTables("Table4")
         }
 
-        controller.dismissViewControllerAnimated(true, completion: nil)
+        controller.dismiss(animated: true, completion: nil)
     }
     
-    func eventEditViewController(controller: EKEventEditViewController, didCompleteWithAction action: EKEventEditViewAction)
+    func eventEditViewController(_ controller: EKEventEditViewController, didCompleteWith action: EKEventEditViewAction)
     {
         if myDisplayType != ""
         { // only reload if a selection has been made
@@ -2224,22 +2241,22 @@ print("Nothing found")
             populateArraysForTables("Table4")
         }
 
-        self.dismissViewControllerAnimated(true, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
     
-    func eventEditViewControllerDefaultCalendarForNewEvents(controller: EKEventEditViewController) -> EKCalendar
+    func eventEditViewControllerDefaultCalendar(forNewEvents controller: EKEventEditViewController) -> EKCalendar
     {
 
         return globalEventStore.defaultCalendarForNewEvents
     }
 
     
-    func calendarChooserDidCancel(calendarChooser: EKCalendarChooser)
+    func calendarChooserDidCancel(_ calendarChooser: EKCalendarChooser)
     {
-        self.dismissViewControllerAnimated(true, completion: nil)
+        self.dismiss(animated: true, completion: nil)
     }
     
-    func calendarChooserDidFinish(calendarChooser: EKCalendarChooser)
+    func calendarChooserDidFinish(_ calendarChooser: EKCalendarChooser)
     {
         if myDisplayType != ""
         { // only reload if a selection has been made
@@ -2256,12 +2273,12 @@ print("Nothing found")
             populateArraysForTables("Table4")
         }
 
-        self.dismissViewControllerAnimated(true, completion:nil)
+        self.dismiss(animated: true, completion:nil)
     }
 
     func OneNoteNotebookGetSections()
     {
-        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.rawValue), 0))
+        DispatchQueue.global(qos: .userInitiated).async
             { // 1
                /* Disabling this code in order to use the OneNote search API instead
                 if self.myDisplayType == "Project"
@@ -2306,19 +2323,19 @@ print("Nothing found")
         }
     }
     
-    func OneNotePagesReady(notification: NSNotification)
+    func OneNotePagesReady(_ notification: Notification)
     {
         var myDisplay: [TableData] = Array()
 
         for myPage in myOneNoteNotebooks.pages
         {
-            let dateFormat = NSDateFormatterStyle.MediumStyle
-            let timeFormat = NSDateFormatterStyle.ShortStyle
-            let myDateFormatter = NSDateFormatter()
+            let dateFormat = DateFormatter.Style.medium
+            let timeFormat = DateFormatter.Style.short
+            let myDateFormatter = DateFormatter()
             myDateFormatter.dateStyle = dateFormat
             myDateFormatter.timeStyle = timeFormat
             
-            let myDate = myDateFormatter.stringFromDate(myPage.lastModifiedTime)
+            let myDate = myDateFormatter.string(from: myPage.lastModifiedTime as Date)
 
             var myString: String = ""
             
@@ -2336,21 +2353,21 @@ print("Nothing found")
         {
             case "Table1":
                 table1Contents = myDisplay
-                dispatch_async(dispatch_get_main_queue())
+                DispatchQueue.main.async
                 {
                         self.dataTable1.reloadData() // reload table/data or whatever here. However you want.
                 }
             
             case "Table2":
                 table2Contents = myDisplay
-                dispatch_async(dispatch_get_main_queue())
+                DispatchQueue.main.async
                 {
                         self.dataTable2.reloadData() // reload table/data or whatever here. However you want.
                 }
             
             case "Table3":
                 table3Contents = myDisplay
-                dispatch_async(dispatch_get_main_queue())
+                DispatchQueue.main.async
                 {
                         self.dataTable3.reloadData() // reload table/data or whatever here. However you want.
                 }
@@ -2358,7 +2375,7 @@ print("Nothing found")
             case "Table4":
                 table4Contents = myDisplay
                 
-                dispatch_async(dispatch_get_main_queue())
+                DispatchQueue.main.async
                 {
                     self.dataTable4.reloadData() // reload table/data or whatever here. However you want.
                 }
@@ -2399,21 +2416,21 @@ print("Nothing found")
         {
         case "Table1":
             table1Contents = myDisplay
-            dispatch_async(dispatch_get_main_queue())
+            DispatchQueue.main.async
                 {
                     self.dataTable1.reloadData() // reload table/data or whatever here. However you want.
             }
             
         case "Table2":
             table2Contents = myDisplay
-            dispatch_async(dispatch_get_main_queue())
+            DispatchQueue.main.async
                 {
                     self.dataTable2.reloadData() // reload table/data or whatever here. However you want.
             }
             
         case "Table3":
             table3Contents = myDisplay
-            dispatch_async(dispatch_get_main_queue())
+            DispatchQueue.main.async
                 {
                     self.dataTable3.reloadData() // reload table/data or whatever here. However you want.
             }
@@ -2421,7 +2438,7 @@ print("Nothing found")
         case "Table4":
             table4Contents = myDisplay
             
-            dispatch_async(dispatch_get_main_queue())
+            DispatchQueue.main.async
                 {
                     self.dataTable4.reloadData() // reload table/data or whatever here. However you want.
             }
@@ -2460,21 +2477,21 @@ print("Nothing found")
         {
         case "Table1":
             table1Contents = myDisplay
-            dispatch_async(dispatch_get_main_queue())
+            DispatchQueue.main.async
             {
                 self.dataTable1.reloadData() // reload table/data or whatever here. However you want.
             }
             
         case "Table2":
             table2Contents = myDisplay
-            dispatch_async(dispatch_get_main_queue())
+            DispatchQueue.main.async
             {
                 self.dataTable2.reloadData() // reload table/data or whatever here. However you want.
             }
             
         case "Table3":
             table3Contents = myDisplay
-            dispatch_async(dispatch_get_main_queue())
+            DispatchQueue.main.async
         {
                     self.dataTable3.reloadData() // reload table/data or whatever here. However you want.
             }
@@ -2482,7 +2499,7 @@ print("Nothing found")
         case "Table4":
             table4Contents = myDisplay
             
-            dispatch_async(dispatch_get_main_queue())
+            DispatchQueue.main.async
             {
                 self.dataTable4.reloadData() // reload table/data or whatever here. However you want.
             }
@@ -2494,16 +2511,16 @@ print("Nothing found")
     }
 
     
-    @IBAction func btnCloseWindowClick(sender: UIButton)
+    @IBAction func btnCloseWindowClick(_ sender: UIButton)
     {
         showFields()
         
-        myWebView.hidden = true
-        btnSendToInbox.hidden = true
-        btnCloseWindow.hidden = true
+        myWebView.isHidden = true
+        btnSendToInbox.isHidden = true
+        btnCloseWindow.isHidden = true
     }
     
-    func gmailSignedIn(notification: NSNotification)
+    func gmailSignedIn(_ notification: Notification)
     {
         if hangoutsTableToRefresh != ""
         {
@@ -2526,7 +2543,7 @@ print("Nothing found")
         
         if myDisplayType == "Project"
         {
-            dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.rawValue), 0))
+            DispatchQueue.global(qos: .userInitiated).async
             {
                 self.myGmailMessages.getProjectMessages(self.mySelectedProject.projectName, inMessageType: "Mail")
             }
@@ -2542,7 +2559,7 @@ print("Nothing found")
             {
                 searchString = personContact.fullName
             }
-            dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.rawValue), 0))
+            DispatchQueue.global(qos: .userInitiated).async
             {
                 self.myGmailMessages.getPersonMessages(searchString, emailAddresses: self.personContact.emailAddresses, inMessageType: "Mail")
             }
@@ -2558,7 +2575,7 @@ print("Nothing found")
         
         if myDisplayType == "Project"
         {
-            dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.rawValue), 0))
+            DispatchQueue.global(qos: .userInitiated).async
             {
                     self.myHangoutsMessages.getProjectMessages(self.mySelectedProject.projectName, inMessageType: "Hangouts")
             }
@@ -2574,14 +2591,14 @@ print("Nothing found")
             {
                 searchString = personContact.fullName
             }
-            dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.rawValue), 0))
+            DispatchQueue.global(qos: .userInitiated).async
             {
                     self.myHangoutsMessages.getPersonMessages(searchString, emailAddresses: self.personContact.emailAddresses, inMessageType: "Hangouts")
             }
         }
     }
     
-    func sideBarDidSelectButtonAtIndex(passedItem:menuObject)
+    func sideBarDidSelectButtonAtIndex(_ passedItem:menuObject)
     {
         switch passedItem.displayType
         {
@@ -2589,7 +2606,7 @@ print("Nothing found")
                 switch passedItem.displayString
                 {
                     case "Planning":
-                        let projectViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("GTDPlanning") as! MaintainGTDPlanningViewController
+                        let projectViewControl = self.storyboard!.instantiateViewController(withIdentifier: "GTDPlanning") as! MaintainGTDPlanningViewController
                         
                         let myPassedGTD = GTDModel()
                         
@@ -2598,17 +2615,17 @@ print("Nothing found")
                         
                         projectViewControl.passedGTD = myPassedGTD
                         
-                        self.presentViewController(projectViewControl, animated: true, completion: nil)
+                        self.present(projectViewControl, animated: true, completion: nil)
  
                     case "Inbox":
-                        let GTDInboxViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("GTDInbox") as! GTDInboxViewController
+                        let GTDInboxViewControl = self.storyboard!.instantiateViewController(withIdentifier: "GTDInbox") as! GTDInboxViewController
                     
                         GTDInboxViewControl.delegate = self
                         
-                        self.presentViewController(GTDInboxViewControl, animated: true, completion: nil)
+                        self.present(GTDInboxViewControl, animated: true, completion: nil)
                     
                     case "Context":
-                        let projectViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("GTDPlanning") as! MaintainGTDPlanningViewController
+                        let projectViewControl = self.storyboard!.instantiateViewController(withIdentifier: "GTDPlanning") as! MaintainGTDPlanningViewController
                     
                         let myPassedGTD = GTDModel()
                     
@@ -2617,7 +2634,7 @@ print("Nothing found")
                     
                         projectViewControl.passedGTD = myPassedGTD
                     
-                        self.presentViewController(projectViewControl, animated: true, completion: nil)
+                        self.present(projectViewControl, animated: true, completion: nil)
                     
                     default:
                         print("sideBarDidSelectButtonAtIndex Header - Action selector: Hit default")
@@ -2634,7 +2651,7 @@ print("Nothing found")
                     let picker = CNContactPickerViewController()
                 
                     picker.delegate = self
-                    presentViewController(picker, animated: true, completion: nil)
+                    present(picker, animated: true, completion: nil)
                 }
                 else
                 {
@@ -2668,19 +2685,19 @@ print("Nothing found")
                 switch passedItem.displayString
                 {
                     case "Settings":
-                        let settingViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("Settings") as! settingsViewController
+                        let settingViewControl = self.storyboard!.instantiateViewController(withIdentifier: "Settings") as! settingsViewController
                         settingViewControl.delegate = self
                         settingViewControl.evernoteSession = evernoteSession
-                        settingViewControl.dropboxCoreService = dropboxCoreService
+ //GRE                       settingViewControl.dropboxCoreService = dropboxCoreService
                         
-                        self.presentViewController(settingViewControl, animated: true, completion: nil)
+                        self.present(settingViewControl, animated: true, completion: nil)
                     
                     case "Maintain Display Panes":
-                        let maintainPaneViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("MaintainPanes") as! MaintainPanesViewController
+                        let maintainPaneViewControl = self.storyboard!.instantiateViewController(withIdentifier: "MaintainPanes") as! MaintainPanesViewController
                         
                         maintainPaneViewControl.delegate = self
                         
-                        self.presentViewController(maintainPaneViewControl, animated: true, completion: nil)
+                        self.present(maintainPaneViewControl, animated: true, completion: nil)
                     
                     case "Load TextExpander Snippets" :
                         // Textexpander
@@ -2708,11 +2725,11 @@ print("Nothing found")
                 }
             
             case "MaintainContexts":
-                let maintainContextViewControl = self.storyboard!.instantiateViewControllerWithIdentifier("maintainContexts") as! MaintainContextsViewController
+                let maintainContextViewControl = self.storyboard!.instantiateViewController(withIdentifier: "maintainContexts") as! MaintainContextsViewController
                     
                 maintainContextViewControl.delegate = self
                     
-                self.presentViewController(maintainContextViewControl, animated: true, completion: nil)
+                self.present(maintainContextViewControl, animated: true, completion: nil)
 
             case "Place":
                 let myContext = passedItem.displayObject as! context
@@ -2727,15 +2744,15 @@ print("Nothing found")
         }
     }
     
-    func sideBarWillOpen(target: UIView)
+    func sideBarWillOpen(_ target: UIView)
     {
-        self.view.bringSubviewToFront(target)
+        self.view.bringSubview(toFront: target)
     }
     
-    func loadProject(projectID: Int, teamID: Int)
+    func loadProject(_ projectID: Int, teamID: Int)
     {
-        TableTypeSelection1.hidden = true
-        setSelectionButton.hidden = true
+        TableTypeSelection1.isHidden = true
+        setSelectionButton.isHidden = true
 
         showFields()
         
@@ -2749,20 +2766,22 @@ print("Nothing found")
         table3Contents = Array()
         table4Contents = Array()
         
-        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.rawValue), 0))
+        DispatchQueue.global(qos: .background).async
         {
             self.populateArraysForTables("Table1")
         }
-        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.rawValue), 0))
+        
+        DispatchQueue.global(qos: .background).async
         {
             self.populateArraysForTables("Table2")
         }
-        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.rawValue), 0))
+        
+        DispatchQueue.global(qos: .background).async
         {
             self.populateArraysForTables("Table3")
         }
         
-        dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_USER_INITIATED.rawValue), 0))
+        DispatchQueue.global(qos: .background).async
         {
             self.populateArraysForTables("Table4")
         }
@@ -2771,17 +2790,17 @@ print("Nothing found")
         
         // Here is where we will set the titles for the buttons
         
-        TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: mySelectedProject.projectName), forState: .Normal)
-        TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: mySelectedProject.projectName), forState: .Normal)
-        TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: mySelectedProject.projectName), forState: .Normal)
-        TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: mySelectedProject.projectName), forState: .Normal)
+        TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: mySelectedProject.projectName), for: UIControlState())
+        TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: mySelectedProject.projectName), for: UIControlState())
+        TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: mySelectedProject.projectName), for: UIControlState())
+        TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: mySelectedProject.projectName), for: UIControlState())
     }
     
-    func loadPerson(personRecord: CNContact)
+    func loadPerson(_ personRecord: CNContact)
     {
-        TableTypeSelection1.hidden = true
-        setSelectionButton.hidden = true
-        StartLabel.hidden = true
+        TableTypeSelection1.isHidden = true
+        setSelectionButton.isHidden = true
+        StartLabel.isHidden = true
         
         showFields()
     
@@ -2806,16 +2825,16 @@ print("Nothing found")
     
         let myFullName = personContact.fullName
     
-        TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: myFullName), forState: .Normal)
-        TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myFullName), forState: .Normal)
-        TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myFullName), forState: .Normal)
-        TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myFullName), forState: .Normal)
+        TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: myFullName), for: UIControlState())
+        TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myFullName), for: UIControlState())
+        TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myFullName), for: UIControlState())
+        TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myFullName), for: UIControlState())
     }
     
-    func loadContext(inContext: String)
+    func loadContext(_ inContext: String)
     {
-        TableTypeSelection1.hidden = true
-        setSelectionButton.hidden = true
+        TableTypeSelection1.isHidden = true
+        setSelectionButton.isHidden = true
         
         showFields()
         
@@ -2840,15 +2859,15 @@ print("Nothing found")
         
         let myFullName = inContext
         
-        TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: myFullName), forState: .Normal)
-        TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myFullName), forState: .Normal)
-        TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myFullName), forState: .Normal)
-        TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myFullName), forState: .Normal)
+        TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: myFullName), for: UIControlState())
+        TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myFullName), for: UIControlState())
+        TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myFullName), for: UIControlState())
+        TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myFullName), for: UIControlState())
     }
 
-    func MaintainPanesDidFinish(controller:MaintainPanesViewController)
+    func MaintainPanesDidFinish(_ controller:MaintainPanesViewController)
     {
-        controller.dismissViewControllerAnimated(true, completion: nil)
+        controller.dismiss(animated: true, completion: nil)
     }
     
     func buildMeetingDisplay() -> [TableData]
@@ -2867,7 +2886,7 @@ print("Nothing found")
                 myString += "At \(event.location)\n"
             }
             
-            if event.startDate.compare(NSDate()) == NSComparisonResult.OrderedAscending
+            if event.startDate.compare(Date()) == ComparisonResult.orderedAscending
             {
                 // Event is in the past
                 writeRowToArray(myString, inTable: &tableContents, inDisplayFormat: "Gray")
@@ -2917,53 +2936,52 @@ print("Nothing found")
         return tableContents
     }
     
-    func myGTDPlanningDidFinish(controller:MaintainGTDPlanningViewController)
+    func myGTDPlanningDidFinish(_ controller:MaintainGTDPlanningViewController)
     {
-        controller.dismissViewControllerAnimated(true, completion: nil)
+        controller.dismiss(animated: true, completion: nil)
     }
     
-    func displayTaskOptions(workingTask: task, targetTable: String) -> UIAlertController
+    func displayTaskOptions(_ workingTask: task, targetTable: String) -> UIAlertController
     {
-        let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .ActionSheet)
+        let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .actionSheet)
         
-        let myOption1 = UIAlertAction(title: "Edit Action", style: .Default, handler: { (action: UIAlertAction) -> () in
-            let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("tasks") as! taskViewController
-            popoverContent.modalPresentationStyle = .Popover
+        let myOption1 = UIAlertAction(title: "Edit Action", style: .default, handler: { (action: UIAlertAction) -> () in
+            let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "tasks") as! taskViewController
+            popoverContent.modalPresentationStyle = .popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
             popover!.sourceView = self.view
-            popover!.sourceRect = CGRectMake(0,0,700,700)
+            popover!.sourceRect = CGRect(x: 0,y: 0,width: 700,height: 700)
             
             popoverContent.passedTask = workingTask
             
-            popoverContent.preferredContentSize = CGSizeMake(700,700)
+            popoverContent.preferredContentSize = CGSize(width: 700,height: 700)
             
-            self.presentViewController(popoverContent, animated: true, completion: nil)
+            self.present(popoverContent, animated: true, completion: nil)
         })
         
-        let myOption2 = UIAlertAction(title: "Action Updates", style: .Default, handler: { (action: UIAlertAction) -> () in
-            let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("taskUpdate") as! taskUpdatesViewController
-            popoverContent.modalPresentationStyle = .Popover
+        let myOption2 = UIAlertAction(title: "Action Updates", style: .default, handler: { (action: UIAlertAction) -> () in
+            let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "taskUpdate") as! taskUpdatesViewController
+            popoverContent.modalPresentationStyle = .popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
             popover!.sourceView = self.view
-            popover!.sourceRect = CGRectMake(0,0,700,700)
+            popover!.sourceRect = CGRect(x: 0,y: 0,width: 700,height: 700)
             
             popoverContent.passedTask = workingTask
             
-            popoverContent.preferredContentSize = CGSizeMake(700,700)
+            popoverContent.preferredContentSize = CGSize(width: 700,height: 700)
             
-            self.presentViewController(popoverContent, animated: true, completion: nil)
+            self.present(popoverContent, animated: true, completion: nil)
         })
         
-        let myOption3 = UIAlertAction(title: "Defer: 1 Hour", style: .Default, handler: { (action: UIAlertAction) -> () in
-            let myCalendar = NSCalendar.currentCalendar()
+        let myOption3 = UIAlertAction(title: "Defer: 1 Hour", style: .default, handler: { (action: UIAlertAction) -> () in
+            let myCalendar = Calendar.current
                 
-            let newTime = myCalendar.dateByAddingUnit(
-                .Hour,
+            let newTime = myCalendar.date(
+                byAdding: .hour,
                 value: 1,
-                toDate: NSDate(),
-                options: [])!
+                to: Date())!
 
             workingTask.startDate = newTime
             
@@ -2990,14 +3008,13 @@ print("Nothing found")
             }
         })
         
-        let myOption4 = UIAlertAction(title: "Defer: 4 Hours", style: .Default, handler: { (action: UIAlertAction) -> () in
-            let myCalendar = NSCalendar.currentCalendar()
+        let myOption4 = UIAlertAction(title: "Defer: 4 Hours", style: .default, handler: { (action: UIAlertAction) -> () in
+            let myCalendar = Calendar.current
                 
-            let newTime = myCalendar.dateByAddingUnit(
-                .Hour,
+            let newTime = myCalendar.date(
+                byAdding: .hour,
                 value: 4,
-                toDate: NSDate(),
-                options: [])!
+                to: Date())!
 
             workingTask.startDate = newTime
             
@@ -3023,14 +3040,13 @@ print("Nothing found")
             }
         })
         
-        let myOption5 = UIAlertAction(title: "Defer: 1 Day", style: .Default, handler: { (action: UIAlertAction) -> () in
-            let myCalendar = NSCalendar.currentCalendar()
+        let myOption5 = UIAlertAction(title: "Defer: 1 Day", style: .default, handler: { (action: UIAlertAction) -> () in
+            let myCalendar = Calendar.current
                 
-            let newTime = myCalendar.dateByAddingUnit(
-                .Day,
+            let newTime = myCalendar.date(
+                byAdding: .day,
                 value: 1,
-                toDate: NSDate(),
-                options: [])!
+                to: Date())!
 
             workingTask.startDate = newTime
             
@@ -3056,14 +3072,13 @@ print("Nothing found")
             }
         })
         
-        let myOption6 = UIAlertAction(title: "Defer: 1 Week", style: .Default, handler: { (action: UIAlertAction) -> () in
-            let myCalendar = NSCalendar.currentCalendar()
+        let myOption6 = UIAlertAction(title: "Defer: 1 Week", style: .default, handler: { (action: UIAlertAction) -> () in
+            let myCalendar = Calendar.current
                 
-            let newTime = myCalendar.dateByAddingUnit(
-                .Day,
+            let newTime = myCalendar.date(
+                byAdding: .day,
                 value: 7,
-                toDate: NSDate(),
-                options: [])!
+                to: Date())!
 
             workingTask.startDate = newTime
             
@@ -3089,14 +3104,13 @@ print("Nothing found")
             }
         })
         
-        let myOption7 = UIAlertAction(title: "Defer: 1 Month", style: .Default, handler: { (action: UIAlertAction) -> () in
-            let myCalendar = NSCalendar.currentCalendar()
+        let myOption7 = UIAlertAction(title: "Defer: 1 Month", style: .default, handler: { (action: UIAlertAction) -> () in
+            let myCalendar = Calendar.current
                 
-            let newTime = myCalendar.dateByAddingUnit(
-                .Month,
+            let newTime = myCalendar.date(
+                byAdding: .month,
                 value: 1,
-                toDate: NSDate(),
-                options: [])!
+                to: Date())!
 
             workingTask.startDate = newTime
             
@@ -3122,14 +3136,13 @@ print("Nothing found")
             }
         })
         
-        let myOption8 = UIAlertAction(title: "Defer: 1 Year", style: .Default, handler: { (action: UIAlertAction) -> () in
-            let myCalendar = NSCalendar.currentCalendar()
+        let myOption8 = UIAlertAction(title: "Defer: 1 Year", style: .default, handler: { (action: UIAlertAction) -> () in
+            let myCalendar = Calendar.current
                 
-            let newTime = myCalendar.dateByAddingUnit(
-                .Year,
+            let newTime = myCalendar.date(
+                byAdding: .year,
                 value: 1,
-                toDate: NSDate(),
-                options: [])!
+                to: Date())!
 
             workingTask.startDate = newTime
             
@@ -3155,26 +3168,26 @@ print("Nothing found")
             }
         })
         
-        let myOption9 = UIAlertAction(title: "Defer: Custom", style: .Default, handler: { (action: UIAlertAction) -> () in
+        let myOption9 = UIAlertAction(title: "Defer: Custom", style: .default, handler: { (action: UIAlertAction) -> () in
             if workingTask.displayStartDate == ""
             {
-                self.myDatePicker.date = NSDate()
+                self.myDatePicker.date = Date()
             }
             else
             {
-                self.myDatePicker.date = workingTask.startDate
+                self.myDatePicker.date = workingTask.startDate as Date
             }
             
-            self.myDatePicker.datePickerMode = UIDatePickerMode.DateAndTime
+            self.myDatePicker.datePickerMode = UIDatePickerMode.dateAndTime
             self.hideFields()
-            self.myDatePicker.hidden = false
-            self.btnSetStartDate.hidden = false
+            self.myDatePicker.isHidden = false
+            self.btnSetStartDate.isHidden = false
             self.myWorkingTask = workingTask
             self.myWorkingTable = targetTable
         })
         
-        let myOption10 = UIAlertAction(title: "Delete Action", style: .Default, handler: { (action: UIAlertAction) -> () in
-            workingTask.delete()
+        let myOption10 = UIAlertAction(title: "Delete Action", style: .default, handler: { (action: UIAlertAction) -> () in
+            _ = workingTask.delete()
             
             switch targetTable
             {
@@ -3215,40 +3228,40 @@ print("Nothing found")
     
     func showFields()
     {
-        TableTypeSelection1.hidden = true
-        setSelectionButton.hidden = true
-        TableTypeButton1.hidden = false
-        TableTypeButton2.hidden = false
-        TableTypeButton3.hidden = false
-        TableTypeButton4.hidden = false
-        dataTable1.hidden = false
-        dataTable2.hidden = false
-        dataTable3.hidden = false
-        dataTable4.hidden = false
+        TableTypeSelection1.isHidden = true
+        setSelectionButton.isHidden = true
+        TableTypeButton1.isHidden = false
+        TableTypeButton2.isHidden = false
+        TableTypeButton3.isHidden = false
+        TableTypeButton4.isHidden = false
+        dataTable1.isHidden = false
+        dataTable2.isHidden = false
+        dataTable3.isHidden = false
+        dataTable4.isHidden = false
     }
     
     func hideFields()
     {
-        TableTypeButton1.hidden = true
-        TableTypeButton2.hidden = true
-        TableTypeButton3.hidden = true
-        TableTypeButton4.hidden = true
-        dataTable1.hidden = true
-        dataTable2.hidden = true
-        dataTable3.hidden = true
-        dataTable4.hidden = true
-        StartLabel.hidden = true
-        btnCloseWindow.hidden = true
-        btnSendToInbox.hidden = true
-        myDatePicker.hidden = true
-        btnSetStartDate.hidden = true
+        TableTypeButton1.isHidden = true
+        TableTypeButton2.isHidden = true
+        TableTypeButton3.isHidden = true
+        TableTypeButton4.isHidden = true
+        dataTable1.isHidden = true
+        dataTable2.isHidden = true
+        dataTable3.isHidden = true
+        dataTable4.isHidden = true
+        StartLabel.isHidden = true
+        btnCloseWindow.isHidden = true
+        btnSendToInbox.isHidden = true
+        myDatePicker.isHidden = true
+        btnSetStartDate.isHidden = true
     }
     
-    @IBAction func btnSetStartDate(sender: UIButton)
+    @IBAction func btnSetStartDate(_ sender: UIButton)
     {
         myWorkingTask.startDate = myDatePicker.date
-        myDatePicker.hidden = true
-        btnSetStartDate.hidden = true
+        myDatePicker.isHidden = true
+        btnSetStartDate.isHidden = true
         
         switch myWorkingTable
         {
@@ -3273,7 +3286,7 @@ print("Nothing found")
         showFields()
     }
     
-    @IBAction func btnSendToInbox(sender: UIButton)
+    @IBAction func btnSendToInbox(_ sender: UIButton)
     {
         let newTask = task(inTeamID: myCurrentTeam.teamID)
         newTask.title = myWorkingGmailMessage.subject
@@ -3289,7 +3302,7 @@ print("Nothing found")
         
         newTask.details = myBody
         
-        myDatabaseConnection.saveProcessedEmail(myWorkingGmailMessage.id, emailType: "GMail", processedDate: NSDate())
+        myDatabaseConnection.saveProcessedEmail(myWorkingGmailMessage.id, emailType: "GMail", processedDate: Date())
         NSLog("need something here to do the context")
         
 

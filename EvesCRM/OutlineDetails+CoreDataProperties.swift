@@ -21,7 +21,7 @@ extension OutlineDetails {
     @NSManaged var lineText: String?
     @NSManaged var lineType: String?
     @NSManaged var checkBoxValue: NSNumber?
-    @NSManaged var updateTime: NSDate?
+    @NSManaged var updateTime: Date?
     @NSManaged var updateType: String?
 
 }

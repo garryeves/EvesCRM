@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2A77F31174CAA86D0C284939 /* Pods_EvesCRMTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92959BF0D8483C131E7E26F7 /* Pods_EvesCRMTests.framework */; };
 		3403BA451B02FFEC0043D52C /* settingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341E08C61B01B1B90036202D /* settingsViewController.swift */; };
 		3406506B1ADDF8FF00C90CBB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406506A1ADDF8FF00C90CBB /* AppDelegate.swift */; };
 		3406506E1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3406506C1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld */; };
@@ -36,10 +35,6 @@
 		341F23021AFB29E600FC2883 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 341F23011AFB29E600FC2883 /* libz.dylib */; };
 		341F230B1AFB2DD600FC2883 /* Dropbox.m in Sources */ = {isa = PBXBuildFile; fileRef = 341F230A1AFB2DD600FC2883 /* Dropbox.m */; };
 		341F230C1AFB2DD600FC2883 /* Dropbox.m in Sources */ = {isa = PBXBuildFile; fileRef = 341F230A1AFB2DD600FC2883 /* Dropbox.m */; };
-		341F230F1AFB560200FC2883 /* DropboxSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341F230E1AFB560200FC2883 /* DropboxSDK.framework */; };
-		341F23101AFB560200FC2883 /* DropboxSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341F230E1AFB560200FC2883 /* DropboxSDK.framework */; };
-		341F23121AFC284400FC2883 /* DropboxCoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341F23111AFC284400FC2883 /* DropboxCoreService.swift */; };
-		341F23131AFC284400FC2883 /* DropboxCoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341F23111AFC284400FC2883 /* DropboxCoreService.swift */; };
 		3428522C1B8E9B30003D188F /* Team.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3428522A1B8E9B30003D188F /* Team.swift */; };
 		3428522D1B8E9B30003D188F /* Team.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3428522A1B8E9B30003D188F /* Team.swift */; };
 		3428522E1B8E9B30003D188F /* ProjectNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3428522B1B8E9B30003D188F /* ProjectNote.swift */; };
@@ -133,6 +128,8 @@
 		347EE4241B8D6AC50044D569 /* GTDPlanningTabController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347EE4221B8D6AC50044D569 /* GTDPlanningTabController.swift */; };
 		347FF2061B93FB6600133D62 /* Context1_1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347FF2051B93FB6600133D62 /* Context1_1.swift */; };
 		347FF2071B93FB6600133D62 /* Context1_1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347FF2051B93FB6600133D62 /* Context1_1.swift */; };
+		34841A1D1E272D5800B96BB2 /* notificationDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34841A1C1E272D5800B96BB2 /* notificationDefinitions.swift */; };
+		34841A221E272D5F00B96BB2 /* notificationDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34841A1C1E272D5800B96BB2 /* notificationDefinitions.swift */; };
 		348E6D4B1ADF74C800697268 /* ContactDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348E6D4A1ADF74C800697268 /* ContactDetails.swift */; };
 		348E6D4C1ADF74C800697268 /* ContactDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348E6D4A1ADF74C800697268 /* ContactDetails.swift */; };
 		349331C91B705756004AA569 /* SideBarTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349331C81B705756004AA569 /* SideBarTableViewController.swift */; };
@@ -298,7 +295,6 @@
 
 /* Begin PBXFileReference section */
 		023D2F9C8B259D5BD59411AE /* Pods_EvesCRM.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_EvesCRM.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		17802B7F0F45C65BCB5E3A9E /* Pods-EvesCRMTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EvesCRMTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-EvesCRMTests/Pods-EvesCRMTests.debug.xcconfig"; sourceTree = "<group>"; };
 		340650651ADDF8FF00C90CBB /* EvesCRM.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EvesCRM.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		340650691ADDF8FF00C90CBB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3406506A1ADDF8FF00C90CBB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -328,8 +324,6 @@
 		341F23031AFB2AC000FC2883 /* EvesCRMTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "EvesCRMTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		341F230A1AFB2DD600FC2883 /* Dropbox.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Dropbox.m; sourceTree = "<group>"; };
 		341F230D1AFB305F00FC2883 /* EvesCRMBridging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EvesCRMBridging.h; sourceTree = "<group>"; };
-		341F230E1AFB560200FC2883 /* DropboxSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = DropboxSDK.framework; sourceTree = "<group>"; };
-		341F23111AFC284400FC2883 /* DropboxCoreService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DropboxCoreService.swift; sourceTree = "<group>"; };
 		342852251B8E9943003D188F /* EvesCRM 18.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 18.xcdatamodel"; sourceTree = "<group>"; };
 		3428522A1B8E9B30003D188F /* Team.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Team.swift; sourceTree = "<group>"; };
 		3428522B1B8E9B30003D188F /* ProjectNote.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProjectNote.swift; sourceTree = "<group>"; };
@@ -398,6 +392,7 @@
 		347EE4221B8D6AC50044D569 /* GTDPlanningTabController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GTDPlanningTabController.swift; sourceTree = "<group>"; };
 		347FF2001B93F03F00133D62 /* EvesCRM 19.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 19.xcdatamodel"; sourceTree = "<group>"; };
 		347FF2051B93FB6600133D62 /* Context1_1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Context1_1.swift; sourceTree = "<group>"; };
+		34841A1C1E272D5800B96BB2 /* notificationDefinitions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = notificationDefinitions.swift; sourceTree = "<group>"; };
 		34877BC51B61E2210040DF71 /* EvesCRM 8.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 8.xcdatamodel"; sourceTree = "<group>"; };
 		348E6D4A1ADF74C800697268 /* ContactDetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactDetails.swift; sourceTree = "<group>"; };
 		349331B81B704457004AA569 /* EvesCRM 10.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 10.xcdatamodel"; sourceTree = "<group>"; };
@@ -508,7 +503,6 @@
 		34F35BDD1B6B549000A19ACE /* meetingTabViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = meetingTabViewController.swift; sourceTree = "<group>"; };
 		34F35BE41B6B54A200A19ACE /* meetingAgendaViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = meetingAgendaViewController.swift; sourceTree = "<group>"; };
 		34FED38C1B044BF1006B414C /* maintainPanes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = maintainPanes.swift; sourceTree = "<group>"; };
-		6DC6A619FF714970026F2CA5 /* Pods-EvesCRMTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EvesCRMTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-EvesCRMTests/Pods-EvesCRMTests.release.xcconfig"; sourceTree = "<group>"; };
 		92959BF0D8483C131E7E26F7 /* Pods_EvesCRMTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_EvesCRMTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ABD00990663F79245E935D24 /* Pods-EvesCRM.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EvesCRM.release.xcconfig"; path = "Pods/Target Support Files/Pods-EvesCRM/Pods-EvesCRM.release.xcconfig"; sourceTree = "<group>"; };
 		E5798FB128207E4BACB3FBEF /* Pods-EvesCRM.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EvesCRM.debug.xcconfig"; path = "Pods/Target Support Files/Pods-EvesCRM/Pods-EvesCRM.debug.xcconfig"; sourceTree = "<group>"; };
@@ -540,7 +534,6 @@
 				34F199C11AF6ECE900963ABF /* CloudKit.framework in Frameworks */,
 				344DC1FA1BA1146600DBCE3D /* TextExpander.framework in Frameworks */,
 				345E02811AEF715700BE8D0A /* MessageUI.framework in Frameworks */,
-				341F230F1AFB560200FC2883 /* DropboxSDK.framework in Frameworks */,
 				3406508F1ADDF93600C90CBB /* AddressBook.framework in Frameworks */,
 				340650901ADDF93600C90CBB /* AddressBookUI.framework in Frameworks */,
 				D54BFC2948A2402742B6E462 /* Pods_EvesCRM.framework in Frameworks */,
@@ -552,8 +545,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				344DC1FB1BA1146600DBCE3D /* TextExpander.framework in Frameworks */,
-				341F23101AFB560200FC2883 /* DropboxSDK.framework in Frameworks */,
-				2A77F31174CAA86D0C284939 /* Pods_EvesCRMTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -606,7 +597,6 @@
 				340650681ADDF8FF00C90CBB /* Supporting Files */,
 				34948C241B87029200C1F12D /* OneNote */,
 				34A182F31B0EDB5C00FC369D /* Resources_OneNote */,
-				341F230E1AFB560200FC2883 /* DropboxSDK.framework */,
 				342CA6931B26C761006FEAED /* Google */,
 				340650711ADDF8FF00C90CBB /* Main.storyboard */,
 				3406506C1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld */,
@@ -740,7 +730,6 @@
 				346D5E011AE5F9C700F858E7 /* CalendarDetails.swift */,
 				348E6D4A1ADF74C800697268 /* ContactDetails.swift */,
 				34BDECA91B008846008C9F3F /* displayPanes.swift */,
-				341F23111AFC284400FC2883 /* DropboxCoreService.swift */,
 				344F22711AF1DFF3002C373E /* evernoteDetails.swift */,
 				347518D81AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift */,
 				34B9C0101B26BA70005E52F9 /* gMail.swift */,
@@ -748,6 +737,7 @@
 				349331CE1B70576C004AA569 /* SideBar.swift */,
 				34627D221B60B1C80096DAC4 /* taskManagementClasses.swift */,
 				342852301B8EA38C003D188F /* teamClass.swift */,
+				34841A1C1E272D5800B96BB2 /* notificationDefinitions.swift */,
 			);
 			name = "My Classes";
 			sourceTree = "<group>";
@@ -848,8 +838,6 @@
 			children = (
 				E5798FB128207E4BACB3FBEF /* Pods-EvesCRM.debug.xcconfig */,
 				ABD00990663F79245E935D24 /* Pods-EvesCRM.release.xcconfig */,
-				17802B7F0F45C65BCB5E3A9E /* Pods-EvesCRMTests.debug.xcconfig */,
-				6DC6A619FF714970026F2CA5 /* Pods-EvesCRMTests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -876,12 +864,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 340650871ADDF8FF00C90CBB /* Build configuration list for PBXNativeTarget "EvesCRM" */;
 			buildPhases = (
-				A09D0E21FB223328D930B27F /* Check Pods Manifest.lock */,
+				A09D0E21FB223328D930B27F /* [CP] Check Pods Manifest.lock */,
 				340650611ADDF8FF00C90CBB /* Sources */,
 				340650621ADDF8FF00C90CBB /* Frameworks */,
 				340650631ADDF8FF00C90CBB /* Resources */,
-				4BFD6D19CDD13362ECF4809D /* Copy Pods Resources */,
-				C2D85906FF44FC220FFCA023 /* Embed Pods Frameworks */,
+				4BFD6D19CDD13362ECF4809D /* [CP] Copy Pods Resources */,
+				C2D85906FF44FC220FFCA023 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -896,12 +884,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3406508A1ADDF8FF00C90CBB /* Build configuration list for PBXNativeTarget "EvesCRMTests" */;
 			buildPhases = (
-				79BCD7E1479B82EA7AA3B804 /* Check Pods Manifest.lock */,
 				340650791ADDF8FF00C90CBB /* Sources */,
 				3406507A1ADDF8FF00C90CBB /* Frameworks */,
 				3406507B1ADDF8FF00C90CBB /* Resources */,
-				37BFEF43FC67CB405D8E2819 /* Copy Pods Resources */,
-				73E5056A6B73B620A5491A81 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -921,12 +906,13 @@
 			attributes = {
 				LastSwiftMigration = 0700;
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0700;
+				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = "Garry Eves";
 				TargetAttributes = {
 					340650641ADDF8FF00C90CBB = {
 						CreatedOnToolsVersion = 6.3;
 						DevelopmentTeam = 76YDDNPU7W;
+						LastSwiftMigration = 0820;
 						SystemCapabilities = {
 							com.apple.Push = {
 								enabled = 1;
@@ -1049,29 +1035,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		37BFEF43FC67CB405D8E2819 /* Copy Pods Resources */ = {
+		4BFD6D19CDD13362ECF4809D /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-EvesCRMTests/Pods-EvesCRMTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		4BFD6D19CDD13362ECF4809D /* Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1079,59 +1050,29 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-EvesCRM/Pods-EvesCRM-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		73E5056A6B73B620A5491A81 /* Embed Pods Frameworks */ = {
+		A09D0E21FB223328D930B27F /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-EvesCRMTests/Pods-EvesCRMTests-frameworks.sh\"\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		79BCD7E1479B82EA7AA3B804 /* Check Pods Manifest.lock */ = {
+		C2D85906FF44FC220FFCA023 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		A09D0E21FB223328D930B27F /* Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		C2D85906FF44FC220FFCA023 /* Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Embed Pods Frameworks";
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1162,6 +1103,7 @@
 				340F84A71B79BE220028439B /* taskListViewController.swift in Sources */,
 				34DF7AD31BBCE72A000E3B09 /* Context1_1+CoreDataProperties.swift in Sources */,
 				3410561E1B589D92002B0ED9 /* AgendaItemViewController.swift in Sources */,
+				34841A1D1E272D5800B96BB2 /* notificationDefinitions.swift in Sources */,
 				346B70F91AF75FF4005E1BC2 /* ProjectTeamMembers.swift in Sources */,
 				344726611B54D6A800BEFF0B /* coreDatabase.swift in Sources */,
 				34B71C281C3CDBF4002AE2E7 /* Outline+CoreDataProperties.swift in Sources */,
@@ -1224,7 +1166,6 @@
 				342F46D51B9FC817004BAC9D /* KDRearrangeableCollectionViewDelegate.swift in Sources */,
 				342C0A1F1B4B7CED00A73CA5 /* MeetingAgenda.swift in Sources */,
 				342C0A1D1B4B7CED00A73CA5 /* MeetingAttendees.swift in Sources */,
-				341F23121AFC284400FC2883 /* DropboxCoreService.swift in Sources */,
 				34F35BD31B6B3F7000A19ACE /* taskUpdatesViewController.swift in Sources */,
 				34B7242E1BB62C7700C7AE34 /* startViewController.swift in Sources */,
 				34A1831F1B0EDBB400FC369D /* JsonWriter.m in Sources */,
@@ -1302,12 +1243,12 @@
 				34BDECAD1B0089CC008C9F3F /* Decodes.swift in Sources */,
 				34A182D31B0EDB3D00FC369D /* LiveConnectClient.m in Sources */,
 				344726621B54D6A800BEFF0B /* coreDatabase.swift in Sources */,
-				341F23131AFC284400FC2883 /* DropboxCoreService.swift in Sources */,
 				34BDECBF1B009C17008C9F3F /* Panes.swift in Sources */,
 				342F46D31B9FC804004BAC9D /* KDRearrangeableCollectionViewFlowLayout.swift in Sources */,
 				34A183281B0EDBB400FC369D /* StreamReader.m in Sources */,
 				344B6ACE1BA7B3B600A5377B /* CloudKitInteraction.swift in Sources */,
 				34B5253A1B130F1C00093250 /* oneNote.swift in Sources */,
+				34841A221E272D5F00B96BB2 /* notificationDefinitions.swift in Sources */,
 				346B70F31AF75F47005E1BC2 /* EvesCRM.xcdatamodeld in Sources */,
 				34DF7ACC1BBCB18F000E3B09 /* maintainContextsViewController.swift in Sources */,
 				34A1832C1B0EDBB400FC369D /* UrlHelper.m in Sources */,
@@ -1387,8 +1328,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1412,7 +1355,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -1434,8 +1377,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -1453,10 +1398,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -1466,7 +1411,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E5798FB128207E4BACB3FBEF /* Pods-EvesCRM.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = EvesCRM/EvesCRM.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -1490,6 +1436,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = EvesCRMBridging.h;
 				"SWIFT_OBJC_BRIDGING_HEADER[arch=*]" = EvesCRM/EvesCRMBridging.h;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Debug;
@@ -1498,7 +1445,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = ABD00990663F79245E935D24 /* Pods-EvesCRM.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = YES;
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = EvesCRM/EvesCRM.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -1521,14 +1469,14 @@
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "ENSDK.framework/Headers/ENSDK.h Dropbox.framework/Headers/Dropbox.h";
 				"SWIFT_OBJC_BRIDGING_HEADER[arch=*]" = EvesCRM/EvesCRMBridging.h;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = 2;
 			};
 			name = Release;
 		};
 		3406508B1ADDF8FF00C90CBB /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 17802B7F0F45C65BCB5E3A9E /* Pods-EvesCRMTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
@@ -1554,7 +1502,6 @@
 		};
 		3406508C1ADDF8FF00C90CBB /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6DC6A619FF714970026F2CA5 /* Pods-EvesCRMTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;

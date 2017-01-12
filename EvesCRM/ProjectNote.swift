@@ -13,7 +13,7 @@ class ProjectNote: NSManagedObject {
 
     @NSManaged var note: String
     @NSManaged var projectID: NSNumber
-    @NSManaged var updateTime: NSDate
+    @NSManaged var updateTime: Date
     @NSManaged var updateType: String
     @NSManaged var reviewPeriod: String
     @NSManaged var predecessor: NSNumber

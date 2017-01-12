@@ -13,15 +13,15 @@ import AddressBook
 
 class gmailMessage: NSObject
 {
-    private var mySubject: String = ""
-    private var myFrom: String = ""
-    private var myTo: String = ""
-    private var myDateString: String = ""
-    private var myDate: NSDate = NSDate()
-    private var myID: String = ""
-    private var myThreadId: String = ""
-    private var mySnippet: String = ""
-    private var myBody: String = ""
+    fileprivate var mySubject: String = ""
+    fileprivate var myFrom: String = ""
+    fileprivate var myTo: String = ""
+    fileprivate var myDateString: String = ""
+    fileprivate var myDate: Date = Date()
+    fileprivate var myID: String = ""
+    fileprivate var myThreadId: String = ""
+    fileprivate var mySnippet: String = ""
+    fileprivate var myBody: String = ""
     
     var subject: String
     {
@@ -83,16 +83,16 @@ class gmailMessage: NSObject
         {
         get
         {
-            let myDateFormatter = NSDateFormatter()
+            let myDateFormatter = DateFormatter()
                 
-            let dateFormat = NSDateFormatterStyle.MediumStyle
-            let timeFormat = NSDateFormatterStyle.ShortStyle
-            myDateFormatter.timeZone = NSTimeZone()
+            let dateFormat = DateFormatter.Style.medium
+            let timeFormat = DateFormatter.Style.short
+         //GRE   myDateFormatter.timeZone = TimeZone()
             myDateFormatter.dateStyle = dateFormat
             myDateFormatter.timeStyle = timeFormat
                 
             /* Instantiate the event store */
-            let returnDate = myDateFormatter.stringFromDate(myDate)
+            let returnDate = myDateFormatter.string(from: myDate)
                 
             return returnDate
         }
@@ -106,7 +106,7 @@ class gmailMessage: NSObject
         }
     }
 
-    func populateMessage(inData: gmailData)
+    func populateMessage(_ inData: gmailData)
     {
         // Make call to get the full details of the message
         // format as full
@@ -117,15 +117,15 @@ class gmailMessage: NSObject
        splitString(myString)
     }
     
-    private func splitString(inString: String)
+    fileprivate func splitString(_ inString: String)
     {
         // we need to do a bit of "dodgy" working, I want to be able to split strings based on :, but : is natural in dates and URTLs. so need to change it to seomthign esle,
         //string out the : data and then change back
         
-        let tempStr3 = inString.stringByReplacingOccurrencesOfString("\\u003e,", withString: "")
-        let tempStr4 = tempStr3.stringByReplacingOccurrencesOfString("\\u003c,", withString: "")
-        let tempStr5 = tempStr4.stringByReplacingOccurrencesOfString("\\u003e", withString: "")
-        let tempStr6 = tempStr5.stringByReplacingOccurrencesOfString("\\u003c", withString: "")
+        let tempStr3 = inString.replacingOccurrences(of: "\\u003e,", with: "")
+        let tempStr4 = tempStr3.replacingOccurrences(of: "\\u003c,", with: "")
+        let tempStr5 = tempStr4.replacingOccurrences(of: "\\u003e", with: "")
+        let tempStr6 = tempStr5.replacingOccurrences(of: "\\u003c", with: "")
 //if myID == "12613a7c784c8656"
 //{
 //println("inString = \(inString)")
@@ -133,10 +133,10 @@ class gmailMessage: NSObject
         var split: [String]!
         var passNum: Int = 1
         
-        if tempStr6.rangeOfString("\"labelIds\": [") != nil
+        if tempStr6.range(of: "\"labelIds\": [") != nil
         {
             // We can split based on label ID
-            split = tempStr6.componentsSeparatedByString("],")
+            split = tempStr6.components(separatedBy: "],")
             passNum = 1
         }
         else
@@ -159,7 +159,7 @@ class gmailMessage: NSObject
             {
                 // This is a wrapper portion so we do nothing
 
-                if myItem.rangeOfString("SENT") != nil
+                if myItem.range(of: "SENT") != nil
                 {
                     //This is a messgae that ahs been SENT as opposed to received
                     messageType = "SENT"
@@ -168,7 +168,7 @@ class gmailMessage: NSObject
     
             if passNum == 2
             {
-                let split2 = myItem.componentsSeparatedByString("\"headers\": [")
+                let split2 = myItem.components(separatedBy: "\"headers\": [")
 
                 var pass2Num: Int = 1
                 for myItem2 in split2
@@ -178,37 +178,36 @@ class gmailMessage: NSObject
 //println("myItem2 = \(myItem2)")
 //}
                     // lets get rid of the "
-                    let tempPassStr = myItem2.stringByReplacingOccurrencesOfString("\"\"", withString: "\".\"")
+                    let tempPassStr = myItem2.replacingOccurrences(of: "\"\"", with: "\".\"")
                     
                     if pass2Num == 1
                     {
-                        let split3 = tempPassStr.componentsSeparatedByString("\",")
+                        let split3 = tempPassStr.components(separatedBy: "\",")
                         for myItem3 in split3
                         {
-                            if myItem3.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()) != ""
+                            if myItem3.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines) != ""
                             {
-                                let split4 = myItem3.componentsSeparatedByString("\":")
-                                let keyString = split4[0].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-                                let keyString2 = keyString.stringByReplacingOccurrencesOfString("\"", withString: "")
-                                let valueString = split4[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-                                let valueString2 = valueString.stringByReplacingOccurrencesOfString("\"", withString: "")
+                                let split4 = myItem3.components(separatedBy: "\":")
+                                let keyString = split4[0].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+                                let keyString2 = keyString.replacingOccurrences(of: "\"", with: "")
+                                let valueString = split4[1].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+                                let valueString2 = valueString.replacingOccurrences(of: "\"", with: "") as String
                             
                                 if keyString2 == "snippet"
                                 {
-                                    if valueString2.rangeOfString("http") == nil
+                                    if valueString2.range(of: "http") == nil
                                     {
-                                        let sDecode1 = valueString2.stringByRemovingPercentEncoding!
+                                        let sDecode1 = valueString2.removingPercentEncoding
                                         //let sDecode1 = valueString2.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
                                         
-                                        NSCharacterSet.URLQueryAllowedCharacterSet()
+                                 //GRE       CharacterSet.urlQueryAllowed
                                         
-                                        
-                                        let sDecode2 = sDecode1.stringByReplacingOccurrencesOfString("&#39;", withString: "'")
-                                        let sDecode3 = sDecode2.stringByReplacingOccurrencesOfString("&quot;", withString: "\"")
-                                        let sDecode4 = sDecode3.stringByReplacingOccurrencesOfString("&lt;", withString: "<")
-                                        let sDecode5 = sDecode4.stringByReplacingOccurrencesOfString("&gt;", withString: ">")
+                                        let sDecode2 = sDecode1?.replacingOccurrences(of: "&#39;", with: "'")
+                                        let sDecode3 = sDecode2?.replacingOccurrences(of: "&quot;", with: "\"")
+                                        let sDecode4 = sDecode3?.replacingOccurrences(of: "&lt;", with: "<")
+                                        let sDecode5 = sDecode4?.replacingOccurrences(of: "&gt;", with: ">")
                                     
-                                        mySnippet = sDecode5
+                                        mySnippet = sDecode5!
                                     }
                                     else
                                     {
@@ -246,7 +245,7 @@ class gmailMessage: NSObject
         }
     }
     
-    private func processMessageBody(inString: String)
+    fileprivate func processMessageBody(_ inString: String)
     {
         // Start to break the message body down
         
@@ -256,30 +255,30 @@ class gmailMessage: NSObject
 //println("processMessageBody inString = \(inString)")
 //}
         
-        if inString.rangeOfString("\"data\"") != nil
+        if inString.range(of: "\"data\"") != nil
         {
-            let split1 = inString.componentsSeparatedByString("\"data\":")
+            let split1 = inString.components(separatedBy: "\"data\":")
 //if myID == "12613a7c784c8656"
 //{
 //println("processMessageBody split1 = \(split1)")
 //}
             // This gives the Header part, and also the body + trailer
             
-            let split2 = split1[1].componentsSeparatedByString("\"")
+            let split2 = split1[1].components(separatedBy: "\"")
 //if myID == "12613a7c784c8656"
 //{
 //println("processMessageBody split2 = \(split2)")
 //}
             // This splits the body and gives us a "dummy" headers, as first char is a ", the actual body and the trailer record
             
-            let myTmp1 = split2[1].stringByReplacingOccurrencesOfString("-", withString: "+")
-            let myTmp2 = myTmp1.stringByReplacingOccurrencesOfString("_", withString: "/")
+            let myTmp1 = split2[1].replacingOccurrences(of: "-", with: "+")
+            let myTmp2 = myTmp1.replacingOccurrences(of: "_", with: "/")
             
-            let decodedData = NSData(base64EncodedString: myTmp2, options: .IgnoreUnknownCharacters)
+            let decodedData = Data(base64Encoded: myTmp2, options: .ignoreUnknownCharacters)
             
             if decodedData != nil
             {
-                let decodedString = NSString(data: decodedData!, encoding: NSUTF8StringEncoding)
+                let decodedString = NSString(data: decodedData!, encoding: String.Encoding.utf8.rawValue)
 //println("Body = \(myID) - \(decodedString)")
                 if decodedString != nil
                 {
@@ -289,30 +288,30 @@ class gmailMessage: NSObject
         }
     }
 
-    private func processMessageDetails(inString: String)
+    fileprivate func processMessageDetails(_ inString: String)
     {
-        let temp2Pass = inString.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-        let temp2Pass0 = temp2Pass.stringByReplacingOccurrencesOfString("},", withString: "*^&,")
-        let temp2Pass1 = temp2Pass0.stringByReplacingOccurrencesOfString("\",", withString: "\"*^&,")
-        let temp2Pass2 = temp2Pass1.stringByReplacingOccurrencesOfString("}", withString: "")
-        let temp2Pass3 = temp2Pass2.stringByReplacingOccurrencesOfString("{", withString: "")
+        let temp2Pass = inString.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+        let temp2Pass0 = temp2Pass.replacingOccurrences(of: "},", with: "*^&,")
+        let temp2Pass1 = temp2Pass0.replacingOccurrences(of: "\",", with: "\"*^&,")
+        let temp2Pass2 = temp2Pass1.replacingOccurrences(of: "}", with: "")
+        let temp2Pass3 = temp2Pass2.replacingOccurrences(of: "{", with: "")
         
         // Dates have a comma so need to get rid of them
         
-        let temp2Pass4 = temp2Pass3.stringByReplacingOccurrencesOfString("Mon,", withString: "Mon")
-        let temp2Pass5 = temp2Pass4.stringByReplacingOccurrencesOfString("Tue,", withString: "Tue")
-        let temp2Pass6 = temp2Pass5.stringByReplacingOccurrencesOfString("Wed,", withString: "Wed")
-        let temp2Pass7 = temp2Pass6.stringByReplacingOccurrencesOfString("Thu,", withString: "Thu")
-        let temp2Pass8 = temp2Pass7.stringByReplacingOccurrencesOfString("Fri,", withString: "Fri")
-        let temp2Pass9 = temp2Pass8.stringByReplacingOccurrencesOfString("Sat,", withString: "Sat")
-        let temp2Pass10 = temp2Pass9.stringByReplacingOccurrencesOfString("Sun,", withString: "Sun")
-        let temp2Pass11 = temp2Pass10.stringByReplacingOccurrencesOfString("to:", withString: "to")
-        let temp2Pass12 = temp2Pass11.stringByReplacingOccurrencesOfString("http:", withString: "http")
-        let temp2Pass13 = temp2Pass12.stringByReplacingOccurrencesOfString("https:", withString: "https")
-        let temp2Pass14 = temp2Pass13.stringByReplacingOccurrencesOfString(", ", withString: " ")
-        let temp2Pass15 = temp2Pass14.stringByReplacingOccurrencesOfString("\\", withString: "")
+        let temp2Pass4 = temp2Pass3.replacingOccurrences(of: "Mon,", with: "Mon")
+        let temp2Pass5 = temp2Pass4.replacingOccurrences(of: "Tue,", with: "Tue")
+        let temp2Pass6 = temp2Pass5.replacingOccurrences(of: "Wed,", with: "Wed")
+        let temp2Pass7 = temp2Pass6.replacingOccurrences(of: "Thu,", with: "Thu")
+        let temp2Pass8 = temp2Pass7.replacingOccurrences(of: "Fri,", with: "Fri")
+        let temp2Pass9 = temp2Pass8.replacingOccurrences(of: "Sat,", with: "Sat")
+        let temp2Pass10 = temp2Pass9.replacingOccurrences(of: "Sun,", with: "Sun")
+        let temp2Pass11 = temp2Pass10.replacingOccurrences(of: "to:", with: "to")
+        let temp2Pass12 = temp2Pass11.replacingOccurrences(of: "http:", with: "http")
+        let temp2Pass13 = temp2Pass12.replacingOccurrences(of: "https:", with: "https")
+        let temp2Pass14 = temp2Pass13.replacingOccurrences(of: ", ", with: " ")
+        let temp2Pass15 = temp2Pass14.replacingOccurrences(of: "\\", with: "")
         
-        let split3 = temp2Pass15.componentsSeparatedByString("*^&,")
+        let split3 = temp2Pass15.components(separatedBy: "*^&,")
         var split3Pass1: Bool = true
         var keyString2: String = ""
         var valueString2: String = ""
@@ -322,26 +321,26 @@ class gmailMessage: NSObject
 //{
 //println("processMessageDetails myItem3 = \(myItem3)")
 //}
-            let stripSpaces = myItem3.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+            let stripSpaces = myItem3.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
             
             if stripSpaces != ""
             {
                 
-                let split4 = stripSpaces.componentsSeparatedByString("\":")
+                let split4 = stripSpaces.components(separatedBy: "\":")
 
                 if split4.count > 1
                 {
                     if split3Pass1
                     {
                         // Item is the key
-                        let keyString = split4[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-                        keyString2 = keyString.stringByReplacingOccurrencesOfString("\"", withString: "")
+                        let keyString = split4[1].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+                        keyString2 = keyString.replacingOccurrences(of: "\"", with: "")
                         split3Pass1 = false
                     }
                     else
                     {
-                        let valueString = split4[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-                        valueString2 = valueString.stringByReplacingOccurrencesOfString("\"", withString: "")
+                        let valueString = split4[1].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+                        valueString2 = valueString.replacingOccurrences(of: "\"", with: "")
 
 //if myID == "12613a7c784c8656"
 //{
@@ -371,21 +370,21 @@ class gmailMessage: NSObject
                             var minutesAdjustment: Int = 0
                             var splitDate: [String]!
                             
-                            splitDate = valueString2.componentsSeparatedByString("+")
+                            splitDate = valueString2.components(separatedBy: "+")
 
                             let numberCheck = characterAtIndex(valueString2, index: 0)
                             
-                            let myDateFormatter = NSDateFormatter()
+                            let myDateFormatter = DateFormatter()
                             
                             if splitDate.count > 1
                             {// do for + hours
-                                if valueString2.rangeOfString("(") != nil
+                                if valueString2.range(of: "(") != nil
                                 { // This one has the Timezone included in it, format example Mon 15 June 2015 23:49:09 +0000 (UTC)
                                     myDateFormatter.dateFormat = "EEE dd MMM yyyy HH:mm:ss"
                                     
                                     // Lets get rid of the timezone bit
                     
-                                    let splitZone = splitDate[1].componentsSeparatedByString(" ")
+                                    let splitZone = splitDate[1].components(separatedBy: " ")
                                     timeAdjuststring = splitZone[0]
                                 }
                                 else if  numberCheck >= "0" && numberCheck <= "9"
@@ -403,15 +402,15 @@ class gmailMessage: NSObject
                             {
                             // Belt and braces, so for - hours
                                 timeAdjustmentType = "-"
-                                splitDate = valueString2.componentsSeparatedByString("-")
+                                splitDate = valueString2.components(separatedBy: "-")
                                 
-                                if valueString2.rangeOfString("(") != nil
+                                if valueString2.range(of: "(") != nil
                                 { // This one has the Timezone included in it, format example Mon 15 June 2015 23:49:09 +0000 (UTC)
                                     myDateFormatter.dateFormat = "EEE dd MMM yyyy HH:mm:ss"
                                     
                                     // Lets get rid of the timezone bit
                                     
-                                    let splitZone = splitDate[1].componentsSeparatedByString(" ")
+                                    let splitZone = splitDate[1].components(separatedBy: " ")
                                     timeAdjuststring = splitZone[0]
                                 }
                                 else if  numberCheck >= "0" && numberCheck <= "9"
@@ -440,7 +439,7 @@ class gmailMessage: NSObject
                             
                             if timeAdjuststring != ""
                             {
-                                let hoursTemp = Int(timeAdjuststring.substringWithRange(Range<String.Index>(start: timeAdjuststring.startIndex, end: timeAdjuststring.startIndex.advancedBy(2))))!
+                                let hoursTemp = Int(timeAdjuststring.substring(with: (timeAdjuststring.startIndex ..< timeAdjuststring.characters.index(timeAdjuststring.startIndex, offsetBy: 2))))!
                             
                                 if timeAdjustmentType == "+"
                                 {
@@ -452,7 +451,7 @@ class gmailMessage: NSObject
                                 }
                             
                                 // last 2 give us the minutes
-                                let minutesTemp = Int(timeAdjuststring.substringWithRange(Range<String.Index>(start: timeAdjuststring.startIndex.advancedBy(2), end: timeAdjuststring.endIndex.advancedBy(-1))))!
+                                let minutesTemp = Int(timeAdjuststring.substring(with: (timeAdjuststring.characters.index(timeAdjuststring.startIndex, offsetBy: 2) ..< timeAdjuststring.characters.index(timeAdjuststring.endIndex, offsetBy: -1))))!
                             
                                 if timeAdjustmentType == "+"
                                 {
@@ -464,29 +463,27 @@ class gmailMessage: NSObject
                                 }
                             }
                             
-                            myDateFormatter.timeZone = NSTimeZone()
-                            let tempDate: NSDate = myDateFormatter.dateFromString(splitDate[0])!
-                            let tempDate1 = NSCalendar.currentCalendar().dateByAddingUnit(
-                                NSCalendarUnit.Hour,
+           //GRE                 myDateFormatter.timeZone = TimeZone()
+                            let tempDate: Date = myDateFormatter.date(from: splitDate[0])!
+                            
+                            let tempDate1 = Calendar.current.date(
+                                byAdding: .hour,
                                 value: hoursAdjustment,
-                                toDate: tempDate,
-                                options: NSCalendarOptions.WrapComponents)
+                                to: tempDate)
 
-                            let tempDate2 = NSCalendar.currentCalendar().dateByAddingUnit(
-                                NSCalendarUnit.Minute,
+                            let tempDate2 = Calendar.current.date(
+                                byAdding: .minute,
                                 value: minutesAdjustment,
-                                toDate: tempDate1!,
-                                options: NSCalendarOptions.WrapComponents)
+                                to: tempDate1!)
 
-                            let timezoneAdjust = NSTimeZone.localTimeZone().secondsFromGMT
+                            let timezoneAdjust = NSTimeZone.local.secondsFromGMT()
                             
                             let timezoneAdjust2 = (timezoneAdjust / 60) / 60
                             
-                            let tempDate3 = NSCalendar.currentCalendar().dateByAddingUnit(
-                                NSCalendarUnit.Hour,
+                            let tempDate3 = Calendar.current.date(
+                                byAdding: .hour,
                                 value: timezoneAdjust2,
-                                toDate: tempDate2!,
-                                options: NSCalendarOptions.WrapComponents)
+                                to: tempDate2!)
 
                             myDate = tempDate3!
                             myDateString = valueString2
@@ -509,8 +506,8 @@ class gmailMessage: NSObject
 
 class gmailMessages: NSObject
 {
-    private var myMessages: [gmailMessage] = []
-    private var myGmailData: gmailData!
+    fileprivate var myMessages: [gmailMessage] = []
+    fileprivate var myGmailData: gmailData!
     
     var messages: [gmailMessage]
     {
@@ -526,7 +523,7 @@ class gmailMessages: NSObject
         myGmailData = inGmailData
     }
     
-    func getPersonMessages(inString: String, emailAddresses: [String], inMessageType: String)
+    func getPersonMessages(_ inString: String, emailAddresses: [String], inMessageType: String)
     {
         // this is used to get the messages
         
@@ -562,15 +559,15 @@ class gmailMessages: NSObject
         if inMessageType == "Hangouts"
         {
            // listMessages()
-            NSNotificationCenter.defaultCenter().postNotificationName("NotificationHangoutsDidFinish", object: nil)
+            notificationCenter.post(name: NotificationHangoutsDidFinish, object: nil)
         }
         else
         {
-            NSNotificationCenter.defaultCenter().postNotificationName("NotificationGmailDidFinish", object: nil)
+            notificationCenter.post(name: NotificationGmailDidFinish, object: nil)
         }
     }
     
-    func getProjectMessages(inString: String, inMessageType: String)
+    func getProjectMessages(_ inString: String, inMessageType: String)
     {
         // this is used to get the messages
         
@@ -594,11 +591,11 @@ class gmailMessages: NSObject
         if inMessageType == "Hangouts"
         {
             // listMessages()
-            NSNotificationCenter.defaultCenter().postNotificationName("NotificationHangoutsDidFinish", object: nil)
+            notificationCenter.post(name: NotificationHangoutsDidFinish, object: nil)
         }
         else
         {
-            NSNotificationCenter.defaultCenter().postNotificationName("NotificationGmailDidFinish", object: nil)
+            notificationCenter.post(name: NotificationGmailDidFinish, object: nil)
         }
         
     }
@@ -615,11 +612,11 @@ class gmailMessages: NSObject
         
         splitString(myString)
         
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationGmailInboxLoadDidFinish", object: nil)
+        notificationCenter.post(name: NotificationGmailInboxLoadDidFinish, object: nil)
     }
 
     
-    private func splitString(inString: String)
+    fileprivate func splitString(_ inString: String)
     {
         var processedFileHeader: Bool = false
         var firstItem2: Bool = true
@@ -627,12 +624,12 @@ class gmailMessages: NSObject
         // we need to do a bit of "dodgy" working, I want to be able to split strings based on :, but : is natural in dates and URTLs. so need to change it to seomthign esle,
         //string out the : data and then change back
         
-        let tempStr1 = inString.stringByReplacingOccurrencesOfString("},", withString: "")
-        let tempStr2 = tempStr1.stringByReplacingOccurrencesOfString("}", withString: "")
-        let tempStr3 = tempStr2.stringByReplacingOccurrencesOfString("],", withString: "")
-        let tempStr4 = tempStr3.stringByReplacingOccurrencesOfString("\"", withString: "")
+        let tempStr1 = inString.replacingOccurrences(of: "},", with: "")
+        let tempStr2 = tempStr1.replacingOccurrences(of: "}", with: "")
+        let tempStr3 = tempStr2.replacingOccurrences(of: "],", with: "")
+        let tempStr4 = tempStr3.replacingOccurrences(of: "\"", with: "")
 
-        let split = tempStr4.componentsSeparatedByString("{")
+        let split = tempStr4.components(separatedBy: "{")
         
         myMessages = Array()
         
@@ -646,7 +643,7 @@ class gmailMessages: NSObject
             else
             {
                 // need to further split the items into its component parts
-                let split2 = myItem.componentsSeparatedByString(",")
+                let split2 = myItem.components(separatedBy: ",")
                 firstItem2 = true
                 let myMessage = gmailMessage()
                 for myItem2 in split2
@@ -655,31 +652,32 @@ class gmailMessages: NSObject
                     
                     if firstItem2
                     {  // strip out characters upto and including the first comma
-                        let end = myItem2.endIndex.advancedBy(-1)
-                        let start = myItem2.characters.indexOf(",")
+                        let end = myItem2.characters.index(myItem2.endIndex, offsetBy: -1)
+                        let start = myItem2.characters.index(of: ",")
                         
                         var selectedString: String = ""
                         
                         if start != nil
                         {
-                            let myStart = start?.successor()
-                            selectedString = myItem2[myStart!...end]
+ //                           let myStart = <#T##String.CharacterView corresponding to your index##String.CharacterView#>.index(after: (start)!)
+                            let myStart = myItem2.index(after: (start)!)
+                            selectedString = myItem2[myStart...end]
                         }
                         else
                         { // no space found
                             selectedString = myItem2
                         }
                         
-                        split3 = selectedString.componentsSeparatedByString(":")
+                        split3 = selectedString.components(separatedBy: ":")
                         firstItem2 = false
                     }
                     else
                     {
-                        split3 = myItem2.componentsSeparatedByString(":")
+                        split3 = myItem2.components(separatedBy: ":")
                     }
 
-                    let keyString = split3[0].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
-                    let valueString = split3[1].stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                    let keyString = split3[0].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+                    let valueString = split3[1].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
                     
                     // now split each of these into value pairs - how to store?  Maybe in a Collection??
 
@@ -738,17 +736,17 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
 {
 //    var liveClient: LiveConnectClient!
     // Set the CLIENT_ID value to be the one you get from http://manage.dev.live.com/
-    private let CLIENT_ID = "344184320417-h2nr89gi0ji02tbcs7f7kpj0kevuhq6f.apps.googleusercontent.com"
-    private let gmailSecret = "USKddrDHh2aL6C2rzQGmrYku"
-    private let kKeychainItemName = "OAuth Sample: Google Mail"
-    private let kShouldSaveInKeychainKey = "shouldSaveInKeychain"
-    private var mySourceViewController: UIViewController!
+    fileprivate let CLIENT_ID = "344184320417-h2nr89gi0ji02tbcs7f7kpj0kevuhq6f.apps.googleusercontent.com"
+    fileprivate let gmailSecret = "USKddrDHh2aL6C2rzQGmrYku"
+    fileprivate let kKeychainItemName = "OAuth Sample: Google Mail"
+    fileprivate let kShouldSaveInKeychainKey = "shouldSaveInKeychain"
+    fileprivate var mySourceViewController: UIViewController!
     
-    private var auth: GTMOAuth2Authentication!
-    private var currentUser: GIDGoogleUser!
+    fileprivate var auth: GTMOAuth2Authentication!
+    fileprivate var currentUser: GIDGoogleUser!
     
-    private var myInString: String = ""
-    private var myQueryType: String = ""
+    fileprivate var myInString: String = ""
+    fileprivate var myQueryType: String = ""
     
     var sourceViewController: UIViewController
     {
@@ -765,13 +763,13 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
     override init()
     {
         super.init()
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "gmailSignedIn:", name:"NotificationGmailSignedIn", object: nil)
+        notificationCenter.addObserver(self, selector: #selector(gmailData.gmailSignedIn(_:)), name: NotificationGmailSignedIn, object: nil)
     }
     
     func shouldSaveInKeychain() -> Bool
     {
-        let defaults: NSUserDefaults = NSUserDefaults.standardUserDefaults()
-        let flag = defaults.boolForKey(kShouldSaveInKeychainKey)
+        let defaults: UserDefaults = UserDefaults.standard
+        let flag = defaults.bool(forKey: kShouldSaveInKeychainKey)
         return flag
     }
     
@@ -789,7 +787,7 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
         }
     }
     
-    func getData(inURLString: String) -> String
+    func getData(_ inURLString: String) -> String
     {
  //       var response: NSURLResponse?
         var myReturnString: String = ""
@@ -798,13 +796,14 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
         
  //       let tempStr1 = inURLString.stringByReplacingOccurrencesOfString("userId", withString:GIDSignIn.sharedInstance().currentUser.userID)
         
-        let escapedURL: String = inURLString.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
+        let escapedURL: String = inURLString.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!
 
 
-        let url: NSURL = NSURL(string: escapedURL)!
-        let request = NSMutableURLRequest(URL: url)
-        request.HTTPMethod = "GET"
-        request.cachePolicy = NSURLRequestCachePolicy.ReloadIgnoringLocalCacheData
+        let url: URL = URL(string: escapedURL)!
+        //        let request = NSMutableURLRequest(url: url)
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringLocalCacheData
         
         if currentUser != nil
         {
@@ -821,20 +820,20 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
                 
  //           NSLog("Initial result = \(result)")
                 
-                let session = NSURLSession.sharedSession()
+                let session = URLSession.shared
                 
-                let sem = dispatch_semaphore_create(0);
+                let sem = DispatchSemaphore(value: 0);
                 
-                let task = session.dataTaskWithRequest(request, completionHandler: {data, myresponse, error -> Void in
+                let task = session.dataTask(with: request, completionHandler: {data, myresponse, error -> Void in
                     
-                    let httpResponse = myresponse as? NSHTTPURLResponse
+                    let httpResponse = myresponse as? HTTPURLResponse
                     
                     let status = httpResponse!.statusCode
                     
                     if status == 200
                     {
                         // this means data was retrieved OK
-                        myReturnString = NSString(data: data!, encoding: NSUTF8StringEncoding) as! String
+                        myReturnString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue) as! String
                     }
                     else if status == 201
                     {
@@ -844,12 +843,12 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
                     {
                         print("gmailData: getData: There was an error accessing the gmailData data. Response code: \(status)")
                     }
-                    dispatch_semaphore_signal(sem)
+                    sem.signal()
                 })
                 
+                sem.wait()
                 task.resume()
-                dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
-                
+            
 //            }
  //           catch let error1 as NSError
   //          {
@@ -883,33 +882,33 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
     
     // Stop the UIActivityIndicatorView animation that was started when the user
     // pressed the Sign In button
-    func signInWillDispatch(signIn: GIDSignIn!, error: NSError!)
+    func sign(inWillDispatch signIn: GIDSignIn!, error: Error!)
     {
      //   myActivityIndicator.stopAnimating()
     }
     
     // Present a view that prompts the user to sign in with Google
-    func signIn(signIn: GIDSignIn!, presentViewController viewController: UIViewController!)
+    func sign(_ signIn: GIDSignIn!, present viewController: UIViewController!)
     {
-            mySourceViewController.presentViewController(viewController, animated: true, completion: nil)
+            mySourceViewController.present(viewController, animated: true, completion: nil)
     }
     
     // Dismiss the "Sign in with Google" view
-    func signIn(signIn: GIDSignIn!, dismissViewController viewController: UIViewController!)
+    func sign(_ signIn: GIDSignIn!, dismiss viewController: UIViewController!)
     {
-            mySourceViewController.dismissViewControllerAnimated(true, completion: nil)
+            mySourceViewController.dismiss(animated: true, completion: nil)
     }
     
-    func gmailSignedIn(notification: NSNotification)
+    func gmailSignedIn(_ notification: Notification)
     {
         currentUser = GIDSignIn.sharedInstance().currentUser
         if mySourceViewController is GTDInboxViewController
         {
-            NSNotificationCenter.defaultCenter().postNotificationName("NotificationGmailInboxConnected", object: nil)
+            notificationCenter.post(name: NotificationGmailInboxConnected, object: nil)
         }
         else
         {
-            NSNotificationCenter.defaultCenter().postNotificationName("NotificationGmailConnected", object: nil)
+            notificationCenter.post(name: NotificationGmailConnected, object: nil)
         }
     }
 }
@@ -950,7 +949,7 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
             }
             
             if let authorizer = service.authorizer,
-                canAuth = authorizer.canAuthorize where canAuth
+                let canAuth = authorizer.canAuthorize, canAuth
             {
                 fetchLabels()
             }
@@ -1154,11 +1153,11 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
    //         currentUser = GIDSignIn.sharedInstance().currentUser
    //         if mySourceViewController is GTDInboxViewController
    //         {
-   //             NSNotificationCenter.defaultCenter().postNotificationName("NotificationGmailInboxConnected", object: nil)
+   //             NSnotificationCenterCenter().postNotificationName("NotificationGmailInboxConnected", object: nil)
    //         }
    //         else
    //         {
-   //             NSNotificationCenter.defaultCenter().postNotificationName("NotificationGmailConnected", object: nil)
+   //             NSnotificationCenterCenter().postNotificationName("NotificationGmailConnected", object: nil)
    //         }
         }
 

@@ -9,17 +9,19 @@
 import UIKit
 import CoreData
 import CloudKit
-
+import SwiftyDropbox
+import TextExpander
+import UserNotifications
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
-
+class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate
+{
     var window: UIWindow?
     static var SMAppDelegateCustomKeyboardWillAppearToken: Int = 0
 
     var SMTEExpansionEnabled: String = "SMTEExpansionEnabled"
     
-    func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
             // Initial development is done on the sandbox service
@@ -41,7 +43,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         ENSession.setSharedSessionConsumerKey("garryeves", consumerSecret: "527092b280bfd300", optionalHost: "www.evernote.com")
         
         
-        dropboxCoreService.setup()
+ //GRE       DropboxClientsManager.setupWithAppKeyDesktop("1qayzo6cmw8v6nr")
         
         // Initialize Google sign-in
         var configureErr: NSError?
@@ -52,9 +54,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         
         GIDSignIn.sharedInstance().delegate = self
         
-        let notificationSettings = UIUserNotificationSettings(forTypes: [.None, .Badge, .Alert, .Sound], categories: nil)
-        UIApplication.sharedApplication().registerUserNotificationSettings(notificationSettings)
-        UIApplication.sharedApplication().registerForRemoteNotifications()
+      //  let notificationSettings = UIUserNotificationSettings(types: [.badge, .alert, .sound], categories: nil)
+        remoteCenter.requestAuthorization(options:[.badge, .alert, .sound]) { (granted, error) in
+            
+            if granted
+            {
+                UIApplication.shared.registerForRemoteNotifications()
+            }
+        }
+
         
         
        // UIApplication.sharedApplication().registerForRemoteNotifications()
@@ -62,16 +70,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         return true
     }
 
-    func application(application: UIApplication, didReceiveRemoteNotification userInfo: [NSObject : AnyObject])
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any])
     {
    //     NSLog("yep, a notificaton")
         
         let cloudKitNotification = CKNotification(fromRemoteNotificationDictionary: userInfo as! [String : NSObject])
         
-        if cloudKitNotification.notificationType == .Query
+        if cloudKitNotification.notificationType == .query
         {
             let queryNotification = cloudKitNotification as! CKQueryNotification
-            let recordID = queryNotification.recordID!.recordName
+            _ = queryNotification.recordID!.recordName
             
 //            NSLog("initial record ID = \(recordID)")
             
@@ -79,7 +87,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         }
     }
     
-    func application(application: UIApplication, handleOpenURL url: NSURL) -> Bool
+    func application(_ application: UIApplication, handleOpen url: URL) -> Bool
     {
         
 print("appdelegate application - handleOpenURL = \(url.scheme)")
@@ -147,13 +155,13 @@ print("appdelegate application - handleOpenURL = \(url.scheme)")
         }
     */
         
-        retVal = ENSession.sharedSession().handleOpenURL(url)
+        retVal = ENSession.shared().handleOpen(url)
         return retVal
     }
     
-    func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
-print("appdelegate application - source Application = \(sourceApplication)")
-print("appdelegate application - source Application URL = \(url.scheme)")
+    func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
+//print("appdelegate application - source Application = \(sourceApplication)")
+//print("appdelegate application - source Application URL = \(url.scheme)")
         
         var error: NSError?
         var textExpander: SMTEDelegateController!
@@ -161,48 +169,48 @@ print("appdelegate application - source Application URL = \(url.scheme)")
         
         if sourceApplication == "dropboxCoreService"
         {
-            retVal = dropboxCoreService.finalizeAuthentication(url)
+ //GRE           retVal = dropboxCoreService.finalizeAuthentication(url)
         }
         else if "EvesCRM-fill-xc" == url.scheme
         {
             var textExpander: SMTEDelegateController!
-            if myCurrentViewController.isKindOfClass(agendaItemViewController)
+            if myCurrentViewController is agendaItemViewController
             {
                 var tempController: agendaItemViewController!
                 tempController = myCurrentViewController as! agendaItemViewController
                 textExpander = tempController.textExpander
             }
-            else if myCurrentViewController.isKindOfClass(meetingAgendaViewController)
+            else if myCurrentViewController is meetingAgendaViewController
             {
                 var tempController: meetingAgendaViewController!
                 tempController = myCurrentViewController as! meetingAgendaViewController
                 textExpander = tempController.textExpander
             }
-            else if myCurrentViewController.isKindOfClass(taskViewController)
+            else if myCurrentViewController is taskViewController
             {
                 var tempController: taskViewController!
                 tempController = myCurrentViewController as! taskViewController
                 textExpander = tempController.textExpander
             }
-            else if myCurrentViewController.isKindOfClass(meetingsViewController)
+            else if myCurrentViewController is meetingsViewController
             {
                 var tempController: meetingsViewController!
                 tempController = myCurrentViewController as! meetingsViewController
                 textExpander = tempController.textExpander
             }
-            else if myCurrentViewController.isKindOfClass(reminderViewController)
+            else if myCurrentViewController is reminderViewController
             {
                 var tempController: reminderViewController!
                 tempController = myCurrentViewController as! reminderViewController
                 textExpander = tempController.textExpander
             }
-            else if myCurrentViewController.isKindOfClass(MaintainProjectViewController)
+            else if myCurrentViewController is MaintainProjectViewController
             {
                 var tempController: MaintainProjectViewController!
                 tempController = myCurrentViewController as! MaintainProjectViewController
                 textExpander = tempController.textExpander
             }
-            else if myCurrentViewController.isKindOfClass(taskUpdatesViewController)
+            else if myCurrentViewController is taskUpdatesViewController
             {
                 var tempController: taskUpdatesViewController!
                 tempController = myCurrentViewController as! taskUpdatesViewController
@@ -253,7 +261,7 @@ print("appdelegate application - source Application URL = \(url.scheme)")
     //        let currentViewController: ViewController = self.window!.rootViewController!
             //  textExpander = currentViewController.textExpander as SMTEDelegateController
             
-            if myCurrentViewController.isKindOfClass(ViewController)
+            if myCurrentViewController is ViewController
             {
                 var tempController: ViewController!
                 tempController = myCurrentViewController as! ViewController
@@ -267,15 +275,15 @@ print("appdelegate application - source Application URL = \(url.scheme)")
             
             if textExpander.handleGetSnippetsURL(url, error:&error, cancelFlag:&cancel) == false
             {
-                NSLog("Failed to handle URL: user canceled: %@, error: %@", cancel ? "yes" : "no", error!)
+                NSLog("Failed to handle URL: user canceled: %@, error: %@", cancel.boolValue ? "yes" : "no", error!)
             }
             else
             {
-                if cancel
+                if cancel.boolValue
                 {
                     NSLog("User cancelled get snippets");
-                    let standardUserDefaults: NSUserDefaults = NSUserDefaults()
-                    standardUserDefaults.setBool(false, forKey:SMTEExpansionEnabled)
+                    let standardUserDefaults: UserDefaults = UserDefaults()
+                    standardUserDefaults.set(false, forKey:SMTEExpansionEnabled)
                 }
                 else if error != nil
                 {
@@ -291,29 +299,29 @@ print("appdelegate application - source Application URL = \(url.scheme)")
 
         else //if sourceApplication!.rangeOfString("google") != nil
         {
-            retVal = GIDSignIn.sharedInstance().handleURL(url, sourceApplication: sourceApplication, annotation: annotation)
+            retVal = GIDSignIn.sharedInstance().handle(url, sourceApplication: sourceApplication, annotation: annotation)
         }
         
         return retVal
     }
     
-    func applicationWillResignActive(application: UIApplication) {
+    func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
     }
 
-    func applicationDidEnterBackground(application: UIApplication) {
+    func applicationDidEnterBackground(_ application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     }
 
-    func applicationWillEnterForeground(application: UIApplication) {
+    func applicationWillEnterForeground(_ application: UIApplication) {
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
 //   println("applicationWillEnterForeground")
 //        ENSession.sharedSession().listNotebooksWithCompletion{(a :[AnyObject]!, b : NSError!) -> Void in print(a)}
     }
 
-    func applicationDidBecomeActive(application: UIApplication) {
+    func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
         
       //  ENSession.handleDidBecomeActive
@@ -322,7 +330,7 @@ print("appdelegate application - source Application URL = \(url.scheme)")
      //   FBSDKAppEvents.activateApp()
     }
 
-    func applicationWillTerminate(application: UIApplication) {
+    func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         // Saves changes in the application's managed object context before the application terminates.
         self.saveContext()
@@ -330,8 +338,8 @@ print("appdelegate application - source Application URL = \(url.scheme)")
     
     // GRE Added for Google sign in
     
-    func signIn(signIn: GIDSignIn!, didSignInForUser user: GIDGoogleUser!,
-        withError error: NSError!) {
+    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!,
+        withError error: Error!) {
             if (error == nil) {
                 // Perform any operations on signed in user here.
                 // ...
@@ -339,10 +347,11 @@ print("appdelegate application - source Application URL = \(url.scheme)")
             } else {
                 print("\(error.localizedDescription)")
             }
-            NSNotificationCenter.defaultCenter().postNotificationName("NotificationGmailSignedIn", object: nil)
+            notificationCenter.post(name: NotificationGmailSignedIn, object: nil)
     }
-    func signIn(signIn: GIDSignIn!, didDisconnectWithUser user:GIDGoogleUser!,
-        withError error: NSError!) {
+    
+    @objc(signIn:didDisconnectWithUser:withError:) func sign(_ signIn: GIDSignIn!, didDisconnectWith user:GIDGoogleUser!,
+        withError error: Error!) {
             // Perform any operations when the user disconnects from app here.
             // ...
     }
@@ -351,37 +360,37 @@ print("appdelegate application - source Application URL = \(url.scheme)")
 
     // MARK: - Core Data stack
 
-    lazy var applicationDocumentsDirectory: NSURL = {
+    lazy var applicationDocumentsDirectory: URL = {
         // The directory the application uses to store the Core Data store file. This code uses a directory named "com.garryeves.EvesCRM" in the application's documents Application Support directory.
-        let urls = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)
+        let urls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         return urls[urls.count-1] 
     }()
 
     lazy var managedObjectModel: NSManagedObjectModel = {
         // The managed object model for the application. This property is not optional. It is a fatal error for the application not to be able to find and load its model.
-        let modelURL = NSBundle.mainBundle().URLForResource("EvesCRM", withExtension: "momd")!
-        return NSManagedObjectModel(contentsOfURL: modelURL)!
+        let modelURL = Bundle.main.url(forResource: "EvesCRM", withExtension: "momd")!
+        return NSManagedObjectModel(contentsOf: modelURL)!
     }()
     
     lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator? = {
         // The persistent store coordinator for the application. This implementation creates and return a coordinator, having added the store for the application to it. This property is optional since there are legitimate error conditions that could cause the creation of the store to fail.
         // Create the coordinator and store
         var coordinator: NSPersistentStoreCoordinator? = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
-        let url = self.applicationDocumentsDirectory.URLByAppendingPathComponent("EvesCRM.sqlite")
+        let url = self.applicationDocumentsDirectory.appendingPathComponent("EvesCRM.sqlite")
         var error: NSError? = nil
         var failureReason = "There was an error creating or loading the application's saved data."
         let mOptions = [NSMigratePersistentStoresAutomaticallyOption: true,
             NSInferMappingModelAutomaticallyOption: true]
 
   do {
-      try coordinator!.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: url, options: mOptions)
+      try coordinator!.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: mOptions)
   } catch var error1 as NSError {
       error = error1
       coordinator = nil
       // Report any error we got.
       var dict = [String: AnyObject]()
-      dict[NSLocalizedDescriptionKey] = "Failed to initialize the application's saved data"
-      dict[NSLocalizedFailureReasonErrorKey] = failureReason
+      dict[NSLocalizedDescriptionKey] = "Failed to initialize the application's saved data" as AnyObject?
+      dict[NSLocalizedFailureReasonErrorKey] = failureReason as AnyObject?
       dict[NSUnderlyingErrorKey] = error
       error = NSError(domain: "YOUR_ERROR_DOMAIN", code: 9999, userInfo: dict)
       // Replace this with code to handle the error appropriately.
@@ -404,7 +413,7 @@ print("appdelegate application - source Application URL = \(url.scheme)")
             return nil
         }
         
-        var managedObjectContext = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
+        var managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         managedObjectContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         managedObjectContext.persistentStoreCoordinator = coordinator
         
@@ -434,22 +443,22 @@ print("appdelegate application - source Application URL = \(url.scheme)")
 
     // GRE Added notification for iCloud storage
     
-    func registerCoordinatorForStoreNotifications (coordinator : NSPersistentStoreCoordinator) {
-        let nc : NSNotificationCenter = NSNotificationCenter.defaultCenter();
+    func registerCoordinatorForStoreNotifications (_ coordinator : NSPersistentStoreCoordinator) {
+      //  let nc : NotificationCenter = notificationCenter;
         
-        nc.addObserver(self, selector: "storesWillChange:",
-            name: NSPersistentStoreCoordinatorStoresWillChangeNotification,
+        notificationCenter.addObserver(self, selector: #selector(AppDelegate.storesWillChange(_:)),
+            name: NSNotification.Name.NSPersistentStoreCoordinatorStoresWillChange,
             object: coordinator)
         
-        nc.addObserver(self, selector: "storesDidChange:",
-            name: NSPersistentStoreCoordinatorStoresDidChangeNotification,
+        notificationCenter.addObserver(self, selector: #selector(AppDelegate.storesDidChange(_:)),
+            name: NSNotification.Name.NSPersistentStoreCoordinatorStoresDidChange,
             object: coordinator)
         
-        nc.addObserver(self, selector: "persistentStoreDidImportUbiquitousContentChanges:",
-            name: NSPersistentStoreDidImportUbiquitousContentChangesNotification,
-            object: coordinator)
+//        notificationCenter.addObserver(self, selector: #selector(AppDelegate.persistentStoreDidImportUbiquitousContentChanges(_:)),
+//            name: NSNotification.Name.NSPersistentStoreDidImportUbiquitousContentChanges,
+//            object: coordinator)
         
-        nc.addObserver(self, selector: "mergeChanges:", name: NSManagedObjectContextDidSaveNotification, object: coordinator);
+        notificationCenter.addObserver(self, selector: #selector(AppDelegate.mergeChanges(_:)), name: NSNotification.Name.NSManagedObjectContextDidSave, object: coordinator);
     }
     
 
@@ -461,12 +470,12 @@ print("appdelegate application - source Application URL = \(url.scheme)")
     // most likely to be called if the user enables / disables iCloud
     // (either globally, or just for your app) or if the user changes
     // iCloud accounts.
-    func storesWillChange(notification: NSNotification)
+    func storesWillChange(_ notification: Notification)
     {
         NSLog("storesWillChange notif:\(notification)");
         if let moc = self.managedObjectContext
         {
-            moc.performBlockAndWait
+            moc.performAndWait
             {
                 let error: NSError? = nil;
                 if moc.hasChanges
@@ -501,7 +510,7 @@ print("appdelegate application - source Application URL = \(url.scheme)")
     }
     
     // Subscribe to NSPersistentStoreCoordinatorStoresDidChangeNotification
-    func storesDidChange(notification: NSNotification) {
+    func storesDidChange(_ notification: Notification) {
         // here is when you can refresh your UI and
         // load new data from the new store
         NSLog("storesDidChange posting notif");
@@ -510,24 +519,24 @@ print("appdelegate application - source Application URL = \(url.scheme)")
     
     func postRefetchDatabaseNotification() {
         NSLog("postRefetchDatabaseNotification posting notif")
-        dispatch_async(dispatch_get_main_queue(), { () -> Void in
-            NSNotificationCenter.defaultCenter().postNotificationName(
-                "kRefetchDatabaseNotification", // Replace with your constant of the refetch name, and add observer in the proper place - e.g. RootViewController
+        DispatchQueue.main.async(execute: { () -> Void in
+            notificationCenter.post(
+                name: kRefetchDatabaseNotification, // Replace with your constant of the refetch name, and add observer in the proper place - e.g. RootViewController
                 object: nil);
         })
     }
     
-    func mergeChanges(notification: NSNotification) {
+    func mergeChanges(_ notification: Notification) {
         NSLog("mergeChanges notif:\(notification)")
         if let moc = managedObjectContext {
-            moc.performBlock {
-                moc.mergeChangesFromContextDidSaveNotification(notification)
+            moc.perform {
+                moc.mergeChanges(fromContextDidSave: notification)
                 self.postRefetchDatabaseNotification()
             }
         }
     }
     
-    func persistentStoreDidImportUbiquitousContentChanges(notification: NSNotification) {
+    func persistentStoreDidImportUbiquitousContentChanges(_ notification: Notification) {
         self.mergeChanges(notification);
         NSLog("persistentStoreDidImportUbiquitousContentChanges posting notif");
     }

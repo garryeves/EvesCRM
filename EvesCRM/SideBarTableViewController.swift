@@ -11,7 +11,7 @@ import UIKit
 
 protocol SideBarTableViewControllerDelegate
 {
-    func sideBarControlDidSelectRow(passedItem: menuObject)
+    func sideBarControlDidSelectRow(_ passedItem: menuObject)
 }
 
 class SideBarTableViewController: UITableViewController
@@ -36,29 +36,29 @@ class SideBarTableViewController: UITableViewController
     
     // MARK: - Table view data source
 
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int
+    override func numberOfSections(in tableView: UITableView) -> Int
     {
         return 1
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         return displayArray.count
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
     {
-        var cell:UITableViewCell? = tableView.dequeueReusableCellWithIdentifier("Cell")
+        var cell:UITableViewCell? = tableView.dequeueReusableCell(withIdentifier: "Cell")
         if cell == nil
         {
-            cell = UITableViewCell(style: UITableViewCellStyle.Default, reuseIdentifier: "Cell")
+            cell = UITableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: "Cell")
             // Configure the cell...
             
-            cell!.backgroundColor = UIColor.clearColor()
-            cell!.textLabel!.textColor = UIColor.darkTextColor()
+            cell!.backgroundColor = UIColor.clear
+            cell!.textLabel!.textColor = UIColor.darkText
             
             let selectedView:UIView = UIView(frame: CGRect(x: 0, y: 0, width: cell!.frame.size.width, height: cell!.frame.size.height))
-            selectedView.backgroundColor = UIColor.blackColor().colorWithAlphaComponent(0.3)
+            selectedView.backgroundColor = UIColor.black.withAlphaComponent(0.3)
             
             cell!.selectedBackgroundView = selectedView
         }
@@ -67,22 +67,22 @@ class SideBarTableViewController: UITableViewController
                 
         if displayArray[indexPath.row].type == "disclosure"
         {
-            cell!.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
+            cell!.accessoryType = UITableViewCellAccessoryType.disclosureIndicator
         }
         else
         {
-            cell!.accessoryType = UITableViewCellAccessoryType.None
+            cell!.accessoryType = UITableViewCellAccessoryType.none
         }
     
         return cell!
     }
     
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
     {
         return 45.0
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
     {
         if displayArray[indexPath.row].type != "disclosure"
         {

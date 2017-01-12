@@ -16,8 +16,8 @@ extension ProcessedEmails {
 
     @NSManaged var emailID: String?
     @NSManaged var emailType: String?
-    @NSManaged var processedDate: NSDate?
-    @NSManaged var updateTime: NSDate?
+    @NSManaged var processedDate: Date?
+    @NSManaged var updateTime: Date?
     @NSManaged var updateType: String?
 
 }

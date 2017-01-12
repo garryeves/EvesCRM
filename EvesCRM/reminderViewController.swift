@@ -8,18 +8,19 @@
 
 import UIKit
 import EventKit
+import TextExpander
 
 protocol MyReminderDelegate{
-    func myReminderDidFinish(controller:reminderViewController, actionType: String)
+    func myReminderDidFinish(_ controller:reminderViewController, actionType: String)
 }
 
 
 class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDelegate
 {
-    private var reminderStore = EKEventStore()
-    private var targetReminderCal: EKCalendar!
-    private var myReminder: EKReminder!
-    private var iniitialSwitchState: String = "Off"
+    fileprivate var reminderStore = EKEventStore()
+    fileprivate var targetReminderCal: EKCalendar!
+    fileprivate var myReminder: EKReminder!
+    fileprivate var iniitialSwitchState: String = "Off"
 
     var delegate: MyReminderDelegate?
     var inAction: String!
@@ -28,9 +29,9 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
     var myDisplayType: String!
     var myProjectName: String!
 
-    private var itemSelected: String = ""
+    fileprivate var itemSelected: String = ""
 
-    private var priorityOptions = ["High", "Medium", "Low", "None"]
+    fileprivate var priorityOptions = ["High", "Medium", "Low", "None"]
 
     @IBOutlet weak var descriptionText: UITextField!
     @IBOutlet weak var dueDatePicker: UIDatePicker!
@@ -46,7 +47,7 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
    
     // Textexpander
     
-    private var snippetExpanded: Bool = false
+    fileprivate var snippetExpanded: Bool = false
     
     var textExpander: SMTEDelegateController!
 
@@ -57,18 +58,18 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
         
         // Setup the calendar store to give access to Reminders
         
-        reminderStore.requestAccessToEntityType(EKEntityType.Reminder,
+        reminderStore.requestAccess(to: EKEntityType.reminder,
             completion: {(granted: Bool, error:NSError?) -> Void in
                 if !granted
                 {
                     print("Access to store not granted")
                 }
-        })
+        } as! EKEventStoreRequestAccessCompletionHandler)
         
         if inAction == "Edit"
         {
 
-            myReminder = reminderStore.calendarItemWithIdentifier(inReminderID) as! EKReminder
+            myReminder = reminderStore.calendarItem(withIdentifier: inReminderID) as! EKReminder
             
             if myReminder != nil
             {
@@ -90,12 +91,12 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
                     }
                     
                     iniitialSwitchState = "On"
-                    dueDatePicker.hidden = false
+                    dueDatePicker.isHidden = false
                 }
                 else
                 {
                     showDueDateSwitch.setOn(false, animated: false)
-                    dueDatePicker.hidden = true
+                    dueDatePicker.isHidden = true
                 }
                 
                 // display priority
@@ -112,17 +113,17 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
             }
             else
             {
-                descriptionText.hidden = true
-                notesText.hidden = true
-                dueDatePicker.hidden = true
-                showDueDateSwitch.hidden = true
-                priorityPicker.hidden = true
-                descriptionLabel.hidden = true
-                notesLabel.hidden = true
-                priorityLabel.hidden = true
-                dueDateLabel.hidden = true
-                errorLabel.hidden = false
-                completeButton.hidden = true
+                descriptionText.isHidden = true
+                notesText.isHidden = true
+                dueDatePicker.isHidden = true
+                showDueDateSwitch.isHidden = true
+                priorityPicker.isHidden = true
+                descriptionLabel.isHidden = true
+                notesLabel.isHidden = true
+                priorityLabel.isHidden = true
+                dueDateLabel.isHidden = true
+                errorLabel.isHidden = false
+                completeButton.isHidden = true
                 
                 errorLabel.text = "Could not find requested Reminder.  Please press 'Cancel' to return to main screen"
             }
@@ -130,35 +131,36 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
         else
         {
             
-            completeButton.hidden = true
+            completeButton.isHidden = true
             
             // Default to no priority
             priorityPicker.selectRow(3, inComponent: 0, animated: true)
             
-            dueDatePicker.hidden = true
+            dueDatePicker.isHidden = true
         }
         
         // Set the earliest date for a Due date to be "tomorrow", ie no due dates can be set for today or the past
-        let components = NSDateComponents()
-        components.setValue(1, forComponent: NSCalendarUnit.Day);
-        let currDate: NSDate = NSDate()
-        let earliestDate = NSCalendar.currentCalendar().dateByAddingComponents(components, toDate: currDate, options: NSCalendarOptions(rawValue: 0))
+        let earliestDate = Calendar.current.date(
+                            byAdding: .day,
+                            value: 1,
+                            to: Date())
+        
         dueDatePicker.minimumDate = earliestDate
         
         let borderColor : UIColor = UIColor(red: 0.85, green: 0.85, blue: 0.85, alpha: 1.0)
         notesText.layer.borderWidth = 0.5
-        notesText.layer.borderColor = borderColor.CGColor
+        notesText.layer.borderColor = borderColor.cgColor
         notesText.layer.cornerRadius = 5.0
         
-        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
+        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(reminderViewController.handleSwipe(_:)))
+        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.right
         self.view.addGestureRecognizer(showGestureRecognizer)
         
-        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
+        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(reminderViewController.handleSwipe(_:)))
+        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.left
         self.view.addGestureRecognizer(hideGestureRecognizer)
 
-        notesText.layer.borderColor = UIColor.lightGrayColor().CGColor
+        notesText.layer.borderColor = UIColor.lightGray.cgColor
         notesText.layer.borderWidth = 0.5
         notesText.layer.cornerRadius = 5.0
         notesText.layer.masksToBounds = true
@@ -176,15 +178,15 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
         myCurrentViewController = self
     }
  
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?)
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?)
     {
         descriptionText.endEditing(true)
         notesText.endEditing(true)
     }
     
-    func handleSwipe(recognizer:UISwipeGestureRecognizer)
+    func handleSwipe(_ recognizer:UISwipeGestureRecognizer)
     {
-        if recognizer.direction == UISwipeGestureRecognizerDirection.Left
+        if recognizer.direction == UISwipeGestureRecognizerDirection.left
         {
             // Do nothing
         }
@@ -194,19 +196,19 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
         }
     }
 
-    func numberOfComponentsInPickerView(priorityPicker: UIPickerView) -> Int {
+    func numberOfComponentsInPickerView(_ priorityPicker: UIPickerView) -> Int {
         return 1
     }
 
-    func pickerView(inPicker: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+    func pickerView(_ inPicker: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
          return priorityOptions.count
     }
     
-    func pickerView(inPicker: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String! {
+    func pickerView(_ inPicker: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String! {
         return priorityOptions[row]
     }
     
-    func pickerView(inPicker: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+    func pickerView(_ inPicker: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
        // actionSelection()
         itemSelected = priorityOptions[row]
         save()
@@ -217,15 +219,15 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
         // Dispose of any resources that can be recreated.
     }
     
-    @IBAction func completeButtonPressed(sender: UIButton)
+    @IBAction func completeButtonPressed(_ sender: UIButton)
     {
         
-        myReminder.completed = true
+        myReminder.isCompleted = true
         
         var myError : NSError? = nil
         
         do {
-            try reminderStore.saveReminder(myReminder, commit: true)
+            try reminderStore.save(myReminder, commit: true)
         } catch let error as NSError {
             myError = error
         }
@@ -237,29 +239,29 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
         delegate?.myReminderDidFinish(self, actionType: "Changed")
     }
     
-    @IBAction func showDueDateChanged(sender: UISwitch)
+    @IBAction func showDueDateChanged(_ sender: UISwitch)
     {
-        if showDueDateSwitch.on
+        if showDueDateSwitch.isOn
         {
-            dueDatePicker.hidden = false
+            dueDatePicker.isHidden = false
         }
         else
         {
-            dueDatePicker.hidden = true
+            dueDatePicker.isHidden = true
         }
         save()
     }
     
-    @IBAction func txtDescription(sender: UITextField)
+    @IBAction func txtDescription(_ sender: UITextField)
     {
         if descriptionText.text == ""
         {
             let alert = UIAlertController(title: "Reminders", message:
-                "You have not entered any text for the Reminder", preferredStyle: UIAlertControllerStyle.Alert)
+                "You have not entered any text for the Reminder", preferredStyle: UIAlertControllerStyle.alert)
             
-            self.presentViewController(alert, animated: false, completion: nil)
+            self.present(alert, animated: false, completion: nil)
             
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
                 handler: nil))
             
             
@@ -271,12 +273,12 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
         }
     }
     
-    @IBAction func datePicker(sender: UIDatePicker)
+    @IBAction func datePicker(_ sender: UIDatePicker)
     {
         save()
     }
     
-    func textViewDidEndEditing(textView: UITextView)
+    func textViewDidEndEditing(_ textView: UITextView)
     { //Handle the text changes here
         
         if textView == notesText
@@ -294,7 +296,7 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
         {
             // First need to check to see if the Reminder list exists.  if it does not then we need to create it
             
-            let myCalendars = reminderStore.calendarsForEntityType(EKEntityType.Reminder) 
+            let myCalendars = reminderStore.calendars(for: EKEntityType.reminder) 
             var calExists = false
             for calendar in myCalendars
             {
@@ -308,7 +310,7 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
             myError = nil
             if !calExists
             {
-                myCalendar = EKCalendar(forEntityType:EKEntityType.Reminder, eventStore:reminderStore)
+                myCalendar = EKCalendar(for:EKEntityType.reminder, eventStore:reminderStore)
                 myCalendar.title=inCalendarName
                 
                 
@@ -349,7 +351,7 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
         myReminder.notes = notesText.text
         
         // need to check if we need to set a due date
-        if showDueDateSwitch.on
+        if showDueDateSwitch.isOn
         {
             // Due date set
             if myReminder.hasAlarms
@@ -382,7 +384,7 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
             }
         }
         
-        switch priorityOptions[priorityPicker.selectedRowInComponent(0)]
+        switch priorityOptions[priorityPicker.selectedRow(inComponent: 0)]
         {
         case "High":  myReminder.priority = 1 // High priority
             
@@ -396,7 +398,7 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
         myError = nil
         
         do {
-            try reminderStore.saveReminder(myReminder, commit: true)
+            try reminderStore.save(myReminder, commit: true)
         } catch let error as NSError {
             myError = error
         }
@@ -429,27 +431,28 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
     * identifier string needs to include element id/name information. Eg. "webview-field2".
     */
     
-    func identifierForTextArea(uiTextObject: AnyObject) -> String
+    //func identifierForTextArea(_ uiTextObject: AnyObject) -> String
+    func identifier(forTextArea uiTextObject: Any) -> String
     {
         var result: String = ""
 
-        if uiTextObject.isKindOfClass(UITextField)
+        if uiTextObject is UITextField
         {
-            if uiTextObject.tag == 1
+            if (uiTextObject as AnyObject).tag == 1
             {
                 result = "descriptionText"
             }
         }
         
-        if uiTextObject.isKindOfClass(UITextView)
+        if uiTextObject is UITextView
         {
-            if uiTextObject.tag == 1
+            if (uiTextObject as AnyObject).tag == 1
             {
                 result = "notesText"
             }
         }
         
-        if uiTextObject.isKindOfClass(UISearchBar)
+        if uiTextObject is UISearchBar
         {
             result =  "mySearchBar"
         }
@@ -465,7 +468,7 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
     * Return NO to cancel the process.
     */
 
-    func prepareForFillSwitch(textIdentifier: String) -> Bool
+    func prepare(forFillSwitch textIdentifier: String) -> Bool
     {
         // At this point the app should save state since TextExpander touch is about
         // to activate.
@@ -500,29 +503,30 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
     * expect the identified text object to become the first responder.
     */
     
-    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>) -> AnyObject
+    // func makeIdentifiedTextObjectFirstResponder(_ textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>) -> AnyObject
+    public func makeIdentifiedTextObjectFirstResponder(_ textIdentifier: String!, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>!) -> Any!
     {
         snippetExpanded = true
         
-        let intIoInsertionPointLocation:Int = ioInsertionPointLocation.memory
+        let intIoInsertionPointLocation:Int = ioInsertionPointLocation.pointee
         
         if "descriptionText" == textIdentifier
         {
             descriptionText.becomeFirstResponder()
-            let theLoc = descriptionText.positionFromPosition(descriptionText.beginningOfDocument, offset: intIoInsertionPointLocation)
+            let theLoc = descriptionText.position(from: descriptionText.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                descriptionText.selectedTextRange = descriptionText.textRangeFromPosition(theLoc!, toPosition: theLoc!)
+                descriptionText.selectedTextRange = descriptionText.textRange(from: theLoc!, to: theLoc!)
             }
             return descriptionText
         }
         else if "notesText" == textIdentifier
         {
             notesText.becomeFirstResponder()
-            let theLoc = notesText.positionFromPosition(notesText.beginningOfDocument, offset: intIoInsertionPointLocation)
+            let theLoc = notesText.position(from: notesText.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                notesText.selectedTextRange = notesText.textRangeFromPosition(theLoc!, toPosition: theLoc!)
+                notesText.selectedTextRange = notesText.textRange(from: theLoc!, to: theLoc!)
             }
             return notesText
         }
@@ -545,11 +549,11 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
             
             //return nil
             
-            return ""
+            return "" as AnyObject
         }
     }
     
-    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool
     {
         if (textExpander.isAttemptingToExpandText)
         {
@@ -567,16 +571,16 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
     // of workaround into the SDK, so instead we provide an example here.
     // If you have a better workaround suggestion, we'd love to hear it.
     
-    func twiddleText(textView: UITextView)
+    func twiddleText(_ textView: UITextView)
     {
-        let SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO = UIDevice.currentDevice().systemVersion
+        let SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO = UIDevice.current.systemVersion
         if SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO >= "7.0"
         {
-            textView.textStorage.edited(NSTextStorageEditActions.EditedCharacters,range:NSMakeRange(0, textView.textStorage.length),changeInLength:0)
+            textView.textStorage.edited(NSTextStorageEditActions.editedCharacters,range:NSMakeRange(0, textView.textStorage.length),changeInLength:0)
         }
     }
     
-    func textViewDidChange(textView: UITextView)
+    func textViewDidChange(_ textView: UITextView)
     {
         if snippetExpanded
         {

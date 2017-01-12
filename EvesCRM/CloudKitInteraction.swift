@@ -8,9 +8,33 @@
 
 import Foundation
 import CloudKit
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l > r
+  default:
+    return rhs < lhs
+  }
+}
+
 
 protocol ModelDelegate {
-    func errorUpdating(error: NSError)
+    func errorUpdating(_ error: NSError)
     func modelUpdated()
 }
 
@@ -24,7 +48,7 @@ class CloudKitInteraction
     init()
     {
         #if os(iOS)
-            container = CKContainer.defaultContainer()
+            container = CKContainer.default()
         #elseif os(OSX)
             container = CKContainer.init(identifier: "iCloud.com.garryeves.EvesCRM")
         #else
@@ -37,7 +61,7 @@ class CloudKitInteraction
         userInfo = UserInfo(container: container)        
     }
     
-    func saveContextToCloudKit(inLastSyncDate: NSDate)
+    func saveContextToCloudKit(_ inLastSyncDate: Date)
     {
 //        NSLog("Syncing Contexts")
         for myItem in myDatabaseConnection.getContextsForSync(inLastSyncDate)
@@ -51,7 +75,7 @@ class CloudKitInteraction
         }
     }
 
-    func saveDecodesToCloudKit(inLastSyncDate: NSDate, syncName: String)
+    func saveDecodesToCloudKit(_ inLastSyncDate: Date, syncName: String)
     {
 //        NSLog("Syncing Decodes")
         for myItem in myDatabaseConnection.getDecodesForSync(inLastSyncDate)
@@ -60,7 +84,7 @@ class CloudKitInteraction
         }
     }
 
-    func saveGTDItemToCloudKit(inLastSyncDate: NSDate)
+    func saveGTDItemToCloudKit(_ inLastSyncDate: Date)
     {
 //        NSLog("Syncing GTDItem")
         for myItem in myDatabaseConnection.getGTDItemsForSync(inLastSyncDate)
@@ -69,7 +93,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveGTDLevelToCloudKit(inLastSyncDate: NSDate)
+    func saveGTDLevelToCloudKit(_ inLastSyncDate: Date)
     {
 //        NSLog("Syncing GTDLevel")
         for myItem in myDatabaseConnection.getGTDLevelsForSync(inLastSyncDate)
@@ -78,7 +102,7 @@ class CloudKitInteraction
         }
     }
 
-    func saveMeetingAgendaToCloudKit(inLastSyncDate: NSDate)
+    func saveMeetingAgendaToCloudKit(_ inLastSyncDate: Date)
     {
 //        NSLog("Syncing Meeting Agenda")
         for myItem in myDatabaseConnection.getMeetingAgendasForSync(inLastSyncDate)
@@ -87,7 +111,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveMeetingAgendaItemToCloudKit(inLastSyncDate: NSDate)
+    func saveMeetingAgendaItemToCloudKit(_ inLastSyncDate: Date)
     {
 //        NSLog("Syncing meetingAgendaItems")
         for myItem in myDatabaseConnection.getMeetingAgendaItemsForSync(inLastSyncDate)
@@ -96,7 +120,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveMeetingAttendeesToCloudKit(inLastSyncDate: NSDate)
+    func saveMeetingAttendeesToCloudKit(_ inLastSyncDate: Date)
     {
 //        NSLog("Syncing MeetingAttendees")
         for myItem in myDatabaseConnection.getMeetingAttendeesForSync(inLastSyncDate)
@@ -105,7 +129,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveMeetingSupportingDocsToCloudKit(inLastSyncDate: NSDate)
+    func saveMeetingSupportingDocsToCloudKit(_ inLastSyncDate: Date)
     {
 //        NSLog("Syncing MeetingSupportingDocs")
         for myItem in myDatabaseConnection.getMeetingSupportingDocsForSync(inLastSyncDate)
@@ -114,7 +138,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveMeetingTasksToCloudKit(inLastSyncDate: NSDate)
+    func saveMeetingTasksToCloudKit(_ inLastSyncDate: Date)
     {
 //        NSLog("Syncing MeetingTasks")
         for myItem in myDatabaseConnection.getMeetingTasksForSync(inLastSyncDate)
@@ -123,7 +147,7 @@ class CloudKitInteraction
         }
     }
     
-    func savePanesToCloudKit(inLastSyncDate: NSDate)
+    func savePanesToCloudKit(_ inLastSyncDate: Date)
     {
 //        NSLog("Syncing Panes")
         for myItem in myDatabaseConnection.getPanesForSync(inLastSyncDate)
@@ -132,7 +156,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveProjectsToCloudKit(inLastSyncDate: NSDate)
+    func saveProjectsToCloudKit(_ inLastSyncDate: Date)
     {
 //        NSLog("Syncing Projects")
         for myItem in myDatabaseConnection.getProjectsForSync(inLastSyncDate)
@@ -146,7 +170,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveProjectTeamMembersToCloudKit(inLastSyncDate: NSDate)
+    func saveProjectTeamMembersToCloudKit(_ inLastSyncDate: Date)
     {
 //        NSLog("Syncing ProjectTeamMembers")
         for myItem in myDatabaseConnection.getProjectTeamMembersForSync(inLastSyncDate)
@@ -155,7 +179,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveRolesToCloudKit(inLastSyncDate: NSDate)
+    func saveRolesToCloudKit(_ inLastSyncDate: Date)
     {
 //        NSLog("Syncing Roles")
         for myItem in myDatabaseConnection.getRolesForSync(inLastSyncDate)
@@ -164,7 +188,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveStagesToCloudKit(inLastSyncDate: NSDate)
+    func saveStagesToCloudKit(_ inLastSyncDate: Date)
     {
 //        NSLog("Syncing Stages")
         for myItem in myDatabaseConnection.getStagesForSync(inLastSyncDate)
@@ -173,7 +197,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveTaskToCloudKit(inLastSyncDate: NSDate)
+    func saveTaskToCloudKit(_ inLastSyncDate: Date)
     {
 //        NSLog("Syncing Task")
         for myItem in myDatabaseConnection.getTaskForSync(inLastSyncDate)
@@ -182,7 +206,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveTaskAttachmentToCloudKit(inLastSyncDate: NSDate)
+    func saveTaskAttachmentToCloudKit(_ inLastSyncDate: Date)
     {
  //       NSLog("Syncing taskAttachments")
         for myItem in myDatabaseConnection.getTaskAttachmentsForSync(inLastSyncDate)
@@ -191,7 +215,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveTaskContextToCloudKit(inLastSyncDate: NSDate)
+    func saveTaskContextToCloudKit(_ inLastSyncDate: Date)
     {
 //        NSLog("Syncing TaskContext")
         for myItem in myDatabaseConnection.getTaskContextsForSync(inLastSyncDate)
@@ -200,7 +224,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveTaskPredecessorToCloudKit(inLastSyncDate: NSDate)
+    func saveTaskPredecessorToCloudKit(_ inLastSyncDate: Date)
     {
 //        NSLog("Syncing TaskPredecessor")
         for myItem in myDatabaseConnection.getTaskPredecessorsForSync(inLastSyncDate)
@@ -209,7 +233,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveTaskUpdatesToCloudKit(inLastSyncDate: NSDate)
+    func saveTaskUpdatesToCloudKit(_ inLastSyncDate: Date)
     {
 //        NSLog("Syncing TaskUpdates")
         for myItem in myDatabaseConnection.getTaskUpdatesForSync(inLastSyncDate)
@@ -218,7 +242,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveTeamToCloudKit(inLastSyncDate: NSDate)
+    func saveTeamToCloudKit(_ inLastSyncDate: Date)
     {
 //        NSLog("Syncing Team")
         for myItem in myDatabaseConnection.getTeamsForSync(inLastSyncDate)
@@ -227,7 +251,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveProcessedEmailsToCloudKit(inLastSyncDate: NSDate)
+    func saveProcessedEmailsToCloudKit(_ inLastSyncDate: Date)
     {
 //        NSLog("Syncing ProcessedEmails")
         for myItem in myDatabaseConnection.getProcessedEmailsForSync(inLastSyncDate)
@@ -236,7 +260,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveOutlineToCloudKit(inLastSyncDate: NSDate)
+    func saveOutlineToCloudKit(_ inLastSyncDate: Date)
     {
         //        NSLog("Syncing ProcessedEmails")
         for myItem in myDatabaseConnection.getOutlineForSync(inLastSyncDate)
@@ -245,7 +269,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveOutlineDetailsToCloudKit(inLastSyncDate: NSDate)
+    func saveOutlineDetailsToCloudKit(_ inLastSyncDate: Date)
     {
         //        NSLog("Syncing ProcessedEmails")
         for myItem in myDatabaseConnection.getOutlineDetailsForSync(inLastSyncDate)
@@ -254,846 +278,845 @@ class CloudKitInteraction
         }
     }
     
-    func updateContextInCoreData(inLastSyncDate: NSDate)
+    func updateContextInCoreData(_ inLastSyncDate: Date)
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Context", predicate: predicate)
         
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 self.updateContextRecord(record)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
     }
     
-    func updateDecodesInCoreData(inLastSyncDate: NSDate)
+    func updateDecodesInCoreData(_ inLastSyncDate: Date)
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
 
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Decodes", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 self.updateDecodeRecord(record)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
-        
+        sem.wait()
     }
     
-    func updateGTDItemInCoreData(inLastSyncDate: NSDate)
+    func updateGTDItemInCoreData(_ inLastSyncDate: Date)
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "GTDItem", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 self.updateGTDItemRecord(record)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
-    func updateGTDLevelInCoreData(inLastSyncDate: NSDate)
+    func updateGTDLevelInCoreData(_ inLastSyncDate: Date)
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "GTDLevel", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 self.updateGTDLevelRecord(record)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
-    func updateMeetingAgendaInCoreData(inLastSyncDate: NSDate)
+    func updateMeetingAgendaInCoreData(_ inLastSyncDate: Date)
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 self.updateMeetingAgendaRecord(record)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
-    func updateMeetingAgendaItemInCoreData(inLastSyncDate: NSDate)
+    func updateMeetingAgendaItemInCoreData(_ inLastSyncDate: Date)
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 self.updateMeetingAgendaItemRecord(record)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
-    func updateMeetingAttendeesInCoreData(inLastSyncDate: NSDate)
+    func updateMeetingAttendeesInCoreData(_ inLastSyncDate: Date)
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingAttendees", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 self.updateMeetingAttendeesRecord(record)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
-    func updateMeetingSupportingDocsInCoreData(inLastSyncDate: NSDate)
+    func updateMeetingSupportingDocsInCoreData(_ inLastSyncDate: Date)
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
            // for record in results!
             for _ in results!
             {
   //              self.updateMeetingSupportingDocsRecord(record)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
-    func updateMeetingTasksInCoreData(inLastSyncDate: NSDate)
+    func updateMeetingTasksInCoreData(_ inLastSyncDate: Date)
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingTasks", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 self.updateMeetingTasksRecord(record)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
-    func updatePanesInCoreData(inLastSyncDate: NSDate)
+    func updatePanesInCoreData(_ inLastSyncDate: Date)
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Panes", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 self.updatePanesRecord(record)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
-    func updateProjectsInCoreData(inLastSyncDate: NSDate)
+    func updateProjectsInCoreData(_ inLastSyncDate: Date)
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 self.updateProjectsRecord(record)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
-    func updateProjectTeamMembersInCoreData(inLastSyncDate: NSDate)
+    func updateProjectTeamMembersInCoreData(_ inLastSyncDate: Date)
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "ProjectTeamMembers", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 self.updateProjectTeamMembersRecord(record)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
-    func updateRolesInCoreData(inLastSyncDate: NSDate)
+    func updateRolesInCoreData(_ inLastSyncDate: Date)
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Roles", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 self.updateRolesRecord(record)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
-    func updateStagesInCoreData(inLastSyncDate: NSDate)
+    func updateStagesInCoreData(_ inLastSyncDate: Date)
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Stages", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 self.updateStagesRecord(record)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
-    func updateTaskInCoreData(inLastSyncDate: NSDate)
+    func updateTaskInCoreData(_ inLastSyncDate: Date)
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Task", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 self.updateTaskRecord(record)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
-    func updateTaskAttachmentInCoreData(inLastSyncDate: NSDate)
+    func updateTaskAttachmentInCoreData(_ inLastSyncDate: Date)
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskAttachment", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
          //   for record in results!
             for record in results!
             {
                 self.updateTaskAttachmentRecord(record)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
-    func updateTaskContextInCoreData(inLastSyncDate: NSDate)
+    func updateTaskContextInCoreData(_ inLastSyncDate: Date)
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskContext", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 self.updateTaskContextRecord(record)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
-    func updateTaskPredecessorInCoreData(inLastSyncDate: NSDate)
+    func updateTaskPredecessorInCoreData(_ inLastSyncDate: Date)
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskPredecessor", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 self.updateTaskPredecessorRecord(record)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
-    func updateTaskUpdatesInCoreData(inLastSyncDate: NSDate)
+    func updateTaskUpdatesInCoreData(_ inLastSyncDate: Date)
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskUpdates", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 self.updateTaskUpdatesRecord(record)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
-    func updateTeamInCoreData(inLastSyncDate: NSDate)
+    func updateTeamInCoreData(_ inLastSyncDate: Date)
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Team", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 self.updateTeamRecord(record)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
-    func updateProcessedEmailsInCoreData(inLastSyncDate: NSDate)
+    func updateProcessedEmailsInCoreData(_ inLastSyncDate: Date)
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "ProcessedEmails", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 self.updateProcessedEmailsRecord(record)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
-    func updateOutlineInCoreData(inLastSyncDate: NSDate)
+    func updateOutlineInCoreData(_ inLastSyncDate: Date)
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Outline", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 self.updateOutlineRecord(record)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
-    func updateOutlineDetailsInCoreData(inLastSyncDate: NSDate)
+    func updateOutlineDetailsInCoreData(_ inLastSyncDate: Date)
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "OutlineDetails", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 self.updateOutlineDetailsRecord(record)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
     func deleteContext()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Context", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
         
         var myRecordList2: [CKRecordID] = Array()
         let predicate2: NSPredicate = NSPredicate(value: true)
         let query2: CKQuery = CKQuery(recordType: "Context1_1", predicate: predicate2)
-        privateDB.performQuery(query2, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query2, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 myRecordList2.append(record.recordID)
             }
             self.performDelete(myRecordList2)
-            dispatch_semaphore_signal(sem)
-        })
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
+        sem.wait()
     }
     
     func deleteDecodes()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Decodes", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
     func deleteGTDItem()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "GTDItem", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
-            dispatch_semaphore_signal(sem)
-        })
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
+        sem.wait()
     }
     
     func deleteGTDLevel()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "GTDLevel", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
-            dispatch_semaphore_signal(sem)
-        })
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
+        sem.wait()
     }
     
     func deleteMeetingAgenda()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
-            dispatch_semaphore_signal(sem)
-        })
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
+        sem.wait()
     }
     
     func deleteMeetingAgendaItem()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
-            dispatch_semaphore_signal(sem)
-        })
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
+        sem.wait()
     }
     
     func deleteMeetingAttendees()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "MeetingAttendees", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
-            dispatch_semaphore_signal(sem)
-        })
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
+        sem.wait()
     }
     
     func deleteMeetingSupportingDocs()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
-            dispatch_semaphore_signal(sem)
-        })
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
+        sem.wait()
     }
     
     func deleteMeetingTasks()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "MeetingTasks", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
-            dispatch_semaphore_signal(sem)
-        })
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
+        sem.wait()
     }
     
     func deletePanes()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Panes", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
-            dispatch_semaphore_signal(sem)
-        })
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
+        sem.wait()
     }
     
     func deleteProjects()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
-            dispatch_semaphore_signal(sem)
-        })
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
+        sem.wait()
         
         var myRecordList2: [CKRecordID] = Array()
         let predicate2: NSPredicate = NSPredicate(value: true)
         let query2: CKQuery = CKQuery(recordType: "ProjectNote", predicate: predicate2)
-        privateDB.performQuery(query2, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query2, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 myRecordList2.append(record.recordID)
             }
             self.performDelete(myRecordList2)
-            dispatch_semaphore_signal(sem)
-        })
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
+        sem.wait()
     }
     
     func deleteProjectTeamMembers()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "ProjectTeamMembers", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
-            dispatch_semaphore_signal(sem)
-        })
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
+        sem.wait()
     }
     
     func deleteRoles()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Roles", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
-            dispatch_semaphore_signal(sem)
-        })
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
+        sem.wait()
     }
     
     func deleteStages()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Stages", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
-            dispatch_semaphore_signal(sem)
-        })
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
+        sem.wait()
     }
     
     func deleteTask()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Task", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
-            dispatch_semaphore_signal(sem)
-        })
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
+        sem.wait()
     }
     
     func deleteTaskAttachment()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "TaskAttachment", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
-            dispatch_semaphore_signal(sem)
-        })
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
+        sem.wait()
     }
     
     func deleteTaskContext()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "TaskContext", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
-            dispatch_semaphore_signal(sem)
-        })
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
+        sem.wait()
     }
     
     func deleteTaskPredecessor()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "TaskPredecessor", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
-            dispatch_semaphore_signal(sem)
-        })
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
+        sem.wait()
     }
     
     func deleteTaskUpdates()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "TaskUpdates", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
-            dispatch_semaphore_signal(sem)
-        })
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
+        sem.wait()
     }
     
     func deleteTeam()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Team", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
-            dispatch_semaphore_signal(sem)
-        })
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
+        sem.wait()
     }
     
     func deleteProcessedEmails()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "ProcessedEmails", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
-            dispatch_semaphore_signal(sem)
-        })
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
+        sem.wait()
     }
  
     func deleteOutline()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Outline", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
-            dispatch_semaphore_signal(sem)
-        })
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
+        sem.wait()
     }
     
     func deleteOutlineDetails()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "OutlineDetails", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
-            dispatch_semaphore_signal(sem)
-        })
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
+        sem.wait()
     }
 
-    func performDelete(inRecordSet: [CKRecordID])
+    func performDelete(_ inRecordSet: [CKRecordID])
     {
         let operation = CKModifyRecordsOperation(recordsToSave: nil, recordIDsToDelete: inRecordSet)
-        operation.savePolicy = .AllKeys
+        operation.savePolicy = .allKeys
         operation.database = privateDB
         operation.modifyRecordsCompletionBlock = { (added, deleted, error) in
             if error != nil
@@ -1106,7 +1129,7 @@ class CloudKitInteraction
             }
         }
         
-        let queue = NSOperationQueue()
+        let queue = OperationQueue()
         queue.addOperations([operation], waitUntilFinished: true)
       //  privateDB.addOperation(operation, waitUntilFinished: true)
      //   NSLog("finished delete")
@@ -1114,35 +1137,35 @@ class CloudKitInteraction
     
     func replaceContextInCoreData()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = NSDateFormatter()
-        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = DateFormatter.Style.short
+        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Context", predicate: predicate)
         var predecessor: Int = 0
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let contextID = record.objectForKey("contextID") as! Int
-                let autoEmail = record.objectForKey("autoEmail") as! String
-                let email = record.objectForKey("email") as! String
-                let name = record.objectForKey("name") as! String
-                let parentContext = record.objectForKey("parentContext") as! Int
-                let personID = record.objectForKey("personID") as! Int
-                let status = record.objectForKey("status") as! String
-                let teamID = record.objectForKey("teamID") as! Int
-                let contextType = record.objectForKey("contextType") as! String
+                let contextID = record.object(forKey: "contextID") as! Int
+                let autoEmail = record.object(forKey: "autoEmail") as! String
+                let email = record.object(forKey: "email") as! String
+                let name = record.object(forKey: "name") as! String
+                let parentContext = record.object(forKey: "parentContext") as! Int
+                let personID = record.object(forKey: "personID") as! Int
+                let status = record.object(forKey: "status") as! String
+                let teamID = record.object(forKey: "teamID") as! Int
+                let contextType = record.object(forKey: "contextType") as! String
                 
                 
-                if record.objectForKey("predecessor") != nil
+                if record.object(forKey: "predecessor") != nil
                 {
-                    predecessor = record.objectForKey("predecessor") as! Int
+                    predecessor = record.object(forKey: "predecessor") as! Int
                 }
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
+                let updateTime = record.object(forKey: "updateTime") as! Date
+                let updateType = record.object(forKey: "updateType") as! String
                 
                 myDatabaseConnection.replaceContext(contextID, inName: name, inEmail: email, inAutoEmail: autoEmail, inParentContext: parentContext, inStatus: status, inPersonID: personID, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
                 
@@ -1150,202 +1173,202 @@ class CloudKitInteraction
                 myDatabaseConnection.replaceContext1_1(contextID, predecessor: predecessor, contextType: contextType, updateTime: updateTime, updateType: updateType)
                 
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
     }
     
     func replaceDecodesInCoreData()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = NSDateFormatter()
-        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = DateFormatter.Style.short
+        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Decodes", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
                 self.updateDecodeRecord(record)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
     func replaceGTDItemInCoreData()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = NSDateFormatter()
-        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = DateFormatter.Style.short
+        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "GTDItem", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let gTDItemID = record.objectForKey("gTDItemID") as! Int
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let gTDParentID = record.objectForKey("gTDParentID") as! Int
-                let lastReviewDate = record.objectForKey("lastReviewDate") as! NSDate
-                let note = record.objectForKey("note") as! String
-                let predecessor = record.objectForKey("predecessor") as! Int
-                let reviewFrequency = record.objectForKey("reviewFrequency") as! Int
-                let reviewPeriod = record.objectForKey("reviewPeriod") as! String
-                let status = record.objectForKey("status") as! String
-                let teamID = record.objectForKey("teamID") as! Int
-                let title = record.objectForKey("title") as! String
-                let gTDLevel = record.objectForKey("gTDLevel") as! Int
+                let gTDItemID = record.object(forKey: "gTDItemID") as! Int
+                let updateTime = record.object(forKey: "updateTime") as! Date
+                let updateType = record.object(forKey: "updateType") as! String
+                let gTDParentID = record.object(forKey: "gTDParentID") as! Int
+                let lastReviewDate = record.object(forKey: "lastReviewDate") as! Date
+                let note = record.object(forKey: "note") as! String
+                let predecessor = record.object(forKey: "predecessor") as! Int
+                let reviewFrequency = record.object(forKey: "reviewFrequency") as! Int
+                let reviewPeriod = record.object(forKey: "reviewPeriod") as! String
+                let status = record.object(forKey: "status") as! String
+                let teamID = record.object(forKey: "teamID") as! Int
+                let title = record.object(forKey: "title") as! String
+                let gTDLevel = record.object(forKey: "gTDLevel") as! Int
                 
                 myDatabaseConnection.replaceGTDItem(gTDItemID, inParentID: gTDParentID, inTitle: title, inStatus: status, inTeamID: teamID, inNote: note, inLastReviewDate: lastReviewDate, inReviewFrequency: reviewFrequency, inReviewPeriod: reviewPeriod, inPredecessor: predecessor, inGTDLevel: gTDLevel, inUpdateTime: updateTime, inUpdateType: updateType)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
     func replaceGTDLevelInCoreData()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = NSDateFormatter()
-        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = DateFormatter.Style.short
+        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "GTDLevel", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let gTDLevel = record.objectForKey("gTDLevel") as! Int
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey( "updateType") as! String
-                let teamID = record.objectForKey("teamID") as! Int
-                let levelName = record.objectForKey("levelName") as! String
+                let gTDLevel = record.object(forKey: "gTDLevel") as! Int
+                let updateTime = record.object(forKey: "updateTime") as! Date
+                let updateType = record.object( forKey: "updateType") as! String
+                let teamID = record.object(forKey: "teamID") as! Int
+                let levelName = record.object(forKey: "levelName") as! String
                 
                 myDatabaseConnection.replaceGTDLevel(gTDLevel, inLevelName: levelName, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
     func replaceMeetingAgendaInCoreData()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = NSDateFormatter()
-        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = DateFormatter.Style.short
+        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let meetingID = record.objectForKey("meetingID") as! String
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let chair = record.objectForKey("chair") as! String
-                let endTime = record.objectForKey("endTime") as! NSDate
-                let location = record.objectForKey("location") as! String
-                let minutes = record.objectForKey("minutes") as! String
-                let minutesType = record.objectForKey("minutesType") as! String
-                let name = record.objectForKey("name") as! String
-                let previousMeetingID = record.objectForKey("previousMeetingID") as! String
-                let startTime = record.objectForKey("meetingStartTime") as! NSDate
-                let teamID = record.objectForKey("actualTeamID") as! Int
+                let meetingID = record.object(forKey: "meetingID") as! String
+                let updateTime = record.object(forKey: "updateTime") as! Date
+                let updateType = record.object(forKey: "updateType") as! String
+                let chair = record.object(forKey: "chair") as! String
+                let endTime = record.object(forKey: "endTime") as! Date
+                let location = record.object(forKey: "location") as! String
+                let minutes = record.object(forKey: "minutes") as! String
+                let minutesType = record.object(forKey: "minutesType") as! String
+                let name = record.object(forKey: "name") as! String
+                let previousMeetingID = record.object(forKey: "previousMeetingID") as! String
+                let startTime = record.object(forKey: "meetingStartTime") as! Date
+                let teamID = record.object(forKey: "actualTeamID") as! Int
                 
                 myDatabaseConnection.replaceAgenda(meetingID, inPreviousMeetingID : previousMeetingID, inName: name, inChair: chair, inMinutes: minutes, inLocation: location, inStartTime: startTime, inEndTime: endTime, inMinutesType: minutesType, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
     func replaceMeetingAgendaItemInCoreData()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = NSDateFormatter()
-        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = DateFormatter.Style.short
+        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let meetingID = record.objectForKey("meetingID") as! String
-                let agendaID = record.objectForKey("agendaID") as! Int
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let actualEndTime = record.objectForKey("actualEndTime") as! NSDate
-                let actualStartTime = record.objectForKey("actualStartTime") as! NSDate
-                let decisionMade = record.objectForKey("decisionMade") as! String
-                let discussionNotes = record.objectForKey("discussionNotes") as! String
-                let owner = record.objectForKey("owner") as! String
-                let status = record.objectForKey("status") as! String
-                let timeAllocation = record.objectForKey("timeAllocation") as! Int
-                let title = record.objectForKey("title") as! String
-                let meetingOrder = record.objectForKey("meetingOrder") as! Int
+                let meetingID = record.object(forKey: "meetingID") as! String
+                let agendaID = record.object(forKey: "agendaID") as! Int
+                let updateTime = record.object(forKey: "updateTime") as! Date
+                let updateType = record.object(forKey: "updateType") as! String
+                let actualEndTime = record.object(forKey: "actualEndTime") as! Date
+                let actualStartTime = record.object(forKey: "actualStartTime") as! Date
+                let decisionMade = record.object(forKey: "decisionMade") as! String
+                let discussionNotes = record.object(forKey: "discussionNotes") as! String
+                let owner = record.object(forKey: "owner") as! String
+                let status = record.object(forKey: "status") as! String
+                let timeAllocation = record.object(forKey: "timeAllocation") as! Int
+                let title = record.object(forKey: "title") as! String
+                let meetingOrder = record.object(forKey: "meetingOrder") as! Int
                 
                 myDatabaseConnection.replaceAgendaItem(meetingID, actualEndTime: actualEndTime, actualStartTime: actualStartTime, status: status, decisionMade: decisionMade, discussionNotes: discussionNotes, timeAllocation: timeAllocation, owner: owner, title: title, agendaID: agendaID, meetingOrder: meetingOrder, inUpdateTime: updateTime, inUpdateType: updateType)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
     func replaceMeetingAttendeesInCoreData()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = NSDateFormatter()
-        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = DateFormatter.Style.short
+        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingAttendees", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let meetingID = record.objectForKey("meetingID") as! String
-                let name  = record.objectForKey("name") as! String
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let attendenceStatus = record.objectForKey("attendenceStatus") as! String
-                let email = record.objectForKey("email") as! String
-                let type = record.objectForKey("type") as! String
+                let meetingID = record.object(forKey: "meetingID") as! String
+                let name  = record.object(forKey: "name") as! String
+                let updateTime = record.object(forKey: "updateTime") as! Date
+                let updateType = record.object(forKey: "updateType") as! String
+                let attendenceStatus = record.object(forKey: "attendenceStatus") as! String
+                let email = record.object(forKey: "email") as! String
+                let type = record.object(forKey: "type") as! String
                 
                 myDatabaseConnection.replaceAttendee(meetingID, name: name, email: email,  type: type, status: attendenceStatus, inUpdateTime: updateTime, inUpdateType: updateType)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
     func replaceMeetingSupportingDocsInCoreData()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = NSDateFormatter()
-        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = DateFormatter.Style.short
+        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             // for record in results!
             for _ in results!
             {
@@ -1360,242 +1383,242 @@ class CloudKitInteraction
                 
                 // myDatabaseConnection.replaceDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
     func replaceMeetingTasksInCoreData()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = NSDateFormatter()
-        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = DateFormatter.Style.short
+        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingTasks", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let meetingID = record.objectForKey("meetingID") as! String
-                let agendaID = record.objectForKey("agendaID") as! Int
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let taskID = record.objectForKey("taskID") as! Int
+                let meetingID = record.object(forKey: "meetingID") as! String
+                let agendaID = record.object(forKey: "agendaID") as! Int
+                let updateTime = record.object(forKey: "updateTime") as! Date
+                let updateType = record.object(forKey: "updateType") as! String
+                let taskID = record.object(forKey: "taskID") as! Int
                 
                 myDatabaseConnection.replaceMeetingTask(agendaID, meetingID: meetingID, taskID: taskID, inUpdateTime: updateTime, inUpdateType: updateType)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
     func replacePanesInCoreData()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = NSDateFormatter()
-        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = DateFormatter.Style.short
+        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Panes", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let pane_name = record.objectForKey("pane_name") as! String
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let pane_available = record.objectForKey("pane_available") as! Bool
-                let pane_order = record.objectForKey("pane_order") as! Int
-                let pane_visible = record.objectForKey("pane_visible") as! Bool
+                let pane_name = record.object(forKey: "pane_name") as! String
+                let updateTime = record.object(forKey: "updateTime") as! Date
+                let updateType = record.object(forKey: "updateType") as! String
+                let pane_available = record.object(forKey: "pane_available") as! Bool
+                let pane_order = record.object(forKey: "pane_order") as! Int
+                let pane_visible = record.object(forKey: "pane_visible") as! Bool
                 
                 myDatabaseConnection.replacePane(pane_name, inPaneAvailable: pane_available, inPaneVisible: pane_visible, inPaneOrder: pane_order, inUpdateTime: updateTime, inUpdateType: updateType)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
     func replaceProjectsInCoreData()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = NSDateFormatter()
-        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = DateFormatter.Style.short
+        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let projectID = record.objectForKey("projectID") as! Int
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let areaID = record.objectForKey("areaID") as! Int
-                let lastReviewDate = record.objectForKey("lastReviewDate") as! NSDate
-                let projectEndDate = record.objectForKey("projectEndDate") as! NSDate
-                let projectName = record.objectForKey("projectName") as! String
-                let projectStartDate = record.objectForKey("projectStartDate") as! NSDate
-                let projectStatus = record.objectForKey("projectStatus") as! String
-                let repeatBase = record.objectForKey("repeatBase") as! String
-                let repeatInterval = record.objectForKey("repeatInterval") as! Int
-                let repeatType = record.objectForKey("repeatType") as! String
-                let reviewFrequency = record.objectForKey("reviewFrequency") as! Int
-                let teamID = record.objectForKey("teamID") as! Int
-                let note = record.objectForKey("note") as! String
-                let reviewPeriod = record.objectForKey("reviewPeriod") as! String
-                let predecessor = record.objectForKey("predecessor") as! Int
+                let projectID = record.object(forKey: "projectID") as! Int
+                let updateTime = record.object(forKey: "updateTime") as! Date
+                let updateType = record.object(forKey: "updateType") as! String
+                let areaID = record.object(forKey: "areaID") as! Int
+                let lastReviewDate = record.object(forKey: "lastReviewDate") as! Date
+                let projectEndDate = record.object(forKey: "projectEndDate") as! Date
+                let projectName = record.object(forKey: "projectName") as! String
+                let projectStartDate = record.object(forKey: "projectStartDate") as! Date
+                let projectStatus = record.object(forKey: "projectStatus") as! String
+                let repeatBase = record.object(forKey: "repeatBase") as! String
+                let repeatInterval = record.object(forKey: "repeatInterval") as! Int
+                let repeatType = record.object(forKey: "repeatType") as! String
+                let reviewFrequency = record.object(forKey: "reviewFrequency") as! Int
+                let teamID = record.object(forKey: "teamID") as! Int
+                let note = record.object(forKey: "note") as! String
+                let reviewPeriod = record.object(forKey: "reviewPeriod") as! String
+                let predecessor = record.object(forKey: "predecessor") as! Int
                 
                 myDatabaseConnection.replaceProject(projectID, inProjectEndDate: projectEndDate, inProjectName: projectName, inProjectStartDate: projectStartDate, inProjectStatus: projectStatus, inReviewFrequency: reviewFrequency, inLastReviewDate: lastReviewDate, inGTDItemID: areaID, inRepeatInterval: repeatInterval, inRepeatType: repeatType, inRepeatBase: repeatBase, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
                 
                 myDatabaseConnection.replaceProjectNote(projectID, inNote: note, inReviewPeriod: reviewPeriod, inPredecessor: predecessor, inUpdateTime: updateTime, inUpdateType: updateType)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
     func replaceProjectTeamMembersInCoreData()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = NSDateFormatter()
-        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = DateFormatter.Style.short
+        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "ProjectTeamMembers", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let projectID = record.objectForKey("projectID") as! Int
-                let teamMember = record.objectForKey("teamMember") as! String
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let roleID = record.objectForKey("roleID") as! Int
-                let projectMemberNotes = record.objectForKey("projectMemberNotes") as! String
+                let projectID = record.object(forKey: "projectID") as! Int
+                let teamMember = record.object(forKey: "teamMember") as! String
+                let updateTime = record.object(forKey: "updateTime") as! Date
+                let updateType = record.object(forKey: "updateType") as! String
+                let roleID = record.object(forKey: "roleID") as! Int
+                let projectMemberNotes = record.object(forKey: "projectMemberNotes") as! String
                 
                 myDatabaseConnection.replaceTeamMember(projectID, inRoleID: roleID, inPersonName: teamMember, inNotes: projectMemberNotes, inUpdateTime: updateTime, inUpdateType: updateType)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
     func replaceRolesInCoreData()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = NSDateFormatter()
-        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = DateFormatter.Style.short
+        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Roles", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let roleID = record.objectForKey("roleID") as! Int
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let teamID = record.objectForKey("teamID") as! Int
-                let roleDescription = record.objectForKey("roleDescription") as! String
+                let roleID = record.object(forKey: "roleID") as! Int
+                let updateTime = record.object(forKey: "updateTime") as! Date
+                let updateType = record.object(forKey: "updateType") as! String
+                let teamID = record.object(forKey: "teamID") as! Int
+                let roleDescription = record.object(forKey: "roleDescription") as! String
                 
                 myDatabaseConnection.replaceRole(roleDescription, teamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType, roleID: roleID)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
     func replaceStagesInCoreData()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = NSDateFormatter()
-        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = DateFormatter.Style.short
+        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Stages", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let stageDescription = record.objectForKey("stageDescription") as! String
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let teamID = record.objectForKey("teamID") as! Int
+                let stageDescription = record.object(forKey: "stageDescription") as! String
+                let updateTime = record.object(forKey: "updateTime") as! Date
+                let updateType = record.object(forKey: "updateType") as! String
+                let teamID = record.object(forKey: "teamID") as! Int
                 
                 myDatabaseConnection.replaceStage(stageDescription, teamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
     func replaceTaskInCoreData()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = NSDateFormatter()
-        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = DateFormatter.Style.short
+        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Task", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let taskID = record.objectForKey("taskID") as! Int
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let completionDate = record.objectForKey("completionDate") as! NSDate
-                let details = record.objectForKey("details") as! String
-                let dueDate = record.objectForKey("dueDate") as! NSDate
-                let energyLevel = record.objectForKey("energyLevel") as! String
-                let estimatedTime = record.objectForKey("estimatedTime") as! Int
-                let estimatedTimeType = record.objectForKey("estimatedTimeType") as! String
-                let flagged = record.objectForKey("flagged") as! Bool
-                let priority = record.objectForKey("priority") as! String
-                let repeatBase = record.objectForKey("repeatBase") as! String
-                let repeatInterval = record.objectForKey("repeatInterval") as! Int
-                let repeatType = record.objectForKey("repeatType") as! String
-                let startDate = record.objectForKey("startDate") as! NSDate
-                let status = record.objectForKey("status") as! String
-                let teamID = record.objectForKey("teamID") as! Int
-                let title = record.objectForKey("title") as! String
-                let urgency = record.objectForKey("urgency") as! String
-                let projectID = record.objectForKey("projectID") as! Int
+                let taskID = record.object(forKey: "taskID") as! Int
+                let updateTime = record.object(forKey: "updateTime") as! Date
+                let updateType = record.object(forKey: "updateType") as! String
+                let completionDate = record.object(forKey: "completionDate") as! Date
+                let details = record.object(forKey: "details") as! String
+                let dueDate = record.object(forKey: "dueDate") as! Date
+                let energyLevel = record.object(forKey: "energyLevel") as! String
+                let estimatedTime = record.object(forKey: "estimatedTime") as! Int
+                let estimatedTimeType = record.object(forKey: "estimatedTimeType") as! String
+                let flagged = record.object(forKey: "flagged") as! Bool
+                let priority = record.object(forKey: "priority") as! String
+                let repeatBase = record.object(forKey: "repeatBase") as! String
+                let repeatInterval = record.object(forKey: "repeatInterval") as! Int
+                let repeatType = record.object(forKey: "repeatType") as! String
+                let startDate = record.object(forKey: "startDate") as! Date
+                let status = record.object(forKey: "status") as! String
+                let teamID = record.object(forKey: "teamID") as! Int
+                let title = record.object(forKey: "title") as! String
+                let urgency = record.object(forKey: "urgency") as! String
+                let projectID = record.object(forKey: "projectID") as! Int
                 
                 myDatabaseConnection.replaceTask(taskID, inTitle: title, inDetails: details, inDueDate: dueDate, inStartDate: startDate, inStatus: status, inPriority: priority, inEnergyLevel: energyLevel, inEstimatedTime: estimatedTime, inEstimatedTimeType: estimatedTimeType, inProjectID: projectID, inCompletionDate: completionDate, inRepeatInterval: repeatInterval, inRepeatType: repeatType, inRepeatBase: repeatBase, inFlagged: flagged, inUrgency: urgency, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
     func replaceTaskAttachmentInCoreData()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = NSDateFormatter()
-        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = DateFormatter.Style.short
+        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskAttachment", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             //   for record in results!
             for _ in results!
             {
@@ -1607,202 +1630,202 @@ class CloudKitInteraction
                 NSLog("replaceTaskAttachmentInCoreData - Still to be coded")
                 //   myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
     func replaceTaskContextInCoreData()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = NSDateFormatter()
-        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = DateFormatter.Style.short
+        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskContext", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let taskID = record.objectForKey("taskID") as! Int
-                let contextID = record.objectForKey("contextID") as! Int
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
+                let taskID = record.object(forKey: "taskID") as! Int
+                let contextID = record.object(forKey: "contextID") as! Int
+                let updateTime = record.object(forKey: "updateTime") as! Date
+                let updateType = record.object(forKey: "updateType") as! String
                 
                 myDatabaseConnection.replaceTaskContext(contextID, inTaskID: taskID, inUpdateTime: updateTime, inUpdateType: updateType)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
     func replaceTaskPredecessorInCoreData()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = NSDateFormatter()
-        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = DateFormatter.Style.short
+        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskPredecessor", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let taskID = record.objectForKey("taskID") as! Int
-                let predecessorID = record.objectForKey("predecessorID") as! Int
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let predecessorType = record.objectForKey("predecessorType") as! String
+                let taskID = record.object(forKey: "taskID") as! Int
+                let predecessorID = record.object(forKey: "predecessorID") as! Int
+                let updateTime = record.object(forKey: "updateTime") as! Date
+                let updateType = record.object(forKey: "updateType") as! String
+                let predecessorType = record.object(forKey: "predecessorType") as! String
                 
                 myDatabaseConnection.replacePredecessorTask(taskID, inPredecessorID: predecessorID, inPredecessorType: predecessorType, inUpdateTime: updateTime, inUpdateType: updateType)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
     func replaceTaskUpdatesInCoreData()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = NSDateFormatter()
-        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = DateFormatter.Style.short
+        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskUpdates", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let taskID = record.objectForKey("taskID") as! Int
-                let updateDate = record.objectForKey("updateDate") as! NSDate
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let details = record.objectForKey("details") as! String
-                let source = record.objectForKey("source") as! String
+                let taskID = record.object(forKey: "taskID") as! Int
+                let updateDate = record.object(forKey: "updateDate") as! Date
+                let updateTime = record.object(forKey: "updateTime") as! Date
+                let updateType = record.object(forKey: "updateType") as! String
+                let details = record.object(forKey: "details") as! String
+                let source = record.object(forKey: "source") as! String
                 
                 myDatabaseConnection.replaceTaskUpdate(taskID, inDetails: details, inSource: source, inUpdateDate: updateDate, inUpdateTime: updateTime, inUpdateType: updateType)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
     func replaceTeamInCoreData()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = NSDateFormatter()
-        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = DateFormatter.Style.short
+        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
 
         let query: CKQuery = CKQuery(recordType: "Team", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let teamID = record.objectForKey("teamID") as! Int
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let name = record.objectForKey("name") as! String
-                let note = record.objectForKey("note") as! String
-                let status = record.objectForKey("status") as! String
-                let type = record.objectForKey("type") as! String
-                let predecessor = record.objectForKey("predecessor") as! Int
-                let externalID = record.objectForKey("externalID") as! Int
+                let teamID = record.object(forKey: "teamID") as! Int
+                let updateTime = record.object(forKey: "updateTime") as! Date
+                let updateType = record.object(forKey: "updateType") as! String
+                let name = record.object(forKey: "name") as! String
+                let note = record.object(forKey: "note") as! String
+                let status = record.object(forKey: "status") as! String
+                let type = record.object(forKey: "type") as! String
+                let predecessor = record.object(forKey: "predecessor") as! Int
+                let externalID = record.object(forKey: "externalID") as! Int
 
                 myDatabaseConnection.replaceTeam(teamID, inName: name, inStatus: status, inNote: note, inType: type, inPredecessor: predecessor, inExternalID: externalID, inUpdateTime: updateTime, inUpdateType: updateType)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
     func replaceProcessedEmailsInCoreData()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = NSDateFormatter()
-        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = DateFormatter.Style.short
+        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "ProcessedEmails", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let emailID = record.objectForKey("emailID") as! String
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
-                let emailType = record.objectForKey("emailType") as! String
-                let processedDate = record.objectForKey("processedDate") as! NSDate
+                let emailID = record.object(forKey: "emailID") as! String
+                let updateTime = record.object(forKey: "updateTime") as! Date
+                let updateType = record.object(forKey: "updateType") as! String
+                let emailType = record.object(forKey: "emailType") as! String
+                let processedDate = record.object(forKey: "processedDate") as! Date
                 
                 myDatabaseConnection.replaceProcessedEmail(emailID, emailType: emailType, processedDate: processedDate, updateTime: updateTime, updateType: updateType)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
     
     func replaceOutlineInCoreData()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = NSDateFormatter()
-        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = DateFormatter.Style.short
+        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Outline", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let outlineID = record.objectForKey("outlineID") as! Int
-                let parentID = record.objectForKey("parentID") as! Int
-                let parentType = record.objectForKey("parentType") as! String
-                let title = record.objectForKey("title") as! String
-                let status = record.objectForKey("status") as! String
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
+                let outlineID = record.object(forKey: "outlineID") as! Int
+                let parentID = record.object(forKey: "parentID") as! Int
+                let parentType = record.object(forKey: "parentType") as! String
+                let title = record.object(forKey: "title") as! String
+                let status = record.object(forKey: "status") as! String
+                let updateTime = record.object(forKey: "updateTime") as! Date
+                let updateType = record.object(forKey: "updateType") as! String
                 
                 myDatabaseConnection.replaceOutline(outlineID, parentID: parentID, parentType: parentType, title: title, status: status, updateTime: updateTime, updateType: updateType)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
 
     func replaceOutlineDetailsInCoreData()
     {
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = NSDateFormatter()
-        myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-        let inLastSyncDate = myDateFormatter.dateFromString("01/01/15")
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = DateFormatter.Style.short
+        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate!)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "OutlineDetails", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
             for record in results!
             {
-                let outlineID = record.objectForKey("outlineID") as! Int
-                let lineID = record.objectForKey("lineID") as! Int
-                let lineOrder = record.objectForKey("lineOrder") as! Int
-                let parentLine = record.objectForKey("parentLine") as! Int
-                let lineText = record.objectForKey("lineText") as! String
-                let lineType = record.objectForKey("lineType") as! String
+                let outlineID = record.object(forKey: "outlineID") as! Int
+                let lineID = record.object(forKey: "lineID") as! Int
+                let lineOrder = record.object(forKey: "lineOrder") as! Int
+                let parentLine = record.object(forKey: "parentLine") as! Int
+                let lineText = record.object(forKey: "lineText") as! String
+                let lineType = record.object(forKey: "lineType") as! String
                 
-                let checkBox = record.objectForKey("checkBoxValue") as! String
+                let checkBox = record.object(forKey: "checkBoxValue") as! String
                 
                 var checkBoxValue: Bool = false
                 
@@ -1810,23 +1833,23 @@ class CloudKitInteraction
                 {
                     checkBoxValue = true
                 }
-                let updateTime = record.objectForKey("updateTime") as! NSDate
-                let updateType = record.objectForKey("updateType") as! String
+                let updateTime = record.object(forKey: "updateTime") as! Date
+                let updateType = record.object(forKey: "updateType") as! String
                 
                 myDatabaseConnection.replaceOutlineDetails(outlineID, lineID: lineID, lineOrder: lineOrder, parentLine: parentLine, lineText: lineText, lineType: lineType, checkBoxValue: checkBoxValue, updateTime: updateTime, updateType: updateType)
             }
-            dispatch_semaphore_signal(sem)
-        })
+            sem.signal()
+        } as! ([CKRecord]?, Error?) -> Void)
         
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
     }
 
     
-    func saveContextRecordToCloudKit(sourceRecord: Context)
+    func saveContextRecordToCloudKit(_ sourceRecord: Context)
     {
         let predicate = NSPredicate(format: "(contextID == \(sourceRecord.contextID as Int)) && (teamID == \(sourceRecord.teamID as Int))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Context", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
                 {
                     NSLog("Error querying records: \(error!.localizedDescription)")
@@ -1870,7 +1893,7 @@ class CloudKitInteraction
                         record!.setValue(myContextType, forKey: "contextType")
                         
                         // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -1900,7 +1923,7 @@ class CloudKitInteraction
                         record.setValue(myPredecessor, forKey: "predecessor")
                         record.setValue(myContextType, forKey: "contextType")
                         
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -1918,11 +1941,11 @@ class CloudKitInteraction
             })
     }
     
-    func saveContext1_1RecordToCloudKit(sourceRecord: Context1_1)
+    func saveContext1_1RecordToCloudKit(_ sourceRecord: Context1_1)
     {
         let predicate = NSPredicate(format: "(contextID == \(sourceRecord.contextID as! Int))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Context", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
                 {
                     NSLog("Error querying records: \(error!.localizedDescription)")
@@ -1940,7 +1963,7 @@ class CloudKitInteraction
                         record!.setValue(sourceRecord.updateType, forKey: "updateType")
                         
                         // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -1963,7 +1986,7 @@ class CloudKitInteraction
                         record.setValue(sourceRecord.updateTime, forKey: "updateTime")
                         record.setValue(sourceRecord.updateType, forKey: "updateType")
                         
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -1981,11 +2004,11 @@ class CloudKitInteraction
             })
     }
     
-    func saveDecodesRecordToCloudKit(sourceRecord: Decodes, syncName: String)
+    func saveDecodesRecordToCloudKit(_ sourceRecord: Decodes, syncName: String)
     {
         let predicate = NSPredicate(format: "(decode_name == \"\(sourceRecord.decode_name)\")") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Decodes", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
                 {
                     NSLog("Error querying records: \(error!.localizedDescription)")
@@ -2004,7 +2027,7 @@ class CloudKitInteraction
                         {
                         case "Context" :
                             let localValue = Int(sourceRecord.decode_value)
-                            let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
+                            let tempValue = record!.object(forKey: "decode_value")! as CKRecordValue
                             let remoteValue = Int(tempValue as! String)
                             
                             if localValue > remoteValue
@@ -2018,7 +2041,7 @@ class CloudKitInteraction
                             
                         case "Projects" :
                             let localValue = Int(sourceRecord.decode_value)
-                            let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
+                            let tempValue = record!.object(forKey: "decode_value")! as CKRecordValue
                             let remoteValue = Int(tempValue as! String)
                             
                             if localValue > remoteValue
@@ -2032,7 +2055,7 @@ class CloudKitInteraction
                             
                         case "GTDItem" :
                             let localValue = Int(sourceRecord.decode_value)
-                            let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
+                            let tempValue = record!.object(forKey: "decode_value")! as CKRecordValue
                             let remoteValue = Int(tempValue as! String)
                             
                             if localValue > remoteValue
@@ -2046,7 +2069,7 @@ class CloudKitInteraction
                             
                         case "Team" :
                             let localValue = Int(sourceRecord.decode_value)
-                            let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
+                            let tempValue = record!.object(forKey: "decode_value")! as CKRecordValue
                             let remoteValue = Int(tempValue as! String)
                             
                             if localValue > remoteValue
@@ -2060,7 +2083,7 @@ class CloudKitInteraction
                             
                         case "Roles" :
                             let localValue = Int(sourceRecord.decode_value)
-                            let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
+                            let tempValue = record!.object(forKey: "decode_value")! as CKRecordValue
                             let remoteValue = Int(tempValue as! String)
                             
                             if localValue > remoteValue
@@ -2074,7 +2097,7 @@ class CloudKitInteraction
                             
                         case "Task" :
                             let localValue = Int(sourceRecord.decode_value)
-                            let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
+                            let tempValue = record!.object(forKey: "decode_value")! as CKRecordValue
                             let remoteValue = Int(tempValue as! String)
                             
                             if localValue > remoteValue
@@ -2088,7 +2111,7 @@ class CloudKitInteraction
                             
                         case "Device" :
                             let localValue = Int(sourceRecord.decode_value)
-                            let tempValue = record!.objectForKey("decode_value")! as CKRecordValue
+                            let tempValue = record!.object(forKey: "decode_value")! as CKRecordValue
                             let remoteValue = Int(tempValue as! String)
                             
                             if localValue > remoteValue
@@ -2126,7 +2149,7 @@ class CloudKitInteraction
                             record!.setValue(sourceRecord.updateType, forKey: "updateType")
                             
                             // Save this record again
-                            self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                            self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                                 if saveError != nil
                                 {
                                     NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -2150,7 +2173,7 @@ class CloudKitInteraction
                         todoRecord.setValue(sourceRecord.updateTime, forKey: "updateTime")
                         todoRecord.setValue(sourceRecord.updateType, forKey: "updateType")
                         
-                        self.privateDB.saveRecord(todoRecord, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(todoRecord, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -2169,11 +2192,11 @@ class CloudKitInteraction
 
     }
     
-    func saveGTDItemRecordToCloudKit(sourceRecord: GTDItem)
+    func saveGTDItemRecordToCloudKit(_ sourceRecord: GTDItem)
     {
         let predicate = NSPredicate(format: "(gTDItemID == \(sourceRecord.gTDItemID as! Int)) && (teamID == \(sourceRecord.teamID as! Int))")
         let query = CKQuery(recordType: "GTDItem", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
                 {
                     NSLog("Error querying records: \(error!.localizedDescription)")
@@ -2199,7 +2222,7 @@ class CloudKitInteraction
                         
                         
                         // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -2230,7 +2253,7 @@ class CloudKitInteraction
                         record.setValue(sourceRecord.title, forKey: "title")
                         record.setValue(sourceRecord.gTDLevel, forKey: "gTDLevel")
                         
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -2248,11 +2271,11 @@ class CloudKitInteraction
             })
     }
     
-    func saveGTDLevelRecordToCloudKit(sourceRecord: GTDLevel)
+    func saveGTDLevelRecordToCloudKit(_ sourceRecord: GTDLevel)
     {
         let predicate = NSPredicate(format: "(gTDLevel == \(sourceRecord.gTDLevel as! Int)) && (teamID == \(sourceRecord.teamID as! Int))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "GTDLevel", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
                 {
                     NSLog("Error querying records: \(error!.localizedDescription)")
@@ -2269,7 +2292,7 @@ class CloudKitInteraction
                         record!.setValue(sourceRecord.levelName, forKey: "levelName")
                         
                         // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -2292,7 +2315,7 @@ class CloudKitInteraction
                         record.setValue(sourceRecord.teamID, forKey: "teamID")
                         record.setValue(sourceRecord.levelName, forKey: "levelName")
                         
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -2310,11 +2333,11 @@ class CloudKitInteraction
             })
     }
     
-    func saveMeetingAgendaRecordToCloudKit(sourceRecord: MeetingAgenda)
+    func saveMeetingAgendaRecordToCloudKit(_ sourceRecord: MeetingAgenda)
     {
         let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID)\") && (actualTeamID == \(sourceRecord.teamID as Int))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
                 {
                     NSLog("Error querying records: \(error!.localizedDescription)")
@@ -2338,7 +2361,7 @@ class CloudKitInteraction
                         record!.setValue(sourceRecord.startTime, forKey: "meetingStartTime")
                         
                         // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -2368,7 +2391,7 @@ class CloudKitInteraction
                         record.setValue(sourceRecord.startTime, forKey: "meetingStartTime")
                         record.setValue(sourceRecord.teamID, forKey: "actualTeamID")
                         
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -2386,11 +2409,11 @@ class CloudKitInteraction
             })
     }
     
-    func saveMeetingAgendaItemRecordToCloudKit(sourceRecord: MeetingAgendaItem)
+    func saveMeetingAgendaItemRecordToCloudKit(_ sourceRecord: MeetingAgendaItem)
     {
         let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID as! Int))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
                 {
                     NSLog("Error querying records: \(error!.localizedDescription)")
@@ -2415,7 +2438,7 @@ class CloudKitInteraction
                         record!.setValue(sourceRecord.meetingOrder, forKey: "meetingOrder")
                         
                         // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -2447,7 +2470,7 @@ class CloudKitInteraction
                         record.setValue(sourceRecord.meetingOrder, forKey: "meetingOrder")
                         
                         
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -2465,11 +2488,11 @@ class CloudKitInteraction
             })
     }
     
-    func saveMeetingAttendeesRecordToCloudKit(sourceRecord: MeetingAttendees)
+    func saveMeetingAttendeesRecordToCloudKit(_ sourceRecord: MeetingAttendees)
     {
         let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID)\") && (name = \"\(sourceRecord.name)\")") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "MeetingAttendees", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
                 {
                     NSLog("Error querying records: \(error!.localizedDescription)")
@@ -2488,7 +2511,7 @@ class CloudKitInteraction
                         record!.setValue(sourceRecord.type, forKey: "type")
                         
                         // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -2513,7 +2536,7 @@ class CloudKitInteraction
                         record.setValue(sourceRecord.email, forKey: "email")
                         record.setValue(sourceRecord.type, forKey: "type")
                         
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -2531,11 +2554,11 @@ class CloudKitInteraction
             })
     }
     
-    func saveMeetingSupportingDocsRecordToCloudKit(sourceRecord: MeetingSupportingDocs)
+    func saveMeetingSupportingDocsRecordToCloudKit(_ sourceRecord: MeetingSupportingDocs)
     {
         let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID)\") && (agendaID == \(sourceRecord.agendaID as Int))") // better be accurate to get only the
         let query = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
                 {
                     NSLog("Error querying records: \(error!.localizedDescription)")
@@ -2553,7 +2576,7 @@ class CloudKitInteraction
                         record!.setValue(sourceRecord.title, forKey: "title")
                         
                         // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -2577,7 +2600,7 @@ class CloudKitInteraction
                         record.setValue(sourceRecord.attachmentPath, forKey: "attachmentPath")
                         record.setValue(sourceRecord.title, forKey: "title")
                         
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -2595,11 +2618,11 @@ class CloudKitInteraction
             })
     }
     
-    func saveMeetingTasksRecordToCloudKit(sourceRecord: MeetingTasks)
+    func saveMeetingTasksRecordToCloudKit(_ sourceRecord: MeetingTasks)
     {
         let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID)\") && (agendaID == \(sourceRecord.agendaID as Int)) && (taskID == \(sourceRecord.taskID as Int))") // better be accurate to get only the
         let query = CKQuery(recordType: "MeetingTasks", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
                 {
                     NSLog("Error querying records: \(error!.localizedDescription)")
@@ -2616,7 +2639,7 @@ class CloudKitInteraction
                         record!.setValue(sourceRecord.taskID, forKey: "taskID")
                         
                         // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -2640,7 +2663,7 @@ class CloudKitInteraction
                         record.setValue(sourceRecord.taskID, forKey: "taskID")
                         
                         
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -2658,11 +2681,11 @@ class CloudKitInteraction
             })
     }
     
-    func savePanesRecordToCloudKit(sourceRecord: Panes)
+    func savePanesRecordToCloudKit(_ sourceRecord: Panes)
     {
         let predicate = NSPredicate(format: "(pane_name == \"\(sourceRecord.pane_name)\")") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Panes", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
                 {
                     NSLog("Error querying records: \(error!.localizedDescription)")
@@ -2681,7 +2704,7 @@ class CloudKitInteraction
                         record!.setValue(sourceRecord.pane_visible, forKey: "pane_visible")
                         
                         // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -2705,7 +2728,7 @@ class CloudKitInteraction
                         record.setValue(sourceRecord.pane_order, forKey: "pane_order")
                         record.setValue(sourceRecord.pane_visible, forKey: "pane_visible")
                         
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -2723,11 +2746,11 @@ class CloudKitInteraction
             })
     }
     
-    func saveProjectsRecordToCloudKit(sourceRecord: Projects)
+    func saveProjectsRecordToCloudKit(_ sourceRecord: Projects)
     {
         let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID as Int))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Projects", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
                 {
                     NSLog("Error querying records: \(error!.localizedDescription)")
@@ -2773,7 +2796,7 @@ class CloudKitInteraction
                         record!.setValue(myPredecessor, forKey: "predecessor")
                         
                         // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -2808,7 +2831,7 @@ class CloudKitInteraction
                         record.setValue(myReviewPeriod, forKey: "reviewPeriod")
                         record.setValue(myPredecessor, forKey: "predecessor")
                         
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -2826,11 +2849,11 @@ class CloudKitInteraction
             })
     }
     
-    func saveProjectNoteRecordToCloudKit(sourceRecord: ProjectNote)
+    func saveProjectNoteRecordToCloudKit(_ sourceRecord: ProjectNote)
     {
         let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID as Int))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Projects", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
                 {
                     NSLog("Error querying records: \(error!.localizedDescription)")
@@ -2849,7 +2872,7 @@ class CloudKitInteraction
                         record!.setValue(sourceRecord.predecessor, forKey: "predecessor")
                         
                         // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -2875,7 +2898,7 @@ class CloudKitInteraction
                         record.setValue(sourceRecord.reviewPeriod, forKey: "reviewPeriod")
                         record.setValue(sourceRecord.predecessor, forKey: "predecessor")
                         
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -2894,11 +2917,11 @@ class CloudKitInteraction
             })
     }
 
-    func saveProjectTeamMembersRecordToCloudKit(sourceRecord: ProjectTeamMembers)
+    func saveProjectTeamMembersRecordToCloudKit(_ sourceRecord: ProjectTeamMembers)
     {
         let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID as Int)) && (teamMember == \"\(sourceRecord.teamMember)\")") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "ProjectTeamMembers", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
                 {
                     NSLog("Error querying records: \(error!.localizedDescription)")
@@ -2916,7 +2939,7 @@ class CloudKitInteraction
                         record!.setValue(sourceRecord.projectMemberNotes, forKey: "projectMemberNotes")
                         
                         // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -2940,7 +2963,7 @@ class CloudKitInteraction
                         record.setValue(sourceRecord.roleID, forKey: "roleID")
                         record.setValue(sourceRecord.projectMemberNotes, forKey: "projectMemberNotes")
                         
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -2958,11 +2981,11 @@ class CloudKitInteraction
             })
     }
     
-    func saveRolesRecordToCloudKit(sourceRecord: Roles)
+    func saveRolesRecordToCloudKit(_ sourceRecord: Roles)
     {
         let predicate = NSPredicate(format: "(roleID == \(sourceRecord.roleID as Int))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Roles", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
                 {
                     NSLog("Error querying records: \(error!.localizedDescription)")
@@ -2979,7 +3002,7 @@ class CloudKitInteraction
                         record!.setValue(sourceRecord.roleDescription, forKey: "roleDescription")
                         
                         // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -3002,7 +3025,7 @@ class CloudKitInteraction
                         record.setValue(sourceRecord.teamID, forKey: "teamID")
                         record.setValue(sourceRecord.roleDescription, forKey: "roleDescription")
                         
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -3020,11 +3043,11 @@ class CloudKitInteraction
             })
     }
     
-    func saveStagesRecordToCloudKit(sourceRecord: Stages)
+    func saveStagesRecordToCloudKit(_ sourceRecord: Stages)
     {
         let predicate = NSPredicate(format: "(stageDescription == \"\(sourceRecord.stageDescription)\") && (teamID == \(sourceRecord.teamID as Int))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Stages", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
                 {
                     NSLog("Error querying records: \(error!.localizedDescription)")
@@ -3040,7 +3063,7 @@ class CloudKitInteraction
                         record!.setValue(sourceRecord.updateType, forKey: "updateType")
                         
                         // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -3062,7 +3085,7 @@ class CloudKitInteraction
                         record.setValue(sourceRecord.updateType, forKey: "updateType")
                         record.setValue(sourceRecord.teamID, forKey: "teamID")
                         
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -3080,12 +3103,12 @@ class CloudKitInteraction
             })
     }
 
-    func saveTaskRecordToCloudKit(sourceRecord: Task)
+    func saveTaskRecordToCloudKit(_ sourceRecord: Task)
     {
         let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as Int))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Task", predicate: predicate)
         
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
                 {
                     NSLog("Error querying records: \(error!.localizedDescription)")
@@ -3118,7 +3141,7 @@ class CloudKitInteraction
                         record!.setValue(sourceRecord.teamID, forKey: "teamID")
                         
                         // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -3156,7 +3179,7 @@ class CloudKitInteraction
                         record.setValue(sourceRecord.urgency, forKey: "urgency")
                         record.setValue(sourceRecord.projectID, forKey: "projectID")
                         
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -3174,11 +3197,11 @@ class CloudKitInteraction
             })
     }
     
-    func saveTaskAttachmentRecordToCloudKit(sourceRecord: TaskAttachment)
+    func saveTaskAttachmentRecordToCloudKit(_ sourceRecord: TaskAttachment)
     {
         let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as Int)) && (title == \"\(sourceRecord.title)\")") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "TaskAttachment", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
                 {
                     NSLog("Error querying records: \(error!.localizedDescription)")
@@ -3195,7 +3218,7 @@ class CloudKitInteraction
                         record!.setValue(sourceRecord.attachment, forKey: "attachment")
                         
                         // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -3219,7 +3242,7 @@ class CloudKitInteraction
                         record.setValue(sourceRecord.attachment, forKey: "attachment")
                         
                         
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -3237,11 +3260,11 @@ class CloudKitInteraction
             })
     }
     
-    func saveTaskContextRecordToCloudKit(sourceRecord: TaskContext)
+    func saveTaskContextRecordToCloudKit(_ sourceRecord: TaskContext)
     {
         let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as Int)) && (contextID == \(sourceRecord.contextID as Int))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "TaskContext", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
                 {
                     NSLog("Error querying records: \(error!.localizedDescription)")
@@ -3257,7 +3280,7 @@ class CloudKitInteraction
                         record!.setValue(sourceRecord.updateType, forKey: "updateType")
                         
                         // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -3280,7 +3303,7 @@ class CloudKitInteraction
                         record.setValue(sourceRecord.updateType, forKey: "updateType")
                         
                         
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -3298,11 +3321,11 @@ class CloudKitInteraction
             })
     }
     
-    func saveTaskPredecessorRecordToCloudKit(sourceRecord: TaskPredecessor)
+    func saveTaskPredecessorRecordToCloudKit(_ sourceRecord: TaskPredecessor)
     {
         let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as Int)) && (predecessorID == \(sourceRecord.predecessorID as Int))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "TaskPredecessor", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
                 {
                     NSLog("Error querying records: \(error!.localizedDescription)")
@@ -3319,7 +3342,7 @@ class CloudKitInteraction
                         record!.setValue(sourceRecord.predecessorType, forKey: "predecessorType")
                         
                         // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -3342,7 +3365,7 @@ class CloudKitInteraction
                         record.setValue(sourceRecord.updateType, forKey: "updateType")
                         record.setValue(sourceRecord.predecessorType, forKey: "predecessorType")
                         
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -3360,11 +3383,11 @@ class CloudKitInteraction
             })
     }
     
-    func saveTaskUpdatesRecordToCloudKit(sourceRecord: TaskUpdates)
+    func saveTaskUpdatesRecordToCloudKit(_ sourceRecord: TaskUpdates)
     {
-        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as Int)) && (updateDate == %@)", sourceRecord.updateDate) // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as Int)) && (updateDate == %@)", sourceRecord.updateDate as CVarArg) // better be accurate to get only the record you need
         let query = CKQuery(recordType: "TaskUpdates", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
                 {
                     NSLog("Error querying records: \(error!.localizedDescription)")
@@ -3382,7 +3405,7 @@ class CloudKitInteraction
                         record!.setValue(sourceRecord.source, forKey: "source")
                         
                         // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -3406,7 +3429,7 @@ class CloudKitInteraction
                         record.setValue(sourceRecord.details, forKey: "details")
                         record.setValue(sourceRecord.source, forKey: "source")
                         
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -3424,11 +3447,11 @@ class CloudKitInteraction
             })
     }
     
-    func saveTeamRecordToCloudKit(sourceRecord: Team)
+    func saveTeamRecordToCloudKit(_ sourceRecord: Team)
     {
         let predicate = NSPredicate(format: "(teamID == \(sourceRecord.teamID as Int))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Team", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
                 {
                     NSLog("Error querying records: \(error!.localizedDescription)")
@@ -3451,7 +3474,7 @@ class CloudKitInteraction
                         
                         
                         // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -3478,7 +3501,7 @@ class CloudKitInteraction
                         record.setValue(sourceRecord.predecessor, forKey: "predecessor")
                         record.setValue(sourceRecord.externalID, forKey: "externalID")
                         
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -3496,11 +3519,11 @@ class CloudKitInteraction
             })
     }
     
-    func saveProcessedEmailsRecordToCloudKit(sourceRecord: ProcessedEmails)
+    func saveProcessedEmailsRecordToCloudKit(_ sourceRecord: ProcessedEmails)
     {
         let predicate = NSPredicate(format: "(emailID == \"\(sourceRecord.emailID!)\")") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "ProcessedEmails", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
                 {
                     NSLog("Error querying records: \(error!.localizedDescription)")
@@ -3518,7 +3541,7 @@ class CloudKitInteraction
                         record!.setValue(sourceRecord.processedDate, forKey: "processedDate")
                         
                         // Save this record again
-                        self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -3541,7 +3564,7 @@ class CloudKitInteraction
                         record.setValue(sourceRecord.emailType, forKey: "emailType")
                         record.setValue(sourceRecord.processedDate, forKey: "processedDate")
                         
-                        self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                        self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -3559,11 +3582,11 @@ class CloudKitInteraction
             })
     }
 
-    func saveOutlineRecordToCloudKit(sourceRecord: Outline)
+    func saveOutlineRecordToCloudKit(_ sourceRecord: Outline)
     {
         let predicate = NSPredicate(format: "(outlineID == \(sourceRecord.outlineID!))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Outline", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
             {
                 NSLog("Error querying records: \(error!.localizedDescription)")
@@ -3583,7 +3606,7 @@ class CloudKitInteraction
                     record!.setValue(sourceRecord.status, forKey: "status")
                     
                     // Save this record again
-                    self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                    self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
                         {
                             NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -3608,7 +3631,7 @@ class CloudKitInteraction
                     record.setValue(sourceRecord.title, forKey: "title")
                     record.setValue(sourceRecord.status, forKey: "status")
                     
-                    self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                    self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
                         {
                             NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -3626,11 +3649,11 @@ class CloudKitInteraction
         })
     }
 
-    func saveOutlineDetailsRecordToCloudKit(sourceRecord: OutlineDetails)
+    func saveOutlineDetailsRecordToCloudKit(_ sourceRecord: OutlineDetails)
     {
         let predicate = NSPredicate(format: "(outlineID == \(sourceRecord.outlineID!)) && (lineID == \(sourceRecord.lineID!))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "OutlineDetails", predicate: predicate)
-        privateDB.performQuery(query, inZoneWithID: nil, completionHandler: { (records, error) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
             {
                 NSLog("Error querying records: \(error!.localizedDescription)")
@@ -3659,7 +3682,7 @@ class CloudKitInteraction
                     }
                     
                     // Save this record again
-                    self.privateDB.saveRecord(record!, completionHandler: { (savedRecord, saveError) in
+                    self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
                         {
                             NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -3694,7 +3717,7 @@ class CloudKitInteraction
                         record.setValue("False", forKey: "checkBoxValue")
                     }
                     
-                    self.privateDB.saveRecord(record, completionHandler: { (savedRecord, saveError) in
+                    self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
                         {
                             NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -3712,36 +3735,36 @@ class CloudKitInteraction
         })
     }
     
-    private func updateContextRecord(sourceRecord: CKRecord)
+    fileprivate func updateContextRecord(_ sourceRecord: CKRecord)
     {
         var predecessor: Int = 0
         
-        let contextID = sourceRecord.objectForKey("contextID") as! Int
-        let autoEmail = sourceRecord.objectForKey("autoEmail") as! String
-        let email = sourceRecord.objectForKey("email") as! String
-        let name = sourceRecord.objectForKey("name") as! String
-        let parentContext = sourceRecord.objectForKey("parentContext") as! Int
-        let personID = sourceRecord.objectForKey("personID") as! Int
-        let status = sourceRecord.objectForKey("status") as! String
-        let teamID = sourceRecord.objectForKey("teamID") as! Int
-        let contextType = sourceRecord.objectForKey("contextType") as! String
+        let contextID = sourceRecord.object(forKey: "contextID") as! Int
+        let autoEmail = sourceRecord.object(forKey: "autoEmail") as! String
+        let email = sourceRecord.object(forKey: "email") as! String
+        let name = sourceRecord.object(forKey: "name") as! String
+        let parentContext = sourceRecord.object(forKey: "parentContext") as! Int
+        let personID = sourceRecord.object(forKey: "personID") as! Int
+        let status = sourceRecord.object(forKey: "status") as! String
+        let teamID = sourceRecord.object(forKey: "teamID") as! Int
+        let contextType = sourceRecord.object(forKey: "contextType") as! String
         
-        if sourceRecord.objectForKey("predecessor") != nil
+        if sourceRecord.object(forKey: "predecessor") != nil
         {
-            predecessor = sourceRecord.objectForKey("predecessor") as! Int
+            predecessor = sourceRecord.object(forKey: "predecessor") as! Int
         }
         
-        var updateTime = NSDate()
-        if sourceRecord.objectForKey("updateTime") != nil
+        var updateTime = Date()
+        if sourceRecord.object(forKey: "updateTime") != nil
         {
-            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+            updateTime = sourceRecord.object(forKey: "updateTime") as! Date
         }
         
         var updateType = ""
         
-        if sourceRecord.objectForKey("updateType") != nil
+        if sourceRecord.object(forKey: "updateType") != nil
         {
-            updateType = sourceRecord.objectForKey("updateType") as! String
+            updateType = sourceRecord.object(forKey: "updateType") as! String
         }
 
         myDatabaseConnection.saveContext(contextID, inName: name, inEmail: email, inAutoEmail: autoEmail, inParentContext: parentContext, inStatus: status, inPersonID: personID, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
@@ -3749,175 +3772,175 @@ class CloudKitInteraction
         myDatabaseConnection.saveContext1_1(contextID, predecessor: predecessor, contextType: contextType, updateTime: updateTime, updateType: updateType)
     }
 
-    private func updateDecodeRecord(sourceRecord: CKRecord)
+    fileprivate func updateDecodeRecord(_ sourceRecord: CKRecord)
     {
-        let decodeName = sourceRecord.objectForKey("decode_name") as! String
-        let decodeValue = sourceRecord.objectForKey("decode_value") as! String
-        let decodeType = sourceRecord.objectForKey("decodeType") as! String
+        let decodeName = sourceRecord.object(forKey: "decode_name") as! String
+        let decodeValue = sourceRecord.object(forKey: "decode_value") as! String
+        let decodeType = sourceRecord.object(forKey: "decodeType") as! String
         
-        var updateTime = NSDate()
-        if sourceRecord.objectForKey("updateTime") != nil
+        var updateTime = Date()
+        if sourceRecord.object(forKey: "updateTime") != nil
         {
-            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+            updateTime = sourceRecord.object(forKey: "updateTime") as! Date
         }
     
         var updateType = ""
         
-        if sourceRecord.objectForKey("updateType") != nil
+        if sourceRecord.object(forKey: "updateType") != nil
         {
-            updateType = sourceRecord.objectForKey("updateType") as! String
+            updateType = sourceRecord.object(forKey: "updateType") as! String
         }
         
         myDatabaseConnection.updateDecodeValue(decodeName, inCodeValue: decodeValue, inCodeType: decodeType, inUpdateTime: updateTime, inUpdateType: updateType)
     }
     
-    private func updateGTDItemRecord(sourceRecord: CKRecord)
+    fileprivate func updateGTDItemRecord(_ sourceRecord: CKRecord)
     {
-        let gTDItemID = sourceRecord.objectForKey("gTDItemID") as! Int
-        var updateTime = NSDate()
-        if sourceRecord.objectForKey("updateTime") != nil
+        let gTDItemID = sourceRecord.object(forKey: "gTDItemID") as! Int
+        var updateTime = Date()
+        if sourceRecord.object(forKey: "updateTime") != nil
         {
-            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+            updateTime = sourceRecord.object(forKey: "updateTime") as! Date
         }
         
         var updateType = ""
         
-        if sourceRecord.objectForKey("updateType") != nil
+        if sourceRecord.object(forKey: "updateType") != nil
         {
-            updateType = sourceRecord.objectForKey("updateType") as! String
+            updateType = sourceRecord.object(forKey: "updateType") as! String
         }
-        let gTDParentID = sourceRecord.objectForKey("gTDParentID") as! Int
-        let lastReviewDate = sourceRecord.objectForKey("lastReviewDate") as! NSDate
-        let note = sourceRecord.objectForKey("note") as! String
-        let predecessor = sourceRecord.objectForKey("predecessor") as! Int
-        let reviewFrequency = sourceRecord.objectForKey("reviewFrequency") as! Int
-        let reviewPeriod = sourceRecord.objectForKey("reviewPeriod") as! String
-        let status = sourceRecord.objectForKey("status") as! String
-        let teamID = sourceRecord.objectForKey("teamID") as! Int
-        let title = sourceRecord.objectForKey("title") as! String
-        let gTDLevel = sourceRecord.objectForKey("gTDLevel") as! Int
+        let gTDParentID = sourceRecord.object(forKey: "gTDParentID") as! Int
+        let lastReviewDate = sourceRecord.object(forKey: "lastReviewDate") as! Date
+        let note = sourceRecord.object(forKey: "note") as! String
+        let predecessor = sourceRecord.object(forKey: "predecessor") as! Int
+        let reviewFrequency = sourceRecord.object(forKey: "reviewFrequency") as! Int
+        let reviewPeriod = sourceRecord.object(forKey: "reviewPeriod") as! String
+        let status = sourceRecord.object(forKey: "status") as! String
+        let teamID = sourceRecord.object(forKey: "teamID") as! Int
+        let title = sourceRecord.object(forKey: "title") as! String
+        let gTDLevel = sourceRecord.object(forKey: "gTDLevel") as! Int
         
         myDatabaseConnection.saveGTDItem(gTDItemID, inParentID: gTDParentID, inTitle: title, inStatus: status, inTeamID: teamID, inNote: note, inLastReviewDate: lastReviewDate, inReviewFrequency: reviewFrequency, inReviewPeriod: reviewPeriod, inPredecessor: predecessor, inGTDLevel: gTDLevel, inUpdateTime: updateTime, inUpdateType: updateType)
     }
     
-    private func updateGTDLevelRecord(sourceRecord: CKRecord)
+    fileprivate func updateGTDLevelRecord(_ sourceRecord: CKRecord)
     {
-        let gTDLevel = sourceRecord.objectForKey("gTDLevel") as! Int
-        var updateTime = NSDate()
-        if sourceRecord.objectForKey("updateTime") != nil
+        let gTDLevel = sourceRecord.object(forKey: "gTDLevel") as! Int
+        var updateTime = Date()
+        if sourceRecord.object(forKey: "updateTime") != nil
         {
-            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+            updateTime = sourceRecord.object(forKey: "updateTime") as! Date
         }
         
         var updateType = ""
         
-        if sourceRecord.objectForKey("updateType") != nil
+        if sourceRecord.object(forKey: "updateType") != nil
         {
-            updateType = sourceRecord.objectForKey("updateType") as! String
+            updateType = sourceRecord.object(forKey: "updateType") as! String
         }
-        let teamID = sourceRecord.objectForKey("teamID") as! Int
-        let levelName = sourceRecord.objectForKey("levelName") as! String
+        let teamID = sourceRecord.object(forKey: "teamID") as! Int
+        let levelName = sourceRecord.object(forKey: "levelName") as! String
         
         myDatabaseConnection.saveGTDLevel(gTDLevel, inLevelName: levelName, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
     }
     
-    private func updateMeetingAgendaRecord(sourceRecord: CKRecord)
+    fileprivate func updateMeetingAgendaRecord(_ sourceRecord: CKRecord)
     {
-        let meetingID = sourceRecord.objectForKey("meetingID") as! String
-        var updateTime = NSDate()
-        if sourceRecord.objectForKey("updateTime") != nil
+        let meetingID = sourceRecord.object(forKey: "meetingID") as! String
+        var updateTime = Date()
+        if sourceRecord.object(forKey: "updateTime") != nil
         {
-            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+            updateTime = sourceRecord.object(forKey: "updateTime") as! Date
         }
         
         var updateType = ""
         
-        if sourceRecord.objectForKey("updateType") != nil
+        if sourceRecord.object(forKey: "updateType") != nil
         {
-            updateType = sourceRecord.objectForKey("updateType") as! String
+            updateType = sourceRecord.object(forKey: "updateType") as! String
         }
-        let chair = sourceRecord.objectForKey("chair") as! String
-        let endTime = sourceRecord.objectForKey("endTime") as! NSDate
-        let location = sourceRecord.objectForKey("location") as! String
-        let minutes = sourceRecord.objectForKey("minutes") as! String
-        let minutesType = sourceRecord.objectForKey("minutesType") as! String
-        let name = sourceRecord.objectForKey("name") as! String
-        let previousMeetingID = sourceRecord.objectForKey("previousMeetingID") as! String
-        let startTime = sourceRecord.objectForKey("meetingStartTime") as! NSDate
-        let teamID = sourceRecord.objectForKey("actualTeamID") as! Int
+        let chair = sourceRecord.object(forKey: "chair") as! String
+        let endTime = sourceRecord.object(forKey: "endTime") as! Date
+        let location = sourceRecord.object(forKey: "location") as! String
+        let minutes = sourceRecord.object(forKey: "minutes") as! String
+        let minutesType = sourceRecord.object(forKey: "minutesType") as! String
+        let name = sourceRecord.object(forKey: "name") as! String
+        let previousMeetingID = sourceRecord.object(forKey: "previousMeetingID") as! String
+        let startTime = sourceRecord.object(forKey: "meetingStartTime") as! Date
+        let teamID = sourceRecord.object(forKey: "actualTeamID") as! Int
         
         myDatabaseConnection.saveAgenda(meetingID, inPreviousMeetingID : previousMeetingID, inName: name, inChair: chair, inMinutes: minutes, inLocation: location, inStartTime: startTime, inEndTime: endTime, inMinutesType: minutesType, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
     }
     
-    private func updateMeetingAgendaItemRecord(sourceRecord: CKRecord)
+    fileprivate func updateMeetingAgendaItemRecord(_ sourceRecord: CKRecord)
     {
-        let meetingID = sourceRecord.objectForKey("meetingID") as! String
-        let agendaID = sourceRecord.objectForKey("agendaID") as! Int
-        var updateTime = NSDate()
-        if sourceRecord.objectForKey("updateTime") != nil
+        let meetingID = sourceRecord.object(forKey: "meetingID") as! String
+        let agendaID = sourceRecord.object(forKey: "agendaID") as! Int
+        var updateTime = Date()
+        if sourceRecord.object(forKey: "updateTime") != nil
         {
-            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+            updateTime = sourceRecord.object(forKey: "updateTime") as! Date
         }
         
         var updateType = ""
         
-        if sourceRecord.objectForKey("updateType") != nil
+        if sourceRecord.object(forKey: "updateType") != nil
         {
-            updateType = sourceRecord.objectForKey("updateType") as! String
+            updateType = sourceRecord.object(forKey: "updateType") as! String
         }
-        var actualEndTime: NSDate!
-        if sourceRecord.objectForKey("actualEndTime") != nil
+        var actualEndTime: Date!
+        if sourceRecord.object(forKey: "actualEndTime") != nil
         {
-            actualEndTime = sourceRecord.objectForKey("actualEndTime") as! NSDate
-        }
-        else
-        {
-            actualEndTime = getDefaultDate()
-        }
-        var actualStartTime: NSDate!
-        if sourceRecord.objectForKey("actualStartTime") != nil
-        {
-            actualStartTime = sourceRecord.objectForKey("actualStartTime") as! NSDate
+            actualEndTime = sourceRecord.object(forKey: "actualEndTime") as! Date
         }
         else
         {
-            actualStartTime = getDefaultDate()
+            actualEndTime = getDefaultDate() as Date!
         }
-        let decisionMade = sourceRecord.objectForKey("decisionMade") as! String
-        let discussionNotes = sourceRecord.objectForKey("discussionNotes") as! String
-        let owner = sourceRecord.objectForKey("owner") as! String
-        let status = sourceRecord.objectForKey("status") as! String
-        let timeAllocation = sourceRecord.objectForKey("timeAllocation") as! Int
-        let title = sourceRecord.objectForKey("title") as! String
-        let meetingOrder = sourceRecord.objectForKey("meetingOrder") as! Int
+        var actualStartTime: Date!
+        if sourceRecord.object(forKey: "actualStartTime") != nil
+        {
+            actualStartTime = sourceRecord.object(forKey: "actualStartTime") as! Date
+        }
+        else
+        {
+            actualStartTime = getDefaultDate() as Date!
+        }
+        let decisionMade = sourceRecord.object(forKey: "decisionMade") as! String
+        let discussionNotes = sourceRecord.object(forKey: "discussionNotes") as! String
+        let owner = sourceRecord.object(forKey: "owner") as! String
+        let status = sourceRecord.object(forKey: "status") as! String
+        let timeAllocation = sourceRecord.object(forKey: "timeAllocation") as! Int
+        let title = sourceRecord.object(forKey: "title") as! String
+        let meetingOrder = sourceRecord.object(forKey: "meetingOrder") as! Int
         
         myDatabaseConnection.saveAgendaItem(meetingID, actualEndTime: actualEndTime, actualStartTime: actualStartTime, status: status, decisionMade: decisionMade, discussionNotes: discussionNotes, timeAllocation: timeAllocation, owner: owner, title: title, agendaID: agendaID, meetingOrder: meetingOrder, inUpdateTime: updateTime, inUpdateType: updateType)
     }
     
-    private func updateMeetingAttendeesRecord(sourceRecord: CKRecord)
+    fileprivate func updateMeetingAttendeesRecord(_ sourceRecord: CKRecord)
     {
-        let meetingID = sourceRecord.objectForKey("meetingID") as! String
-        let name  = sourceRecord.objectForKey("name") as! String
-        var updateTime = NSDate()
-        if sourceRecord.objectForKey("updateTime") != nil
+        let meetingID = sourceRecord.object(forKey: "meetingID") as! String
+        let name  = sourceRecord.object(forKey: "name") as! String
+        var updateTime = Date()
+        if sourceRecord.object(forKey: "updateTime") != nil
         {
-            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+            updateTime = sourceRecord.object(forKey: "updateTime") as! Date
         }
         
         var updateType = ""
         
-        if sourceRecord.objectForKey("updateType") != nil
+        if sourceRecord.object(forKey: "updateType") != nil
         {
-            updateType = sourceRecord.objectForKey("updateType") as! String
+            updateType = sourceRecord.object(forKey: "updateType") as! String
         }
-        let attendenceStatus = sourceRecord.objectForKey("attendenceStatus") as! String
-        let email = sourceRecord.objectForKey("email") as! String
-        let type = sourceRecord.objectForKey("type") as! String
+        let attendenceStatus = sourceRecord.object(forKey: "attendenceStatus") as! String
+        let email = sourceRecord.object(forKey: "email") as! String
+        let type = sourceRecord.object(forKey: "type") as! String
         
         myDatabaseConnection.saveAttendee(meetingID, name: name, email: email,  type: type, status: attendenceStatus, inUpdateTime: updateTime, inUpdateType: updateType)
     }
     
-    private func updateMeetingSupportingDocsRecord(sourceRecord: CKRecord)
+    fileprivate func updateMeetingSupportingDocsRecord(_ sourceRecord: CKRecord)
     {
       //  let meetingID = sourceRecord.objectForKey("meetingID") as! String
         //              let agendaID = sourceRecord.objectForKey("agendaID") as! Int
@@ -3941,184 +3964,184 @@ class CloudKitInteraction
         // myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
     }
     
-    private func updateMeetingTasksRecord(sourceRecord: CKRecord)
+    fileprivate func updateMeetingTasksRecord(_ sourceRecord: CKRecord)
     {
-        let meetingID = sourceRecord.objectForKey("meetingID") as! String
-        let agendaID = sourceRecord.objectForKey("agendaID") as! Int
-        var updateTime = NSDate()
-        if sourceRecord.objectForKey("updateTime") != nil
+        let meetingID = sourceRecord.object(forKey: "meetingID") as! String
+        let agendaID = sourceRecord.object(forKey: "agendaID") as! Int
+        var updateTime = Date()
+        if sourceRecord.object(forKey: "updateTime") != nil
         {
-            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+            updateTime = sourceRecord.object(forKey: "updateTime") as! Date
         }
         
         var updateType = ""
         
-        if sourceRecord.objectForKey("updateType") != nil
+        if sourceRecord.object(forKey: "updateType") != nil
         {
-            updateType = sourceRecord.objectForKey("updateType") as! String
+            updateType = sourceRecord.object(forKey: "updateType") as! String
         }
-        let taskID = sourceRecord.objectForKey("taskID") as! Int
+        let taskID = sourceRecord.object(forKey: "taskID") as! Int
         
         myDatabaseConnection.saveMeetingTask(agendaID, meetingID: meetingID, taskID: taskID, inUpdateTime: updateTime, inUpdateType: updateType)
     }
     
-    private func updatePanesRecord(sourceRecord: CKRecord)
+    fileprivate func updatePanesRecord(_ sourceRecord: CKRecord)
     {
-        let pane_name = sourceRecord.objectForKey("pane_name") as! String
-        var updateTime = NSDate()
-        if sourceRecord.objectForKey("updateTime") != nil
+        let pane_name = sourceRecord.object(forKey: "pane_name") as! String
+        var updateTime = Date()
+        if sourceRecord.object(forKey: "updateTime") != nil
         {
-            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+            updateTime = sourceRecord.object(forKey: "updateTime") as! Date
         }
         
         var updateType = ""
         
-        if sourceRecord.objectForKey("updateType") != nil
+        if sourceRecord.object(forKey: "updateType") != nil
         {
-            updateType = sourceRecord.objectForKey("updateType") as! String
+            updateType = sourceRecord.object(forKey: "updateType") as! String
         }
-        let pane_available = sourceRecord.objectForKey("pane_available") as! Bool
-        let pane_order = sourceRecord.objectForKey("pane_order") as! Int
-        let pane_visible = sourceRecord.objectForKey("pane_visible") as! Bool
+        let pane_available = sourceRecord.object(forKey: "pane_available") as! Bool
+        let pane_order = sourceRecord.object(forKey: "pane_order") as! Int
+        let pane_visible = sourceRecord.object(forKey: "pane_visible") as! Bool
         
         myDatabaseConnection.savePane(pane_name, inPaneAvailable: pane_available, inPaneVisible: pane_visible, inPaneOrder: pane_order, inUpdateTime: updateTime, inUpdateType: updateType)
     }
     
-    private func updateProjectsRecord(sourceRecord: CKRecord)
+    fileprivate func updateProjectsRecord(_ sourceRecord: CKRecord)
     {
-        let projectID = sourceRecord.objectForKey("projectID") as! Int
-        var updateTime = NSDate()
-        if sourceRecord.objectForKey("updateTime") != nil
+        let projectID = sourceRecord.object(forKey: "projectID") as! Int
+        var updateTime = Date()
+        if sourceRecord.object(forKey: "updateTime") != nil
         {
-            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+            updateTime = sourceRecord.object(forKey: "updateTime") as! Date
         }
         
         var updateType = ""
         
-        if sourceRecord.objectForKey("updateType") != nil
+        if sourceRecord.object(forKey: "updateType") != nil
         {
-            updateType = sourceRecord.objectForKey("updateType") as! String
+            updateType = sourceRecord.object(forKey: "updateType") as! String
         }
-        let areaID = sourceRecord.objectForKey("areaID") as! Int
-        let lastReviewDate = sourceRecord.objectForKey("lastReviewDate") as! NSDate
-        let projectEndDate = sourceRecord.objectForKey("projectEndDate") as! NSDate
-        let projectName = sourceRecord.objectForKey("projectName") as! String
-        let projectStartDate = sourceRecord.objectForKey("projectStartDate") as! NSDate
-        let projectStatus = sourceRecord.objectForKey("projectStatus") as! String
-        let repeatBase = sourceRecord.objectForKey("repeatBase") as! String
-        let repeatInterval = sourceRecord.objectForKey("repeatInterval") as! Int
-        let repeatType = sourceRecord.objectForKey("repeatType") as! String
-        let reviewFrequency = sourceRecord.objectForKey("reviewFrequency") as! Int
-        let teamID = sourceRecord.objectForKey("teamID") as! Int
-        let note = sourceRecord.objectForKey("note") as! String
-        let reviewPeriod = sourceRecord.objectForKey("reviewPeriod") as! String
-        let predecessor = sourceRecord.objectForKey("predecessor") as! Int
+        let areaID = sourceRecord.object(forKey: "areaID") as! Int
+        let lastReviewDate = sourceRecord.object(forKey: "lastReviewDate") as! Date
+        let projectEndDate = sourceRecord.object(forKey: "projectEndDate") as! Date
+        let projectName = sourceRecord.object(forKey: "projectName") as! String
+        let projectStartDate = sourceRecord.object(forKey: "projectStartDate") as! Date
+        let projectStatus = sourceRecord.object(forKey: "projectStatus") as! String
+        let repeatBase = sourceRecord.object(forKey: "repeatBase") as! String
+        let repeatInterval = sourceRecord.object(forKey: "repeatInterval") as! Int
+        let repeatType = sourceRecord.object(forKey: "repeatType") as! String
+        let reviewFrequency = sourceRecord.object(forKey: "reviewFrequency") as! Int
+        let teamID = sourceRecord.object(forKey: "teamID") as! Int
+        let note = sourceRecord.object(forKey: "note") as! String
+        let reviewPeriod = sourceRecord.object(forKey: "reviewPeriod") as! String
+        let predecessor = sourceRecord.object(forKey: "predecessor") as! Int
         
         myDatabaseConnection.saveProject(projectID, inProjectEndDate: projectEndDate, inProjectName: projectName, inProjectStartDate: projectStartDate, inProjectStatus: projectStatus, inReviewFrequency: reviewFrequency, inLastReviewDate: lastReviewDate, inGTDItemID: areaID, inRepeatInterval: repeatInterval, inRepeatType: repeatType, inRepeatBase: repeatBase, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
         
         myDatabaseConnection.saveProjectNote(projectID, inNote: note, inReviewPeriod: reviewPeriod, inPredecessor: predecessor, inUpdateTime: updateTime, inUpdateType: updateType)
     }
     
-    private func updateProjectTeamMembersRecord(sourceRecord: CKRecord)
+    fileprivate func updateProjectTeamMembersRecord(_ sourceRecord: CKRecord)
     {
-        let projectID = sourceRecord.objectForKey("projectID") as! Int
-        let teamMember = sourceRecord.objectForKey("teamMember") as! String
-        var updateTime = NSDate()
-        if sourceRecord.objectForKey("updateTime") != nil
+        let projectID = sourceRecord.object(forKey: "projectID") as! Int
+        let teamMember = sourceRecord.object(forKey: "teamMember") as! String
+        var updateTime = Date()
+        if sourceRecord.object(forKey: "updateTime") != nil
         {
-            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+            updateTime = sourceRecord.object(forKey: "updateTime") as! Date
         }
         
         var updateType = ""
         
-        if sourceRecord.objectForKey("updateType") != nil
+        if sourceRecord.object(forKey: "updateType") != nil
         {
-            updateType = sourceRecord.objectForKey("updateType") as! String
+            updateType = sourceRecord.object(forKey: "updateType") as! String
         }
-        let roleID = sourceRecord.objectForKey("roleID") as! Int
-        let projectMemberNotes = sourceRecord.objectForKey("projectMemberNotes") as! String
+        let roleID = sourceRecord.object(forKey: "roleID") as! Int
+        let projectMemberNotes = sourceRecord.object(forKey: "projectMemberNotes") as! String
         
         myDatabaseConnection.saveTeamMember(projectID, inRoleID: roleID, inPersonName: teamMember, inNotes: projectMemberNotes, inUpdateTime: updateTime, inUpdateType: updateType)
     }
     
-    private func updateRolesRecord(sourceRecord: CKRecord)
+    fileprivate func updateRolesRecord(_ sourceRecord: CKRecord)
     {
-        let roleID = sourceRecord.objectForKey("roleID") as! Int
-        var updateTime = NSDate()
-        if sourceRecord.objectForKey("updateTime") != nil
+        let roleID = sourceRecord.object(forKey: "roleID") as! Int
+        var updateTime = Date()
+        if sourceRecord.object(forKey: "updateTime") != nil
         {
-            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+            updateTime = sourceRecord.object(forKey: "updateTime") as! Date
         }
         
         var updateType = ""
         
-        if sourceRecord.objectForKey("updateType") != nil
+        if sourceRecord.object(forKey: "updateType") != nil
         {
-            updateType = sourceRecord.objectForKey("updateType") as! String
+            updateType = sourceRecord.object(forKey: "updateType") as! String
         }
-        let teamID = sourceRecord.objectForKey("teamID") as! Int
-        let roleDescription = sourceRecord.objectForKey("roleDescription") as! String
+        let teamID = sourceRecord.object(forKey: "teamID") as! Int
+        let roleDescription = sourceRecord.object(forKey: "roleDescription") as! String
         
         myDatabaseConnection.saveCloudRole(roleDescription, teamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType, roleID: roleID)
     }
     
-    private func updateStagesRecord(sourceRecord: CKRecord)
+    fileprivate func updateStagesRecord(_ sourceRecord: CKRecord)
     {
-        let stageDescription = sourceRecord.objectForKey("stageDescription") as! String
-        var updateTime = NSDate()
-        if sourceRecord.objectForKey("updateTime") != nil
+        let stageDescription = sourceRecord.object(forKey: "stageDescription") as! String
+        var updateTime = Date()
+        if sourceRecord.object(forKey: "updateTime") != nil
         {
-            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+            updateTime = sourceRecord.object(forKey: "updateTime") as! Date
         }
         
         var updateType = ""
         
-        if sourceRecord.objectForKey("updateType") != nil
+        if sourceRecord.object(forKey: "updateType") != nil
         {
-            updateType = sourceRecord.objectForKey("updateType") as! String
+            updateType = sourceRecord.object(forKey: "updateType") as! String
         }
-        let teamID = sourceRecord.objectForKey("teamID") as! Int
+        let teamID = sourceRecord.object(forKey: "teamID") as! Int
         
         myDatabaseConnection.saveStage(stageDescription, teamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
     }
     
-    private func updateTaskRecord(sourceRecord: CKRecord)
+    fileprivate func updateTaskRecord(_ sourceRecord: CKRecord)
     {
-        let taskID = sourceRecord.objectForKey("taskID") as! Int
-        var updateTime = NSDate()
-        if sourceRecord.objectForKey("updateTime") != nil
+        let taskID = sourceRecord.object(forKey: "taskID") as! Int
+        var updateTime = Date()
+        if sourceRecord.object(forKey: "updateTime") != nil
         {
-            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+            updateTime = sourceRecord.object(forKey: "updateTime") as! Date
         }
         
         var updateType = ""
         
-        if sourceRecord.objectForKey("updateType") != nil
+        if sourceRecord.object(forKey: "updateType") != nil
         {
-            updateType = sourceRecord.objectForKey("updateType") as! String
+            updateType = sourceRecord.object(forKey: "updateType") as! String
         }
-        let completionDate = sourceRecord.objectForKey("completionDate") as! NSDate
-        let details = sourceRecord.objectForKey("details") as! String
-        let dueDate = sourceRecord.objectForKey("dueDate") as! NSDate
-        let energyLevel = sourceRecord.objectForKey("energyLevel") as! String
-        let estimatedTime = sourceRecord.objectForKey("estimatedTime") as! Int
-        let estimatedTimeType = sourceRecord.objectForKey("estimatedTimeType") as! String
-        let flagged = sourceRecord.objectForKey("flagged") as! Bool
-        let priority = sourceRecord.objectForKey("priority") as! String
-        let repeatBase = sourceRecord.objectForKey("repeatBase") as! String
-        let repeatInterval = sourceRecord.objectForKey("repeatInterval") as! Int
-        let repeatType = sourceRecord.objectForKey("repeatType") as! String
-        let startDate = sourceRecord.objectForKey("startDate") as! NSDate
-        let status = sourceRecord.objectForKey("status") as! String
-        let teamID = sourceRecord.objectForKey("teamID") as! Int
-        let title = sourceRecord.objectForKey("title") as! String
-        let urgency = sourceRecord.objectForKey("urgency") as! String
-        let projectID = sourceRecord.objectForKey("projectID") as! Int
+        let completionDate = sourceRecord.object(forKey: "completionDate") as! Date
+        let details = sourceRecord.object(forKey: "details") as! String
+        let dueDate = sourceRecord.object(forKey: "dueDate") as! Date
+        let energyLevel = sourceRecord.object(forKey: "energyLevel") as! String
+        let estimatedTime = sourceRecord.object(forKey: "estimatedTime") as! Int
+        let estimatedTimeType = sourceRecord.object(forKey: "estimatedTimeType") as! String
+        let flagged = sourceRecord.object(forKey: "flagged") as! Bool
+        let priority = sourceRecord.object(forKey: "priority") as! String
+        let repeatBase = sourceRecord.object(forKey: "repeatBase") as! String
+        let repeatInterval = sourceRecord.object(forKey: "repeatInterval") as! Int
+        let repeatType = sourceRecord.object(forKey: "repeatType") as! String
+        let startDate = sourceRecord.object(forKey: "startDate") as! Date
+        let status = sourceRecord.object(forKey: "status") as! String
+        let teamID = sourceRecord.object(forKey: "teamID") as! Int
+        let title = sourceRecord.object(forKey: "title") as! String
+        let urgency = sourceRecord.object(forKey: "urgency") as! String
+        let projectID = sourceRecord.object(forKey: "projectID") as! Int
         
         myDatabaseConnection.saveTask(taskID, inTitle: title, inDetails: details, inDueDate: dueDate, inStartDate: startDate, inStatus: status, inPriority: priority, inEnergyLevel: energyLevel, inEstimatedTime: estimatedTime, inEstimatedTimeType: estimatedTimeType, inProjectID: projectID, inCompletionDate: completionDate, inRepeatInterval: repeatInterval, inRepeatType: repeatType, inRepeatBase: repeatBase, inFlagged: flagged, inUrgency: urgency, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
     }
     
-    private func updateTaskAttachmentRecord(sourceRecord: CKRecord)
+    fileprivate func updateTaskAttachmentRecord(_ sourceRecord: CKRecord)
     {
         //    let taskID = sourceRecord.objectForKey("taskID") as! Int
         //    let title = sourceRecord.objectForKey("title") as! String
@@ -4139,160 +4162,160 @@ class CloudKitInteraction
         //   myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
     }
     
-    private func updateTaskContextRecord(sourceRecord: CKRecord)
+    fileprivate func updateTaskContextRecord(_ sourceRecord: CKRecord)
     {
-        let taskID = sourceRecord.objectForKey("taskID") as! Int
-        let contextID = sourceRecord.objectForKey("contextID") as! Int
-        var updateTime = NSDate()
-        if sourceRecord.objectForKey("updateTime") != nil
+        let taskID = sourceRecord.object(forKey: "taskID") as! Int
+        let contextID = sourceRecord.object(forKey: "contextID") as! Int
+        var updateTime = Date()
+        if sourceRecord.object(forKey: "updateTime") != nil
         {
-            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+            updateTime = sourceRecord.object(forKey: "updateTime") as! Date
         }
         
         var updateType = ""
         
-        if sourceRecord.objectForKey("updateType") != nil
+        if sourceRecord.object(forKey: "updateType") != nil
         {
-            updateType = sourceRecord.objectForKey("updateType") as! String
+            updateType = sourceRecord.object(forKey: "updateType") as! String
         }
         
         myDatabaseConnection.saveTaskContext(contextID, inTaskID: taskID, inUpdateTime: updateTime, inUpdateType: updateType)
     }
     
-    private func updateTaskPredecessorRecord(sourceRecord: CKRecord)
+    fileprivate func updateTaskPredecessorRecord(_ sourceRecord: CKRecord)
     {
-        let taskID = sourceRecord.objectForKey("taskID") as! Int
-        let predecessorID = sourceRecord.objectForKey("predecessorID") as! Int
-        var updateTime = NSDate()
-        if sourceRecord.objectForKey("updateTime") != nil
+        let taskID = sourceRecord.object(forKey: "taskID") as! Int
+        let predecessorID = sourceRecord.object(forKey: "predecessorID") as! Int
+        var updateTime = Date()
+        if sourceRecord.object(forKey: "updateTime") != nil
         {
-            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+            updateTime = sourceRecord.object(forKey: "updateTime") as! Date
         }
         
         var updateType = ""
         
-        if sourceRecord.objectForKey("updateType") != nil
+        if sourceRecord.object(forKey: "updateType") != nil
         {
-            updateType = sourceRecord.objectForKey("updateType") as! String
+            updateType = sourceRecord.object(forKey: "updateType") as! String
         }
-        let predecessorType = sourceRecord.objectForKey("predecessorType") as! String
+        let predecessorType = sourceRecord.object(forKey: "predecessorType") as! String
         
         myDatabaseConnection.savePredecessorTask(taskID, inPredecessorID: predecessorID, inPredecessorType: predecessorType, inUpdateTime: updateTime, inUpdateType: updateType)
     }
     
-    private func updateTaskUpdatesRecord(sourceRecord: CKRecord)
+    fileprivate func updateTaskUpdatesRecord(_ sourceRecord: CKRecord)
     {
-        let taskID = sourceRecord.objectForKey("taskID") as! Int
-        let updateDate = sourceRecord.objectForKey("updateDate") as! NSDate
-        var updateTime = NSDate()
-        if sourceRecord.objectForKey("updateTime") != nil
+        let taskID = sourceRecord.object(forKey: "taskID") as! Int
+        let updateDate = sourceRecord.object(forKey: "updateDate") as! Date
+        var updateTime = Date()
+        if sourceRecord.object(forKey: "updateTime") != nil
         {
-            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+            updateTime = sourceRecord.object(forKey: "updateTime") as! Date
         }
         
         var updateType = ""
         
-        if sourceRecord.objectForKey("updateType") != nil
+        if sourceRecord.object(forKey: "updateType") != nil
         {
-            updateType = sourceRecord.objectForKey("updateType") as! String
+            updateType = sourceRecord.object(forKey: "updateType") as! String
         }
-        let details = sourceRecord.objectForKey("details") as! String
-        let source = sourceRecord.objectForKey("source") as! String
+        let details = sourceRecord.object(forKey: "details") as! String
+        let source = sourceRecord.object(forKey: "source") as! String
         
         myDatabaseConnection.saveTaskUpdate(taskID, inDetails: details, inSource: source, inUpdateDate: updateDate, inUpdateTime: updateTime, inUpdateType: updateType)
     }
     
-    private func updateTeamRecord(sourceRecord: CKRecord)
+    fileprivate func updateTeamRecord(_ sourceRecord: CKRecord)
     {
-        let teamID = sourceRecord.objectForKey("teamID") as! Int
-        var updateTime = NSDate()
-        if sourceRecord.objectForKey("updateTime") != nil
+        let teamID = sourceRecord.object(forKey: "teamID") as! Int
+        var updateTime = Date()
+        if sourceRecord.object(forKey: "updateTime") != nil
         {
-            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+            updateTime = sourceRecord.object(forKey: "updateTime") as! Date
         }
         
         var updateType = ""
         
-        if sourceRecord.objectForKey("updateType") != nil
+        if sourceRecord.object(forKey: "updateType") != nil
         {
-            updateType = sourceRecord.objectForKey("updateType") as! String
+            updateType = sourceRecord.object(forKey: "updateType") as! String
         }
-        let name = sourceRecord.objectForKey("name") as! String
-        let note = sourceRecord.objectForKey("note") as! String
-        let status = sourceRecord.objectForKey("status") as! String
-        let type = sourceRecord.objectForKey("type") as! String
-        let predecessor = sourceRecord.objectForKey("predecessor") as! Int
-        let externalID = sourceRecord.objectForKey("externalID") as! Int
+        let name = sourceRecord.object(forKey: "name") as! String
+        let note = sourceRecord.object(forKey: "note") as! String
+        let status = sourceRecord.object(forKey: "status") as! String
+        let type = sourceRecord.object(forKey: "type") as! String
+        let predecessor = sourceRecord.object(forKey: "predecessor") as! Int
+        let externalID = sourceRecord.object(forKey: "externalID") as! Int
         
         myDatabaseConnection.saveTeam(teamID, inName: name, inStatus: status, inNote: note, inType: type, inPredecessor: predecessor, inExternalID: externalID, inUpdateTime: updateTime, inUpdateType: updateType)
     }
     
-    private func updateProcessedEmailsRecord(sourceRecord: CKRecord)
+    fileprivate func updateProcessedEmailsRecord(_ sourceRecord: CKRecord)
     {
-        let emailID = sourceRecord.objectForKey("emailID") as! String
-        var updateTime = NSDate()
-        if sourceRecord.objectForKey("updateTime") != nil
+        let emailID = sourceRecord.object(forKey: "emailID") as! String
+        var updateTime = Date()
+        if sourceRecord.object(forKey: "updateTime") != nil
         {
-            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+            updateTime = sourceRecord.object(forKey: "updateTime") as! Date
         }
         
         var updateType = ""
         
-        if sourceRecord.objectForKey("updateType") != nil
+        if sourceRecord.object(forKey: "updateType") != nil
         {
-            updateType = sourceRecord.objectForKey("updateType") as! String
+            updateType = sourceRecord.object(forKey: "updateType") as! String
         }
-        let emailType = sourceRecord.objectForKey("emailType") as! String
-        let processedDate = sourceRecord.objectForKey("processedDate") as! NSDate
+        let emailType = sourceRecord.object(forKey: "emailType") as! String
+        let processedDate = sourceRecord.object(forKey: "processedDate") as! Date
         
         myDatabaseConnection.saveProcessedEmail(emailID, emailType: emailType, processedDate: processedDate, updateTime: updateTime, updateType: updateType)
     }
     
-    private func updateOutlineRecord(sourceRecord: CKRecord)
+    fileprivate func updateOutlineRecord(_ sourceRecord: CKRecord)
     {
-        let outlineID = sourceRecord.objectForKey("outlineID") as! Int
-        var updateTime = NSDate()
-        if sourceRecord.objectForKey("updateTime") != nil
+        let outlineID = sourceRecord.object(forKey: "outlineID") as! Int
+        var updateTime = Date()
+        if sourceRecord.object(forKey: "updateTime") != nil
         {
-            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+            updateTime = sourceRecord.object(forKey: "updateTime") as! Date
         }
         
         var updateType = ""
         
-        if sourceRecord.objectForKey("updateType") != nil
+        if sourceRecord.object(forKey: "updateType") != nil
         {
-            updateType = sourceRecord.objectForKey("updateType") as! String
+            updateType = sourceRecord.object(forKey: "updateType") as! String
         }
-        let parentID = sourceRecord.objectForKey("parentID") as! Int
-        let parentType = sourceRecord.objectForKey("parentType") as! String
-        let title = sourceRecord.objectForKey("title") as! String
-        let status = sourceRecord.objectForKey("status") as! String
+        let parentID = sourceRecord.object(forKey: "parentID") as! Int
+        let parentType = sourceRecord.object(forKey: "parentType") as! String
+        let title = sourceRecord.object(forKey: "title") as! String
+        let status = sourceRecord.object(forKey: "status") as! String
         
         myDatabaseConnection.saveOutline(outlineID, parentID: parentID, parentType: parentType, title: title, status: status, updateTime: updateTime, updateType: updateType)
     }
     
-    private func updateOutlineDetailsRecord(sourceRecord: CKRecord)
+    fileprivate func updateOutlineDetailsRecord(_ sourceRecord: CKRecord)
     {
-        let outlineID = sourceRecord.objectForKey("outlineID") as! Int
-        var updateTime = NSDate()
-        if sourceRecord.objectForKey("updateTime") != nil
+        let outlineID = sourceRecord.object(forKey: "outlineID") as! Int
+        var updateTime = Date()
+        if sourceRecord.object(forKey: "updateTime") != nil
         {
-            updateTime = sourceRecord.objectForKey("updateTime") as! NSDate
+            updateTime = sourceRecord.object(forKey: "updateTime") as! Date
         }
         
         var updateType = ""
         
-        if sourceRecord.objectForKey("updateType") != nil
+        if sourceRecord.object(forKey: "updateType") != nil
         {
-            updateType = sourceRecord.objectForKey("updateType") as! String
+            updateType = sourceRecord.object(forKey: "updateType") as! String
         }
-        let lineID = sourceRecord.objectForKey("lineID") as! Int
-        let lineOrder = sourceRecord.objectForKey("lineOrder") as! Int
-        let parentLine = sourceRecord.objectForKey("parentLine") as! Int
-        let lineText = sourceRecord.objectForKey("lineText") as! String
-        let lineType = sourceRecord.objectForKey("lineType") as! String
+        let lineID = sourceRecord.object(forKey: "lineID") as! Int
+        let lineOrder = sourceRecord.object(forKey: "lineOrder") as! Int
+        let parentLine = sourceRecord.object(forKey: "parentLine") as! Int
+        let lineText = sourceRecord.object(forKey: "lineText") as! String
+        let lineType = sourceRecord.object(forKey: "lineType") as! String
         
-        let checkBox = sourceRecord.objectForKey("checkBoxValue") as! String
+        let checkBox = sourceRecord.object(forKey: "checkBoxValue") as! String
         
         var checkBoxValue: Bool = false
         
@@ -4304,45 +4327,45 @@ class CloudKitInteraction
         myDatabaseConnection.saveOutlineDetail(outlineID, lineID: lineID, lineOrder: lineOrder, parentLine: parentLine, lineText: lineText, lineType: lineType, checkBoxValue: checkBoxValue, updateTime: updateTime, updateType: updateType)
     }
     
-    private func createSubscription(sourceTable:String, sourceQuery: String)
+    fileprivate func createSubscription(_ sourceTable:String, sourceQuery: String)
     {
         let predicate: NSPredicate = NSPredicate(format: sourceQuery)
-        let subscription = CKSubscription(recordType: sourceTable, predicate: predicate, options: [CKSubscriptionOptions.FiresOnRecordCreation, CKSubscriptionOptions.FiresOnRecordUpdate])
+        let subscription = CKQuerySubscription(recordType: sourceTable, predicate: predicate, options: [.firesOnRecordCreation, .firesOnRecordUpdate])
         
         let notification = CKNotificationInfo()
         
         subscription.notificationInfo = notification
         
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
         NSLog("Creating subscription for \(sourceTable)")
         
-        self.privateDB.saveSubscription(subscription) { (result, error) -> Void in
+        self.privateDB.save(subscription, completionHandler: { (result, error) -> Void in
             if error != nil
             {
                 print("Table = \(sourceTable)  Error = \(error!.localizedDescription)")
             }
             
-            dispatch_semaphore_signal(sem)
-        }
+            sem.signal()
+        }) 
 
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER)
+        sem.wait()
     }
     
     func setupSubscriptions()
     {
         // Setup notification
         
-        let sem = dispatch_semaphore_create(0);
+        let sem = DispatchSemaphore(value: 0);
         
-        privateDB.fetchAllSubscriptionsWithCompletionHandler() { [unowned self] (subscriptions, error) -> Void in
+        privateDB.fetchAllSubscriptions() { [unowned self] (subscriptions, error) -> Void in
             if error == nil
             {
                 if let subscriptions = subscriptions
                 {
                     for subscription in subscriptions
                     {
-                        self.privateDB.deleteSubscriptionWithID(subscription.subscriptionID, completionHandler: { (str, error) -> Void in
+                        self.privateDB.delete(withSubscriptionID: subscription.subscriptionID, completionHandler: { (str, error) -> Void in
                             if error != nil
                             {
                                 // do your error handling here!
@@ -4358,10 +4381,10 @@ class CloudKitInteraction
                 // do your error handling here!
                 print(error!.localizedDescription)
             }
-            dispatch_semaphore_signal(sem)
+            sem.signal()
         }
     
-        dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
+        sem.wait()
         
         createSubscription("Context", sourceQuery: "contextID > -1")
         
@@ -4410,11 +4433,11 @@ class CloudKitInteraction
         createSubscription("Team", sourceQuery: "teamID > -1")
     }
     
-    func getRecords(sourceID: CKRecordID)
+    func getRecords(_ sourceID: CKRecordID)
     {
   //      NSLog("source record = \(sourceID)")
         
-        privateDB.fetchRecordWithID(sourceID)
+        privateDB.fetch(withRecordID: sourceID)
         { (record, error) -> Void in
             if error == nil
             {

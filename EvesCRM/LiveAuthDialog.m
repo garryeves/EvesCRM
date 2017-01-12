@@ -84,7 +84,7 @@
     [button setImage:buttonImage 
             forState:UIControlStateNormal];
     //set the frame of the button to the size of the image
-    button.frame = CGRectMake(0, 0, buttonImage.size.width, buttonImage.size.height);
+    button.frame = CGRect(x: 0, y: 0, width: buttonImage.size.width, height: buttonImage.size.height);
     
     [button addTarget:self 
                action:@selector(dismissView:) 

@@ -16,7 +16,7 @@ extension GTDItem {
 
     @NSManaged var gTDItemID: NSNumber?
     @NSManaged var gTDParentID: NSNumber?
-    @NSManaged var lastReviewDate: NSDate?
+    @NSManaged var lastReviewDate: Date?
     @NSManaged var note: String?
     @NSManaged var predecessor: NSNumber?
     @NSManaged var reviewFrequency: NSNumber?
@@ -24,7 +24,7 @@ extension GTDItem {
     @NSManaged var status: String?
     @NSManaged var teamID: NSNumber?
     @NSManaged var title: String?
-    @NSManaged var updateTime: NSDate?
+    @NSManaged var updateTime: Date?
     @NSManaged var updateType: String?
     @NSManaged var gTDLevel: NSNumber?
 

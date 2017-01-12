@@ -10,7 +10,7 @@ import Foundation
 
 protocol MyTaskListDelegate
 {
-    func myTaskListDidFinish(controller:taskListViewController)
+    func myTaskListDidFinish(_ controller:taskListViewController)
 }
 
 class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPresentationControllerDelegate
@@ -21,12 +21,12 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
     
     @IBOutlet weak var colTaskList: UICollectionView!
     
-    private var myTaskList: [task] = Array()
+    fileprivate var myTaskList: [task] = Array()
     
-    private let cellTaskName = "taskCell"
+    fileprivate let cellTaskName = "taskCell"
     
-    private var myCells: [cellDetails] = Array()
-    private var headerSize: CGFloat = 0.0
+    fileprivate var myCells: [cellDetails] = Array()
+    fileprivate var headerSize: CGFloat = 0.0
     
     override func viewDidLoad()
     {
@@ -77,12 +77,12 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
             }
         }
         
-        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Right
+        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(taskListViewController.handleSwipe(_:)))
+        showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.right
         self.view.addGestureRecognizer(showGestureRecognizer)
         
-        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: "handleSwipe:")
-        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.Left
+        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(taskListViewController.handleSwipe(_:)))
+        hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.left
         self.view.addGestureRecognizer(hideGestureRecognizer)
     }
     
@@ -100,9 +100,9 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
         colTaskList.reloadData()
     }
     
-    func handleSwipe(recognizer:UISwipeGestureRecognizer)
+    func handleSwipe(_ recognizer:UISwipeGestureRecognizer)
     {
-        if recognizer.direction == UISwipeGestureRecognizerDirection.Left
+        if recognizer.direction == UISwipeGestureRecognizerDirection.left
         {
             // Do nothing
         }
@@ -112,22 +112,23 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
         }
     }
 
-    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
+    func numberOfSectionsInCollectionView(_ collectionView: UICollectionView) -> Int
     {
         myCells.removeAll()
         return 1
     }
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
         return myTaskList.count
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
+    //    func collectionView(_ collectionView: UICollectionView, cellForItemAtIndexPath indexPath: IndexPath) -> UICollectionViewCell
+    func collectionView(_ collectionView: UICollectionView, cellForItem indexPath: IndexPath) -> UICollectionViewCell
     {
         var cell : myTaskListItem!
         
-        cell = collectionView.dequeueReusableCellWithReuseIdentifier(cellTaskName, forIndexPath: indexPath) as! myTaskListItem
+        cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellTaskName, for: indexPath as IndexPath) as! myTaskListItem
         
         if myTaskList.count == 0
         {
@@ -180,7 +181,7 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
                     cell.txtContext.text = "\(cell.txtContext.text)\(myItem.name)\n"
                 }
             }
-            cell.txtContext.font = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
+            cell.txtContext.font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.body)
         }
         
         if (indexPath.row % 2 == 0)
@@ -190,8 +191,8 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
         }
         else
         {
-            cell.backgroundColor = UIColor.clearColor()
-            cell.txtContext.backgroundColor = UIColor.clearColor()
+            cell.backgroundColor = UIColor.clear
+            cell.txtContext.backgroundColor = UIColor.clear
         }
         
         cell.layoutSubviews()
@@ -199,27 +200,27 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
         return cell
     }
     
-    func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView
     {
         var headerView:UICollectionReusableView!
         if kind == UICollectionElementKindSectionHeader
         {
-            headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: "taskItemHeader", forIndexPath: indexPath) 
+            headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "taskItemHeader", for: indexPath as IndexPath) 
         }
         
         return headerView
     }
     
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath)
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: IndexPath)
     {
         let myOptions = displayTaskOptions(collectionView, workingTask: myTaskList[indexPath.row])
         myOptions.popoverPresentationController!.sourceView = collectionView
         
-        self.presentViewController(myOptions, animated: true, completion: nil)
+        self.present(myOptions, animated: true, completion: nil)
     }
     
     
-    func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
+    func collectionView(_ collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
     {
         var retVal: CGSize!
         
@@ -228,17 +229,17 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
         return retVal
     }
     
-    func displayTaskOptions(sourceView: UIView, workingTask: task) -> UIAlertController
+    func displayTaskOptions(_ sourceView: UIView, workingTask: task) -> UIAlertController
     {
-        let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .ActionSheet)
+        let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .actionSheet)
         
-        let myOption1 = UIAlertAction(title: "Edit Action", style: .Default, handler: { (action: UIAlertAction) -> () in
-            let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("tasks") as! taskViewController
-            popoverContent.modalPresentationStyle = .Popover
+        let myOption1 = UIAlertAction(title: "Edit Action", style: .default, handler: { (action: UIAlertAction) -> () in
+            let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "tasks") as! taskViewController
+            popoverContent.modalPresentationStyle = .popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
             popover!.sourceView = sourceView
-            popover!.sourceRect = CGRectMake(700,700,0,0)
+            popover!.sourceRect = CGRect(x: 700,y: 700,width: 0,height: 0)
             
             popoverContent.passedTask = workingTask
             
@@ -250,24 +251,24 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
                 popoverContent.passedEvent = myWorkingItem
             }
             
-            popoverContent.preferredContentSize = CGSizeMake(700,700)
+            popoverContent.preferredContentSize = CGSize(width: 700,height: 700)
             
-            self.presentViewController(popoverContent, animated: true, completion: nil)
+            self.present(popoverContent, animated: true, completion: nil)
         })
         
-        let myOption2 = UIAlertAction(title: "Action Updates", style: .Default, handler: { (action: UIAlertAction) -> () in
-            let popoverContent = self.storyboard?.instantiateViewControllerWithIdentifier("taskUpdate") as! taskUpdatesViewController
-            popoverContent.modalPresentationStyle = .Popover
+        let myOption2 = UIAlertAction(title: "Action Updates", style: .default, handler: { (action: UIAlertAction) -> () in
+            let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "taskUpdate") as! taskUpdatesViewController
+            popoverContent.modalPresentationStyle = .popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
             popover!.sourceView = sourceView
-            popover!.sourceRect = CGRectMake(700,700,0,0)
+            popover!.sourceRect = CGRect(x: 700,y: 700,width: 0,height: 0)
             
             popoverContent.passedTask = workingTask
             
-            popoverContent.preferredContentSize = CGSizeMake(700,700)
+            popoverContent.preferredContentSize = CGSize(width: 700,height: 700)
             
-            self.presentViewController(popoverContent, animated: true, completion: nil)
+            self.present(popoverContent, animated: true, completion: nil)
         })
         
         myOptions.addAction(myOption1)

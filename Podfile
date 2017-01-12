@@ -1,14 +1,13 @@
 # Uncomment this line to define a global platform for your project
 # platform :ios, '6.0'
-platform :ios, "9.0"
+platform :ios, "10.0"
 use_frameworks!
+
+project '/Users/garryeves/Documents/xcode/EvesCRM/Contacts Dashboard.xcodeproj '
 
 target 'EvesCRM' do
 pod 'Google/SignIn'
-end
-
-target 'EvesCRMTests' do
-pod 'Google/SignIn'
+pod 'SwiftyDropbox'
 end
 
 post_install do |installer|

@@ -14,12 +14,12 @@ import AddressBook
 class EvernoteDetails
 {
 
-    private var retrievedData: [EvernoteData] = [EvernoteData]()
-    private var expectedSearchResults: Int = 0
-    private var tableContents:[TableData] = [TableData]()
-    private var myENSession: ENSession!
-    private var isConnected = false
-    private var asyncDone = false
+    fileprivate var retrievedData: [EvernoteData] = [EvernoteData]()
+    fileprivate var expectedSearchResults: Int = 0
+    fileprivate var tableContents:[TableData] = [TableData]()
+    fileprivate var myENSession: ENSession!
+    fileprivate var isConnected = false
+    fileprivate var asyncDone = false
     
     init(inSession: ENSession)
     {
@@ -47,19 +47,19 @@ class EvernoteDetails
         return tableContents
     }
 */
-    func findEvernoteNotes(searchString: String)
+    func findEvernoteNotes(_ searchString: String)
     {
     
         var searchText: ENNoteSearch!
         let searchNotebook: ENNotebook = ENNotebook()
-        let searchScope: ENSessionSearchScope = ([ENSessionSearchScope.Personal, ENSessionSearchScope.PersonalLinked, ENSessionSearchScope.Business])
-        let searchOrder = ENSessionSortOrder.RecentlyUpdated
+        let searchScope: ENSessionSearchScope = ([ENSessionSearchScope.personal, ENSessionSearchScope.personalLinked, ENSessionSearchScope.business])
+        let searchOrder = ENSessionSortOrder.recentlyUpdated
         let searchMaxResults: UInt = 100
     
         var myDisplayStrings: [String] = Array()
 
-        tableContents.removeAll(keepCapacity: false)
-        retrievedData.removeAll(keepCapacity: false)
+        tableContents.removeAll(keepingCapacity: false)
+        retrievedData.removeAll(keepingCapacity: false)
         asyncDone = false
         
         if !isConnected
@@ -69,41 +69,37 @@ class EvernoteDetails
         }
         else
         {
-            searchText = ENNoteSearch(searchString: searchString)
+            searchText = ENNoteSearch(search: searchString)
 
-            myENSession.findNotesWithSearch(searchText, inNotebook: searchNotebook, orScope:searchScope, sortOrder: searchOrder, maxResults: searchMaxResults, completion: {
+            myENSession.findNotes(with: searchText, in: searchNotebook, orScope:searchScope, sortOrder: searchOrder, maxResults: searchMaxResults, completion: {
                 (findNotesResults, findNotesError) in
 
-                self.expectedSearchResults = findNotesResults.count
-                if findNotesResults.count > 0
+                self.expectedSearchResults = (findNotesResults?.count)!
+                if (findNotesResults?.count)! > 0
                 {
-                    for result in findNotesResults
+                    for result in findNotesResults!
                     {
                         var myData: EvernoteData
                         
                         myData = EvernoteData()
                         
-                        myData.title = result.title!!
-                        myData.updateDate = result.updated
-                        myData.createDate = result.created
-                        myData.identifier = result.noteRef!.guid
-                        myData.NoteRef = result.noteRef
+                        myData.title = (result as AnyObject).title!!
+                        myData.updateDate = (result as AnyObject).updated
+                        myData.createDate = (result as AnyObject).created
+                        myData.identifier = (result as AnyObject).noteRef!.guid
+                        myData.NoteRef = (result as AnyObject).noteRef
   
                         // Each ENSessionFindNotesResult has a noteRef along with other important metadata.
                         
                         // Seup Date format for display
                         
-                        let startDateFormatter = NSDateFormatter()
-                        let endDateFormatter = NSDateFormatter()
-                        let dateFormat = NSDateFormatterStyle.MediumStyle
-                        let timeFormat = NSDateFormatterStyle.ShortStyle
-                        startDateFormatter.dateStyle = dateFormat
-                        startDateFormatter.timeStyle = timeFormat
-                        endDateFormatter.timeStyle = timeFormat
+                        let startDateFormatter = DateFormatter()
+                        startDateFormatter.dateStyle = .medium
+                        startDateFormatter.timeStyle = .short
                 
-                        let lastUpdateDate = startDateFormatter.stringFromDate(result.updated)
+                        let lastUpdateDate = startDateFormatter.string(from: myData.updateDate)
 
-                        var myString = "\(result.title!!)\n"
+                        var myString = "\(myData.title)\n"
                         
                         myString += "last updated \(lastUpdateDate)"
                         myDisplayStrings.append(myString)
@@ -114,17 +110,17 @@ class EvernoteDetails
                     {
                         writeRowToArray(displayString, inTable: &self.tableContents)
                     }
-                    NSNotificationCenter.defaultCenter().postNotificationName("NotificationEvernoteComplete", object: nil)
+                    notificationCenter.post(name: NotificationEvernoteComplete, object: nil)
                 }
                 else
                 {
                     writeRowToArray("No Notes found", inTable: &self.tableContents)
-                    NSNotificationCenter.defaultCenter().postNotificationName("NotificationEvernoteComplete", object: nil)
+                    notificationCenter.post(name: NotificationEvernoteComplete, object: nil)
                 }
                 if findNotesError != nil
                 {
                     writeRowToArray("No Notes found - error", inTable: &self.tableContents)
-                    NSNotificationCenter.defaultCenter().postNotificationName("NotificationEvernoteComplete", object: nil)
+                    notificationCenter.post(name: NotificationEvernoteComplete, object: nil)
                 }
             })
         }

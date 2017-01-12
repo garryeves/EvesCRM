@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+import TextExpander
 
 class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDelegate
 {
@@ -30,12 +30,12 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
     var inGTDObject: workingGTDItem!
     
     private var pickerOptions: [String] = Array()
-    private var pickerTarget: String = ""
-    private var selectedRow: Int = 0
+    fileprivate var pickerTarget: String = ""
+    fileprivate var selectedRow: Int = 0
     
     // Textexpander
     
-    private var snippetExpanded: Bool = false
+    fileprivate var snippetExpanded: Bool = false
     
     var textExpander: SMTEDelegateController!
 
@@ -43,15 +43,15 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
     {
         super.viewDidLoad()
         
-        txtNotes.layer.borderColor = UIColor.lightGrayColor().CGColor
+        txtNotes.layer.borderColor = UIColor.lightGray.cgColor
         txtNotes.layer.borderWidth = 0.5
         txtNotes.layer.cornerRadius = 5.0
         txtNotes.layer.masksToBounds = true
         txtNotes.delegate = self
         
-        myPicker.hidden = true
-        myDatePicker.hidden = true
-        btnTargetDate.hidden = true
+        myPicker.isHidden = true
+        myDatePicker.isHidden = true
+        btnTargetDate.isHidden = true
         
         txtTitle.text = inGTDObject.title
         txtNotes.text = inGTDObject.note
@@ -59,29 +59,29 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
                 
         if inGTDObject.displayLastReviewDate == ""
         {
-            btnLastReview.setTitle("Set", forState: .Normal)
+            btnLastReview.setTitle("Set", for: .normal)
         }
         else
         {
-            btnLastReview.setTitle(inGTDObject.displayLastReviewDate, forState: .Normal)
+            btnLastReview.setTitle(inGTDObject.displayLastReviewDate, for: .normal)
         }
                 
         if inGTDObject.reviewPeriod == ""
         {
-            btnPeriod.setTitle("Set", forState: .Normal)
+            btnPeriod.setTitle("Set", for: .normal)
         }
         else
         {
-            btnPeriod.setTitle(inGTDObject.reviewPeriod, forState: .Normal)
+            btnPeriod.setTitle(inGTDObject.reviewPeriod, for: .normal)
         }
                 
         if inGTDObject.status == ""
         {
-            btnStatus.setTitle("Set", forState: .Normal)
+            btnStatus.setTitle("Set", for: .normal)
         }
         else
         {
-            btnStatus.setTitle(inGTDObject.status, forState: .Normal)
+            btnStatus.setTitle(inGTDObject.status, for: .normal)
         }
         
         // TextExpander
@@ -104,92 +104,92 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
         // Dispose of any resources that can be recreated.
     }
     
-    func numberOfComponentsInPickerView(TableTypeSelection1: UIPickerView) -> Int
+    func numberOfComponentsInPickerView(_ TableTypeSelection1: UIPickerView) -> Int
     {
         return 1
     }
     
-    func pickerView(TableTypeSelection1: UIPickerView, numberOfRowsInComponent component: Int) -> Int
+    func pickerView(_ TableTypeSelection1: UIPickerView, numberOfRowsInComponent component: Int) -> Int
     {
         return pickerOptions.count
     }
     
-    func pickerView(TableTypeSelection1: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String!
+    func pickerView(_ TableTypeSelection1: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String!
     {
         return pickerOptions[row]
     }
     
-    func pickerView(TableTypeSelection1: UIPickerView, didSelectRow row: Int, inComponent component: Int)
+    func pickerView(_ TableTypeSelection1: UIPickerView, didSelectRow row: Int, inComponent component: Int)
     {
         selectedRow = row
     }
     
-    @IBAction func txtFrequency(sender: UITextField)
+    @IBAction func txtFrequency(_ sender: UITextField)
     {
         inGTDObject.reviewFrequency = Int(txtFrequency.text!)!
     }
     
-    @IBAction func txtTitle(sender: UITextField)
+    @IBAction func txtTitle(_ sender: UITextField)
     {
         inGTDObject.title = txtTitle.text!
     }
     
-    func textViewDidEndEditing(textView: UITextView)
+    func textViewDidEndEditing(_ textView: UITextView)
     { //Handle the text changes here
         inGTDObject.note = textView.text
     }
     
-    @IBAction func btnLastReview(sender: UIButton)
+    @IBAction func btnLastReview(_ sender: UIButton)
     {
-        btnTargetDate.setTitle("Set Last Reviewed Date", forState: .Normal)
+        btnTargetDate.setTitle("Set Last Reviewed Date", for: .normal)
         pickerTarget = "ReviewDate"
-        myDatePicker.datePickerMode = UIDatePickerMode.Date
-        btnTargetDate.hidden = false
-        myDatePicker.hidden = false
+        myDatePicker.datePickerMode = UIDatePickerMode.date
+        btnTargetDate.isHidden = false
+        myDatePicker.isHidden = false
         hideFields()
     }
     
-    @IBAction func btnTargetDate(sender: UIButton)
+    @IBAction func btnTargetDate(_ sender: UIButton)
     {
-        let dateFormatter = NSDateFormatter()
+        let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMM yyyy"
         
         if pickerTarget == "ReviewDate"
         {
-            btnLastReview.setTitle(dateFormatter.stringFromDate(myDatePicker.date), forState: .Normal)
+            btnLastReview.setTitle(dateFormatter.string(from: myDatePicker.date), for: .normal)
             
             inGTDObject.lastReviewDate = myDatePicker.date
         }
         
         if pickerTarget == "Status"
         {
-            btnStatus.setTitle(pickerOptions[selectedRow], forState: .Normal)
+            btnStatus.setTitle(pickerOptions[selectedRow], for: .normal)
             
             inGTDObject.status = pickerOptions[selectedRow]
         }
         
         if pickerTarget == "Period"
         {
-            btnPeriod.setTitle(pickerOptions[selectedRow], forState: .Normal)
+            btnPeriod.setTitle(pickerOptions[selectedRow], for: .normal)
             
             inGTDObject.reviewPeriod = pickerOptions[selectedRow]
         }
 
-        myPicker.hidden = true
-        myDatePicker.hidden = true
-        btnTargetDate.hidden = true
+        myPicker.isHidden = true
+        myDatePicker.isHidden = true
+        btnTargetDate.isHidden = true
         
         showFields()
     }
     
-    @IBAction func btnPeriod(sender: UIButton)
+    @IBAction func btnPeriod(_ sender: UIButton)
     {
         var selectedRow: Int = 0
 
-        btnTargetDate.setTitle("Set Review period", forState: .Normal)
-        btnTargetDate.hidden = false
+        btnTargetDate.setTitle("Set Review period", for: .normal)
+        btnTargetDate.isHidden = false
         
-        pickerOptions.removeAll(keepCapacity: false)
+        pickerOptions.removeAll(keepingCapacity: false)
         pickerOptions.append("")
         
         if inGTDObject.reviewPeriod == "Days"
@@ -217,20 +217,20 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
         pickerOptions.append("Years")
         
         hideFields()
-        myPicker.hidden = false
+        myPicker.isHidden = false
         myPicker.reloadAllComponents()
         pickerTarget = "Period"
         myPicker.selectRow(selectedRow,inComponent: 0, animated: true)
     }
     
-    @IBAction func btnStatus(sender: UIButton)
+    @IBAction func btnStatus(_ sender: UIButton)
     {
         var selectedRow: Int = 0
 
-        btnTargetDate.setTitle("Set Status", forState: .Normal)
-        btnTargetDate.hidden = false
+        btnTargetDate.setTitle("Set Status", for: .normal)
+        btnTargetDate.isHidden = false
         
-        pickerOptions.removeAll(keepCapacity: false)
+        pickerOptions.removeAll(keepingCapacity: false)
         
         pickerOptions.append("")
         if inGTDObject.status == "Open"
@@ -246,7 +246,7 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
         pickerOptions.append("Closed")
         
         hideFields()
-        myPicker.hidden = false
+        myPicker.isHidden = false
         myPicker.reloadAllComponents()
         pickerTarget = "Status"
         myPicker.selectRow(selectedRow,inComponent: 0, animated: true)
@@ -254,34 +254,34 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
     
     func hideFields()
     {
-        txtTitle.hidden = true
-        lblStatus.hidden = true
-        lblNotes.hidden = true
-        txtNotes.hidden = true
-        lblTitle.hidden = true
-        lblLastReview.hidden = true
-        lblFrquency.hidden = true
-        lblPeriod.hidden = true
-        txtFrequency.hidden = true
-        btnLastReview.hidden = true
-        btnPeriod.hidden = true
-        btnStatus.hidden = true
+        txtTitle.isHidden = true
+        lblStatus.isHidden = true
+        lblNotes.isHidden = true
+        txtNotes.isHidden = true
+        lblTitle.isHidden = true
+        lblLastReview.isHidden = true
+        lblFrquency.isHidden = true
+        lblPeriod.isHidden = true
+        txtFrequency.isHidden = true
+        btnLastReview.isHidden = true
+        btnPeriod.isHidden = true
+        btnStatus.isHidden = true
     }
     
     func showFields()
     {
-        txtTitle.hidden = false
-        lblStatus.hidden = false
-        lblNotes.hidden = false
-        txtNotes.hidden = false
-        lblTitle.hidden = false
-        lblLastReview.hidden = false
-        lblFrquency.hidden = false
-        lblPeriod.hidden = false
-        txtFrequency.hidden = false
-        btnLastReview.hidden = false
-        btnPeriod.hidden = false
-        btnStatus.hidden = false
+        txtTitle.isHidden = false
+        lblStatus.isHidden = false
+        lblNotes.isHidden = false
+        txtNotes.isHidden = false
+        lblTitle.isHidden = false
+        lblLastReview.isHidden = false
+        lblFrquency.isHidden = false
+        lblPeriod.isHidden = false
+        txtFrequency.isHidden = false
+        btnLastReview.isHidden = false
+        btnPeriod.isHidden = false
+        btnStatus.isHidden = false
     }
     
     //---------------------------------------------------------------
@@ -306,27 +306,28 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
     * identifier string needs to include element id/name information. Eg. "webview-field2".
     */
     
-    func identifierForTextArea(uiTextObject: AnyObject) -> String
-    {
+ //    func identifierForTextArea(uiTextObject: AnyObject) -> String
+     func identifier(forTextArea uiTextObject: Any) -> String
+     {
         var result: String = ""
         
-        if uiTextObject.isKindOfClass(UITextField)
+        if uiTextObject is UITextField
         {
-            if uiTextObject.tag == 1
+            if (uiTextObject as AnyObject).tag == 1
             {
                 result = "txtTitle"
             }
         }
         
-        if uiTextObject.isKindOfClass(UITextView)
+        if uiTextObject is UITextView
         {
-            if uiTextObject.tag == 1
+            if (uiTextObject as AnyObject).tag == 1
             {
                 result = "txtNotes"
             }
         }
         
-        if uiTextObject.isKindOfClass(UISearchBar)
+        if uiTextObject is UISearchBar
         {
             result =  "mySearchBar"
         }
@@ -342,7 +343,7 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
     * Return NO to cancel the process.
     */
 
-    func prepareForFillSwitch(textIdentifier: String) -> Bool
+    func prepare(forFillSwitch textIdentifier: String) -> Bool
     {
         // At this point the app should save state since TextExpander touch is about
         // to activate.
@@ -381,29 +382,32 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
     * expect the identified text object to become the first responder.
     */
     
-    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>) -> AnyObject
+    // func makeIdentifiedTextObjectFirstResponder(_ textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>) -> AnyObject
+    public func makeIdentifiedTextObjectFirstResponder(_ textIdentifier: String!, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>!) -> Any!
     {
         snippetExpanded = true
         
-        let intIoInsertionPointLocation:Int = ioInsertionPointLocation.memory // grab the data and cast it to a Swift Int8
+        let intIoInsertionPointLocation:Int = ioInsertionPointLocation.pointee // grab the data and cast it to a Swift Int8
         
         if "txtNotes" == textIdentifier
         {
             txtNotes.becomeFirstResponder()
-            let theLoc = txtNotes.positionFromPosition(txtNotes.beginningOfDocument, offset: intIoInsertionPointLocation)
+//GRE            let theLoc = txtNotes.positionFromPosition(txtNotes.beginningOfDocument, offset: intIoInsertionPointLocation)
+            let theLoc = txtNotes.position(from: txtNotes.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtNotes.selectedTextRange = txtNotes.textRangeFromPosition(theLoc!, toPosition: theLoc!)
+//                txtNotes.selectedTextRange = txtNotes.textRangeFromPosition(theLoc!, toPosition: theLoc!)
+                txtNotes.selectedTextRange = txtNotes.textRange(from: theLoc!, to: theLoc!)
             }
             return txtNotes
         }
         else if "txtTitle" == textIdentifier
         {
             txtTitle.becomeFirstResponder()
-            let theLoc = txtTitle.positionFromPosition(txtTitle.beginningOfDocument, offset: intIoInsertionPointLocation)
+            let theLoc = txtTitle.position(from: txtTitle.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtTitle.selectedTextRange = txtTitle.textRangeFromPosition(theLoc!, toPosition: theLoc!)
+                txtTitle.selectedTextRange = txtTitle.textRange(from: theLoc!, to: theLoc!)
             }
             return txtTitle
         }
@@ -426,11 +430,11 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
             
             //return nil
             
-            return ""
+            return "" as AnyObject
         }
     }
     
-    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool
     {
         if (textExpander.isAttemptingToExpandText)
         {
@@ -448,16 +452,16 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
     // of workaround into the SDK, so instead we provide an example here.
     // If you have a better workaround suggestion, we'd love to hear it.
     
-    func twiddleText(textView: UITextView)
+    func twiddleText(_ textView: UITextView)
     {
-        let SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO = UIDevice.currentDevice().systemVersion
+        let SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO = UIDevice.current.systemVersion
         if SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO >= "7.0"
         {
-            textView.textStorage.edited(NSTextStorageEditActions.EditedCharacters,range:NSMakeRange(0, textView.textStorage.length),changeInLength:0)
+            textView.textStorage.edited(NSTextStorageEditActions.editedCharacters,range:NSMakeRange(0, textView.textStorage.length),changeInLength:0)
         }
     }
     
-    func textViewDidChange(textView: UITextView)
+    func textViewDidChange(_ textView: UITextView)
     {
         if snippetExpanded
         {

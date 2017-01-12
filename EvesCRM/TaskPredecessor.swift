@@ -14,7 +14,7 @@ class TaskPredecessor: NSManagedObject {
     @NSManaged var taskID: NSNumber
     @NSManaged var predecessorID: NSNumber
     @NSManaged var predecessorType: String
-    @NSManaged var updateTime: NSDate
+    @NSManaged var updateTime: Date
     @NSManaged var updateType: String
 
 }

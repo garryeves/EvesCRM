@@ -24,7 +24,7 @@
 #import "GTLDefines.h"
 
 @interface GTLDateTime : NSObject <NSCopying> {
-  NSDateComponents *dateComponents_;
+  DateComponents *dateComponents_;
   NSInteger milliseconds_; // This is only for the fraction of a second 0-999
   NSInteger offsetSeconds_; // may be NSUndefinedDateComponent
   BOOL isUniversalTime_; // preserves "Z"
@@ -43,16 +43,16 @@
 // hasTime is NO.)
 + (GTLDateTime *)dateTimeForAllDayWithDate:(NSDate *)date;
 
-+ (GTLDateTime *)dateTimeWithDateComponents:(NSDateComponents *)date;
++ (GTLDateTime *)dateTimeWithDateComponents:(DateComponents *)date;
 
 @property (nonatomic, readonly) NSDate *date;
-@property (nonatomic, readonly) NSCalendar *calendar;
+@property (nonatomic, readonly) Calendar *calendar;
 
 @property (nonatomic, readonly) NSString *RFC3339String;
 @property (nonatomic, readonly) NSString *stringValue; // same as RFC3339String
 
 @property (nonatomic, readonly, retain) NSTimeZone *timeZone;
-@property (nonatomic, readonly, copy) NSDateComponents *dateComponents;
+@property (nonatomic, readonly, copy) DateComponents *dateComponents;
 @property (nonatomic, readonly) NSInteger milliseconds; // This is only for the fraction of a second 0-999
 
 @property (nonatomic, readonly) BOOL hasTime;

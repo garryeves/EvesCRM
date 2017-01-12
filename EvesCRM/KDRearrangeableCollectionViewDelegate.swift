@@ -10,7 +10,7 @@ import UIKit
 
 @objc protocol KDRearrangeableCollectionViewDelegate : UICollectionViewDelegate {
     
-    func moveDataItem(toIndexPath : NSIndexPath, fromIndexPath: NSIndexPath) -> Void
+    func moveDataItem(_ toIndexPath : IndexPath, fromIndexPath: IndexPath) -> Void
     
 }
 

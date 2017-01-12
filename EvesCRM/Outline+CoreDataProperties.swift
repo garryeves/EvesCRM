@@ -19,7 +19,7 @@ extension Outline {
     @NSManaged var parentType: String?
     @NSManaged var title: String?
     @NSManaged var status: String?
-    @NSManaged var updateTime: NSDate?
+    @NSManaged var updateTime: Date?
     @NSManaged var updateType: String?
 
 }

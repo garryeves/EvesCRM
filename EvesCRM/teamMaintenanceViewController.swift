@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import TextExpander
 
 class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearrangeableCollectionViewDelegate
 {
@@ -25,18 +26,18 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
     @IBOutlet weak var lblContext: UILabel!
     @IBOutlet weak var colContext: UICollectionView!
     
-    private var myGTDHierarchy: [workingGTDLevel] = Array()
-    private var myDisplayHierarchy: [String] = Array()
-    private var myContext: [context] = Array()
+    fileprivate var myGTDHierarchy: [workingGTDLevel] = Array()
+    fileprivate var myDisplayHierarchy: [String] = Array()
+    fileprivate var myContext: [context] = Array()
     
     var myWorkingTeam: team!
     
-    private var pickerDisplayArray: [String] = Array()
-    private var mySelectedRow: Int = -1
+    fileprivate var pickerDisplayArray: [String] = Array()
+    fileprivate var mySelectedRow: Int = -1
     
     // Textexpander
     
-    private var snippetExpanded: Bool = false
+    fileprivate var snippetExpanded: Bool = false
     
     var textExpander: SMTEDelegateController!
     
@@ -52,23 +53,23 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
         
         if myWorkingTeam.status == ""
         {
-            btnStatus.setTitle("Select Status", forState: .Normal)
+            btnStatus.setTitle("Select Status", for: .normal)
         }
         else
         {
-            btnStatus.setTitle(myWorkingTeam.status, forState: .Normal)
+            btnStatus.setTitle(myWorkingTeam.status, for: .normal)
         }
         txtNotes.text = myWorkingTeam.note
         
-        myPickerView.hidden = true
-        btnSetStatus.hidden = true
+        myPickerView.isHidden = true
+        btnSetStatus.isHidden = true
         
-        txtNotes.layer.borderColor = UIColor.lightGrayColor().CGColor
+        txtNotes.layer.borderColor = UIColor.lightGray.cgColor
         txtNotes.layer.borderWidth = 0.5
         txtNotes.layer.cornerRadius = 5.0
         txtNotes.layer.masksToBounds = true
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "changeSettings:", name:"NotificationChangeSettings", object: nil)
+        notificationCenter.addObserver(self, selector: #selector(teamMaintenanceViewController.changeSettings(_:)), name: NotificationChangeSettings, object: nil)
         
         // TextExpander
         textExpander = SMTEDelegateController()
@@ -101,32 +102,32 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
         colHierarchy.reloadData()
     }
     
-    func numberOfComponentsInPickerView(inPicker: UIPickerView) -> Int
+    func numberOfComponentsInPickerView(_ inPicker: UIPickerView) -> Int
     {
         return 1
     }
     
-    func pickerView(inPicker: UIPickerView, numberOfRowsInComponent component: Int) -> Int
+    func pickerView(_ inPicker: UIPickerView, numberOfRowsInComponent component: Int) -> Int
     {
         return pickerDisplayArray.count
     }
     
-    func pickerView(inPicker: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String!
+    func pickerView(_ inPicker: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String!
     {
         return pickerDisplayArray[row]
     }
     
-    func pickerView(inPicker: UIPickerView, didSelectRow row: Int, inComponent component: Int)
+    func pickerView(_ inPicker: UIPickerView, didSelectRow row: Int, inComponent component: Int)
     {
         mySelectedRow = row
     }
     
-    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
+    func numberOfSectionsInCollectionView(_ collectionView: UICollectionView) -> Int
     {
         return 1
     }
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
         if collectionView == colContext
         {
@@ -138,11 +139,12 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
         }
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
+    //    func collectionView(_ collectionView: UICollectionView, cellForItemAtIndexPath indexPath: IndexPath) -> UICollectionViewCell
+    func collectionView(_ collectionView: UICollectionView, cellForItem indexPath: IndexPath) -> UICollectionViewCell
     {
         if collectionView == colContext
         {
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellContext", forIndexPath: indexPath) as! mySettingContext
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellContext", for: indexPath as IndexPath) as! mySettingContext
             cell.lblRole.text = myContext[indexPath.row].name
             
             if (indexPath.row % 2 == 0)  // was .row
@@ -151,7 +153,7 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
             }
             else
             {
-                cell.backgroundColor = UIColor.clearColor()
+                cell.backgroundColor = UIColor.clear
             }
             
             cell.layoutSubviews()
@@ -159,18 +161,18 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
         }
         else
         {  // colHierarchy
-            let cell = collectionView.dequeueReusableCellWithReuseIdentifier("cellHierarchy", forIndexPath: indexPath) as! mySettingHierarchy
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellHierarchy", for: indexPath as IndexPath) as! mySettingHierarchy
             cell.lblName.text  = myDisplayHierarchy[indexPath.row]
             
             if myDisplayHierarchy[indexPath.row] == "Activity" || myDisplayHierarchy[indexPath.row] == "Action"
             {
-                cell.btnRemove.hidden = true
-                cell.btnRename.hidden = true
+                cell.btnRemove.isHidden = true
+                cell.btnRename.isHidden = true
             }
             else
             {
-                cell.btnRemove.hidden = false
-                cell.btnRename.hidden = false
+                cell.btnRemove.isHidden = false
+                cell.btnRename.isHidden = false
                 cell.myGTDLevel = myGTDHierarchy[indexPath.row]
             }
             
@@ -180,7 +182,7 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
             }
             else
             {
-                cell.backgroundColor = UIColor.clearColor()
+                cell.backgroundColor = UIColor.clear
             }
             
             cell.layoutSubviews()
@@ -189,7 +191,7 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
         }
     }
     
-    func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
+    func collectionView(_ collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
     {
         var retVal: CGSize!
         
@@ -207,7 +209,7 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
     
     // Start move
     
-    func moveDataItem(toIndexPath : NSIndexPath, fromIndexPath: NSIndexPath) -> Void
+    func moveDataItem(_ toIndexPath : IndexPath, fromIndexPath: IndexPath) -> Void
     {
         if fromIndexPath.item > myGTDHierarchy.count
         {
@@ -239,37 +241,37 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
     
     // End move
     
-    @IBAction func txtName(sender: UITextField)
+    @IBAction func txtName(_ sender: UITextField)
     {
         myWorkingTeam.name = txtName.text!
     }
     
-    @IBAction func btnStatus(sender: UIButton)
+    @IBAction func btnStatus(_ sender: UIButton)
     {
         pickerDisplayArray.removeAll()
         pickerDisplayArray.append("")
         pickerDisplayArray.append("Open")
         pickerDisplayArray.append("Closed")
 
-        btnSetStatus.setTitle("Select Status", forState: .Normal)
+        btnSetStatus.setTitle("Select Status", for: .normal)
         myPickerView.reloadAllComponents()
-        myPickerView.hidden = false
-        btnSetStatus.hidden = false
+        myPickerView.isHidden = false
+        btnSetStatus.isHidden = false
         mySelectedRow = -1
         hideFields()
     }
     
-    @IBAction func btnSetStatus(sender: UIButton)
+    @IBAction func btnSetStatus(_ sender: UIButton)
     {
         myWorkingTeam.status = pickerDisplayArray[mySelectedRow]
-        btnStatus.setTitle(myWorkingTeam.status, forState: UIControlState.Normal)
+        btnStatus.setTitle(myWorkingTeam.status, for: UIControlState.normal)
 
-        myPickerView.hidden = true
-        btnSetStatus.hidden = true
+        myPickerView.isHidden = true
+        btnSetStatus.isHidden = true
         showFields()
     }
     
-    func textViewDidEndEditing(textView: UITextView)
+    func textViewDidEndEditing(_ textView: UITextView)
     { //Handle the text changes here
         if textView == txtNotes
         {
@@ -277,16 +279,16 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
         }
     }
     
-    @IBAction func btnHierarchy(sender: UIButton)
+    @IBAction func btnHierarchy(_ sender: UIButton)
     {
         if txtHierarchy.text == ""
         {
             let alert = UIAlertController(title: "Add Hierarchy", message:
-                "You need to enter a hierarchy name before you can add it", preferredStyle: UIAlertControllerStyle.Alert)
+                "You need to enter a hierarchy name before you can add it", preferredStyle: UIAlertControllerStyle.alert)
             
-            self.presentViewController(alert, animated: false, completion: nil)
+            self.present(alert, animated: false, completion: nil)
             
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
                 handler: nil))
             
             txtHierarchy.becomeFirstResponder()
@@ -328,37 +330,37 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
     
     func showFields()
     {
-        lblName.hidden = false
-        lblStatus.hidden = false
-        lblNotes.hidden = false
-        lblHierarchy.hidden = false
-        txtName.hidden = false
-        txtNotes.hidden = false
-        colHierarchy.hidden = false
-        txtHierarchy.hidden = false
-        btnHierarchy.hidden = false
-        btnStatus.hidden = false
-        lblContext.hidden = false
-        colContext.hidden = false
+        lblName.isHidden = false
+        lblStatus.isHidden = false
+        lblNotes.isHidden = false
+        lblHierarchy.isHidden = false
+        txtName.isHidden = false
+        txtNotes.isHidden = false
+        colHierarchy.isHidden = false
+        txtHierarchy.isHidden = false
+        btnHierarchy.isHidden = false
+        btnStatus.isHidden = false
+        lblContext.isHidden = false
+        colContext.isHidden = false
     }
     
     func hideFields()
     {
-        lblName.hidden = true
-        lblStatus.hidden = true
-        lblNotes.hidden = true
-        lblHierarchy.hidden = true
-        txtName.hidden = true
-        txtNotes.hidden = true
-        colHierarchy.hidden = true
-        txtHierarchy.hidden = true
-        btnHierarchy.hidden = true
-        btnStatus.hidden = true
-        lblContext.hidden = true
-        colContext.hidden = true
+        lblName.isHidden = true
+        lblStatus.isHidden = true
+        lblNotes.isHidden = true
+        lblHierarchy.isHidden = true
+        txtName.isHidden = true
+        txtNotes.isHidden = true
+        colHierarchy.isHidden = true
+        txtHierarchy.isHidden = true
+        btnHierarchy.isHidden = true
+        btnStatus.isHidden = true
+        lblContext.isHidden = true
+        colContext.isHidden = true
     }
     
-    func changeSettings(notification: NSNotification)
+    func changeSettings(_ notification: Notification)
     {
         let settingChanged = notification.userInfo!["setting"] as! String
         let workingItem = notification.userInfo!["Item"] as! workingGTDLevel
@@ -370,9 +372,9 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
         }
         else if settingChanged == "HierarchyDelete"
         {
-            let deleteAlert = UIAlertController(title: "Delete Hierarchy", message: "Please confirm, if you delete this then any items associated with it will be lost", preferredStyle: UIAlertControllerStyle.Alert)
+            let deleteAlert = UIAlertController(title: "Delete Hierarchy", message: "Please confirm, if you delete this then any items associated with it will be lost", preferredStyle: UIAlertControllerStyle.alert)
             
-            deleteAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { (action: UIAlertAction!) in
+            deleteAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action: UIAlertAction!) in
                 workingItem.delete()
                 self.myWorkingTeam.loadGTDLevels()
                 self.loadHierarchy()
@@ -380,25 +382,25 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
 
             }))
             
-            deleteAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: { (action: UIAlertAction!) in
+            deleteAlert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (action: UIAlertAction!) in
                 NSLog("Do nothing")
             }))
             
-            presentViewController(deleteAlert, animated: true, completion: nil)
+            present(deleteAlert, animated: true, completion: nil)
         }
         else
         { // Hierarchy change
             
             //1. Create the alert controller.
-            let newNameAlert = UIAlertController(title: "Hierarchy Rename", message: "Enter new name for Hierarchy Level", preferredStyle: .Alert)
+            let newNameAlert = UIAlertController(title: "Hierarchy Rename", message: "Enter new name for Hierarchy Level", preferredStyle: .alert)
             
             //2. Add the text field. You can configure it however you need.
-            newNameAlert.addTextFieldWithConfigurationHandler({ (textField) -> Void in
+            newNameAlert.addTextField(configurationHandler: { (textField) -> Void in
                 textField.text = workingItem.title
             })
             
             //3. Grab the value from the text field, and print it when the user clicks OK.
-            newNameAlert.addAction(UIAlertAction(title: "OK", style: .Default, handler: { (action) -> Void in
+            newNameAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
                 let textField = newNameAlert.textFields![0] as UITextField
                 workingItem.title = textField.text!
                 self.myWorkingTeam.loadGTDLevels()
@@ -407,7 +409,7 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
             }))
             
             // 4. Present the alert.
-            self.presentViewController(newNameAlert, animated: true, completion: nil)
+            self.present(newNameAlert, animated: true, completion: nil)
         }
     }
     //---------------------------------------------------------------
@@ -432,31 +434,32 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
     * identifier string needs to include element id/name information. Eg. "webview-field2".
     */
     
-    func identifierForTextArea(uiTextObject: AnyObject) -> String
+    //func identifierForTextArea(_ uiTextObject: AnyObject) -> String
+    func identifier(forTextArea uiTextObject: Any) -> String
     {
         var result: String = ""
         
-        if uiTextObject.isKindOfClass(UITextField)
+        if uiTextObject is UITextField
         {
-            if uiTextObject.tag == 1
+            if (uiTextObject as AnyObject).tag == 1
             {
                 result = "txtRole"
             }
-            if uiTextObject.tag == 2
+            if (uiTextObject as AnyObject).tag == 2
             {
                 result = "txtStage"
             }
         }
         
-        if uiTextObject.isKindOfClass(UITextView)
+        if uiTextObject is UITextView
         {
-            if uiTextObject.tag == 1
+            if (uiTextObject as AnyObject).tag == 1
             {
                 result = "txtNotes"
             }
         }
         
-        if uiTextObject.isKindOfClass(UISearchBar)
+        if uiTextObject is UISearchBar
         {
             result =  "mySearchBar"
         }
@@ -472,7 +475,7 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
     * Return NO to cancel the process.
     */
     
-    func prepareForFillSwitch(textIdentifier: String) -> Bool
+    func prepare(forFillSwitch textIdentifier: String) -> Bool
     {
         // At this point the app should save state since TextExpander touch is about
         // to activate.
@@ -507,19 +510,20 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
     * expect the identified text object to become the first responder.
     */
     
-    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>) -> AnyObject
+    // func makeIdentifiedTextObjectFirstResponder(_ textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>) -> AnyObject
+    public func makeIdentifiedTextObjectFirstResponder(_ textIdentifier: String!, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>!) -> Any!
     {
         snippetExpanded = true
         
-        let intIoInsertionPointLocation:Int = ioInsertionPointLocation.memory
+        let intIoInsertionPointLocation:Int = ioInsertionPointLocation.pointee
         
         if "txtNotes" == textIdentifier
         {
             txtNotes.becomeFirstResponder()
-            let theLoc = txtNotes.positionFromPosition(txtNotes.beginningOfDocument, offset: intIoInsertionPointLocation)
+            let theLoc = txtNotes.position(from: txtNotes.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtNotes.selectedTextRange = txtNotes.textRangeFromPosition(theLoc!, toPosition: theLoc!)
+                txtNotes.selectedTextRange = txtNotes.textRange(from: theLoc!, to: theLoc!)
             }
             return txtNotes
         }
@@ -542,11 +546,11 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
             
             //return nil
             
-            return ""
+            return "" as AnyObject
         }
     }
     
-    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool
+    func textView(_ textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool
     {
         if (textExpander.isAttemptingToExpandText)
         {
@@ -564,16 +568,16 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
     // of workaround into the SDK, so instead we provide an example here.
     // If you have a better workaround suggestion, we'd love to hear it.
     
-    func twiddleText(textView: UITextView)
+    func twiddleText(_ textView: UITextView)
     {
-        let SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO = UIDevice.currentDevice().systemVersion
+        let SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO = UIDevice.current.systemVersion
         if SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO >= "7.0"
         {
-            textView.textStorage.edited(NSTextStorageEditActions.EditedCharacters,range:NSMakeRange(0, textView.textStorage.length),changeInLength:0)
+            textView.textStorage.edited(NSTextStorageEditActions.editedCharacters,range:NSMakeRange(0, textView.textStorage.length),changeInLength:0)
         }
     }
     
-    func textViewDidChange(textView: UITextView)
+    func textViewDidChange(_ textView: UITextView)
     {
         if snippetExpanded
         {
@@ -710,14 +714,14 @@ class KDRearrangeableSettingHierarchy: UICollectionViewCell
         super.layoutSubviews()
     }
     
-    @IBAction func btnRemove(sender: UIButton)
+    @IBAction func btnRemove(_ sender: UIButton)
     {
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeSettings", object: nil, userInfo:["setting":"HierarchyDelete", "Item": myGTDLevel])
+        notificationCenter.post(name: NotificationChangeSettings, object: nil, userInfo:["setting":"HierarchyDelete", "Item": myGTDLevel])
     }
 
-    @IBAction func btnRename(sender: UIButton)
+    @IBAction func btnRename(_ sender: UIButton)
     {
-        NSNotificationCenter.defaultCenter().postNotificationName("NotificationChangeSettings", object: nil, userInfo:["setting":"HierarchyUpdate", "Item": myGTDLevel])
+        notificationCenter.post(name: NotificationChangeSettings, object: nil, userInfo:["setting":"HierarchyUpdate", "Item": myGTDLevel])
     }
 }
 

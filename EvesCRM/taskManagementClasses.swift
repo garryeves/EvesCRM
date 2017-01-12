@@ -11,10 +11,10 @@ import AddressBook
 
 class workingGTDLevel: NSObject
 {
-    private var myTitle: String = "New"
-    private var myTeamID: Int = 0
-    private var myGTDLevel: Int = 0
-    private var saveCalled: Bool = false
+    fileprivate var myTitle: String = "New"
+    fileprivate var myTeamID: Int = 0
+    fileprivate var myGTDLevel: Int = 0
+    fileprivate var saveCalled: Bool = false
     
     var GTDLevel: Int
     {
@@ -97,7 +97,7 @@ class workingGTDLevel: NSObject
         if !saveCalled
         {
             saveCalled = true
-            let _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "performSave", userInfo: nil, repeats: false)
+            let _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(workingGTDLevel.performSave), userInfo: nil, repeats: false)
         }
     }
     
@@ -129,12 +129,12 @@ class workingGTDLevel: NSObject
             {  // There is another level so need to decrement the level count
                 myDatabaseConnection.changeGTDLevel(currentLevel + 1, newGTDLevel: currentLevel, inTeamID: myTeamID)
                 
-                currentLevel++
+                currentLevel += 1
             }
         }
     }
     
-    func moveLevel(newLevel: Int)
+    func moveLevel(_ newLevel: Int)
     {
         if myGTDLevel > newLevel
         {
@@ -149,7 +149,7 @@ class workingGTDLevel: NSObject
                 NSLog("Move level \(levelCount)")
                 let nextLevel = levelCount + 1
                 myDatabaseConnection.changeGTDLevel(levelCount, newGTDLevel: nextLevel, inTeamID: myTeamID)
-                levelCount--
+                levelCount -= 1
             }
             myDatabaseConnection.changeGTDLevel(-99, newGTDLevel: newLevel, inTeamID: myTeamID)
         }
@@ -168,7 +168,7 @@ class workingGTDLevel: NSObject
                 NSLog("Move level \(levelCount)")
                 let nextLevel = levelCount - 1
                 myDatabaseConnection.changeGTDLevel(levelCount, newGTDLevel: nextLevel, inTeamID: myTeamID)
-                levelCount++
+                levelCount += 1
             }
             myDatabaseConnection.changeGTDLevel(-99, newGTDLevel: newLevel, inTeamID: myTeamID)
 
@@ -178,21 +178,21 @@ class workingGTDLevel: NSObject
 
 class workingGTDItem: NSObject
 {
-    private var myGTDItemID: Int = 0
-    private var myGTDParentID: Int = 0
-    private var myTitle: String = "New"
-    private var myStatus: String = ""
-    private var myChildren: [AnyObject] = Array()
-    private var myTeamID: Int = 0
-    private var myNote: String = ""
-    private var myLastReviewDate: NSDate!
-    private var myReviewFrequency: Int = 0
-    private var myReviewPeriod: String = ""
-    private var myPredecessor: Int = 0
-    private var myGTDID: Int = 0
-    private var myGTDLevel: Int = 0
-    private var myStoreGTDLevel: Int = 0
-    private var saveCalled: Bool = false
+    fileprivate var myGTDItemID: Int = 0
+    fileprivate var myGTDParentID: Int = 0
+    fileprivate var myTitle: String = "New"
+    fileprivate var myStatus: String = ""
+    fileprivate var myChildren: [AnyObject] = Array()
+    fileprivate var myTeamID: Int = 0
+    fileprivate var myNote: String = ""
+    fileprivate var myLastReviewDate: Date!
+    fileprivate var myReviewFrequency: Int = 0
+    fileprivate var myReviewPeriod: String = ""
+    fileprivate var myPredecessor: Int = 0
+    fileprivate var myGTDID: Int = 0
+    fileprivate var myGTDLevel: Int = 0
+    fileprivate var myStoreGTDLevel: Int = 0
+    fileprivate var saveCalled: Bool = false
     
     var GTDItemID: Int
     {
@@ -306,7 +306,7 @@ class workingGTDItem: NSObject
         }
     }
     
-    var lastReviewDate: NSDate
+    var lastReviewDate: Date
     {
         get
         {
@@ -325,19 +325,19 @@ class workingGTDItem: NSObject
         {
             if myLastReviewDate == nil
             {
-                myLastReviewDate = getDefaultDate()
+                myLastReviewDate = getDefaultDate() as Date!
                 save()
                 return ""
             }
-            else if myLastReviewDate == getDefaultDate()
+            else if myLastReviewDate == getDefaultDate() as Date
             {
                 return ""
             }
             else
             {
-                let myDateFormatter = NSDateFormatter()
-                myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
-                return myDateFormatter.stringFromDate(myLastReviewDate)
+                let myDateFormatter = DateFormatter()
+                myDateFormatter.dateStyle = DateFormatter.Style.medium
+                return myDateFormatter.string(from: myLastReviewDate)
             }
         }
     }
@@ -430,7 +430,7 @@ class workingGTDItem: NSObject
         
         myGTDItemID = myDatabaseConnection.getNextID("GTDItem")
         myGTDParentID = inParentID
-        myLastReviewDate = getDefaultDate()
+        myLastReviewDate = getDefaultDate() as Date!
         myTeamID = inTeamID
         
         if myStoreGTDLevel == 0
@@ -450,7 +450,7 @@ class workingGTDItem: NSObject
         if !saveCalled
         {
             saveCalled = true
-            let _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "performSave", userInfo: nil, repeats: false)
+            let _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(workingGTDLevel.performSave), userInfo: nil, repeats: false)
         }
     }
     
@@ -463,13 +463,13 @@ class workingGTDItem: NSObject
         saveCalled = false
     }
     
-    func addChild(inChild: workingGTDItem)
+    func addChild(_ inChild: workingGTDItem)
     {
         inChild.GTDParentID = myGTDItemID
         loadChildren()
     }
     
-    func removeChild(inChild: workingGTDItem)
+    func removeChild(_ inChild: workingGTDItem)
     {
         inChild.GTDParentID = 0
         loadChildren()
@@ -504,7 +504,7 @@ class workingGTDItem: NSObject
                 
                 if myItem.projectStartDate != getDefaultDate()
                 {
-                    if myItem.projectStartDate.compare(NSDate()) == NSComparisonResult.OrderedDescending
+                    if myItem.projectStartDate.compare(Date()) == ComparisonResult.orderedDescending
                     {  // Start date is in future
                         boolAddProject = false
                     }
@@ -549,12 +549,12 @@ class workingGTDItem: NSObject
 
 class projectTeamMember: NSObject
 {
-    private var myProjectID: Int = 0
-    private var myProjectMemberNotes: String = ""
-    private var myRoleID: Int = 0
-    private var myTeamMember: String = ""
-    private var myTeamID: Int = 0
-    private var saveCalled: Bool = false
+    fileprivate var myProjectID: Int = 0
+    fileprivate var myProjectMemberNotes: String = ""
+    fileprivate var myRoleID: Int = 0
+    fileprivate var myTeamMember: String = ""
+    fileprivate var myTeamID: Int = 0
+    fileprivate var saveCalled: Bool = false
     
     var projectID: Int
     {
@@ -599,7 +599,7 @@ class projectTeamMember: NSObject
     {
         get
         {
-            return myDatabaseConnection.getRoleDescription(myRoleID as Int, inTeamID: myTeamID)
+            return myDatabaseConnection.getRoleDescription(NSNumber(value: myRoleID as Int), inTeamID: myTeamID)
         }
     }
 
@@ -638,7 +638,7 @@ class projectTeamMember: NSObject
         if !saveCalled
         {
             saveCalled = true
-            let _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "performSave", userInfo: nil, repeats: false)
+            let _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(workingGTDLevel.performSave), userInfo: nil, repeats: false)
         }
     }
     
@@ -659,26 +659,26 @@ class projectTeamMember: NSObject
 
 class project: NSObject // 10k level
 {
-    private var myProjectEndDate: NSDate!
-    private var myProjectID: Int = 0
-    private var myProjectName: String = "New project"
-    private var myProjectStartDate: NSDate!
-    private var myProjectStatus: String = ""
-    private var myReviewFrequency: Int = 0
-    private var myLastReviewDate: NSDate!
-    private var myTeamMembers: [projectTeamMember] = Array()
-    private var myTasks: [task] = Array()
-    private var myGTDItemID: Int = 0
-    private var myRepeatInterval: Int = 0
-    private var myRepeatType: String = ""
-    private var myRepeatBase: String = ""
-    private var myTeamID: Int = 0
-    private var myNote: String = ""
-    private var myReviewPeriod: String = ""
-    private var myPredecessor: Int = 0
-    private var saveCalled: Bool = false
+    fileprivate var myProjectEndDate: Date!
+    fileprivate var myProjectID: Int = 0
+    fileprivate var myProjectName: String = "New project"
+    fileprivate var myProjectStartDate: Date!
+    fileprivate var myProjectStatus: String = ""
+    fileprivate var myReviewFrequency: Int = 0
+    fileprivate var myLastReviewDate: Date!
+    fileprivate var myTeamMembers: [projectTeamMember] = Array()
+    fileprivate var myTasks: [task] = Array()
+    fileprivate var myGTDItemID: Int = 0
+    fileprivate var myRepeatInterval: Int = 0
+    fileprivate var myRepeatType: String = ""
+    fileprivate var myRepeatBase: String = ""
+    fileprivate var myTeamID: Int = 0
+    fileprivate var myNote: String = ""
+    fileprivate var myReviewPeriod: String = ""
+    fileprivate var myPredecessor: Int = 0
+    fileprivate var saveCalled: Bool = false
     
-    var projectEndDate: NSDate
+    var projectEndDate: Date
     {
         get
         {
@@ -698,19 +698,19 @@ class project: NSObject // 10k level
         {
             if myProjectEndDate == nil
             {
-                myProjectEndDate = getDefaultDate()
+                myProjectEndDate = getDefaultDate() as Date!
                 save()
                 return ""
             }
-            else if myProjectEndDate == getDefaultDate()
+            else if myProjectEndDate == getDefaultDate() as Date
             {
                 return ""
             }
             else
             {
-                let myDateFormatter = NSDateFormatter()
-                myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
-                return myDateFormatter.stringFromDate(myProjectEndDate)
+                let myDateFormatter = DateFormatter()
+                myDateFormatter.dateStyle = DateFormatter.Style.medium
+                return myDateFormatter.string(from: myProjectEndDate)
             }
         }
     }
@@ -736,7 +736,7 @@ class project: NSObject // 10k level
         }
     }
 
-    var projectStartDate: NSDate
+    var projectStartDate: Date
     {
         get
         {
@@ -771,19 +771,19 @@ class project: NSObject // 10k level
         {
             if myProjectStartDate == nil
             {
-                myProjectStartDate = getDefaultDate()
+                myProjectStartDate = getDefaultDate() as Date!
                 save()
                 return ""
             }
-            else if myProjectStartDate == getDefaultDate()
+            else if myProjectStartDate == getDefaultDate() as Date
             {
                 return ""
             }
             else
             {
-                let myDateFormatter = NSDateFormatter()
-                myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
-                return myDateFormatter.stringFromDate(myProjectStartDate)
+                let myDateFormatter = DateFormatter()
+                myDateFormatter.dateStyle = DateFormatter.Style.medium
+                return myDateFormatter.string(from: myProjectStartDate)
             }
         }
     }
@@ -819,7 +819,7 @@ class project: NSObject // 10k level
         }
     }
     
-    var lastReviewDate: NSDate
+    var lastReviewDate: Date
     {
         get
         {
@@ -838,19 +838,19 @@ class project: NSObject // 10k level
         {
             if myLastReviewDate == nil
             {
-                myLastReviewDate = getDefaultDate()
+                myLastReviewDate = getDefaultDate() as Date!
                 save()
                 return ""
             }
-            else if myLastReviewDate == getDefaultDate()
+            else if myLastReviewDate == getDefaultDate() as Date
             {
                 return ""
             }
             else
             {
-                let myDateFormatter = NSDateFormatter()
-                myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
-                return myDateFormatter.stringFromDate(myLastReviewDate)
+                let myDateFormatter = DateFormatter()
+                myDateFormatter.dateStyle = DateFormatter.Style.medium
+                return myDateFormatter.string(from: myLastReviewDate)
             }
         }
     }
@@ -967,9 +967,9 @@ class project: NSObject // 10k level
         
         // Set dates to a really daft value so that it stores into the database
         
-        myProjectEndDate = getDefaultDate()
-        myProjectStartDate = getDefaultDate()
-        myLastReviewDate = getDefaultDate()
+        myProjectEndDate = getDefaultDate() as Date!
+        myProjectStartDate = getDefaultDate() as Date!
+        myLastReviewDate = getDefaultDate() as Date!
         myTeamID = inTeamID
         
         save()
@@ -1031,7 +1031,7 @@ class project: NSObject // 10k level
     {
         myTeamMembers.removeAll()
             
-        let myProjectTeamMembers = myDatabaseConnection.getTeamMembers(myProjectID)
+        let myProjectTeamMembers = myDatabaseConnection.getTeamMembers(NSNumber(value: myProjectID))
             
         for myTeamMember in myProjectTeamMembers
         {
@@ -1055,14 +1055,14 @@ class project: NSObject // 10k level
         }
     }
         
-    func addTask(inTask: task)
+    func addTask(_ inTask: task)
     {
         inTask.projectID = myProjectID
             
         loadTasks()
     }
         
-    func removeTask(inTask: task)
+    func removeTask(_ inTask: task)
     {
         inTask.projectID = 0
         loadTasks()
@@ -1106,7 +1106,7 @@ class project: NSObject // 10k level
         if !saveCalled
         {
             saveCalled = true
-            let _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "performSave", userInfo: nil, repeats: false)
+            let _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(workingGTDLevel.performSave), userInfo: nil, repeats: false)
         }
     }
     
@@ -1128,16 +1128,16 @@ class project: NSObject // 10k level
     func checkForRepeat()
     {
         // Check to see if there is a repeat pattern
-        var tempStartDate: NSDate = getDefaultDate()
-        var tempEndDate: NSDate = getDefaultDate()
+        var tempStartDate: Date = getDefaultDate() as Date
+        var tempEndDate: Date = getDefaultDate() as Date
         
         if myRepeatInterval != 0
         {
             // Calculate new start and end dates, based on the repeat fields
             
-            if myProjectStartDate == getDefaultDate() && myProjectEndDate == getDefaultDate()
+            if myProjectStartDate == getDefaultDate() as Date && myProjectEndDate == getDefaultDate() as Date
             {  // No dates have set, so we set the start date
-                tempStartDate = calculateNewDate(NSDate(), inDateBase:myRepeatBase, inInterval: myRepeatInterval, inPeriod: myRepeatType)
+                tempStartDate = calculateNewDate(Date(), inDateBase:myRepeatBase, inInterval: myRepeatInterval, inPeriod: myRepeatType)
             }
             else
             { // A date has been set in at least one of the fields, so we use that as the date to set
@@ -1146,29 +1146,28 @@ class project: NSObject // 10k level
                 
                 var daysToAdd: Int = 0
                 
-                if myProjectStartDate != getDefaultDate() && myProjectEndDate != getDefaultDate()
+                if myProjectStartDate != getDefaultDate() as Date && myProjectEndDate != getDefaultDate() as Date
                 {
-                    let calendar = NSCalendar.currentCalendar()
+                    let calendar = Calendar.current
                 
-                    let components = calendar.components([.Day], fromDate: myProjectStartDate, toDate: myProjectEndDate, options: [])
+                    let components = calendar.dateComponents([.day], from: myProjectStartDate, to: myProjectEndDate)
                 
-                    daysToAdd = components.day
+                    daysToAdd = components.day!
                 }
                 
-                if myProjectStartDate != getDefaultDate()
+                if myProjectStartDate != getDefaultDate() as Date
                 {
-                    tempStartDate = calculateNewDate(NSDate(), inDateBase:myRepeatBase, inInterval: myRepeatInterval, inPeriod: myRepeatType)
+                    tempStartDate = calculateNewDate(Date(), inDateBase:myRepeatBase, inInterval: myRepeatInterval, inPeriod: myRepeatType)
                 }
             
-                if myProjectEndDate != getDefaultDate()
+                if myProjectEndDate != getDefaultDate() as Date
                 {
-                    let calendar = NSCalendar.currentCalendar()
+                    let calendar = Calendar.current
                     
-                    let tempDate = calendar.dateByAddingUnit(
-                            [.Day],
+                    let tempDate = calendar.date(
+                            byAdding: .day,
                             value: daysToAdd,
-                            toDate: NSDate(),
-                            options: [])!
+                            to: Date())!
                     
                     tempEndDate = calculateNewDate(tempDate, inDateBase:myRepeatBase, inInterval: myRepeatInterval, inPeriod: myRepeatType)
                 }
@@ -1188,7 +1187,7 @@ class project: NSObject // 10k level
             
             // Populate team Members
            
-            let myProjectTeamMembers = myDatabaseConnection.getTeamMembers(myProjectID)
+            let myProjectTeamMembers = myDatabaseConnection.getTeamMembers(NSNumber(value: myProjectID))
             
             for myTeamMember in myProjectTeamMembers
             {
@@ -1258,8 +1257,8 @@ class project: NSObject // 10k level
 
 class taskPredecessor: NSObject
 {
-    private var myPredecessorID: Int = 0
-    private var myPredecessorType: String = ""
+    fileprivate var myPredecessorID: Int = 0
+    fileprivate var myPredecessorType: String = ""
     
     var predecessorID: Int
     {
@@ -1294,27 +1293,27 @@ class taskPredecessor: NSObject
 
 class task: NSObject
 {
-    private var myTaskID: Int = 0
-    private var myTitle: String = "New task"
-    private var myDetails: String = ""
-    private var myDueDate: NSDate!
-    private var myStartDate: NSDate!
-    private var myStatus: String = ""
-    private var myContexts: [context] = Array()
-    private var myPriority: String = ""
-    private var myEnergyLevel: String = ""
-    private var myEstimatedTime: Int = 0
-    private var myEstimatedTimeType: String = ""
-    private var myProjectID: Int = 0
-    private var myCompletionDate: NSDate!
-    private var myRepeatInterval: Int = 0
-    private var myRepeatType: String = ""
-    private var myRepeatBase: String = ""
-    private var myFlagged: Bool = false
-    private var myUrgency: String = ""
-    private var myTeamID: Int = 0
-    private var myPredecessors: [taskPredecessor] = Array()
-    private var saveCalled: Bool = false
+    fileprivate var myTaskID: Int = 0
+    fileprivate var myTitle: String = "New task"
+    fileprivate var myDetails: String = ""
+    fileprivate var myDueDate: Date!
+    fileprivate var myStartDate: Date!
+    fileprivate var myStatus: String = ""
+    fileprivate var myContexts: [context] = Array()
+    fileprivate var myPriority: String = ""
+    fileprivate var myEnergyLevel: String = ""
+    fileprivate var myEstimatedTime: Int = 0
+    fileprivate var myEstimatedTimeType: String = ""
+    fileprivate var myProjectID: Int = 0
+    fileprivate var myCompletionDate: Date!
+    fileprivate var myRepeatInterval: Int = 0
+    fileprivate var myRepeatType: String = ""
+    fileprivate var myRepeatBase: String = ""
+    fileprivate var myFlagged: Bool = false
+    fileprivate var myUrgency: String = ""
+    fileprivate var myTeamID: Int = 0
+    fileprivate var myPredecessors: [taskPredecessor] = Array()
+    fileprivate var saveCalled: Bool = false
  
     var taskID: Int
     {
@@ -1350,7 +1349,7 @@ class task: NSObject
         }
     }
     
-    var dueDate: NSDate
+    var dueDate: Date
     {
         get
         {
@@ -1369,24 +1368,24 @@ class task: NSObject
         {
             if myDueDate == nil
             {
-                myDueDate = getDefaultDate()
+                myDueDate = getDefaultDate() as Date!
                 save()
                 return ""
             }
-            else if myDueDate == getDefaultDate()
+            else if myDueDate == getDefaultDate() as Date
             {
                 return ""
             }
             else
             {
-                let myDateFormatter = NSDateFormatter()
-                myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
-                return myDateFormatter.stringFromDate(myDueDate)
+                let myDateFormatter = DateFormatter()
+                myDateFormatter.dateStyle = DateFormatter.Style.medium
+                return myDateFormatter.string(from: myDueDate)
             }
         }
     }
     
-    var startDate: NSDate
+    var startDate: Date
     {
         get
         {
@@ -1405,19 +1404,19 @@ class task: NSObject
         {
             if myStartDate == nil
             {
-                myStartDate = getDefaultDate()
+                myStartDate = getDefaultDate() as Date!
                 save()
                 return ""
             }
-            else if myStartDate == getDefaultDate()
+            else if myStartDate == getDefaultDate() as Date
             {
                 return ""
             }
             else
             {
-                let myDateFormatter = NSDateFormatter()
-                myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
-                return myDateFormatter.stringFromDate(myStartDate)
+                let myDateFormatter = DateFormatter()
+                myDateFormatter.dateStyle = DateFormatter.Style.medium
+                return myDateFormatter.string(from: myStartDate)
             }
         }
     }
@@ -1434,7 +1433,7 @@ class task: NSObject
             if newValue == "Complete"
             {
                 checkForRepeat()
-                myCompletionDate = NSDate()
+                myCompletionDate = Date()
             }
             save()
         }
@@ -1544,7 +1543,7 @@ class task: NSObject
         return myHistory
     }
 
-    var completionDate: NSDate
+    var completionDate: Date
     {
         get
         {
@@ -1558,19 +1557,19 @@ class task: NSObject
         {
             if myCompletionDate == nil
             {
-                myCompletionDate = getDefaultDate()
+                myCompletionDate = getDefaultDate() as Date!
                 save()
                 return ""
             }
-            else if myCompletionDate == getDefaultDate()
+            else if myCompletionDate == getDefaultDate() as Date
             {
                 return ""
             }
             else
             {
-                let myDateFormatter = NSDateFormatter()
-                myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
-                return myDateFormatter.stringFromDate(myCompletionDate)
+                let myDateFormatter = DateFormatter()
+                myDateFormatter.dateStyle = DateFormatter.Style.medium
+                return myDateFormatter.string(from: myCompletionDate)
             }
         }
     }
@@ -1667,9 +1666,9 @@ class task: NSObject
         
         myTaskID = myDatabaseConnection.getNextID("Task")
         
-        myDueDate = getDefaultDate()
-        myStartDate = getDefaultDate()
-        myCompletionDate = getDefaultDate()
+        myDueDate = getDefaultDate() as Date!
+        myStartDate = getDefaultDate() as Date!
+        myCompletionDate = getDefaultDate() as Date!
         myStatus = "Open"
         
         myTitle = "New Task"
@@ -1726,7 +1725,7 @@ class task: NSObject
         }
     }
     
-    init(oldTask: task, startDate: NSDate, dueDate: NSDate)
+    init(oldTask: task, startDate: Date, dueDate: Date)
     {
         super.init()
         
@@ -1775,7 +1774,7 @@ class task: NSObject
         if !saveCalled
         {
             saveCalled = true
-            let _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "performSave", userInfo: nil, repeats: false)
+            let _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(workingGTDLevel.performSave), userInfo: nil, repeats: false)
         }
     }
     
@@ -1795,7 +1794,7 @@ class task: NSObject
         saveCalled = false
     }
     
-    func addContext(contextID: Int)
+    func addContext(_ contextID: Int)
     {
         var itemFound: Bool = false
         
@@ -1810,7 +1809,7 @@ class task: NSObject
         for myItem in myCheck
         {
             let myRetrievedContext = context(contextID: myItem.contextID as Int)
-            if myRetrievedContext.name.lowercaseString == myContext.name.lowercaseString
+            if myRetrievedContext.name.lowercased() == myContext.name.lowercased()
             {
                 itemFound = true
                 break
@@ -1832,7 +1831,7 @@ class task: NSObject
         }
     }
     
-    func removeContext(contextID: Int)
+    func removeContext(_ contextID: Int)
     {
         myDatabaseConnection.deleteTaskContext(contextID, inTaskID: myTaskID)
         
@@ -1854,7 +1853,7 @@ class task: NSObject
     }
 
     
-    func addHistoryRecord(inHistoryDetails: String, inHistorySource: String)
+    func addHistoryRecord(_ inHistoryDetails: String, inHistorySource: String)
     {
         let myItem = taskUpdates(inTaskID: myTaskID)
         myItem.details = inHistoryDetails
@@ -1864,17 +1863,17 @@ class task: NSObject
     }
     
     
-    func addPredecessor(inPredecessorID: Int, inPredecessorType: String)
+    func addPredecessor(_ inPredecessorID: Int, inPredecessorType: String)
     {
         myDatabaseConnection.savePredecessorTask(myTaskID, inPredecessorID: inPredecessorID, inPredecessorType: inPredecessorType)
     }
 
-    func removePredecessor(inPredecessorID: Int, inPredecessorType: String)
+    func removePredecessor(_ inPredecessorID: Int, inPredecessorType: String)
     {
         myDatabaseConnection.deleteTaskPredecessor(myTaskID, inPredecessorID: inPredecessorID)
     }
 
-    func changePredecessor(inPredecessorID: Int, inPredecessorType: String)
+    func changePredecessor(_ inPredecessorID: Int, inPredecessorType: String)
     {
         myDatabaseConnection.updatePredecessorTaskType(myTaskID, inPredecessorID: inPredecessorID, inPredecessorType: inPredecessorType)
     }
@@ -1882,7 +1881,7 @@ class task: NSObject
     func markComplete()
     {
         checkForRepeat()
-        myCompletionDate = NSDate()
+        myCompletionDate = Date()
         myStatus = "Complete"
         save()
     }
@@ -1893,7 +1892,7 @@ class task: NSObject
         save()
     }
     
-    private func writeLine(inTargetString: String, inLineString: String) -> String
+    fileprivate func writeLine(_ inTargetString: String, inLineString: String) -> String
     {
         var myString = inTargetString
         
@@ -2008,7 +2007,7 @@ class task: NSObject
         return myExportString
     }
     
-    private func writeHTMLLine(inTargetString: String, inLineString: String) -> String
+    fileprivate func writeHTMLLine(_ inTargetString: String, inLineString: String) -> String
     {
         var myString = inTargetString
         
@@ -2138,16 +2137,16 @@ class task: NSObject
     func checkForRepeat()
     {
         // Check to see if there is a repeat pattern
-        var tempStartDate: NSDate = getDefaultDate()
-        var tempDueDate: NSDate = getDefaultDate()
+        var tempStartDate: Date = getDefaultDate() as Date
+        var tempDueDate: Date = getDefaultDate() as Date
         
         if myRepeatInterval != 0
         {
             // Calculate new start and end dates, based on the repeat fields
             
-            if myStartDate == getDefaultDate() && myDueDate == getDefaultDate()
+            if myStartDate == getDefaultDate() as Date && myDueDate == getDefaultDate() as Date
             {  // No dates have set, so we set the start date
-                tempStartDate = calculateNewDate(NSDate(), inDateBase:myRepeatBase, inInterval: myRepeatInterval, inPeriod: myRepeatType)
+                tempStartDate = calculateNewDate(Date(), inDateBase:myRepeatBase, inInterval: myRepeatInterval, inPeriod: myRepeatType)
             }
             else
             { // A date has been set in at least one of the fields, so we use that as the date to set
@@ -2156,21 +2155,21 @@ class task: NSObject
                 
                 var daysToAdd: Int = 0
                 
-                if myStartDate != getDefaultDate() && myDueDate != getDefaultDate()
+                if myStartDate != getDefaultDate() as Date && myDueDate != getDefaultDate() as Date
                 {
-                    let calendar = NSCalendar.currentCalendar()
+                    let calendar = Calendar.current
                     
-                    let components = calendar.components([.Day], fromDate: myStartDate, toDate: myDueDate, options: [])
+                    let components = calendar.dateComponents([.day], from: myStartDate, to: myDueDate)
                     
-                    daysToAdd = components.day
+                    daysToAdd = components.day!
                 }
                 
-                let now: NSDate = NSDate()
-                let gregorian: NSCalendar = NSCalendar(calendarIdentifier: NSCalendarIdentifierGregorian)!
-                let dateComponents: NSDateComponents = gregorian.components([.Year, .Month, .Day], fromDate: now)
-                let todayDate: NSDate = gregorian.dateFromComponents(dateComponents)!
+                let now: Date = Date()
+                let gregorian: Calendar = Calendar(identifier: Calendar.Identifier.gregorian)
+                let dateComponents: DateComponents = (gregorian as Calendar).dateComponents([.year, .month, .day], from: now)
+                let todayDate: Date = gregorian.date(from: dateComponents)!
 
-                if myStartDate != getDefaultDate()
+                if myStartDate != getDefaultDate() as Date
                 {
                     if myRepeatBase == "Start Date"
                     {
@@ -2182,15 +2181,14 @@ class task: NSObject
                     }
                 }
                 
-                if myDueDate != getDefaultDate()
+                if myDueDate != getDefaultDate() as Date
                 {
-                    let calendar = NSCalendar.currentCalendar()
+                    let calendar = Calendar.current
                     
-                    let tempDate = calendar.dateByAddingUnit(
-                        [.Day],
+                    let tempDate = calendar.date(
+                        byAdding: .day,
                         value: daysToAdd,
-                        toDate: todayDate,
-                        options: [])!
+                        to: todayDate)!
                     
                     tempDueDate = calculateNewDate(tempDate, inDateBase:myRepeatBase, inInterval: myRepeatInterval, inPeriod: myRepeatType)
                 }
@@ -2204,10 +2202,10 @@ class task: NSObject
 
 class contexts: NSObject
 {
-    private var myContexts:[context] = Array()
-    private var myPeopleContexts:[context] = Array()
-    private var myPlaceContexts:[context] = Array()
-    private var myToolContexts:[context] = Array()
+    fileprivate var myContexts:[context] = Array()
+    fileprivate var myPeopleContexts:[context] = Array()
+    fileprivate var myPlaceContexts:[context] = Array()
+    fileprivate var myToolContexts:[context] = Array()
     
     override init()
     {
@@ -2223,7 +2221,7 @@ class contexts: NSObject
             }
         }
         
-        myPeopleContexts.sortInPlace { $0.name < $1.name }
+        myPeopleContexts.sort { $0.name < $1.name }
         
         for myItem in myDatabaseConnection.getContextsForType("Place")
         {
@@ -2237,7 +2235,7 @@ class contexts: NSObject
             }
         }
         
-        myPlaceContexts.sortInPlace { $0.name < $1.name }
+        myPlaceContexts.sort { $0.name < $1.name }
         
         for myItem in myDatabaseConnection.getContextsForType("Tool")
         {
@@ -2251,9 +2249,9 @@ class contexts: NSObject
             }
         }
         
-        myToolContexts.sortInPlace { $0.name < $1.name }
+        myToolContexts.sort { $0.name < $1.name }
         
-        myContexts.sortInPlace { $0.name < $1.name }
+        myContexts.sort { $0.name < $1.name }
     }
     
 
@@ -2351,17 +2349,17 @@ class contexts: NSObject
 
 class context: NSObject
 {
-    private var myContextID: Int = 0
-    private var myName: String = "New context"
-    private var myEmail: String = ""
-    private var myAutoEmail: String = ""
-    private var myParentContext: Int = 0
-    private var myStatus: String = ""
-    private var myPersonID: Int = 0
-    private var myTeamID: Int = 0
-    private var myPredecessor: Int = 0
-    private var myContextType: String = ""
-    private var saveCalled: Bool = false
+    fileprivate var myContextID: Int = 0
+    fileprivate var myName: String = "New context"
+    fileprivate var myEmail: String = ""
+    fileprivate var myAutoEmail: String = ""
+    fileprivate var myParentContext: Int = 0
+    fileprivate var myStatus: String = ""
+    fileprivate var myPersonID: Int = 0
+    fileprivate var myTeamID: Int = 0
+    fileprivate var myPredecessor: Int = 0
+    fileprivate var myContextType: String = ""
+    fileprivate var saveCalled: Bool = false
     
     var contextID: Int
     {
@@ -2516,9 +2514,9 @@ class context: NSObject
         }
     }
     
-    func removeWhitespace(string: String) -> String {
-        let components = string.componentsSeparatedByCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()).filter({!$0.characters.isEmpty})
-        return components.joinWithSeparator(" ")
+    func removeWhitespace(_ string: String) -> String {
+        let components = string.components(separatedBy: CharacterSet.whitespacesAndNewlines).filter({!$0.characters.isEmpty})
+        return components.joined(separator: " ")
     }
     
     
@@ -2545,7 +2543,7 @@ class context: NSObject
         
         for myContext in myContextList.allContexts
         {
-            if myContext.name.lowercaseString == strippedContext.lowercaseString
+            if myContext.name.lowercased() == strippedContext.lowercased()
             {
                 // Existing context found, so use this record
                 
@@ -2642,7 +2640,7 @@ class context: NSObject
     }
     
     
-    private func getContext1_1()
+    fileprivate func getContext1_1()
     {
         // Get context1_1
         
@@ -2673,7 +2671,7 @@ class context: NSObject
         if !saveCalled
         {
             saveCalled = true
-            let _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "performSave", userInfo: nil, repeats: false)
+            let _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(workingGTDLevel.performSave), userInfo: nil, repeats: false)
         }
     }
     
@@ -2708,13 +2706,13 @@ class context: NSObject
 
 class taskUpdates: NSObject
 {
-    private var myTaskID: Int = 0
-    private var myUpdateDate: NSDate!
-    private var myDetails: String = ""
-    private var mySource: String = ""
-    private var saveCalled: Bool = false
+    fileprivate var myTaskID: Int = 0
+    fileprivate var myUpdateDate: Date!
+    fileprivate var myDetails: String = ""
+    fileprivate var mySource: String = ""
+    fileprivate var saveCalled: Bool = false
 
-    var updateDate: NSDate
+    var updateDate: Date
     {
         get
         {
@@ -2726,10 +2724,10 @@ class taskUpdates: NSObject
     {
         get
         {
-            let myDateFormatter = NSDateFormatter()
-            myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
-            myDateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
-            return myDateFormatter.stringFromDate(myUpdateDate)
+            let myDateFormatter = DateFormatter()
+            myDateFormatter.dateStyle = DateFormatter.Style.medium
+            myDateFormatter.timeStyle = DateFormatter.Style.short
+            return myDateFormatter.string(from: myUpdateDate)
         }
     }
     
@@ -2737,9 +2735,9 @@ class taskUpdates: NSObject
     {
         get
         {
-            let myDateFormatter = NSDateFormatter()
-            myDateFormatter.dateStyle = NSDateFormatterStyle.MediumStyle
-            return myDateFormatter.stringFromDate(myUpdateDate)
+            let myDateFormatter = DateFormatter()
+            myDateFormatter.dateStyle = DateFormatter.Style.medium
+            return myDateFormatter.string(from: myUpdateDate)
         }
     }
     
@@ -2747,9 +2745,9 @@ class taskUpdates: NSObject
     {
         get
         {
-            let myDateFormatter = NSDateFormatter()
-            myDateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
-            return myDateFormatter.stringFromDate(myUpdateDate)
+            let myDateFormatter = DateFormatter()
+            myDateFormatter.timeStyle = DateFormatter.Style.short
+            return myDateFormatter.string(from: myUpdateDate)
         }
     }
     
@@ -2786,7 +2784,7 @@ class taskUpdates: NSObject
     init(inUpdate: TaskUpdates)
     {
         myTaskID = inUpdate.taskID as Int
-        myUpdateDate = inUpdate.updateDate
+        myUpdateDate = inUpdate.updateDate as Date!
         myDetails = inUpdate.details
         mySource = inUpdate.source
     }
@@ -2798,7 +2796,7 @@ class taskUpdates: NSObject
         if !saveCalled
         {
             saveCalled = true
-            let _ = NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: "performSave", userInfo: nil, repeats: false)
+            let _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(workingGTDLevel.performSave), userInfo: nil, repeats: false)
         }
     }
     
@@ -2854,7 +2852,7 @@ class tasks: NSObject
         loadActiveTasksForContext(contextID)
     }
     
-    func loadActiveTasksForContext(contextID: Int)
+    func loadActiveTasksForContext(_ contextID: Int)
     {
         myActiveTasks.removeAll()
         
@@ -2879,16 +2877,16 @@ class tasks: NSObject
             }
         }
         
-        myActiveTasks.sortInPlace({$0.dueDate.timeIntervalSinceNow < $1.dueDate.timeIntervalSinceNow})
+        myActiveTasks.sort(by: {$0.dueDate.timeIntervalSinceNow < $1.dueDate.timeIntervalSinceNow})
     }
     
-    func loadActiveTasksForProject(projectID: Int)
+    func loadActiveTasksForProject(_ projectID: Int)
     {
         myActiveTasks.removeAll()
         
         var taskList = myDatabaseConnection.getActiveTasksForProject(projectID)
         
-        taskList.sortInPlace({$0.dueDate.timeIntervalSinceNow < $1.dueDate.timeIntervalSinceNow})
+        taskList.sort(by: {$0.dueDate.timeIntervalSinceNow < $1.dueDate.timeIntervalSinceNow})
         
         for myItem in taskList
         {
@@ -2898,13 +2896,13 @@ class tasks: NSObject
         }
     }
     
-    func loadAllTasksForProject(projectID: Int)
+    func loadAllTasksForProject(_ projectID: Int)
     {
         myTasks.removeAll()
         
         var taskList = myDatabaseConnection.getTasksForProject(projectID)
         
-        taskList.sortInPlace({$0.dueDate.timeIntervalSinceNow < $1.dueDate.timeIntervalSinceNow})
+        taskList.sort(by: {$0.dueDate.timeIntervalSinceNow < $1.dueDate.timeIntervalSinceNow})
         
         for myItem in taskList
         {
@@ -2918,8 +2916,8 @@ class tasks: NSObject
 #if os(iOS)
     class GTDModel: NSObject
     {
-        private var myDelegate: MyMaintainProjectDelegate!
-        private var myActionSource: String = ""
+        fileprivate var myDelegate: MyMaintainProjectDelegate!
+        fileprivate var myActionSource: String = ""
         
         var delegate: MyMaintainProjectDelegate
             {

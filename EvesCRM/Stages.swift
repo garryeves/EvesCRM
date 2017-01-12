@@ -13,7 +13,7 @@ class Stages: NSManagedObject {
 
     @NSManaged var stageDescription: String
     @NSManaged var teamID: NSNumber
-    @NSManaged var updateTime: NSDate
+    @NSManaged var updateTime: Date
     @NSManaged var updateType: String
 
 }

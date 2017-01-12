@@ -14,7 +14,7 @@ class Decodes: NSManagedObject {
     @NSManaged var decode_name: String
     @NSManaged var decode_value: String
     @NSManaged var decodeType: String
-    @NSManaged var updateTime: NSDate
+    @NSManaged var updateTime: Date
     @NSManaged var updateType: String
 
 }

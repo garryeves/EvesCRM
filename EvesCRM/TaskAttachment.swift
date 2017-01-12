@@ -11,10 +11,10 @@ import CoreData
 
 class TaskAttachment: NSManagedObject {
 
-    @NSManaged var attachment: NSData
+    @NSManaged var attachment: Data
     @NSManaged var taskID: NSNumber
     @NSManaged var title: String
-    @NSManaged var updateTime: NSDate
+    @NSManaged var updateTime: Date
     @NSManaged var updateType: String
 
 }

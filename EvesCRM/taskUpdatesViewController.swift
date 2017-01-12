@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import TextExpander
 
 //protocol MyTaskDelegate
 //{
@@ -27,7 +28,7 @@ class taskUpdatesViewController: UIViewController, SMTEFillDelegate
 
     // Textexpander
     
-    private var snippetExpanded: Bool = false
+    fileprivate var snippetExpanded: Bool = false
     
     var textExpander: SMTEDelegateController!
 
@@ -35,7 +36,7 @@ class taskUpdatesViewController: UIViewController, SMTEFillDelegate
     {
         super.viewDidLoad()
         
-        txtUpdateDetails.layer.borderColor = UIColor.lightGrayColor().CGColor
+        txtUpdateDetails.layer.borderColor = UIColor.lightGray.cgColor
         txtUpdateDetails.layer.borderWidth = 0.5
         txtUpdateDetails.layer.cornerRadius = 5.0
         txtUpdateDetails.layer.masksToBounds = true
@@ -63,19 +64,20 @@ class taskUpdatesViewController: UIViewController, SMTEFillDelegate
         colHistory.collectionViewLayout.invalidateLayout()
     }
     
-    func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int
+    func numberOfSectionsInCollectionView(_ collectionView: UICollectionView) -> Int
     {
         return 1
     }
     
-    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
         return passedTask.history.count
     }
     
-    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell
+    //    func collectionView(_ collectionView: UICollectionView, cellForItemAtIndexPath indexPath: IndexPath) -> UICollectionViewCell
+    func collectionView(_ collectionView: UICollectionView, cellForItem indexPath: IndexPath) -> UICollectionViewCell
     {
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("myHistoryCell", forIndexPath: indexPath) as! myHistory
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "myHistoryCell", for: indexPath as IndexPath) as! myHistory
         
         cell.lblDate.text = passedTask.history[indexPath.row].displayShortUpdateDate
         cell.lblSource.text = passedTask.history[indexPath.row].source
@@ -83,8 +85,8 @@ class taskUpdatesViewController: UIViewController, SMTEFillDelegate
         cell.lblTime.text = passedTask.history[indexPath.row].displayShortUpdateTime
             
         let fixedWidth = cell.txtUpdate.frame.size.width
-        cell.txtUpdate.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.max))
-        let newSize = cell.txtUpdate.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.max))
+        cell.txtUpdate.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
+        let newSize = cell.txtUpdate.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
         var newFrame = cell.txtUpdate.frame
         newFrame.size = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
         cell.txtUpdate.frame = newFrame;
@@ -96,25 +98,25 @@ class taskUpdatesViewController: UIViewController, SMTEFillDelegate
         }
         else
         {
-            cell.backgroundColor = UIColor.clearColor()
-            cell.txtUpdate.backgroundColor = UIColor.clearColor()
+            cell.backgroundColor = UIColor.clear
+            cell.txtUpdate.backgroundColor = UIColor.clear
         }
         
         return cell
     }
     
-    func collectionView(collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, atIndexPath indexPath: NSIndexPath) -> UICollectionReusableView
     {
         var headerView:UICollectionReusableView!
         if kind == UICollectionElementKindSectionHeader
         {
-            headerView = collectionView.dequeueReusableSupplementaryViewOfKind(kind, withReuseIdentifier: "taskItemHeader", forIndexPath: indexPath) 
+            headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "taskItemHeader", for: indexPath as IndexPath) 
         }
         
         return headerView
     }
     
-    func collectionView(collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
+    func collectionView(_ collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
     {
         var retVal: CGSize!
         
@@ -125,7 +127,7 @@ class taskUpdatesViewController: UIViewController, SMTEFillDelegate
         return retVal
     }
     
-    @IBAction func btnAddUpdate(sender: UIButton)
+    @IBAction func btnAddUpdate(_ sender: UIButton)
     {
         if txtUpdateDetails.text.characters.count > 0 && txtUpdateSource.text!.characters.count > 0
         {
@@ -137,11 +139,11 @@ class taskUpdatesViewController: UIViewController, SMTEFillDelegate
         else
         {
             let alert = UIAlertController(title: "Add Task Update", message:
-                "You need to enter update details and source", preferredStyle: UIAlertControllerStyle.Alert)
+                "You need to enter update details and source", preferredStyle: UIAlertControllerStyle.alert)
             
-            self.presentViewController(alert, animated: false, completion: nil)
+            self.present(alert, animated: false, completion: nil)
             
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.Default,
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
                 handler: nil))
         }
     }
@@ -168,27 +170,28 @@ class taskUpdatesViewController: UIViewController, SMTEFillDelegate
     * identifier string needs to include element id/name information. Eg. "webview-field2".
     */
     
-    func identifierForTextArea(uiTextObject: AnyObject) -> String
+    //func identifierForTextArea(_ uiTextObject: AnyObject) -> String
+    func identifier(forTextArea uiTextObject: Any) -> String
     {
         var result: String = ""
 
-        if uiTextObject.isKindOfClass(UITextField)
+        if uiTextObject is UITextField
         {
-            if uiTextObject.tag == 1
+            if (uiTextObject as AnyObject).tag == 1
             {
                 result = "txtUpdateSource"
             }
         }
         
-        if uiTextObject.isKindOfClass(UITextView)
+        if uiTextObject is UITextView
         {
-            if uiTextObject.tag == 1
+            if (uiTextObject as AnyObject).tag == 1
             {
                 result = "txtUpdateDetails"
             }
         }
         
-        if uiTextObject.isKindOfClass(UISearchBar)
+        if uiTextObject is UISearchBar
         {
             result =  "mySearchBar"
         }
@@ -204,7 +207,7 @@ class taskUpdatesViewController: UIViewController, SMTEFillDelegate
     * Return NO to cancel the process.
     */
 
-    func prepareForFillSwitch(textIdentifier: String) -> Bool
+    func prepare(forFillSwitch textIdentifier: String) -> Bool
     {
         // At this point the app should save state since TextExpander touch is about
         // to activate.
@@ -239,29 +242,30 @@ class taskUpdatesViewController: UIViewController, SMTEFillDelegate
     * expect the identified text object to become the first responder.
     */
     
-    func makeIdentifiedTextObjectFirstResponder(textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>) -> AnyObject
+    // func makeIdentifiedTextObjectFirstResponder(_ textIdentifier: String, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>) -> AnyObject
+    public func makeIdentifiedTextObjectFirstResponder(_ textIdentifier: String!, fillWasCanceled userCanceledFill: Bool, cursorPosition ioInsertionPointLocation: UnsafeMutablePointer<Int>!) -> Any!
     {
         snippetExpanded = true
         
-        let intIoInsertionPointLocation:Int = ioInsertionPointLocation.memory
+        let intIoInsertionPointLocation:Int = ioInsertionPointLocation.pointee
         
         if "txtUpdateSource" == textIdentifier
         {
             txtUpdateSource.becomeFirstResponder()
-            let theLoc = txtUpdateSource.positionFromPosition(txtUpdateSource.beginningOfDocument, offset: intIoInsertionPointLocation)
+            let theLoc = txtUpdateSource.position(from: txtUpdateSource.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtUpdateSource.selectedTextRange = txtUpdateSource.textRangeFromPosition(theLoc!, toPosition: theLoc!)
+                txtUpdateSource.selectedTextRange = txtUpdateSource.textRange(from: theLoc!, to: theLoc!)
             }
             return txtUpdateSource
         }
         else if "txtUpdateDetails" == textIdentifier
         {
             txtUpdateDetails.becomeFirstResponder()
-            let theLoc = txtUpdateDetails.positionFromPosition(txtUpdateDetails.beginningOfDocument, offset: intIoInsertionPointLocation)
+            let theLoc = txtUpdateDetails.position(from: txtUpdateDetails.beginningOfDocument, offset: intIoInsertionPointLocation)
             if theLoc != nil
             {
-                txtUpdateDetails.selectedTextRange = txtUpdateDetails.textRangeFromPosition(theLoc!, toPosition: theLoc!)
+                txtUpdateDetails.selectedTextRange = txtUpdateDetails.textRange(from: theLoc!, to: theLoc!)
             }
             return txtUpdateDetails
         }
@@ -284,11 +288,11 @@ class taskUpdatesViewController: UIViewController, SMTEFillDelegate
             
             //return nil
             
-            return ""
+            return "" as AnyObject
         }
     }
     
-    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool
+    func textView(_ textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool
     {
         if (textExpander.isAttemptingToExpandText)
         {
@@ -306,16 +310,16 @@ class taskUpdatesViewController: UIViewController, SMTEFillDelegate
     // of workaround into the SDK, so instead we provide an example here.
     // If you have a better workaround suggestion, we'd love to hear it.
     
-    func twiddleText(textView: UITextView)
+    func twiddleText(_ textView: UITextView)
     {
-        let SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO = UIDevice.currentDevice().systemVersion
+        let SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO = UIDevice.current.systemVersion
         if SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO >= "7.0"
         {
-            textView.textStorage.edited(NSTextStorageEditActions.EditedCharacters,range:NSMakeRange(0, textView.textStorage.length),changeInLength:0)
+            textView.textStorage.edited(NSTextStorageEditActions.editedCharacters,range:NSMakeRange(0, textView.textStorage.length),changeInLength:0)
         }
     }
     
-    func textViewDidChange(textView: UITextView)
+    func textViewDidChange(_ textView: UITextView)
     {
         if snippetExpanded
         {
