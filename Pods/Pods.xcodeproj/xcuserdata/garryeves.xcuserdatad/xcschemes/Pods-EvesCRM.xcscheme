@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0820"
+   LastUpgradeVersion = "0700"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "33715FD10F3C85A4166536D7E10AD567"
+               BlueprintIdentifier = "17AB64DE6D8F2E6C3309BE651B7749D9"
                BuildableName = "Pods_EvesCRM.framework"
                BlueprintName = "Pods-EvesCRM"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "33715FD10F3C85A4166536D7E10AD567"
+            BlueprintIdentifier = "17AB64DE6D8F2E6C3309BE651B7749D9"
             BuildableName = "Pods_EvesCRM.framework"
             BlueprintName = "Pods-EvesCRM"
             ReferencedContainer = "container:Pods.xcodeproj">

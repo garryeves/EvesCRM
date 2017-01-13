@@ -53,26 +53,6 @@
 		342C0A201B4B7CED00A73CA5 /* MeetingAgenda.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342C0A141B4B7CED00A73CA5 /* MeetingAgenda.swift */; };
 		342C0A221B4B844D00A73CA5 /* meetingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342C0A211B4B844D00A73CA5 /* meetingsViewController.swift */; };
 		342C0A231B4B844D00A73CA5 /* meetingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342C0A211B4B844D00A73CA5 /* meetingsViewController.swift */; };
-		342CA6A01B26C79B006FEAED /* GTLCommon_Sources.m in Sources */ = {isa = PBXBuildFile; fileRef = 342CA6971B26C79B006FEAED /* GTLCommon_Sources.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		342CA6A11B26C79B006FEAED /* GTLCommon_Sources.m in Sources */ = {isa = PBXBuildFile; fileRef = 342CA6971B26C79B006FEAED /* GTLCommon_Sources.m */; };
-		342CA6A21B26C79B006FEAED /* GTLNetworking_Sources.m in Sources */ = {isa = PBXBuildFile; fileRef = 342CA6991B26C79B006FEAED /* GTLNetworking_Sources.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		342CA6A31B26C79B006FEAED /* GTLNetworking_Sources.m in Sources */ = {isa = PBXBuildFile; fileRef = 342CA6991B26C79B006FEAED /* GTLNetworking_Sources.m */; };
-		342CA6A41B26C79B006FEAED /* Objects in Resources */ = {isa = PBXBuildFile; fileRef = 342CA69A1B26C79B006FEAED /* Objects */; };
-		342CA6A51B26C79B006FEAED /* Objects in Resources */ = {isa = PBXBuildFile; fileRef = 342CA69A1B26C79B006FEAED /* Objects */; };
-		342CA6A61B26C79B006FEAED /* GoogleResources in Resources */ = {isa = PBXBuildFile; fileRef = 342CA69B1B26C79B006FEAED /* GoogleResources */; };
-		342CA6A71B26C79B006FEAED /* GoogleResources in Resources */ = {isa = PBXBuildFile; fileRef = 342CA69B1B26C79B006FEAED /* GoogleResources */; };
-		342CA6A81B26C79B006FEAED /* Services in Resources */ = {isa = PBXBuildFile; fileRef = 342CA69C1B26C79B006FEAED /* Services */; };
-		342CA6A91B26C79B006FEAED /* Services in Resources */ = {isa = PBXBuildFile; fileRef = 342CA69C1B26C79B006FEAED /* Services */; };
-		342CA6AA1B26C79B006FEAED /* Tests in Resources */ = {isa = PBXBuildFile; fileRef = 342CA69D1B26C79B006FEAED /* Tests */; };
-		342CA6AB1B26C79B006FEAED /* Tests in Resources */ = {isa = PBXBuildFile; fileRef = 342CA69D1B26C79B006FEAED /* Tests */; };
-		342CA6AC1B26C79B006FEAED /* Tools in Resources */ = {isa = PBXBuildFile; fileRef = 342CA69E1B26C79B006FEAED /* Tools */; };
-		342CA6AD1B26C79B006FEAED /* Tools in Resources */ = {isa = PBXBuildFile; fileRef = 342CA69E1B26C79B006FEAED /* Tools */; };
-		342CA6AE1B26C79B006FEAED /* Utilities in Resources */ = {isa = PBXBuildFile; fileRef = 342CA69F1B26C79B006FEAED /* Utilities */; };
-		342CA6AF1B26C79B006FEAED /* Utilities in Resources */ = {isa = PBXBuildFile; fileRef = 342CA69F1B26C79B006FEAED /* Utilities */; };
-		342CA6BD1B26CE6F006FEAED /* Source in Resources */ = {isa = PBXBuildFile; fileRef = 342CA6BC1B26CE6F006FEAED /* Source */; };
-		342CA6BE1B26CE6F006FEAED /* Source in Resources */ = {isa = PBXBuildFile; fileRef = 342CA6BC1B26CE6F006FEAED /* Source */; };
-		342CA6C01B26D0B3006FEAED /* gtm-oauth2-master in Resources */ = {isa = PBXBuildFile; fileRef = 342CA6BF1B26D0B3006FEAED /* gtm-oauth2-master */; };
-		342CA6C11B26D0B3006FEAED /* gtm-oauth2-master in Resources */ = {isa = PBXBuildFile; fileRef = 342CA6BF1B26D0B3006FEAED /* gtm-oauth2-master */; };
 		342F46D01B9FC804004BAC9D /* KDRearrangeableCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342F46CE1B9FC804004BAC9D /* KDRearrangeableCollectionViewCell.swift */; };
 		342F46D11B9FC804004BAC9D /* KDRearrangeableCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342F46CE1B9FC804004BAC9D /* KDRearrangeableCollectionViewCell.swift */; };
 		342F46D21B9FC804004BAC9D /* KDRearrangeableCollectionViewFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 342F46CF1B9FC804004BAC9D /* KDRearrangeableCollectionViewFlowLayout.swift */; };
@@ -136,54 +116,6 @@
 		349331CF1B70576C004AA569 /* SideBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349331CE1B70576C004AA569 /* SideBar.swift */; };
 		349C4D3F1B033B6400EC8099 /* Stages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349C4D3E1B033B6400EC8099 /* Stages.swift */; };
 		349C4D401B033B6400EC8099 /* Stages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349C4D3E1B033B6400EC8099 /* Stages.swift */; };
-		34A182D21B0EDB3D00FC369D /* LiveConnectClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182C41B0EDB3D00FC369D /* LiveConnectClient.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		34A182D31B0EDB3D00FC369D /* LiveConnectClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182C41B0EDB3D00FC369D /* LiveConnectClient.m */; };
-		34A182D41B0EDB3D00FC369D /* LiveConnectSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182C61B0EDB3D00FC369D /* LiveConnectSession.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		34A182D51B0EDB3D00FC369D /* LiveConnectSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182C61B0EDB3D00FC369D /* LiveConnectSession.m */; };
-		34A182D61B0EDB3D00FC369D /* LiveDownloadOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182C91B0EDB3D00FC369D /* LiveDownloadOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		34A182D71B0EDB3D00FC369D /* LiveDownloadOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182C91B0EDB3D00FC369D /* LiveDownloadOperation.m */; };
-		34A182D81B0EDB3D00FC369D /* LiveOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182CC1B0EDB3D00FC369D /* LiveOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		34A182D91B0EDB3D00FC369D /* LiveOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182CC1B0EDB3D00FC369D /* LiveOperation.m */; };
-		34A182DA1B0EDB3D00FC369D /* LiveOperationProgress.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182CF1B0EDB3D00FC369D /* LiveOperationProgress.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		34A182DB1B0EDB3D00FC369D /* LiveOperationProgress.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182CF1B0EDB3D00FC369D /* LiveOperationProgress.m */; };
-		34A182F61B0EDB5C00FC369D /* LiveAuthDialog_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34A182DD1B0EDB5C00FC369D /* LiveAuthDialog_iPad.xib */; };
-		34A182F71B0EDB5C00FC369D /* LiveAuthDialog_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34A182DD1B0EDB5C00FC369D /* LiveAuthDialog_iPad.xib */; };
-		34A182F81B0EDB5C00FC369D /* LiveAuthDialog_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34A182DE1B0EDB5C00FC369D /* LiveAuthDialog_iPhone.xib */; };
-		34A182F91B0EDB5C00FC369D /* LiveAuthDialog_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34A182DE1B0EDB5C00FC369D /* LiveAuthDialog_iPhone.xib */; };
-		34A182FA1B0EDB5C00FC369D /* LiveAuthDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182E01B0EDB5C00FC369D /* LiveAuthDialog.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		34A182FB1B0EDB5C00FC369D /* LiveAuthDialog.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182E01B0EDB5C00FC369D /* LiveAuthDialog.m */; };
-		34A182FC1B0EDB5C00FC369D /* LiveAuthRefreshRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182E31B0EDB5C00FC369D /* LiveAuthRefreshRequest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		34A182FD1B0EDB5C00FC369D /* LiveAuthRefreshRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182E31B0EDB5C00FC369D /* LiveAuthRefreshRequest.m */; };
-		34A182FE1B0EDB5C00FC369D /* LiveAuthRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182E51B0EDB5C00FC369D /* LiveAuthRequest.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		34A182FF1B0EDB5C00FC369D /* LiveAuthRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182E51B0EDB5C00FC369D /* LiveAuthRequest.m */; };
-		34A183001B0EDB5C00FC369D /* LiveAuthStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182E71B0EDB5C00FC369D /* LiveAuthStorage.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		34A183011B0EDB5C00FC369D /* LiveAuthStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182E71B0EDB5C00FC369D /* LiveAuthStorage.m */; };
-		34A183021B0EDB5C00FC369D /* LiveConnectClientCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182E91B0EDB5C00FC369D /* LiveConnectClientCore.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		34A183031B0EDB5C00FC369D /* LiveConnectClientCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182E91B0EDB5C00FC369D /* LiveConnectClientCore.m */; };
-		34A183041B0EDB5C00FC369D /* LiveDownloadOperationCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182EC1B0EDB5C00FC369D /* LiveDownloadOperationCore.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		34A183051B0EDB5C00FC369D /* LiveDownloadOperationCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182EC1B0EDB5C00FC369D /* LiveDownloadOperationCore.m */; };
-		34A183061B0EDB5C00FC369D /* LiveOperationCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182EF1B0EDB5C00FC369D /* LiveOperationCore.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		34A183071B0EDB5C00FC369D /* LiveOperationCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182EF1B0EDB5C00FC369D /* LiveOperationCore.m */; };
-		34A183081B0EDB5C00FC369D /* LiveUploadOperationCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182F21B0EDB5C00FC369D /* LiveUploadOperationCore.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		34A183091B0EDB5C00FC369D /* LiveUploadOperationCore.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A182F21B0EDB5C00FC369D /* LiveUploadOperationCore.m */; };
-		34A1830A1B0EDB5C00FC369D /* Resources_OneNote in Resources */ = {isa = PBXBuildFile; fileRef = 34A182F31B0EDB5C00FC369D /* Resources_OneNote */; };
-		34A1830B1B0EDB5C00FC369D /* Resources_OneNote in Resources */ = {isa = PBXBuildFile; fileRef = 34A182F31B0EDB5C00FC369D /* Resources_OneNote */; };
-		34A1831D1B0EDBB400FC369D /* JsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A1830D1B0EDBB400FC369D /* JsonParser.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		34A1831E1B0EDBB400FC369D /* JsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A1830D1B0EDBB400FC369D /* JsonParser.m */; };
-		34A1831F1B0EDBB400FC369D /* JsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A1830F1B0EDBB400FC369D /* JsonWriter.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		34A183201B0EDBB400FC369D /* JsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A1830F1B0EDBB400FC369D /* JsonWriter.m */; };
-		34A183211B0EDBB400FC369D /* LiveApiHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A183111B0EDBB400FC369D /* LiveApiHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		34A183221B0EDBB400FC369D /* LiveApiHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A183111B0EDBB400FC369D /* LiveApiHelper.m */; };
-		34A183231B0EDBB400FC369D /* LiveAuthHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A183131B0EDBB400FC369D /* LiveAuthHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		34A183241B0EDBB400FC369D /* LiveAuthHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A183131B0EDBB400FC369D /* LiveAuthHelper.m */; };
-		34A183251B0EDBB400FC369D /* LiveConnectionHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A183161B0EDBB400FC369D /* LiveConnectionHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		34A183261B0EDBB400FC369D /* LiveConnectionHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A183161B0EDBB400FC369D /* LiveConnectionHelper.m */; };
-		34A183271B0EDBB400FC369D /* StreamReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A183181B0EDBB400FC369D /* StreamReader.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		34A183281B0EDBB400FC369D /* StreamReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A183181B0EDBB400FC369D /* StreamReader.m */; };
-		34A183291B0EDBB400FC369D /* StringHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A1831A1B0EDBB400FC369D /* StringHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		34A1832A1B0EDBB400FC369D /* StringHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A1831A1B0EDBB400FC369D /* StringHelper.m */; };
-		34A1832B1B0EDBB400FC369D /* UrlHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A1831C1B0EDBB400FC369D /* UrlHelper.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		34A1832C1B0EDBB400FC369D /* UrlHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 34A1831C1B0EDBB400FC369D /* UrlHelper.m */; };
 		34A578BA1B5F6110008D3D8E /* TaskContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A578B91B5F6110008D3D8E /* TaskContext.swift */; };
 		34A578BB1B5F6110008D3D8E /* TaskContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A578B91B5F6110008D3D8E /* TaskContext.swift */; };
 		34A578BD1B5F6110008D3D8E /* Context.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A578BC1B5F6110008D3D8E /* Context.swift */; };
@@ -252,6 +184,7 @@
 		34F35BE61B6B54A200A19ACE /* meetingAgendaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F35BE41B6B54A200A19ACE /* meetingAgendaViewController.swift */; };
 		34FED38D1B044BF1006B414C /* maintainPanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FED38C1B044BF1006B414C /* maintainPanes.swift */; };
 		34FED38E1B044BF1006B414C /* maintainPanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FED38C1B044BF1006B414C /* maintainPanes.swift */; };
+		5F4D9549951FC69F58838EAF /* Pods_EvesCRMTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92959BF0D8483C131E7E26F7 /* Pods_EvesCRMTests.framework */; };
 		D54BFC2948A2402742B6E462 /* Pods_EvesCRM.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 023D2F9C8B259D5BD59411AE /* Pods_EvesCRM.framework */; };
 /* End PBXBuildFile section */
 
@@ -262,34 +195,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 340650641ADDF8FF00C90CBB;
 			remoteInfo = EvesCRM;
-		};
-		342CA6B41B26C79B006FEAED /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 342CA6941B26C79B006FEAED /* GTL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4F38F6A60B66E91D00B24B81;
-			remoteInfo = GTLFramework;
-		};
-		342CA6B61B26C79B006FEAED /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 342CA6941B26C79B006FEAED /* GTL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4F12027C11A4CA2F00BEB470;
-			remoteInfo = GTLTouchStaticLib;
-		};
-		342CA6B81B26C79B006FEAED /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 342CA6941B26C79B006FEAED /* GTL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4F12027D11A4CA2F00BEB470;
-			remoteInfo = GTLUnitTests;
-		};
-		342CA6BA1B26C79B006FEAED /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 342CA6941B26C79B006FEAED /* GTL.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 4F1AD9020B71603F00DC0485;
-			remoteInfo = DevelopmentTestTool;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -336,18 +241,6 @@
 		342C0A131B4B7CED00A73CA5 /* MeetingAttendees.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeetingAttendees.swift; sourceTree = "<group>"; };
 		342C0A141B4B7CED00A73CA5 /* MeetingAgenda.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MeetingAgenda.swift; sourceTree = "<group>"; };
 		342C0A211B4B844D00A73CA5 /* meetingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = meetingsViewController.swift; sourceTree = "<group>"; };
-		342CA6941B26C79B006FEAED /* GTL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = GTL.xcodeproj; sourceTree = "<group>"; };
-		342CA6971B26C79B006FEAED /* GTLCommon_Sources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTLCommon_Sources.m; sourceTree = "<group>"; };
-		342CA6981B26C79B006FEAED /* GTLDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTLDefines.h; sourceTree = "<group>"; };
-		342CA6991B26C79B006FEAED /* GTLNetworking_Sources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GTLNetworking_Sources.m; sourceTree = "<group>"; };
-		342CA69A1B26C79B006FEAED /* Objects */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Objects; sourceTree = "<group>"; };
-		342CA69B1B26C79B006FEAED /* GoogleResources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = GoogleResources; sourceTree = "<group>"; };
-		342CA69C1B26C79B006FEAED /* Services */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Services; sourceTree = "<group>"; };
-		342CA69D1B26C79B006FEAED /* Tests */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Tests; sourceTree = "<group>"; };
-		342CA69E1B26C79B006FEAED /* Tools */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Tools; sourceTree = "<group>"; };
-		342CA69F1B26C79B006FEAED /* Utilities */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Utilities; sourceTree = "<group>"; };
-		342CA6BC1B26CE6F006FEAED /* Source */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Source; sourceTree = "<group>"; };
-		342CA6BF1B26D0B3006FEAED /* gtm-oauth2-master */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "gtm-oauth2-master"; sourceTree = "<group>"; };
 		342F46CE1B9FC804004BAC9D /* KDRearrangeableCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KDRearrangeableCollectionViewCell.swift; sourceTree = "<group>"; };
 		342F46CF1B9FC804004BAC9D /* KDRearrangeableCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KDRearrangeableCollectionViewFlowLayout.swift; sourceTree = "<group>"; };
 		342F46D41B9FC817004BAC9D /* KDRearrangeableCollectionViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KDRearrangeableCollectionViewDelegate.swift; sourceTree = "<group>"; };
@@ -373,6 +266,7 @@
 		3456E0501BBA646300533186 /* EvesCRM 22.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 22.xcdatamodel"; sourceTree = "<group>"; };
 		3456E0551BBA650500533186 /* ProcessedEmails+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ProcessedEmails+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		3456E0561BBA650500533186 /* ProcessedEmails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProcessedEmails.swift; sourceTree = "<group>"; };
+		3458D3B61E287F0100CB8C08 /* OneDriveSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OneDriveSDK.framework; path = "../../../Library/Developer/Xcode/DerivedData/Contacts_Dashboard-gppeexcfwnifnsagtkkqxafxnyrq/Build/Products/Debug-iphoneos/OneDriveSDK/OneDriveSDK.framework"; sourceTree = "<group>"; };
 		345E027E1AEF714800BE8D0A /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
 		345E02801AEF715700BE8D0A /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		345E02821AEF71CF00BE8D0A /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
@@ -400,62 +294,6 @@
 		349331CE1B70576C004AA569 /* SideBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SideBar.swift; sourceTree = "<group>"; };
 		349C4D3D1B033AF300EC8099 /* EvesCRM 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 4.xcdatamodel"; sourceTree = "<group>"; };
 		349C4D3E1B033B6400EC8099 /* Stages.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Stages.swift; sourceTree = "<group>"; };
-		34A182C21B0EDB3D00FC369D /* LiveAuthDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveAuthDelegate.h; sourceTree = "<group>"; };
-		34A182C31B0EDB3D00FC369D /* LiveConnectClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveConnectClient.h; sourceTree = "<group>"; };
-		34A182C41B0EDB3D00FC369D /* LiveConnectClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveConnectClient.m; sourceTree = "<group>"; };
-		34A182C51B0EDB3D00FC369D /* LiveConnectSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveConnectSession.h; sourceTree = "<group>"; };
-		34A182C61B0EDB3D00FC369D /* LiveConnectSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveConnectSession.m; sourceTree = "<group>"; };
-		34A182C71B0EDB3D00FC369D /* LiveConnectSessionStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveConnectSessionStatus.h; sourceTree = "<group>"; };
-		34A182C81B0EDB3D00FC369D /* LiveDownloadOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveDownloadOperation.h; sourceTree = "<group>"; };
-		34A182C91B0EDB3D00FC369D /* LiveDownloadOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveDownloadOperation.m; sourceTree = "<group>"; };
-		34A182CA1B0EDB3D00FC369D /* LiveDownloadOperationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveDownloadOperationDelegate.h; sourceTree = "<group>"; };
-		34A182CB1B0EDB3D00FC369D /* LiveOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveOperation.h; sourceTree = "<group>"; };
-		34A182CC1B0EDB3D00FC369D /* LiveOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveOperation.m; sourceTree = "<group>"; };
-		34A182CD1B0EDB3D00FC369D /* LiveOperationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveOperationDelegate.h; sourceTree = "<group>"; };
-		34A182CE1B0EDB3D00FC369D /* LiveOperationProgress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveOperationProgress.h; sourceTree = "<group>"; };
-		34A182CF1B0EDB3D00FC369D /* LiveOperationProgress.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveOperationProgress.m; sourceTree = "<group>"; };
-		34A182D01B0EDB3D00FC369D /* LiveUploadOperationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveUploadOperationDelegate.h; sourceTree = "<group>"; };
-		34A182D11B0EDB3D00FC369D /* LiveUploadOverwriteOption.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveUploadOverwriteOption.h; sourceTree = "<group>"; };
-		34A182DD1B0EDB5C00FC369D /* LiveAuthDialog_iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LiveAuthDialog_iPad.xib; sourceTree = "<group>"; };
-		34A182DE1B0EDB5C00FC369D /* LiveAuthDialog_iPhone.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LiveAuthDialog_iPhone.xib; sourceTree = "<group>"; };
-		34A182DF1B0EDB5C00FC369D /* LiveAuthDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveAuthDialog.h; sourceTree = "<group>"; };
-		34A182E01B0EDB5C00FC369D /* LiveAuthDialog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveAuthDialog.m; sourceTree = "<group>"; };
-		34A182E11B0EDB5C00FC369D /* LiveAuthDialogDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveAuthDialogDelegate.h; sourceTree = "<group>"; };
-		34A182E21B0EDB5C00FC369D /* LiveAuthRefreshRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveAuthRefreshRequest.h; sourceTree = "<group>"; };
-		34A182E31B0EDB5C00FC369D /* LiveAuthRefreshRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveAuthRefreshRequest.m; sourceTree = "<group>"; };
-		34A182E41B0EDB5C00FC369D /* LiveAuthRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveAuthRequest.h; sourceTree = "<group>"; };
-		34A182E51B0EDB5C00FC369D /* LiveAuthRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveAuthRequest.m; sourceTree = "<group>"; };
-		34A182E61B0EDB5C00FC369D /* LiveAuthStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveAuthStorage.h; sourceTree = "<group>"; };
-		34A182E71B0EDB5C00FC369D /* LiveAuthStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveAuthStorage.m; sourceTree = "<group>"; };
-		34A182E81B0EDB5C00FC369D /* LiveConnectClientCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveConnectClientCore.h; sourceTree = "<group>"; };
-		34A182E91B0EDB5C00FC369D /* LiveConnectClientCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveConnectClientCore.m; sourceTree = "<group>"; };
-		34A182EA1B0EDB5C00FC369D /* LiveConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveConstants.h; sourceTree = "<group>"; };
-		34A182EB1B0EDB5C00FC369D /* LiveDownloadOperationCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveDownloadOperationCore.h; sourceTree = "<group>"; };
-		34A182EC1B0EDB5C00FC369D /* LiveDownloadOperationCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveDownloadOperationCore.m; sourceTree = "<group>"; };
-		34A182ED1B0EDB5C00FC369D /* LiveDownloadOperationInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveDownloadOperationInternal.h; sourceTree = "<group>"; };
-		34A182EE1B0EDB5C00FC369D /* LiveOperationCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveOperationCore.h; sourceTree = "<group>"; };
-		34A182EF1B0EDB5C00FC369D /* LiveOperationCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveOperationCore.m; sourceTree = "<group>"; };
-		34A182F01B0EDB5C00FC369D /* LiveOperationInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveOperationInternal.h; sourceTree = "<group>"; };
-		34A182F11B0EDB5C00FC369D /* LiveUploadOperationCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveUploadOperationCore.h; sourceTree = "<group>"; };
-		34A182F21B0EDB5C00FC369D /* LiveUploadOperationCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveUploadOperationCore.m; sourceTree = "<group>"; };
-		34A182F31B0EDB5C00FC369D /* Resources_OneNote */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Resources_OneNote; sourceTree = "<group>"; };
-		34A1830C1B0EDBB400FC369D /* JsonParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonParser.h; sourceTree = "<group>"; };
-		34A1830D1B0EDBB400FC369D /* JsonParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JsonParser.m; sourceTree = "<group>"; };
-		34A1830E1B0EDBB400FC369D /* JsonWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonWriter.h; sourceTree = "<group>"; };
-		34A1830F1B0EDBB400FC369D /* JsonWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JsonWriter.m; sourceTree = "<group>"; };
-		34A183101B0EDBB400FC369D /* LiveApiHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveApiHelper.h; sourceTree = "<group>"; };
-		34A183111B0EDBB400FC369D /* LiveApiHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveApiHelper.m; sourceTree = "<group>"; };
-		34A183121B0EDBB400FC369D /* LiveAuthHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveAuthHelper.h; sourceTree = "<group>"; };
-		34A183131B0EDBB400FC369D /* LiveAuthHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveAuthHelper.m; sourceTree = "<group>"; };
-		34A183141B0EDBB400FC369D /* LiveConnectionCreatorDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveConnectionCreatorDelegate.h; sourceTree = "<group>"; };
-		34A183151B0EDBB400FC369D /* LiveConnectionHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveConnectionHelper.h; sourceTree = "<group>"; };
-		34A183161B0EDBB400FC369D /* LiveConnectionHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiveConnectionHelper.m; sourceTree = "<group>"; };
-		34A183171B0EDBB400FC369D /* StreamReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamReader.h; sourceTree = "<group>"; };
-		34A183181B0EDBB400FC369D /* StreamReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StreamReader.m; sourceTree = "<group>"; };
-		34A183191B0EDBB400FC369D /* StringHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringHelper.h; sourceTree = "<group>"; };
-		34A1831A1B0EDBB400FC369D /* StringHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StringHelper.m; sourceTree = "<group>"; };
-		34A1831B1B0EDBB400FC369D /* UrlHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UrlHelper.h; sourceTree = "<group>"; };
-		34A1831C1B0EDBB400FC369D /* UrlHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UrlHelper.m; sourceTree = "<group>"; };
 		34A578B11B5F5F93008D3D8E /* EvesCRM 7.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 7.xcdatamodel"; sourceTree = "<group>"; };
 		34A578B91B5F6110008D3D8E /* TaskContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskContext.swift; sourceTree = "<group>"; };
 		34A578BC1B5F6110008D3D8E /* Context.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Context.swift; sourceTree = "<group>"; };
@@ -503,9 +341,11 @@
 		34F35BDD1B6B549000A19ACE /* meetingTabViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = meetingTabViewController.swift; sourceTree = "<group>"; };
 		34F35BE41B6B54A200A19ACE /* meetingAgendaViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = meetingAgendaViewController.swift; sourceTree = "<group>"; };
 		34FED38C1B044BF1006B414C /* maintainPanes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = maintainPanes.swift; sourceTree = "<group>"; };
+		8D27096CBF35CB77F5123AA2 /* Pods-EvesCRMTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EvesCRMTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-EvesCRMTests/Pods-EvesCRMTests.debug.xcconfig"; sourceTree = "<group>"; };
 		92959BF0D8483C131E7E26F7 /* Pods_EvesCRMTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_EvesCRMTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ABD00990663F79245E935D24 /* Pods-EvesCRM.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EvesCRM.release.xcconfig"; path = "Pods/Target Support Files/Pods-EvesCRM/Pods-EvesCRM.release.xcconfig"; sourceTree = "<group>"; };
 		E5798FB128207E4BACB3FBEF /* Pods-EvesCRM.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EvesCRM.debug.xcconfig"; path = "Pods/Target Support Files/Pods-EvesCRM/Pods-EvesCRM.debug.xcconfig"; sourceTree = "<group>"; };
+		F87D4CCBCAA0DF716089B6A0 /* Pods-EvesCRMTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EvesCRMTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-EvesCRMTests/Pods-EvesCRMTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -545,6 +385,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				344DC1FB1BA1146600DBCE3D /* TextExpander.framework in Frameworks */,
+				5F4D9549951FC69F58838EAF /* Pods_EvesCRMTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -595,9 +436,6 @@
 			children = (
 				342F46CD1B9FC7D0004BAC9D /* KDRearrangeableCollectionViewFlowLayout */,
 				340650681ADDF8FF00C90CBB /* Supporting Files */,
-				34948C241B87029200C1F12D /* OneNote */,
-				34A182F31B0EDB5C00FC369D /* Resources_OneNote */,
-				342CA6931B26C761006FEAED /* Google */,
 				340650711ADDF8FF00C90CBB /* Main.storyboard */,
 				3406506C1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld */,
 				34948C1D1B87018300C1F12D /* Database Tables */,
@@ -638,36 +476,6 @@
 				340650821ADDF8FF00C90CBB /* Info.plist */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		342CA6931B26C761006FEAED /* Google */ = {
-			isa = PBXGroup;
-			children = (
-				342CA6BF1B26D0B3006FEAED /* gtm-oauth2-master */,
-				342CA6BC1B26CE6F006FEAED /* Source */,
-				342CA6941B26C79B006FEAED /* GTL.xcodeproj */,
-				342CA6971B26C79B006FEAED /* GTLCommon_Sources.m */,
-				342CA6981B26C79B006FEAED /* GTLDefines.h */,
-				342CA6991B26C79B006FEAED /* GTLNetworking_Sources.m */,
-				342CA69A1B26C79B006FEAED /* Objects */,
-				342CA69B1B26C79B006FEAED /* GoogleResources */,
-				342CA69C1B26C79B006FEAED /* Services */,
-				342CA69D1B26C79B006FEAED /* Tests */,
-				342CA69E1B26C79B006FEAED /* Tools */,
-				342CA69F1B26C79B006FEAED /* Utilities */,
-			);
-			name = Google;
-			sourceTree = "<group>";
-		};
-		342CA6951B26C79B006FEAED /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				342CA6B51B26C79B006FEAED /* GTL.framework */,
-				342CA6B71B26C79B006FEAED /* libGTLTouchStaticLib.a */,
-				342CA6B91B26C79B006FEAED /* GTLUnitTests.xctest */,
-				342CA6BB1B26C79B006FEAED /* DevelopmentTestTool */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		342F46CD1B9FC7D0004BAC9D /* KDRearrangeableCollectionViewFlowLayout */ = {
@@ -771,73 +579,13 @@
 			name = "My ViewControllers";
 			sourceTree = "<group>";
 		};
-		34948C241B87029200C1F12D /* OneNote */ = {
-			isa = PBXGroup;
-			children = (
-				34A1830C1B0EDBB400FC369D /* JsonParser.h */,
-				34A1830D1B0EDBB400FC369D /* JsonParser.m */,
-				34A1830E1B0EDBB400FC369D /* JsonWriter.h */,
-				34A1830F1B0EDBB400FC369D /* JsonWriter.m */,
-				34A183101B0EDBB400FC369D /* LiveApiHelper.h */,
-				34A183111B0EDBB400FC369D /* LiveApiHelper.m */,
-				34A183121B0EDBB400FC369D /* LiveAuthHelper.h */,
-				34A183131B0EDBB400FC369D /* LiveAuthHelper.m */,
-				34A183141B0EDBB400FC369D /* LiveConnectionCreatorDelegate.h */,
-				34A183151B0EDBB400FC369D /* LiveConnectionHelper.h */,
-				34A183161B0EDBB400FC369D /* LiveConnectionHelper.m */,
-				34A183171B0EDBB400FC369D /* StreamReader.h */,
-				34A183181B0EDBB400FC369D /* StreamReader.m */,
-				34A183191B0EDBB400FC369D /* StringHelper.h */,
-				34A1831A1B0EDBB400FC369D /* StringHelper.m */,
-				34A1831B1B0EDBB400FC369D /* UrlHelper.h */,
-				34A1831C1B0EDBB400FC369D /* UrlHelper.m */,
-				34A182DD1B0EDB5C00FC369D /* LiveAuthDialog_iPad.xib */,
-				34A182DE1B0EDB5C00FC369D /* LiveAuthDialog_iPhone.xib */,
-				34A182DF1B0EDB5C00FC369D /* LiveAuthDialog.h */,
-				34A182E01B0EDB5C00FC369D /* LiveAuthDialog.m */,
-				34A182E11B0EDB5C00FC369D /* LiveAuthDialogDelegate.h */,
-				34A182E21B0EDB5C00FC369D /* LiveAuthRefreshRequest.h */,
-				34A182E31B0EDB5C00FC369D /* LiveAuthRefreshRequest.m */,
-				34A182E41B0EDB5C00FC369D /* LiveAuthRequest.h */,
-				34A182E51B0EDB5C00FC369D /* LiveAuthRequest.m */,
-				34A182E61B0EDB5C00FC369D /* LiveAuthStorage.h */,
-				34A182E71B0EDB5C00FC369D /* LiveAuthStorage.m */,
-				34A182E81B0EDB5C00FC369D /* LiveConnectClientCore.h */,
-				34A182E91B0EDB5C00FC369D /* LiveConnectClientCore.m */,
-				34A182EA1B0EDB5C00FC369D /* LiveConstants.h */,
-				34A182EB1B0EDB5C00FC369D /* LiveDownloadOperationCore.h */,
-				34A182EC1B0EDB5C00FC369D /* LiveDownloadOperationCore.m */,
-				34A182ED1B0EDB5C00FC369D /* LiveDownloadOperationInternal.h */,
-				34A182EE1B0EDB5C00FC369D /* LiveOperationCore.h */,
-				34A182EF1B0EDB5C00FC369D /* LiveOperationCore.m */,
-				34A182F01B0EDB5C00FC369D /* LiveOperationInternal.h */,
-				34A182F11B0EDB5C00FC369D /* LiveUploadOperationCore.h */,
-				34A182F21B0EDB5C00FC369D /* LiveUploadOperationCore.m */,
-				34A182C21B0EDB3D00FC369D /* LiveAuthDelegate.h */,
-				34A182C31B0EDB3D00FC369D /* LiveConnectClient.h */,
-				34A182C41B0EDB3D00FC369D /* LiveConnectClient.m */,
-				34A182C51B0EDB3D00FC369D /* LiveConnectSession.h */,
-				34A182C61B0EDB3D00FC369D /* LiveConnectSession.m */,
-				34A182C71B0EDB3D00FC369D /* LiveConnectSessionStatus.h */,
-				34A182C81B0EDB3D00FC369D /* LiveDownloadOperation.h */,
-				34A182C91B0EDB3D00FC369D /* LiveDownloadOperation.m */,
-				34A182CA1B0EDB3D00FC369D /* LiveDownloadOperationDelegate.h */,
-				34A182CB1B0EDB3D00FC369D /* LiveOperation.h */,
-				34A182CC1B0EDB3D00FC369D /* LiveOperation.m */,
-				34A182CD1B0EDB3D00FC369D /* LiveOperationDelegate.h */,
-				34A182CE1B0EDB3D00FC369D /* LiveOperationProgress.h */,
-				34A182CF1B0EDB3D00FC369D /* LiveOperationProgress.m */,
-				34A182D01B0EDB3D00FC369D /* LiveUploadOperationDelegate.h */,
-				34A182D11B0EDB3D00FC369D /* LiveUploadOverwriteOption.h */,
-			);
-			name = OneNote;
-			sourceTree = "<group>";
-		};
 		8043ACD39079544A50E65498 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
 				E5798FB128207E4BACB3FBEF /* Pods-EvesCRM.debug.xcconfig */,
 				ABD00990663F79245E935D24 /* Pods-EvesCRM.release.xcconfig */,
+				8D27096CBF35CB77F5123AA2 /* Pods-EvesCRMTests.debug.xcconfig */,
+				F87D4CCBCAA0DF716089B6A0 /* Pods-EvesCRMTests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -845,6 +593,7 @@
 		851C4C97138CC25684616EC5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3458D3B61E287F0100CB8C08 /* OneDriveSDK.framework */,
 				34CCFCA21B85960C00BC1A34 /* UIKit.framework */,
 				34CCFCA01B85960300BC1A34 /* JavaScriptCore.framework */,
 				34CCFC9E1B8595F800BC1A34 /* Foundation.framework */,
@@ -884,9 +633,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3406508A1ADDF8FF00C90CBB /* Build configuration list for PBXNativeTarget "EvesCRMTests" */;
 			buildPhases = (
+				BD4947DE41CC2D24066B91A5 /* [CP] Check Pods Manifest.lock */,
 				340650791ADDF8FF00C90CBB /* Sources */,
 				3406507A1ADDF8FF00C90CBB /* Frameworks */,
 				3406507B1ADDF8FF00C90CBB /* Resources */,
+				7A11F870A3C32055888DBF2B /* [CP] Embed Pods Frameworks */,
+				B0E959042AE5F88BF3999176 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -914,6 +666,9 @@
 						DevelopmentTeam = 76YDDNPU7W;
 						LastSwiftMigration = 0820;
 						SystemCapabilities = {
+							com.apple.Keychain = {
+								enabled = 1;
+							};
 							com.apple.Push = {
 								enabled = 1;
 							};
@@ -939,12 +694,6 @@
 			mainGroup = 3406505C1ADDF8FF00C90CBB;
 			productRefGroup = 340650661ADDF8FF00C90CBB /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 342CA6951B26C79B006FEAED /* Products */;
-					ProjectRef = 342CA6941B26C79B006FEAED /* GTL.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				340650641ADDF8FF00C90CBB /* EvesCRM */,
@@ -953,60 +702,18 @@
 		};
 /* End PBXProject section */
 
-/* Begin PBXReferenceProxy section */
-		342CA6B51B26C79B006FEAED /* GTL.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = GTL.framework;
-			remoteRef = 342CA6B41B26C79B006FEAED /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		342CA6B71B26C79B006FEAED /* libGTLTouchStaticLib.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libGTLTouchStaticLib.a;
-			remoteRef = 342CA6B61B26C79B006FEAED /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		342CA6B91B26C79B006FEAED /* GTLUnitTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = GTLUnitTests.xctest;
-			remoteRef = 342CA6B81B26C79B006FEAED /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		342CA6BB1B26C79B006FEAED /* DevelopmentTestTool */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = DevelopmentTestTool;
-			remoteRef = 342CA6BA1B26C79B006FEAED /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
-
 /* Begin PBXResourcesBuildPhase section */
 		340650631ADDF8FF00C90CBB /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				3436F9441B28113E0085C58A /* GTMOAuth2ViewTouch.xib in Resources */,
-				342CA6AA1B26C79B006FEAED /* Tests in Resources */,
-				342CA6AE1B26C79B006FEAED /* Utilities in Resources */,
-				342CA6A81B26C79B006FEAED /* Services in Resources */,
 				340650731ADDF8FF00C90CBB /* Main.storyboard in Resources */,
-				342CA6C01B26D0B3006FEAED /* gtm-oauth2-master in Resources */,
 				340C7CB71B900FE900ECC4FB /* Resource in Resources */,
-				342CA6A41B26C79B006FEAED /* Objects in Resources */,
-				34A182F61B0EDB5C00FC369D /* LiveAuthDialog_iPad.xib in Resources */,
 				344F226C1AF1DC20002C373E /* ENSDKResources.bundle in Resources */,
-				342CA6BD1B26CE6F006FEAED /* Source in Resources */,
-				342CA6AC1B26C79B006FEAED /* Tools in Resources */,
 				340650781ADDF8FF00C90CBB /* LaunchScreen.xib in Resources */,
 				34CC8C0D1B281E5200D6EB0D /* GoogleService-Info.plist in Resources */,
-				34A1830A1B0EDB5C00FC369D /* Resources_OneNote in Resources */,
-				34A182F81B0EDB5C00FC369D /* LiveAuthDialog_iPhone.xib in Resources */,
 				340650751ADDF8FF00C90CBB /* Images.xcassets in Resources */,
-				342CA6A61B26C79B006FEAED /* GoogleResources in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1014,20 +721,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				342CA6AB1B26C79B006FEAED /* Tests in Resources */,
 				3436F9451B28113E0085C58A /* GTMOAuth2ViewTouch.xib in Resources */,
-				34A182F71B0EDB5C00FC369D /* LiveAuthDialog_iPad.xib in Resources */,
-				342CA6BE1B26CE6F006FEAED /* Source in Resources */,
-				342CA6A51B26C79B006FEAED /* Objects in Resources */,
-				342CA6AF1B26C79B006FEAED /* Utilities in Resources */,
 				340C7CB81B900FE900ECC4FB /* Resource in Resources */,
-				342CA6A71B26C79B006FEAED /* GoogleResources in Resources */,
-				34A182F91B0EDB5C00FC369D /* LiveAuthDialog_iPhone.xib in Resources */,
 				341DD2371AECA9FF001DCF65 /* Main.storyboard in Resources */,
-				342CA6AD1B26C79B006FEAED /* Tools in Resources */,
-				34A1830B1B0EDB5C00FC369D /* Resources_OneNote in Resources */,
-				342CA6C11B26D0B3006FEAED /* gtm-oauth2-master in Resources */,
-				342CA6A91B26C79B006FEAED /* Services in Resources */,
 				34CC8C0E1B281E5200D6EB0D /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1050,7 +746,52 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-EvesCRM/Pods-EvesCRM-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		7A11F870A3C32055888DBF2B /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-EvesCRMTests/Pods-EvesCRMTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		A09D0E21FB223328D930B27F /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		B0E959042AE5F88BF3999176 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-EvesCRMTests/Pods-EvesCRMTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		BD4947DE41CC2D24066B91A5 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1096,7 +837,6 @@
 				34B71C2E1C3CDBF4002AE2E7 /* OutlineDetails.swift in Sources */,
 				347EE4231B8D6AC50044D569 /* GTDPlanningTabController.swift in Sources */,
 				344829841BC1FEBC000EFEA4 /* MeetingAgendaItem+CoreDataProperties.swift in Sources */,
-				34A183291B0EDBB400FC369D /* StringHelper.m in Sources */,
 				344B6AD01BA7B47500A5377B /* UserInfo.swift in Sources */,
 				342F46D21B9FC804004BAC9D /* KDRearrangeableCollectionViewFlowLayout.swift in Sources */,
 				34B4C7E41B8191930098F6BC /* TaskAttachment.swift in Sources */,
@@ -1109,7 +849,6 @@
 				34B71C281C3CDBF4002AE2E7 /* Outline+CoreDataProperties.swift in Sources */,
 				34A578BA1B5F6110008D3D8E /* TaskContext.swift in Sources */,
 				34B9C0111B26BA70005E52F9 /* gMail.swift in Sources */,
-				34A183041B0EDB5C00FC369D /* LiveDownloadOperationCore.m in Sources */,
 				34F35BDE1B6B549000A19ACE /* meetingTabViewController.swift in Sources */,
 				347EE41C1B8D68620044D569 /* GTDPlanning.swift in Sources */,
 				346D5E021AE5F9C700F858E7 /* CalendarDetails.swift in Sources */,
@@ -1118,21 +857,14 @@
 				349C4D3F1B033B6400EC8099 /* Stages.swift in Sources */,
 				349331C91B705756004AA569 /* SideBarTableViewController.swift in Sources */,
 				346B70DE1AF70B8F005E1BC2 /* maintainProjectViewController.swift in Sources */,
-				34A183251B0EDBB400FC369D /* LiveConnectionHelper.m in Sources */,
 				34111C3A1AEC898B003090EB /* reminderViewController.swift in Sources */,
-				34A182FA1B0EDB5C00FC369D /* LiveAuthDialog.m in Sources */,
 				34E92AE01B9D191900F158F3 /* GTDLevel+CoreDataProperties.swift in Sources */,
 				34C7E8071B5F625C005555B3 /* TaskUpdates.swift in Sources */,
 				342F46D01B9FC804004BAC9D /* KDRearrangeableCollectionViewCell.swift in Sources */,
 				34B71C2A1C3CDBF4002AE2E7 /* Outline.swift in Sources */,
-				34A183271B0EDBB400FC369D /* StreamReader.m in Sources */,
 				3406E6C11B9E772800A5F0F9 /* teamDecodesViewController.swift in Sources */,
 				347518D91AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift in Sources */,
 				34BDECBE1B009C17008C9F3F /* Panes.swift in Sources */,
-				34A183021B0EDB5C00FC369D /* LiveConnectClientCore.m in Sources */,
-				34A182D41B0EDB3D00FC369D /* LiveConnectSession.m in Sources */,
-				34A182DA1B0EDB3D00FC369D /* LiveOperationProgress.m in Sources */,
-				34A1831D1B0EDBB400FC369D /* JsonParser.m in Sources */,
 				34A578C31B5F6170008D3D8E /* MeetingTasks.swift in Sources */,
 				34C74F8C1BB508A30083AF2E /* GTDInbox.swift in Sources */,
 				34A578BD1B5F6110008D3D8E /* Context.swift in Sources */,
@@ -1140,25 +872,16 @@
 				34BDECAA1B008846008C9F3F /* displayPanes.swift in Sources */,
 				34F35BE51B6B54A200A19ACE /* meetingAgendaViewController.swift in Sources */,
 				346B70F71AF75FF4005E1BC2 /* Roles.swift in Sources */,
-				342CA6A01B26C79B006FEAED /* GTLCommon_Sources.m in Sources */,
 				3428522C1B8E9B30003D188F /* Team.swift in Sources */,
 				348E6D4B1ADF74C800697268 /* ContactDetails.swift in Sources */,
 				344B6ACD1BA7B3B600A5377B /* CloudKitInteraction.swift in Sources */,
-				34A182FC1B0EDB5C00FC369D /* LiveAuthRefreshRequest.m in Sources */,
-				342CA6A21B26C79B006FEAED /* GTLNetworking_Sources.m in Sources */,
 				3406506B1ADDF8FF00C90CBB /* AppDelegate.swift in Sources */,
 				3456E0591BBA650500533186 /* ProcessedEmails.swift in Sources */,
-				34A1832B1B0EDBB400FC369D /* UrlHelper.m in Sources */,
-				34A183231B0EDBB400FC369D /* LiveAuthHelper.m in Sources */,
 				342C0A221B4B844D00A73CA5 /* meetingsViewController.swift in Sources */,
 				34C899F71B8447340087DA8E /* TaskPredecessor.swift in Sources */,
-				34A183081B0EDB5C00FC369D /* LiveUploadOperationCore.m in Sources */,
 				341E08C71B01B1B90036202D /* settingsViewController.swift in Sources */,
-				34A182D61B0EDB3D00FC369D /* LiveDownloadOperation.m in Sources */,
 				343B3F1E1B83045D0053777B /* DBSync.swift in Sources */,
 				34E92AE81B9D5B3400F158F3 /* teamMaintenanceViewController.swift in Sources */,
-				34A183001B0EDB5C00FC369D /* LiveAuthStorage.m in Sources */,
-				34A183211B0EDBB400FC369D /* LiveApiHelper.m in Sources */,
 				34627D231B60B1C80096DAC4 /* taskManagementClasses.swift in Sources */,
 				342C0A1B1B4B7CED00A73CA5 /* MeetingAgendaItem.swift in Sources */,
 				34E92ADE1B9D191900F158F3 /* GTDItem.swift in Sources */,
@@ -1168,12 +891,8 @@
 				342C0A1D1B4B7CED00A73CA5 /* MeetingAttendees.swift in Sources */,
 				34F35BD31B6B3F7000A19ACE /* taskUpdatesViewController.swift in Sources */,
 				34B7242E1BB62C7700C7AE34 /* startViewController.swift in Sources */,
-				34A1831F1B0EDBB400FC369D /* JsonWriter.m in Sources */,
 				349331CF1B70576C004AA569 /* SideBar.swift in Sources */,
-				34A182D21B0EDB3D00FC369D /* LiveConnectClient.m in Sources */,
-				34A183061B0EDB5C00FC369D /* LiveOperationCore.m in Sources */,
 				344F22721AF1DFF3002C373E /* evernoteDetails.swift in Sources */,
-				34A182D81B0EDB3D00FC369D /* LiveOperation.m in Sources */,
 				346A2E511B66027100C6C63E /* Projects.swift in Sources */,
 				3456E0571BBA650500533186 /* ProcessedEmails+CoreDataProperties.swift in Sources */,
 				341F230B1AFB2DD600FC2883 /* Dropbox.m in Sources */,
@@ -1181,7 +900,6 @@
 				34E92ADC1B9D191900F158F3 /* GTDItem+CoreDataProperties.swift in Sources */,
 				34FED38D1B044BF1006B414C /* maintainPanes.swift in Sources */,
 				34BDECAC1B0089CC008C9F3F /* Decodes.swift in Sources */,
-				34A182FE1B0EDB5C00FC369D /* LiveAuthRequest.m in Sources */,
 				3428522E1B8E9B30003D188F /* ProjectNote.swift in Sources */,
 				34DF7ACB1BBCB18F000E3B09 /* maintainContextsViewController.swift in Sources */,
 			);
@@ -1198,21 +916,15 @@
 				342C0A1C1B4B7CED00A73CA5 /* MeetingAgendaItem.swift in Sources */,
 				342C0A161B4B7CED00A73CA5 /* MeetingSupportingDocs.swift in Sources */,
 				346B70F81AF75FF4005E1BC2 /* Roles.swift in Sources */,
-				34A183071B0EDB5C00FC369D /* LiveOperationCore.m in Sources */,
-				34A183261B0EDBB400FC369D /* LiveConnectionHelper.m in Sources */,
 				342C0A201B4B7CED00A73CA5 /* MeetingAgenda.swift in Sources */,
 				341F230C1AFB2DD600FC2883 /* Dropbox.m in Sources */,
 				34DF7AD41BBCE72A000E3B09 /* Context1_1+CoreDataProperties.swift in Sources */,
 				342F46D61B9FC817004BAC9D /* KDRearrangeableCollectionViewDelegate.swift in Sources */,
 				346B70DF1AF70B8F005E1BC2 /* maintainProjectViewController.swift in Sources */,
 				343B3F1F1B83045D0053777B /* DBSync.swift in Sources */,
-				34A182D91B0EDB3D00FC369D /* LiveOperation.m in Sources */,
-				34A182FD1B0EDB5C00FC369D /* LiveAuthRefreshRequest.m in Sources */,
-				34A182FB1B0EDB5C00FC369D /* LiveAuthDialog.m in Sources */,
 				34C7E8081B5F625C005555B3 /* TaskUpdates.swift in Sources */,
 				34627D241B60B1C80096DAC4 /* taskManagementClasses.swift in Sources */,
 				3428522F1B8E9B30003D188F /* ProjectNote.swift in Sources */,
-				34A1831E1B0EDBB400FC369D /* JsonParser.m in Sources */,
 				346A2E521B66027100C6C63E /* Projects.swift in Sources */,
 				34F35BE61B6B54A200A19ACE /* meetingAgendaViewController.swift in Sources */,
 				34A578BE1B5F6110008D3D8E /* Context.swift in Sources */,
@@ -1220,10 +932,8 @@
 				34A578BB1B5F6110008D3D8E /* TaskContext.swift in Sources */,
 				344B6AD11BA7B47500A5377B /* UserInfo.swift in Sources */,
 				34B4C7E51B8191930098F6BC /* TaskAttachment.swift in Sources */,
-				34A183221B0EDBB400FC369D /* LiveApiHelper.m in Sources */,
 				346B70FA1AF75FF4005E1BC2 /* ProjectTeamMembers.swift in Sources */,
 				34E92ADD1B9D191900F158F3 /* GTDItem+CoreDataProperties.swift in Sources */,
-				34A183091B0EDB5C00FC369D /* LiveUploadOperationCore.m in Sources */,
 				34B71C2D1C3CDBF4002AE2E7 /* OutlineDetails+CoreDataProperties.swift in Sources */,
 				3456E0581BBA650500533186 /* ProcessedEmails+CoreDataProperties.swift in Sources */,
 				3428522D1B8E9B30003D188F /* Team.swift in Sources */,
@@ -1235,36 +945,25 @@
 				34A578C41B5F6170008D3D8E /* MeetingTasks.swift in Sources */,
 				346D5E031AE5F9C700F858E7 /* CalendarDetails.swift in Sources */,
 				34B9C0121B26BA70005E52F9 /* gMail.swift in Sources */,
-				34A1832A1B0EDBB400FC369D /* StringHelper.m in Sources */,
 				340F84A81B79BE220028439B /* taskListViewController.swift in Sources */,
 				342C0A231B4B844D00A73CA5 /* meetingsViewController.swift in Sources */,
 				34C74F8D1BB508A30083AF2E /* GTDInbox.swift in Sources */,
-				342CA6A31B26C79B006FEAED /* GTLNetworking_Sources.m in Sources */,
 				34BDECAD1B0089CC008C9F3F /* Decodes.swift in Sources */,
-				34A182D31B0EDB3D00FC369D /* LiveConnectClient.m in Sources */,
 				344726621B54D6A800BEFF0B /* coreDatabase.swift in Sources */,
 				34BDECBF1B009C17008C9F3F /* Panes.swift in Sources */,
 				342F46D31B9FC804004BAC9D /* KDRearrangeableCollectionViewFlowLayout.swift in Sources */,
-				34A183281B0EDBB400FC369D /* StreamReader.m in Sources */,
 				344B6ACE1BA7B3B600A5377B /* CloudKitInteraction.swift in Sources */,
 				34B5253A1B130F1C00093250 /* oneNote.swift in Sources */,
 				34841A221E272D5F00B96BB2 /* notificationDefinitions.swift in Sources */,
 				346B70F31AF75F47005E1BC2 /* EvesCRM.xcdatamodeld in Sources */,
 				34DF7ACC1BBCB18F000E3B09 /* maintainContextsViewController.swift in Sources */,
-				34A1832C1B0EDBB400FC369D /* UrlHelper.m in Sources */,
 				34B71C291C3CDBF4002AE2E7 /* Outline+CoreDataProperties.swift in Sources */,
 				34A578C11B5F6110008D3D8E /* Task.swift in Sources */,
 				342852321B8EA38C003D188F /* teamClass.swift in Sources */,
-				34A182FF1B0EDB5C00FC369D /* LiveAuthRequest.m in Sources */,
-				34A183031B0EDB5C00FC369D /* LiveConnectClientCore.m in Sources */,
-				34A183011B0EDB5C00FC369D /* LiveAuthStorage.m in Sources */,
 				34B71C2F1C3CDBF4002AE2E7 /* OutlineDetails.swift in Sources */,
 				347EE4241B8D6AC50044D569 /* GTDPlanningTabController.swift in Sources */,
 				3410561F1B589D92002B0ED9 /* AgendaItemViewController.swift in Sources */,
-				34A183241B0EDBB400FC369D /* LiveAuthHelper.m in Sources */,
-				34A182DB1B0EDB3D00FC369D /* LiveOperationProgress.m in Sources */,
 				347EE41D1B8D68620044D569 /* GTDPlanning.swift in Sources */,
-				34A183051B0EDB5C00FC369D /* LiveDownloadOperationCore.m in Sources */,
 				347518DC1AE3635100FF1C46 /* EvesCRMSharedFiles.swift in Sources */,
 				344829851BC1FEBC000EFEA4 /* MeetingAgendaItem+CoreDataProperties.swift in Sources */,
 				342F46D11B9FC804004BAC9D /* KDRearrangeableCollectionViewCell.swift in Sources */,
@@ -1272,13 +971,9 @@
 				342F46D91B9FC826004BAC9D /* LICENCE.md in Sources */,
 				34F35BDF1B6B549000A19ACE /* meetingTabViewController.swift in Sources */,
 				340650841ADDF8FF00C90CBB /* EvesCRMTests.swift in Sources */,
-				34A182D71B0EDB3D00FC369D /* LiveDownloadOperation.m in Sources */,
 				34C899F81B8447340087DA8E /* TaskPredecessor.swift in Sources */,
 				34B71C2B1C3CDBF4002AE2E7 /* Outline.swift in Sources */,
-				34A182D51B0EDB3D00FC369D /* LiveConnectSession.m in Sources */,
 				349C4D401B033B6400EC8099 /* Stages.swift in Sources */,
-				34A183201B0EDBB400FC369D /* JsonWriter.m in Sources */,
-				342CA6A11B26C79B006FEAED /* GTLCommon_Sources.m in Sources */,
 				34E92ADF1B9D191900F158F3 /* GTDItem.swift in Sources */,
 				348E6D4C1ADF74C800697268 /* ContactDetails.swift in Sources */,
 				3456E05A1BBA650500533186 /* ProcessedEmails.swift in Sources */,
@@ -1430,6 +1125,73 @@
 				);
 				INFOPLIST_FILE = EvesCRM/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"c++\"",
+					"-l\"sqlite3\"",
+					"-l\"stdc++\"",
+					"-l\"z\"",
+					"-framework",
+					"\"ADALiOS\"",
+					"-framework",
+					"\"AddressBook\"",
+					"-framework",
+					"\"Alamofire\"",
+					"-framework",
+					"\"AssetsLibrary\"",
+					"-framework",
+					"\"Base32\"",
+					"-framework",
+					"\"CoreFoundation\"",
+					"-framework",
+					"\"CoreLocation\"",
+					"-framework",
+					"\"CoreMotion\"",
+					"-framework",
+					"\"CoreText\"",
+					"-framework",
+					"\"FirebaseAnalytics\"",
+					"-framework",
+					"\"FirebaseCore\"",
+					"-framework",
+					"\"FirebaseInstanceID\"",
+					"-framework",
+					"\"GGLCore\"",
+					"-framework",
+					"\"GGLSignIn\"",
+					"-framework",
+					"\"GTMOAuth2\"",
+					"-framework",
+					"\"GTMSessionFetcher\"",
+					"-framework",
+					"\"GoogleAPIClientForREST\"",
+					"-framework",
+					"\"GoogleAppUtilities\"",
+					"-framework",
+					"\"GoogleInterchangeUtilities\"",
+					"-framework",
+					"\"GoogleSignIn\"",
+					"-framework",
+					"\"GoogleSymbolUtilities\"",
+					"-framework",
+					"\"GoogleToolboxForMac\"",
+					"-framework",
+					"\"MessageUI\"",
+					"-framework",
+					"\"OneDriveSDK\"",
+					"-framework",
+					"\"SafariServices\"",
+					"-framework",
+					"\"Security\"",
+					"-framework",
+					"\"StoreKit\"",
+					"-framework",
+					"\"SwiftyDropbox\"",
+					"-framework",
+					"\"SystemConfiguration\"",
+					"$(inherited)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.garryeves.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -1464,6 +1226,73 @@
 				);
 				INFOPLIST_FILE = EvesCRM/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-l\"c++\"",
+					"-l\"sqlite3\"",
+					"-l\"stdc++\"",
+					"-l\"z\"",
+					"-framework",
+					"\"ADALiOS\"",
+					"-framework",
+					"\"AddressBook\"",
+					"-framework",
+					"\"Alamofire\"",
+					"-framework",
+					"\"AssetsLibrary\"",
+					"-framework",
+					"\"Base32\"",
+					"-framework",
+					"\"CoreFoundation\"",
+					"-framework",
+					"\"CoreLocation\"",
+					"-framework",
+					"\"CoreMotion\"",
+					"-framework",
+					"\"CoreText\"",
+					"-framework",
+					"\"FirebaseAnalytics\"",
+					"-framework",
+					"\"FirebaseCore\"",
+					"-framework",
+					"\"FirebaseInstanceID\"",
+					"-framework",
+					"\"GGLCore\"",
+					"-framework",
+					"\"GGLSignIn\"",
+					"-framework",
+					"\"GTMOAuth2\"",
+					"-framework",
+					"\"GTMSessionFetcher\"",
+					"-framework",
+					"\"GoogleAPIClientForREST\"",
+					"-framework",
+					"\"GoogleAppUtilities\"",
+					"-framework",
+					"\"GoogleInterchangeUtilities\"",
+					"-framework",
+					"\"GoogleSignIn\"",
+					"-framework",
+					"\"GoogleSymbolUtilities\"",
+					"-framework",
+					"\"GoogleToolboxForMac\"",
+					"-framework",
+					"\"MessageUI\"",
+					"-framework",
+					"\"OneDriveSDK\"",
+					"-framework",
+					"\"SafariServices\"",
+					"-framework",
+					"\"Security\"",
+					"-framework",
+					"\"StoreKit\"",
+					"-framework",
+					"\"SwiftyDropbox\"",
+					"-framework",
+					"\"SystemConfiguration\"",
+					"$(inherited)",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.garryeves.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
@@ -1477,6 +1306,7 @@
 		};
 		3406508B1ADDF8FF00C90CBB /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8D27096CBF35CB77F5123AA2 /* Pods-EvesCRMTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;
@@ -1502,6 +1332,7 @@
 		};
 		3406508C1ADDF8FF00C90CBB /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F87D4CCBCAA0DF716089B6A0 /* Pods-EvesCRMTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_MODULES = YES;

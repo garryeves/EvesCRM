@@ -39,7 +39,7 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
 - (void)setFromRFC3339String:(NSString *)str;
 
 @property (nonatomic, retain, readwrite) NSTimeZone *timeZone;
-@property (nonatomic, copy, readwrite) DateComponents *dateComponents;
+@property (nonatomic, copy, readwrite) NSDateComponents *dateComponents;
 @property (nonatomic, assign, readwrite) NSInteger milliseconds;
 
 @property (nonatomic, assign, readwrite) BOOL hasTime;
@@ -97,13 +97,13 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
   return result;
 }
 
-+ (GTLDateTime *)dateTimeWithDateComponents:(DateComponents *)components {
++ (GTLDateTime *)dateTimeWithDateComponents:(NSDateComponents *)components {
 #if GTL_NEW_CALENDAR_ENUMS
-  NSString *calendarID = CalendarIdentifierGregorian;
+  NSString *calendarID = NSCalendarIdentifierGregorian;
 #else
   NSString *calendarID = NSGregorianCalendar;
 #endif
-  Calendar *cal = [[[Calendar alloc] initWithCalendarIdentifier:calendarID] autorelease];
+  NSCalendar *cal = [[[NSCalendar alloc] initWithCalendarIdentifier:calendarID] autorelease];
   NSDate *date = [cal dateFromComponents:components];
 #if GTL_IPHONE
   NSTimeZone *tz = [components timeZone];
@@ -251,7 +251,7 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
   }
 }
 
-- (Calendar *)calendarForTimeZone:(NSTimeZone *)tz {
+- (NSCalendar *)calendarForTimeZone:(NSTimeZone *)tz {
   static NSMutableDictionary *gCalendarsForTimeZones;
 
   static dispatch_once_t onceToken;
@@ -259,17 +259,17 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
     gCalendarsForTimeZones = [[NSMutableDictionary alloc] init];
   });
 
-  Calendar *cal = nil;
+  NSCalendar *cal = nil;
   @synchronized(gCalendarsForTimeZones) {
     id tzKey = (tz ? tz : [NSNull null]);
     cal = [gCalendarsForTimeZones objectForKey:tzKey];
     if (cal == nil) {
 #if GTL_NEW_CALENDAR_ENUMS
-      NSString *calendarID = CalendarIdentifierGregorian;
+      NSString *calendarID = NSCalendarIdentifierGregorian;
 #else
       NSString *calendarID = NSGregorianCalendar;
 #endif
-      cal = [[[Calendar alloc] initWithCalendarIdentifier:calendarID] autorelease];
+      cal = [[[NSCalendar alloc] initWithCalendarIdentifier:calendarID] autorelease];
       if (tz) {
         [cal setTimeZone:tz];
       }
@@ -279,7 +279,7 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
   return cal;
 }
 
-- (Calendar *)calendar {
+- (NSCalendar *)calendar {
   NSTimeZone *tz = self.timeZone;
   return [self calendarForTimeZone:tz];
 }
@@ -289,9 +289,9 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
     if (cachedDate_) return cachedDate_;
   }
 
-  DateComponents *dateComponents = self.dateComponents;
+  NSDateComponents *dateComponents_ = self.dateComponents;
   NSTimeInterval extraMillisecondsAsSeconds = 0.0;
-  Calendar *cal;
+  NSCalendar *cal;
 
   if (!self.hasTime) {
     // We're not keeping track of a time, but NSDate always is based on
@@ -302,10 +302,10 @@ static const NSInteger kGTLUndefinedDateComponent = NSUndefinedDateComponent;
     // We'll make a copy of the date components, setting the time on our
     // copy to noon GMT, since that ensures the date renders correctly for
     // any time zone.
-    DateComponents *noonDateComponents = [[dateComponents copy] autorelease];
-    [noonDateComponents setHour:12];
-    [noonDateComponents setMinute:0];
-    [noonDateComponents setSecond:0];
+    dateComponents_ *dateComponents_ = [[dateComponents copy] autorelease];
+    [NSDateComponents setHour:12];
+    [NSDateComponents setMinute:0];
+    [NSDateComponents setSecond:0];
     dateComponents = noonDateComponents;
 
     NSTimeZone *gmt = [NSTimeZone timeZoneWithName:@"Universal"];

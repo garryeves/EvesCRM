@@ -98,7 +98,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
     
     var dropboxConnected: Bool = false
     
-    var dbRestClient: DBRestClient?
+//    var dbRestClient: DBRestClient?
     
   //  var eventDetails: [EKEvent] = Array()
     var eventDetails: iOSCalendar!
@@ -1659,166 +1659,166 @@ println("facebook ID = \(myFacebookID)")
 print("Dropbox status = \(progress)")
     }
     
-    func myDropboxMetadataLoaded(_ metadata:DBMetadata)
-    {
-        if metadata.contents != nil
-        {
-                for myEntry in metadata.contents
-                {
-        print("Entry = \((myEntry as AnyObject).filename)")
-                }
-        }
-        else
-        {
-print("Nothing found")
-        }
-    }
-    
-    func myDropboxMetadataFailed(_ error:NSError)
-    {
-        let alert = UIAlertController(title: "Dropbox", message:
-            "Unable to load Dropbox directory list.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
-        
-        self.present(alert, animated: false, completion: nil)
-        
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
-            handler: nil))
-    }
-    
-    func myDropboxLoadAccountInfo(_ info:DBAccountInfo)
-    {
-        print("Dropbox Account Info = \(info)")
-    }
-
-    func myDropboxLoadAccountInfoFailed(_ error:NSError)
-    {
-        let alert = UIAlertController(title: "Dropbox", message:
-            "Unable to load Dropbox account info.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
-        
-        self.present(alert, animated: false, completion: nil)
-        
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
-            handler: nil))
-    }
-
-    func myDropboxFileDidUpload(_ destPath:String, srcPath:String, metadata:DBMetadata)
-    {
-        print("Dropbox Upload = \(destPath), \(srcPath)")
-    }
-
-    func myDropboxFileUploadFailed(_ error:NSError)
-    {
-        let alert = UIAlertController(title: "Dropbox", message:
-            "Unable to upload file to Dropbox.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
-        
-        self.present(alert, animated: false, completion: nil)
-        
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
-            handler: nil))
-    }
-
-    func myDropboxUploadProgress(_ progress:CGFloat, destPath:String, srcPath:String)
-    {
-        print("Dropbox upload status = \(progress)")
-    }
-
-    func myDropboxFileLoadRevisions(_ revisions:NSArray, path:String)
-    {
-        print("Dropbox File revision = \(path)")
-    }
-
-    func myDropboxFileLoadRevisionsFailed(_ error:NSError)
-    {
-        let alert = UIAlertController(title: "Dropbox", message:
-            "Unable to load Dropbox file revisions.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
-        
-        self.present(alert, animated: false, completion: nil)
-        
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
-            handler: nil))
-    }
-
-    func myDropboxCreateFolder(_ folder:DBMetadata)
-    {
-        print("Dropbox Create folder")
-    }
-
-    func myDropboxCreateFolderFailed(_ error:NSError)
-    {
-        let alert = UIAlertController(title: "Dropbox", message:
-            "Unable to load create Dropbox folder.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
-        
-        self.present(alert, animated: false, completion: nil)
-        
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
-            handler: nil))
-    }
-
-    func myDropboxFileDeleted(_ path:String)
-    {
-        print("Dropbox File Deleted = \(path)")
-    }
-
-    func myDropboxFileDeleteFailed(_ error:NSError)
-    {
-        let alert = UIAlertController(title: "Dropbox", message:
-            "Unable to delete Dropbox file.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
-        
-        self.present(alert, animated: false, completion: nil)
-        
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
-            handler: nil))
-    }
-
-    func myDropboxFileCopiedLoad(_ fromPath:String, toPath:DBMetadata)
-    {
-        print("Dropbox file copied = \(fromPath)")
-    }
-
-    func myDropboxFileCopyFailed(_ error:NSError)
-    {
-        let alert = UIAlertController(title: "Dropbox", message:
-            "Unable to copy Dropbox file.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
-        
-        self.present(alert, animated: false, completion: nil)
-        
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
-            handler: nil))
-    }
-
-    func myDropboxFileMoved(_ fromPath:String, toPath:DBMetadata)
-    {
-        print("Dropbox file moved = \(fromPath)")
-    }
-
-    func myDropboxFileMoveFailed(_ error:NSError)
-    {
-        let alert = UIAlertController(title: "Dropbox", message:
-            "Unable to move Dropbox file.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
-        
-        self.present(alert, animated: false, completion: nil)
-        
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
-            handler: nil))
-    }
-
-    func myDropboxFileDidLoadSearch(_ results:NSArray, path:String, keyword:String)
-    {
-        print("Dropbox search = \(path), \(keyword)")
-    }
-
-    func myDropboxFileLoadSearchFailed(_ error:NSError)
-    {
-        let alert = UIAlertController(title: "Dropbox", message:
-            "Unable to search Dropbox.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
-        
-        self.present(alert, animated: false, completion: nil)
-        
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
-            handler: nil))
-    }
-    
-    
+//    func myDropboxMetadataLoaded(_ metadata:DBMetadata)
+//    {
+//        if metadata.contents != nil
+//        {
+//                for myEntry in metadata.contents
+//                {
+//        print("Entry = \((myEntry as AnyObject).filename)")
+//                }
+//        }
+//        else
+//        {
+//print("Nothing found")
+//        }
+//    }
+//    
+//    func myDropboxMetadataFailed(_ error:NSError)
+//    {
+//        let alert = UIAlertController(title: "Dropbox", message:
+//            "Unable to load Dropbox directory list.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
+//        
+//        self.present(alert, animated: false, completion: nil)
+//        
+//        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
+//            handler: nil))
+//    }
+//    
+//    func myDropboxLoadAccountInfo(_ info:DBAccountInfo)
+//    {
+//        print("Dropbox Account Info = \(info)")
+//    }
+//
+//    func myDropboxLoadAccountInfoFailed(_ error:NSError)
+//    {
+//        let alert = UIAlertController(title: "Dropbox", message:
+//            "Unable to load Dropbox account info.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
+//        
+//        self.present(alert, animated: false, completion: nil)
+//        
+//        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
+//            handler: nil))
+//    }
+//
+//    func myDropboxFileDidUpload(_ destPath:String, srcPath:String, metadata:DBMetadata)
+//    {
+//        print("Dropbox Upload = \(destPath), \(srcPath)")
+//    }
+//
+//    func myDropboxFileUploadFailed(_ error:NSError)
+//    {
+//        let alert = UIAlertController(title: "Dropbox", message:
+//            "Unable to upload file to Dropbox.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
+//        
+//        self.present(alert, animated: false, completion: nil)
+//        
+//        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
+//            handler: nil))
+//    }
+//
+//    func myDropboxUploadProgress(_ progress:CGFloat, destPath:String, srcPath:String)
+//    {
+//        print("Dropbox upload status = \(progress)")
+//    }
+//
+//    func myDropboxFileLoadRevisions(_ revisions:NSArray, path:String)
+//    {
+//        print("Dropbox File revision = \(path)")
+//    }
+//
+//    func myDropboxFileLoadRevisionsFailed(_ error:NSError)
+//    {
+//        let alert = UIAlertController(title: "Dropbox", message:
+//            "Unable to load Dropbox file revisions.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
+//        
+//        self.present(alert, animated: false, completion: nil)
+//        
+//        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
+//            handler: nil))
+//    }
+//
+//    func myDropboxCreateFolder(_ folder:DBMetadata)
+//    {
+//        print("Dropbox Create folder")
+//    }
+//
+//    func myDropboxCreateFolderFailed(_ error:NSError)
+//    {
+//        let alert = UIAlertController(title: "Dropbox", message:
+//            "Unable to load create Dropbox folder.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
+//        
+//        self.present(alert, animated: false, completion: nil)
+//        
+//        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
+//            handler: nil))
+//    }
+//
+//    func myDropboxFileDeleted(_ path:String)
+//    {
+//        print("Dropbox File Deleted = \(path)")
+//    }
+//
+//    func myDropboxFileDeleteFailed(_ error:NSError)
+//    {
+//        let alert = UIAlertController(title: "Dropbox", message:
+//            "Unable to delete Dropbox file.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
+//        
+//        self.present(alert, animated: false, completion: nil)
+//        
+//        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
+//            handler: nil))
+//    }
+//
+//    func myDropboxFileCopiedLoad(_ fromPath:String, toPath:DBMetadata)
+//    {
+//        print("Dropbox file copied = \(fromPath)")
+//    }
+//
+//    func myDropboxFileCopyFailed(_ error:NSError)
+//    {
+//        let alert = UIAlertController(title: "Dropbox", message:
+//            "Unable to copy Dropbox file.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
+//        
+//        self.present(alert, animated: false, completion: nil)
+//        
+//        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
+//            handler: nil))
+//    }
+//
+//    func myDropboxFileMoved(_ fromPath:String, toPath:DBMetadata)
+//    {
+//        print("Dropbox file moved = \(fromPath)")
+//    }
+//
+//    func myDropboxFileMoveFailed(_ error:NSError)
+//    {
+//        let alert = UIAlertController(title: "Dropbox", message:
+//            "Unable to move Dropbox file.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
+//        
+//        self.present(alert, animated: false, completion: nil)
+//        
+//        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
+//            handler: nil))
+//    }
+//
+//    func myDropboxFileDidLoadSearch(_ results:NSArray, path:String, keyword:String)
+//    {
+//        print("Dropbox search = \(path), \(keyword)")
+//    }
+//
+//    func myDropboxFileLoadSearchFailed(_ error:NSError)
+//    {
+//        let alert = UIAlertController(title: "Dropbox", message:
+//            "Unable to search Dropbox.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
+//        
+//        self.present(alert, animated: false, completion: nil)
+//        
+//        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
+//            handler: nil))
+//    }
+//    
+//    
     func readOmnifocusFileContents(_ inPath: String)
     {
         var myFullName: String = ""

@@ -4,7 +4,17 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>ADALiOS.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Alamofire.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Base32.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -19,12 +29,27 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>GoogleAPIClientForREST.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>GoogleToolboxForMac.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>OneDriveSDK.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods-EvesCRM.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>Pods-EvesCRMTests.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -37,22 +62,27 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>0720C50FB71FC3E14B47F21A84D3176B</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>107A9565F9DF88517DFD3E28C05B2B96</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>33715FD10F3C85A4166536D7E10AD567</key>
+		<key>17AB64DE6D8F2E6C3309BE651B7749D9</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>3C32D28A25C59F5E337787260862814D</key>
+		<key>47E394314EFBFDBD0C1D92F7918F2E1C</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>681BE6E3D02A43F9BA63777AC435C8FD</key>
+		<key>555D2251584DAD9240C8A27180FE015F</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -62,7 +92,27 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>AB0734C590877C257B5EEA38D093469E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>B1C4AAFAF49036C7007633DAA3C806AD</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>D754D048A59EE2C949DB4030D58270DC</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>DD0543A41A528EAFE58C0CBE0BEC81B0</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E790A7B67F67B5D81BE60B90A0FD1322</key>
 		<dict>
 			<key>primary</key>
 			<true/>

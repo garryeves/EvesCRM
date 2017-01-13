@@ -12,6 +12,8 @@ import CloudKit
 import SwiftyDropbox
 import TextExpander
 import UserNotifications
+import GoogleSignIn
+import GGLSignIn
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate
@@ -333,7 +335,7 @@ print("appdelegate application - handleOpenURL = \(url.scheme)")
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
         // Saves changes in the application's managed object context before the application terminates.
-        self.saveContext()
+     //   self.saveContext()
     }
     
     // GRE Added for Google sign in
@@ -358,187 +360,187 @@ print("appdelegate application - handleOpenURL = \(url.scheme)")
     
     
 
-    // MARK: - Core Data stack
-
-    lazy var applicationDocumentsDirectory: URL = {
-        // The directory the application uses to store the Core Data store file. This code uses a directory named "com.garryeves.EvesCRM" in the application's documents Application Support directory.
-        let urls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
-        return urls[urls.count-1] 
-    }()
-
-    lazy var managedObjectModel: NSManagedObjectModel = {
-        // The managed object model for the application. This property is not optional. It is a fatal error for the application not to be able to find and load its model.
-        let modelURL = Bundle.main.url(forResource: "EvesCRM", withExtension: "momd")!
-        return NSManagedObjectModel(contentsOf: modelURL)!
-    }()
-    
-    lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator? = {
-        // The persistent store coordinator for the application. This implementation creates and return a coordinator, having added the store for the application to it. This property is optional since there are legitimate error conditions that could cause the creation of the store to fail.
-        // Create the coordinator and store
-        var coordinator: NSPersistentStoreCoordinator? = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
-        let url = self.applicationDocumentsDirectory.appendingPathComponent("EvesCRM.sqlite")
-        var error: NSError? = nil
-        var failureReason = "There was an error creating or loading the application's saved data."
-        let mOptions = [NSMigratePersistentStoresAutomaticallyOption: true,
-            NSInferMappingModelAutomaticallyOption: true]
-
-  do {
-      try coordinator!.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: mOptions)
-  } catch var error1 as NSError {
-      error = error1
-      coordinator = nil
-      // Report any error we got.
-      var dict = [String: AnyObject]()
-      dict[NSLocalizedDescriptionKey] = "Failed to initialize the application's saved data" as AnyObject?
-      dict[NSLocalizedFailureReasonErrorKey] = failureReason as AnyObject?
-      dict[NSUnderlyingErrorKey] = error
-      error = NSError(domain: "YOUR_ERROR_DOMAIN", code: 9999, userInfo: dict)
-      // Replace this with code to handle the error appropriately.
-      // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-      NSLog("Unresolved error \(error), \(error!.userInfo)")
-      abort()
-  } catch {
-      fatalError()
-  }
-
-        self.registerCoordinatorForStoreNotifications (coordinator!)
-
-        return coordinator
-    }()
-
-    lazy var managedObjectContext: NSManagedObjectContext? = {
-        // Returns the managed object context for the application (which is already bound to the persistent store coordinator for the application.) This property is optional since there are legitimate error conditions that could cause the creation of the context to fail.
-        let coordinator = self.persistentStoreCoordinator
-        if coordinator == nil {
-            return nil
-        }
-        
-        var managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-        managedObjectContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-        managedObjectContext.persistentStoreCoordinator = coordinator
-        
-        return managedObjectContext
-    }()
-
-    // MARK: - Core Data Saving support
-
-    func saveContext () {
-        if let moc = self.managedObjectContext {
-            var error: NSError? = nil
-            if moc.hasChanges {
-                do {
-
-                    try moc.save()
-                    
-                } catch let error1 as NSError {
-                    error = error1
-                    // Replace this implementation with code to handle the error appropriately.
-                    // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                    NSLog("Unresolved error \(error), \(error!.userInfo)")
-                    abort()
-                }
-            }
-        }
-    }
-
-    // GRE Added notification for iCloud storage
-    
-    func registerCoordinatorForStoreNotifications (_ coordinator : NSPersistentStoreCoordinator) {
-      //  let nc : NotificationCenter = notificationCenter;
-        
-        notificationCenter.addObserver(self, selector: #selector(AppDelegate.storesWillChange(_:)),
-            name: NSNotification.Name.NSPersistentStoreCoordinatorStoresWillChange,
-            object: coordinator)
-        
-        notificationCenter.addObserver(self, selector: #selector(AppDelegate.storesDidChange(_:)),
-            name: NSNotification.Name.NSPersistentStoreCoordinatorStoresDidChange,
-            object: coordinator)
-        
-//        notificationCenter.addObserver(self, selector: #selector(AppDelegate.persistentStoreDidImportUbiquitousContentChanges(_:)),
-//            name: NSNotification.Name.NSPersistentStoreDidImportUbiquitousContentChanges,
+//    // MARK: - Core Data stack
+//
+//    lazy var applicationDocumentsDirectory: URL = {
+//        // The directory the application uses to store the Core Data store file. This code uses a directory named "com.garryeves.EvesCRM" in the application's documents Application Support directory.
+//        let urls = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+//        return urls[urls.count-1] 
+//    }()
+//
+//    lazy var managedObjectModel: NSManagedObjectModel = {
+//        // The managed object model for the application. This property is not optional. It is a fatal error for the application not to be able to find and load its model.
+//        let modelURL = Bundle.main.url(forResource: "EvesCRM", withExtension: "momd")!
+//        return NSManagedObjectModel(contentsOf: modelURL)!
+//    }()
+//    
+//    lazy var persistentStoreCoordinator: NSPersistentStoreCoordinator? = {
+//        // The persistent store coordinator for the application. This implementation creates and return a coordinator, having added the store for the application to it. This property is optional since there are legitimate error conditions that could cause the creation of the store to fail.
+//        // Create the coordinator and store
+//        var coordinator: NSPersistentStoreCoordinator? = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
+//        let url = self.applicationDocumentsDirectory.appendingPathComponent("EvesCRM.sqlite")
+//        var error: NSError? = nil
+//        var failureReason = "There was an error creating or loading the application's saved data."
+//        let mOptions = [NSMigratePersistentStoresAutomaticallyOption: true,
+//            NSInferMappingModelAutomaticallyOption: true]
+//
+//  do {
+//      try coordinator!.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: mOptions)
+//  } catch var error1 as NSError {
+//      error = error1
+//      coordinator = nil
+//      // Report any error we got.
+//      var dict = [String: AnyObject]()
+//      dict[NSLocalizedDescriptionKey] = "Failed to initialize the application's saved data" as AnyObject?
+//      dict[NSLocalizedFailureReasonErrorKey] = failureReason as AnyObject?
+//      dict[NSUnderlyingErrorKey] = error
+//      error = NSError(domain: "YOUR_ERROR_DOMAIN", code: 9999, userInfo: dict)
+//      // Replace this with code to handle the error appropriately.
+//      // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+//      NSLog("Unresolved error \(error), \(error!.userInfo)")
+//      abort()
+//  } catch {
+//      fatalError()
+//  }
+//
+//        self.registerCoordinatorForStoreNotifications (coordinator!)
+//
+//        return coordinator
+//    }()
+//
+//    lazy var managedObjectContext: NSManagedObjectContext? = {
+//        // Returns the managed object context for the application (which is already bound to the persistent store coordinator for the application.) This property is optional since there are legitimate error conditions that could cause the creation of the context to fail.
+//        let coordinator = self.persistentStoreCoordinator
+//        if coordinator == nil {
+//            return nil
+//        }
+//        
+//        var managedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+//        managedObjectContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+//        managedObjectContext.persistentStoreCoordinator = coordinator
+//        
+//        return managedObjectContext
+//    }()
+//
+//    // MARK: - Core Data Saving support
+//
+//    func saveContext () {
+//        if let moc = self.managedObjectContext {
+//            var error: NSError? = nil
+//            if moc.hasChanges {
+//                do {
+//
+//                    try moc.save()
+//                    
+//                } catch let error1 as NSError {
+//                    error = error1
+//                    // Replace this implementation with code to handle the error appropriately.
+//                    // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+//                    NSLog("Unresolved error \(error), \(error!.userInfo)")
+//                    abort()
+//                }
+//            }
+//        }
+//    }
+//
+//    // GRE Added notification for iCloud storage
+//    
+//    func registerCoordinatorForStoreNotifications (_ coordinator : NSPersistentStoreCoordinator) {
+//      //  let nc : NotificationCenter = notificationCenter;
+//        
+//        notificationCenter.addObserver(self, selector: #selector(AppDelegate.storesWillChange(_:)),
+//            name: NSNotification.Name.NSPersistentStoreCoordinatorStoresWillChange,
 //            object: coordinator)
-        
-        notificationCenter.addObserver(self, selector: #selector(AppDelegate.mergeChanges(_:)), name: NSNotification.Name.NSManagedObjectContextDidSave, object: coordinator);
-    }
-    
-
-    
-    
-    // GRE coredata
-    
-    // Subscribe to NSPersistentStoreCoordinatorStoresWillChangeNotification
-    // most likely to be called if the user enables / disables iCloud
-    // (either globally, or just for your app) or if the user changes
-    // iCloud accounts.
-    func storesWillChange(_ notification: Notification)
-    {
-        NSLog("storesWillChange notif:\(notification)");
-        if let moc = self.managedObjectContext
-        {
-            moc.performAndWait
-            {
-                let error: NSError? = nil;
-                if moc.hasChanges
-                {
-                    do
-                    {
-                        try moc.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure in appDelegate: storesWillChange: \(error)")
-                    }
-                    NSLog("Save error: \(error)");
-                }
-                else
-                {
-                    // drop any managed objects
-                }
-                
-                // Reset context anyway, as suggested by Apple Support
-                // The reason is that when storesWillChange notification occurs, Core Data is going to switch the stores. During and after that switch (happening in background), your currently fetched objects will become invalid.
-                
-                moc.reset();
-            }
-            
-            // now reset your UI to be prepared for a totally different
-            // set of data (eg, popToRootViewControllerAnimated:)
-            // BUT don't load any new data yet.
-        }
-    }
-    
-    // Subscribe to NSPersistentStoreCoordinatorStoresDidChangeNotification
-    func storesDidChange(_ notification: Notification) {
-        // here is when you can refresh your UI and
-        // load new data from the new store
-        NSLog("storesDidChange posting notif");
-        self.postRefetchDatabaseNotification();
-    }
-    
-    func postRefetchDatabaseNotification() {
-        NSLog("postRefetchDatabaseNotification posting notif")
-        DispatchQueue.main.async(execute: { () -> Void in
-            notificationCenter.post(
-                name: kRefetchDatabaseNotification, // Replace with your constant of the refetch name, and add observer in the proper place - e.g. RootViewController
-                object: nil);
-        })
-    }
-    
-    func mergeChanges(_ notification: Notification) {
-        NSLog("mergeChanges notif:\(notification)")
-        if let moc = managedObjectContext {
-            moc.perform {
-                moc.mergeChanges(fromContextDidSave: notification)
-                self.postRefetchDatabaseNotification()
-            }
-        }
-    }
-    
-    func persistentStoreDidImportUbiquitousContentChanges(_ notification: Notification) {
-        self.mergeChanges(notification);
-        NSLog("persistentStoreDidImportUbiquitousContentChanges posting notif");
-    }
+//        
+//        notificationCenter.addObserver(self, selector: #selector(AppDelegate.storesDidChange(_:)),
+//            name: NSNotification.Name.NSPersistentStoreCoordinatorStoresDidChange,
+//            object: coordinator)
+//        
+////        notificationCenter.addObserver(self, selector: #selector(AppDelegate.persistentStoreDidImportUbiquitousContentChanges(_:)),
+////            name: NSNotification.Name.NSPersistentStoreDidImportUbiquitousContentChanges,
+////            object: coordinator)
+//        
+//        notificationCenter.addObserver(self, selector: #selector(AppDelegate.mergeChanges(_:)), name: NSNotification.Name.NSManagedObjectContextDidSave, object: coordinator);
+//    }
+//    
+//
+//    
+//    
+//    // GRE coredata
+//    
+//    // Subscribe to NSPersistentStoreCoordinatorStoresWillChangeNotification
+//    // most likely to be called if the user enables / disables iCloud
+//    // (either globally, or just for your app) or if the user changes
+//    // iCloud accounts.
+//    func storesWillChange(_ notification: Notification)
+//    {
+//        NSLog("storesWillChange notif:\(notification)");
+//        if let moc = self.managedObjectContext
+//        {
+//            moc.performAndWait
+//            {
+//                let error: NSError? = nil;
+//                if moc.hasChanges
+//                {
+//                    do
+//                    {
+//                        try moc.save()
+//                    }
+//                    catch let error as NSError
+//                    {
+//                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
+//                        
+//                        print("Failure in appDelegate: storesWillChange: \(error)")
+//                    }
+//                    NSLog("Save error: \(error)");
+//                }
+//                else
+//                {
+//                    // drop any managed objects
+//                }
+//                
+//                // Reset context anyway, as suggested by Apple Support
+//                // The reason is that when storesWillChange notification occurs, Core Data is going to switch the stores. During and after that switch (happening in background), your currently fetched objects will become invalid.
+//                
+//                moc.reset();
+//            }
+//            
+//            // now reset your UI to be prepared for a totally different
+//            // set of data (eg, popToRootViewControllerAnimated:)
+//            // BUT don't load any new data yet.
+//        }
+//    }
+//    
+//    // Subscribe to NSPersistentStoreCoordinatorStoresDidChangeNotification
+//    func storesDidChange(_ notification: Notification) {
+//        // here is when you can refresh your UI and
+//        // load new data from the new store
+//        NSLog("storesDidChange posting notif");
+//        self.postRefetchDatabaseNotification();
+//    }
+//    
+//    func postRefetchDatabaseNotification() {
+//        NSLog("postRefetchDatabaseNotification posting notif")
+//        DispatchQueue.main.async(execute: { () -> Void in
+//            notificationCenter.post(
+//                name: kRefetchDatabaseNotification, // Replace with your constant of the refetch name, and add observer in the proper place - e.g. RootViewController
+//                object: nil);
+//        })
+//    }
+//    
+//    func mergeChanges(_ notification: Notification) {
+//        NSLog("mergeChanges notif:\(notification)")
+//        if let moc = managedObjectContext {
+//            moc.perform {
+//                moc.mergeChanges(fromContextDidSave: notification)
+//                self.postRefetchDatabaseNotification()
+//            }
+//        }
+//    }
+//    
+//    func persistentStoreDidImportUbiquitousContentChanges(_ notification: Notification) {
+//        self.mergeChanges(notification);
+//        NSLog("persistentStoreDidImportUbiquitousContentChanges posting notif");
+//    }
 }
 

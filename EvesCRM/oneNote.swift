@@ -7,6 +7,7 @@
 //
 
 import Foundation
+//import OneDriveSDK
 
 class oneNotePage: NSObject
 {
@@ -1055,12 +1056,13 @@ class oneNoteNotebooks: NSObject
     }
 }
 
-class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLConnectionDataDelegate
+//class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLConnectionDataDelegate
+class oneNoteData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate
 {
-    var liveClient: LiveConnectClient!
+//GRE    var liveClient: LiveConnectClient!
     // Set the CLIENT_ID value to be the one you get from http://manage.dev.live.com/
     fileprivate let CLIENT_ID = "000000004C152111"; //@"%CLIENT_ID%";
-    fileprivate let OneNoteScopeText = ["wl.signin", "wl.skydrive", "wl.skydrive_update", "wl.offline_access", "office.onenote_create", "office.onenote", "office.onenote_update"]
+    fileprivate let OneNoteScopeText = ["wl.signin", "wl.skydrive", "wl.skydrive_update", "wl.offline_access", "office.onenote_create", "office.onenote", "office.onenote_update", "onedrive.readwrite"]
     
     fileprivate var mySourceViewController: UIViewController!
     
@@ -1109,16 +1111,17 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
             return myOneNoteConnected
         }
     }
+    
     override init()
     {
         super.init()
         if !myOneNoteConnected
         {
-            if liveClient == nil
-            {
-                liveClient = LiveConnectClient(clientId: CLIENT_ID, scopes:OneNoteScopeText, delegate:self, userState: "init")
-            }
-        }
+//            if liveClient == nil
+//            {
+// //GRE               liveClient = LiveConnectClient(clientId: CLIENT_ID, scopes:OneNoteScopeText, delegate:self, userState: "init")
+//            }
+       }
     }
     
     func createOneNoteObject(_ inName: String, inType: String, inParent: String) -> String
@@ -1132,10 +1135,10 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
         
         if !myOneNoteConnected
         {
-            if liveClient == nil
-            {
-                liveClient = LiveConnectClient(clientId: CLIENT_ID, scopes:OneNoteScopeText, delegate:self, userState: "init")
-            }
+//            if liveClient == nil
+//            {
+//   //GRE             liveClient = LiveConnectClient(clientId: CLIENT_ID, scopes:OneNoteScopeText, delegate:self, userState: "init")
+//            }
         }
         else
         {
@@ -1162,86 +1165,49 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
             request.httpBody = presentation
             request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringLocalCacheData
             
-            if liveClient.session != nil
-            {
-                request.setValue("Bearer \(liveClient.session.accessToken)", forHTTPHeaderField: "Authorization")
-                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                
-                // Send the HTTP request
-                
-  //          let result: NSData?
-  //              do
-  //              {
-  //                  result = try NSURLConnection.sendSynchronousRequest(request, returningResponse:&response)
-  //              }
-  //              catch let error1 as NSError
-  //              {
-  //                  NSLog("createOneNoteObject\(error1)")
- //                   result = nil
- //               }
-                
-                let session = URLSession.shared
-                
-                let sem = DispatchSemaphore(value: 0);
-                
-                let task = session.dataTask(with: request, completionHandler: {data, myresponse, error -> Void in
-                    
-                    let httpResponse = myresponse as? HTTPURLResponse
-                    
-                    let status = httpResponse!.statusCode
-                    
-                    let myReturnString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue) as! String
-                    
-                    if status == 201
-                    {
-                        switch inType
-                        {
-                        case "Notebook" :
-                            ret_val = self.processNotebookCreateReturn(myReturnString)
-                            
-                        case "Section" :
-                            ret_val = self.processNotebookCreateReturn(myReturnString)
-                            
-                        default: print("createOneNoteObject: invalid type passed in")
-                        }
+//            if liveClient.session != nil
+//            {
+//                request.setValue("Bearer \(liveClient.session.accessToken)", forHTTPHeaderField: "Authorization")
+//                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-                    }
-                    else
-                    {
-                        print("oneNoteData: createOneNoteObject: There was an error accessing the OneNote data. Response code: \(status)")
-                    }
-                    sem.signal()
-                })
-                
-                task.resume()
-                sem.wait()
-
-     /*
-                let httpResponse = response as? NSHTTPURLResponse
-                
-                let status = httpResponse!.statusCode
-                
-                let myReturnString = NSString(data: result!, encoding: NSUTF8StringEncoding) as! String
-                
-                if status == 201
-                {
-                    switch inType
-                    {
-                        case "Notebook" :
-                            ret_val = processNotebookCreateReturn(myReturnString)
-                        
-                        case "Section" :
-                            ret_val = processNotebookCreateReturn(myReturnString)
-
-                        default: print("createOneNoteObject: invalid type passed in")
-                    }
-                }
-                else
-                {
-                    print("oneNoteData: createOneNoteObject: There was an error accessing the OneNote data. Response code: \(status)")
-                }
-*/
-            }
+            
+//                let session = URLSession.shared
+//                
+//                let sem = DispatchSemaphore(value: 0);
+//                
+//                let task = session.dataTask(with: request, completionHandler: {data, myresponse, error -> Void in
+//                    
+//                    let httpResponse = myresponse as? HTTPURLResponse
+//                    
+//                    let status = httpResponse!.statusCode
+//                    
+//                    let myReturnString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue) as! String
+//                    
+//                    if status == 201
+//                    {
+//                        switch inType
+//                        {
+//                        case "Notebook" :
+//                            ret_val = self.processNotebookCreateReturn(myReturnString)
+//                            
+//                        case "Section" :
+//                            ret_val = self.processNotebookCreateReturn(myReturnString)
+//                            
+//                        default: print("createOneNoteObject: invalid type passed in")
+//                        }
+//
+//                    }
+//                    else
+//                    {
+//                        print("oneNoteData: createOneNoteObject: There was an error accessing the OneNote data. Response code: \(status)")
+//                    }
+//                    sem.signal()
+//                })
+//                
+//                task.resume()
+//                sem.wait()
+//
+//            }
         }
     
         return ret_val
@@ -1258,10 +1224,10 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
         
         if !myOneNoteConnected
         {
-            if liveClient == nil
-            {
-                liveClient = LiveConnectClient(clientId: CLIENT_ID, scopes:OneNoteScopeText, delegate:self, userState: "init")
-            }
+//            if liveClient == nil
+//            {
+//   //GRE             liveClient = LiveConnectClient(clientId: CLIENT_ID, scopes:OneNoteScopeText, delegate:self, userState: "init")
+//            }
         }
         else
         {
@@ -1285,69 +1251,41 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
             request.httpBody = presentation
             request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringLocalCacheData
             
-            if liveClient.session != nil
-            {
-                request.setValue("Bearer \(liveClient.session.accessToken)", forHTTPHeaderField: "Authorization")
-                request.setValue("text/html", forHTTPHeaderField: "Content-Type")
-                
-                // Send the HTTP request
-                
-          /*  let result: NSData?
-                do
-                {
-                    result = try NSURLConnection.sendSynchronousRequest(request, returningResponse:&response)
-                }
-                catch let error1 as NSError
-                {
-                    NSLog("createOneNotePage\(error1)")
-                    result = nil
-                }
-              */
-                
-                let session = URLSession.shared
-                
-                let sem = DispatchSemaphore(value: 0);
-                
-                let task = session.dataTask(with: request, completionHandler: {data, myresponse, error -> Void in
-                    
-                    let httpResponse = myresponse as? HTTPURLResponse
-                    
-                    let status = httpResponse!.statusCode
-                    
-                    let myReturnString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue) as! String
-                    
-                    if status == 201
-                    {
-                        ret_val = self.processPageCreateReturn(myReturnString)
-                    }
-                    else
-                    {
-                        print("oneNoteData: createOneNotePage: There was an error accessing the OneNote data. Response code: \(status)")
-                    }
-                    sem.signal()
-                })
-                
-                task.resume()
-                sem.wait()
-                
-                
-                /*
-                let httpResponse = response as? NSHTTPURLResponse
-                
-                let status = httpResponse!.statusCode
-                
-                let myReturnString = NSString(data: result!, encoding: NSUTF8StringEncoding) as! String
-                
-                if status == 201
-                {
-                    ret_val = processPageCreateReturn(myReturnString)
-                }
-                else
-                {
-                    print("oneNoteData: createOneNotePage: There was an error accessing the OneNote data. Response code: \(status)")
-                }
-*/
-            }
+//            if liveClient.session != nil
+//            {
+//                request.setValue("Bearer \(liveClient.session.accessToken)", forHTTPHeaderField: "Authorization")
+//                request.setValue("text/html", forHTTPHeaderField: "Content-Type")
+//                
+//                // Send the HTTP request
+//
+//                
+//                let session = URLSession.shared
+//                
+//                let sem = DispatchSemaphore(value: 0);
+//                
+//                let task = session.dataTask(with: request, completionHandler: {data, myresponse, error -> Void in
+//                    
+//                    let httpResponse = myresponse as? HTTPURLResponse
+//                    
+//                    let status = httpResponse!.statusCode
+//                    
+//                    let myReturnString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue) as! String
+//                    
+//                    if status == 201
+//                    {
+//                        ret_val = self.processPageCreateReturn(myReturnString)
+//                    }
+//                    else
+//                    {
+//                        print("oneNoteData: createOneNotePage: There was an error accessing the OneNote data. Response code: \(status)")
+//                    }
+//                    sem.signal()
+//                })
+//                
+//                task.resume()
+//                sem.wait()
+//
+//            }
             
         }
         
@@ -1459,10 +1397,10 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
         
         if !myOneNoteConnected
         {
-            if liveClient == nil
-            {
-                liveClient = LiveConnectClient(clientId: CLIENT_ID, scopes:OneNoteScopeText, delegate:self, userState: "init")
-            }
+//            if liveClient == nil
+//            {
+//     //GRE           liveClient = LiveConnectClient(clientId: CLIENT_ID, scopes:OneNoteScopeText, delegate:self, userState: "init")
+//            }
         }
         else
         {
@@ -1483,85 +1421,60 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
         request.httpMethod = "GET"
         request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringLocalCacheData
         
-        if liveClient.session != nil
-        {
-            request.setValue("Bearer \(liveClient.session.accessToken)", forHTTPHeaderField: "Authorization")
-            // Send the HTTP request
-
-  /*      let result: NSData?
-            do
-            {
-                result = try NSURLConnection.sendSynchronousRequest(request, returningResponse:&response)
-            }
-            catch let error1 as NSError
-            {
-                NSLog("performGetData\(error1)")
-                result = nil
-            }
-      */
-            
-            let session = URLSession.shared
-            
-            let sem = DispatchSemaphore(value: 0);
-            
-            let task = session.dataTask(with: request, completionHandler: {data, myresponse, error -> Void in
-                
-                let httpResponse = myresponse as? HTTPURLResponse
-                
-                let status = httpResponse!.statusCode
-                
-                if status == 200
-                {
-                    // this means data was retrieved OK
-                    myReturnString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue) as! String
-                }
-                else if status == 201
-                {
-                    print("oneNoteData: Page created!")
-                }
-                else
-                {
-                    print("oneNoteData: connectionDidFinishLoading: There was an error accessing the OneNote data. Response code: \(status)")
-                }
-                sem.signal()
-            })
-            
-            task.resume()
-            sem.wait()
-            
-            
-            /*
-            
-            let httpResponse = response as? NSHTTPURLResponse
-          
-            let status = httpResponse!.statusCode
-            
-            if status == 200
-            {
-                // this means data was retrieved OK
-                myReturnString = NSString(data: result!, encoding: NSUTF8StringEncoding) as! String
-            }
-            else if status == 201
-            {
-                print("oneNoteData: Page created!")
-            }
-            else
-            {
-                print("oneNoteData: connectionDidFinishLoading: There was an error accessing the OneNote data. Response code: \(status)")
-            }
-*/
-        }
+//        if liveClient.session != nil
+//        {
+//            request.setValue("Bearer \(liveClient.session.accessToken)", forHTTPHeaderField: "Authorization")
+//            // Send the HTTP request
+//
+//
+//            
+//            let session = URLSession.shared
+//            
+//            let sem = DispatchSemaphore(value: 0);
+//            
+//            let task = session.dataTask(with: request, completionHandler: {data, myresponse, error -> Void in
+//                
+//                let httpResponse = myresponse as? HTTPURLResponse
+//                
+//                let status = httpResponse!.statusCode
+//                
+//                if status == 200
+//                {
+//                    // this means data was retrieved OK
+//                    myReturnString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue) as! String
+//                }
+//                else if status == 201
+//                {
+//                    print("oneNoteData: Page created!")
+//                }
+//                else
+//                {
+//                    print("oneNoteData: connectionDidFinishLoading: There was an error accessing the OneNote data. Response code: \(status)")
+//                }
+//                sem.signal()
+//            })
+//            
+//            task.resume()
+//            sem.wait()
+//            
+//
+//        }
         return myReturnString
     }
 
-    @objc func authCompleted(_ status: LiveConnectSessionStatus, session: LiveConnectSession, userState: Any)
-    {
-        if liveClient.session == nil
-        {
-            liveClient.login(mySourceViewController, delegate:self, userState: "login")
-        }
-        
-        myOneNoteConnected = true
-        notificationCenter.post(name: NotificationOneNoteConnected, object: nil)
-    }
+//    @objc func authCompleted(_ status: LiveConnectSessionStatus, session: LiveConnectSession, userState: Any)
+    
+    
+    // This is invoked when the original method call is considered successful.
+    
+//    public func authCompleted(_ status: LiveConnectSessionStatus, session: LiveConnectSession!, userState: Any!)
+//    {
+//        if liveClient.session == nil
+//        {
+//            liveClient.login(mySourceViewController, delegate:self, userState: "login")
+//        }
+//        
+//        myOneNoteConnected = true
+//        notificationCenter.post(name: NotificationOneNoteConnected, object: nil)
+//    }
 }

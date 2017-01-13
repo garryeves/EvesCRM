@@ -7,7 +7,16 @@ project '/Users/garryeves/Documents/xcode/EvesCRM/Contacts Dashboard.xcodeproj '
 
 target 'EvesCRM' do
 pod 'Google/SignIn'
+pod 'GoogleAPIClientForREST'
 pod 'SwiftyDropbox'
+pod 'OneDriveSDK'
+end
+
+target 'EvesCRMTests' do
+pod 'Google/SignIn'
+pod 'GoogleAPIClientForREST'
+pod 'SwiftyDropbox'
+pod 'OneDriveSDK'
 end
 
 post_install do |installer|

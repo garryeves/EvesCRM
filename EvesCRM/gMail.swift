@@ -8,6 +8,7 @@
 
 import Foundation
 import AddressBook
+import GoogleSignIn
 //import AppKit
 
 
@@ -742,7 +743,8 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
     fileprivate let kShouldSaveInKeychainKey = "shouldSaveInKeychain"
     fileprivate var mySourceViewController: UIViewController!
     
-    fileprivate var auth: GTMOAuth2Authentication!
+//    fileprivate var auth: GTMOAuth2Authentication!
+    fileprivate var auth: GIDAuthentication!
     fileprivate var currentUser: GIDGoogleUser!
     
     fileprivate var myInString: String = ""

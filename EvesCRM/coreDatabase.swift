@@ -13,30 +13,69 @@ import CoreData
     import AppKit
 #endif
 
-
 class coreDatabase: NSObject
 {
-    fileprivate var managedObjectContext: NSManagedObjectContext!
+    lazy var persistentContainer: NSPersistentContainer = {
+        /*
+         The persistent container for the application. This implementation
+         creates and returns a container, having loaded the store for the
+         application to it. This property is optional since there are legitimate
+         error conditions that could cause the creation of the store to fail.
+         */
+        let container = NSPersistentContainer(name: "EvesCRM")
+        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+            if let error = error as NSError? {
+                // Replace this implementation with code to handle the error appropriately.
+                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+                
+                /*
+                 Typical reasons for an error here include:
+                 * The parent directory does not exist, cannot be created, or disallows writing.
+                 * The persistent store is not accessible, due to permissions or data protection when the device is locked.
+                 * The device is out of space.
+                 * The store could not be migrated to the current model version.
+                 Check the error message to determine what the actual problem was.
+                 */
+                fatalError("Unresolved error \(error), \(error.userInfo)")
+            }
+        })
+        return container
+    }()
+    
+    private var getContext: NSManagedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
     
     override init()
     {
-        #if os(iOS)
-            managedObjectContext = (UIApplication.shared.delegate as! AppDelegate).managedObjectContext
-        #elseif os(OSX)
-            managedObjectContext = (NSApplication.sharedApplication().delegate as! AppDelegate).managedObjectContext
-        #else
-            NSLog("Unexpected OS")
-        #endif
+        super.init()
+        getContext = persistentContainer.viewContext
+    }
+    
+    func saveContext ()
+    {
+        if getContext.hasChanges
+        {
+            do
+            {
+                try getContext.save()
+            }
+            catch
+            {
+                // Replace this implementation with code to handle the error appropriately.
+                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+                let nserror = error as NSError
+                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+            }
+        }
     }
     
     func refreshObject(_ objectID: NSManagedObject)
     {
-        managedObjectContext!.refresh(objectID, mergeChanges: true)
+        getContext.refresh(objectID, mergeChanges: true)
     }
     
     func getOpenProjectsForGTDItem(_ inGTDItemID: Int, inTeamID: Int)->[Projects]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Projects")
+        let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -50,15 +89,22 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
 
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Projects]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error ocurred during execution: \(error)")
+            return []
+        }
     }
 
     func getProjectDetails(_ projectID: Int)->[Projects]
     {
         
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Projects")
+        let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -70,15 +116,22 @@ class coreDatabase: NSObject
         // Create a new fetch request using the entity
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Projects]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getProjectSuccessor(_ projectID: Int)->Int
     {
         
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectNote")
+        let fetchRequest = NSFetchRequest<ProjectNote>(entityName: "ProjectNote")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -90,26 +143,22 @@ class coreDatabase: NSObject
         // Create a new fetch request using the entity
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [ProjectNote]
-        
-        var retVal: Int = 0
-        
-        if fetchResults!.count == 0
+        do
         {
-            retVal = 0
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults[0].projectID as Int
         }
-        else
+        catch
         {
-            retVal = fetchResults![0].projectID as Int
+            print("Error occurred during execution: \(error)")
+            return 0
         }
-        
-        return retVal
     }
 
     func getGTDItemSuccessor(_ projectID: Int)->Int
     {
         
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDItem")
+        let fetchRequest = NSFetchRequest<GTDItem>(entityName: "GTDItem")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -121,25 +170,21 @@ class coreDatabase: NSObject
         // Create a new fetch request using the entity
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [GTDItem]
-        
-        var retVal: Int = 0
-        
-        if fetchResults!.count == 0
+        do
         {
-            retVal = 0
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults[0].gTDItemID as! Int
         }
-        else
+        catch
         {
-            retVal = fetchResults![0].gTDItemID as! Int
+            print("Error occurred during execution: \(error)")
+            return 0
         }
-        
-        return retVal
     }
   
     func getAllProjects(_ inTeamID: Int)->[Projects]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Projects")
+        let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -149,24 +194,38 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
 
         // Execute the fetch request, and cast the results to an array of objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Projects]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getProjectCount()->Int
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Projects")
+        let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Projects]
-        
-        return fetchResults!.count
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults.count
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return 0
+        }
     }
     
     func getRoles(_ inTeamID: Int)->[Roles]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Roles")
+        let fetchRequest = NSFetchRequest<Roles>(entityName: "Roles")
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(inTeamID))")
@@ -174,14 +233,21 @@ class coreDatabase: NSObject
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Roles]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func deleteAllRoles(_ inTeamID: Int)
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Roles")
+        let fetchRequest = NSFetchRequest<Roles>(entityName: "Roles")
 
         let predicate = NSPredicate(format: "(teamID == \(inTeamID))")
         
@@ -189,27 +255,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
 
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Roles]
-        for myStage in fetchResults!
+        do
         {
-            myStage.updateTime = Date()
-            myStage.updateType = "Delete"
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults = try getContext.fetch(fetchRequest)
+            for myStage in fetchResults
+            {
+                myStage.updateTime = Date()
+                myStage.updateType = "Delete"
+                
+                saveContext()
+                myCloudDB.saveRolesRecordToCloudKit(myStage)
             }
-            
-            myCloudDB.saveRolesRecordToCloudKit(myStage)
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
     }
     
@@ -217,7 +277,7 @@ class coreDatabase: NSObject
     {
         var retVal: Int = 0
         
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Roles")
+        let fetchRequest = NSFetchRequest<Roles>(entityName: "Roles")
         
         fetchRequest.propertiesToFetch = ["roleID"]
         
@@ -226,11 +286,17 @@ class coreDatabase: NSObject
         fetchRequest.sortDescriptors = sortDescriptors
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Roles]
-        
-        for myItem in fetchResults!
+        do
         {
-            retVal = myItem.roleID as Int
+            let fetchResults = try getContext.fetch(fetchRequest)
+            for myItem in fetchResults
+            {
+                retVal = myItem.roleID as Int
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
         
         return retVal + 1
@@ -244,7 +310,7 @@ class coreDatabase: NSObject
         if myRoles.count == 0
         {
             
-            mySelectedRole = NSEntityDescription.insertNewObject(forEntityName: "Roles", into: self.managedObjectContext!) as! Roles
+            mySelectedRole = NSEntityDescription.insertNewObject(forEntityName: "Roles", into: getContext) as! Roles
         
             // Get the role number
             mySelectedRole.roleID = NSNumber(value: getNextID("Roles"))
@@ -280,35 +346,19 @@ class coreDatabase: NSObject
             }
         }
         
-        managedObjectContext!.perform
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
         
         myCloudDB.saveRolesRecordToCloudKit(mySelectedRole)
     }
 
     func saveCloudRole(_ roleName: String, teamID: Int, inUpdateTime: Date, inUpdateType: String, roleID: Int = 0)
     {
-        
-        
         let myRoles = getRole(roleID)
-        
         
         var mySelectedRole: Roles
         if myRoles.count == 0
         {
-            
-            mySelectedRole = NSEntityDescription.insertNewObject(forEntityName: "Roles", into: self.managedObjectContext!) as! Roles
+            mySelectedRole = NSEntityDescription.insertNewObject(forEntityName: "Roles", into: getContext) as! Roles
             
             // Get the role number
             mySelectedRole.roleID = NSNumber(value: roleID)
@@ -325,61 +375,34 @@ class coreDatabase: NSObject
             mySelectedRole.updateType = inUpdateType
         }
         
-        managedObjectContext!.perform
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
     }
 
     func replaceRole(_ roleName: String, teamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE", roleID: Int = 0)
     {
-        managedObjectContext!.perform
-            {
-        let mySelectedRole = NSEntityDescription.insertNewObject(forEntityName: "Roles", into: self.managedObjectContext!) as! Roles
+        let mySelectedRole = NSEntityDescription.insertNewObject(forEntityName: "Roles", into: getContext) as! Roles
                     
-                    // Get the role number
-                    mySelectedRole.roleID = NSNumber(value: roleID)
-                    mySelectedRole.roleDescription = roleName
-                    mySelectedRole.teamID = NSNumber(value: teamID)
-                    if inUpdateType == "CODE"
-                    {
-                        mySelectedRole.updateTime = Date()
-                        mySelectedRole.updateType = "Add"
-                    }
-                    else
-                    {
-                        mySelectedRole.updateTime = inUpdateTime
-                        mySelectedRole.updateType = inUpdateType
-                    }
-
-
-                
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+        // Get the role number
+        mySelectedRole.roleID = NSNumber(value: roleID)
+        mySelectedRole.roleDescription = roleName
+        mySelectedRole.teamID = NSNumber(value: teamID)
+        if inUpdateType == "CODE"
+        {
+            mySelectedRole.updateTime = Date()
+            mySelectedRole.updateType = "Add"
         }
+        else
+        {
+            mySelectedRole.updateTime = inUpdateTime
+            mySelectedRole.updateType = inUpdateType
+        }
+
+        saveContext()
     }
 
-    
     func getRole(_ roleID: Int, teamID: Int)->[Roles]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Roles")
+        let fetchRequest = NSFetchRequest<Roles>(entityName: "Roles")
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(teamID)) && (roleID == \(roleID))")
@@ -387,14 +410,21 @@ class coreDatabase: NSObject
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Roles]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getRole(_ roleID: Int)->[Roles]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Roles")
+        let fetchRequest = NSFetchRequest<Roles>(entityName: "Roles")
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         let predicate = NSPredicate(format: "(updateType != \"Delete\") && (roleID == \(roleID))")
@@ -402,14 +432,21 @@ class coreDatabase: NSObject
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Roles]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func deleteRoleEntry(_ inRoleName: String, inTeamID: Int)
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Roles")
+        let fetchRequest = NSFetchRequest<Roles>(entityName: "Roles")
         
         let predicate = NSPredicate(format: "(roleDescription == \"\(inRoleName)\") && (teamID == \(inTeamID))")
         
@@ -417,27 +454,22 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Roles]
-        for myStage in fetchResults!
+        do
         {
-            myStage.updateTime = Date()
-            myStage.updateType = "Delete"
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults = try getContext.fetch(fetchRequest)
+            for myStage in fetchResults
+            {
+                myStage.updateTime = Date()
+                myStage.updateType = "Delete"
+                
+                saveContext()
+                
+                myCloudDB.saveRolesRecordToCloudKit(myStage)
             }
-            
-            myCloudDB.saveRolesRecordToCloudKit(myStage)
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
     }
     
@@ -448,7 +480,7 @@ class coreDatabase: NSObject
         let myProjectTeamRecords = getTeamMemberRecord(inProjectID, inPersonName: inPersonName)
         if myProjectTeamRecords.count == 0
         { // Add
-            myProjectTeam = NSEntityDescription.insertNewObject(forEntityName: "ProjectTeamMembers", into: self.managedObjectContext!) as! ProjectTeamMembers
+            myProjectTeam = NSEntityDescription.insertNewObject(forEntityName: "ProjectTeamMembers", into: getContext) as! ProjectTeamMembers
             myProjectTeam.projectID = NSNumber(value: inProjectID)
             myProjectTeam.teamMember = inPersonName
             myProjectTeam.roleID = NSNumber(value: inRoleID)
@@ -484,58 +516,34 @@ class coreDatabase: NSObject
             }
         }
         
-        managedObjectContext!.perform
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
     }
 
     func replaceTeamMember(_ inProjectID: Int, inRoleID: Int, inPersonName: String, inNotes: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.perform
-            {
-        let myProjectTeam = NSEntityDescription.insertNewObject(forEntityName: "ProjectTeamMembers", into: self.managedObjectContext!) as! ProjectTeamMembers
-            myProjectTeam.projectID = NSNumber(value: inProjectID)
-            myProjectTeam.teamMember = inPersonName
-            myProjectTeam.roleID = NSNumber(value: inRoleID)
-            myProjectTeam.projectMemberNotes = inNotes
-            if inUpdateType == "CODE"
-            {
-                myProjectTeam.updateTime = Date()
-                myProjectTeam.updateType = "Add"
-            }
-            else
-            {
-                myProjectTeam.updateTime = inUpdateTime
-                myProjectTeam.updateType = inUpdateType
-            }
-
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-                self.refreshObject(myProjectTeam)
+        let myProjectTeam = NSEntityDescription.insertNewObject(forEntityName: "ProjectTeamMembers", into: getContext) as! ProjectTeamMembers
+        myProjectTeam.projectID = NSNumber(value: inProjectID)
+        myProjectTeam.teamMember = inPersonName
+        myProjectTeam.roleID = NSNumber(value: inRoleID)
+        myProjectTeam.projectMemberNotes = inNotes
+        if inUpdateType == "CODE"
+        {
+            myProjectTeam.updateTime = Date()
+            myProjectTeam.updateType = "Add"
         }
+        else
+        {
+            myProjectTeam.updateTime = inUpdateTime
+            myProjectTeam.updateType = inUpdateType
+        }
+
+        saveContext()
+        self.refreshObject(myProjectTeam)
     }
 
     func deleteTeamMember(_ inProjectID: Int, inPersonName: String)
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectTeamMembers")
+        let fetchRequest = NSFetchRequest<ProjectTeamMembers>(entityName: "ProjectTeamMembers")
         
         let predicate = NSPredicate(format: "(projectID == \(inProjectID)) AND (teamMember == \"\(inPersonName)\")")
         
@@ -543,31 +551,26 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [ProjectTeamMembers]
-        for myStage in fetchResults!
+        do
         {
-            myStage.updateTime = Date()
-            myStage.updateType = "Delete"
-
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults = try getContext.fetch(fetchRequest)
+            for myStage in fetchResults
+            {
+                myStage.updateTime = Date()
+                myStage.updateType = "Delete"
+                
+                saveContext()
             }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
     }
 
     func getTeamMemberRecord(_ inProjectID: Int, inPersonName: String)->[ProjectTeamMembers]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectTeamMembers")
+        let fetchRequest = NSFetchRequest<ProjectTeamMembers>(entityName: "ProjectTeamMembers")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -577,14 +580,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [ProjectTeamMembers]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getTeamMembers(_ inProjectID: NSNumber)->[ProjectTeamMembers]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectTeamMembers")
+        let fetchRequest = NSFetchRequest<ProjectTeamMembers>(entityName: "ProjectTeamMembers")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -594,14 +604,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [ProjectTeamMembers]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getProjects(_ inTeamID: Int, inArchiveFlag: Bool = false) -> [Projects]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Projects")
+        let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -630,15 +647,21 @@ class coreDatabase: NSObject
         fetchRequest.sortDescriptors = sortDescriptors
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Projects]
-        
-        return fetchResults!
-
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getProjectsForPerson(_ inPersonName: String)->[ProjectTeamMembers]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectTeamMembers")
+        let fetchRequest = NSFetchRequest<ProjectTeamMembers>(entityName: "ProjectTeamMembers")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -651,35 +674,49 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [ProjectTeamMembers]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getRoleDescription(_ inRoleID: NSNumber, inTeamID: Int)->String
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Roles")
+        let fetchRequest = NSFetchRequest<Roles>(entityName: "Roles")
         let predicate = NSPredicate(format: "(roleID == \(inRoleID)) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Roles]
-        
-        if fetchResults!.count == 0
+        do
         {
-            return ""
+            let fetchResults = try getContext.fetch(fetchRequest)
+            if fetchResults.count == 0
+            {
+                return ""
+            }
+            else
+            {
+                return fetchResults[0].roleDescription
+            }
         }
-        else
+        catch
         {
-            return fetchResults![0].roleDescription
+            print("Error occurred during execution: \(error)")
+            return ""
         }
     }
     
     func getDecodeValue(_ inCodeKey: String) -> String
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Decodes")
+        let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
    //     let predicate = NSPredicate(format: "(decode_name == \"\(inCodeKey)\") && (updateType != \"Delete\")")
         let predicate = NSPredicate(format: "(decode_name == \"\(inCodeKey)\")")
         
@@ -687,32 +724,45 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Decodes]
-        
-        if fetchResults!.count == 0
+        do
         {
-            return ""
+            let fetchResults = try getContext.fetch(fetchRequest)
+            if fetchResults.count == 0
+            {
+                return ""
+            }
+            else
+            {
+                return fetchResults[0].decode_value
+            }
         }
-        else
+        catch
         {
-            return fetchResults![0].decode_value
+            print("Error occurred during execution: \(error)")
+            return ""
         }
     }
     
     func getVisibleDecodes() -> [Decodes]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Decodes")
+        let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
         
         let predicate = NSPredicate(format: "(decodeType != \"hidden\") && (updateType != \"Delete\")")
-   //     let predicate = NSPredicate(format: "(updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Decodes]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func updateDecodeValue(_ inCodeKey: String, inCodeValue: String, inCodeType: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
@@ -722,7 +772,7 @@ class coreDatabase: NSObject
 
         if getDecodeValue(inCodeKey) == ""
         { // Add
-            myDecode = NSEntityDescription.insertNewObject(forEntityName: "Decodes", into: managedObjectContext!) as! Decodes
+            myDecode = NSEntityDescription.insertNewObject(forEntityName: "Decodes", into: getContext) as! Decodes
             
             myDecode.decode_name = inCodeKey
             myDecode.decode_value = inCodeValue
@@ -740,54 +790,45 @@ class coreDatabase: NSObject
         }
         else
         { // Update
-            let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Decodes")
+            let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
             let predicate = NSPredicate(format: "(decode_name == \"\(inCodeKey)\") && (updateType != \"Delete\")")
             
             // Set the predicate on the fetch request
             fetchRequest.predicate = predicate
             
             // Execute the fetch request, and cast the results to an array of  objects
-            let myDecodes = (try? managedObjectContext!.fetch(fetchRequest)) as? [Decodes]
-            myDecode = myDecodes![0]
-            myDecode.decode_value = inCodeValue
-            myDecode.decodeType = inCodeType
-            if inUpdateType == "CODE"
+            do
             {
-                myDecode.updateTime = Date()
-                if myDecode.updateType != "Add"
+                let myDecodes = try getContext.fetch(fetchRequest)
+                myDecode = myDecodes[0]
+                myDecode.decode_value = inCodeValue
+                myDecode.decodeType = inCodeType
+                if inUpdateType == "CODE"
                 {
-                    myDecode.updateType = "Update"
+                    myDecode.updateTime = Date()
+                    if myDecode.updateType != "Add"
+                    {
+                        myDecode.updateType = "Update"
+                    }
                 }
+                else
+                {
+                    myDecode.updateTime = inUpdateTime
+                    myDecode.updateType = inUpdateType
+                }
+                saveContext()
+                myCloudDB.saveDecodesRecordToCloudKit(myDecode, syncName: myDBSync.getSyncID())
             }
-            else
+            catch
             {
-                myDecode.updateTime = inUpdateTime
-                myDecode.updateType = inUpdateType
+                print("Error occurred during execution: \(error)")
             }
         }
-        
-        managedObjectContext!.perform
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
-        
-        myCloudDB.saveDecodesRecordToCloudKit(myDecode, syncName: myDBSync.getSyncID())
     }
     
     func replaceDecodeValue(_ inCodeKey: String, inCodeValue: String, inCodeType: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.perform
-            {
-        let myDecode = NSEntityDescription.insertNewObject(forEntityName: "Decodes", into: self.managedObjectContext!) as! Decodes
+        let myDecode = NSEntityDescription.insertNewObject(forEntityName: "Decodes", into: getContext) as! Decodes
             
         myDecode.decode_name = inCodeKey
         myDecode.decode_value = inCodeValue
@@ -803,24 +844,12 @@ class coreDatabase: NSObject
             myDecode.updateType = inUpdateType
         }
 
-        
-
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
     }
     
     func getStages(_ inTeamID: Int)->[Stages]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Stages")
+        let fetchRequest = NSFetchRequest<Stages>(entityName: "Stages")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -830,14 +859,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
 
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Stages]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getVisibleStages(_ inTeamID: Int)->[Stages]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Stages")
+        let fetchRequest = NSFetchRequest<Stages>(entityName: "Stages")
     
         let predicate = NSPredicate(format: "(stageDescription != \"Archived\") && (updateType != \"Delete\") && (teamID == \(inTeamID))")
     
@@ -845,46 +881,48 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
 
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Stages]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func deleteAllStages(_ inTeamID: Int)
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Stages")
+        let fetchRequest = NSFetchRequest<Stages>(entityName: "Stages")
         let predicate = NSPredicate(format: "(teamID == \(inTeamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Stages]
-        for myStage in fetchResults!
+        do
         {
-            myStage.updateTime = Date()
-            myStage.updateType = "Delete"
-
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults = try getContext.fetch(fetchRequest)
+            for myStage in fetchResults
+            {
+                myStage.updateTime = Date()
+                myStage.updateType = "Delete"
+                
+                saveContext()
+                
+                myCloudDB.saveStagesRecordToCloudKit(myStage)
             }
-            
-            myCloudDB.saveStagesRecordToCloudKit(myStage)
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
     }
 
     func stageExists(_ inStageDesc:String, inTeamID: Int)-> Bool
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Stages")
+        let fetchRequest = NSFetchRequest<Stages>(entityName: "Stages")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -896,21 +934,28 @@ class coreDatabase: NSObject
         // Create a new fetch request using the entity
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Stages]
-        
-        if fetchResults!.count > 0
+        do
         {
-            return true
+            let fetchResults = try getContext.fetch(fetchRequest)
+            if fetchResults.count > 0
+            {
+                return true
+            }
+            else
+            {
+                return false
+            }
         }
-        else
+        catch
         {
+            print("Error occurred during execution: \(error)")
             return false
         }
     }
     
     func getStage(_ stageDesc:String, teamID: Int)->[Stages]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Stages")
+        let fetchRequest = NSFetchRequest<Stages>(entityName: "Stages")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -920,9 +965,16 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Stages]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func saveStage(_ stageDesc: String, teamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
@@ -933,7 +985,7 @@ class coreDatabase: NSObject
         
         if myStages.count == 0
         {
-            myStage = NSEntityDescription.insertNewObject(forEntityName: "Stages", into: managedObjectContext!) as! Stages
+            myStage = NSEntityDescription.insertNewObject(forEntityName: "Stages", into: getContext) as! Stages
         
             myStage.stageDescription = stageDesc
             myStage.teamID = NSNumber(value: teamID)
@@ -966,59 +1018,34 @@ class coreDatabase: NSObject
             }
         }
         
-        managedObjectContext!.perform
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
         
         myCloudDB.saveStagesRecordToCloudKit(myStage)
     }
     
     func replaceStage(_ stageDesc: String, teamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.perform
-            {
-        let myStage = NSEntityDescription.insertNewObject(forEntityName: "Stages", into: self.managedObjectContext!) as! Stages
+        let myStage = NSEntityDescription.insertNewObject(forEntityName: "Stages", into: getContext) as! Stages
             
-            myStage.stageDescription = stageDesc
-            myStage.teamID = NSNumber(value: teamID)
-            if inUpdateType == "CODE"
-            {
-                myStage.updateTime = Date()
-                myStage.updateType = "Add"
-            }
-            else
-            {
-                myStage.updateTime = inUpdateTime
-                myStage.updateType = inUpdateType
-            }
-
-                
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+        myStage.stageDescription = stageDesc
+        myStage.teamID = NSNumber(value: teamID)
+        if inUpdateType == "CODE"
+        {
+            myStage.updateTime = Date()
+            myStage.updateType = "Add"
         }
+        else
+        {
+            myStage.updateTime = inUpdateTime
+            myStage.updateType = inUpdateType
+        }
+
+        saveContext()
     }
     
     func deleteStageEntry(_ inStageDesc: String, inTeamID: Int)
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Stages")
+        let fetchRequest = NSFetchRequest<Stages>(entityName: "Stages")
         
         let predicate = NSPredicate(format: "(stageDescription == \"\(inStageDesc)\") && (teamID == \(inTeamID)) && (updateType != \"Delete\")")
         
@@ -1026,33 +1053,27 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Stages]
-        for myStage in fetchResults!
+        do
         {
-            myStage.updateTime = Date()
-            myStage.updateType = "Delete"
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults = try getContext.fetch(fetchRequest)
+            for myStage in fetchResults
+            {
+                myStage.updateTime = Date()
+                myStage.updateType = "Delete"
+                saveContext()
+                
+                myCloudDB.saveStagesRecordToCloudKit(myStage)
             }
-            
-            myCloudDB.saveStagesRecordToCloudKit(myStage)
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
     }
     
     func searchPastAgendaByPartialMeetingIDBeforeStart(_ inSearchText: String, inMeetingStartDate: Date, inTeamID: Int)->[MeetingAgenda]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -1069,14 +1090,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgenda]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func searchPastAgendaWithoutPartialMeetingIDBeforeStart(_ inSearchText: String, inMeetingStartDate: Date, inTeamID: Int)->[MeetingAgenda]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -1093,14 +1121,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgenda]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
 
     func listAgendaReverseDateBeforeStart(_ inMeetingStartDate: Date, inTeamID: Int)->[MeetingAgenda]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -1117,14 +1152,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgenda]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func searchPastAgendaByPartialMeetingIDAfterStart(_ inSearchText: String, inMeetingStartDate: Date, inTeamID: Int)->[MeetingAgenda]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -1141,14 +1183,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgenda]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func searchPastAgendaWithoutPartialMeetingIDAfterStart(_ inSearchText: String, inMeetingStartDate: Date, inTeamID: Int)->[MeetingAgenda]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -1165,14 +1214,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgenda]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func listAgendaReverseDateAfterStart(_ inMeetingStartDate: Date, inTeamID: Int)->[MeetingAgenda]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -1189,9 +1245,16 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgenda]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func createAgenda(_ inEvent: myCalendarItem)
@@ -1207,7 +1270,7 @@ class coreDatabase: NSObject
         
         if myAgendas.count == 0
         {
-            myAgenda = NSEntityDescription.insertNewObject(forEntityName: "MeetingAgenda", into: managedObjectContext!) as! MeetingAgenda
+            myAgenda = NSEntityDescription.insertNewObject(forEntityName: "MeetingAgenda", into: getContext) as! MeetingAgenda
             myAgenda.meetingID = inMeetingID
             myAgenda.previousMeetingID = inPreviousMeetingID
             myAgenda.name = inName
@@ -1256,64 +1319,39 @@ class coreDatabase: NSObject
             }
         }
         
-        managedObjectContext!.perform
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
     }
 
     func replaceAgenda(_ inMeetingID: String, inPreviousMeetingID : String, inName: String, inChair: String, inMinutes: String, inLocation: String, inStartTime: Date, inEndTime: Date, inMinutesType: String, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.perform
-            {
-        let myAgenda = NSEntityDescription.insertNewObject(forEntityName: "MeetingAgenda", into: self.managedObjectContext!) as! MeetingAgenda
-            myAgenda.meetingID = inMeetingID
-            myAgenda.previousMeetingID = inPreviousMeetingID
-            myAgenda.name = inName
-            myAgenda.chair = inChair
-            myAgenda.minutes = inMinutes
-            myAgenda.location = inLocation
-            myAgenda.startTime = inStartTime
-            myAgenda.endTime = inEndTime
-            myAgenda.minutesType = inMinutesType
-            myAgenda.teamID = NSNumber(value: inTeamID)
-            if inUpdateType == "CODE"
-            {
-                myAgenda.updateTime = Date()
-                myAgenda.updateType = "Add"
-            }
-            else
-            {
-                myAgenda.updateTime = inUpdateTime
-                myAgenda.updateType = inUpdateType
-            }
-        
-
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+        let myAgenda = NSEntityDescription.insertNewObject(forEntityName: "MeetingAgenda", into: getContext) as! MeetingAgenda
+        myAgenda.meetingID = inMeetingID
+        myAgenda.previousMeetingID = inPreviousMeetingID
+        myAgenda.name = inName
+        myAgenda.chair = inChair
+        myAgenda.minutes = inMinutes
+        myAgenda.location = inLocation
+        myAgenda.startTime = inStartTime
+        myAgenda.endTime = inEndTime
+        myAgenda.minutesType = inMinutesType
+        myAgenda.teamID = NSNumber(value: inTeamID)
+        if inUpdateType == "CODE"
+        {
+            myAgenda.updateTime = Date()
+            myAgenda.updateType = "Add"
         }
+        else
+        {
+            myAgenda.updateTime = inUpdateTime
+            myAgenda.updateType = inUpdateType
+        }
+        
+        saveContext()
     }
     
     func loadPreviousAgenda(_ inMeetingID: String, inTeamID: Int)->[MeetingAgenda]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -1326,14 +1364,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgenda]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func loadAgenda(_ inMeetingID: String, inTeamID: Int)->[MeetingAgenda]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -1346,14 +1391,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgenda]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
 
     func updatePreviousAgendaID(_ inPreviousMeetingID: String, inMeetingID: String, inTeamID: Int)
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -1366,36 +1418,30 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgenda]
-        
-        for myResult in fetchResults!
+        do
         {
-            myResult.previousMeetingID = inPreviousMeetingID
-            myResult.updateTime = Date()
-            if myResult.updateType != "Add"
+            let fetchResults = try getContext.fetch(fetchRequest)
+            for myResult in fetchResults
             {
-                myResult.updateType = "Update"
+                myResult.previousMeetingID = inPreviousMeetingID
+                myResult.updateTime = Date()
+                if myResult.updateType != "Add"
+                {
+                    myResult.updateType = "Update"
+                }
             }
+            
+            saveContext()
         }
-        
-        managedObjectContext!.performAndWait
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
     }
     
     func loadAgendaForProject(_ inProjectName: String, inTeamID: Int)->[MeetingAgenda]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -1408,14 +1454,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgenda]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
    
     func getAgendaForDateRange(_ inStartDate: Date, inEndDate: Date, inTeamID: Int)->[MeetingAgenda]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -1428,14 +1481,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgenda]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func loadAttendees(_ inMeetingID: String)->[MeetingAttendees]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAttendees")
+        let fetchRequest = NSFetchRequest<MeetingAttendees>(entityName: "MeetingAttendees")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -1448,14 +1508,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAttendees]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func loadMeetingsForAttendee(_ inAttendeeName: String)->[MeetingAttendees]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAttendees")
+        let fetchRequest = NSFetchRequest<MeetingAttendees>(entityName: "MeetingAttendees")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -1468,14 +1535,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAttendees]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
 
     func checkMeetingsForAttendee(_ attendeeName: String, meetingID: String)->[MeetingAttendees]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAttendees")
+        let fetchRequest = NSFetchRequest<MeetingAttendees>(entityName: "MeetingAttendees")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -1488,9 +1562,16 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAttendees]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
 
     func saveAttendee(_ meetingID: String, name: String, email: String,  type: String, status: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
@@ -1501,7 +1582,7 @@ class coreDatabase: NSObject
         
         if myMeeting.count == 0
         {
-            myPerson = NSEntityDescription.insertNewObject(forEntityName: "MeetingAttendees", into: managedObjectContext!) as! MeetingAttendees
+            myPerson = NSEntityDescription.insertNewObject(forEntityName: "MeetingAttendees", into: getContext) as! MeetingAttendees
             myPerson.meetingID = meetingID
             myPerson.name = name
             myPerson.attendenceStatus = status
@@ -1539,92 +1620,62 @@ class coreDatabase: NSObject
             }
         }
             
-        managedObjectContext!.perform
-        {
-            do
-            {
-                try self.managedObjectContext!.save()
-            }
-            catch let error as NSError
-            {
-                NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                print("Failure to save context: \(error)")
-            }
-        }
+        saveContext()
     }
 
     func replaceAttendee(_ meetingID: String, name: String, email: String,  type: String, status: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.perform
-            {
-        let myPerson = NSEntityDescription.insertNewObject(forEntityName: "MeetingAttendees", into: self.managedObjectContext!) as! MeetingAttendees
-            myPerson.meetingID = meetingID
-            myPerson.name = name
-            myPerson.attendenceStatus = status
-            myPerson.email = email
-            myPerson.type = type
-            if inUpdateType == "CODE"
-            {
-                myPerson.updateTime = Date()
-                myPerson.updateType = "Add"
-            }
-            else
-            {
-                myPerson.updateTime = inUpdateTime
-                myPerson.updateType = inUpdateType
-            }
-        
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+        let myPerson = NSEntityDescription.insertNewObject(forEntityName: "MeetingAttendees", into: getContext) as! MeetingAttendees
+        myPerson.meetingID = meetingID
+        myPerson.name = name
+        myPerson.attendenceStatus = status
+        myPerson.email = email
+        myPerson.type = type
+        if inUpdateType == "CODE"
+        {
+            myPerson.updateTime = Date()
+            myPerson.updateType = "Add"
         }
+        else
+        {
+            myPerson.updateTime = inUpdateTime
+            myPerson.updateType = inUpdateType
+        }
+        
+        saveContext()
     }
 
     func deleteAttendee(_ meetingID: String, name: String)
     {
         var predicate: NSPredicate
         
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAttendees")
+        let fetchRequest = NSFetchRequest<MeetingAttendees>(entityName: "MeetingAttendees")
         predicate = NSPredicate(format: "(meetingID == \"\(meetingID)\") && (name == \"\(name)\") && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAttendees]
-        
-        for myMeeting in fetchResults!
+        do
         {
-            myMeeting.updateTime = Date()
-            myMeeting.updateType = "Delete"
-            
-            managedObjectContext!.performAndWait
+            let fetchResults = try getContext.fetch(fetchRequest)
+            for myMeeting in fetchResults
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                    print("Failure to save context: \(error)")
-                }
+                myMeeting.updateTime = Date()
+                myMeeting.updateType = "Delete"
+                
+                saveContext()
             }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
     }
 
     func loadAgendaItem(_ inMeetingID: String)->[MeetingAgendaItem]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgendaItem")
+        let fetchRequest = NSFetchRequest<MeetingAgendaItem>(entityName: "MeetingAgendaItem")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -1641,9 +1692,16 @@ class coreDatabase: NSObject
         fetchRequest.sortDescriptors = sortDescriptors
 
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgendaItem]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func saveAgendaItem(_ meetingID: String, actualEndTime: Date, actualStartTime: Date, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int, owner: String, title: String, agendaID: Int, meetingOrder: Int,  inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
@@ -1654,7 +1712,7 @@ class coreDatabase: NSObject
         
         if myAgendaItem.count == 0
         {
-            mySavedItem = NSEntityDescription.insertNewObject(forEntityName: "MeetingAgendaItem", into: managedObjectContext!) as! MeetingAgendaItem
+            mySavedItem = NSEntityDescription.insertNewObject(forEntityName: "MeetingAgendaItem", into: getContext) as! MeetingAgendaItem
             mySavedItem.meetingID = meetingID
             mySavedItem.agendaID = agendaID as NSNumber?
             mySavedItem.actualEndTime = actualEndTime
@@ -1706,66 +1764,41 @@ class coreDatabase: NSObject
             }
         }
         
-        managedObjectContext!.perform
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
     }
     
     func replaceAgendaItem(_ meetingID: String, actualEndTime: Date, actualStartTime: Date, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int, owner: String, title: String, agendaID: Int, meetingOrder: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.perform
-            {
-        let mySavedItem = NSEntityDescription.insertNewObject(forEntityName: "MeetingAgendaItem", into: self.managedObjectContext!) as! MeetingAgendaItem
-            mySavedItem.meetingID = meetingID
-            mySavedItem.agendaID = agendaID as NSNumber?
-            mySavedItem.actualEndTime = actualEndTime
-            mySavedItem.actualStartTime = actualStartTime
-            mySavedItem.status = status
-            mySavedItem.decisionMade = decisionMade
-            mySavedItem.discussionNotes = discussionNotes
-            mySavedItem.timeAllocation = timeAllocation as NSNumber?
-            mySavedItem.owner = owner
-            mySavedItem.title = title
-            mySavedItem.meetingOrder = meetingOrder as NSNumber?
+        let mySavedItem = NSEntityDescription.insertNewObject(forEntityName: "MeetingAgendaItem", into: getContext) as! MeetingAgendaItem
+        mySavedItem.meetingID = meetingID
+        mySavedItem.agendaID = agendaID as NSNumber?
+        mySavedItem.actualEndTime = actualEndTime
+        mySavedItem.actualStartTime = actualStartTime
+        mySavedItem.status = status
+        mySavedItem.decisionMade = decisionMade
+        mySavedItem.discussionNotes = discussionNotes
+        mySavedItem.timeAllocation = timeAllocation as NSNumber?
+        mySavedItem.owner = owner
+        mySavedItem.title = title
+        mySavedItem.meetingOrder = meetingOrder as NSNumber?
 
-            if inUpdateType == "CODE"
-            {
-                mySavedItem.updateTime = Date()
-                mySavedItem.updateType = "Add"
-            }
-            else
-            {
-                mySavedItem.updateTime = inUpdateTime
-                mySavedItem.updateType = inUpdateType
-            }
-
-
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+        if inUpdateType == "CODE"
+        {
+            mySavedItem.updateTime = Date()
+            mySavedItem.updateType = "Add"
         }
+        else
+        {
+            mySavedItem.updateTime = inUpdateTime
+            mySavedItem.updateType = inUpdateType
+        }
+
+        saveContext()
     }
     
     func loadSpecificAgendaItem(_ inMeetingID: String, inAgendaID: Int)->[MeetingAgendaItem]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgendaItem")
+        let fetchRequest = NSFetchRequest<MeetingAgendaItem>(entityName: "MeetingAgendaItem")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -1782,42 +1815,43 @@ class coreDatabase: NSObject
         fetchRequest.sortDescriptors = sortDescriptors
 
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgendaItem]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func deleteAgendaItem(_ meetingID: String, agendaID: Int)
     {
         var predicate: NSPredicate
         
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgendaItem")
+        let fetchRequest = NSFetchRequest<MeetingAgendaItem>(entityName: "MeetingAgendaItem")
         predicate = NSPredicate(format: "(meetingID == \"\(meetingID)\") AND (agendaID == \(agendaID)) && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgendaItem]
-        
-        for myMeeting in fetchResults!
+        do
         {
-            myMeeting.updateTime = Date()
-            myMeeting.updateType = "Delete"
-
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults = try getContext.fetch(fetchRequest)
+            for myMeeting in fetchResults
+            {
+                myMeeting.updateTime = Date()
+                myMeeting.updateType = "Delete"
+                
+                saveContext()
             }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
     }
     
@@ -1825,33 +1859,27 @@ class coreDatabase: NSObject
     {
         var predicate: NSPredicate
         
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgendaItem")
+        let fetchRequest = NSFetchRequest<MeetingAgendaItem>(entityName: "MeetingAgendaItem")
         predicate = NSPredicate(format: "meetingID == \"\(inMeetingID)\"")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgendaItem]
-        
-        for myMeeting in fetchResults!
+        do
         {
-            myMeeting.updateTime = Date()
-            myMeeting.updateType = "Delete"
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults = try getContext.fetch(fetchRequest)
+            for myMeeting in fetchResults
+            {
+                myMeeting.updateTime = Date()
+                myMeeting.updateType = "Delete"
+                
+                saveContext()
             }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
     }
 
@@ -1863,7 +1891,7 @@ class coreDatabase: NSObject
         
         if myTasks.count == 0
         { // Add
-            myTask = NSEntityDescription.insertNewObject(forEntityName: "Task", into: self.managedObjectContext!) as! Task
+            myTask = NSEntityDescription.insertNewObject(forEntityName: "Task", into: getContext) as! Task
             myTask.taskID = NSNumber(value: inTaskID)
             myTask.title = inTitle
             myTask.details = inDetails
@@ -1931,73 +1959,48 @@ class coreDatabase: NSObject
             
         }
         
-        managedObjectContext!.perform
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
     }
     
     func replaceTask(_ inTaskID: Int, inTitle: String, inDetails: String, inDueDate: Date, inStartDate: Date, inStatus: String, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int, inEstimatedTimeType: String, inProjectID: Int, inCompletionDate: Date, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inFlagged: Bool, inUrgency: String, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.perform
-            {
-        let myTask = NSEntityDescription.insertNewObject(forEntityName: "Task", into: self.managedObjectContext!) as! Task
-            myTask.taskID = NSNumber(value: inTaskID)
-            myTask.title = inTitle
-            myTask.details = inDetails
-            myTask.dueDate = inDueDate
-            myTask.startDate = inStartDate
-            myTask.status = inStatus
-            myTask.priority = inPriority
-            myTask.energyLevel = inEnergyLevel
-            myTask.estimatedTime = NSNumber(value: inEstimatedTime)
-            myTask.estimatedTimeType = inEstimatedTimeType
-            myTask.projectID = NSNumber(value: inProjectID)
-            myTask.completionDate = inCompletionDate
-            myTask.repeatInterval = NSNumber(value: inRepeatInterval)
-            myTask.repeatType = inRepeatType
-            myTask.repeatBase = inRepeatBase
-            myTask.flagged = inFlagged as NSNumber
-            myTask.urgency = inUrgency
-            myTask.teamID = NSNumber(value: inTeamID)
-            
-            if inUpdateType == "CODE"
-            {
-                myTask.updateTime = Date()
-                myTask.updateType = "Add"
-            }
-            else
-            {
-                myTask.updateTime = inUpdateTime
-                myTask.updateType = inUpdateType
-            }
-
-
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+        let myTask = NSEntityDescription.insertNewObject(forEntityName: "Task", into: getContext) as! Task
+        myTask.taskID = NSNumber(value: inTaskID)
+        myTask.title = inTitle
+        myTask.details = inDetails
+        myTask.dueDate = inDueDate
+        myTask.startDate = inStartDate
+        myTask.status = inStatus
+        myTask.priority = inPriority
+        myTask.energyLevel = inEnergyLevel
+        myTask.estimatedTime = NSNumber(value: inEstimatedTime)
+        myTask.estimatedTimeType = inEstimatedTimeType
+        myTask.projectID = NSNumber(value: inProjectID)
+        myTask.completionDate = inCompletionDate
+        myTask.repeatInterval = NSNumber(value: inRepeatInterval)
+        myTask.repeatType = inRepeatType
+        myTask.repeatBase = inRepeatBase
+        myTask.flagged = inFlagged as NSNumber
+        myTask.urgency = inUrgency
+        myTask.teamID = NSNumber(value: inTeamID)
+        
+        if inUpdateType == "CODE"
+        {
+            myTask.updateTime = Date()
+            myTask.updateType = "Add"
         }
+        else
+        {
+            myTask.updateTime = inUpdateTime
+            myTask.updateType = inUpdateType
+        }
+
+        saveContext()
     }
     
     func deleteTask(_ inTaskID: Int)
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
+        let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
         let predicate = NSPredicate(format: "taskID == \(inTaskID)")
         
@@ -2005,31 +2008,27 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Task]
-        for myStage in fetchResults!
+        do
         {
-            myStage.updateTime = Date()
-            myStage.updateType = "Delete"
-
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults = try getContext.fetch(fetchRequest)
+            for myStage in fetchResults
+            {
+                myStage.updateTime = Date()
+                myStage.updateType = "Delete"
+                
+                saveContext()
             }
         }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+
     }
     
     func getTasksNotDeleted(_ inTeamID: Int)->[Task]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
+        let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2043,14 +2042,21 @@ class coreDatabase: NSObject
         fetchRequest.sortDescriptors = sortDescriptors
 
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Task]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
 
     func getAllTasksForProject(_ inProjectID: Int, inTeamID: Int)->[Task]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
+        let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2060,14 +2066,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Task]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getTasksForProject(_ projectID: Int)->[Task]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
+        let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2077,14 +2090,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Task]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getActiveTasksForProject(_ projectID: Int)->[Task]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
+        let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2094,14 +2114,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Task]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
 
     func getTasksWithoutProject(_ teamID: Int)->[Task]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
+        let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
 
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2111,16 +2138,23 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Task]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getTaskWithoutContext(_ teamID: Int)->[Task]
     {
         // first get a list of all tasks that have a context
         
-        let fetchContext = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskContext")
+        let fetchContext = NSFetchRequest<TaskContext>(entityName: "TaskContext")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2130,11 +2164,20 @@ class coreDatabase: NSObject
         fetchContext.predicate = predicate1
 
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchContextResults = (try? managedObjectContext!.fetch(fetchContext)) as? [TaskContext]
+        
+        var fetchContextResults: [TaskContext] = Array()
+        
+        do
+        {
+            fetchContextResults = try getContext.fetch(fetchContext)
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
         
         // Get the list of all current tasks
-        let fetchTask = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
-        
+        let fetchTask = NSFetchRequest<Task>(entityName: "Task")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2143,17 +2186,26 @@ class coreDatabase: NSObject
         // Set the predicate on the fetch request
         fetchTask.predicate = predicate2
         
+        var fetchTaskResults: [Task] = Array()
+        
+        do
+        {
+            fetchTaskResults = try getContext.fetch(fetchTask)
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchTaskResults = (try? managedObjectContext!.fetch(fetchTask)) as? [Task]
 
         var myTaskArray: [Task] = Array()
         var taskFound: Bool = false
         
-        for myTask in fetchTaskResults!
+        for myTask in fetchTaskResults
         {
             // loop though the context tasks
             taskFound = false
-            for myContext in fetchContextResults!
+            for myContext in fetchContextResults
             {
                 if myTask.taskID == myContext.taskID
                 {
@@ -2173,7 +2225,7 @@ class coreDatabase: NSObject
     
     func getTask(_ taskID: Int)->[Task]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
+        let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2183,14 +2235,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Task]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getTaskRegardlessOfStatus(_ taskID: Int)->[Task]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
+        let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2200,14 +2259,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Task]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getActiveTask(_ taskID: Int)->[Task]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
+        let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2217,24 +2283,38 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Task]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
 
     func getTaskCount()->Int
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
+        let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Task]
-        
-        return fetchResults!.count
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults.count
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return 0
+        }
     }
     
     func getTaskPredecessors(_ inTaskID: Int)->[TaskPredecessor]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskPredecessor")
+        let fetchRequest = NSFetchRequest<TaskPredecessor>(entityName: "TaskPredecessor")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2244,9 +2324,16 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [TaskPredecessor]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
    
     func savePredecessorTask(_ inTaskID: Int, inPredecessorID: Int, inPredecessorType: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
@@ -2257,7 +2344,7 @@ class coreDatabase: NSObject
         
         if myTasks.count == 0
         { // Add
-            myTask = NSEntityDescription.insertNewObject(forEntityName: "TaskPredecessor", into: self.managedObjectContext!) as! TaskPredecessor
+            myTask = NSEntityDescription.insertNewObject(forEntityName: "TaskPredecessor", into: getContext) as! TaskPredecessor
             myTask.taskID = NSNumber(value: inTaskID)
             myTask.predecessorID = NSNumber(value: inPredecessorID)
             myTask.predecessorType = inPredecessorType
@@ -2291,60 +2378,34 @@ class coreDatabase: NSObject
             }
         }
 
-        managedObjectContext!.perform
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
         
         myCloudDB.saveTaskPredecessorRecordToCloudKit(myTask)
     }
     
     func replacePredecessorTask(_ inTaskID: Int, inPredecessorID: Int, inPredecessorType: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.perform
-            {
-        let myTask = NSEntityDescription.insertNewObject(forEntityName: "TaskPredecessor", into: self.managedObjectContext!) as! TaskPredecessor
-            myTask.taskID = NSNumber(value: inTaskID)
-            myTask.predecessorID = NSNumber(value: inPredecessorID)
-            myTask.predecessorType = inPredecessorType
-            if inUpdateType == "CODE"
-            {
-                myTask.updateTime = Date()
-                myTask.updateType = "Add"
-            }
-            else
-            {
-                myTask.updateTime = inUpdateTime
-                myTask.updateType = inUpdateType
-            }
-
-        
-
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+        let myTask = NSEntityDescription.insertNewObject(forEntityName: "TaskPredecessor", into: getContext) as! TaskPredecessor
+        myTask.taskID = NSNumber(value: inTaskID)
+        myTask.predecessorID = NSNumber(value: inPredecessorID)
+        myTask.predecessorType = inPredecessorType
+        if inUpdateType == "CODE"
+        {
+            myTask.updateTime = Date()
+            myTask.updateType = "Add"
         }
+        else
+        {
+            myTask.updateTime = inUpdateTime
+            myTask.updateType = inUpdateType
+        }
+        
+        saveContext()
     }
     
     func updatePredecessorTaskType(_ inTaskID: Int, inPredecessorID: Int, inPredecessorType: String)
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskPredecessor")
+        let fetchRequest = NSFetchRequest<TaskPredecessor>(entityName: "TaskPredecessor")
         
         let predicate = NSPredicate(format: "(taskID == \(inTaskID)) && (predecessorID == \(inPredecessorID))")
         
@@ -2352,37 +2413,32 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [TaskPredecessor]
-        for myStage in fetchResults!
+        do
         {
-            myStage.predecessorType = inPredecessorType
-            myStage.updateTime = Date()
-            if myStage.updateType != "Add"
+            let fetchResults = try getContext.fetch(fetchRequest)
+            for myStage in fetchResults
             {
-                myStage.updateType = "Update"
-            }
-            
-            managedObjectContext!.performAndWait
+                myStage.predecessorType = inPredecessorType
+                myStage.updateTime = Date()
+                if myStage.updateType != "Add"
                 {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+                    myStage.updateType = "Update"
+                }
+                
+                saveContext()
+                
+                myCloudDB.saveTaskPredecessorRecordToCloudKit(myStage)
             }
-            
-            myCloudDB.saveTaskPredecessorRecordToCloudKit(myStage)
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
     }
 
     func deleteTaskPredecessor(_ inTaskID: Int, inPredecessorID: Int)
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskPredecessor")
+        let fetchRequest = NSFetchRequest<TaskPredecessor>(entityName: "TaskPredecessor")
         
         let predicate = NSPredicate(format: "(taskID == \(inTaskID)) && (predecessorID == \(inPredecessorID))")
         
@@ -2390,27 +2446,22 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [TaskPredecessor]
-        for myStage in fetchResults!
+        do
         {
-            myStage.updateTime = Date()
-            myStage.updateType = "Delete"
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults = try getContext.fetch(fetchRequest)
+            for myStage in fetchResults
+            {
+                myStage.updateTime = Date()
+                myStage.updateType = "Delete"
+                
+                saveContext()
+                
+                myCloudDB.saveTaskPredecessorRecordToCloudKit(myStage)
             }
-            
-            myCloudDB.saveTaskPredecessorRecordToCloudKit(myStage)
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
     }
     
@@ -2422,7 +2473,7 @@ class coreDatabase: NSObject
         
         if myProjects.count == 0
         { // Add
-            myProject = NSEntityDescription.insertNewObject(forEntityName: "Projects", into: self.managedObjectContext!) as! Projects
+            myProject = NSEntityDescription.insertNewObject(forEntityName: "Projects", into: getContext) as! Projects
             myProject.projectID = NSNumber(value: inProjectID)
             myProject.projectEndDate = inProjectEndDate
             myProject.projectName = inProjectName
@@ -2476,62 +2527,38 @@ class coreDatabase: NSObject
             }
         }
         
-        managedObjectContext!.perform
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
     }
 
     func replaceProject(_ inProjectID: Int, inProjectEndDate: Date, inProjectName: String, inProjectStartDate: Date, inProjectStatus: String, inReviewFrequency: Int, inLastReviewDate: Date, inGTDItemID: Int, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.perform
-            {
-        let myProject = NSEntityDescription.insertNewObject(forEntityName: "Projects", into: self.managedObjectContext!) as! Projects
-            myProject.projectID = NSNumber(value: inProjectID)
-            myProject.projectEndDate = inProjectEndDate
-            myProject.projectName = inProjectName
-            myProject.projectStartDate = inProjectStartDate
-            myProject.projectStatus = inProjectStatus
-            myProject.reviewFrequency = NSNumber(value: inReviewFrequency)
-            myProject.lastReviewDate = inLastReviewDate
-            myProject.areaID = NSNumber(value: inGTDItemID)
-            myProject.repeatInterval = NSNumber(value: inRepeatInterval)
-            myProject.repeatType = inRepeatType
-            myProject.repeatBase = inRepeatBase
-            myProject.teamID = NSNumber(value: inTeamID)
-            
-            if inUpdateType == "CODE"
-            {
-                myProject.updateTime = Date()
-                myProject.updateType = "Add"
-            }
-            else
-            {
-                myProject.updateTime = inUpdateTime
-                myProject.updateType = inUpdateType
-            }
 
-
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+        let myProject = NSEntityDescription.insertNewObject(forEntityName: "Projects", into: getContext) as! Projects
+        myProject.projectID = NSNumber(value: inProjectID)
+        myProject.projectEndDate = inProjectEndDate
+        myProject.projectName = inProjectName
+        myProject.projectStartDate = inProjectStartDate
+        myProject.projectStatus = inProjectStatus
+        myProject.reviewFrequency = NSNumber(value: inReviewFrequency)
+        myProject.lastReviewDate = inLastReviewDate
+        myProject.areaID = NSNumber(value: inGTDItemID)
+        myProject.repeatInterval = NSNumber(value: inRepeatInterval)
+        myProject.repeatType = inRepeatType
+        myProject.repeatBase = inRepeatBase
+        myProject.teamID = NSNumber(value: inTeamID)
+        
+        if inUpdateType == "CODE"
+        {
+            myProject.updateTime = Date()
+            myProject.updateType = "Add"
         }
+        else
+        {
+            myProject.updateTime = inUpdateTime
+            myProject.updateType = inUpdateType
+        }
+
+        saveContext()
     }
 
     func deleteProject(_ inProjectID: Int, inTeamID: Int)
@@ -2547,19 +2574,7 @@ class coreDatabase: NSObject
             myProject.updateType = "Delete"
         }
         
-        managedObjectContext!.performAndWait
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
         
         var myProjectNote: ProjectNote!
         
@@ -2572,19 +2587,7 @@ class coreDatabase: NSObject
             myProjectNote.updateTime = Date()
         }
         
-        managedObjectContext!.performAndWait
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
     }
     
     func saveTaskUpdate(_ inTaskID: Int, inDetails: String, inSource: String, inUpdateDate: Date = Date(), inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
@@ -2593,7 +2596,7 @@ class coreDatabase: NSObject
 
         if getTaskUpdate(inTaskID, updateDate: inUpdateDate).count == 0
         {
-            myTaskUpdate = NSEntityDescription.insertNewObject(forEntityName: "TaskUpdates", into: self.managedObjectContext!) as! TaskUpdates
+            myTaskUpdate = NSEntityDescription.insertNewObject(forEntityName: "TaskUpdates", into: getContext) as! TaskUpdates
             myTaskUpdate.taskID = NSNumber(value: inTaskID)
             myTaskUpdate.updateDate = inUpdateDate
             myTaskUpdate.details = inDetails
@@ -2609,59 +2612,35 @@ class coreDatabase: NSObject
                 myTaskUpdate.updateType = inUpdateType
             }
         
-            managedObjectContext!.perform
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
-            }
+            saveContext()
         }
     }
     
     func replaceTaskUpdate(_ inTaskID: Int, inDetails: String, inSource: String, inUpdateDate: Date = Date(), inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.perform
-            {
-        let myTaskUpdate = NSEntityDescription.insertNewObject(forEntityName: "TaskUpdates", into: self.managedObjectContext!) as! TaskUpdates
-            myTaskUpdate.taskID = NSNumber(value: inTaskID)
-            myTaskUpdate.updateDate = inUpdateDate
-            myTaskUpdate.details = inDetails
-            myTaskUpdate.source = inSource
-            if inUpdateType == "CODE"
-            {
-                myTaskUpdate.updateTime = Date()
-                myTaskUpdate.updateType = "Add"
-            }
-            else
-            {
-                myTaskUpdate.updateTime = inUpdateTime
-                myTaskUpdate.updateType = inUpdateType
-            }
-            
 
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                    print("Failure to save context: \(error)")
-                }
-            }
+        let myTaskUpdate = NSEntityDescription.insertNewObject(forEntityName: "TaskUpdates", into: getContext) as! TaskUpdates
+        myTaskUpdate.taskID = NSNumber(value: inTaskID)
+        myTaskUpdate.updateDate = inUpdateDate
+        myTaskUpdate.details = inDetails
+        myTaskUpdate.source = inSource
+        if inUpdateType == "CODE"
+        {
+            myTaskUpdate.updateTime = Date()
+            myTaskUpdate.updateType = "Add"
+        }
+        else
+        {
+            myTaskUpdate.updateTime = inUpdateTime
+            myTaskUpdate.updateType = inUpdateType
+        }
+        
+        saveContext()
     }
 
     func getTaskUpdate(_ taskID: Int, updateDate: Date)->[TaskUpdates]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskUpdates")
+        let fetchRequest = NSFetchRequest<TaskUpdates>(entityName: "TaskUpdates")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2675,14 +2654,21 @@ class coreDatabase: NSObject
         fetchRequest.sortDescriptors = sortDescriptors
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [TaskUpdates]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getTaskUpdates(_ inTaskID: Int)->[TaskUpdates]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskUpdates")
+        let fetchRequest = NSFetchRequest<TaskUpdates>(entityName: "TaskUpdates")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2696,9 +2682,16 @@ class coreDatabase: NSObject
         fetchRequest.sortDescriptors = sortDescriptors
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [TaskUpdates]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
 
     func saveContext(_ inContextID: Int, inName: String, inEmail: String, inAutoEmail: String, inParentContext: Int, inStatus: String, inPersonID: Int, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
@@ -2709,7 +2702,7 @@ class coreDatabase: NSObject
         
         if myContexts.count == 0
         { // Add
-            myContext = NSEntityDescription.insertNewObject(forEntityName: "Context", into: self.managedObjectContext!) as! Context
+            myContext = NSEntityDescription.insertNewObject(forEntityName: "Context", into: getContext) as! Context
             myContext.contextID = NSNumber(value: inContextID)
             myContext.name = inName
             myContext.email = inEmail
@@ -2755,26 +2748,12 @@ class coreDatabase: NSObject
             }
         }
         
-        managedObjectContext!.perform
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+         saveContext()
     }
     
     func replaceContext(_ inContextID: Int, inName: String, inEmail: String, inAutoEmail: String, inParentContext: Int, inStatus: String, inPersonID: Int, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.perform
-            {
-        let myContext = NSEntityDescription.insertNewObject(forEntityName: "Context", into: self.managedObjectContext!) as! Context
+        let myContext = NSEntityDescription.insertNewObject(forEntityName: "Context", into: getContext) as! Context
         myContext.contextID = NSNumber(value: inContextID)
         myContext.name = inName
         myContext.email = inEmail
@@ -2794,17 +2773,7 @@ class coreDatabase: NSObject
             myContext.updateType = inUpdateType
         }
 
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
     }
 
     func deleteContext(_ inContextID: Int, inTeamID: Int)
@@ -2812,25 +2781,13 @@ class coreDatabase: NSObject
         let myContexts = getContextDetails(inContextID)
         
         if myContexts.count > 0
-       {
+        {
             let myContext = myContexts[0]
             myContext.updateTime = Date()
             myContext.updateType = "Delete"
         }
         
-        managedObjectContext!.performAndWait
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
         
         let myContexts2 = getContext1_1(inContextID)
         
@@ -2841,24 +2798,12 @@ class coreDatabase: NSObject
             myContext.updateType = "Delete"
         }
         
-        managedObjectContext!.performAndWait
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
     }
     
     func getContexts(_ inTeamID: Int)->[Context]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Context")
+        let fetchRequest = NSFetchRequest<Context>(entityName: "Context")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2872,14 +2817,21 @@ class coreDatabase: NSObject
         fetchRequest.sortDescriptors = sortDescriptors
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Context]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
 
     func getContextsForType(_ contextType: String)->[Context1_1]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Context1_1")
+        let fetchRequest = NSFetchRequest<Context1_1>(entityName: "Context1_1")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2889,14 +2841,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Context1_1]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getContextByName(_ contextName: String)->[Context]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Context")
+        let fetchRequest = NSFetchRequest<Context>(entityName: "Context")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2906,14 +2865,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Context]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getContextDetails(_ contextID: Int)->[Context]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Context")
+        let fetchRequest = NSFetchRequest<Context>(entityName: "Context")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2923,14 +2889,21 @@ class coreDatabase: NSObject
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Context]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
 
     func getAllContexts(_ inTeamID: Int)->[Context]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Context")
+        let fetchRequest = NSFetchRequest<Context>(entityName: "Context")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2943,19 +2916,33 @@ class coreDatabase: NSObject
         // doesn't have a title of "Best Language" exactly.
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Context]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getContextCount()->Int
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Context")
+        let fetchRequest = NSFetchRequest<Context>(entityName: "Context")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Context]
-        
-        return fetchResults!.count
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults.count
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return 0
+        }
     }
 
     func saveTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
@@ -2966,7 +2953,7 @@ class coreDatabase: NSObject
         
         if myContexts.count == 0
         { // Add
-            myContext = NSEntityDescription.insertNewObject(forEntityName: "TaskContext", into: self.managedObjectContext!) as! TaskContext
+            myContext = NSEntityDescription.insertNewObject(forEntityName: "TaskContext", into: getContext) as! TaskContext
             myContext.contextID = NSNumber(value: inContextID)
             myContext.taskID = NSNumber(value: inTaskID)
             if inUpdateType == "CODE"
@@ -2998,28 +2985,15 @@ class coreDatabase: NSObject
             }
         }
         
-        managedObjectContext!.perform
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
         
         myCloudDB.saveTaskContextRecordToCloudKit(myContext)
     }
 
-func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
-{
-    managedObjectContext!.perform
-        {
-    let myContext = NSEntityDescription.insertNewObject(forEntityName: "TaskContext", into: self.managedObjectContext!) as! TaskContext
+    func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    {
+
+        let myContext = NSEntityDescription.insertNewObject(forEntityName: "TaskContext", into: getContext) as! TaskContext
         myContext.contextID = NSNumber(value: inContextID)
         myContext.taskID = NSNumber(value: inTaskID)
         if inUpdateType == "CODE"
@@ -3032,23 +3006,12 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
             myContext.updateTime = inUpdateTime
             myContext.updateType = inUpdateType
         }
-
-            do
-            {
-                try self.managedObjectContext!.save()
-            }
-            catch let error as NSError
-            {
-                NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                
-                print("Failure to save context: \(error)")
-            }
+        saveContext()
     }
-}
 
     func deleteTaskContext(_ inContextID: Int, inTaskID: Int)
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskContext")
+        let fetchRequest = NSFetchRequest<TaskContext>(entityName: "TaskContext")
         
         let predicate = NSPredicate(format: "(contextID == \(inContextID)) AND (taskID = \(inTaskID))")
         
@@ -3056,31 +3019,26 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [TaskContext]
-        for myStage in fetchResults!
+        do
         {
-            myStage.updateTime = Date()
-            myStage.updateType = "Delete"
-
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults = try getContext.fetch(fetchRequest)
+            for myStage in fetchResults
+            {
+                myStage.updateTime = Date()
+                myStage.updateType = "Delete"
+                
+                saveContext()
             }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
     }
 
-    fileprivate func getTaskContext(_ inContextID: Int, inTaskID: Int)->[TaskContext]
+    private func getTaskContext(_ inContextID: Int, inTaskID: Int)->[TaskContext]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskContext")
+        let fetchRequest = NSFetchRequest<TaskContext>(entityName: "TaskContext")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -3090,14 +3048,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [TaskContext]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
 
     func getContextsForTask(_ inTaskID: Int)->[TaskContext]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskContext")
+        let fetchRequest = NSFetchRequest<TaskContext>(entityName: "TaskContext")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -3107,14 +3072,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [TaskContext]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
 
     func getTasksForContext(_ inContextID: Int)->[TaskContext]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskContext")
+        let fetchRequest = NSFetchRequest<TaskContext>(entityName: "TaskContext")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -3124,9 +3096,16 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [TaskContext]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
 
     func saveGTDLevel(_ inGTDLevel: Int, inLevelName: String, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
@@ -3137,7 +3116,7 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         if myGTDItems.count == 0
         { // Add
-            myGTD = NSEntityDescription.insertNewObject(forEntityName: "GTDLevel", into: self.managedObjectContext!) as! GTDLevel
+            myGTD = NSEntityDescription.insertNewObject(forEntityName: "GTDLevel", into: getContext) as! GTDLevel
             myGTD.gTDLevel = inGTDLevel as NSNumber?
             myGTD.levelName = inLevelName
             myGTD.teamID = inTeamID as NSNumber?
@@ -3172,57 +3151,33 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
             }
         }
         
-        managedObjectContext!.perform
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
     }
     
     func replaceGTDLevel(_ inGTDLevel: Int, inLevelName: String, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.perform
-            {
-        let myGTD = NSEntityDescription.insertNewObject(forEntityName: "GTDLevel", into: self.managedObjectContext!) as! GTDLevel
-            myGTD.gTDLevel = inGTDLevel as NSNumber?
-            myGTD.levelName = inLevelName
-            myGTD.teamID = inTeamID as NSNumber?
-            
-            if inUpdateType == "CODE"
-            {
-                myGTD.updateType = "Add"
-                myGTD.updateTime = Date()
-            }
-            else
-            {
-                myGTD.updateTime = inUpdateTime
-                myGTD.updateType = inUpdateType
-            }
-
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+        let myGTD = NSEntityDescription.insertNewObject(forEntityName: "GTDLevel", into: getContext) as! GTDLevel
+        myGTD.gTDLevel = inGTDLevel as NSNumber?
+        myGTD.levelName = inLevelName
+        myGTD.teamID = inTeamID as NSNumber?
+        
+        if inUpdateType == "CODE"
+        {
+            myGTD.updateType = "Add"
+            myGTD.updateTime = Date()
         }
+        else
+        {
+            myGTD.updateTime = inUpdateTime
+            myGTD.updateType = inUpdateType
+        }
+
+        saveContext()
     }
     
     func getGTDLevel(_ inGTDLevel: Int, inTeamID: Int)->[GTDLevel]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDLevel")
+        let fetchRequest = NSFetchRequest<GTDLevel>(entityName: "GTDLevel")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -3232,16 +3187,23 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [GTDLevel]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func changeGTDLevel(_ oldGTDLevel: Int, newGTDLevel: Int, inTeamID: Int)
     {
         var myGTD: GTDLevel!
         
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDLevel")
+        let fetchRequest = NSFetchRequest<GTDLevel>(entityName: "GTDLevel")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -3251,32 +3213,25 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [GTDLevel]
-        
-        if fetchResults!.count > 0
-        { // Update
-            myGTD = fetchResults![0]
-         //   myGTD.gTDLevel = newGTDLevel
-            myGTD.setValue(newGTDLevel, forKey: "gTDLevel")
-            myGTD.updateTime = Date()
-            if myGTD.updateType != "Add"
-            {
-                myGTD.updateType = "Update"
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            if fetchResults.count > 0
+            { // Update
+                myGTD = fetchResults[0]
+                //   myGTD.gTDLevel = newGTDLevel
+                myGTD.setValue(newGTDLevel, forKey: "gTDLevel")
+                myGTD.updateTime = Date()
+                if myGTD.updateType != "Add"
+                {
+                    myGTD.updateType = "Update"
+                }
             }
+            saveContext()
         }
-        
-        managedObjectContext!.performAndWait
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
     }
 
@@ -3293,24 +3248,12 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
             myGTD.updateType = "Delete"
         }
         
-        managedObjectContext!.performAndWait
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
     }
 
     func getGTDLevels(_ inTeamID: Int)->[GTDLevel]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDLevel")
+        let fetchRequest = NSFetchRequest<GTDLevel>(entityName: "GTDLevel")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -3326,9 +3269,16 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         fetchRequest.sortDescriptors = [sortDescriptor]
 
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [GTDLevel]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func saveGTDItem(_ inGTDItemID: Int, inParentID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String, inLastReviewDate: Date, inReviewFrequency: Int, inReviewPeriod: String, inPredecessor: Int, inGTDLevel: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
@@ -3339,7 +3289,7 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         if myGTDItems.count == 0
         { // Add
-            myGTD = NSEntityDescription.insertNewObject(forEntityName: "GTDItem", into: self.managedObjectContext!) as! GTDItem
+            myGTD = NSEntityDescription.insertNewObject(forEntityName: "GTDItem", into: getContext) as! GTDItem
             myGTD.gTDItemID = inGTDItemID as NSNumber?
             myGTD.gTDParentID = inParentID as NSNumber?
             myGTD.title = inTitle
@@ -3390,59 +3340,35 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
             }
         }
       
-        managedObjectContext!.perform
-        {
-            do
-            {
-                try self.managedObjectContext!.save()
-            }
-            catch let error as NSError
-            {
-                NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                
-                print("Failure to save context: \(error)")
-            }
-        }
+        saveContext()
     }
     
     func replaceGTDItem(_ inGTDItemID: Int, inParentID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String, inLastReviewDate: Date, inReviewFrequency: Int, inReviewPeriod: String, inPredecessor: Int, inGTDLevel: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.perform
-            {
-        let myGTD = NSEntityDescription.insertNewObject(forEntityName: "GTDItem", into: self.managedObjectContext!) as! GTDItem
-            myGTD.gTDItemID = inGTDItemID as NSNumber?
-            myGTD.gTDParentID = inParentID as NSNumber?
-            myGTD.title = inTitle
-            myGTD.status = inStatus
-            myGTD.teamID = inTeamID as NSNumber?
-            myGTD.note = inNote
-            myGTD.lastReviewDate = inLastReviewDate
-            myGTD.reviewFrequency = inReviewFrequency as NSNumber?
-            myGTD.reviewPeriod = inReviewPeriod
-            myGTD.predecessor = inPredecessor as NSNumber?
-            myGTD.gTDLevel = inGTDLevel as NSNumber?
-            if inUpdateType == "CODE"
-            {
-                myGTD.updateTime = Date()
-                myGTD.updateType = "Add"
-            }
-            else
-            {
-                myGTD.updateTime = inUpdateTime
-                myGTD.updateType = inUpdateType
-            }
-
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+        let myGTD = NSEntityDescription.insertNewObject(forEntityName: "GTDItem", into: getContext) as! GTDItem
+        myGTD.gTDItemID = inGTDItemID as NSNumber?
+        myGTD.gTDParentID = inParentID as NSNumber?
+        myGTD.title = inTitle
+        myGTD.status = inStatus
+        myGTD.teamID = inTeamID as NSNumber?
+        myGTD.note = inNote
+        myGTD.lastReviewDate = inLastReviewDate
+        myGTD.reviewFrequency = inReviewFrequency as NSNumber?
+        myGTD.reviewPeriod = inReviewPeriod
+        myGTD.predecessor = inPredecessor as NSNumber?
+        myGTD.gTDLevel = inGTDLevel as NSNumber?
+        if inUpdateType == "CODE"
+        {
+            myGTD.updateTime = Date()
+            myGTD.updateType = "Add"
         }
+        else
+        {
+            myGTD.updateTime = inUpdateTime
+            myGTD.updateType = inUpdateType
+        }
+
+        saveContext()
     }
     
     func deleteGTDItem(_ inGTDItemID: Int, inTeamID: Int)
@@ -3457,25 +3383,12 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
             myGTD.updateTime = Date()
             myGTD.updateType = "Delete"
         }
-        
-        managedObjectContext!.performAndWait
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
     }
     
     func getGTDItem(_ inGTDItemID: Int, inTeamID: Int)->[GTDItem]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDItem")
+        let fetchRequest = NSFetchRequest<GTDItem>(entityName: "GTDItem")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -3485,14 +3398,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [GTDItem]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getGTDItemsForLevel(_ inGTDLevel: Int, inTeamID: Int)->[GTDItem]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDItem")
+        let fetchRequest = NSFetchRequest<GTDItem>(entityName: "GTDItem")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -3502,24 +3422,38 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [GTDItem]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getGTDItemCount() -> Int
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDItem")
+        let fetchRequest = NSFetchRequest<GTDItem>(entityName: "GTDItem")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [GTDItem]
-        
-        return fetchResults!.count
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults.count
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return 0
+        }
     }
     
     func getOpenGTDChildItems(_ inGTDItemID: Int, inTeamID: Int)->[GTDItem]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDItem")
+        let fetchRequest = NSFetchRequest<GTDItem>(entityName: "GTDItem")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -3529,14 +3463,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [GTDItem]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func checkGTDItem(_ inGTDItemID: Int, inTeamID: Int)->[GTDItem]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDItem")
+        let fetchRequest = NSFetchRequest<GTDItem>(entityName: "GTDItem")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -3546,92 +3487,84 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? self.managedObjectContext!.fetch(fetchRequest)) as? [GTDItem]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func resetprojects()
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectTeamMembers")
+        let fetchRequest = NSFetchRequest<ProjectTeamMembers>(entityName: "ProjectTeamMembers")
     
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [ProjectTeamMembers]
-        for myStage in fetchResults!
+        do
         {
-            myStage.updateTime = Date()
-            myStage.updateType = "Delete"
-
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults = try getContext.fetch(fetchRequest)
+            for myStage in fetchResults
+            {
+                myStage.updateTime = Date()
+                myStage.updateType = "Delete"
+                
+                saveContext()
             }
         }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
 
-        let fetchRequest2 = NSFetchRequest<NSFetchRequestResult>(entityName: "Projects")
+        let fetchRequest2 = NSFetchRequest<Projects>(entityName: "Projects")
             
         // Execute the fetch request, and cast the results to an array of objects
-        let fetchResults2 = (try? managedObjectContext!.fetch(fetchRequest2)) as? [Projects]
-        for myStage in fetchResults2!
+        do
         {
-            myStage.updateTime = Date()
-            myStage.updateType = "Delete"
-
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults2 = try getContext.fetch(fetchRequest2)
+            for myStage in fetchResults2
+            {
+                myStage.updateTime = Date()
+                myStage.updateType = "Delete"
+                
+                saveContext()
             }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
     }
     
     func deleteAllPanes()
     {  // This is used to allow for testing of pane creation, so can delete all the panes if needed
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Panes")
+        let fetchRequest = NSFetchRequest<Panes>(entityName: "Panes")
 
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Panes]
-        for myPane in fetchResults!
+        do
         {
-            myPane.updateTime = Date()
-            myPane.updateType = "Delete"
-
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults = try getContext.fetch(fetchRequest)
+            for myPane in fetchResults
+            {
+                myPane.updateTime = Date()
+                myPane.updateType = "Delete"
+                
+                saveContext()
             }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
     }
 
     func getPanes() -> [Panes]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Panes")
+        let fetchRequest = NSFetchRequest<Panes>(entityName: "Panes")
         
         let sortDescriptor = NSSortDescriptor(key: "pane_name", ascending: true)
         
@@ -3649,14 +3582,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         // Create a new fetch request using the entity
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Panes]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
 
     func getPane(_ paneName:String) -> [Panes]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Panes")
+        let fetchRequest = NSFetchRequest<Panes>(entityName: "Panes")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -3672,14 +3612,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         // Create a new fetch request using the entity
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Panes]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func togglePaneVisible(_ paneName: String)
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Panes")
+        let fetchRequest = NSFetchRequest<Panes>(entityName: "Panes")
         
         let predicate = NSPredicate(format: "(pane_name == \"\(paneName)\") && (updateType != \"Delete\")")
         
@@ -3687,45 +3634,40 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Panes]
-        for myPane in fetchResults!
+        do
         {
-            if myPane.pane_visible == true
+            let fetchResults = try getContext.fetch(fetchRequest)
+            for myPane in fetchResults
             {
-                myPane.pane_visible = false
-            }
-            else
-            {
-                myPane.pane_visible = true
-            }
-            
-            myPane.updateTime = Date()
-            if myPane.updateType != "Add"
-            {
-                myPane.updateType = "Update"
-            }
-
-            managedObjectContext!.performAndWait
+                if myPane.pane_visible == true
                 {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+                    myPane.pane_visible = false
+                }
+                else
+                {
+                    myPane.pane_visible = true
+                }
+                
+                myPane.updateTime = Date()
+                if myPane.updateType != "Add"
+                {
+                    myPane.updateType = "Update"
+                }
+                
+                saveContext()
+                
+                myCloudDB.savePanesRecordToCloudKit(myPane)
             }
-            
-            myCloudDB.savePanesRecordToCloudKit(myPane)
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
     }
 
     func setPaneOrder(_ paneName: String, paneOrder: Int)
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Panes")
+        let fetchRequest = NSFetchRequest<Panes>(entityName: "Panes")
         
         let predicate = NSPredicate(format: "(pane_name == \"\(paneName)\") && (updateType != \"Delete\")")
         
@@ -3733,31 +3675,26 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Panes]
-        for myPane in fetchResults!
+        do
         {
-            myPane.pane_order = NSNumber(value: paneOrder)
-            myPane.updateTime = Date()
-            if myPane.updateType != "Add"
+            let fetchResults = try getContext.fetch(fetchRequest)
+            for myPane in fetchResults
             {
-                myPane.updateType = "Update"
-            }
-            
-            managedObjectContext!.performAndWait
+                myPane.pane_order = NSNumber(value: paneOrder)
+                myPane.updateTime = Date()
+                if myPane.updateType != "Add"
                 {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+                    myPane.updateType = "Update"
+                }
+                
+                saveContext()
+                
+                myCloudDB.savePanesRecordToCloudKit(myPane)
             }
-            
-            myCloudDB.savePanesRecordToCloudKit(myPane)
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
     }
     
@@ -3770,7 +3707,7 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         if myPanes.count == 0
         {
             // Save the details of this pane to the database
-            myPane = NSEntityDescription.insertNewObject(forEntityName: "Panes", into: self.managedObjectContext!) as! Panes
+            myPane = NSEntityDescription.insertNewObject(forEntityName: "Panes", into: getContext) as! Panes
         
             myPane.pane_name = inPaneName
             myPane.pane_available = inPaneAvailable as NSNumber
@@ -3808,285 +3745,207 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
             }
         }
         
-        managedObjectContext!.perform
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
         
         myCloudDB.savePanesRecordToCloudKit(myPane)
     }
     
     func replacePane(_ inPaneName:String, inPaneAvailable: Bool, inPaneVisible: Bool, inPaneOrder: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.perform
-            {
-        let myPane = NSEntityDescription.insertNewObject(forEntityName: "Panes", into: self.managedObjectContext!) as! Panes
+        let myPane = NSEntityDescription.insertNewObject(forEntityName: "Panes", into: getContext) as! Panes
             
-            myPane.pane_name = inPaneName
-            myPane.pane_available = inPaneAvailable as NSNumber
-            myPane.pane_visible = inPaneVisible as NSNumber
-            myPane.pane_order = NSNumber(value: inPaneOrder)
-            if inUpdateType == "CODE"
-            {
-                myPane.updateTime = Date()
-                myPane.updateType = "Add"
-            }
-            else
-            {
-                myPane.updateTime = inUpdateTime
-                myPane.updateType = inUpdateType
-            }
-
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+        myPane.pane_name = inPaneName
+        myPane.pane_available = inPaneAvailable as NSNumber
+        myPane.pane_visible = inPaneVisible as NSNumber
+        myPane.pane_order = NSNumber(value: inPaneOrder)
+        if inUpdateType == "CODE"
+        {
+            myPane.updateTime = Date()
+            myPane.updateType = "Add"
         }
+        else
+        {
+            myPane.updateTime = inUpdateTime
+            myPane.updateType = inUpdateType
+        }
+
+        saveContext()
     }
 
     func resetMeetings()
     {
-        let fetchRequest1 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
+        let fetchRequest1 = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults1 = (try? managedObjectContext!.fetch(fetchRequest1)) as? [MeetingAgenda]
-        
-        for myMeeting in fetchResults1!
+        do
         {
-            myMeeting.updateTime = Date()
-            myMeeting.updateType = "Delete"
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults1 = try getContext.fetch(fetchRequest1)
+            for myMeeting in fetchResults1
+            {
+                myMeeting.updateTime = Date()
+                myMeeting.updateType = "Delete"
+                
+                saveContext()
             }
         }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
         
-        let fetchRequest2 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAttendees")
+        let fetchRequest2 = NSFetchRequest<MeetingAttendees>(entityName: "MeetingAttendees")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults2 = (try? managedObjectContext!.fetch(fetchRequest2)) as? [MeetingAttendees]
-        
-        for myMeeting2 in fetchResults2!
+        do
         {
-            myMeeting2.updateTime = Date()
-            myMeeting2.updateType = "Delete"
-
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults2 = try getContext.fetch(fetchRequest2)
+            for myMeeting2 in fetchResults2
+            {
+                myMeeting2.updateTime = Date()
+                myMeeting2.updateType = "Delete"
+                
+                saveContext()
             }
         }
-        
-        let fetchRequest3 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgendaItem")
-
-        let fetchResults3 = (try? managedObjectContext!.fetch(fetchRequest3)) as? [MeetingAgendaItem]
-        
-        for myMeeting3 in fetchResults3!
+        catch
         {
-            myMeeting3.updateTime = Date()
-            myMeeting3.updateType = "Delete"
-
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
-            }
+            print("Error occurred during execution: \(error)")
         }
         
-        let fetchRequest4 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingTasks")
-        
-        let fetchResults4 = (try? managedObjectContext!.fetch(fetchRequest4)) as? [MeetingTasks]
-        
-        for myMeeting4 in fetchResults4!
+        let fetchRequest3 = NSFetchRequest<MeetingAgendaItem>(entityName: "MeetingAgendaItem")
+
+        do
         {
-            myMeeting4.updateTime = Date()
-            myMeeting4.updateType = "Delete"
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults3 = try getContext.fetch(fetchRequest3)
+            for myMeeting3 in fetchResults3
+            {
+                myMeeting3.updateTime = Date()
+                myMeeting3.updateType = "Delete"
+                
+                saveContext()
             }
         }
-        
-        let fetchRequest6 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingSupportingDocs")
-        
-        let fetchResults6 = (try? managedObjectContext!.fetch(fetchRequest6)) as? [MeetingSupportingDocs]
-        
-        for myMeeting6 in fetchResults6!
+        catch
         {
-            myMeeting6.updateTime = Date()
-            myMeeting6.updateType = "Delete"
+            print("Error occurred during execution: \(error)")
+        }
 
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+        let fetchRequest4 = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
+        
+        do
+        {
+            let fetchResults4 = try getContext.fetch(fetchRequest4)
+            for myMeeting4 in fetchResults4
+            {
+                myMeeting4.updateTime = Date()
+                myMeeting4.updateType = "Delete"
+                
+                saveContext()
             }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        let fetchRequest6 = NSFetchRequest<MeetingSupportingDocs>(entityName: "MeetingSupportingDocs")
+        
+        do
+        {
+            let fetchResults6 = try getContext.fetch(fetchRequest6)
+            for myMeeting6 in fetchResults6
+            {
+                myMeeting6.updateTime = Date()
+                myMeeting6.updateType = "Delete"
+                
+                saveContext()
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
     }
     
     func resetTasks()
     {
-        let fetchRequest1 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingTasks")
+        let fetchRequest1 = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults1 = (try? managedObjectContext!.fetch(fetchRequest1)) as? [MeetingTasks]
-        
-        for myMeeting in fetchResults1!
+        do
         {
-            myMeeting.updateTime = Date()
-            myMeeting.updateType = "Delete"
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults1 = try getContext.fetch(fetchRequest1)
+            for myMeeting in fetchResults1
+            {
+                myMeeting.updateTime = Date()
+                myMeeting.updateType = "Delete"
+                
+                saveContext()
             }
         }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
 
-        let fetchRequest2 = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
+        let fetchRequest2 = NSFetchRequest<Task>(entityName: "Task")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults2 = (try? managedObjectContext!.fetch(fetchRequest2)) as? [Task]
-        
-        for myMeeting2 in fetchResults2!
+        do
         {
-            myMeeting2.updateTime = Date()
-            myMeeting2.updateType = "Delete"
-
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults2 = try getContext.fetch(fetchRequest2)
+            for myMeeting2 in fetchResults2
+            {
+                myMeeting2.updateTime = Date()
+                myMeeting2.updateType = "Delete"
+                
+                saveContext()
             }
         }
-        
-        let fetchRequest3 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskContext")
-        
-        let fetchResults3 = (try? managedObjectContext!.fetch(fetchRequest3)) as? [TaskContext]
-        
-        for myMeeting3 in fetchResults3!
+        catch
         {
-            myMeeting3.updateTime = Date()
-            myMeeting3.updateType = "Delete"
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
-            }
+            print("Error occurred during execution: \(error)")
         }
         
-        let fetchRequest4 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskUpdates")
+        let fetchRequest3 = NSFetchRequest<TaskContext>(entityName: "TaskContext")
         
-        let fetchResults4 = (try? managedObjectContext!.fetch(fetchRequest4)) as? [TaskUpdates]
-        
-        for myMeeting4 in fetchResults4!
+        do
         {
-            myMeeting4.updateTime = Date()
-            myMeeting4.updateType = "Delete"
-
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults3 = try getContext.fetch(fetchRequest3)
+            for myMeeting3 in fetchResults3
+            {
+                myMeeting3.updateTime = Date()
+                myMeeting3.updateType = "Delete"
+                saveContext()
             }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        let fetchRequest4 = NSFetchRequest<TaskUpdates>(entityName: "TaskUpdates")
+        
+        do
+        {
+            let fetchResults4 = try getContext.fetch(fetchRequest4)
+            for myMeeting4 in fetchResults4
+            {
+                myMeeting4.updateTime = Date()
+                myMeeting4.updateType = "Delete"
+                
+                saveContext()
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
     }
 
     func getAgendaTasks(_ inMeetingID: String, inAgendaID: Int)->[MeetingTasks]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingTasks")
+        let fetchRequest = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -4096,14 +3955,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingTasks]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getMeetingsTasks(_ inMeetingID: String)->[MeetingTasks]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingTasks")
+        let fetchRequest = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -4113,66 +3979,49 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingTasks]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func saveAgendaTask(_ inAgendaID: Int, inMeetingID: String, inTaskID: Int)
     {
         var myTask: MeetingTasks
         
-        myTask = NSEntityDescription.insertNewObject(forEntityName: "MeetingTasks", into: managedObjectContext!) as! MeetingTasks
+        myTask = NSEntityDescription.insertNewObject(forEntityName: "MeetingTasks", into: getContext) as! MeetingTasks
         myTask.agendaID = NSNumber(value: inAgendaID)
         myTask.meetingID = inMeetingID
         myTask.taskID = NSNumber(value: inTaskID)
         myTask.updateTime = Date()
         myTask.updateType = "Add"
         
-        managedObjectContext!.perform
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
         
         myCloudDB.saveMeetingTasksRecordToCloudKit(myTask)
     }
     
     func replaceAgendaTask(_ inAgendaID: Int, inMeetingID: String, inTaskID: Int)
     {
-        managedObjectContext!.perform
-            {
-        let myTask = NSEntityDescription.insertNewObject(forEntityName: "MeetingTasks", into: self.managedObjectContext!) as! MeetingTasks
+        let myTask = NSEntityDescription.insertNewObject(forEntityName: "MeetingTasks", into: getContext) as! MeetingTasks
         myTask.agendaID = NSNumber(value: inAgendaID)
         myTask.meetingID = inMeetingID
         myTask.taskID = NSNumber(value: inTaskID)
         myTask.updateTime = Date()
         myTask.updateType = "Add"
 
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
     }
 
     func checkMeetingTask(_ meetingID: String, agendaID: Int, taskID: Int)->[MeetingTasks]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingTasks")
+        let fetchRequest = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -4182,9 +4031,16 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingTasks]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func saveMeetingTask(_ agendaID: Int, meetingID: String, taskID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
@@ -4195,7 +4051,7 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         if myTaskList.count == 0
         {
-            myTask = NSEntityDescription.insertNewObject(forEntityName: "MeetingTasks", into: managedObjectContext!) as! MeetingTasks
+            myTask = NSEntityDescription.insertNewObject(forEntityName: "MeetingTasks", into: getContext) as! MeetingTasks
             myTask.agendaID = NSNumber(value: agendaID)
             myTask.meetingID = meetingID
             myTask.taskID = NSNumber(value: taskID)
@@ -4228,56 +4084,31 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
             }
         }
         
-        managedObjectContext!.perform
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
     }
 
     func replaceMeetingTask(_ agendaID: Int, meetingID: String, taskID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.perform
-            {
-        let myTask = NSEntityDescription.insertNewObject(forEntityName: "MeetingTasks", into: self.managedObjectContext!) as! MeetingTasks
-            myTask.agendaID = NSNumber(value: agendaID)
-            myTask.meetingID = meetingID
-            myTask.taskID = NSNumber(value: taskID)
-            if inUpdateType == "CODE"
-            {
-                myTask.updateTime = Date()
-                myTask.updateType = "Add"
-            }
-            else
-            {
-                myTask.updateTime = inUpdateTime
-                myTask.updateType = inUpdateType
-            }
-
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+        let myTask = NSEntityDescription.insertNewObject(forEntityName: "MeetingTasks", into: getContext) as! MeetingTasks
+        myTask.agendaID = NSNumber(value: agendaID)
+        myTask.meetingID = meetingID
+        myTask.taskID = NSNumber(value: taskID)
+        if inUpdateType == "CODE"
+        {
+            myTask.updateTime = Date()
+            myTask.updateType = "Add"
         }
+        else
+        {
+            myTask.updateTime = inUpdateTime
+            myTask.updateType = inUpdateType
+        }
+        saveContext()
     }
     
     func deleteAgendaTask(_ inAgendaID: Int, inMeetingID: String, inTaskID: Int)
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingTasks")
+        let fetchRequest = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -4287,31 +4118,25 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingTasks]
-        
-        for myItem in fetchResults!
+        do
         {
-            myItem.updateTime = Date()
-            myItem.updateType = "Delete"
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults = try getContext.fetch(fetchRequest)
+            for myItem in fetchResults
+            {
+                myItem.updateTime = Date()
+                myItem.updateType = "Delete"
+                saveContext()
             }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
     }
     
     func getAgendaTask(_ inAgendaID: Int, inMeetingID: String, inTaskID: Int)->[MeetingTasks]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingTasks")
+        let fetchRequest = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -4321,60 +4146,56 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingTasks]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func resetContexts()
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Context")
+        let fetchRequest = NSFetchRequest<Context>(entityName: "Context")
         
                 // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Context]
-        
-        for myItem in fetchResults!
+        do
         {
-            myItem.updateTime = Date()
-            myItem.updateType = "Delete"
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults = try getContext.fetch(fetchRequest)
+            for myItem in fetchResults
+            {
+                myItem.updateTime = Date()
+                myItem.updateType = "Delete"
+                
+                saveContext()
             }
         }
-
-        let fetchRequest2 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskContext")
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        let fetchRequest2 = NSFetchRequest<TaskContext>(entityName: "TaskContext")
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults2 = (try? managedObjectContext!.fetch(fetchRequest2)) as? [TaskContext]
-        for myItem2 in fetchResults2!
+        do
         {
-            myItem2.updateTime = Date()
-            myItem2.updateType = "Delete"
-
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults2 = try getContext.fetch(fetchRequest2)
+            for myItem2 in fetchResults2
+            {
+                myItem2.updateTime = Date()
+                myItem2.updateType = "Delete"
+                
+                saveContext()
             }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
     }
     
@@ -4382,1334 +4203,1034 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
     {
         let predicate = NSPredicate(format: "(updateType == \"Delete\")")
 
-        let fetchRequest2 = NSFetchRequest<NSFetchRequestResult>(entityName: "Context")
+        let fetchRequest2 = NSFetchRequest<Context>(entityName: "Context")
         
         // Set the predicate on the fetch request
         fetchRequest2.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults2 = (try? managedObjectContext!.fetch(fetchRequest2)) as? [Context]
-        
-        for myItem2 in fetchResults2!
+        do
         {
-            managedObjectContext!.delete(myItem2 as NSManagedObject)
-        }
-        
-        managedObjectContext!.performAndWait
+            let fetchResults2 = try getContext.fetch(fetchRequest2)
+            for myItem2 in fetchResults2
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                getContext.delete(myItem2 as NSManagedObject)
+            }
+            saveContext()
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
 
-        let fetchRequest3 = NSFetchRequest<NSFetchRequestResult>(entityName: "Decodes")
+        let fetchRequest3 = NSFetchRequest<Decodes>(entityName: "Decodes")
         
         // Set the predicate on the fetch request
         fetchRequest3.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults3 = (try? managedObjectContext!.fetch(fetchRequest3)) as? [Decodes]
-        
-        for myItem3 in fetchResults3!
+        do
         {
-            managedObjectContext!.delete(myItem3 as NSManagedObject)
+            let fetchResults3 = try getContext.fetch(fetchRequest3)
+            for myItem3 in fetchResults3
+            {
+                getContext.delete(myItem3 as NSManagedObject)
+            }
+            
+            saveContext()
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
         
-        managedObjectContext!.performAndWait
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
-
-        let fetchRequest5 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
+        let fetchRequest5 = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
         // Set the predicate on the fetch request
         fetchRequest5.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults5 = (try? managedObjectContext!.fetch(fetchRequest5)) as? [MeetingAgenda]
-        
-        for myItem5 in fetchResults5!
+        do
         {
-            managedObjectContext!.delete(myItem5 as NSManagedObject)
-        }
-        
-        managedObjectContext!.performAndWait
+            let fetchResults5 = try getContext.fetch(fetchRequest5)
+            for myItem5 in fetchResults5
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                getContext.delete(myItem5 as NSManagedObject)
+            }
+            
+            saveContext()
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
 
-        let fetchRequest6 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgendaItem")
+        let fetchRequest6 = NSFetchRequest<MeetingAgendaItem>(entityName: "MeetingAgendaItem")
         
         // Set the predicate on the fetch request
         fetchRequest6.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults6 = (try? managedObjectContext!.fetch(fetchRequest6)) as? [MeetingAgendaItem]
-        
-        for myItem6 in fetchResults6!
+        do
         {
-            managedObjectContext!.delete(myItem6 as NSManagedObject)
-        }
-        
-        managedObjectContext!.performAndWait
+            let fetchResults6 = try getContext.fetch(fetchRequest6)
+            for myItem6 in fetchResults6
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                getContext.delete(myItem6 as NSManagedObject)
+            }
+            
+            saveContext()
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
 
-        let fetchRequest7 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAttendees")
+        let fetchRequest7 = NSFetchRequest<MeetingAttendees>(entityName: "MeetingAttendees")
         
         // Set the predicate on the fetch request
         fetchRequest7.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults7 = (try? managedObjectContext!.fetch(fetchRequest7)) as? [MeetingAttendees]
-        
-        for myItem7 in fetchResults7!
+        do
         {
-            managedObjectContext!.delete(myItem7 as NSManagedObject)
-        }
-        
-        managedObjectContext!.performAndWait
+            let fetchResults7 = try getContext.fetch(fetchRequest7)
+            for myItem7 in fetchResults7
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                getContext.delete(myItem7 as NSManagedObject)
+            }
+            
+            saveContext()
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
 
-        let fetchRequest8 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingSupportingDocs")
+        let fetchRequest8 = NSFetchRequest<MeetingSupportingDocs>(entityName: "MeetingSupportingDocs")
         
         // Set the predicate on the fetch request
         fetchRequest8.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults8 = (try? managedObjectContext!.fetch(fetchRequest8)) as? [MeetingSupportingDocs]
-        
-        for myItem8 in fetchResults8!
+        do
         {
-            managedObjectContext!.delete(myItem8 as NSManagedObject)
-        }
-        
-        managedObjectContext!.performAndWait
+            let fetchResults8 = try getContext.fetch(fetchRequest8)
+            for myItem8 in fetchResults8
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                getContext.delete(myItem8 as NSManagedObject)
+            }
+            
+            saveContext()
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
 
-        let fetchRequest9 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingTasks")
+        let fetchRequest9 = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
         // Set the predicate on the fetch request
         fetchRequest9.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults9 = (try? managedObjectContext!.fetch(fetchRequest9)) as? [MeetingTasks]
-        
-        for myItem9 in fetchResults9!
+        do
         {
-            managedObjectContext!.delete(myItem9 as NSManagedObject)
-        }
-        
-        managedObjectContext!.performAndWait
+            let fetchResults9 = try getContext.fetch(fetchRequest9)
+            for myItem9 in fetchResults9
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                getContext.delete(myItem9 as NSManagedObject)
+            }
+            
+            saveContext()
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
 
-        let fetchRequest10 = NSFetchRequest<NSFetchRequestResult>(entityName: "Panes")
+        let fetchRequest10 = NSFetchRequest<Panes>(entityName: "Panes")
         
         // Set the predicate on the fetch request
         fetchRequest10.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults10 = (try? managedObjectContext!.fetch(fetchRequest10)) as? [Panes]
-        
-        for myItem10 in fetchResults10!
+        do
         {
-            managedObjectContext!.delete(myItem10 as NSManagedObject)
-        }
-        
-        managedObjectContext!.performAndWait
+            let fetchResults10 = try getContext.fetch(fetchRequest10)
+            for myItem10 in fetchResults10
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                getContext.delete(myItem10 as NSManagedObject)
+            }
+            
+            saveContext()
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
 
-        let fetchRequest11 = NSFetchRequest<NSFetchRequestResult>(entityName: "Projects")
+        let fetchRequest11 = NSFetchRequest<Projects>(entityName: "Projects")
         
         // Set the predicate on the fetch request
         fetchRequest11.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults11 = (try? managedObjectContext!.fetch(fetchRequest11)) as? [Projects]
-        
-        for myItem11 in fetchResults11!
+        do
         {
-            managedObjectContext!.delete(myItem11 as NSManagedObject)
+            let fetchResults11 = try getContext.fetch(fetchRequest11)
+            for myItem11 in fetchResults11
+            {
+                getContext.delete(myItem11 as NSManagedObject)
+            }
+            
+            saveContext()
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
         
-        managedObjectContext!.performAndWait
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
-
-        let fetchRequest12 = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectTeamMembers")
+        let fetchRequest12 = NSFetchRequest<ProjectTeamMembers>(entityName: "ProjectTeamMembers")
         
         // Set the predicate on the fetch request
         fetchRequest12.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults12 = (try? managedObjectContext!.fetch(fetchRequest12)) as? [ProjectTeamMembers]
-        
-        for myItem12 in fetchResults12!
+        do
         {
-            managedObjectContext!.delete(myItem12 as NSManagedObject)
-        }
-        
-        managedObjectContext!.performAndWait
+            let fetchResults12 = try getContext.fetch(fetchRequest12)
+            for myItem12 in fetchResults12
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                getContext.delete(myItem12 as NSManagedObject)
+            }
+            
+            saveContext()
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
 
-        let fetchRequest14 = NSFetchRequest<NSFetchRequestResult>(entityName: "Roles")
+        let fetchRequest14 = NSFetchRequest<Roles>(entityName: "Roles")
         
         // Set the predicate on the fetch request
         fetchRequest14.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults14 = (try? managedObjectContext!.fetch(fetchRequest14)) as? [Roles]
-        
-        for myItem14 in fetchResults14!
+        do
         {
-            managedObjectContext!.delete(myItem14 as NSManagedObject)
-        }
-        
-        managedObjectContext!.performAndWait
+            let fetchResults14 = try getContext.fetch(fetchRequest14)
+            for myItem14 in fetchResults14
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                getContext.delete(myItem14 as NSManagedObject)
+            }
+            
+            saveContext()
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
 
-        let fetchRequest15 = NSFetchRequest<NSFetchRequestResult>(entityName: "Stages")
+        let fetchRequest15 = NSFetchRequest<Stages>(entityName: "Stages")
         
         // Set the predicate on the fetch request
         fetchRequest15.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults15 = (try? managedObjectContext!.fetch(fetchRequest15)) as? [Stages]
-        
-        for myItem15 in fetchResults15!
+        do
         {
-            managedObjectContext!.delete(myItem15 as NSManagedObject)
-        }
-        
-        managedObjectContext!.performAndWait
+            let fetchResults15 = try getContext.fetch(fetchRequest15)
+            for myItem15 in fetchResults15
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                getContext.delete(myItem15 as NSManagedObject)
+            }
+            
+            saveContext()
         }
-
-        let fetchRequest16 = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+ 
+        let fetchRequest16 = NSFetchRequest<Task>(entityName: "Task")
         
         // Set the predicate on the fetch request
         fetchRequest16.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults16 = (try? managedObjectContext!.fetch(fetchRequest16)) as? [Task]
-        
-        for myItem16 in fetchResults16!
+        do
         {
-            managedObjectContext!.delete(myItem16 as NSManagedObject)
-        }
-        
-        managedObjectContext!.performAndWait
+            let fetchResults16 = try getContext.fetch(fetchRequest16)
+            for myItem16 in fetchResults16
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                getContext.delete(myItem16 as NSManagedObject)
+            }
+            
+            saveContext()
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
 
-        let fetchRequest17 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskAttachment")
+        let fetchRequest17 = NSFetchRequest<TaskAttachment>(entityName: "TaskAttachment")
         
         // Set the predicate on the fetch request
         fetchRequest17.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults17 = (try? managedObjectContext!.fetch(fetchRequest17)) as? [TaskAttachment]
-        
-        for myItem17 in fetchResults17!
+        do
         {
-            managedObjectContext!.delete(myItem17 as NSManagedObject)
-        }
-        
-        managedObjectContext!.performAndWait
+            let fetchResults17 = try getContext.fetch(fetchRequest17)
+            for myItem17 in fetchResults17
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                getContext.delete(myItem17 as NSManagedObject)
+            }
+            
+            saveContext()
         }
-
-        let fetchRequest18 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskContext")
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+ 
+        let fetchRequest18 = NSFetchRequest<TaskContext>(entityName: "TaskContext")
         
         // Set the predicate on the fetch request
         fetchRequest18.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults18 = (try? managedObjectContext!.fetch(fetchRequest18)) as? [TaskContext]
-        
-        for myItem18 in fetchResults18!
+        do
         {
-            managedObjectContext!.delete(myItem18 as NSManagedObject)
-        }
-        
-        managedObjectContext!.performAndWait
+            let fetchResults18 = try getContext.fetch(fetchRequest18)
+            for myItem18 in fetchResults18
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                getContext.delete(myItem18 as NSManagedObject)
+            }
+            
+            saveContext()
         }
-
-        let fetchRequest19 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskUpdates")
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+  
+        let fetchRequest19 = NSFetchRequest<TaskUpdates>(entityName: "TaskUpdates")
         
         // Set the predicate on the fetch request
         fetchRequest19.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults19 = (try? managedObjectContext!.fetch(fetchRequest19)) as? [TaskUpdates]
-        
-        for myItem19 in fetchResults19!
+        do
         {
-            managedObjectContext!.delete(myItem19 as NSManagedObject)
-        }
-        
-        managedObjectContext!.performAndWait
+            let fetchResults19 = try getContext.fetch(fetchRequest19)
+            for myItem19 in fetchResults19
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                getContext.delete(myItem19 as NSManagedObject)
+            }
+            
+            saveContext()
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
 
-        let fetchRequest21 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskPredecessor")
+        let fetchRequest21 = NSFetchRequest<TaskPredecessor>(entityName: "TaskPredecessor")
         
         // Set the predicate on the fetch request
         fetchRequest21.predicate = predicate
-        let fetchResults21 = (try? managedObjectContext!.fetch(fetchRequest21)) as? [TaskPredecessor]
-        
-        for myItem21 in fetchResults21!
+        do
         {
-            managedObjectContext!.delete(myItem21 as NSManagedObject)
-        }
-        
-        managedObjectContext!.performAndWait
+            let fetchResults21 = try getContext.fetch(fetchRequest21)
+            for myItem21 in fetchResults21
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                getContext.delete(myItem21 as NSManagedObject)
+            }
+            
+            saveContext()
         }
-        
-        let fetchRequest22 = NSFetchRequest<NSFetchRequestResult>(entityName: "Team")
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+   
+        let fetchRequest22 = NSFetchRequest<Team>(entityName: "Team")
         
         // Set the predicate on the fetch request
         fetchRequest22.predicate = predicate
-        let fetchResults22 = (try? managedObjectContext!.fetch(fetchRequest22)) as? [Team]
-        
-        for myItem22 in fetchResults22!
+        do
         {
-            managedObjectContext!.delete(myItem22 as NSManagedObject)
-        }
-        
-        managedObjectContext!.performAndWait
+            let fetchResults22 = try getContext.fetch(fetchRequest22)
+            for myItem22 in fetchResults22
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                getContext.delete(myItem22 as NSManagedObject)
+            }
+            
+            saveContext()
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
 
-        let fetchRequest23 = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectNote")
+        let fetchRequest23 = NSFetchRequest<ProjectNote>(entityName: "ProjectNote")
         
         // Set the predicate on the fetch request
         fetchRequest23.predicate = predicate
-        let fetchResults23 = (try? managedObjectContext!.fetch(fetchRequest23)) as? [ProjectNote]
-        
-        for myItem23 in fetchResults23!
+        do
         {
-            managedObjectContext!.delete(myItem23 as NSManagedObject)
-        }
-        
-        managedObjectContext!.performAndWait
+            let fetchResults23 = try getContext.fetch(fetchRequest23)
+            for myItem23 in fetchResults23
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                getContext.delete(myItem23 as NSManagedObject)
+            }
+            
+            saveContext()
         }
-        
-        let fetchRequest24 = NSFetchRequest<NSFetchRequestResult>(entityName: "Context1_1")
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+
+        let fetchRequest24 = NSFetchRequest<Context1_1>(entityName: "Context1_1")
         
         // Set the predicate on the fetch request
         fetchRequest24.predicate = predicate
-        let fetchResults24 = (try? managedObjectContext!.fetch(fetchRequest24)) as? [Context1_1]
-        
-        for myItem24 in fetchResults24!
+        do
         {
-            managedObjectContext!.delete(myItem24 as NSManagedObject)
-        }
-        
-        managedObjectContext!.performAndWait
+            let fetchResults24 = try getContext.fetch(fetchRequest24)
+            for myItem24 in fetchResults24
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                getContext.delete(myItem24 as NSManagedObject)
+            }
+            
+            saveContext()
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
         
-        let fetchRequest25 = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDItem")
+        let fetchRequest25 = NSFetchRequest<GTDItem>(entityName: "GTDItem")
         
         // Set the predicate on the fetch request
         fetchRequest25.predicate = predicate
-        let fetchResults25 = (try? managedObjectContext!.fetch(fetchRequest25)) as? [GTDItem]
-        
-        for myItem25 in fetchResults25!
+        do
         {
-            managedObjectContext!.delete(myItem25 as NSManagedObject)
-        }
-        
-        managedObjectContext!.performAndWait
+            let fetchResults25 = try getContext.fetch(fetchRequest25)
+            for myItem25 in fetchResults25
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                getContext.delete(myItem25 as NSManagedObject)
+            }
+            
+            saveContext()
         }
-        
-        let fetchRequest26 = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDLevel")
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+   
+        let fetchRequest26 = NSFetchRequest<GTDLevel>(entityName: "GTDLevel")
         
         // Set the predicate on the fetch request
         fetchRequest26.predicate = predicate
-        let fetchResults26 = (try? managedObjectContext!.fetch(fetchRequest26)) as? [GTDLevel]
-        
-        for myItem26 in fetchResults26!
+        do
         {
-            managedObjectContext!.delete(myItem26 as NSManagedObject)
-        }
-        
-        managedObjectContext!.performAndWait
+            let fetchResults26 = try getContext.fetch(fetchRequest26)
+            for myItem26 in fetchResults26
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                getContext.delete(myItem26 as NSManagedObject)
+            }
+            
+            saveContext()
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
 
-        let fetchRequest27 = NSFetchRequest<NSFetchRequestResult>(entityName: "ProcessedEmails")
+        let fetchRequest27 = NSFetchRequest<ProcessedEmails>(entityName: "ProcessedEmails")
         
         // Set the predicate on the fetch request
         fetchRequest27.predicate = predicate
-        let fetchResults27 = (try? managedObjectContext!.fetch(fetchRequest27)) as? [ProcessedEmails]
-        
-        for myItem27 in fetchResults27!
+        do
         {
-            managedObjectContext!.delete(myItem27 as NSManagedObject)
-        }
-        
-        managedObjectContext!.performAndWait
+            let fetchResults27 = try getContext.fetch(fetchRequest27)
+            for myItem27 in fetchResults27
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                getContext.delete(myItem27 as NSManagedObject)
+            }
+            
+            saveContext()
         }
-
-        let fetchRequest28 = NSFetchRequest<NSFetchRequestResult>(entityName: "Outline")
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+    
+        let fetchRequest28 = NSFetchRequest<Outline>(entityName: "Outline")
         
         // Set the predicate on the fetch request
         fetchRequest28.predicate = predicate
-        let fetchResults28 = (try? managedObjectContext!.fetch(fetchRequest28)) as? [Outline]
-        
-        for myItem28 in fetchResults28!
+        do
         {
-            managedObjectContext!.delete(myItem28 as NSManagedObject)
-        }
-        
-        managedObjectContext!.performAndWait
+            let fetchResults28 = try getContext.fetch(fetchRequest28)
+            for myItem28 in fetchResults28
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                getContext.delete(myItem28 as NSManagedObject)
+            }
+            
+            saveContext()
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
 
-        let fetchRequest29 = NSFetchRequest<NSFetchRequestResult>(entityName: "OutlineDetails")
+        let fetchRequest29 = NSFetchRequest<OutlineDetails>(entityName: "OutlineDetails")
         
         // Set the predicate on the fetch request
         fetchRequest29.predicate = predicate
-        let fetchResults29 = (try? managedObjectContext!.fetch(fetchRequest29)) as? [OutlineDetails]
-        
-        for myItem29 in fetchResults29!
+        do
         {
-            managedObjectContext!.delete(myItem29 as NSManagedObject)
-        }
-        
-        managedObjectContext!.performAndWait
+            let fetchResults29 = try getContext.fetch(fetchRequest29)
+            for myItem29 in fetchResults29
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                getContext.delete(myItem29 as NSManagedObject)
+            }
+            
+            saveContext()
         }
-
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
     }
 
     func clearSyncedItems()
     {
         let predicate = NSPredicate(format: "(updateType != \"\")")
         
-        let fetchRequest2 = NSFetchRequest<NSFetchRequestResult>(entityName: "Context")
+        let fetchRequest2 = NSFetchRequest<Context>(entityName: "Context")
         
         // Set the predicate on the fetch request
         fetchRequest2.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults2 = (try? managedObjectContext!.fetch(fetchRequest2)) as? [Context]
-        
-        for myItem2 in fetchResults2!
+        do
         {
-            myItem2.updateType = ""
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults2 = try getContext.fetch(fetchRequest2)
+            for myItem2 in fetchResults2
+            {
+                myItem2.updateType = ""
+                
+                saveContext()
             }
         }
-        
-        let fetchRequest3 = NSFetchRequest<NSFetchRequestResult>(entityName: "Decodes")
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+     
+        let fetchRequest3 = NSFetchRequest<Decodes>(entityName: "Decodes")
         
         // Set the predicate on the fetch request
         fetchRequest3.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults3 = (try? managedObjectContext!.fetch(fetchRequest3)) as? [Decodes]
-        
-        for myItem3 in fetchResults3!
+        do
         {
-            myItem3.updateType = ""
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults3 = try getContext.fetch(fetchRequest3)
+            for myItem3 in fetchResults3
+            {
+                myItem3.updateType = ""
+                
+                saveContext()
             }
         }
-        
-        let fetchRequest5 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+
+        let fetchRequest5 = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
         // Set the predicate on the fetch request
         fetchRequest5.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults5 = (try? managedObjectContext!.fetch(fetchRequest5)) as? [MeetingAgenda]
-        
-        for myItem5 in fetchResults5!
+        do
         {
-            myItem5.updateType = ""
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults5 = try getContext.fetch(fetchRequest5)
+            for myItem5 in fetchResults5
+            {
+                myItem5.updateType = ""
+                
+                saveContext()
             }
         }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
         
-        let fetchRequest6 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgendaItem")
+        let fetchRequest6 = NSFetchRequest<MeetingAgendaItem>(entityName: "MeetingAgendaItem")
         
         // Set the predicate on the fetch request
         fetchRequest6.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults6 = (try? managedObjectContext!.fetch(fetchRequest6)) as? [MeetingAgendaItem]
-        
-        for myItem6 in fetchResults6!
+        do
         {
-            myItem6.updateType = ""
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults6 = try getContext.fetch(fetchRequest6)
+            for myItem6 in fetchResults6
+            {
+                myItem6.updateType = ""
+                
+                saveContext()
             }
         }
-       
-        let fetchRequest7 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAttendees")
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+
+        let fetchRequest7 = NSFetchRequest<MeetingAttendees>(entityName: "MeetingAttendees")
         
         // Set the predicate on the fetch request
         fetchRequest7.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults7 = (try? managedObjectContext!.fetch(fetchRequest7)) as? [MeetingAttendees]
-        
-        for myItem7 in fetchResults7!
+        do
         {
-            myItem7.updateType = ""
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults7 = try getContext.fetch(fetchRequest7)
+            for myItem7 in fetchResults7
+            {
+                myItem7.updateType = ""
+                
+                saveContext()
             }
         }
-        
-        let fetchRequest8 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingSupportingDocs")
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+     
+        let fetchRequest8 = NSFetchRequest<MeetingSupportingDocs>(entityName: "MeetingSupportingDocs")
         
         // Set the predicate on the fetch request
         fetchRequest8.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults8 = (try? managedObjectContext!.fetch(fetchRequest8)) as? [MeetingSupportingDocs]
-        
-        for myItem8 in fetchResults8!
+        do
         {
-            myItem8.updateType = ""
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults8 = try getContext.fetch(fetchRequest8)
+            for myItem8 in fetchResults8
+            {
+                myItem8.updateType = ""
+                
+                saveContext()
             }
         }
-        
-        let fetchRequest9 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingTasks")
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+     
+        let fetchRequest9 = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
         // Set the predicate on the fetch request
         fetchRequest9.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults9 = (try? managedObjectContext!.fetch(fetchRequest9)) as? [MeetingTasks]
-        
-        for myItem9 in fetchResults9!
+        do
         {
-            myItem9.updateType = ""
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults9 = try getContext.fetch(fetchRequest9)
+            for myItem9 in fetchResults9
+            {
+                myItem9.updateType = ""
+                
+                saveContext()
             }
         }
-        
-        let fetchRequest10 = NSFetchRequest<NSFetchRequestResult>(entityName: "Panes")
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+ 
+        let fetchRequest10 = NSFetchRequest<Panes>(entityName: "Panes")
         
         // Set the predicate on the fetch request
         fetchRequest10.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults10 = (try? managedObjectContext!.fetch(fetchRequest10)) as? [Panes]
-        
-        for myItem10 in fetchResults10!
+        do
         {
-            myItem10.updateType = ""
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults10 = try getContext.fetch(fetchRequest10)
+            for myItem10 in fetchResults10
+            {
+                myItem10.updateType = ""
+                
+                saveContext()
             }
         }
-        
-        let fetchRequest11 = NSFetchRequest<NSFetchRequestResult>(entityName: "Projects")
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+ 
+        let fetchRequest11 = NSFetchRequest<Projects>(entityName: "Projects")
         
         // Set the predicate on the fetch request
         fetchRequest11.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults11 = (try? managedObjectContext!.fetch(fetchRequest11)) as? [Projects]
-        
-        for myItem11 in fetchResults11!
+        do
         {
-            myItem11.updateType = ""
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults11 = try getContext.fetch(fetchRequest11)
+            for myItem11 in fetchResults11
+            {
+                myItem11.updateType = ""
+                
+                saveContext()
             }
         }
-        
-        let fetchRequest12 = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectTeamMembers")
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+    
+        let fetchRequest12 = NSFetchRequest<ProjectTeamMembers>(entityName: "ProjectTeamMembers")
         
         // Set the predicate on the fetch request
         fetchRequest12.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults12 = (try? managedObjectContext!.fetch(fetchRequest12)) as? [ProjectTeamMembers]
-        
-        for myItem12 in fetchResults12!
+        do
         {
-            myItem12.updateType = ""
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults12 = try getContext.fetch(fetchRequest12)
+            for myItem12 in fetchResults12
+            {
+                myItem12.updateType = ""
+                
+                saveContext()
             }
         }
-        
-        let fetchRequest14 = NSFetchRequest<NSFetchRequestResult>(entityName: "Roles")
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+    
+        let fetchRequest14 = NSFetchRequest<Roles>(entityName: "Roles")
         
         // Set the predicate on the fetch request
         fetchRequest14.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults14 = (try? managedObjectContext!.fetch(fetchRequest14)) as? [Roles]
-        
-        for myItem14 in fetchResults14!
+        do
         {
-            myItem14.updateType = ""
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults14 = try getContext.fetch(fetchRequest14)
+            for myItem14 in fetchResults14
+            {
+                myItem14.updateType = ""
+                
+                saveContext()
             }
         }
-        
-        let fetchRequest15 = NSFetchRequest<NSFetchRequestResult>(entityName: "Stages")
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+      
+        let fetchRequest15 = NSFetchRequest<Stages>(entityName: "Stages")
         
         // Set the predicate on the fetch request
         fetchRequest15.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults15 = (try? managedObjectContext!.fetch(fetchRequest15)) as? [Stages]
-        
-        for myItem15 in fetchResults15!
+        do
         {
-            myItem15.updateType = ""
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults15 = try getContext.fetch(fetchRequest15)
+            for myItem15 in fetchResults15
+            {
+                myItem15.updateType = ""
+                
+                saveContext()
             }
         }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
         
-        let fetchRequest16 = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
+
+        
+        let fetchRequest16 = NSFetchRequest<Task>(entityName: "Task")
         
         // Set the predicate on the fetch request
         fetchRequest16.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults16 = (try? managedObjectContext!.fetch(fetchRequest16)) as? [Task]
-        
-        for myItem16 in fetchResults16!
+        do
         {
-            myItem16.updateType = ""
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults16 = try getContext.fetch(fetchRequest16)
+            for myItem16 in fetchResults16
+            {
+                myItem16.updateType = ""
+                
+                saveContext()
             }
         }
-        
-        let fetchRequest17 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskAttachment")
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+
+        let fetchRequest17 = NSFetchRequest<TaskAttachment>(entityName: "TaskAttachment")
         
         // Set the predicate on the fetch request
         fetchRequest17.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults17 = (try? managedObjectContext!.fetch(fetchRequest17)) as? [TaskAttachment]
-        
-        for myItem17 in fetchResults17!
+        do
         {
-            myItem17.updateType = ""
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults17 = try getContext.fetch(fetchRequest17)
+            for myItem17 in fetchResults17
+            {
+                myItem17.updateType = ""
+                
+                saveContext()
             }
         }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
         
-        let fetchRequest18 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskContext")
+        let fetchRequest18 = NSFetchRequest<TaskContext>(entityName: "TaskContext")
         
         // Set the predicate on the fetch request
         fetchRequest18.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults18 = (try? managedObjectContext!.fetch(fetchRequest18)) as? [TaskContext]
-        
-        for myItem18 in fetchResults18!
+        do
         {
-            myItem18.updateType = ""
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults18 = try getContext.fetch(fetchRequest18)
+            for myItem18 in fetchResults18
+            {
+                myItem18.updateType = ""
+                
+                saveContext()
             }
         }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
         
-        let fetchRequest19 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskUpdates")
+        let fetchRequest19 = NSFetchRequest<TaskUpdates>(entityName: "TaskUpdates")
         
         // Set the predicate on the fetch request
         fetchRequest19.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults19 = (try? managedObjectContext!.fetch(fetchRequest19)) as? [TaskUpdates]
-        
-        for myItem19 in fetchResults19!
+        do
         {
-            myItem19.updateType = ""
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults19 = try getContext.fetch(fetchRequest19)
+            for myItem19 in fetchResults19
+            {
+                myItem19.updateType = ""
+                
+                saveContext()
             }
         }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
         
-        let fetchRequest21 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskPredecessor")
+        let fetchRequest21 = NSFetchRequest<TaskPredecessor>(entityName: "TaskPredecessor")
         
         // Set the predicate on the fetch request
         fetchRequest21.predicate = predicate
         
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults21 = (try? managedObjectContext!.fetch(fetchRequest21)) as? [TaskPredecessor]
-        
-        for myItem21 in fetchResults21!
+        // Execute the fetch request, and cast the results to an array of LogItem object
+        do
         {
-            myItem21.updateType = ""
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults21 = try getContext.fetch(fetchRequest21)
+            for myItem21 in fetchResults21
+            {
+                myItem21.updateType = ""
+                
+                saveContext()
             }
         }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
         
-        let fetchRequest22 = NSFetchRequest<NSFetchRequestResult>(entityName: "Team")
+        let fetchRequest22 = NSFetchRequest<Team>(entityName: "Team")
         // Set the predicate on the fetch request
         fetchRequest22.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults22 = (try? managedObjectContext!.fetch(fetchRequest22)) as? [Team]
-        
-        for myItem22 in fetchResults22!
+        do
         {
-            myItem22.updateType = ""
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults22 = try getContext.fetch(fetchRequest22)
+            for myItem22 in fetchResults22
+            {
+                myItem22.updateType = ""
+                
+                saveContext()
             }
         }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
 
-        let fetchRequest23 = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectNote")
+        let fetchRequest23 = NSFetchRequest<ProjectNote>(entityName: "ProjectNote")
         // Set the predicate on the fetch request
         fetchRequest23.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults23 = (try? managedObjectContext!.fetch(fetchRequest23)) as? [ProjectNote]
-        
-        for myItem23 in fetchResults23!
+        do
         {
-            myItem23.updateType = ""
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults23 = try getContext.fetch(fetchRequest23)
+            for myItem23 in fetchResults23
+            {
+                myItem23.updateType = ""
+                
+                saveContext()
             }
         }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
         
-        let fetchRequest24 = NSFetchRequest<NSFetchRequestResult>(entityName: "Context1_1")
+        let fetchRequest24 = NSFetchRequest<Context1_1>(entityName: "Context1_1")
         // Set the predicate on the fetch request
         fetchRequest24.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults24 = (try? managedObjectContext!.fetch(fetchRequest24)) as? [Context1_1]
-        
-        for myItem24 in fetchResults24!
+        do
         {
-            myItem24.updateType = ""
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults24 = try getContext.fetch(fetchRequest24)
+            for myItem24 in fetchResults24
+            {
+                myItem24.updateType = ""
+                
+                saveContext()
             }
         }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
         
-        let fetchRequest25 = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDItem")
+        let fetchRequest25 = NSFetchRequest<GTDItem>(entityName: "GTDItem")
         // Set the predicate on the fetch request
         fetchRequest25.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults25 = (try? managedObjectContext!.fetch(fetchRequest25)) as? [GTDItem]
-        
-        for myItem25 in fetchResults25!
+        do
         {
-            myItem25.updateType = ""
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults25 = try getContext.fetch(fetchRequest25)
+            for myItem25 in fetchResults25
+            {
+                myItem25.updateType = ""
+                
+                saveContext()
             }
         }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
 
-        let fetchRequest26 = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDLevel")
+        let fetchRequest26 = NSFetchRequest<GTDLevel>(entityName: "GTDLevel")
         // Set the predicate on the fetch request
         fetchRequest26.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults26 = (try? managedObjectContext!.fetch(fetchRequest26)) as? [GTDLevel]
-        
-        for myItem26 in fetchResults26!
+        do
         {
-            myItem26.updateType = ""
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults26 = try getContext.fetch(fetchRequest26)
+            for myItem26 in fetchResults26
+            {
+                myItem26.updateType = ""
+                
+                saveContext()
             }
         }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
         
-        let fetchRequest27 = NSFetchRequest<NSFetchRequestResult>(entityName: "ProcessedEmails")
+        let fetchRequest27 = NSFetchRequest<ProcessedEmails>(entityName: "ProcessedEmails")
         // Set the predicate on the fetch request
         fetchRequest27.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults27 = (try? managedObjectContext!.fetch(fetchRequest27)) as? [ProcessedEmails]
-        
-        for myItem27 in fetchResults27!
+        do
         {
-            myItem27.updateType = ""
-            
-            managedObjectContext!.performAndWait
+            let fetchResults27 = try getContext.fetch(fetchRequest27)
+            for myItem27 in fetchResults27
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                    print("Failure to save context: \(error)")
-                }
+                myItem27.updateType = ""
+                
+                saveContext()
             }
         }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
         
-        let fetchRequest28 = NSFetchRequest<NSFetchRequestResult>(entityName: "Outline")
+        let fetchRequest28 = NSFetchRequest<Outline>(entityName: "Outline")
         // Set the predicate on the fetch request
         fetchRequest28.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults28 = (try? managedObjectContext!.fetch(fetchRequest28)) as? [Outline]
-        
-        for myItem28 in fetchResults28!
+        do
         {
-            myItem28.updateType = ""
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults28 = try getContext.fetch(fetchRequest28)
+            for myItem28 in fetchResults28
+            {
+                myItem28.updateType = ""
+                
+                saveContext()
             }
         }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
         
-        let fetchRequest29 = NSFetchRequest<NSFetchRequestResult>(entityName: "OutlineDetails")
+        let fetchRequest29 = NSFetchRequest<OutlineDetails>(entityName: "OutlineDetails")
         // Set the predicate on the fetch request
         fetchRequest29.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults29 = (try? managedObjectContext!.fetch(fetchRequest29)) as? [OutlineDetails]
-        
-        for myItem29 in fetchResults29!
+        do
         {
-            myItem29.updateType = ""
-            
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+            let fetchResults29 = try getContext.fetch(fetchRequest29)
+            for myItem29 in fetchResults29
+            {
+                myItem29.updateType = ""
+                
+                saveContext()
             }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
     }
     
@@ -5721,7 +5242,7 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         if myTeams.count == 0
         { // Add
-            myTeam = NSEntityDescription.insertNewObject(forEntityName: "Team", into: self.managedObjectContext!) as! Team
+            myTeam = NSEntityDescription.insertNewObject(forEntityName: "Team", into: getContext) as! Team
             myTeam.teamID = NSNumber(value: inTeamID)
             myTeam.name = inName
             myTeam.status = inStatus
@@ -5764,61 +5285,37 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
             }
         }
         
-        managedObjectContext!.perform
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
     }
     
     func replaceTeam(_ inTeamID: Int, inName: String, inStatus: String, inNote: String, inType: String, inPredecessor: Int, inExternalID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.perform
-            {
-        let myTeam = NSEntityDescription.insertNewObject(forEntityName: "Team", into: self.managedObjectContext!) as! Team
-            myTeam.teamID = NSNumber(value: inTeamID)
-            myTeam.name = inName
-            myTeam.status = inStatus
-            myTeam.note = inNote
-            myTeam.type = inType
-            myTeam.predecessor = NSNumber(value: inPredecessor)
-            myTeam.externalID = NSNumber(value: inExternalID)
-            if inUpdateType == "CODE"
-            {
-                myTeam.updateTime = Date()
-                myTeam.updateType = "Add"
-            }
-            else
-            {
-                myTeam.updateTime = inUpdateTime
-                myTeam.updateType = inUpdateType
-            }
-
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-                self.refreshObject(myTeam)
+        let myTeam = NSEntityDescription.insertNewObject(forEntityName: "Team", into: getContext) as! Team
+        myTeam.teamID = NSNumber(value: inTeamID)
+        myTeam.name = inName
+        myTeam.status = inStatus
+        myTeam.note = inNote
+        myTeam.type = inType
+        myTeam.predecessor = NSNumber(value: inPredecessor)
+        myTeam.externalID = NSNumber(value: inExternalID)
+        if inUpdateType == "CODE"
+        {
+            myTeam.updateTime = Date()
+            myTeam.updateType = "Add"
         }
+        else
+        {
+            myTeam.updateTime = inUpdateTime
+            myTeam.updateType = inUpdateType
+        }
+
+        saveContext()
+        self.refreshObject(myTeam)
     }
 
     func getTeam(_ inTeamID: Int)->[Team]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Team")
+        let fetchRequest = NSFetchRequest<Team>(entityName: "Team")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -5828,14 +5325,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Team]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getAllTeams()->[Team]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Team")
+        let fetchRequest = NSFetchRequest<Team>(entityName: "Team")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -5849,14 +5353,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         fetchRequest.sortDescriptors = sortDescriptors
 
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Team]
-    
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getMyTeams(_ myID: String)->[Team]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Team")
+        let fetchRequest = NSFetchRequest<Team>(entityName: "Team")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -5870,70 +5381,72 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         fetchRequest.sortDescriptors = sortDescriptors
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Team]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getTeamsCount() -> Int
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Team")
+        let fetchRequest = NSFetchRequest<Team>(entityName: "Team")
         fetchRequest.shouldRefreshRefetchedObjects = true
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Team]
-        
-        return fetchResults!.count
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults.count
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return 0
+        }
     }
     
     func deleteAllTeams()
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Team")
+        let fetchRequest = NSFetchRequest<Team>(entityName: "Team")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Team]
-        
-        for myItem in fetchResults!
+        do
         {
-            managedObjectContext!.delete(myItem as NSManagedObject)
+            let fetchResults = try getContext.fetch(fetchRequest)
+            for myItem in fetchResults
+            {
+                getContext.delete(myItem as NSManagedObject)
+            }
+            
+            saveContext()
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
         
-        managedObjectContext!.performAndWait
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
-
-        let fetchRequest2 = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDLevel")
+        let fetchRequest2 = NSFetchRequest<GTDLevel>(entityName: "GTDLevel")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults2 = (try? managedObjectContext!.fetch(fetchRequest2)) as? [GTDLevel]
-        
-        for myItem2 in fetchResults2!
+        do
         {
-            managedObjectContext!.delete(myItem2 as NSManagedObject)
-        }
-        
-        managedObjectContext!.performAndWait
+            let fetchResults2 = try getContext.fetch(fetchRequest2)
+            for myItem2 in fetchResults2
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                getContext.delete(myItem2 as NSManagedObject)
+            }
+            
+            saveContext()
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
     }
     
@@ -5945,7 +5458,7 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         if myTeams.count == 0
         { // Add
-            myProjectNote = NSEntityDescription.insertNewObject(forEntityName: "ProjectNote", into: self.managedObjectContext!) as! ProjectNote
+            myProjectNote = NSEntityDescription.insertNewObject(forEntityName: "ProjectNote", into: getContext) as! ProjectNote
             myProjectNote.projectID = NSNumber(value: inProjectID)
             myProjectNote.note = inNote
 
@@ -5983,58 +5496,34 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
             }
         }
         
-        managedObjectContext!.perform
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
     }
  
     func replaceProjectNote(_ inProjectID: Int, inNote: String, inReviewPeriod: String, inPredecessor: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        managedObjectContext!.perform
-            {
-        let myProjectNote = NSEntityDescription.insertNewObject(forEntityName: "ProjectNote", into: self.managedObjectContext!) as! ProjectNote
-            myProjectNote.projectID = NSNumber(value: inProjectID)
-            myProjectNote.note = inNote
-            
-            myProjectNote.reviewPeriod = inReviewPeriod
-            myProjectNote.predecessor = NSNumber(value: inPredecessor)
-            if inUpdateType == "CODE"
-            {
-                myProjectNote.updateTime = Date()
-                myProjectNote.updateType = "Add"
-            }
-            else
-            {
-                myProjectNote.updateTime = inUpdateTime
-                myProjectNote.updateType = inUpdateType
-            }
-
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+        let myProjectNote = NSEntityDescription.insertNewObject(forEntityName: "ProjectNote", into: getContext) as! ProjectNote
+        myProjectNote.projectID = NSNumber(value: inProjectID)
+        myProjectNote.note = inNote
+        
+        myProjectNote.reviewPeriod = inReviewPeriod
+        myProjectNote.predecessor = NSNumber(value: inPredecessor)
+        if inUpdateType == "CODE"
+        {
+            myProjectNote.updateTime = Date()
+            myProjectNote.updateType = "Add"
         }
+        else
+        {
+            myProjectNote.updateTime = inUpdateTime
+            myProjectNote.updateType = inUpdateType
+        }
+
+        saveContext()
     }
 
     func getProjectNote(_ inProjectID: Int)->[ProjectNote]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectNote")
+        let fetchRequest = NSFetchRequest<ProjectNote>(entityName: "ProjectNote")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -6044,69 +5533,77 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [ProjectNote]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
 
     func getNextID(_ inTableName: String, inInitialValue: Int = 1) -> Int
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Decodes")
+        let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
         let predicate = NSPredicate(format: "(decode_name == \"\(inTableName)\") && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Decodes]
-        
-        if fetchResults!.count == 0
+        do
         {
-            // Create table entry
-            let storeKey = "\(inInitialValue)"
-            updateDecodeValue(inTableName, inCodeValue: storeKey, inCodeType: "hidden")
-
-            return inInitialValue
+            let fetchResults = try getContext.fetch(fetchRequest)
+            if fetchResults.count == 0
+            {
+                // Create table entry
+                let storeKey = "\(inInitialValue)"
+                updateDecodeValue(inTableName, inCodeValue: storeKey, inCodeType: "hidden")
+                
+                return inInitialValue
+            }
+            else
+            {
+                // Increment table value by 1 and save back to database
+                let storeint = Int(fetchResults[0].decode_value)! + 1
+                
+                let storeKey = "\(storeint)"
+                updateDecodeValue(inTableName, inCodeValue: storeKey, inCodeType: "hidden")
+                
+                return storeint
+            }
         }
-        else
+        catch
         {
-            // Increment table value by 1 and save back to database
-            let storeint = Int(fetchResults![0].decode_value)! + 1
-            
-            let storeKey = "\(storeint)"
-            updateDecodeValue(inTableName, inCodeValue: storeKey, inCodeType: "hidden")
-
-            return storeint
+            print("Error occurred during execution: \(error)")
+            return 0
         }
     }
     
     func initialiseTeamForMeetingAgenda(_ inTeamID: Int)
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgenda]
-        
-        if fetchResults!.count > 0
+        do
         {
-            for myItem in fetchResults!
+            let fetchResults = try getContext.fetch(fetchRequest)
+            if fetchResults.count > 0
             {
-                myItem.teamID = NSNumber(value: inTeamID)
-            }
-            
-            managedObjectContext!.performAndWait
+                for myItem in fetchResults
                 {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+                    myItem.teamID = NSNumber(value: inTeamID)
+                }
+                
+                saveContext()
             }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
     }
 
@@ -6114,155 +5611,131 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
     {
         var maxID: Int = 1
         
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Context")
+        let fetchRequest = NSFetchRequest<Context>(entityName: "Context")
         
         let sortDescriptor = NSSortDescriptor(key: "contextID", ascending: true)
         let sortDescriptors = [sortDescriptor]
         fetchRequest.sortDescriptors = sortDescriptors
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Context]
-        
-        if fetchResults!.count > 0
+        do
         {
-            for myItem in fetchResults!
+            let fetchResults = try getContext.fetch(fetchRequest)
+            if fetchResults.count > 0
             {
-                myItem.teamID = NSNumber(value: inTeamID)
-                maxID = myItem.contextID as Int
-            }
-        
-            managedObjectContext!.performAndWait
+                for myItem in fetchResults
                 {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+                    myItem.teamID = NSNumber(value: inTeamID)
+                    maxID = myItem.contextID as Int
+                }
+                
+                saveContext()
             }
+            
+            // Now go and populate the Decode for this
+            
+            let tempInt = "\(maxID)"
+            updateDecodeValue("Context", inCodeValue: tempInt, inCodeType: "hidden")
         }
-        
-        // Now go and populate the Decode for this
-        
-        let tempInt = "\(maxID)"
-        updateDecodeValue("Context", inCodeValue: tempInt, inCodeType: "hidden")
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
     }
 
     func initialiseTeamForProject(_ inTeamID: Int)
     {
         var maxID: Int = 1
         
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Projects")
+        let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
         
         let sortDescriptor = NSSortDescriptor(key: "projectID", ascending: true)
         let sortDescriptors = [sortDescriptor]
         fetchRequest.sortDescriptors = sortDescriptors
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Projects]
-        
-        if fetchResults!.count > 0
+        do
         {
-            for myItem in fetchResults!
+            let fetchResults = try getContext.fetch(fetchRequest)
+            if fetchResults.count > 0
             {
-                myItem.teamID = NSNumber(value: inTeamID)
-                maxID = myItem.projectID as Int
+                for myItem in fetchResults
+                {
+                    myItem.teamID = NSNumber(value: inTeamID)
+                    maxID = myItem.projectID as Int
+                }
+                
+                saveContext()
             }
             
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
-            }
+            // Now go and populate the Decode for this
+            
+            let tempInt = "\(maxID)"
+            updateDecodeValue("Projects", inCodeValue: tempInt, inCodeType: "hidden")
         }
-        
-        // Now go and populate the Decode for this
-        
-        let tempInt = "\(maxID)"
-        updateDecodeValue("Projects", inCodeValue: tempInt, inCodeType: "hidden")
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
     }
 
     func initialiseTeamForRoles(_ inTeamID: Int)
     {
         var maxID: Int = 1
         
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Roles")
+        let fetchRequest = NSFetchRequest<Roles>(entityName: "Roles")
         
         let sortDescriptor = NSSortDescriptor(key: "roleID", ascending: true)
         let sortDescriptors = [sortDescriptor]
         fetchRequest.sortDescriptors = sortDescriptors
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Roles]
-        
-        if fetchResults!.count > 0
+        do
         {
-            for myItem in fetchResults!
+            let fetchResults = try getContext.fetch(fetchRequest)
+            if fetchResults.count > 0
             {
-                myItem.teamID = NSNumber(value: inTeamID)
-                maxID = myItem.roleID as Int
+                for myItem in fetchResults
+                {
+                    myItem.teamID = NSNumber(value: inTeamID)
+                    maxID = myItem.roleID as Int
+                }
+                
+                saveContext()
             }
             
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
-            }
+            // Now go and populate the Decode for this
+            
+            let tempInt = "\(maxID)"
+            updateDecodeValue("Roles", inCodeValue: tempInt, inCodeType: "hidden")
         }
-        
-        // Now go and populate the Decode for this
-        
-        let tempInt = "\(maxID)"
-        updateDecodeValue("Roles", inCodeValue: tempInt, inCodeType: "hidden")
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
     }
 
     func initialiseTeamForStages(_ inTeamID: Int)
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Stages")
+        let fetchRequest = NSFetchRequest<Stages>(entityName: "Stages")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Stages]
-        
-        if fetchResults!.count > 0
+        do
         {
-            for myItem in fetchResults!
+            let fetchResults = try getContext.fetch(fetchRequest)
+            if fetchResults.count > 0
             {
-                myItem.teamID = NSNumber(value: inTeamID)
-            }
-            
-            managedObjectContext!.performAndWait
+                for myItem in fetchResults
                 {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
+                    myItem.teamID = NSNumber(value: inTeamID)
+                }
+                
+                saveContext()
             }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
     }
 
@@ -6270,42 +5743,36 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
     {
         var maxID: Int = 1
         
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
+        let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
         let sortDescriptor = NSSortDescriptor(key: "taskID", ascending: true)
         let sortDescriptors = [sortDescriptor]
         fetchRequest.sortDescriptors = sortDescriptors
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Task]
-        
-        if fetchResults!.count > 0
+        do
         {
-            for myItem in fetchResults!
+            let fetchResults = try getContext.fetch(fetchRequest)
+            if fetchResults.count > 0
             {
-                myItem.teamID = NSNumber(value: inTeamID)
-                maxID = myItem.taskID as Int
+                for myItem in fetchResults
+                {
+                    myItem.teamID = NSNumber(value: inTeamID)
+                    maxID = myItem.taskID as Int
+                }
+                
+                saveContext()
             }
             
-            managedObjectContext!.performAndWait
-                {
-                    do
-                    {
-                        try self.managedObjectContext!.save()
-                    }
-                    catch let error as NSError
-                    {
-                        NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                        
-                        print("Failure to save context: \(error)")
-                    }
-            }
+            // Now go and populate the Decode for this
+            
+            let tempInt = "\(maxID)"
+            updateDecodeValue("Task", inCodeValue: tempInt, inCodeType: "hidden")
         }
-        
-        // Now go and populate the Decode for this
-        
-        let tempInt = "\(maxID)"
-        updateDecodeValue("Task", inCodeValue: tempInt, inCodeType: "hidden")
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
     }
 
     func saveContext1_1(_ contextID: Int, predecessor: Int, contextType: String, updateTime: Date = Date(), updateType: String = "CODE")
@@ -6316,7 +5783,7 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         if myContexts.count == 0
         { // Add
-            myContext = NSEntityDescription.insertNewObject(forEntityName: "Context1_1", into: self.managedObjectContext!) as! Context1_1
+            myContext = NSEntityDescription.insertNewObject(forEntityName: "Context1_1", into: getContext) as! Context1_1
             myContext.contextID = contextID as NSNumber?
             myContext.predecessor = predecessor as NSNumber?
             myContext.contextType = contextType
@@ -6352,26 +5819,12 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
             }
         }
         
-        managedObjectContext!.perform
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
     }
     
     func replaceContext1_1(_ contextID: Int, predecessor: Int, contextType: String, updateTime: Date = Date(), updateType: String = "CODE")
     {
-        managedObjectContext!.perform
-            {
-        let myContext = NSEntityDescription.insertNewObject(forEntityName: "Context1_1", into: self.managedObjectContext!) as! Context1_1
+        let myContext = NSEntityDescription.insertNewObject(forEntityName: "Context1_1", into: getContext) as! Context1_1
         myContext.contextID = contextID as NSNumber?
         myContext.predecessor = predecessor as NSNumber?
         myContext.contextType = contextType
@@ -6386,22 +5839,12 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
             myContext.updateType = updateType
         }
 
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
     }
 
     func getContext1_1(_ inContextID: Int)->[Context1_1]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Context1_1")
+        let fetchRequest = NSFetchRequest<Context1_1>(entityName: "Context1_1")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -6415,14 +5858,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         fetchRequest.sortDescriptors = sortDescriptors
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Context1_1]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func resetDecodes()
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Decodes")
+        let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -6433,31 +5883,25 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Decodes]
-        
-        for myItem in fetchResults!
+        do
         {
-            managedObjectContext!.delete(myItem as NSManagedObject)
-        }
-        
-        managedObjectContext!.performAndWait
+            let fetchResults = try getContext.fetch(fetchRequest)
+            for myItem in fetchResults
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                getContext.delete(myItem as NSManagedObject)
+            }
+            
+            saveContext()
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
     }
     
     func performTidyDecodes(_ inString: String)
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Decodes")
+        let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -6468,25 +5912,19 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Decodes]
-        
-        for myItem in fetchResults!
+        do
         {
-            managedObjectContext!.delete(myItem as NSManagedObject)
-        }
-        
-        managedObjectContext!.performAndWait
+            let fetchResults = try getContext.fetch(fetchRequest)
+            for myItem in fetchResults
             {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                getContext.delete(myItem as NSManagedObject)
+            }
+            
+            saveContext()
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
     }
     
@@ -6504,7 +5942,7 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
     
     func getContextsForSync(_ inLastSyncDate: Date) -> [Context]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Context")
+        let fetchRequest = NSFetchRequest<Context>(entityName: "Context")
 
         let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
@@ -6512,14 +5950,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Context]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
 
     func getContexts1_1ForSync(_ inLastSyncDate: Date) -> [Context1_1]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Context1_1")
+        let fetchRequest = NSFetchRequest<Context1_1>(entityName: "Context1_1")
      
         let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
@@ -6527,14 +5972,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Context1_1]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
 
     func getDecodesForSync(_ inLastSyncDate: Date) -> [Decodes]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Decodes")
+        let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
@@ -6542,14 +5994,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Decodes]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
 
     func getGTDItemsForSync(_ inLastSyncDate: Date) -> [GTDItem]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDItem")
+        let fetchRequest = NSFetchRequest<GTDItem>(entityName: "GTDItem")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
@@ -6557,14 +6016,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [GTDItem]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getGTDLevelsForSync(_ inLastSyncDate: Date) -> [GTDLevel]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDLevel")
+        let fetchRequest = NSFetchRequest<GTDLevel>(entityName: "GTDLevel")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
@@ -6572,14 +6038,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [GTDLevel]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getMeetingAgendasForSync(_ inLastSyncDate: Date) -> [MeetingAgenda]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
@@ -6587,14 +6060,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgenda]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getMeetingAgendaItemsForSync(_ inLastSyncDate: Date) -> [MeetingAgendaItem]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgendaItem")
+        let fetchRequest = NSFetchRequest<MeetingAgendaItem>(entityName: "MeetingAgendaItem")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
@@ -6602,14 +6082,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAgendaItem]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getMeetingAttendeesForSync(_ inLastSyncDate: Date) -> [MeetingAttendees]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAttendees")
+        let fetchRequest = NSFetchRequest<MeetingAttendees>(entityName: "MeetingAttendees")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
@@ -6617,14 +6104,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingAttendees]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getMeetingSupportingDocsForSync(_ inLastSyncDate: Date) -> [MeetingSupportingDocs]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingSupportingDocs")
+        let fetchRequest = NSFetchRequest<MeetingSupportingDocs>(entityName: "MeetingSupportingDocs")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
@@ -6632,14 +6126,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingSupportingDocs]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getMeetingTasksForSync(_ inLastSyncDate: Date) -> [MeetingTasks]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingTasks")
+        let fetchRequest = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
@@ -6647,14 +6148,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [MeetingTasks]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getPanesForSync(_ inLastSyncDate: Date) -> [Panes]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Panes")
+        let fetchRequest = NSFetchRequest<Panes>(entityName: "Panes")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
@@ -6662,14 +6170,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Panes]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getProjectsForSync(_ inLastSyncDate: Date) -> [Projects]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Projects")
+        let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
@@ -6677,14 +6192,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Projects]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getProjectNotesForSync(_ inLastSyncDate: Date) -> [ProjectNote]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectNote")
+        let fetchRequest = NSFetchRequest<ProjectNote>(entityName: "ProjectNote")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
@@ -6692,14 +6214,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [ProjectNote]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getProjectTeamMembersForSync(_ inLastSyncDate: Date) -> [ProjectTeamMembers]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectTeamMembers")
+        let fetchRequest = NSFetchRequest<ProjectTeamMembers>(entityName: "ProjectTeamMembers")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
@@ -6707,14 +6236,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [ProjectTeamMembers]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
 
     func getRolesForSync(_ inLastSyncDate: Date) -> [Roles]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Roles")
+        let fetchRequest = NSFetchRequest<Roles>(entityName: "Roles")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
@@ -6722,14 +6258,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Roles]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getStagesForSync(_ inLastSyncDate: Date) -> [Stages]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Stages")
+        let fetchRequest = NSFetchRequest<Stages>(entityName: "Stages")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
@@ -6737,14 +6280,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Stages]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
 
     func getTaskForSync(_ inLastSyncDate: Date) -> [Task]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
+        let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
@@ -6752,14 +6302,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Task]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
 
     func getTaskAttachmentsForSync(_ inLastSyncDate: Date) -> [TaskAttachment]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskAttachment")
+        let fetchRequest = NSFetchRequest<TaskAttachment>(entityName: "TaskAttachment")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
@@ -6767,14 +6324,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [TaskAttachment]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getTaskContextsForSync(_ inLastSyncDate: Date) -> [TaskContext]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskContext")
+        let fetchRequest = NSFetchRequest<TaskContext>(entityName: "TaskContext")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
@@ -6782,14 +6346,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [TaskContext]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getTaskPredecessorsForSync(_ inLastSyncDate: Date) -> [TaskPredecessor]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskPredecessor")
+        let fetchRequest = NSFetchRequest<TaskPredecessor>(entityName: "TaskPredecessor")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
@@ -6797,14 +6368,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [TaskPredecessor]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getTaskUpdatesForSync(_ inLastSyncDate: Date) -> [TaskUpdates]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskUpdates")
+        let fetchRequest = NSFetchRequest<TaskUpdates>(entityName: "TaskUpdates")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
@@ -6812,14 +6390,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [TaskUpdates]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getTeamsForSync(_ inLastSyncDate: Date) -> [Team]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Team")
+        let fetchRequest = NSFetchRequest<Team>(entityName: "Team")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
@@ -6827,14 +6412,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Team]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getProcessedEmailsForSync(_ inLastSyncDate: Date) -> [ProcessedEmails]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ProcessedEmails")
+        let fetchRequest = NSFetchRequest<ProcessedEmails>(entityName: "ProcessedEmails")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
@@ -6842,14 +6434,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [ProcessedEmails]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
 
     func getOutlineForSync(_ inLastSyncDate: Date) -> [Outline]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Outline")
+        let fetchRequest = NSFetchRequest<Outline>(entityName: "Outline")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
@@ -6857,14 +6456,21 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Outline]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func getOutlineDetailsForSync(_ inLastSyncDate: Date) -> [OutlineDetails]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "OutlineDetails")
+        let fetchRequest = NSFetchRequest<OutlineDetails>(entityName: "OutlineDetails")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
         
@@ -6872,592 +6478,460 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         fetchRequest.predicate = predicate
         // Execute the fetch request, and cast the results to an array of  objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [OutlineDetails]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
     
     func deleteAllCoreData()
     {
-        let fetchRequest2 = NSFetchRequest<NSFetchRequestResult>(entityName: "Context")
-        managedObjectContext!.performAndWait
-            {
+        let fetchRequest2 = NSFetchRequest<Context>(entityName: "Context")
+
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults2 = (try? self.managedObjectContext!.fetch(fetchRequest2)) as? [Context]
- 
-
-        for myItem2 in fetchResults2!
+        do
         {
-            self.managedObjectContext!.delete(myItem2 as NSManagedObject)
-        }
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
-        
-        let fetchRequest3 = NSFetchRequest<NSFetchRequestResult>(entityName: "Decodes")
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performAndWait
+            let fetchResults2 = try getContext.fetch(fetchRequest2)
+            for myItem2 in fetchResults2
             {
-                let fetchResults3 = (try? self.managedObjectContext!.fetch(fetchRequest3)) as? [Decodes]
-
-        for myItem3 in fetchResults3!
-        {
-            self.managedObjectContext!.delete(myItem3 as NSManagedObject)
-        }
-
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
-        
-        let fetchRequest5 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgenda")
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performAndWait
-            {
-                let fetchResults5 = (try? self.managedObjectContext!.fetch(fetchRequest5)) as? [MeetingAgenda]
-
-        for myItem5 in fetchResults5!
-        {
-            self.managedObjectContext!.delete(myItem5 as NSManagedObject)
-        }
-
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
-        
-        let fetchRequest6 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAgendaItem")
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performAndWait
-            {
-                let fetchResults6 = (try? self.managedObjectContext!.fetch(fetchRequest6)) as? [MeetingAgendaItem]
-
-        for myItem6 in fetchResults6!
-        {
-            self.managedObjectContext!.delete(myItem6 as NSManagedObject)
-        }
-
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
-        
-        let fetchRequest7 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingAttendees")
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performAndWait
-            {
-                let fetchResults7 = (try? self.managedObjectContext!.fetch(fetchRequest7)) as? [MeetingAttendees]
-
-        for myItem7 in fetchResults7!
-        {
-            self.managedObjectContext!.delete(myItem7 as NSManagedObject)
-        }
-
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
-        
-        let fetchRequest8 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingSupportingDocs")
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performAndWait
-            {
-                let fetchResults8 = (try? self.managedObjectContext!.fetch(fetchRequest8)) as? [MeetingSupportingDocs]
-                
-                for myItem8 in fetchResults8!
-        {
-            self.managedObjectContext!.delete(myItem8 as NSManagedObject)
-        }
-
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
-        
-        let fetchRequest9 = NSFetchRequest<NSFetchRequestResult>(entityName: "MeetingTasks")
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performAndWait
-            {
-                let fetchResults9 = (try? self.managedObjectContext!.fetch(fetchRequest9)) as? [MeetingTasks]
-
-        for myItem9 in fetchResults9!
-        {
-            self.managedObjectContext!.delete(myItem9 as NSManagedObject)
-        }
-
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
-        
-        let fetchRequest10 = NSFetchRequest<NSFetchRequestResult>(entityName: "Panes")
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performAndWait
-            {
-                let fetchResults10 = (try? self.managedObjectContext!.fetch(fetchRequest10)) as? [Panes]
-
-            for myItem10 in fetchResults10!
-        {
-            self.managedObjectContext!.delete(myItem10 as NSManagedObject)
-        }
-
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
-        
-        let fetchRequest11 = NSFetchRequest<NSFetchRequestResult>(entityName: "Projects")
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performAndWait
-            {
-                let fetchResults11 = (try? self.managedObjectContext!.fetch(fetchRequest11)) as? [Projects]
-
-        for myItem11 in fetchResults11!
-        {
-            self.managedObjectContext!.delete(myItem11 as NSManagedObject)
-        }
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
-        
-        let fetchRequest12 = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectTeamMembers")
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performAndWait
-            {
-                let fetchResults12 = (try? self.managedObjectContext!.fetch(fetchRequest12)) as? [ProjectTeamMembers]
-
-        for myItem12 in fetchResults12!
-        {
-            self.managedObjectContext!.delete(myItem12 as NSManagedObject)
-        }
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
-        
-        let fetchRequest14 = NSFetchRequest<NSFetchRequestResult>(entityName: "Roles")
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        
-        managedObjectContext!.performAndWait
-        {
-            let fetchResults14 = (try? self.managedObjectContext!.fetch(fetchRequest14)) as? [Roles]
-
-            for myItem14 in fetchResults14!
-            {
-                self.managedObjectContext!.delete(myItem14 as NSManagedObject)
+                self.getContext.delete(myItem2 as NSManagedObject)
             }
-    
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
         }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+
+        saveContext()
         
-        let fetchRequest15 = NSFetchRequest<NSFetchRequestResult>(entityName: "Stages")
+        let fetchRequest3 = NSFetchRequest<Decodes>(entityName: "Decodes")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performAndWait
-            {
-                let fetchResults15 = (try? self.managedObjectContext!.fetch(fetchRequest15)) as? [Stages]
-
-        for myItem15 in fetchResults15!
+        do
         {
-            self.managedObjectContext!.delete(myItem15 as NSManagedObject)
+            let fetchResults3 = try getContext.fetch(fetchRequest3)
+            for myItem3 in fetchResults3
+            {
+                self.getContext.delete(myItem3 as NSManagedObject)
+            }
         }
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
         
-        let fetchRequest16 = NSFetchRequest<NSFetchRequestResult>(entityName: "Task")
+        saveContext()
+        
+        let fetchRequest5 = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
+        do
+        {
+            let fetchResults5 = try getContext.fetch(fetchRequest5)
+            for myItem5 in fetchResults5
+            {
+                self.getContext.delete(myItem5 as NSManagedObject)
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+        
+        let fetchRequest6 = NSFetchRequest<MeetingAgendaItem>(entityName: "MeetingAgendaItem")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performAndWait
-            {
-                let fetchResults16 = (try? self.managedObjectContext!.fetch(fetchRequest16)) as? [Task]
-
-        for myItem16 in fetchResults16!
+        do
         {
-            self.managedObjectContext!.delete(myItem16 as NSManagedObject)
+            let fetchResults6 = try getContext.fetch(fetchRequest6)
+            for myItem6 in fetchResults6
+            {
+                self.getContext.delete(myItem6 as NSManagedObject)
+            }
         }
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
         
-        let fetchRequest17 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskAttachment")
+        saveContext()
+        
+        let fetchRequest7 = NSFetchRequest<MeetingAttendees>(entityName: "MeetingAttendees")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performAndWait
-            {
-                let fetchResults17 = (try? self.managedObjectContext!.fetch(fetchRequest17)) as? [TaskAttachment]
-
-        for myItem17 in fetchResults17!
+        
+        do
         {
-            self.managedObjectContext!.delete(myItem17 as NSManagedObject)
+            let fetchResults7 = try getContext.fetch(fetchRequest7)
+            for myItem7 in fetchResults7
+            {
+                self.getContext.delete(myItem7 as NSManagedObject)
+            }
         }
-
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
         
-        let fetchRequest18 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskContext")
+        saveContext()
+        
+        let fetchRequest8 = NSFetchRequest<MeetingSupportingDocs>(entityName: "MeetingSupportingDocs")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performAndWait
-            {
-                let fetchResults18 = (try? self.managedObjectContext!.fetch(fetchRequest18)) as? [TaskContext]
-
-        for myItem18 in fetchResults18!
+        do
         {
-            self.managedObjectContext!.delete(myItem18 as NSManagedObject)
+            let fetchResults8 = try getContext.fetch(fetchRequest8)
+            for myItem8 in fetchResults8
+            {
+                self.getContext.delete(myItem8 as NSManagedObject)
+            }
         }
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
         
-        let fetchRequest19 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskUpdates")
+        saveContext()
+        
+        let fetchRequest9 = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        managedObjectContext!.performAndWait
-            {
-                let fetchResults19 = (try? self.managedObjectContext!.fetch(fetchRequest19)) as? [TaskUpdates]
-
-        for myItem19 in fetchResults19!
+        do
         {
-            self.managedObjectContext!.delete(myItem19 as NSManagedObject)
-        }
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
-        
-        let fetchRequest21 = NSFetchRequest<NSFetchRequestResult>(entityName: "TaskPredecessor")
-        
-        managedObjectContext!.performAndWait
+            let fetchResults9 = try getContext.fetch(fetchRequest9)
+            for myItem9 in fetchResults9
             {
-                let fetchResults21 = (try? self.managedObjectContext!.fetch(fetchRequest21)) as? [TaskPredecessor]
-
-        for myItem21 in fetchResults21!
+                self.getContext.delete(myItem9 as NSManagedObject)
+            }
+        }
+        catch
         {
-            self.managedObjectContext!.delete(myItem21 as NSManagedObject)
-        }
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+            print("Error occurred during execution: \(error)")
         }
         
-        let fetchRequest22 = NSFetchRequest<NSFetchRequestResult>(entityName: "Team")
+        saveContext()
         
-        managedObjectContext!.performAndWait
-            {
-                let fetchResults22 = (try? self.managedObjectContext!.fetch(fetchRequest22)) as? [Team]
-
-        for myItem22 in fetchResults22!
+        let fetchRequest10 = NSFetchRequest<Panes>(entityName: "Panes")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
         {
-            self.managedObjectContext!.delete(myItem22 as NSManagedObject)
-        }
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
-        
-        let fetchRequest23 = NSFetchRequest<NSFetchRequestResult>(entityName: "ProjectNote")
-        
-        managedObjectContext!.performAndWait
+            let fetchResults10 = try getContext.fetch(fetchRequest10)
+            for myItem10 in fetchResults10
             {
-                let fetchResults23 = (try? self.managedObjectContext!.fetch(fetchRequest23)) as? [ProjectNote]
-
-        for myItem23 in fetchResults23!
+                self.getContext.delete(myItem10 as NSManagedObject)
+            }
+        }
+        catch
         {
-            self.managedObjectContext!.delete(myItem23 as NSManagedObject)
-        }
-
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+            print("Error occurred during execution: \(error)")
         }
         
-        let fetchRequest24 = NSFetchRequest<NSFetchRequestResult>(entityName: "Context1_1")
+        saveContext()
         
-        managedObjectContext!.performAndWait
-            {
-                let fetchResults24 = (try? self.managedObjectContext!.fetch(fetchRequest24)) as? [Context1_1]
-                
-        for myItem24 in fetchResults24!
+        let fetchRequest11 = NSFetchRequest<Projects>(entityName: "Projects")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
         {
-            self.managedObjectContext!.delete(myItem24 as NSManagedObject)
-        }
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
-        
-        let fetchRequest25 = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDItem")
-        
-        managedObjectContext!.performAndWait
+            let fetchResults11 = try getContext.fetch(fetchRequest11)
+            for myItem11 in fetchResults11
             {
-                let fetchResults25 = (try? self.managedObjectContext!.fetch(fetchRequest25)) as? [GTDItem]
-
-        for myItem25 in fetchResults25!
+                self.getContext.delete(myItem11 as NSManagedObject)
+            }
+        }
+        catch
         {
-            self.managedObjectContext!.delete(myItem25 as NSManagedObject)
-        }
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+            print("Error occurred during execution: \(error)")
         }
         
-        let fetchRequest26 = NSFetchRequest<NSFetchRequestResult>(entityName: "GTDLevel")
+        saveContext()
         
-        managedObjectContext!.performAndWait
-            {
-                let fetchResults26 = (try? self.managedObjectContext!.fetch(fetchRequest26)) as? [GTDLevel]
-
-        for myItem26 in fetchResults26!
+        let fetchRequest12 = NSFetchRequest<ProjectTeamMembers>(entityName: "ProjectTeamMembers")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
         {
-            self.managedObjectContext!.delete(myItem26 as NSManagedObject)
-        }
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
-        
-        let fetchRequest27 = NSFetchRequest<NSFetchRequestResult>(entityName: "ProcessedEmails")
-        
-        managedObjectContext!.performAndWait
+            let fetchResults12 = try getContext.fetch(fetchRequest12)
+            for myItem12 in fetchResults12
             {
-                let fetchResults27 = (try? self.managedObjectContext!.fetch(fetchRequest27)) as? [ProcessedEmails]
-                
-                for myItem27 in fetchResults27!
-                {
-                    self.managedObjectContext!.delete(myItem27 as NSManagedObject)
-                }
-                
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                self.getContext.delete(myItem12 as NSManagedObject)
+            }
         }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+        
+        let fetchRequest14 = NSFetchRequest<Roles>(entityName: "Roles")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        
+        do
+        {
+            let fetchResults14 = try getContext.fetch(fetchRequest14)
+            for myItem14 in fetchResults14
+            {
+                self.getContext.delete(myItem14 as NSManagedObject)
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+        
+        let fetchRequest15 = NSFetchRequest<Stages>(entityName: "Stages")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults15 = try getContext.fetch(fetchRequest15)
+            for myItem15 in fetchResults15
+            {
+                self.getContext.delete(myItem15 as NSManagedObject)
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+        
+        let fetchRequest16 = NSFetchRequest<Task>(entityName: "Task")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults16 = try getContext.fetch(fetchRequest16)
+            for myItem16 in fetchResults16
+            {
+                self.getContext.delete(myItem16 as NSManagedObject)
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+        
+        let fetchRequest17 = NSFetchRequest<TaskAttachment>(entityName: "TaskAttachment")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults17 = try getContext.fetch(fetchRequest17)
+            for myItem17 in fetchResults17
+            {
+                self.getContext.delete(myItem17 as NSManagedObject)
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+        
+        let fetchRequest18 = NSFetchRequest<TaskContext>(entityName: "TaskContext")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults18 = try getContext.fetch(fetchRequest18)
+            for myItem18 in fetchResults18
+            {
+                self.getContext.delete(myItem18 as NSManagedObject)
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+        
+        let fetchRequest19 = NSFetchRequest<TaskUpdates>(entityName: "TaskUpdates")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults19 = try getContext.fetch(fetchRequest19)
+            for myItem19 in fetchResults19
+            {
+                self.getContext.delete(myItem19 as NSManagedObject)
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+        
+        let fetchRequest21 = NSFetchRequest<TaskPredecessor>(entityName: "TaskPredecessor")
+        
+        do
+        {
+            let fetchResults21 = try getContext.fetch(fetchRequest21)
+            for myItem21 in fetchResults21
+            {
+                self.getContext.delete(myItem21 as NSManagedObject)
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+        
+        let fetchRequest22 = NSFetchRequest<Team>(entityName: "Team")
+        
+        do
+        {
+            let fetchResults22 = try getContext.fetch(fetchRequest22)
+            for myItem22 in fetchResults22
+            {
+                self.getContext.delete(myItem22 as NSManagedObject)
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+        
+        let fetchRequest23 = NSFetchRequest<ProjectNote>(entityName: "ProjectNote")
+        
+        do
+        {
+            let fetchResults23 = try getContext.fetch(fetchRequest23)
+            for myItem23 in fetchResults23
+            {
+                self.getContext.delete(myItem23 as NSManagedObject)
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+        
+        let fetchRequest24 = NSFetchRequest<Context1_1>(entityName: "Context1_1")
+        
+        do
+        {
+            let fetchResults24 = try getContext.fetch(fetchRequest24)
+            for myItem24 in fetchResults24
+            {
+                self.getContext.delete(myItem24 as NSManagedObject)
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+        
+        let fetchRequest25 = NSFetchRequest<GTDItem>(entityName: "GTDItem")
+        
+        do
+        {
+            let fetchResults25 = try getContext.fetch(fetchRequest25)
+            for myItem25 in fetchResults25
+            {
+                self.getContext.delete(myItem25 as NSManagedObject)
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+        
+        let fetchRequest26 = NSFetchRequest<GTDLevel>(entityName: "GTDLevel")
+        
+        do
+        {
+            let fetchResults26 = try getContext.fetch(fetchRequest26)
+            for myItem26 in fetchResults26
+            {
+                self.getContext.delete(myItem26 as NSManagedObject)
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+        
+        let fetchRequest27 = NSFetchRequest<ProcessedEmails>(entityName: "ProcessedEmails")
+        
+        do
+        {
+            let fetchResults27 = try getContext.fetch(fetchRequest27)
+            for myItem27 in fetchResults27
+            {
+                self.getContext.delete(myItem27 as NSManagedObject)
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
 
-        let fetchRequest28 = NSFetchRequest<NSFetchRequestResult>(entityName: "Outline")
+        let fetchRequest28 = NSFetchRequest<Outline>(entityName: "Outline")
         
-        managedObjectContext!.performAndWait
+        do
+        {
+            let fetchResults28 = try getContext.fetch(fetchRequest28)
+            for myItem28 in fetchResults28
             {
-                let fetchResults28 = (try? self.managedObjectContext!.fetch(fetchRequest28)) as? [Outline]
-                
-                for myItem28 in fetchResults28!
-                {
-                    self.managedObjectContext!.delete(myItem28 as NSManagedObject)
-                }
-                
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                self.getContext.delete(myItem28 as NSManagedObject)
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
         }
         
-        let fetchRequest29 = NSFetchRequest<NSFetchRequestResult>(entityName: "OutlineDetails")
+        saveContext()
         
-        managedObjectContext!.performAndWait
+        let fetchRequest29 = NSFetchRequest<OutlineDetails>(entityName: "OutlineDetails")
+        
+        do
+        {
+            let fetchResults29 = try getContext.fetch(fetchRequest29)
+            for myItem29 in fetchResults29
             {
-                let fetchResults29 = (try? self.managedObjectContext!.fetch(fetchRequest29)) as? [OutlineDetails]
-                
-                for myItem29 in fetchResults29!
-                {
-                    self.managedObjectContext!.delete(myItem29 as NSManagedObject)
-                }
-                
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+                self.getContext.delete(myItem29 as NSManagedObject)
+            }
         }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
     }
 
     func saveProcessedEmail(_ emailID: String, emailType: String, processedDate: Date, updateTime: Date = Date(), updateType: String = "CODE")
@@ -7468,7 +6942,7 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         if myEmailItems.count == 0
         { // Add
-            myEmail = NSEntityDescription.insertNewObject(forEntityName: "ProcessedEmails", into: self.managedObjectContext!) as! ProcessedEmails
+            myEmail = NSEntityDescription.insertNewObject(forEntityName: "ProcessedEmails", into: getContext) as! ProcessedEmails
             myEmail.emailID = emailID
             myEmail.emailType = emailType
             myEmail.processedDate = processedDate
@@ -7503,28 +6977,14 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
             }
         }
         
-        managedObjectContext!.perform
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
         
         myCloudDB.saveProcessedEmailsRecordToCloudKit(myEmail)
     }
     
     func replaceProcessedEmail(_ emailID: String, emailType: String, processedDate: Date, updateTime: Date = Date(), updateType: String = "CODE")
     {
-        managedObjectContext!.perform
-            {
-        let myEmail = NSEntityDescription.insertNewObject(forEntityName: "ProcessedEmails", into: self.managedObjectContext!) as! ProcessedEmails
+        let myEmail = NSEntityDescription.insertNewObject(forEntityName: "ProcessedEmails", into: getContext) as! ProcessedEmails
         myEmail.emailID = emailID
         myEmail.emailType = emailType
         myEmail.processedDate = processedDate
@@ -7540,17 +7000,7 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
             myEmail.updateType = updateType
         }
 
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
     }
     
     func deleteProcessedEmail(_ emailID: String)
@@ -7566,25 +7016,12 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
             myEmail.updateType = "Delete"
         }
         
-        managedObjectContext!.performAndWait
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
-
+        saveContext()
     }
     
     func getProcessedEmail(_ emailID: String)->[ProcessedEmails]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "ProcessedEmails")
+        let fetchRequest = NSFetchRequest<ProcessedEmails>(entityName: "ProcessedEmails")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -7594,9 +7031,16 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [ProcessedEmails]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
 
     func saveOutline(_ outlineID: Int, parentID: Int, parentType: String, title: String, status: String, updateTime: Date = Date(), updateType: String = "CODE")
@@ -7607,7 +7051,7 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         if myOutlineItems.count == 0
         { // Add
-            myOutline = NSEntityDescription.insertNewObject(forEntityName: "Outline", into: self.managedObjectContext!) as! Outline
+            myOutline = NSEntityDescription.insertNewObject(forEntityName: "Outline", into: getContext) as! Outline
             myOutline.outlineID = outlineID as NSNumber?
             myOutline.parentID = parentID as NSNumber?
             myOutline.parentType = parentType
@@ -7646,56 +7090,32 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
             }
         }
         
-        managedObjectContext!.perform
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
         
         myCloudDB.saveOutlineRecordToCloudKit(myOutline)
     }
     
     func replaceOutline(_ outlineID: Int, parentID: Int, parentType: String, title: String, status: String, updateTime: Date = Date(), updateType: String = "CODE")
     {
-        managedObjectContext!.perform
-            {
-                let myOutline = NSEntityDescription.insertNewObject(forEntityName: "Outline", into: self.managedObjectContext!) as! Outline
-                myOutline.outlineID = outlineID as NSNumber?
-                myOutline.parentID = parentID as NSNumber?
-                myOutline.parentType = parentType
-                myOutline.title = title
-                myOutline.status = status
-                
-                if updateType == "CODE"
-                {
-                    myOutline.updateTime = Date()
-                    myOutline.updateType = "Add"
-                }
-                else
-                {
-                    myOutline.updateTime = updateTime
-                    myOutline.updateType = updateType
-                }
-                
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+        let myOutline = NSEntityDescription.insertNewObject(forEntityName: "Outline", into: getContext) as! Outline
+        myOutline.outlineID = outlineID as NSNumber?
+        myOutline.parentID = parentID as NSNumber?
+        myOutline.parentType = parentType
+        myOutline.title = title
+        myOutline.status = status
+        
+        if updateType == "CODE"
+        {
+            myOutline.updateTime = Date()
+            myOutline.updateType = "Add"
         }
+        else
+        {
+            myOutline.updateTime = updateTime
+            myOutline.updateType = updateType
+        }
+        
+        saveContext()
     }
     
     func deleteOutline(_ outlineID: Int)
@@ -7710,26 +7130,12 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
             myOutline.updateTime = Date()
             myOutline.updateType = "Delete"
         }
-        
-        managedObjectContext!.performAndWait
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
-        
+        saveContext()
     }
     
     func getOutline(_ outlineID: Int)->[Outline]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "Outline")
+        let fetchRequest = NSFetchRequest<Outline>(entityName: "Outline")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -7739,9 +7145,16 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [Outline]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
 
     func saveOutlineDetail(_ outlineID: Int, lineID: Int, lineOrder: Int, parentLine: Int, lineText: String, lineType: String, checkBoxValue: Bool, updateTime: Date = Date(), updateType: String = "CODE")
@@ -7752,7 +7165,7 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         
         if myOutlineItems.count == 0
         { // Add
-            myOutline = NSEntityDescription.insertNewObject(forEntityName: "OutlineDetails", into: self.managedObjectContext!) as! OutlineDetails
+            myOutline = NSEntityDescription.insertNewObject(forEntityName: "OutlineDetails", into: getContext) as! OutlineDetails
             myOutline.outlineID = outlineID as NSNumber?
             myOutline.lineID = lineID as NSNumber?
             myOutline.lineOrder = lineOrder as NSNumber?
@@ -7795,58 +7208,34 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
             }
         }
         
-        managedObjectContext!.perform
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
+        saveContext()
         
         myCloudDB.saveOutlineDetailsRecordToCloudKit(myOutline)
     }
     
     func replaceOutlineDetails(_ outlineID: Int, lineID: Int, lineOrder: Int, parentLine: Int, lineText: String, lineType: String, checkBoxValue: Bool, updateTime: Date = Date(), updateType: String = "CODE")
     {
-        managedObjectContext!.perform
-            {
-                let myOutline = NSEntityDescription.insertNewObject(forEntityName: "OutlineDetails", into: self.managedObjectContext!) as! OutlineDetails
-                myOutline.outlineID = outlineID as NSNumber?
-                myOutline.lineID = lineID as NSNumber?
-                myOutline.lineOrder = lineOrder as NSNumber?
-                myOutline.parentLine = parentLine as NSNumber?
-                myOutline.lineText = lineText
-                myOutline.lineType = lineType
-                myOutline.checkBoxValue = checkBoxValue as NSNumber?
-                
-                if updateType == "CODE"
-                {
-                    myOutline.updateTime = Date()
-                    myOutline.updateType = "Add"
-                }
-                else
-                {
-                    myOutline.updateTime = updateTime
-                    myOutline.updateType = updateType
-                }
-                
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
+        let myOutline = NSEntityDescription.insertNewObject(forEntityName: "OutlineDetails", into: getContext) as! OutlineDetails
+        myOutline.outlineID = outlineID as NSNumber?
+        myOutline.lineID = lineID as NSNumber?
+        myOutline.lineOrder = lineOrder as NSNumber?
+        myOutline.parentLine = parentLine as NSNumber?
+        myOutline.lineText = lineText
+        myOutline.lineType = lineType
+        myOutline.checkBoxValue = checkBoxValue as NSNumber?
+        
+        if updateType == "CODE"
+        {
+            myOutline.updateTime = Date()
+            myOutline.updateType = "Add"
         }
+        else
+        {
+            myOutline.updateTime = updateTime
+            myOutline.updateType = updateType
+        }
+        
+        saveContext()
     }
     
     func deleteOutlineDetails(_ outlineID: Int, lineID: Int)
@@ -7862,25 +7251,12 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
             myOutline.updateType = "Delete"
         }
         
-        managedObjectContext!.performAndWait
-            {
-                do
-                {
-                    try self.managedObjectContext!.save()
-                }
-                catch let error as NSError
-                {
-                    NSLog("Unresolved error \(error), \(error.userInfo), \(error.localizedDescription)")
-                    
-                    print("Failure to save context: \(error)")
-                }
-        }
-        
+        saveContext()
     }
     
     func getOutlineDetails(_ outlineID: Int, lineID: Int)->[OutlineDetails]
     {
-        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "OutlineDetails")
+        let fetchRequest = NSFetchRequest<OutlineDetails>(entityName: "OutlineDetails")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -7890,8 +7266,15 @@ func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = 
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
-        let fetchResults = (try? managedObjectContext!.fetch(fetchRequest)) as? [OutlineDetails]
-        
-        return fetchResults!
+        do
+        {
+            let fetchResults = try getContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
     }
 }
