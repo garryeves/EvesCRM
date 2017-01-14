@@ -74,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "EvesCRM/coreDatabase.swift"
-            timestampString = "505985417.866048"
+            timestampString = "506056729.35469"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1912"
-            endingLineNumber = "1912"
+            startingLineNumber = "1911"
+            endingLineNumber = "1911"
             landmarkName = "saveTask(_:inTitle:inDetails:inDueDate:inStartDate:inStatus:inPriority:inEnergyLevel:inEstimatedTime:inEstimatedTimeType:inProjectID:inCompletionDate:inRepeatInterval:inRepeatType:inRepeatBase:inFlagged:inUrgency:inTeamID:inUpdateTime:inUpdateType:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -202,11 +202,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "EvesCRM/coreDatabase.swift"
-            timestampString = "505985417.866048"
+            timestampString = "506056729.35469"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4498"
-            endingLineNumber = "4498"
+            startingLineNumber = "4497"
+            endingLineNumber = "4497"
             landmarkName = "clearDeletedItems()"
             landmarkType = "7">
          </BreakpointContent>
@@ -224,6 +224,22 @@
             startingLineNumber = "51"
             endingLineNumber = "51"
             landmarkName = "init()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "EvesCRM/coreDatabase.swift"
+            timestampString = "506056729.35469"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "5293"
+            endingLineNumber = "5293"
+            landmarkName = "replaceTeam(_:inName:inStatus:inNote:inType:inPredecessor:inExternalID:inUpdateTime:inUpdateType:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

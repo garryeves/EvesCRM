@@ -42,21 +42,21 @@ class coreDatabase: NSObject
         return container
     }()
     
-    private var getContext: NSManagedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+    private var objectContext: NSManagedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
     
     override init()
     {
         super.init()
-        getContext = persistentContainer.viewContext
+        objectContext = persistentContainer.viewContext
     }
     
-    func saveContext ()
+    func saveContext()
     {
-        if getContext.hasChanges
+        if objectContext.hasChanges
         {
             do
             {
-                try getContext.save()
+                try objectContext.save()
             }
             catch
             {
@@ -70,7 +70,7 @@ class coreDatabase: NSObject
     
     func refreshObject(_ objectID: NSManagedObject)
     {
-        getContext.refresh(objectID, mergeChanges: true)
+        objectContext.refresh(objectID, mergeChanges: true)
     }
     
     func getOpenProjectsForGTDItem(_ inGTDItemID: Int, inTeamID: Int)->[Projects]
@@ -91,7 +91,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -118,7 +118,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -145,7 +145,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults[0].projectID as Int
         }
         catch
@@ -172,7 +172,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults[0].gTDItemID as! Int
         }
         catch
@@ -196,7 +196,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -213,7 +213,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults.count
         }
         catch
@@ -235,7 +235,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -257,7 +257,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             for myStage in fetchResults
             {
                 myStage.updateTime = Date()
@@ -288,7 +288,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             for myItem in fetchResults
             {
                 retVal = myItem.roleID as Int
@@ -309,8 +309,7 @@ class coreDatabase: NSObject
         var mySelectedRole: Roles
         if myRoles.count == 0
         {
-            
-            mySelectedRole = NSEntityDescription.insertNewObject(forEntityName: "Roles", into: getContext) as! Roles
+            mySelectedRole = Roles(context: objectContext)
         
             // Get the role number
             mySelectedRole.roleID = NSNumber(value: getNextID("Roles"))
@@ -358,7 +357,7 @@ class coreDatabase: NSObject
         var mySelectedRole: Roles
         if myRoles.count == 0
         {
-            mySelectedRole = NSEntityDescription.insertNewObject(forEntityName: "Roles", into: getContext) as! Roles
+            mySelectedRole = Roles(context: objectContext)
             
             // Get the role number
             mySelectedRole.roleID = NSNumber(value: roleID)
@@ -380,7 +379,7 @@ class coreDatabase: NSObject
 
     func replaceRole(_ roleName: String, teamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE", roleID: Int = 0)
     {
-        let mySelectedRole = NSEntityDescription.insertNewObject(forEntityName: "Roles", into: getContext) as! Roles
+        let mySelectedRole = Roles(context: objectContext)
                     
         // Get the role number
         mySelectedRole.roleID = NSNumber(value: roleID)
@@ -412,7 +411,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -434,7 +433,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -456,7 +455,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             for myStage in fetchResults
             {
                 myStage.updateTime = Date()
@@ -480,7 +479,7 @@ class coreDatabase: NSObject
         let myProjectTeamRecords = getTeamMemberRecord(inProjectID, inPersonName: inPersonName)
         if myProjectTeamRecords.count == 0
         { // Add
-            myProjectTeam = NSEntityDescription.insertNewObject(forEntityName: "ProjectTeamMembers", into: getContext) as! ProjectTeamMembers
+            myProjectTeam = ProjectTeamMembers(context: objectContext)
             myProjectTeam.projectID = NSNumber(value: inProjectID)
             myProjectTeam.teamMember = inPersonName
             myProjectTeam.roleID = NSNumber(value: inRoleID)
@@ -521,7 +520,7 @@ class coreDatabase: NSObject
 
     func replaceTeamMember(_ inProjectID: Int, inRoleID: Int, inPersonName: String, inNotes: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        let myProjectTeam = NSEntityDescription.insertNewObject(forEntityName: "ProjectTeamMembers", into: getContext) as! ProjectTeamMembers
+        let myProjectTeam = ProjectTeamMembers(context: objectContext)
         myProjectTeam.projectID = NSNumber(value: inProjectID)
         myProjectTeam.teamMember = inPersonName
         myProjectTeam.roleID = NSNumber(value: inRoleID)
@@ -553,7 +552,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             for myStage in fetchResults
             {
                 myStage.updateTime = Date()
@@ -582,7 +581,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -606,7 +605,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -649,7 +648,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -676,7 +675,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -697,7 +696,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             if fetchResults.count == 0
             {
                 return ""
@@ -726,7 +725,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             if fetchResults.count == 0
             {
                 return ""
@@ -755,7 +754,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -772,7 +771,7 @@ class coreDatabase: NSObject
 
         if getDecodeValue(inCodeKey) == ""
         { // Add
-            myDecode = NSEntityDescription.insertNewObject(forEntityName: "Decodes", into: getContext) as! Decodes
+            myDecode = Decodes(context: objectContext)
             
             myDecode.decode_name = inCodeKey
             myDecode.decode_value = inCodeValue
@@ -799,7 +798,7 @@ class coreDatabase: NSObject
             // Execute the fetch request, and cast the results to an array of  objects
             do
             {
-                let myDecodes = try getContext.fetch(fetchRequest)
+                let myDecodes = try objectContext.fetch(fetchRequest)
                 myDecode = myDecodes[0]
                 myDecode.decode_value = inCodeValue
                 myDecode.decodeType = inCodeType
@@ -828,7 +827,7 @@ class coreDatabase: NSObject
     
     func replaceDecodeValue(_ inCodeKey: String, inCodeValue: String, inCodeType: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        let myDecode = NSEntityDescription.insertNewObject(forEntityName: "Decodes", into: getContext) as! Decodes
+        let myDecode = Decodes(context: objectContext)
             
         myDecode.decode_name = inCodeKey
         myDecode.decode_value = inCodeValue
@@ -861,7 +860,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -883,7 +882,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -903,7 +902,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             for myStage in fetchResults
             {
                 myStage.updateTime = Date()
@@ -936,7 +935,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             if fetchResults.count > 0
             {
                 return true
@@ -967,7 +966,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -985,7 +984,7 @@ class coreDatabase: NSObject
         
         if myStages.count == 0
         {
-            myStage = NSEntityDescription.insertNewObject(forEntityName: "Stages", into: getContext) as! Stages
+            myStage = Stages(context: objectContext)
         
             myStage.stageDescription = stageDesc
             myStage.teamID = NSNumber(value: teamID)
@@ -1025,7 +1024,7 @@ class coreDatabase: NSObject
     
     func replaceStage(_ stageDesc: String, teamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        let myStage = NSEntityDescription.insertNewObject(forEntityName: "Stages", into: getContext) as! Stages
+        let myStage = Stages(context: objectContext)
             
         myStage.stageDescription = stageDesc
         myStage.teamID = NSNumber(value: teamID)
@@ -1055,7 +1054,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             for myStage in fetchResults
             {
                 myStage.updateTime = Date()
@@ -1092,7 +1091,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -1123,7 +1122,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -1154,7 +1153,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -1185,7 +1184,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -1216,7 +1215,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -1247,7 +1246,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -1270,7 +1269,7 @@ class coreDatabase: NSObject
         
         if myAgendas.count == 0
         {
-            myAgenda = NSEntityDescription.insertNewObject(forEntityName: "MeetingAgenda", into: getContext) as! MeetingAgenda
+            myAgenda = MeetingAgenda(context: objectContext)
             myAgenda.meetingID = inMeetingID
             myAgenda.previousMeetingID = inPreviousMeetingID
             myAgenda.name = inName
@@ -1324,7 +1323,7 @@ class coreDatabase: NSObject
 
     func replaceAgenda(_ inMeetingID: String, inPreviousMeetingID : String, inName: String, inChair: String, inMinutes: String, inLocation: String, inStartTime: Date, inEndTime: Date, inMinutesType: String, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        let myAgenda = NSEntityDescription.insertNewObject(forEntityName: "MeetingAgenda", into: getContext) as! MeetingAgenda
+        let myAgenda = MeetingAgenda(context: objectContext)
         myAgenda.meetingID = inMeetingID
         myAgenda.previousMeetingID = inPreviousMeetingID
         myAgenda.name = inName
@@ -1366,7 +1365,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -1393,7 +1392,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -1420,7 +1419,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             for myResult in fetchResults
             {
                 myResult.previousMeetingID = inPreviousMeetingID
@@ -1456,7 +1455,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -1483,7 +1482,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -1510,7 +1509,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -1537,7 +1536,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -1564,7 +1563,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -1582,7 +1581,7 @@ class coreDatabase: NSObject
         
         if myMeeting.count == 0
         {
-            myPerson = NSEntityDescription.insertNewObject(forEntityName: "MeetingAttendees", into: getContext) as! MeetingAttendees
+            myPerson = MeetingAttendees(context: objectContext)
             myPerson.meetingID = meetingID
             myPerson.name = name
             myPerson.attendenceStatus = status
@@ -1625,7 +1624,7 @@ class coreDatabase: NSObject
 
     func replaceAttendee(_ meetingID: String, name: String, email: String,  type: String, status: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        let myPerson = NSEntityDescription.insertNewObject(forEntityName: "MeetingAttendees", into: getContext) as! MeetingAttendees
+        let myPerson = MeetingAttendees(context: objectContext)
         myPerson.meetingID = meetingID
         myPerson.name = name
         myPerson.attendenceStatus = status
@@ -1658,7 +1657,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             for myMeeting in fetchResults
             {
                 myMeeting.updateTime = Date()
@@ -1694,7 +1693,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -1712,7 +1711,7 @@ class coreDatabase: NSObject
         
         if myAgendaItem.count == 0
         {
-            mySavedItem = NSEntityDescription.insertNewObject(forEntityName: "MeetingAgendaItem", into: getContext) as! MeetingAgendaItem
+            mySavedItem = MeetingAgendaItem(context: objectContext)
             mySavedItem.meetingID = meetingID
             mySavedItem.agendaID = agendaID as NSNumber?
             mySavedItem.actualEndTime = actualEndTime
@@ -1769,7 +1768,7 @@ class coreDatabase: NSObject
     
     func replaceAgendaItem(_ meetingID: String, actualEndTime: Date, actualStartTime: Date, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int, owner: String, title: String, agendaID: Int, meetingOrder: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        let mySavedItem = NSEntityDescription.insertNewObject(forEntityName: "MeetingAgendaItem", into: getContext) as! MeetingAgendaItem
+        let mySavedItem = MeetingAgendaItem(context: objectContext)
         mySavedItem.meetingID = meetingID
         mySavedItem.agendaID = agendaID as NSNumber?
         mySavedItem.actualEndTime = actualEndTime
@@ -1817,7 +1816,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -1840,7 +1839,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             for myMeeting in fetchResults
             {
                 myMeeting.updateTime = Date()
@@ -1868,7 +1867,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             for myMeeting in fetchResults
             {
                 myMeeting.updateTime = Date()
@@ -1891,7 +1890,7 @@ class coreDatabase: NSObject
         
         if myTasks.count == 0
         { // Add
-            myTask = NSEntityDescription.insertNewObject(forEntityName: "Task", into: getContext) as! Task
+            myTask = Task(context: objectContext)
             myTask.taskID = NSNumber(value: inTaskID)
             myTask.title = inTitle
             myTask.details = inDetails
@@ -1964,7 +1963,7 @@ class coreDatabase: NSObject
     
     func replaceTask(_ inTaskID: Int, inTitle: String, inDetails: String, inDueDate: Date, inStartDate: Date, inStatus: String, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int, inEstimatedTimeType: String, inProjectID: Int, inCompletionDate: Date, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inFlagged: Bool, inUrgency: String, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        let myTask = NSEntityDescription.insertNewObject(forEntityName: "Task", into: getContext) as! Task
+        let myTask = Task(context: objectContext)
         myTask.taskID = NSNumber(value: inTaskID)
         myTask.title = inTitle
         myTask.details = inDetails
@@ -2010,7 +2009,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             for myStage in fetchResults
             {
                 myStage.updateTime = Date()
@@ -2044,7 +2043,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -2068,7 +2067,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -2092,7 +2091,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -2116,7 +2115,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -2140,7 +2139,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -2169,7 +2168,7 @@ class coreDatabase: NSObject
         
         do
         {
-            fetchContextResults = try getContext.fetch(fetchContext)
+            fetchContextResults = try objectContext.fetch(fetchContext)
         }
         catch
         {
@@ -2190,7 +2189,7 @@ class coreDatabase: NSObject
         
         do
         {
-            fetchTaskResults = try getContext.fetch(fetchTask)
+            fetchTaskResults = try objectContext.fetch(fetchTask)
         }
         catch
         {
@@ -2237,7 +2236,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -2261,7 +2260,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -2285,7 +2284,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -2302,7 +2301,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults.count
         }
         catch
@@ -2326,7 +2325,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -2344,7 +2343,7 @@ class coreDatabase: NSObject
         
         if myTasks.count == 0
         { // Add
-            myTask = NSEntityDescription.insertNewObject(forEntityName: "TaskPredecessor", into: getContext) as! TaskPredecessor
+            myTask = TaskPredecessor(context: objectContext)
             myTask.taskID = NSNumber(value: inTaskID)
             myTask.predecessorID = NSNumber(value: inPredecessorID)
             myTask.predecessorType = inPredecessorType
@@ -2385,7 +2384,7 @@ class coreDatabase: NSObject
     
     func replacePredecessorTask(_ inTaskID: Int, inPredecessorID: Int, inPredecessorType: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        let myTask = NSEntityDescription.insertNewObject(forEntityName: "TaskPredecessor", into: getContext) as! TaskPredecessor
+        let myTask = TaskPredecessor(context: objectContext)
         myTask.taskID = NSNumber(value: inTaskID)
         myTask.predecessorID = NSNumber(value: inPredecessorID)
         myTask.predecessorType = inPredecessorType
@@ -2415,7 +2414,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             for myStage in fetchResults
             {
                 myStage.predecessorType = inPredecessorType
@@ -2448,7 +2447,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             for myStage in fetchResults
             {
                 myStage.updateTime = Date()
@@ -2473,7 +2472,7 @@ class coreDatabase: NSObject
         
         if myProjects.count == 0
         { // Add
-            myProject = NSEntityDescription.insertNewObject(forEntityName: "Projects", into: getContext) as! Projects
+            myProject = Projects(context: objectContext)
             myProject.projectID = NSNumber(value: inProjectID)
             myProject.projectEndDate = inProjectEndDate
             myProject.projectName = inProjectName
@@ -2533,7 +2532,7 @@ class coreDatabase: NSObject
     func replaceProject(_ inProjectID: Int, inProjectEndDate: Date, inProjectName: String, inProjectStartDate: Date, inProjectStatus: String, inReviewFrequency: Int, inLastReviewDate: Date, inGTDItemID: Int, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
 
-        let myProject = NSEntityDescription.insertNewObject(forEntityName: "Projects", into: getContext) as! Projects
+        let myProject = Projects(context: objectContext)
         myProject.projectID = NSNumber(value: inProjectID)
         myProject.projectEndDate = inProjectEndDate
         myProject.projectName = inProjectName
@@ -2596,7 +2595,7 @@ class coreDatabase: NSObject
 
         if getTaskUpdate(inTaskID, updateDate: inUpdateDate).count == 0
         {
-            myTaskUpdate = NSEntityDescription.insertNewObject(forEntityName: "TaskUpdates", into: getContext) as! TaskUpdates
+            myTaskUpdate = TaskUpdates(context: objectContext)
             myTaskUpdate.taskID = NSNumber(value: inTaskID)
             myTaskUpdate.updateDate = inUpdateDate
             myTaskUpdate.details = inDetails
@@ -2619,7 +2618,7 @@ class coreDatabase: NSObject
     func replaceTaskUpdate(_ inTaskID: Int, inDetails: String, inSource: String, inUpdateDate: Date = Date(), inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
 
-        let myTaskUpdate = NSEntityDescription.insertNewObject(forEntityName: "TaskUpdates", into: getContext) as! TaskUpdates
+        let myTaskUpdate = TaskUpdates(context: objectContext)
         myTaskUpdate.taskID = NSNumber(value: inTaskID)
         myTaskUpdate.updateDate = inUpdateDate
         myTaskUpdate.details = inDetails
@@ -2656,7 +2655,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -2684,7 +2683,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -2702,7 +2701,7 @@ class coreDatabase: NSObject
         
         if myContexts.count == 0
         { // Add
-            myContext = NSEntityDescription.insertNewObject(forEntityName: "Context", into: getContext) as! Context
+            myContext = Context(context: objectContext)
             myContext.contextID = NSNumber(value: inContextID)
             myContext.name = inName
             myContext.email = inEmail
@@ -2753,7 +2752,7 @@ class coreDatabase: NSObject
     
     func replaceContext(_ inContextID: Int, inName: String, inEmail: String, inAutoEmail: String, inParentContext: Int, inStatus: String, inPersonID: Int, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        let myContext = NSEntityDescription.insertNewObject(forEntityName: "Context", into: getContext) as! Context
+        let myContext = Context(context: objectContext)
         myContext.contextID = NSNumber(value: inContextID)
         myContext.name = inName
         myContext.email = inEmail
@@ -2819,7 +2818,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -2843,7 +2842,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -2867,7 +2866,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -2891,7 +2890,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -2918,7 +2917,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -2928,14 +2927,14 @@ class coreDatabase: NSObject
         }
     }
     
-    func getContextCount()->Int
+    func objectContextCount()->Int
     {
         let fetchRequest = NSFetchRequest<Context>(entityName: "Context")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults.count
         }
         catch
@@ -2953,7 +2952,7 @@ class coreDatabase: NSObject
         
         if myContexts.count == 0
         { // Add
-            myContext = NSEntityDescription.insertNewObject(forEntityName: "TaskContext", into: getContext) as! TaskContext
+            myContext = TaskContext(context: objectContext)
             myContext.contextID = NSNumber(value: inContextID)
             myContext.taskID = NSNumber(value: inTaskID)
             if inUpdateType == "CODE"
@@ -2993,7 +2992,7 @@ class coreDatabase: NSObject
     func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
 
-        let myContext = NSEntityDescription.insertNewObject(forEntityName: "TaskContext", into: getContext) as! TaskContext
+        let myContext = TaskContext(context: objectContext)
         myContext.contextID = NSNumber(value: inContextID)
         myContext.taskID = NSNumber(value: inTaskID)
         if inUpdateType == "CODE"
@@ -3021,7 +3020,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             for myStage in fetchResults
             {
                 myStage.updateTime = Date()
@@ -3050,7 +3049,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -3074,7 +3073,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -3098,7 +3097,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -3116,7 +3115,7 @@ class coreDatabase: NSObject
         
         if myGTDItems.count == 0
         { // Add
-            myGTD = NSEntityDescription.insertNewObject(forEntityName: "GTDLevel", into: getContext) as! GTDLevel
+            myGTD = GTDLevel(context: objectContext)
             myGTD.gTDLevel = inGTDLevel as NSNumber?
             myGTD.levelName = inLevelName
             myGTD.teamID = inTeamID as NSNumber?
@@ -3156,7 +3155,7 @@ class coreDatabase: NSObject
     
     func replaceGTDLevel(_ inGTDLevel: Int, inLevelName: String, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        let myGTD = NSEntityDescription.insertNewObject(forEntityName: "GTDLevel", into: getContext) as! GTDLevel
+        let myGTD = GTDLevel(context: objectContext)
         myGTD.gTDLevel = inGTDLevel as NSNumber?
         myGTD.levelName = inLevelName
         myGTD.teamID = inTeamID as NSNumber?
@@ -3189,7 +3188,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -3215,7 +3214,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             if fetchResults.count > 0
             { // Update
                 myGTD = fetchResults[0]
@@ -3271,7 +3270,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -3289,7 +3288,7 @@ class coreDatabase: NSObject
         
         if myGTDItems.count == 0
         { // Add
-            myGTD = NSEntityDescription.insertNewObject(forEntityName: "GTDItem", into: getContext) as! GTDItem
+            myGTD = GTDItem(context: objectContext)
             myGTD.gTDItemID = inGTDItemID as NSNumber?
             myGTD.gTDParentID = inParentID as NSNumber?
             myGTD.title = inTitle
@@ -3345,7 +3344,7 @@ class coreDatabase: NSObject
     
     func replaceGTDItem(_ inGTDItemID: Int, inParentID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String, inLastReviewDate: Date, inReviewFrequency: Int, inReviewPeriod: String, inPredecessor: Int, inGTDLevel: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        let myGTD = NSEntityDescription.insertNewObject(forEntityName: "GTDItem", into: getContext) as! GTDItem
+        let myGTD = GTDItem(context: objectContext)
         myGTD.gTDItemID = inGTDItemID as NSNumber?
         myGTD.gTDParentID = inParentID as NSNumber?
         myGTD.title = inTitle
@@ -3400,7 +3399,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -3424,7 +3423,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -3441,7 +3440,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults.count
         }
         catch
@@ -3465,7 +3464,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -3489,7 +3488,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -3506,7 +3505,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             for myStage in fetchResults
             {
                 myStage.updateTime = Date()
@@ -3525,7 +3524,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of objects
         do
         {
-            let fetchResults2 = try getContext.fetch(fetchRequest2)
+            let fetchResults2 = try objectContext.fetch(fetchRequest2)
             for myStage in fetchResults2
             {
                 myStage.updateTime = Date()
@@ -3547,7 +3546,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             for myPane in fetchResults
             {
                 myPane.updateTime = Date()
@@ -3584,7 +3583,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -3614,7 +3613,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -3636,7 +3635,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             for myPane in fetchResults
             {
                 if myPane.pane_visible == true
@@ -3677,7 +3676,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             for myPane in fetchResults
             {
                 myPane.pane_order = NSNumber(value: paneOrder)
@@ -3707,7 +3706,7 @@ class coreDatabase: NSObject
         if myPanes.count == 0
         {
             // Save the details of this pane to the database
-            myPane = NSEntityDescription.insertNewObject(forEntityName: "Panes", into: getContext) as! Panes
+            myPane = Panes(context: objectContext)
         
             myPane.pane_name = inPaneName
             myPane.pane_available = inPaneAvailable as NSNumber
@@ -3752,7 +3751,7 @@ class coreDatabase: NSObject
     
     func replacePane(_ inPaneName:String, inPaneAvailable: Bool, inPaneVisible: Bool, inPaneOrder: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        let myPane = NSEntityDescription.insertNewObject(forEntityName: "Panes", into: getContext) as! Panes
+        let myPane = Panes(context: objectContext)
             
         myPane.pane_name = inPaneName
         myPane.pane_available = inPaneAvailable as NSNumber
@@ -3779,7 +3778,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults1 = try getContext.fetch(fetchRequest1)
+            let fetchResults1 = try objectContext.fetch(fetchRequest1)
             for myMeeting in fetchResults1
             {
                 myMeeting.updateTime = Date()
@@ -3798,7 +3797,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults2 = try getContext.fetch(fetchRequest2)
+            let fetchResults2 = try objectContext.fetch(fetchRequest2)
             for myMeeting2 in fetchResults2
             {
                 myMeeting2.updateTime = Date()
@@ -3816,7 +3815,7 @@ class coreDatabase: NSObject
 
         do
         {
-            let fetchResults3 = try getContext.fetch(fetchRequest3)
+            let fetchResults3 = try objectContext.fetch(fetchRequest3)
             for myMeeting3 in fetchResults3
             {
                 myMeeting3.updateTime = Date()
@@ -3834,7 +3833,7 @@ class coreDatabase: NSObject
         
         do
         {
-            let fetchResults4 = try getContext.fetch(fetchRequest4)
+            let fetchResults4 = try objectContext.fetch(fetchRequest4)
             for myMeeting4 in fetchResults4
             {
                 myMeeting4.updateTime = Date()
@@ -3852,7 +3851,7 @@ class coreDatabase: NSObject
         
         do
         {
-            let fetchResults6 = try getContext.fetch(fetchRequest6)
+            let fetchResults6 = try objectContext.fetch(fetchRequest6)
             for myMeeting6 in fetchResults6
             {
                 myMeeting6.updateTime = Date()
@@ -3874,7 +3873,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults1 = try getContext.fetch(fetchRequest1)
+            let fetchResults1 = try objectContext.fetch(fetchRequest1)
             for myMeeting in fetchResults1
             {
                 myMeeting.updateTime = Date()
@@ -3893,7 +3892,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults2 = try getContext.fetch(fetchRequest2)
+            let fetchResults2 = try objectContext.fetch(fetchRequest2)
             for myMeeting2 in fetchResults2
             {
                 myMeeting2.updateTime = Date()
@@ -3911,7 +3910,7 @@ class coreDatabase: NSObject
         
         do
         {
-            let fetchResults3 = try getContext.fetch(fetchRequest3)
+            let fetchResults3 = try objectContext.fetch(fetchRequest3)
             for myMeeting3 in fetchResults3
             {
                 myMeeting3.updateTime = Date()
@@ -3928,7 +3927,7 @@ class coreDatabase: NSObject
         
         do
         {
-            let fetchResults4 = try getContext.fetch(fetchRequest4)
+            let fetchResults4 = try objectContext.fetch(fetchRequest4)
             for myMeeting4 in fetchResults4
             {
                 myMeeting4.updateTime = Date()
@@ -3957,7 +3956,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -3981,7 +3980,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -3995,7 +3994,7 @@ class coreDatabase: NSObject
     {
         var myTask: MeetingTasks
         
-        myTask = NSEntityDescription.insertNewObject(forEntityName: "MeetingTasks", into: getContext) as! MeetingTasks
+        myTask = MeetingTasks(context: objectContext)
         myTask.agendaID = NSNumber(value: inAgendaID)
         myTask.meetingID = inMeetingID
         myTask.taskID = NSNumber(value: inTaskID)
@@ -4009,7 +4008,7 @@ class coreDatabase: NSObject
     
     func replaceAgendaTask(_ inAgendaID: Int, inMeetingID: String, inTaskID: Int)
     {
-        let myTask = NSEntityDescription.insertNewObject(forEntityName: "MeetingTasks", into: getContext) as! MeetingTasks
+        let myTask = MeetingTasks(context: objectContext)
         myTask.agendaID = NSNumber(value: inAgendaID)
         myTask.meetingID = inMeetingID
         myTask.taskID = NSNumber(value: inTaskID)
@@ -4033,7 +4032,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -4051,7 +4050,7 @@ class coreDatabase: NSObject
         
         if myTaskList.count == 0
         {
-            myTask = NSEntityDescription.insertNewObject(forEntityName: "MeetingTasks", into: getContext) as! MeetingTasks
+            myTask = MeetingTasks(context: objectContext)
             myTask.agendaID = NSNumber(value: agendaID)
             myTask.meetingID = meetingID
             myTask.taskID = NSNumber(value: taskID)
@@ -4089,7 +4088,7 @@ class coreDatabase: NSObject
 
     func replaceMeetingTask(_ agendaID: Int, meetingID: String, taskID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        let myTask = NSEntityDescription.insertNewObject(forEntityName: "MeetingTasks", into: getContext) as! MeetingTasks
+        let myTask = MeetingTasks(context: objectContext)
         myTask.agendaID = NSNumber(value: agendaID)
         myTask.meetingID = meetingID
         myTask.taskID = NSNumber(value: taskID)
@@ -4120,7 +4119,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             for myItem in fetchResults
             {
                 myItem.updateTime = Date()
@@ -4148,7 +4147,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -4165,7 +4164,7 @@ class coreDatabase: NSObject
                 // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             for myItem in fetchResults
             {
                 myItem.updateTime = Date()
@@ -4184,7 +4183,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults2 = try getContext.fetch(fetchRequest2)
+            let fetchResults2 = try objectContext.fetch(fetchRequest2)
             for myItem2 in fetchResults2
             {
                 myItem2.updateTime = Date()
@@ -4211,10 +4210,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults2 = try getContext.fetch(fetchRequest2)
+            let fetchResults2 = try objectContext.fetch(fetchRequest2)
             for myItem2 in fetchResults2
             {
-                getContext.delete(myItem2 as NSManagedObject)
+                objectContext.delete(myItem2 as NSManagedObject)
             }
             saveContext()
         }
@@ -4231,10 +4230,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults3 = try getContext.fetch(fetchRequest3)
+            let fetchResults3 = try objectContext.fetch(fetchRequest3)
             for myItem3 in fetchResults3
             {
-                getContext.delete(myItem3 as NSManagedObject)
+                objectContext.delete(myItem3 as NSManagedObject)
             }
             
             saveContext()
@@ -4252,10 +4251,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults5 = try getContext.fetch(fetchRequest5)
+            let fetchResults5 = try objectContext.fetch(fetchRequest5)
             for myItem5 in fetchResults5
             {
-                getContext.delete(myItem5 as NSManagedObject)
+                objectContext.delete(myItem5 as NSManagedObject)
             }
             
             saveContext()
@@ -4273,10 +4272,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults6 = try getContext.fetch(fetchRequest6)
+            let fetchResults6 = try objectContext.fetch(fetchRequest6)
             for myItem6 in fetchResults6
             {
-                getContext.delete(myItem6 as NSManagedObject)
+                objectContext.delete(myItem6 as NSManagedObject)
             }
             
             saveContext()
@@ -4294,10 +4293,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults7 = try getContext.fetch(fetchRequest7)
+            let fetchResults7 = try objectContext.fetch(fetchRequest7)
             for myItem7 in fetchResults7
             {
-                getContext.delete(myItem7 as NSManagedObject)
+                objectContext.delete(myItem7 as NSManagedObject)
             }
             
             saveContext()
@@ -4315,10 +4314,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults8 = try getContext.fetch(fetchRequest8)
+            let fetchResults8 = try objectContext.fetch(fetchRequest8)
             for myItem8 in fetchResults8
             {
-                getContext.delete(myItem8 as NSManagedObject)
+                objectContext.delete(myItem8 as NSManagedObject)
             }
             
             saveContext()
@@ -4336,10 +4335,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults9 = try getContext.fetch(fetchRequest9)
+            let fetchResults9 = try objectContext.fetch(fetchRequest9)
             for myItem9 in fetchResults9
             {
-                getContext.delete(myItem9 as NSManagedObject)
+                objectContext.delete(myItem9 as NSManagedObject)
             }
             
             saveContext()
@@ -4357,10 +4356,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults10 = try getContext.fetch(fetchRequest10)
+            let fetchResults10 = try objectContext.fetch(fetchRequest10)
             for myItem10 in fetchResults10
             {
-                getContext.delete(myItem10 as NSManagedObject)
+                objectContext.delete(myItem10 as NSManagedObject)
             }
             
             saveContext()
@@ -4378,10 +4377,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults11 = try getContext.fetch(fetchRequest11)
+            let fetchResults11 = try objectContext.fetch(fetchRequest11)
             for myItem11 in fetchResults11
             {
-                getContext.delete(myItem11 as NSManagedObject)
+                objectContext.delete(myItem11 as NSManagedObject)
             }
             
             saveContext()
@@ -4399,10 +4398,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults12 = try getContext.fetch(fetchRequest12)
+            let fetchResults12 = try objectContext.fetch(fetchRequest12)
             for myItem12 in fetchResults12
             {
-                getContext.delete(myItem12 as NSManagedObject)
+                objectContext.delete(myItem12 as NSManagedObject)
             }
             
             saveContext()
@@ -4420,10 +4419,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults14 = try getContext.fetch(fetchRequest14)
+            let fetchResults14 = try objectContext.fetch(fetchRequest14)
             for myItem14 in fetchResults14
             {
-                getContext.delete(myItem14 as NSManagedObject)
+                objectContext.delete(myItem14 as NSManagedObject)
             }
             
             saveContext()
@@ -4441,10 +4440,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults15 = try getContext.fetch(fetchRequest15)
+            let fetchResults15 = try objectContext.fetch(fetchRequest15)
             for myItem15 in fetchResults15
             {
-                getContext.delete(myItem15 as NSManagedObject)
+                objectContext.delete(myItem15 as NSManagedObject)
             }
             
             saveContext()
@@ -4462,10 +4461,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults16 = try getContext.fetch(fetchRequest16)
+            let fetchResults16 = try objectContext.fetch(fetchRequest16)
             for myItem16 in fetchResults16
             {
-                getContext.delete(myItem16 as NSManagedObject)
+                objectContext.delete(myItem16 as NSManagedObject)
             }
             
             saveContext()
@@ -4483,10 +4482,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults17 = try getContext.fetch(fetchRequest17)
+            let fetchResults17 = try objectContext.fetch(fetchRequest17)
             for myItem17 in fetchResults17
             {
-                getContext.delete(myItem17 as NSManagedObject)
+                objectContext.delete(myItem17 as NSManagedObject)
             }
             
             saveContext()
@@ -4504,10 +4503,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults18 = try getContext.fetch(fetchRequest18)
+            let fetchResults18 = try objectContext.fetch(fetchRequest18)
             for myItem18 in fetchResults18
             {
-                getContext.delete(myItem18 as NSManagedObject)
+                objectContext.delete(myItem18 as NSManagedObject)
             }
             
             saveContext()
@@ -4525,10 +4524,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults19 = try getContext.fetch(fetchRequest19)
+            let fetchResults19 = try objectContext.fetch(fetchRequest19)
             for myItem19 in fetchResults19
             {
-                getContext.delete(myItem19 as NSManagedObject)
+                objectContext.delete(myItem19 as NSManagedObject)
             }
             
             saveContext()
@@ -4544,10 +4543,10 @@ class coreDatabase: NSObject
         fetchRequest21.predicate = predicate
         do
         {
-            let fetchResults21 = try getContext.fetch(fetchRequest21)
+            let fetchResults21 = try objectContext.fetch(fetchRequest21)
             for myItem21 in fetchResults21
             {
-                getContext.delete(myItem21 as NSManagedObject)
+                objectContext.delete(myItem21 as NSManagedObject)
             }
             
             saveContext()
@@ -4563,10 +4562,10 @@ class coreDatabase: NSObject
         fetchRequest22.predicate = predicate
         do
         {
-            let fetchResults22 = try getContext.fetch(fetchRequest22)
+            let fetchResults22 = try objectContext.fetch(fetchRequest22)
             for myItem22 in fetchResults22
             {
-                getContext.delete(myItem22 as NSManagedObject)
+                objectContext.delete(myItem22 as NSManagedObject)
             }
             
             saveContext()
@@ -4582,10 +4581,10 @@ class coreDatabase: NSObject
         fetchRequest23.predicate = predicate
         do
         {
-            let fetchResults23 = try getContext.fetch(fetchRequest23)
+            let fetchResults23 = try objectContext.fetch(fetchRequest23)
             for myItem23 in fetchResults23
             {
-                getContext.delete(myItem23 as NSManagedObject)
+                objectContext.delete(myItem23 as NSManagedObject)
             }
             
             saveContext()
@@ -4601,10 +4600,10 @@ class coreDatabase: NSObject
         fetchRequest24.predicate = predicate
         do
         {
-            let fetchResults24 = try getContext.fetch(fetchRequest24)
+            let fetchResults24 = try objectContext.fetch(fetchRequest24)
             for myItem24 in fetchResults24
             {
-                getContext.delete(myItem24 as NSManagedObject)
+                objectContext.delete(myItem24 as NSManagedObject)
             }
             
             saveContext()
@@ -4620,10 +4619,10 @@ class coreDatabase: NSObject
         fetchRequest25.predicate = predicate
         do
         {
-            let fetchResults25 = try getContext.fetch(fetchRequest25)
+            let fetchResults25 = try objectContext.fetch(fetchRequest25)
             for myItem25 in fetchResults25
             {
-                getContext.delete(myItem25 as NSManagedObject)
+                objectContext.delete(myItem25 as NSManagedObject)
             }
             
             saveContext()
@@ -4639,10 +4638,10 @@ class coreDatabase: NSObject
         fetchRequest26.predicate = predicate
         do
         {
-            let fetchResults26 = try getContext.fetch(fetchRequest26)
+            let fetchResults26 = try objectContext.fetch(fetchRequest26)
             for myItem26 in fetchResults26
             {
-                getContext.delete(myItem26 as NSManagedObject)
+                objectContext.delete(myItem26 as NSManagedObject)
             }
             
             saveContext()
@@ -4658,10 +4657,10 @@ class coreDatabase: NSObject
         fetchRequest27.predicate = predicate
         do
         {
-            let fetchResults27 = try getContext.fetch(fetchRequest27)
+            let fetchResults27 = try objectContext.fetch(fetchRequest27)
             for myItem27 in fetchResults27
             {
-                getContext.delete(myItem27 as NSManagedObject)
+                objectContext.delete(myItem27 as NSManagedObject)
             }
             
             saveContext()
@@ -4677,10 +4676,10 @@ class coreDatabase: NSObject
         fetchRequest28.predicate = predicate
         do
         {
-            let fetchResults28 = try getContext.fetch(fetchRequest28)
+            let fetchResults28 = try objectContext.fetch(fetchRequest28)
             for myItem28 in fetchResults28
             {
-                getContext.delete(myItem28 as NSManagedObject)
+                objectContext.delete(myItem28 as NSManagedObject)
             }
             
             saveContext()
@@ -4696,10 +4695,10 @@ class coreDatabase: NSObject
         fetchRequest29.predicate = predicate
         do
         {
-            let fetchResults29 = try getContext.fetch(fetchRequest29)
+            let fetchResults29 = try objectContext.fetch(fetchRequest29)
             for myItem29 in fetchResults29
             {
-                getContext.delete(myItem29 as NSManagedObject)
+                objectContext.delete(myItem29 as NSManagedObject)
             }
             
             saveContext()
@@ -4722,7 +4721,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults2 = try getContext.fetch(fetchRequest2)
+            let fetchResults2 = try objectContext.fetch(fetchRequest2)
             for myItem2 in fetchResults2
             {
                 myItem2.updateType = ""
@@ -4743,7 +4742,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults3 = try getContext.fetch(fetchRequest3)
+            let fetchResults3 = try objectContext.fetch(fetchRequest3)
             for myItem3 in fetchResults3
             {
                 myItem3.updateType = ""
@@ -4764,7 +4763,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults5 = try getContext.fetch(fetchRequest5)
+            let fetchResults5 = try objectContext.fetch(fetchRequest5)
             for myItem5 in fetchResults5
             {
                 myItem5.updateType = ""
@@ -4785,7 +4784,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults6 = try getContext.fetch(fetchRequest6)
+            let fetchResults6 = try objectContext.fetch(fetchRequest6)
             for myItem6 in fetchResults6
             {
                 myItem6.updateType = ""
@@ -4806,7 +4805,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults7 = try getContext.fetch(fetchRequest7)
+            let fetchResults7 = try objectContext.fetch(fetchRequest7)
             for myItem7 in fetchResults7
             {
                 myItem7.updateType = ""
@@ -4827,7 +4826,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults8 = try getContext.fetch(fetchRequest8)
+            let fetchResults8 = try objectContext.fetch(fetchRequest8)
             for myItem8 in fetchResults8
             {
                 myItem8.updateType = ""
@@ -4848,7 +4847,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults9 = try getContext.fetch(fetchRequest9)
+            let fetchResults9 = try objectContext.fetch(fetchRequest9)
             for myItem9 in fetchResults9
             {
                 myItem9.updateType = ""
@@ -4869,7 +4868,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults10 = try getContext.fetch(fetchRequest10)
+            let fetchResults10 = try objectContext.fetch(fetchRequest10)
             for myItem10 in fetchResults10
             {
                 myItem10.updateType = ""
@@ -4890,7 +4889,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults11 = try getContext.fetch(fetchRequest11)
+            let fetchResults11 = try objectContext.fetch(fetchRequest11)
             for myItem11 in fetchResults11
             {
                 myItem11.updateType = ""
@@ -4911,7 +4910,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults12 = try getContext.fetch(fetchRequest12)
+            let fetchResults12 = try objectContext.fetch(fetchRequest12)
             for myItem12 in fetchResults12
             {
                 myItem12.updateType = ""
@@ -4932,7 +4931,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults14 = try getContext.fetch(fetchRequest14)
+            let fetchResults14 = try objectContext.fetch(fetchRequest14)
             for myItem14 in fetchResults14
             {
                 myItem14.updateType = ""
@@ -4953,7 +4952,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults15 = try getContext.fetch(fetchRequest15)
+            let fetchResults15 = try objectContext.fetch(fetchRequest15)
             for myItem15 in fetchResults15
             {
                 myItem15.updateType = ""
@@ -4976,7 +4975,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults16 = try getContext.fetch(fetchRequest16)
+            let fetchResults16 = try objectContext.fetch(fetchRequest16)
             for myItem16 in fetchResults16
             {
                 myItem16.updateType = ""
@@ -4997,7 +4996,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults17 = try getContext.fetch(fetchRequest17)
+            let fetchResults17 = try objectContext.fetch(fetchRequest17)
             for myItem17 in fetchResults17
             {
                 myItem17.updateType = ""
@@ -5018,7 +5017,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults18 = try getContext.fetch(fetchRequest18)
+            let fetchResults18 = try objectContext.fetch(fetchRequest18)
             for myItem18 in fetchResults18
             {
                 myItem18.updateType = ""
@@ -5039,7 +5038,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults19 = try getContext.fetch(fetchRequest19)
+            let fetchResults19 = try objectContext.fetch(fetchRequest19)
             for myItem19 in fetchResults19
             {
                 myItem19.updateType = ""
@@ -5060,7 +5059,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem object
         do
         {
-            let fetchResults21 = try getContext.fetch(fetchRequest21)
+            let fetchResults21 = try objectContext.fetch(fetchRequest21)
             for myItem21 in fetchResults21
             {
                 myItem21.updateType = ""
@@ -5080,7 +5079,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults22 = try getContext.fetch(fetchRequest22)
+            let fetchResults22 = try objectContext.fetch(fetchRequest22)
             for myItem22 in fetchResults22
             {
                 myItem22.updateType = ""
@@ -5100,7 +5099,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults23 = try getContext.fetch(fetchRequest23)
+            let fetchResults23 = try objectContext.fetch(fetchRequest23)
             for myItem23 in fetchResults23
             {
                 myItem23.updateType = ""
@@ -5120,7 +5119,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults24 = try getContext.fetch(fetchRequest24)
+            let fetchResults24 = try objectContext.fetch(fetchRequest24)
             for myItem24 in fetchResults24
             {
                 myItem24.updateType = ""
@@ -5140,7 +5139,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults25 = try getContext.fetch(fetchRequest25)
+            let fetchResults25 = try objectContext.fetch(fetchRequest25)
             for myItem25 in fetchResults25
             {
                 myItem25.updateType = ""
@@ -5160,7 +5159,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults26 = try getContext.fetch(fetchRequest26)
+            let fetchResults26 = try objectContext.fetch(fetchRequest26)
             for myItem26 in fetchResults26
             {
                 myItem26.updateType = ""
@@ -5180,7 +5179,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults27 = try getContext.fetch(fetchRequest27)
+            let fetchResults27 = try objectContext.fetch(fetchRequest27)
             for myItem27 in fetchResults27
             {
                 myItem27.updateType = ""
@@ -5200,7 +5199,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults28 = try getContext.fetch(fetchRequest28)
+            let fetchResults28 = try objectContext.fetch(fetchRequest28)
             for myItem28 in fetchResults28
             {
                 myItem28.updateType = ""
@@ -5220,7 +5219,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults29 = try getContext.fetch(fetchRequest29)
+            let fetchResults29 = try objectContext.fetch(fetchRequest29)
             for myItem29 in fetchResults29
             {
                 myItem29.updateType = ""
@@ -5242,7 +5241,7 @@ class coreDatabase: NSObject
         
         if myTeams.count == 0
         { // Add
-            myTeam = NSEntityDescription.insertNewObject(forEntityName: "Team", into: getContext) as! Team
+            myTeam = Team(context: objectContext)
             myTeam.teamID = NSNumber(value: inTeamID)
             myTeam.name = inName
             myTeam.status = inStatus
@@ -5290,7 +5289,7 @@ class coreDatabase: NSObject
     
     func replaceTeam(_ inTeamID: Int, inName: String, inStatus: String, inNote: String, inType: String, inPredecessor: Int, inExternalID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        let myTeam = NSEntityDescription.insertNewObject(forEntityName: "Team", into: getContext) as! Team
+        let myTeam = Team(context: persistentContainer.viewContext)
         myTeam.teamID = NSNumber(value: inTeamID)
         myTeam.name = inName
         myTeam.status = inStatus
@@ -5327,7 +5326,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -5355,7 +5354,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -5383,7 +5382,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -5401,7 +5400,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults.count
         }
         catch
@@ -5418,10 +5417,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             for myItem in fetchResults
             {
-                getContext.delete(myItem as NSManagedObject)
+                objectContext.delete(myItem as NSManagedObject)
             }
             
             saveContext()
@@ -5436,10 +5435,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults2 = try getContext.fetch(fetchRequest2)
+            let fetchResults2 = try objectContext.fetch(fetchRequest2)
             for myItem2 in fetchResults2
             {
-                getContext.delete(myItem2 as NSManagedObject)
+                objectContext.delete(myItem2 as NSManagedObject)
             }
             
             saveContext()
@@ -5458,7 +5457,7 @@ class coreDatabase: NSObject
         
         if myTeams.count == 0
         { // Add
-            myProjectNote = NSEntityDescription.insertNewObject(forEntityName: "ProjectNote", into: getContext) as! ProjectNote
+            myProjectNote = ProjectNote(context: objectContext)
             myProjectNote.projectID = NSNumber(value: inProjectID)
             myProjectNote.note = inNote
 
@@ -5501,7 +5500,7 @@ class coreDatabase: NSObject
  
     func replaceProjectNote(_ inProjectID: Int, inNote: String, inReviewPeriod: String, inPredecessor: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
     {
-        let myProjectNote = NSEntityDescription.insertNewObject(forEntityName: "ProjectNote", into: getContext) as! ProjectNote
+        let myProjectNote = ProjectNote(context: objectContext)
         myProjectNote.projectID = NSNumber(value: inProjectID)
         myProjectNote.note = inNote
         
@@ -5535,7 +5534,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -5556,7 +5555,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             if fetchResults.count == 0
             {
                 // Create table entry
@@ -5590,7 +5589,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             if fetchResults.count > 0
             {
                 for myItem in fetchResults
@@ -5620,7 +5619,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             if fetchResults.count > 0
             {
                 for myItem in fetchResults
@@ -5656,7 +5655,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             if fetchResults.count > 0
             {
                 for myItem in fetchResults
@@ -5692,7 +5691,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             if fetchResults.count > 0
             {
                 for myItem in fetchResults
@@ -5722,7 +5721,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             if fetchResults.count > 0
             {
                 for myItem in fetchResults
@@ -5752,7 +5751,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             if fetchResults.count > 0
             {
                 for myItem in fetchResults
@@ -5783,7 +5782,7 @@ class coreDatabase: NSObject
         
         if myContexts.count == 0
         { // Add
-            myContext = NSEntityDescription.insertNewObject(forEntityName: "Context1_1", into: getContext) as! Context1_1
+            myContext = Context1_1(context: objectContext)
             myContext.contextID = contextID as NSNumber?
             myContext.predecessor = predecessor as NSNumber?
             myContext.contextType = contextType
@@ -5824,7 +5823,7 @@ class coreDatabase: NSObject
     
     func replaceContext1_1(_ contextID: Int, predecessor: Int, contextType: String, updateTime: Date = Date(), updateType: String = "CODE")
     {
-        let myContext = NSEntityDescription.insertNewObject(forEntityName: "Context1_1", into: getContext) as! Context1_1
+        let myContext = Context1_1(context: objectContext)
         myContext.contextID = contextID as NSNumber?
         myContext.predecessor = predecessor as NSNumber?
         myContext.contextType = contextType
@@ -5860,7 +5859,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -5885,10 +5884,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             for myItem in fetchResults
             {
-                getContext.delete(myItem as NSManagedObject)
+                objectContext.delete(myItem as NSManagedObject)
             }
             
             saveContext()
@@ -5914,10 +5913,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             for myItem in fetchResults
             {
-                getContext.delete(myItem as NSManagedObject)
+                objectContext.delete(myItem as NSManagedObject)
             }
             
             saveContext()
@@ -5952,7 +5951,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -5974,7 +5973,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -5996,7 +5995,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -6018,7 +6017,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -6040,7 +6039,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -6062,7 +6061,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -6084,7 +6083,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -6106,7 +6105,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -6128,7 +6127,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -6150,7 +6149,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -6172,7 +6171,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -6194,7 +6193,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -6216,7 +6215,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -6238,7 +6237,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -6260,7 +6259,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -6282,7 +6281,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -6304,7 +6303,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -6326,7 +6325,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -6348,7 +6347,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -6370,7 +6369,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -6392,7 +6391,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -6414,7 +6413,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -6436,7 +6435,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -6458,7 +6457,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -6480,7 +6479,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of  objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -6497,10 +6496,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults2 = try getContext.fetch(fetchRequest2)
+            let fetchResults2 = try objectContext.fetch(fetchRequest2)
             for myItem2 in fetchResults2
             {
-                self.getContext.delete(myItem2 as NSManagedObject)
+                self.objectContext.delete(myItem2 as NSManagedObject)
             }
         }
         catch
@@ -6515,10 +6514,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults3 = try getContext.fetch(fetchRequest3)
+            let fetchResults3 = try objectContext.fetch(fetchRequest3)
             for myItem3 in fetchResults3
             {
-                self.getContext.delete(myItem3 as NSManagedObject)
+                self.objectContext.delete(myItem3 as NSManagedObject)
             }
         }
         catch
@@ -6531,10 +6530,10 @@ class coreDatabase: NSObject
         let fetchRequest5 = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         do
         {
-            let fetchResults5 = try getContext.fetch(fetchRequest5)
+            let fetchResults5 = try objectContext.fetch(fetchRequest5)
             for myItem5 in fetchResults5
             {
-                self.getContext.delete(myItem5 as NSManagedObject)
+                self.objectContext.delete(myItem5 as NSManagedObject)
             }
         }
         catch
@@ -6549,10 +6548,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults6 = try getContext.fetch(fetchRequest6)
+            let fetchResults6 = try objectContext.fetch(fetchRequest6)
             for myItem6 in fetchResults6
             {
-                self.getContext.delete(myItem6 as NSManagedObject)
+                self.objectContext.delete(myItem6 as NSManagedObject)
             }
         }
         catch
@@ -6568,10 +6567,10 @@ class coreDatabase: NSObject
         
         do
         {
-            let fetchResults7 = try getContext.fetch(fetchRequest7)
+            let fetchResults7 = try objectContext.fetch(fetchRequest7)
             for myItem7 in fetchResults7
             {
-                self.getContext.delete(myItem7 as NSManagedObject)
+                self.objectContext.delete(myItem7 as NSManagedObject)
             }
         }
         catch
@@ -6586,10 +6585,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults8 = try getContext.fetch(fetchRequest8)
+            let fetchResults8 = try objectContext.fetch(fetchRequest8)
             for myItem8 in fetchResults8
             {
-                self.getContext.delete(myItem8 as NSManagedObject)
+                self.objectContext.delete(myItem8 as NSManagedObject)
             }
         }
         catch
@@ -6604,10 +6603,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults9 = try getContext.fetch(fetchRequest9)
+            let fetchResults9 = try objectContext.fetch(fetchRequest9)
             for myItem9 in fetchResults9
             {
-                self.getContext.delete(myItem9 as NSManagedObject)
+                self.objectContext.delete(myItem9 as NSManagedObject)
             }
         }
         catch
@@ -6622,10 +6621,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults10 = try getContext.fetch(fetchRequest10)
+            let fetchResults10 = try objectContext.fetch(fetchRequest10)
             for myItem10 in fetchResults10
             {
-                self.getContext.delete(myItem10 as NSManagedObject)
+                self.objectContext.delete(myItem10 as NSManagedObject)
             }
         }
         catch
@@ -6640,10 +6639,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults11 = try getContext.fetch(fetchRequest11)
+            let fetchResults11 = try objectContext.fetch(fetchRequest11)
             for myItem11 in fetchResults11
             {
-                self.getContext.delete(myItem11 as NSManagedObject)
+                self.objectContext.delete(myItem11 as NSManagedObject)
             }
         }
         catch
@@ -6658,10 +6657,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults12 = try getContext.fetch(fetchRequest12)
+            let fetchResults12 = try objectContext.fetch(fetchRequest12)
             for myItem12 in fetchResults12
             {
-                self.getContext.delete(myItem12 as NSManagedObject)
+                self.objectContext.delete(myItem12 as NSManagedObject)
             }
         }
         catch
@@ -6677,10 +6676,10 @@ class coreDatabase: NSObject
         
         do
         {
-            let fetchResults14 = try getContext.fetch(fetchRequest14)
+            let fetchResults14 = try objectContext.fetch(fetchRequest14)
             for myItem14 in fetchResults14
             {
-                self.getContext.delete(myItem14 as NSManagedObject)
+                self.objectContext.delete(myItem14 as NSManagedObject)
             }
         }
         catch
@@ -6695,10 +6694,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults15 = try getContext.fetch(fetchRequest15)
+            let fetchResults15 = try objectContext.fetch(fetchRequest15)
             for myItem15 in fetchResults15
             {
-                self.getContext.delete(myItem15 as NSManagedObject)
+                self.objectContext.delete(myItem15 as NSManagedObject)
             }
         }
         catch
@@ -6713,10 +6712,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults16 = try getContext.fetch(fetchRequest16)
+            let fetchResults16 = try objectContext.fetch(fetchRequest16)
             for myItem16 in fetchResults16
             {
-                self.getContext.delete(myItem16 as NSManagedObject)
+                self.objectContext.delete(myItem16 as NSManagedObject)
             }
         }
         catch
@@ -6731,10 +6730,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults17 = try getContext.fetch(fetchRequest17)
+            let fetchResults17 = try objectContext.fetch(fetchRequest17)
             for myItem17 in fetchResults17
             {
-                self.getContext.delete(myItem17 as NSManagedObject)
+                self.objectContext.delete(myItem17 as NSManagedObject)
             }
         }
         catch
@@ -6749,10 +6748,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults18 = try getContext.fetch(fetchRequest18)
+            let fetchResults18 = try objectContext.fetch(fetchRequest18)
             for myItem18 in fetchResults18
             {
-                self.getContext.delete(myItem18 as NSManagedObject)
+                self.objectContext.delete(myItem18 as NSManagedObject)
             }
         }
         catch
@@ -6767,10 +6766,10 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults19 = try getContext.fetch(fetchRequest19)
+            let fetchResults19 = try objectContext.fetch(fetchRequest19)
             for myItem19 in fetchResults19
             {
-                self.getContext.delete(myItem19 as NSManagedObject)
+                self.objectContext.delete(myItem19 as NSManagedObject)
             }
         }
         catch
@@ -6784,10 +6783,10 @@ class coreDatabase: NSObject
         
         do
         {
-            let fetchResults21 = try getContext.fetch(fetchRequest21)
+            let fetchResults21 = try objectContext.fetch(fetchRequest21)
             for myItem21 in fetchResults21
             {
-                self.getContext.delete(myItem21 as NSManagedObject)
+                self.objectContext.delete(myItem21 as NSManagedObject)
             }
         }
         catch
@@ -6801,10 +6800,10 @@ class coreDatabase: NSObject
         
         do
         {
-            let fetchResults22 = try getContext.fetch(fetchRequest22)
+            let fetchResults22 = try objectContext.fetch(fetchRequest22)
             for myItem22 in fetchResults22
             {
-                self.getContext.delete(myItem22 as NSManagedObject)
+                self.objectContext.delete(myItem22 as NSManagedObject)
             }
         }
         catch
@@ -6818,10 +6817,10 @@ class coreDatabase: NSObject
         
         do
         {
-            let fetchResults23 = try getContext.fetch(fetchRequest23)
+            let fetchResults23 = try objectContext.fetch(fetchRequest23)
             for myItem23 in fetchResults23
             {
-                self.getContext.delete(myItem23 as NSManagedObject)
+                self.objectContext.delete(myItem23 as NSManagedObject)
             }
         }
         catch
@@ -6835,10 +6834,10 @@ class coreDatabase: NSObject
         
         do
         {
-            let fetchResults24 = try getContext.fetch(fetchRequest24)
+            let fetchResults24 = try objectContext.fetch(fetchRequest24)
             for myItem24 in fetchResults24
             {
-                self.getContext.delete(myItem24 as NSManagedObject)
+                self.objectContext.delete(myItem24 as NSManagedObject)
             }
         }
         catch
@@ -6852,10 +6851,10 @@ class coreDatabase: NSObject
         
         do
         {
-            let fetchResults25 = try getContext.fetch(fetchRequest25)
+            let fetchResults25 = try objectContext.fetch(fetchRequest25)
             for myItem25 in fetchResults25
             {
-                self.getContext.delete(myItem25 as NSManagedObject)
+                self.objectContext.delete(myItem25 as NSManagedObject)
             }
         }
         catch
@@ -6869,10 +6868,10 @@ class coreDatabase: NSObject
         
         do
         {
-            let fetchResults26 = try getContext.fetch(fetchRequest26)
+            let fetchResults26 = try objectContext.fetch(fetchRequest26)
             for myItem26 in fetchResults26
             {
-                self.getContext.delete(myItem26 as NSManagedObject)
+                self.objectContext.delete(myItem26 as NSManagedObject)
             }
         }
         catch
@@ -6886,10 +6885,10 @@ class coreDatabase: NSObject
         
         do
         {
-            let fetchResults27 = try getContext.fetch(fetchRequest27)
+            let fetchResults27 = try objectContext.fetch(fetchRequest27)
             for myItem27 in fetchResults27
             {
-                self.getContext.delete(myItem27 as NSManagedObject)
+                self.objectContext.delete(myItem27 as NSManagedObject)
             }
         }
         catch
@@ -6903,10 +6902,10 @@ class coreDatabase: NSObject
         
         do
         {
-            let fetchResults28 = try getContext.fetch(fetchRequest28)
+            let fetchResults28 = try objectContext.fetch(fetchRequest28)
             for myItem28 in fetchResults28
             {
-                self.getContext.delete(myItem28 as NSManagedObject)
+                self.objectContext.delete(myItem28 as NSManagedObject)
             }
         }
         catch
@@ -6920,10 +6919,10 @@ class coreDatabase: NSObject
         
         do
         {
-            let fetchResults29 = try getContext.fetch(fetchRequest29)
+            let fetchResults29 = try objectContext.fetch(fetchRequest29)
             for myItem29 in fetchResults29
             {
-                self.getContext.delete(myItem29 as NSManagedObject)
+                self.objectContext.delete(myItem29 as NSManagedObject)
             }
         }
         catch
@@ -6942,7 +6941,7 @@ class coreDatabase: NSObject
         
         if myEmailItems.count == 0
         { // Add
-            myEmail = NSEntityDescription.insertNewObject(forEntityName: "ProcessedEmails", into: getContext) as! ProcessedEmails
+            myEmail = ProcessedEmails(context: objectContext)
             myEmail.emailID = emailID
             myEmail.emailType = emailType
             myEmail.processedDate = processedDate
@@ -6984,7 +6983,7 @@ class coreDatabase: NSObject
     
     func replaceProcessedEmail(_ emailID: String, emailType: String, processedDate: Date, updateTime: Date = Date(), updateType: String = "CODE")
     {
-        let myEmail = NSEntityDescription.insertNewObject(forEntityName: "ProcessedEmails", into: getContext) as! ProcessedEmails
+        let myEmail = ProcessedEmails(context: objectContext)
         myEmail.emailID = emailID
         myEmail.emailType = emailType
         myEmail.processedDate = processedDate
@@ -7033,7 +7032,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -7051,7 +7050,7 @@ class coreDatabase: NSObject
         
         if myOutlineItems.count == 0
         { // Add
-            myOutline = NSEntityDescription.insertNewObject(forEntityName: "Outline", into: getContext) as! Outline
+            myOutline = Outline(context: objectContext)
             myOutline.outlineID = outlineID as NSNumber?
             myOutline.parentID = parentID as NSNumber?
             myOutline.parentType = parentType
@@ -7097,7 +7096,7 @@ class coreDatabase: NSObject
     
     func replaceOutline(_ outlineID: Int, parentID: Int, parentType: String, title: String, status: String, updateTime: Date = Date(), updateType: String = "CODE")
     {
-        let myOutline = NSEntityDescription.insertNewObject(forEntityName: "Outline", into: getContext) as! Outline
+        let myOutline = Outline(context: objectContext)
         myOutline.outlineID = outlineID as NSNumber?
         myOutline.parentID = parentID as NSNumber?
         myOutline.parentType = parentType
@@ -7147,7 +7146,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch
@@ -7165,7 +7164,7 @@ class coreDatabase: NSObject
         
         if myOutlineItems.count == 0
         { // Add
-            myOutline = NSEntityDescription.insertNewObject(forEntityName: "OutlineDetails", into: getContext) as! OutlineDetails
+            myOutline = OutlineDetails(context: objectContext)
             myOutline.outlineID = outlineID as NSNumber?
             myOutline.lineID = lineID as NSNumber?
             myOutline.lineOrder = lineOrder as NSNumber?
@@ -7215,7 +7214,7 @@ class coreDatabase: NSObject
     
     func replaceOutlineDetails(_ outlineID: Int, lineID: Int, lineOrder: Int, parentLine: Int, lineText: String, lineType: String, checkBoxValue: Bool, updateTime: Date = Date(), updateType: String = "CODE")
     {
-        let myOutline = NSEntityDescription.insertNewObject(forEntityName: "OutlineDetails", into: getContext) as! OutlineDetails
+        let myOutline = OutlineDetails(context: objectContext)
         myOutline.outlineID = outlineID as NSNumber?
         myOutline.lineID = lineID as NSNumber?
         myOutline.lineOrder = lineOrder as NSNumber?
@@ -7268,7 +7267,7 @@ class coreDatabase: NSObject
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
-            let fetchResults = try getContext.fetch(fetchRequest)
+            let fetchResults = try objectContext.fetch(fetchRequest)
             return fetchResults
         }
         catch

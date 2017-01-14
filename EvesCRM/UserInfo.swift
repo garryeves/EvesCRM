@@ -44,11 +44,11 @@ class UserInfo {
         
         let sem = DispatchSemaphore(value: 0);
         
-        container.accountStatus(completionHandler: {(accountStatus: CKAccountStatus, error: NSError? ) in
+        container.accountStatus(completionHandler: {(accountStatus: CKAccountStatus, error: Error? ) in
             returnStatus = accountStatus
             
             sem.signal()
-        } as! (CKAccountStatus, Error?) -> Void)
+        })
         
         sem.wait()
         
@@ -56,7 +56,7 @@ class UserInfo {
     }
 
   
-  func userID(_ completion: @escaping (_ userRecordID: CKRecordID?, _ error: NSError?)->()) {
+  func userID(_ completion: @escaping (_ userRecordID: CKRecordID?, _ error: Error?)->()) {
     if userRecordID != nil {
       completion(userRecordID, nil)
     } else {
@@ -65,7 +65,7 @@ class UserInfo {
         if recordID != nil {
           self.userRecordID = recordID
         }
-        completion(recordID, error as NSError?)
+        completion(recordID, error as Error?)
       }
     }
   }
@@ -94,7 +94,7 @@ NSLog("gre userinfo")
     }
   }
   
-  func findContacts(_ completion: (_ userInfos:[AnyObject]?, _ error: NSError?)->()) {
+  func findContacts(_ completion: (_ userInfos:[AnyObject]?, _ error: Error?)->()) {
     completion([CKRecordID](), nil)
   }
 }

@@ -34,7 +34,7 @@ fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
 
 
 protocol ModelDelegate {
-    func errorUpdating(_ error: NSError)
+    func errorUpdating(_ error: Error)
     func modelUpdated()
 }
 
@@ -285,13 +285,13 @@ class CloudKitInteraction
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Context", predicate: predicate)
         
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 self.updateContextRecord(record)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
     }
     
@@ -301,13 +301,13 @@ class CloudKitInteraction
 
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Decodes", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 self.updateDecodeRecord(record)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -318,13 +318,13 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "GTDItem", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 self.updateGTDItemRecord(record)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -335,13 +335,13 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "GTDLevel", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 self.updateGTDLevelRecord(record)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -352,13 +352,13 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 self.updateMeetingAgendaRecord(record)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -369,13 +369,13 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 self.updateMeetingAgendaItemRecord(record)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -386,13 +386,13 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingAttendees", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 self.updateMeetingAttendeesRecord(record)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -403,14 +403,14 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
            // for record in results!
             for _ in results!
             {
   //              self.updateMeetingSupportingDocsRecord(record)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -421,13 +421,13 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingTasks", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 self.updateMeetingTasksRecord(record)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -438,13 +438,13 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Panes", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 self.updatePanesRecord(record)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -455,13 +455,13 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 self.updateProjectsRecord(record)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -472,13 +472,13 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "ProjectTeamMembers", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 self.updateProjectTeamMembersRecord(record)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -489,13 +489,13 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Roles", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 self.updateRolesRecord(record)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -506,13 +506,13 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Stages", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 self.updateStagesRecord(record)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -523,13 +523,13 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Task", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 self.updateTaskRecord(record)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -540,14 +540,14 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskAttachment", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
          //   for record in results!
             for record in results!
             {
                 self.updateTaskAttachmentRecord(record)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -558,13 +558,13 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskContext", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 self.updateTaskContextRecord(record)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -575,13 +575,13 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskPredecessor", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 self.updateTaskPredecessorRecord(record)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -592,13 +592,13 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskUpdates", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 self.updateTaskUpdatesRecord(record)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -609,13 +609,13 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Team", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 self.updateTeamRecord(record)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -626,13 +626,13 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "ProcessedEmails", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 self.updateProcessedEmailsRecord(record)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -643,13 +643,13 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Outline", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 self.updateOutlineRecord(record)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -660,13 +660,13 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
         let query: CKQuery = CKQuery(recordType: "OutlineDetails", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 self.updateOutlineDetailsRecord(record)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -678,28 +678,28 @@ class CloudKitInteraction
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Context", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
         
         var myRecordList2: [CKRecordID] = Array()
         let predicate2: NSPredicate = NSPredicate(value: true)
         let query2: CKQuery = CKQuery(recordType: "Context1_1", predicate: predicate2)
-        privateDB.perform(query2, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query2, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList2.append(record.recordID)
             }
             self.performDelete(myRecordList2)
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         sem.wait()
     }
     
@@ -710,14 +710,14 @@ class CloudKitInteraction
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Decodes", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -729,14 +729,14 @@ class CloudKitInteraction
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "GTDItem", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         sem.wait()
     }
     
@@ -747,14 +747,14 @@ class CloudKitInteraction
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "GTDLevel", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         sem.wait()
     }
     
@@ -765,14 +765,14 @@ class CloudKitInteraction
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         sem.wait()
     }
     
@@ -783,14 +783,14 @@ class CloudKitInteraction
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         sem.wait()
     }
     
@@ -801,14 +801,14 @@ class CloudKitInteraction
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "MeetingAttendees", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         sem.wait()
     }
     
@@ -819,14 +819,14 @@ class CloudKitInteraction
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         sem.wait()
     }
     
@@ -837,14 +837,14 @@ class CloudKitInteraction
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "MeetingTasks", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         sem.wait()
     }
     
@@ -855,14 +855,14 @@ class CloudKitInteraction
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Panes", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         sem.wait()
     }
     
@@ -873,27 +873,27 @@ class CloudKitInteraction
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         sem.wait()
         
         var myRecordList2: [CKRecordID] = Array()
         let predicate2: NSPredicate = NSPredicate(value: true)
         let query2: CKQuery = CKQuery(recordType: "ProjectNote", predicate: predicate2)
-        privateDB.perform(query2, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query2, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList2.append(record.recordID)
             }
             self.performDelete(myRecordList2)
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         sem.wait()
     }
     
@@ -904,14 +904,14 @@ class CloudKitInteraction
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "ProjectTeamMembers", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         sem.wait()
     }
     
@@ -922,14 +922,14 @@ class CloudKitInteraction
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Roles", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         sem.wait()
     }
     
@@ -940,14 +940,14 @@ class CloudKitInteraction
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Stages", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         sem.wait()
     }
     
@@ -958,14 +958,14 @@ class CloudKitInteraction
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Task", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         sem.wait()
     }
     
@@ -976,14 +976,14 @@ class CloudKitInteraction
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "TaskAttachment", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         sem.wait()
     }
     
@@ -994,14 +994,14 @@ class CloudKitInteraction
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "TaskContext", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         sem.wait()
     }
     
@@ -1012,14 +1012,14 @@ class CloudKitInteraction
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "TaskPredecessor", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         sem.wait()
     }
     
@@ -1030,14 +1030,14 @@ class CloudKitInteraction
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "TaskUpdates", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         sem.wait()
     }
     
@@ -1048,14 +1048,14 @@ class CloudKitInteraction
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Team", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         sem.wait()
     }
     
@@ -1066,14 +1066,14 @@ class CloudKitInteraction
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "ProcessedEmails", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         sem.wait()
     }
  
@@ -1084,14 +1084,14 @@ class CloudKitInteraction
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Outline", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         sem.wait()
     }
     
@@ -1102,14 +1102,14 @@ class CloudKitInteraction
         var myRecordList: [CKRecordID] = Array()
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "OutlineDetails", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
             self.performDelete(myRecordList)
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         sem.wait()
     }
 
@@ -1146,7 +1146,7 @@ class CloudKitInteraction
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Context", predicate: predicate)
         var predecessor: Int = 0
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let contextID = record.object(forKey: "contextID") as! Int
@@ -1174,7 +1174,7 @@ class CloudKitInteraction
                 
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
     }
     
     func replaceDecodesInCoreData()
@@ -1187,13 +1187,13 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Decodes", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 self.updateDecodeRecord(record)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -1208,7 +1208,7 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "GTDItem", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let gTDItemID = record.object(forKey: "gTDItemID") as! Int
@@ -1228,7 +1228,7 @@ class CloudKitInteraction
                 myDatabaseConnection.replaceGTDItem(gTDItemID, inParentID: gTDParentID, inTitle: title, inStatus: status, inTeamID: teamID, inNote: note, inLastReviewDate: lastReviewDate, inReviewFrequency: reviewFrequency, inReviewPeriod: reviewPeriod, inPredecessor: predecessor, inGTDLevel: gTDLevel, inUpdateTime: updateTime, inUpdateType: updateType)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -1243,7 +1243,7 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "GTDLevel", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let gTDLevel = record.object(forKey: "gTDLevel") as! Int
@@ -1255,7 +1255,7 @@ class CloudKitInteraction
                 myDatabaseConnection.replaceGTDLevel(gTDLevel, inLevelName: levelName, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -1270,7 +1270,7 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let meetingID = record.object(forKey: "meetingID") as! String
@@ -1289,7 +1289,7 @@ class CloudKitInteraction
                 myDatabaseConnection.replaceAgenda(meetingID, inPreviousMeetingID : previousMeetingID, inName: name, inChair: chair, inMinutes: minutes, inLocation: location, inStartTime: startTime, inEndTime: endTime, inMinutesType: minutesType, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -1304,7 +1304,7 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let meetingID = record.object(forKey: "meetingID") as! String
@@ -1324,7 +1324,7 @@ class CloudKitInteraction
                 myDatabaseConnection.replaceAgendaItem(meetingID, actualEndTime: actualEndTime, actualStartTime: actualStartTime, status: status, decisionMade: decisionMade, discussionNotes: discussionNotes, timeAllocation: timeAllocation, owner: owner, title: title, agendaID: agendaID, meetingOrder: meetingOrder, inUpdateTime: updateTime, inUpdateType: updateType)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -1339,7 +1339,7 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingAttendees", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let meetingID = record.object(forKey: "meetingID") as! String
@@ -1353,7 +1353,7 @@ class CloudKitInteraction
                 myDatabaseConnection.replaceAttendee(meetingID, name: name, email: email,  type: type, status: attendenceStatus, inUpdateTime: updateTime, inUpdateType: updateType)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -1368,7 +1368,7 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             // for record in results!
             for _ in results!
             {
@@ -1384,7 +1384,7 @@ class CloudKitInteraction
                 // myDatabaseConnection.replaceDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -1399,7 +1399,7 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingTasks", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let meetingID = record.object(forKey: "meetingID") as! String
@@ -1411,7 +1411,7 @@ class CloudKitInteraction
                 myDatabaseConnection.replaceMeetingTask(agendaID, meetingID: meetingID, taskID: taskID, inUpdateTime: updateTime, inUpdateType: updateType)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -1426,7 +1426,7 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Panes", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let pane_name = record.object(forKey: "pane_name") as! String
@@ -1439,7 +1439,7 @@ class CloudKitInteraction
                 myDatabaseConnection.replacePane(pane_name, inPaneAvailable: pane_available, inPaneVisible: pane_visible, inPaneOrder: pane_order, inUpdateTime: updateTime, inUpdateType: updateType)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -1454,7 +1454,7 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let projectID = record.object(forKey: "projectID") as! Int
@@ -1480,7 +1480,7 @@ class CloudKitInteraction
                 myDatabaseConnection.replaceProjectNote(projectID, inNote: note, inReviewPeriod: reviewPeriod, inPredecessor: predecessor, inUpdateTime: updateTime, inUpdateType: updateType)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -1495,7 +1495,7 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "ProjectTeamMembers", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let projectID = record.object(forKey: "projectID") as! Int
@@ -1508,7 +1508,7 @@ class CloudKitInteraction
                 myDatabaseConnection.replaceTeamMember(projectID, inRoleID: roleID, inPersonName: teamMember, inNotes: projectMemberNotes, inUpdateTime: updateTime, inUpdateType: updateType)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -1523,7 +1523,7 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Roles", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let roleID = record.object(forKey: "roleID") as! Int
@@ -1535,7 +1535,7 @@ class CloudKitInteraction
                 myDatabaseConnection.replaceRole(roleDescription, teamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType, roleID: roleID)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -1550,7 +1550,7 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Stages", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let stageDescription = record.object(forKey: "stageDescription") as! String
@@ -1561,7 +1561,7 @@ class CloudKitInteraction
                 myDatabaseConnection.replaceStage(stageDescription, teamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -1576,7 +1576,7 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Task", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let taskID = record.object(forKey: "taskID") as! Int
@@ -1603,7 +1603,7 @@ class CloudKitInteraction
                 myDatabaseConnection.replaceTask(taskID, inTitle: title, inDetails: details, inDueDate: dueDate, inStartDate: startDate, inStatus: status, inPriority: priority, inEnergyLevel: energyLevel, inEstimatedTime: estimatedTime, inEstimatedTimeType: estimatedTimeType, inProjectID: projectID, inCompletionDate: completionDate, inRepeatInterval: repeatInterval, inRepeatType: repeatType, inRepeatBase: repeatBase, inFlagged: flagged, inUrgency: urgency, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -1618,7 +1618,7 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskAttachment", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             //   for record in results!
             for _ in results!
             {
@@ -1631,7 +1631,7 @@ class CloudKitInteraction
                 //   myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -1646,7 +1646,7 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskContext", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let taskID = record.object(forKey: "taskID") as! Int
@@ -1657,7 +1657,7 @@ class CloudKitInteraction
                 myDatabaseConnection.replaceTaskContext(contextID, inTaskID: taskID, inUpdateTime: updateTime, inUpdateType: updateType)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -1672,7 +1672,7 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskPredecessor", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let taskID = record.object(forKey: "taskID") as! Int
@@ -1684,7 +1684,7 @@ class CloudKitInteraction
                 myDatabaseConnection.replacePredecessorTask(taskID, inPredecessorID: predecessorID, inPredecessorType: predecessorType, inUpdateTime: updateTime, inUpdateType: updateType)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -1699,7 +1699,7 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskUpdates", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let taskID = record.object(forKey: "taskID") as! Int
@@ -1712,7 +1712,7 @@ class CloudKitInteraction
                 myDatabaseConnection.replaceTaskUpdate(taskID, inDetails: details, inSource: source, inUpdateDate: updateDate, inUpdateTime: updateTime, inUpdateType: updateType)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -1728,7 +1728,7 @@ class CloudKitInteraction
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
 
         let query: CKQuery = CKQuery(recordType: "Team", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let teamID = record.object(forKey: "teamID") as! Int
@@ -1744,7 +1744,7 @@ class CloudKitInteraction
                 myDatabaseConnection.replaceTeam(teamID, inName: name, inStatus: status, inNote: note, inType: type, inPredecessor: predecessor, inExternalID: externalID, inUpdateTime: updateTime, inUpdateType: updateType)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -1759,7 +1759,7 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "ProcessedEmails", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let emailID = record.object(forKey: "emailID") as! String
@@ -1771,7 +1771,7 @@ class CloudKitInteraction
                 myDatabaseConnection.replaceProcessedEmail(emailID, emailType: emailType, processedDate: processedDate, updateTime: updateTime, updateType: updateType)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -1786,7 +1786,7 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Outline", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let outlineID = record.object(forKey: "outlineID") as! Int
@@ -1800,7 +1800,7 @@ class CloudKitInteraction
                 myDatabaseConnection.replaceOutline(outlineID, parentID: parentID, parentType: parentType, title: title, status: status, updateTime: updateTime, updateType: updateType)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
@@ -1815,7 +1815,7 @@ class CloudKitInteraction
         
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
         let query: CKQuery = CKQuery(recordType: "OutlineDetails", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: NSError?) in
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let outlineID = record.object(forKey: "outlineID") as! Int
@@ -1839,7 +1839,7 @@ class CloudKitInteraction
                 myDatabaseConnection.replaceOutlineDetails(outlineID, lineID: lineID, lineOrder: lineOrder, parentLine: parentLine, lineText: lineText, lineType: lineType, checkBoxValue: checkBoxValue, updateTime: updateTime, updateType: updateType)
             }
             sem.signal()
-        } as! ([CKRecord]?, Error?) -> Void)
+        })
         
         sem.wait()
     }
