@@ -56,6 +56,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate
         
         GIDSignIn.sharedInstance().delegate = self
         
+        
       //  let notificationSettings = UIUserNotificationSettings(types: [.badge, .alert, .sound], categories: nil)
         remoteCenter.requestAuthorization(options:[.badge, .alert, .sound]) { (granted, error) in
             

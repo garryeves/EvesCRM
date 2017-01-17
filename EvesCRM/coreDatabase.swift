@@ -262,8 +262,6 @@ class coreDatabase: NSObject
             {
                 myStage.updateTime = Date()
                 myStage.updateType = "Delete"
-                
-                saveContext()
                 myCloudDB.saveRolesRecordToCloudKit(myStage)
             }
         }
@@ -271,6 +269,7 @@ class coreDatabase: NSObject
         {
             print("Error occurred during execution: \(error)")
         }
+        saveContext()
     }
     
     func getMaxRoleID()-> Int
@@ -460,9 +459,6 @@ class coreDatabase: NSObject
             {
                 myStage.updateTime = Date()
                 myStage.updateType = "Delete"
-                
-                saveContext()
-                
                 myCloudDB.saveRolesRecordToCloudKit(myStage)
             }
         }
@@ -470,6 +466,8 @@ class coreDatabase: NSObject
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
     }
     
     func saveTeamMember(_ inProjectID: Int, inRoleID: Int, inPersonName: String, inNotes: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
@@ -557,14 +555,13 @@ class coreDatabase: NSObject
             {
                 myStage.updateTime = Date()
                 myStage.updateType = "Delete"
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        saveContext()
     }
 
     func getTeamMemberRecord(_ inProjectID: Int, inPersonName: String)->[ProjectTeamMembers]
@@ -718,7 +715,6 @@ class coreDatabase: NSObject
         let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
    //     let predicate = NSPredicate(format: "(decode_name == \"\(inCodeKey)\") && (updateType != \"Delete\")")
         let predicate = NSPredicate(format: "(decode_name == \"\(inCodeKey)\")")
-        
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         
@@ -772,7 +768,7 @@ class coreDatabase: NSObject
         if getDecodeValue(inCodeKey) == ""
         { // Add
             myDecode = Decodes(context: objectContext)
-            
+
             myDecode.decode_name = inCodeKey
             myDecode.decode_value = inCodeValue
             myDecode.decodeType = inCodeType
@@ -791,7 +787,7 @@ class coreDatabase: NSObject
         { // Update
             let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
             let predicate = NSPredicate(format: "(decode_name == \"\(inCodeKey)\") && (updateType != \"Delete\")")
-            
+
             // Set the predicate on the fetch request
             fetchRequest.predicate = predicate
             
@@ -815,14 +811,16 @@ class coreDatabase: NSObject
                     myDecode.updateTime = inUpdateTime
                     myDecode.updateType = inUpdateType
                 }
-                saveContext()
-                myCloudDB.saveDecodesRecordToCloudKit(myDecode, syncName: myDBSync.getSyncID())
             }
             catch
             {
                 print("Error occurred during execution: \(error)")
             }
         }
+
+        saveContext()
+
+        myCloudDB.saveDecodesRecordToCloudKit(myDecode, syncName: myDBSync.getSyncID())
     }
     
     func replaceDecodeValue(_ inCodeKey: String, inCodeValue: String, inCodeType: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
@@ -908,8 +906,6 @@ class coreDatabase: NSObject
                 myStage.updateTime = Date()
                 myStage.updateType = "Delete"
                 
-                saveContext()
-                
                 myCloudDB.saveStagesRecordToCloudKit(myStage)
             }
         }
@@ -917,6 +913,7 @@ class coreDatabase: NSObject
         {
             print("Error occurred during execution: \(error)")
         }
+        saveContext()
     }
 
     func stageExists(_ inStageDesc:String, inTeamID: Int)-> Bool
@@ -1059,7 +1056,6 @@ class coreDatabase: NSObject
             {
                 myStage.updateTime = Date()
                 myStage.updateType = "Delete"
-                saveContext()
                 
                 myCloudDB.saveStagesRecordToCloudKit(myStage)
             }
@@ -1068,6 +1064,7 @@ class coreDatabase: NSObject
         {
             print("Error occurred during execution: \(error)")
         }
+        saveContext()
     }
     
     func searchPastAgendaByPartialMeetingIDBeforeStart(_ inSearchText: String, inMeetingStartDate: Date, inTeamID: Int)->[MeetingAgenda]
@@ -1429,13 +1426,13 @@ class coreDatabase: NSObject
                     myResult.updateType = "Update"
                 }
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
     }
     
     func loadAgendaForProject(_ inProjectName: String, inTeamID: Int)->[MeetingAgenda]
@@ -1662,14 +1659,14 @@ class coreDatabase: NSObject
             {
                 myMeeting.updateTime = Date()
                 myMeeting.updateType = "Delete"
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
     }
 
     func loadAgendaItem(_ inMeetingID: String)->[MeetingAgendaItem]
@@ -1844,14 +1841,14 @@ class coreDatabase: NSObject
             {
                 myMeeting.updateTime = Date()
                 myMeeting.updateType = "Delete"
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
     }
     
     func deleteAllAgendaItems(_ inMeetingID: String)
@@ -1872,14 +1869,14 @@ class coreDatabase: NSObject
             {
                 myMeeting.updateTime = Date()
                 myMeeting.updateType = "Delete"
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
     }
 
     func saveTask(_ inTaskID: Int, inTitle: String, inDetails: String, inDueDate: Date, inStartDate: Date, inStatus: String, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int, inEstimatedTimeType: String, inProjectID: Int, inCompletionDate: Date, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inFlagged: Bool, inUrgency: String, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
@@ -2014,15 +2011,14 @@ class coreDatabase: NSObject
             {
                 myStage.updateTime = Date()
                 myStage.updateType = "Delete"
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
-
+        
+        saveContext()
     }
     
     func getTasksNotDeleted(_ inTeamID: Int)->[Task]
@@ -2424,8 +2420,6 @@ class coreDatabase: NSObject
                     myStage.updateType = "Update"
                 }
                 
-                saveContext()
-                
                 myCloudDB.saveTaskPredecessorRecordToCloudKit(myStage)
             }
         }
@@ -2433,6 +2427,8 @@ class coreDatabase: NSObject
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
     }
 
     func deleteTaskPredecessor(_ inTaskID: Int, inPredecessorID: Int)
@@ -2453,8 +2449,6 @@ class coreDatabase: NSObject
                 myStage.updateTime = Date()
                 myStage.updateType = "Delete"
                 
-                saveContext()
-                
                 myCloudDB.saveTaskPredecessorRecordToCloudKit(myStage)
             }
         }
@@ -2462,6 +2456,8 @@ class coreDatabase: NSObject
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
     }
     
     func saveProject(_ inProjectID: Int, inProjectEndDate: Date, inProjectName: String, inProjectStartDate: Date, inProjectStatus: String, inReviewFrequency: Int, inLastReviewDate: Date, inGTDItemID: Int, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
@@ -3025,14 +3021,14 @@ class coreDatabase: NSObject
             {
                 myStage.updateTime = Date()
                 myStage.updateType = "Delete"
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
     }
 
     private func getTaskContext(_ inContextID: Int, inTaskID: Int)->[TaskContext]
@@ -3226,12 +3222,12 @@ class coreDatabase: NSObject
                     myGTD.updateType = "Update"
                 }
             }
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        saveContext()
     }
 
     func deleteGTDLevel(_ inGTDLevel: Int, inTeamID: Int)
@@ -3510,14 +3506,14 @@ class coreDatabase: NSObject
             {
                 myStage.updateTime = Date()
                 myStage.updateType = "Delete"
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
 
         let fetchRequest2 = NSFetchRequest<Projects>(entityName: "Projects")
             
@@ -3529,14 +3525,14 @@ class coreDatabase: NSObject
             {
                 myStage.updateTime = Date()
                 myStage.updateType = "Delete"
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
     }
     
     func deleteAllPanes()
@@ -3551,14 +3547,14 @@ class coreDatabase: NSObject
             {
                 myPane.updateTime = Date()
                 myPane.updateType = "Delete"
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
     }
 
     func getPanes() -> [Panes]
@@ -3653,8 +3649,6 @@ class coreDatabase: NSObject
                     myPane.updateType = "Update"
                 }
                 
-                saveContext()
-                
                 myCloudDB.savePanesRecordToCloudKit(myPane)
             }
         }
@@ -3662,6 +3656,7 @@ class coreDatabase: NSObject
         {
             print("Error occurred during execution: \(error)")
         }
+        saveContext()
     }
 
     func setPaneOrder(_ paneName: String, paneOrder: Int)
@@ -3686,8 +3681,6 @@ class coreDatabase: NSObject
                     myPane.updateType = "Update"
                 }
                 
-                saveContext()
-                
                 myCloudDB.savePanesRecordToCloudKit(myPane)
             }
         }
@@ -3695,6 +3688,7 @@ class coreDatabase: NSObject
         {
             print("Error occurred during execution: \(error)")
         }
+        saveContext()
     }
     
     func savePane(_ inPaneName:String, inPaneAvailable: Bool, inPaneVisible: Bool, inPaneOrder: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
@@ -3783,14 +3777,14 @@ class coreDatabase: NSObject
             {
                 myMeeting.updateTime = Date()
                 myMeeting.updateType = "Delete"
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
         
         let fetchRequest2 = NSFetchRequest<MeetingAttendees>(entityName: "MeetingAttendees")
         
@@ -3802,14 +3796,14 @@ class coreDatabase: NSObject
             {
                 myMeeting2.updateTime = Date()
                 myMeeting2.updateType = "Delete"
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
         
         let fetchRequest3 = NSFetchRequest<MeetingAgendaItem>(entityName: "MeetingAgendaItem")
 
@@ -3820,14 +3814,14 @@ class coreDatabase: NSObject
             {
                 myMeeting3.updateTime = Date()
                 myMeeting3.updateType = "Delete"
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
 
         let fetchRequest4 = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
@@ -3838,14 +3832,14 @@ class coreDatabase: NSObject
             {
                 myMeeting4.updateTime = Date()
                 myMeeting4.updateType = "Delete"
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
         
         let fetchRequest6 = NSFetchRequest<MeetingSupportingDocs>(entityName: "MeetingSupportingDocs")
         
@@ -3856,14 +3850,14 @@ class coreDatabase: NSObject
             {
                 myMeeting6.updateTime = Date()
                 myMeeting6.updateType = "Delete"
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
     }
     
     func resetTasks()
@@ -3878,14 +3872,14 @@ class coreDatabase: NSObject
             {
                 myMeeting.updateTime = Date()
                 myMeeting.updateType = "Delete"
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
 
         let fetchRequest2 = NSFetchRequest<Task>(entityName: "Task")
         
@@ -3897,14 +3891,14 @@ class coreDatabase: NSObject
             {
                 myMeeting2.updateTime = Date()
                 myMeeting2.updateType = "Delete"
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
         
         let fetchRequest3 = NSFetchRequest<TaskContext>(entityName: "TaskContext")
         
@@ -3915,13 +3909,13 @@ class coreDatabase: NSObject
             {
                 myMeeting3.updateTime = Date()
                 myMeeting3.updateType = "Delete"
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        saveContext()
         
         let fetchRequest4 = NSFetchRequest<TaskUpdates>(entityName: "TaskUpdates")
         
@@ -3932,14 +3926,14 @@ class coreDatabase: NSObject
             {
                 myMeeting4.updateTime = Date()
                 myMeeting4.updateType = "Delete"
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
     }
 
     func getAgendaTasks(_ inMeetingID: String, inAgendaID: Int)->[MeetingTasks]
@@ -4124,13 +4118,13 @@ class coreDatabase: NSObject
             {
                 myItem.updateTime = Date()
                 myItem.updateType = "Delete"
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        saveContext()
     }
     
     func getAgendaTask(_ inAgendaID: Int, inMeetingID: String, inTaskID: Int)->[MeetingTasks]
@@ -4169,14 +4163,14 @@ class coreDatabase: NSObject
             {
                 myItem.updateTime = Date()
                 myItem.updateType = "Delete"
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
         
         let fetchRequest2 = NSFetchRequest<TaskContext>(entityName: "TaskContext")
         
@@ -4188,14 +4182,14 @@ class coreDatabase: NSObject
             {
                 myItem2.updateTime = Date()
                 myItem2.updateType = "Delete"
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
     }
     
     func clearDeletedItems()
@@ -4215,12 +4209,12 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem2 as NSManagedObject)
             }
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        saveContext()
 
         let fetchRequest3 = NSFetchRequest<Decodes>(entityName: "Decodes")
         
@@ -4235,13 +4229,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem3 as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
         
         let fetchRequest5 = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
@@ -4256,13 +4250,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem5 as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
 
         let fetchRequest6 = NSFetchRequest<MeetingAgendaItem>(entityName: "MeetingAgendaItem")
         
@@ -4277,13 +4271,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem6 as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
 
         let fetchRequest7 = NSFetchRequest<MeetingAttendees>(entityName: "MeetingAttendees")
         
@@ -4298,13 +4292,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem7 as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
 
         let fetchRequest8 = NSFetchRequest<MeetingSupportingDocs>(entityName: "MeetingSupportingDocs")
         
@@ -4319,13 +4313,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem8 as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
 
         let fetchRequest9 = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
@@ -4340,13 +4334,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem9 as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
 
         let fetchRequest10 = NSFetchRequest<Panes>(entityName: "Panes")
         
@@ -4361,13 +4355,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem10 as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
 
         let fetchRequest11 = NSFetchRequest<Projects>(entityName: "Projects")
         
@@ -4382,13 +4376,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem11 as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
         
         let fetchRequest12 = NSFetchRequest<ProjectTeamMembers>(entityName: "ProjectTeamMembers")
         
@@ -4403,13 +4397,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem12 as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
 
         let fetchRequest14 = NSFetchRequest<Roles>(entityName: "Roles")
         
@@ -4424,13 +4418,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem14 as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
 
         let fetchRequest15 = NSFetchRequest<Stages>(entityName: "Stages")
         
@@ -4445,13 +4439,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem15 as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
  
         let fetchRequest16 = NSFetchRequest<Task>(entityName: "Task")
         
@@ -4466,13 +4460,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem16 as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
 
         let fetchRequest17 = NSFetchRequest<TaskAttachment>(entityName: "TaskAttachment")
         
@@ -4487,13 +4481,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem17 as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
  
         let fetchRequest18 = NSFetchRequest<TaskContext>(entityName: "TaskContext")
         
@@ -4508,13 +4502,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem18 as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
   
         let fetchRequest19 = NSFetchRequest<TaskUpdates>(entityName: "TaskUpdates")
         
@@ -4529,13 +4523,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem19 as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
 
         let fetchRequest21 = NSFetchRequest<TaskPredecessor>(entityName: "TaskPredecessor")
         
@@ -4548,13 +4542,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem21 as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
    
         let fetchRequest22 = NSFetchRequest<Team>(entityName: "Team")
         
@@ -4567,13 +4561,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem22 as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
 
         let fetchRequest23 = NSFetchRequest<ProjectNote>(entityName: "ProjectNote")
         
@@ -4586,13 +4580,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem23 as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
 
         let fetchRequest24 = NSFetchRequest<Context1_1>(entityName: "Context1_1")
         
@@ -4605,13 +4599,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem24 as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
         
         let fetchRequest25 = NSFetchRequest<GTDItem>(entityName: "GTDItem")
         
@@ -4624,13 +4618,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem25 as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
    
         let fetchRequest26 = NSFetchRequest<GTDLevel>(entityName: "GTDLevel")
         
@@ -4643,13 +4637,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem26 as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
 
         let fetchRequest27 = NSFetchRequest<ProcessedEmails>(entityName: "ProcessedEmails")
         
@@ -4662,13 +4656,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem27 as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
     
         let fetchRequest28 = NSFetchRequest<Outline>(entityName: "Outline")
         
@@ -4681,13 +4675,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem28 as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
 
         let fetchRequest29 = NSFetchRequest<OutlineDetails>(entityName: "OutlineDetails")
         
@@ -4700,13 +4694,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem29 as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
     }
 
     func clearSyncedItems()
@@ -4725,14 +4719,14 @@ class coreDatabase: NSObject
             for myItem2 in fetchResults2
             {
                 myItem2.updateType = ""
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
      
         let fetchRequest3 = NSFetchRequest<Decodes>(entityName: "Decodes")
         
@@ -4746,14 +4740,14 @@ class coreDatabase: NSObject
             for myItem3 in fetchResults3
             {
                 myItem3.updateType = ""
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
 
         let fetchRequest5 = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
@@ -4767,14 +4761,14 @@ class coreDatabase: NSObject
             for myItem5 in fetchResults5
             {
                 myItem5.updateType = ""
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
         
         let fetchRequest6 = NSFetchRequest<MeetingAgendaItem>(entityName: "MeetingAgendaItem")
         
@@ -4788,14 +4782,14 @@ class coreDatabase: NSObject
             for myItem6 in fetchResults6
             {
                 myItem6.updateType = ""
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
 
         let fetchRequest7 = NSFetchRequest<MeetingAttendees>(entityName: "MeetingAttendees")
         
@@ -4809,14 +4803,14 @@ class coreDatabase: NSObject
             for myItem7 in fetchResults7
             {
                 myItem7.updateType = ""
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
      
         let fetchRequest8 = NSFetchRequest<MeetingSupportingDocs>(entityName: "MeetingSupportingDocs")
         
@@ -4830,14 +4824,14 @@ class coreDatabase: NSObject
             for myItem8 in fetchResults8
             {
                 myItem8.updateType = ""
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
      
         let fetchRequest9 = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
@@ -4851,14 +4845,14 @@ class coreDatabase: NSObject
             for myItem9 in fetchResults9
             {
                 myItem9.updateType = ""
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
  
         let fetchRequest10 = NSFetchRequest<Panes>(entityName: "Panes")
         
@@ -4872,14 +4866,14 @@ class coreDatabase: NSObject
             for myItem10 in fetchResults10
             {
                 myItem10.updateType = ""
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
  
         let fetchRequest11 = NSFetchRequest<Projects>(entityName: "Projects")
         
@@ -4893,14 +4887,14 @@ class coreDatabase: NSObject
             for myItem11 in fetchResults11
             {
                 myItem11.updateType = ""
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
     
         let fetchRequest12 = NSFetchRequest<ProjectTeamMembers>(entityName: "ProjectTeamMembers")
         
@@ -4914,14 +4908,14 @@ class coreDatabase: NSObject
             for myItem12 in fetchResults12
             {
                 myItem12.updateType = ""
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
     
         let fetchRequest14 = NSFetchRequest<Roles>(entityName: "Roles")
         
@@ -4935,14 +4929,14 @@ class coreDatabase: NSObject
             for myItem14 in fetchResults14
             {
                 myItem14.updateType = ""
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
       
         let fetchRequest15 = NSFetchRequest<Stages>(entityName: "Stages")
         
@@ -4956,8 +4950,6 @@ class coreDatabase: NSObject
             for myItem15 in fetchResults15
             {
                 myItem15.updateType = ""
-                
-                saveContext()
             }
         }
         catch
@@ -4965,7 +4957,7 @@ class coreDatabase: NSObject
             print("Error occurred during execution: \(error)")
         }
         
-
+        saveContext()
         
         let fetchRequest16 = NSFetchRequest<Task>(entityName: "Task")
         
@@ -4979,14 +4971,14 @@ class coreDatabase: NSObject
             for myItem16 in fetchResults16
             {
                 myItem16.updateType = ""
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
 
         let fetchRequest17 = NSFetchRequest<TaskAttachment>(entityName: "TaskAttachment")
         
@@ -5000,14 +4992,14 @@ class coreDatabase: NSObject
             for myItem17 in fetchResults17
             {
                 myItem17.updateType = ""
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
         
         let fetchRequest18 = NSFetchRequest<TaskContext>(entityName: "TaskContext")
         
@@ -5021,14 +5013,14 @@ class coreDatabase: NSObject
             for myItem18 in fetchResults18
             {
                 myItem18.updateType = ""
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
         
         let fetchRequest19 = NSFetchRequest<TaskUpdates>(entityName: "TaskUpdates")
         
@@ -5042,14 +5034,14 @@ class coreDatabase: NSObject
             for myItem19 in fetchResults19
             {
                 myItem19.updateType = ""
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
         
         let fetchRequest21 = NSFetchRequest<TaskPredecessor>(entityName: "TaskPredecessor")
         
@@ -5063,14 +5055,14 @@ class coreDatabase: NSObject
             for myItem21 in fetchResults21
             {
                 myItem21.updateType = ""
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
         
         let fetchRequest22 = NSFetchRequest<Team>(entityName: "Team")
         // Set the predicate on the fetch request
@@ -5083,14 +5075,14 @@ class coreDatabase: NSObject
             for myItem22 in fetchResults22
             {
                 myItem22.updateType = ""
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
 
         let fetchRequest23 = NSFetchRequest<ProjectNote>(entityName: "ProjectNote")
         // Set the predicate on the fetch request
@@ -5103,14 +5095,14 @@ class coreDatabase: NSObject
             for myItem23 in fetchResults23
             {
                 myItem23.updateType = ""
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
         
         let fetchRequest24 = NSFetchRequest<Context1_1>(entityName: "Context1_1")
         // Set the predicate on the fetch request
@@ -5123,14 +5115,14 @@ class coreDatabase: NSObject
             for myItem24 in fetchResults24
             {
                 myItem24.updateType = ""
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
         
         let fetchRequest25 = NSFetchRequest<GTDItem>(entityName: "GTDItem")
         // Set the predicate on the fetch request
@@ -5143,14 +5135,14 @@ class coreDatabase: NSObject
             for myItem25 in fetchResults25
             {
                 myItem25.updateType = ""
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
 
         let fetchRequest26 = NSFetchRequest<GTDLevel>(entityName: "GTDLevel")
         // Set the predicate on the fetch request
@@ -5163,14 +5155,14 @@ class coreDatabase: NSObject
             for myItem26 in fetchResults26
             {
                 myItem26.updateType = ""
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
         
         let fetchRequest27 = NSFetchRequest<ProcessedEmails>(entityName: "ProcessedEmails")
         // Set the predicate on the fetch request
@@ -5183,14 +5175,14 @@ class coreDatabase: NSObject
             for myItem27 in fetchResults27
             {
                 myItem27.updateType = ""
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
         
         let fetchRequest28 = NSFetchRequest<Outline>(entityName: "Outline")
         // Set the predicate on the fetch request
@@ -5203,14 +5195,14 @@ class coreDatabase: NSObject
             for myItem28 in fetchResults28
             {
                 myItem28.updateType = ""
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
         
         let fetchRequest29 = NSFetchRequest<OutlineDetails>(entityName: "OutlineDetails")
         // Set the predicate on the fetch request
@@ -5223,14 +5215,14 @@ class coreDatabase: NSObject
             for myItem29 in fetchResults29
             {
                 myItem29.updateType = ""
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
     }
     
     func saveTeam(_ inTeamID: Int, inName: String, inStatus: String, inNote: String, inType: String, inPredecessor: Int, inExternalID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
@@ -5422,13 +5414,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
         
         let fetchRequest2 = NSFetchRequest<GTDLevel>(entityName: "GTDLevel")
         
@@ -5440,13 +5432,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem2 as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
     }
     
     func saveProjectNote(_ inProjectID: Int, inNote: String, inReviewPeriod: String, inPredecessor: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
@@ -5544,6 +5536,44 @@ class coreDatabase: NSObject
         }
     }
 
+    func setNextDeviceID()
+    {
+        let defaults = UserDefaults.standard
+        
+        let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
+        let predicate = NSPredicate(format: "(decode_name == \"Device\") && (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        
+        var storeInt: Int = 1
+        
+        // Execute the fetch request, and cast the results to an array of  objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            if fetchResults.count > 0
+            {
+                // Increment table value by 1 and save back to database
+                storeInt = Int(fetchResults[0].decode_value)! + 1
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            storeInt = 0
+        }
+        
+        if storeInt > 0
+        {
+            let myValue = "CloudKit Sync \(storeInt)"
+            defaults.set(myValue, forKey: "EvesCRM")
+
+            updateDecodeValue("Device", inCodeValue:  "\(storeInt)", inCodeType: "hidden")
+        }
+    }
+    
     func getNextID(_ inTableName: String, inInitialValue: Int = 1) -> Int
     {
         let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
@@ -5561,7 +5591,6 @@ class coreDatabase: NSObject
                 // Create table entry
                 let storeKey = "\(inInitialValue)"
                 updateDecodeValue(inTableName, inCodeValue: storeKey, inCodeType: "hidden")
-                
                 return inInitialValue
             }
             else
@@ -5571,7 +5600,6 @@ class coreDatabase: NSObject
                 
                 let storeKey = "\(storeint)"
                 updateDecodeValue(inTableName, inCodeValue: storeKey, inCodeType: "hidden")
-                
                 return storeint
             }
         }
@@ -5596,14 +5624,14 @@ class coreDatabase: NSObject
                 {
                     myItem.teamID = NSNumber(value: inTeamID)
                 }
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
     }
 
     func initialiseTeamForContext(_ inTeamID: Int)
@@ -5627,8 +5655,6 @@ class coreDatabase: NSObject
                     myItem.teamID = NSNumber(value: inTeamID)
                     maxID = myItem.contextID as Int
                 }
-                
-                saveContext()
             }
             
             // Now go and populate the Decode for this
@@ -5640,6 +5666,8 @@ class coreDatabase: NSObject
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
     }
 
     func initialiseTeamForProject(_ inTeamID: Int)
@@ -5663,8 +5691,6 @@ class coreDatabase: NSObject
                     myItem.teamID = NSNumber(value: inTeamID)
                     maxID = myItem.projectID as Int
                 }
-                
-                saveContext()
             }
             
             // Now go and populate the Decode for this
@@ -5676,6 +5702,8 @@ class coreDatabase: NSObject
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
     }
 
     func initialiseTeamForRoles(_ inTeamID: Int)
@@ -5699,8 +5727,6 @@ class coreDatabase: NSObject
                     myItem.teamID = NSNumber(value: inTeamID)
                     maxID = myItem.roleID as Int
                 }
-                
-                saveContext()
             }
             
             // Now go and populate the Decode for this
@@ -5712,6 +5738,8 @@ class coreDatabase: NSObject
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
     }
 
     func initialiseTeamForStages(_ inTeamID: Int)
@@ -5728,14 +5756,14 @@ class coreDatabase: NSObject
                 {
                     myItem.teamID = NSNumber(value: inTeamID)
                 }
-                
-                saveContext()
             }
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
     }
 
     func initialiseTeamForTask(_ inTeamID: Int)
@@ -5759,8 +5787,6 @@ class coreDatabase: NSObject
                     myItem.teamID = NSNumber(value: inTeamID)
                     maxID = myItem.taskID as Int
                 }
-                
-                saveContext()
             }
             
             // Now go and populate the Decode for this
@@ -5772,6 +5798,8 @@ class coreDatabase: NSObject
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
     }
 
     func saveContext1_1(_ contextID: Int, predecessor: Int, contextType: String, updateTime: Date = Date(), updateType: String = "CODE")
@@ -5889,13 +5917,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
     }
     
     func performTidyDecodes(_ inString: String)
@@ -5918,13 +5946,13 @@ class coreDatabase: NSObject
             {
                 objectContext.delete(myItem as NSManagedObject)
             }
-            
-            saveContext()
         }
         catch
         {
             print("Error occurred during execution: \(error)")
         }
+        
+        saveContext()
     }
     
     func tidyDecodes()

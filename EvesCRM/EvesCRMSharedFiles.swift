@@ -1557,7 +1557,7 @@ func checkCalendarConnected(_ myEventStore: EKEventStore)
         
         case .notDetermined:
             myEventStore.requestAccess(to: EKEntityType.event, completion:
-                {(granted: Bool, error: NSError?) -> Void in
+                {(granted: Bool, error: Error?) -> Void in
                     if granted
                     {
                         print("Event Access granted")
@@ -1566,7 +1566,7 @@ func checkCalendarConnected(_ myEventStore: EKEventStore)
                     {
                         print("Event Access denied")
                     }
-            } as! EKEventStoreRequestAccessCompletionHandler)
+            })
         
         default:
             print("Event Case Default")
@@ -1582,7 +1582,7 @@ func checkCalendarConnected(_ myEventStore: EKEventStore)
         
         case .notDetermined:
             myEventStore.requestAccess(to: EKEntityType.reminder, completion:
-                {(granted: Bool, error: NSError?) -> Void in
+                {(granted: Bool, error: Error?) -> Void in
                     if granted
                     {
                         print("Reminder Access granted")
@@ -1591,7 +1591,7 @@ func checkCalendarConnected(_ myEventStore: EKEventStore)
                     {
                         print("Reminder Access denied")
                     }
-            } as! EKEventStoreRequestAccessCompletionHandler)
+            })
         
         default:
             print("Reminder Case Default")

@@ -132,45 +132,48 @@ class iOSContact
 
         for myAddress in myContactRecord.postalAddresses
         {
-            switch myAddress.label!
-            {
-                case CNLabelHome :
-                    myString = "Home : "
+           if myAddress.label != nil
+           {
+                switch myAddress.label!
+                {
+                    case CNLabelHome :
+                        myString = "Home : "
 
-                case CNLabelWork :
-                    myString = "Work : "
+                    case CNLabelWork :
+                        myString = "Work : "
+                    
+                    case CNLabelOther :
+                        myString = "Other : "
+                    
+                    default :
+                        myString = "Unknown Address : \(myAddress.label!) : "
+                }
                 
-                case CNLabelOther :
-                    myString = "Other : "
+                let myAddressValue = myAddress.value 
+                if myAddressValue.street != ""
+                {
+                    myString += "\(myAddressValue.street)"
+                }
+                if myAddressValue.city != ""
+                {
+                    myString += "\n\(myAddressValue.city)"
+                }
                 
-                default :
-                    myString = "Unknown Address : \(myAddress.label) : "
+                if myAddressValue.state != ""
+                {
+                    myString += "\n\(myAddressValue.state)"
+                }
+                if myAddressValue.country != ""
+                {
+                    myString += "\n\(myAddressValue.country)"
+                }
+                if myAddressValue.postalCode != ""
+                {
+                    myString += "\n\(myAddressValue.postalCode)"
+                }
+                
+                writeRowToArray(myString, inTable: &tableContents)
             }
-            
-            let myAddressValue = myAddress.value 
-            if myAddressValue.street != ""
-            {
-                myString += "\(myAddressValue.street)"
-            }
-            if myAddressValue.city != ""
-            {
-                myString += "\n\(myAddressValue.city)"
-            }
-            
-            if myAddressValue.state != ""
-            {
-                myString += "\n\(myAddressValue.state)"
-            }
-            if myAddressValue.country != ""
-            {
-                myString += "\n\(myAddressValue.country)"
-            }
-            if myAddressValue.postalCode != ""
-            {
-                myString += "\n\(myAddressValue.postalCode)"
-            }
-            
-            writeRowToArray(myString, inTable: &tableContents)
         }
         
         if myContactRecord.organizationName != ""
@@ -193,54 +196,78 @@ class iOSContact
         
         for myPhone in myContactRecord.phoneNumbers
         {
-            switch myPhone.label!
+            if myPhone.label != nil
             {
-                case CNLabelPhoneNumberiPhone :
-                    myString = "iPhone : "
+                switch myPhone.label!
+                {
+                    case CNLabelHome :
+                        myString = "Home : "
+                        
+                    case CNLabelWork :
+                        myString = "Work : "
+                        
+                    case CNLabelOther :
+                        myString = "Other : "
+                        
+                    case CNLabelPhoneNumberiPhone :
+                        myString = "iPhone : "
+                    
+                    case CNLabelPhoneNumberMobile :
+                        myString = "Mobile : "
+                    
+                    case CNLabelPhoneNumberMain :
+                        myString = "Main : "
+
+                    case CNLabelPhoneNumberHomeFax :
+                        myString = "Home Fax : "
+
+                    case CNLabelPhoneNumberWorkFax :
+                        myString = "Work Fax : "
+
+                    case CNLabelPhoneNumberOtherFax :
+                        myString = "Other Fax : "
+                    
+                    case CNLabelPhoneNumberPager :
+                        myString = "Pager : "
+
+                    default :
+                        myString = "Unknown phone number : \(myPhone.label!) : "
+                }
+                let myPhoneValue = myPhone.value 
+                myString += "\(myPhoneValue.stringValue)"
                 
-                case CNLabelPhoneNumberMobile :
-                    myString = "Mobile : "
-                
-                case CNLabelPhoneNumberMain :
-                    myString = "Main : "
-
-                case CNLabelPhoneNumberHomeFax :
-                    myString = "Home Fax : "
-
-                case CNLabelPhoneNumberWorkFax :
-                    myString = "Work Fax : "
-
-                case CNLabelPhoneNumberOtherFax :
-                    myString = "Other Fax : "
-                
-                case CNLabelPhoneNumberPager :
-                    myString = "Pager : "
-
-                default :
-                    myString = "Unknown phone number : \(myPhone.label) : "
+                writeRowToArray(myString, inTable: &tableContents)
             }
-            let myPhoneValue = myPhone.value 
-            myString += "\(myPhoneValue.stringValue)"
-            
-            writeRowToArray(myString, inTable: &tableContents)
         }
 
         for myEmail in myContactRecord.emailAddresses
         {
-            switch myEmail.label!
+            if myEmail.label != nil
             {
-                case CNLabelEmailiCloud :
-                    myString = "iCloud : "
+                switch myEmail.label!
+                {
+                    case CNLabelEmailiCloud :
+                        myString = "iCloud Email : "
+
+                    case CNLabelHome :
+                        myString = "Home Email : "
+                    
+                    case CNLabelWork :
+                        myString = "Work Email : "
+                    
+                    case CNLabelOther :
+                        myString = "Other Email : "
+                    
+                    default :
+                        myString = "Unknown email address : \(myEmail.label!) : "
+                }
+                let myEmailValue = myEmail.value as String
+                myString += "\(myEmailValue)"
                 
-                default :
-                    myString = "Unknown email address : \(myEmail.label) : "
+                writeRowToArray(myString, inTable: &tableContents)
+                
+                myEmailAddresses.append(myEmailValue)
             }
-            let myEmailValue = myEmail.value as String
-            myString += "\(myEmailValue)"
-            
-            writeRowToArray(myString, inTable: &tableContents)
-            
-            myEmailAddresses.append(myEmailValue)
         }
 
         if myContactRecord.note != ""
@@ -251,13 +278,16 @@ class iOSContact
         
         if myContactRecord.birthday?.date != nil
         {
-            myString = "Birthday : \(myContactRecord.birthday)"
+            let myDateFormatter = DateFormatter()
+            myDateFormatter.dateStyle = .long
+
+            myString = "Birthday : \(myDateFormatter.string(from: (myContactRecord.birthday?.date)!))"
             writeRowToArray(myString, inTable: &tableContents)
         }
         
         for myIM in myContactRecord.instantMessageAddresses
         {
-            switch myIM.label!
+            switch myIM.value.service
             {
                 case CNInstantMessageServiceAIM :
                     myString = "AIM : "
@@ -290,7 +320,7 @@ class iOSContact
                     myString = "Yahoo : "
 
                 default :
-                    myString = "Unknown IM address : \(myIM.label) : "
+                    myString = "Unknown IM address : \(myIM.label!) : "
             }
             let myIMValue = myIM.value 
             myString += "\(myIMValue.username)"
@@ -300,7 +330,7 @@ class iOSContact
 
         for mySocial in myContactRecord.socialProfiles
         {
-            switch mySocial.label!
+            switch mySocial.value.service
             {
                 case CNSocialProfileServiceFacebook :
                     myString = "Facebook : "
@@ -330,7 +360,7 @@ class iOSContact
                     myString = "GameCenter : "
                 
                 default :
-                    myString = "Unknown Social address : \(mySocial.label) : "
+                    myString = "Unknown Social address : \(mySocial.value.service) : "
             }
             let mySocialValue = mySocial.value 
             myString += "\(mySocialValue.username)"
@@ -340,18 +370,21 @@ class iOSContact
 
         for myURL in myContactRecord.urlAddresses
         {
-            switch myURL.label!
+            if myURL.label != nil
             {
-                case CNLabelURLAddressHomePage :
-                    myString = "Home Page : "
+                switch myURL.label!
+                {
+                    case CNLabelURLAddressHomePage :
+                        myString = "Home Page : "
+                    
+                    default :
+                        myString = "Unknown URL address : \(myURL.label!) : "
+                }
+                let myURLValue = myURL.value as String
+                myString += "\(myURLValue)"
                 
-                default :
-                    myString = "Unknown URL address : \(myURL.label) : "
+                writeRowToArray(myString, inTable: &tableContents)
             }
-            let myURLValue = myURL.value as String
-            myString += "\(myURLValue)"
-            
-            writeRowToArray(myString, inTable: &tableContents)
         }
 
         if myContactRecord.nickname != ""

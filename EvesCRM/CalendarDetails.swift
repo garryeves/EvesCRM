@@ -1016,17 +1016,28 @@ class myCalendarItem
         
         for attendee in event!.attendees!
         {
-            let emailText: String = "\(attendee.url)"
-            let emailStartPos = emailText.characters.index(of: ":")
-            let nextPlace = emailText.index(after: (emailStartPos)!)
-            var emailAddress: String = ""
-            if nextPlace != nil
+            if !attendee.isCurrentUser
             {
-                let emailEndPos = emailText.characters.index(before: emailText.endIndex)
-                emailAddress = emailText[nextPlace...emailEndPos]
+                // Is the Attendee is not the current user then we need to parse the email address
+                
+                // Split the URL string on : - to give an array, the second element is the email address
+                
+                let emailSplit = String(describing: attendee.url).components(separatedBy: ":")
+                
+                addAttendee(attendee.name!, inEmailAddress: emailSplit[1], inType: "Participant", inStatus: "Invited")
             }
             
-            addAttendee(attendee.name!, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
+//            let emailText: String = "\(attendee.url)"
+//            let emailStartPos = emailText.characters.index(of: ":")
+//            let nextPlace = emailText.index(after: (emailStartPos)!)
+//            var emailAddress: String = ""
+//            if nextPlace != nil
+//            {
+//                let emailEndPos = emailText.characters.index(before: emailText.endIndex)
+//                emailAddress = emailText[nextPlace...emailEndPos]
+//            }
+//            
+//            addAttendee(attendee.name!, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
         }
     }
     
@@ -1184,22 +1195,30 @@ class myCalendarItem
                                 if invitee.name == tempName
                                 {
                                     // Invitee found
-                    
-                                    let emailText: String = "\(invitee.url)"
-                                    let emailStartPos = emailText.characters.index(of: ":")
-                                    let nextPlace = emailText.index(after: (emailStartPos)!)
-                                    var emailAddress: String = ""
-                                    if nextPlace != nil
+
+                                    // Is the Attendee is not the current user then we need to parse the email address
+                                        
+                                    // Split the URL string on : - to give an array, the second element is the email address
+                                    if !invitee.isCurrentUser
                                     {
-                                        let emailEndPos = emailText.characters.index(before: emailText.endIndex)
-                                        emailAddress = emailText[nextPlace...emailEndPos]
-                                    }
+                                        let emailSplit = String(describing: invitee.url).components(separatedBy: ":")
+
+//                                    let emailText: String = "\(invitee.url)"
+//                                    let emailStartPos = emailText.characters.index(of: ":")
+//                                    let nextPlace = emailText.index(after: (emailStartPos)!)
+//                                    var emailAddress: String = ""
+//                                    if nextPlace != nil
+//                                    {
+//                                        let emailEndPos = emailText.characters.index(before: emailText.endIndex)
+//                                        emailAddress = emailText[nextPlace...emailEndPos]
+//                                    }
                     
-                                    initaliseAttendee(invitee.name!, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
+                                        initaliseAttendee(invitee.name!, inEmailAddress: emailSplit[1], inType: "Participant", inStatus: "Invited")
              
-                                    inviteeFound = true
+                                        inviteeFound = true
                     
-                                    break
+                                        break
+                                    }
                                 }
                             }
                         }
@@ -1270,18 +1289,27 @@ class myCalendarItem
                             if !inviteeFound
                             {
                                 // New invitee so add into table
-                
-                                let emailText: String = "\(invitee.url)"
-                                let emailStartPos = emailText.characters.index(of: ":")
-                                let nextPlace = emailText.index(after: (emailStartPos)!)
-                                var emailAddress: String = ""
-                                if nextPlace != nil
+
+                                // Is the Attendee is not the current user then we need to parse the email address
+                                    
+                                // Split the URL string on : - to give an array, the second element is the email address
+                                
+                                if !invitee.isCurrentUser
                                 {
-                                    let emailEndPos = emailText.characters.index(before: emailText.endIndex)
-                                    emailAddress = emailText[nextPlace...emailEndPos]
-                                }
+                                    let emailSplit = String(describing: invitee.url).components(separatedBy: ":")
+                                
+//                                let emailText: String = "\(invitee.url)"
+//                                let emailStartPos = emailText.characters.index(of: ":")
+//                                let nextPlace = emailText.index(after: (emailStartPos)!)
+//                                var emailAddress: String = ""
+//                                if nextPlace != nil
+//                                {
+//                                    let emailEndPos = emailText.characters.index(before: emailText.endIndex)
+//                                    emailAddress = emailText[nextPlace...emailEndPos]
+//                                }
                 
-                                addAttendee(invitee.name!, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
+                                    addAttendee(invitee.name!, inEmailAddress: emailSplit[1], inType: "Participant", inStatus: "Invited")
+                                }
                             }
                         }
                     }
@@ -1292,17 +1320,24 @@ class myCalendarItem
                     {
                         for invitee in myEvent!.attendees!
                         {
-                            let emailText: String = "\(invitee.url)"
-                            let emailStartPos = emailText.characters.index(of: ":")
-                            let nextPlace = emailText.index(after: (emailStartPos)!)
-                            var emailAddress: String = ""
-                            if nextPlace != nil
+                            // Split the URL string on : - to give an array, the second element is the email address
+                            
+                            if !invitee.isCurrentUser
                             {
-                                let emailEndPos = emailText.characters.index(before: emailText.endIndex)
-                                emailAddress = emailText[nextPlace...emailEndPos]
-                            }
+                                    let emailSplit = String(describing: invitee.url).components(separatedBy: ":")
+                              
+//                            let emailText: String = "\(invitee.url)"
+//                            let emailStartPos = emailText.characters.index(of: ":")
+//                            let nextPlace = emailText.index(after: (emailStartPos)!)
+//                            var emailAddress: String = ""
+//                            if nextPlace != nil
+//                            {
+//                                let emailEndPos = emailText.characters.index(before: emailText.endIndex)
+//                                emailAddress = emailText[nextPlace...emailEndPos]
+//                            }
                     
-                            addAttendee(invitee.name!, inEmailAddress: emailAddress, inType: "Participant", inStatus: "Invited")
+                                addAttendee(invitee.name!, inEmailAddress: emailSplit[1], inType: "Participant", inStatus: "Invited")
+                            }
                         }
                     }
                 }
@@ -2513,19 +2548,33 @@ class iOSCalendar
                     {
                         for attendee in event.attendees!
                         {
-                            let emailText: String = "\(attendee.url)"
-                            let emailStartPos = emailText.characters.index(of: ":")
-                            let nextPlace = emailText.index(after: (emailStartPos)!)
-                            var emailAddress: String = ""
-                            if nextPlace != nil
+                            if !attendee.isCurrentUser
                             {
-                                let emailEndPos = emailText.characters.index(before: emailText.endIndex)
-                                emailAddress = emailText[nextPlace...emailEndPos]
+                                // Is the Attendee is not the current user then we need to parse the email address
+
+                                // Split the URL string on : - to give an array, the second element is the email address
+                                
+                                let emailSplit = String(describing: attendee.url).components(separatedBy: ":")
+
+                                if emailSplit[1] == inEmail
+                                {
+                                    storeEvent(event, inAttendee: attendee, teamID: teamID)
+                                }
                             }
-                            if emailAddress == inEmail
-                            {
-                                storeEvent(event, inAttendee: attendee, teamID: teamID)
-                            }
+                            
+//                            let emailText: String = "\(attendee.url)"
+//                            let emailStartPos = emailText.characters.index(of: ":")
+//                            let nextPlace = emailText.index(after: (emailStartPos)!)
+//                            var emailAddress: String = ""
+//                            if nextPlace != nil
+//                            {
+//                                let emailEndPos = emailText.characters.index(before: emailText.endIndex)
+//                                emailAddress = emailText[nextPlace...emailEndPos]
+//                            }
+//                            if emailAddress == inEmail
+//                            {
+//                                storeEvent(event, inAttendee: attendee, teamID: teamID)
+//                            }
                         }
                     }
                 }
@@ -2759,11 +2808,11 @@ class iOSReminder
     {
         reminderStore = EKEventStore()
         reminderStore.requestAccess(to: EKEntityType.reminder,
-            completion: {(granted: Bool, error:NSError?) in
+            completion: {(granted: Bool, error: Error?) in
                 if !granted {
                     print("Access to reminder store not granted")
                 }
-        } as! EKEventStoreRequestAccessCompletionHandler)
+        })
     }
     
     var reminders: [EKReminder]

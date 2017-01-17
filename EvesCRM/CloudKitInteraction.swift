@@ -3777,7 +3777,7 @@ class CloudKitInteraction
         let decodeName = sourceRecord.object(forKey: "decode_name") as! String
         let decodeValue = sourceRecord.object(forKey: "decode_value") as! String
         let decodeType = sourceRecord.object(forKey: "decodeType") as! String
-        
+
         var updateTime = Date()
         if sourceRecord.object(forKey: "updateTime") != nil
         {
@@ -3790,7 +3790,7 @@ class CloudKitInteraction
         {
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
-        
+
         myDatabaseConnection.updateDecodeValue(decodeName, inCodeValue: decodeValue, inCodeType: decodeType, inUpdateTime: updateTime, inUpdateType: updateType)
     }
     

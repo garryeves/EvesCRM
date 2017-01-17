@@ -51,6 +51,8 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
     
     var textExpander: SMTEDelegateController!
 
+    private var isChanged: Bool = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -59,12 +61,12 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
         // Setup the calendar store to give access to Reminders
         
         reminderStore.requestAccess(to: EKEntityType.reminder,
-            completion: {(granted: Bool, error:NSError?) -> Void in
+            completion: {(granted: Bool, error: Error?) -> Void in
                 if !granted
                 {
                     print("Access to store not granted")
                 }
-        } as! EKEventStoreRequestAccessCompletionHandler)
+        })
         
         if inAction == "Edit"
         {
@@ -192,7 +194,14 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
         }
         else
         {
-            delegate?.myReminderDidFinish(self, actionType: "Cancel")
+            if isChanged
+            {
+                delegate?.myReminderDidFinish(self, actionType: "Changed")
+            }
+            else
+            {
+                delegate?.myReminderDidFinish(self, actionType: "Cancel")
+            }
         }
     }
 
@@ -344,6 +353,8 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
             
             myReminder = EKReminder(eventStore: reminderStore)
             myReminder.calendar = myCalendar
+            
+            inAction = "Edit"
         }
         
         myReminder.title = descriptionText.text!
@@ -407,6 +418,8 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
         {
             print("Saving event to Calendar failed with error: \(myError!)")
         }
+        
+        isChanged = true
     }
     
     //---------------------------------------------------------------

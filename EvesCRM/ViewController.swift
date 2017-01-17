@@ -153,13 +153,13 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
         case .notDetermined:
             // 3
             globalEventStore.requestAccess(to: EKEntityType.event, completion:
-                {(granted: Bool, error: NSError?) -> Void in
+                {(granted: Bool, error: Error?) -> Void in
                     if granted {
                         print("Calendar Access granted")
                     } else {
                         print("Calendar Access denied")
                     }
-                } as! EKEventStoreRequestAccessCompletionHandler)
+                })
         default:
             print("Calendar Case Default")
         }

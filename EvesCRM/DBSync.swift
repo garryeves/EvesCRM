@@ -93,9 +93,9 @@ class DBSync: NSObject
                     // Update last sync date
         
                     dateString = "\(syncStart)"
-                    
+
                     myDatabaseConnection.updateDecodeValue(getSyncID(), inCodeValue: dateString, inCodeType: "hidden")
-                    
+
                     myDatabaseConnection.clearDeletedItems()
                     myDatabaseConnection.clearSyncedItems()
 
@@ -131,7 +131,7 @@ class DBSync: NSObject
         
         let syncDate: Date = myDateFormatter.date(from: "01/01/15")!
         let dateString = "\(syncDate)"
-        
+
         myDatabaseConnection.updateDecodeValue("CloudKit Sync", inCodeValue: dateString, inCodeType: "hidden")
         
         myDatabaseConnection.clearDeletedItems()
@@ -352,13 +352,11 @@ class DBSync: NSObject
         else
         {
             // get the next device ID
-            let myNewID = myDatabaseConnection.getNextID("Device")
+            myDatabaseConnection.setNextDeviceID()
             
-            let myValue = "CloudKit Sync \(myNewID)"
+            let name = defaults.string(forKey: "EvesCRM")
             
-            defaults.set(myValue, forKey: "EvesCRM")
-            
-            return myValue
+            return name!
         }
     }
 }

@@ -9,6 +9,8 @@
 import Foundation
 import AddressBook
 import GoogleSignIn
+import GoogleAPIClientForREST
+
 //import AppKit
 
 
@@ -198,17 +200,15 @@ class gmailMessage: NSObject
                                 {
                                     if valueString2.range(of: "http") == nil
                                     {
-                                        let sDecode1 = valueString2.removingPercentEncoding
-                                        //let sDecode1 = valueString2.stringByReplacingPercentEscapesUsingEncoding(NSUTF8StringEncoding)!
-                                        
-                                 //GRE       CharacterSet.urlQueryAllowed
-                                        
+                                        let sDecodea = valueString2.replacingOccurrences(of: "% ", with: "GREPCENTGRE")
+                                        let sDecode1 = sDecodea.removingPercentEncoding
                                         let sDecode2 = sDecode1?.replacingOccurrences(of: "&#39;", with: "'")
                                         let sDecode3 = sDecode2?.replacingOccurrences(of: "&quot;", with: "\"")
                                         let sDecode4 = sDecode3?.replacingOccurrences(of: "&lt;", with: "<")
                                         let sDecode5 = sDecode4?.replacingOccurrences(of: "&gt;", with: ">")
+                                        let sDecode6 = sDecode5?.replacingOccurrences(of: "GREPCENTGRE", with: "% ")
                                     
-                                        mySnippet = sDecode5!
+                                        mySnippet = sDecode6!
                                     }
                                     else
                                     {
@@ -733,7 +733,7 @@ class gmailMessages: NSObject
 }
 
 #if os(iOS)
-class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate, GIDSignInUIDelegate
+class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate, GIDSignInUIDelegate, URLSessionDelegate
 {
 //    var liveClient: LiveConnectClient!
     // Set the CLIENT_ID value to be the one you get from http://manage.dev.live.com/
@@ -791,47 +791,29 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
     
     func getData(_ inURLString: String) -> String
     {
- //       var response: NSURLResponse?
         var myReturnString: String = ""
         
         // Swap userId for the userd ID
         
- //       let tempStr1 = inURLString.stringByReplacingOccurrencesOfString("userId", withString:GIDSignIn.sharedInstance().currentUser.userID)
-        
         let escapedURL: String = inURLString.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!
 
-
         let url: URL = URL(string: escapedURL)!
-        //        let request = NSMutableURLRequest(url: url)
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringLocalCacheData
+        request.cachePolicy = URLRequest.CachePolicy.reloadIgnoringLocalCacheData
         
         if currentUser != nil
         {
-            request.setValue("Bearer \(GIDSignIn.sharedInstance().currentUser.authentication.accessToken)", forHTTPHeaderField: "Authorization")
+            request.setValue("Bearer \(GIDSignIn.sharedInstance().currentUser.authentication.accessToken!)", forHTTPHeaderField: "Authorization")
+ //           request.setValue("Bearer \(GIDSignIn.sharedInstance().currentUser.authentication.accessToken)", forHTTPHeaderField: "Authorization")
             // Send the HTTP request
-            
- //       let result: NSData?
- //           do
- //           {
- //               result = try NSURLConnection.sendSynchronousRequest(request, returningResponse:&response)
-                
-
- //       NSLog("Initial responce = \(response)")
-                
- //           NSLog("Initial result = \(result)")
-                
-                let session = URLSession.shared
-                
                 let sem = DispatchSemaphore(value: 0);
                 
-                let task = session.dataTask(with: request, completionHandler: {data, myresponse, error -> Void in
+                URLSession.shared.dataTask(with: request as URLRequest) {data, response, error in
                     
-                    let httpResponse = myresponse as? HTTPURLResponse
-                    
+                    let httpResponse = response as? HTTPURLResponse
                     let status = httpResponse!.statusCode
-                    
+
                     if status == 200
                     {
                         // this means data was retrieved OK
@@ -846,39 +828,9 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
                         print("gmailData: getData: There was an error accessing the gmailData data. Response code: \(status)")
                     }
                     sem.signal()
-                })
-                
+                }.resume()
                 sem.wait()
-                task.resume()
-            
-//            }
- //           catch let error1 as NSError
-  //          {
-    //            NSLog("GMail getDate: \(error1)")
-      //          result = nil
-        //    }
-/*
-            let httpResponse = response as? NSHTTPURLResponse
-            
-            let status = httpResponse!.statusCode
-            
-            if status == 200
-            {
-                // this means data was retrieved OK
-                myReturnString = NSString(data: result!, encoding: NSUTF8StringEncoding) as! String
-            }
-            else if status == 201
-            {
-                print("gmailData: Page created!")
-            }
-            else
-            {
-                print("gmailData: getData: There was an error accessing the gmailData data. Response code: \(status)")
-            NSLog("initia string temp = \(myReturnString)")
-            }
-*/
         }
-
         return myReturnString
     }
     
@@ -892,13 +844,13 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
     // Present a view that prompts the user to sign in with Google
     func sign(_ signIn: GIDSignIn!, present viewController: UIViewController!)
     {
-            mySourceViewController.present(viewController, animated: true, completion: nil)
+        mySourceViewController.present(viewController, animated: true, completion: nil)
     }
     
     // Dismiss the "Sign in with Google" view
     func sign(_ signIn: GIDSignIn!, dismiss viewController: UIViewController!)
     {
-            mySourceViewController.dismiss(animated: true, completion: nil)
+        mySourceViewController.dismiss(animated: true, completion: nil)
     }
     
     func gmailSignedIn(_ notification: Notification)

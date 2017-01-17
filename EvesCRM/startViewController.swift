@@ -54,8 +54,9 @@ class startViewController: UIViewController
             myNewTeam.status = "Open"
             
             // Store the ID for the default team
+
             myDatabaseConnection.updateDecodeValue("Default Team", inCodeValue: "\(myNewTeam.teamID)", inCodeType: "hidden")
-            
+
             myCurrentTeam = myNewTeam
         }
         else
