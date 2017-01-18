@@ -45,7 +45,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate
         ENSession.setSharedSessionConsumerKey("garryeves", consumerSecret: "527092b280bfd300", optionalHost: "www.evernote.com")
         
         
- //GRE       DropboxClientsManager.setupWithAppKeyDesktop("1qayzo6cmw8v6nr")
+        DropboxClientsManager.setupWithAppKey("1qayzo6cmw8v6nr")
         
         // Initialize Google sign-in
         var configureErr: NSError?
@@ -163,16 +163,26 @@ print("appdelegate application - handleOpenURL = \(url.scheme)")
     }
     
     func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
-//print("appdelegate application - source Application = \(sourceApplication)")
+print("appdelegate application - source Application = \(sourceApplication)")
 //print("appdelegate application - source Application URL = \(url.scheme)")
         
         var error: NSError?
         var textExpander: SMTEDelegateController!
         var retVal: Bool = false
         
-        if sourceApplication == "dropboxCoreService"
+        if sourceApplication == "com.getdropbox.Dropbox"
         {
- //GRE           retVal = dropboxCoreService.finalizeAuthentication(url)
+            if let authResult = DropboxClientsManager.handleRedirectURL(url) {
+                switch authResult {
+                case .success:
+//                    print("Success! User is logged into Dropbox.")
+                    notificationCenter.post(name: NotificationDropBoxConnected, object: nil)
+                case .cancel:
+                    print("Authorization flow was manually canceled by user!")
+                case .error(_, let description):
+                    print("Error: \(description)")
+                }
+            }
         }
         else if "EvesCRM-fill-xc" == url.scheme
         {

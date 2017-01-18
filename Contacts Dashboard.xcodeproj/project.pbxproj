@@ -75,6 +75,7 @@
 		344B6ACE1BA7B3B600A5377B /* CloudKitInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344B6ACC1BA7B3B600A5377B /* CloudKitInteraction.swift */; };
 		344B6AD01BA7B47500A5377B /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344B6ACF1BA7B47500A5377B /* UserInfo.swift */; };
 		344B6AD11BA7B47500A5377B /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344B6ACF1BA7B47500A5377B /* UserInfo.swift */; };
+		344C4CF01E2F00D7005AE173 /* DropboxCoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344C4CEF1E2F00D7005AE173 /* DropboxCoreService.swift */; };
 		344DC1FA1BA1146600DBCE3D /* TextExpander.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 344DC1F91BA1146600DBCE3D /* TextExpander.framework */; };
 		344DC1FB1BA1146600DBCE3D /* TextExpander.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 344DC1F91BA1146600DBCE3D /* TextExpander.framework */; };
 		344F226B1AF1DC20002C373E /* ENSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 344F22691AF1DC20002C373E /* ENSDK.framework */; };
@@ -126,6 +127,7 @@
 		34A578C11B5F6110008D3D8E /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A578BF1B5F6110008D3D8E /* Task.swift */; };
 		34A578C31B5F6170008D3D8E /* MeetingTasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A578C21B5F6170008D3D8E /* MeetingTasks.swift */; };
 		34A578C41B5F6170008D3D8E /* MeetingTasks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A578C21B5F6170008D3D8E /* MeetingTasks.swift */; };
+		34B375921E2F19AA00A75335 /* DropboxCoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344C4CEF1E2F00D7005AE173 /* DropboxCoreService.swift */; };
 		34B3BDA01AF0979E00C5B09D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406506F1ADDF8FF00C90CBB /* ViewController.swift */; };
 		34B4C7E41B8191930098F6BC /* TaskAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B4C7E11B8191930098F6BC /* TaskAttachment.swift */; };
 		34B4C7E51B8191930098F6BC /* TaskAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B4C7E11B8191930098F6BC /* TaskAttachment.swift */; };
@@ -258,6 +260,7 @@
 		344829831BC1FEBC000EFEA4 /* MeetingAgendaItem+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MeetingAgendaItem+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		344B6ACC1BA7B3B600A5377B /* CloudKitInteraction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudKitInteraction.swift; sourceTree = "<group>"; };
 		344B6ACF1BA7B47500A5377B /* UserInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
+		344C4CEF1E2F00D7005AE173 /* DropboxCoreService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DropboxCoreService.swift; sourceTree = "<group>"; };
 		344DC1F91BA1146600DBCE3D /* TextExpander.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = TextExpander.framework; sourceTree = "<group>"; };
 		344F22691AF1DC20002C373E /* ENSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ENSDK.framework; sourceTree = "<group>"; };
 		344F226A1AF1DC20002C373E /* ENSDKResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ENSDKResources.bundle; sourceTree = "<group>"; };
@@ -541,6 +544,7 @@
 				346D5E011AE5F9C700F858E7 /* CalendarDetails.swift */,
 				348E6D4A1ADF74C800697268 /* ContactDetails.swift */,
 				34BDECA91B008846008C9F3F /* displayPanes.swift */,
+				344C4CEF1E2F00D7005AE173 /* DropboxCoreService.swift */,
 				344F22711AF1DFF3002C373E /* evernoteDetails.swift */,
 				347518D81AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift */,
 				34B9C0101B26BA70005E52F9 /* gMail.swift */,
@@ -902,6 +906,7 @@
 				3406506E1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld in Sources */,
 				34E92ADC1B9D191900F158F3 /* GTDItem+CoreDataProperties.swift in Sources */,
 				34FED38D1B044BF1006B414C /* maintainPanes.swift in Sources */,
+				344C4CF01E2F00D7005AE173 /* DropboxCoreService.swift in Sources */,
 				34BDECAC1B0089CC008C9F3F /* Decodes.swift in Sources */,
 				3428522E1B8E9B30003D188F /* ProjectNote.swift in Sources */,
 				34DF7ACB1BBCB18F000E3B09 /* maintainContextsViewController.swift in Sources */,
@@ -929,6 +934,7 @@
 				34627D241B60B1C80096DAC4 /* taskManagementClasses.swift in Sources */,
 				3428522F1B8E9B30003D188F /* ProjectNote.swift in Sources */,
 				346A2E521B66027100C6C63E /* Projects.swift in Sources */,
+				34B375921E2F19AA00A75335 /* DropboxCoreService.swift in Sources */,
 				34F35BE61B6B54A200A19ACE /* meetingAgendaViewController.swift in Sources */,
 				34A578BE1B5F6110008D3D8E /* Context.swift in Sources */,
 				34E92AE91B9D5B3400F158F3 /* teamMaintenanceViewController.swift in Sources */,

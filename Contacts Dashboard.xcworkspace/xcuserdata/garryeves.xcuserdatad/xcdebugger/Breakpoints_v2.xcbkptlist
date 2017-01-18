@@ -9,13 +9,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "EvesCRM/ContactDetails.swift"
-            timestampString = "506311748.626774"
+            filePath = "EvesCRM/ViewController.swift"
+            timestampString = "506410193.80396"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "333"
-            endingLineNumber = "333"
-            landmarkName = "init(contactRecord:)"
+            startingLineNumber = "3337"
+            endingLineNumber = "3337"
+            landmarkName = "displayResults(sourceService:resultsArray:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -25,13 +25,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "EvesCRM/ContactDetails.swift"
-            timestampString = "506311748.626774"
+            filePath = "EvesCRM/ViewController.swift"
+            timestampString = "506410193.80396"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "331"
-            endingLineNumber = "331"
-            landmarkName = "init(contactRecord:)"
+            startingLineNumber = "3354"
+            endingLineNumber = "3354"
+            landmarkName = "displayResults(sourceService:resultsArray:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -41,13 +41,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "EvesCRM/CalendarDetails.swift"
-            timestampString = "506309262.490228"
+            filePath = "EvesCRM/ViewController.swift"
+            timestampString = "506410193.80396"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1299"
-            endingLineNumber = "1299"
-            landmarkName = "loadAttendees()"
+            startingLineNumber = "3338"
+            endingLineNumber = "3338"
+            landmarkName = "displayResults(sourceService:resultsArray:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -57,45 +57,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "EvesCRM/reminderViewController.swift"
-            timestampString = "506313386.975098"
+            filePath = "EvesCRM/ViewController.swift"
+            timestampString = "506410193.80396"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "304"
-            endingLineNumber = "304"
-            landmarkName = "save()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "EvesCRM/gMail.swift"
-            timestampString = "506324815.841689"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "807"
-            endingLineNumber = "807"
-            landmarkName = "getData(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "EvesCRM/gMail.swift"
-            timestampString = "506324815.841689"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "808"
-            endingLineNumber = "808"
-            landmarkName = "getData(_:)"
+            startingLineNumber = "3339"
+            endingLineNumber = "3339"
+            landmarkName = "displayResults(sourceService:resultsArray:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

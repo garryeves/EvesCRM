@@ -45,5 +45,8 @@ let NotificationGmailDidFinish = Notification.Name("NotificationGmailDidFinish")
 let NotificationHangoutsDidFinish = Notification.Name("NotificationHangoutsDidFinish")
 let NotificationGmailConnected = Notification.Name("NotificationGmailConnected")
 
+let NotificationDropBoxConnected = Notification.Name("NotificationDropBoxConnected")
+let NotificationDropBoxReady = Notification.Name("NotificationDropBoxReady")
+
 
 

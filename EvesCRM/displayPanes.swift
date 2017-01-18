@@ -15,6 +15,11 @@ class displayPanes
     
     init()
     {
+        // Create a new pane
+        // Put breakpoint on this to ensure only executed once
+//        let myPane = displayPane()
+//        myPane.createPane("DropBox")
+        
         // Get the list of panes
 
         myPanes = Array()
@@ -44,7 +49,7 @@ class displayPanes
         //  Do this by checking to see if it exists already, if it does then do nothing otherwise create the pane
 //        var loadSet = ["Calendar", "Details", "Evernote", "GMail", "Hangouts", "Omnifocus", "OneNote", "Project Membership", "Reminders", "Tasks"]
         
-        let loadSet = ["Calendar", "Details", "Evernote", "GMail", "Hangouts", "OneNote", "Project Membership", "Reminders", "Tasks"]
+        let loadSet = ["Calendar", "Details", "DropBox", "Evernote", "GMail", "Hangouts", "OneNote", "Project Membership", "Reminders", "Tasks"]
  
         for myItem in loadSet
         {

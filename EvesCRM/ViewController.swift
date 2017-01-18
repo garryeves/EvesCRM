@@ -17,8 +17,13 @@ import TextExpander
 
 //import "ENSDK/Headers/ENSDK.h"
 
+protocol internalCommunicationDelegate
+{
+    func displayResults(sourceService: String, resultsArray: [TableData])
+}
+
 // PeoplePicker code
-class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDelegate, MyMaintainProjectDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate, MyMeetingsDelegate, SideBarDelegate, MyMaintainPanesDelegate, UIPopoverPresentationControllerDelegate, MyGTDInboxDelegate, MyMaintainContextsDelegate   //MyDropboxCoreDelegate
+class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDelegate, MyMaintainProjectDelegate, MySettingsDelegate, EKEventViewDelegate, EKEventEditViewDelegate, EKCalendarChooserDelegate, MyMeetingsDelegate, SideBarDelegate, MyMaintainPanesDelegate, UIPopoverPresentationControllerDelegate, MyGTDInboxDelegate, MyMaintainContextsDelegate, internalCommunicationDelegate   //MyDropboxCoreDelegate
 {
     
     @IBOutlet weak var TableTypeSelection1: UIPickerView!
@@ -96,7 +101,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
     var ubiquityURL: URL?
     var metaDataQuery: NSMetadataQuery?
     
-    var dropboxConnected: Bool = false
+    var dropBoxClass: dropboxService!
     
 //    var dbRestClient: DBRestClient?
     
@@ -231,14 +236,15 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
 
         labelName.text = ""
     
-        notificationCenter.addObserver(self, selector: #selector(ViewController.OneNoteNotebookGetSections), name: NotificationOneNoteNotebooksLoaded, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(ViewController.OneNotePagesReady(_:)), name: NotificationOneNotePagesReady, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(ViewController.OneNoteNoNotebookFound), name: NotificationOneNoteNoNotebookFound, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(ViewController.EvernoteComplete), name: NotificationEvernoteComplete, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(ViewController.myEvernoteUserDidFinish), name: NotificationEvernoteUserDidFinish, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(ViewController.myGmailDidFinish), name: NotificationGmailDidFinish, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(ViewController.myHangoutsDidFinish), name: NotificationHangoutsDidFinish, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(ViewController.gmailSignedIn(_:)), name: NotificationGmailConnected, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.OneNoteNotebookGetSections), name: NotificationOneNoteNotebooksLoaded, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.OneNotePagesReady(_:)), name: NotificationOneNotePagesReady, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.OneNoteNoNotebookFound), name: NotificationOneNoteNoNotebookFound, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.EvernoteComplete), name: NotificationEvernoteComplete, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.myEvernoteUserDidFinish), name: NotificationEvernoteUserDidFinish, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.myGmailDidFinish), name: NotificationGmailDidFinish, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.myHangoutsDidFinish), name: NotificationHangoutsDidFinish, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.gmailSignedIn(_:)), name: NotificationGmailConnected, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.dropBoxReady), name: NotificationDropBoxReady, object: nil)
         
         myWebView.isHidden = true
         
@@ -891,9 +897,21 @@ println("facebook ID = \(myFacebookID)")
 
 */
             
-            
-            
-            
+            case "DropBox":
+                writeRowToArray("Loading DropBox data.  Pane will refresh when finished", inTable: &workArray)
+                
+                dropBoxClass = dropboxService()
+                dropBoxClass.delegate = self
+                if myDisplayType == "Context"
+                {
+                    dropBoxClass.searchString = myContextName
+                }
+                else
+                {
+                    dropBoxClass.searchString = personContact.fullName
+                }
+                dropBoxClass.setup(targetViewController: self)                
+
             default:
                 print("populateArrayDetails: dataType hit default for some reason : \(selectedType)")
         }
@@ -3306,5 +3324,35 @@ print("Dropbox status = \(progress)")
         NSLog("need something here to do the context")
         
 
+    }
+    
+    func dropBoxReady()
+    {
+        dropBoxClass.searchFiles("")
+    }
+    
+    func displayResults(sourceService: String, resultsArray: [TableData])
+    {
+        // Look through the available pans to fins the one that matches the returned service
+        if TableTypeButton1.currentTitle == sourceService
+        {
+            table1Contents = resultsArray
+            dataTable1.reloadData()
+        }
+        else if TableTypeButton2.currentTitle == sourceService
+        {
+            table2Contents = resultsArray
+            dataTable2.reloadData()
+        }
+        else if TableTypeButton3.currentTitle == sourceService
+        {
+            table3Contents = resultsArray
+            dataTable3.reloadData()
+        }
+        else //if TableTypeButton4.currentTitle == sourceService
+        {
+            table4Contents = resultsArray
+            dataTable4.reloadData()
+        }
     }
 }
