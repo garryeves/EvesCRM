@@ -154,10 +154,6 @@ class gmailMessage: NSObject
 
         for myItem in split
         {
-//if myID == "12613a7c784c8656"
-//{
-//println("myItem = \(myItem)")
-//}
             if passNum == 1
             {
                 // This is a wrapper portion so we do nothing
@@ -176,10 +172,6 @@ class gmailMessage: NSObject
                 var pass2Num: Int = 1
                 for myItem2 in split2
                 {
-//if myID == "12613a7c784c8656"
-//{
-//println("myItem2 = \(myItem2)")
-//}
                     // lets get rid of the "
                     let tempPassStr = myItem2.replacingOccurrences(of: "\"\"", with: "\".\"")
                     
@@ -251,25 +243,13 @@ class gmailMessage: NSObject
         // Start to break the message body down
         
         // Does the incoming part contain the data clause
-//if myID == "12613a7c784c8656"
-//{
-//println("processMessageBody inString = \(inString)")
-//}
-        
         if inString.range(of: "\"data\"") != nil
         {
             let split1 = inString.components(separatedBy: "\"data\":")
-//if myID == "12613a7c784c8656"
-//{
-//println("processMessageBody split1 = \(split1)")
-//}
             // This gives the Header part, and also the body + trailer
             
             let split2 = split1[1].components(separatedBy: "\"")
-//if myID == "12613a7c784c8656"
-//{
-//println("processMessageBody split2 = \(split2)")
-//}
+
             // This splits the body and gives us a "dummy" headers, as first char is a ", the actual body and the trailer record
             
             let myTmp1 = split2[1].replacingOccurrences(of: "-", with: "+")
@@ -280,7 +260,7 @@ class gmailMessage: NSObject
             if decodedData != nil
             {
                 let decodedString = NSString(data: decodedData!, encoding: String.Encoding.utf8.rawValue)
-//println("Body = \(myID) - \(decodedString)")
+
                 if decodedString != nil
                 {
                     myBody = decodedString as! String
@@ -318,10 +298,6 @@ class gmailMessage: NSObject
         var valueString2: String = ""
         for myItem3 in split3
         {
-//if myID == "12613a7c784c8656"
-//{
-//println("processMessageDetails myItem3 = \(myItem3)")
-//}
             let stripSpaces = myItem3.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
             
             if stripSpaces != ""
@@ -343,10 +319,6 @@ class gmailMessage: NSObject
                         let valueString = split4[1].trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
                         valueString2 = valueString.replacingOccurrences(of: "\"", with: "")
 
-//if myID == "12613a7c784c8656"
-//{
-//println("processMessageDetails keyString2 = \(keyString2)  valueString2 = \(valueString2)")
-//}
                         switch keyString2
                         {
                         case "Subject":
@@ -464,7 +436,6 @@ class gmailMessage: NSObject
                                 }
                             }
                             
-           //GRE                 myDateFormatter.timeZone = TimeZone()
                             let tempDate: Date = myDateFormatter.date(from: splitDate[0])!
                             
                             let tempDate1 = Calendar.current.date(
@@ -660,7 +631,6 @@ class gmailMessages: NSObject
                         
                         if start != nil
                         {
- //                           let myStart = <#T##String.CharacterView corresponding to your index##String.CharacterView#>.index(after: (start)!)
                             let myStart = myItem2.index(after: (start)!)
                             selectedString = myItem2[myStart...end]
                         }
@@ -735,7 +705,6 @@ class gmailMessages: NSObject
 #if os(iOS)
 class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate, GIDSignInUIDelegate, URLSessionDelegate
 {
-//    var liveClient: LiveConnectClient!
     // Set the CLIENT_ID value to be the one you get from http://manage.dev.live.com/
     fileprivate let CLIENT_ID = "344184320417-h2nr89gi0ji02tbcs7f7kpj0kevuhq6f.apps.googleusercontent.com"
     fileprivate let gmailSecret = "USKddrDHh2aL6C2rzQGmrYku"
@@ -743,7 +712,6 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
     fileprivate let kShouldSaveInKeychainKey = "shouldSaveInKeychain"
     fileprivate var mySourceViewController: UIViewController!
     
-//    fileprivate var auth: GTMOAuth2Authentication!
     fileprivate var auth: GIDAuthentication!
     fileprivate var currentUser: GIDGoogleUser!
     
@@ -805,7 +773,6 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
         if currentUser != nil
         {
             request.setValue("Bearer \(GIDSignIn.sharedInstance().currentUser.authentication.accessToken!)", forHTTPHeaderField: "Authorization")
- //           request.setValue("Bearer \(GIDSignIn.sharedInstance().currentUser.authentication.accessToken)", forHTTPHeaderField: "Authorization")
             // Send the HTTP request
                 let sem = DispatchSemaphore(value: 0);
                 
@@ -871,7 +838,6 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
       
     class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate
     {
-        //    var liveClient: LiveConnectClient!
         // Set the CLIENT_ID value to be the one you get from http://manage.dev.live.com/
         private let CLIENT_ID = "344184320417-h2nr89gi0ji02tbcs7f7kpj0kevuhq6f.apps.googleusercontent.com"
         private let gmailSecret = "USKddrDHh2aL6C2rzQGmrYku"
@@ -912,16 +878,12 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
                 let myStart = myParentViewController.storyboard?.instantiateControllerWithIdentifier("GTMOAuth2Window") as! GTMOAuth2WindowController
                 
                 myStart.showWindow(myStart)
-   //             myParentViewController.view.window?.contentViewController = myStart
-   //             myParentViewController.presentViewControllerAsModalWindow(createAuthController())
             }
         }
         
         // Construct a query and get a list of upcoming labels from the gmail API
         func fetchLabels()
         {
-//            output.text = "Getting labels..."
-            
             let query = GTLQueryGmail.queryForUsersLabelsList()
             service.executeQuery(query,
                 delegate: self,
@@ -954,26 +916,13 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
             {
                 labelString = "No labels found."
             }
-                
-           //     output.text = labelString
-                
         }
         
         // Creates the auth controller for authorizing access to Gmail API
         private func createAuthController() -> GTMOAuth2WindowController
         {
-    //        let scopeString = " ".join(scopes)
             let scopeString = scopes.joinWithSeparator("")
           
-            /*return GTMOAuth2WindowController(
-                scope: scopeString,
-                clientID: CLIENT_ID,
-                clientSecret: gmailSecret,
-                keychainItemName: kKeychainItemName,
-                delegate: self,
-                finishedSelector: "viewController:finishedWithAuth:error:"
-            )*/
-            
             return GTMOAuth2WindowController(
                 scope: scopeString,
                 clientID: CLIENT_ID,
@@ -1013,109 +962,8 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
         
         func getData(inURLString: String) -> String
         {
-/*            var response: NSURLResponse?
-            var myReturnString: String = ""
-            
-            // Swap userId for the userd ID
-            
-            //       let tempStr1 = inURLString.stringByReplacingOccurrencesOfString("userId", withString:GIDSignIn.sharedInstance().currentUser.userID)
-            
-            let escapedURL: String = inURLString.stringByAddingPercentEncodingWithAllowedCharacters(NSCharacterSet.URLQueryAllowedCharacterSet())!
-            
-            
-            let url: NSURL = NSURL(string: escapedURL)!
-            let request = NSMutableURLRequest(URL: url)
-            request.HTTPMethod = "GET"
-            request.cachePolicy = NSURLRequestCachePolicy.ReloadIgnoringLocalCacheData
-            
-            if currentUser != ""
-            {
-                request.setValue("Bearer \(GIDSignIn.sharedInstance().currentUser.authentication.accessToken)", forHTTPHeaderField: "Authorization")
-                // Send the HTTP request
-                
-                let result: NSData?
-                do
-                {
-                    result = try NSURLConnection.sendSynchronousRequest(request, returningResponse:&response)
-                }
-                catch let error1 as NSError
-                {
-                    NSLog("GMail getDate: \(error1)")
-                    result = nil
-                }
-                
-                let httpResponse = response as? NSHTTPURLResponse
-                
-                let status = httpResponse!.statusCode
-                
-                if status == 200
-                {
-                    // this means data was retrieved OK
-                    myReturnString = NSString(data: result!, encoding: NSUTF8StringEncoding) as! String
-                }
-                else if status == 201
-                {
-                    print("gmailData: Page created!")
-                }
-                else
-                {
-                    print("gmailData: getData: There was an error accessing the gmailData data. Response code: \(status)")
-                }
-            }
-            return myReturnString
-*/
             return ""
         }
-       
-        
-        
-        
-        
-        
-   /*
-        
-        
-        
-        
-        
-        func shouldSaveInKeychain() -> Bool
-        {
-            let defaults: NSUserDefaults = NSUserDefaults.standardUserDefaults()
-            let flag = defaults.boolForKey(kShouldSaveInKeychainKey)
-            return flag
-        }
-        
-        func connectToGmail()
-        {
-//            if currentUser == ""
-//            {
-               // auth = GTMOAuth2WindowController.authForGoogleFromKeychainForName(kKeychainItemName, clientID: CLIENT_ID, clientSecret: gmailSecret)
-                
-//                GIDSignIn.sharedInstance().uiDelegate = self
-                
-//                GIDSignIn.sharedInstance().clientID = CLIENT_ID
-//                GIDSignIn.sharedInstance().scopes = ["https://www.googleapis.com/auth/gmail.readonly"]
-                
-                // Uncomment to automatically sign in the user.
-//                GIDSignIn.sharedInstance().signIn()
-//            }
-        }
-        
-        
-        func gmailSignedIn(notification: NSNotification)
-        {
-   //         currentUser = GIDSignIn.sharedInstance().currentUser
-   //         if mySourceViewController is GTDInboxViewController
-   //         {
-   //             NSnotificationCenterCenter().postNotificationName("NotificationGmailInboxConnected", object: nil)
-   //         }
-   //         else
-   //         {
-   //             NSnotificationCenterCenter().postNotificationName("NotificationGmailConnected", object: nil)
-   //         }
-        }
-
-*/
 }
     
 #endif

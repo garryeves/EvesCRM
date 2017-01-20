@@ -184,6 +184,7 @@
 		34F35BDF1B6B549000A19ACE /* meetingTabViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F35BDD1B6B549000A19ACE /* meetingTabViewController.swift */; };
 		34F35BE51B6B54A200A19ACE /* meetingAgendaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F35BE41B6B54A200A19ACE /* meetingAgendaViewController.swift */; };
 		34F35BE61B6B54A200A19ACE /* meetingAgendaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F35BE41B6B54A200A19ACE /* meetingAgendaViewController.swift */; };
+		34F7B3A51E31D33E00030BC2 /* LiveAuthDialog_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34F7B3A41E31D33E00030BC2 /* LiveAuthDialog_iPad.xib */; };
 		34FED38D1B044BF1006B414C /* maintainPanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FED38C1B044BF1006B414C /* maintainPanes.swift */; };
 		34FED38E1B044BF1006B414C /* maintainPanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FED38C1B044BF1006B414C /* maintainPanes.swift */; };
 		5F4D9549951FC69F58838EAF /* Pods_EvesCRMTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92959BF0D8483C131E7E26F7 /* Pods_EvesCRMTests.framework */; };
@@ -345,6 +346,7 @@
 		34F35BD21B6B3F7000A19ACE /* taskUpdatesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = taskUpdatesViewController.swift; sourceTree = "<group>"; };
 		34F35BDD1B6B549000A19ACE /* meetingTabViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = meetingTabViewController.swift; sourceTree = "<group>"; };
 		34F35BE41B6B54A200A19ACE /* meetingAgendaViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = meetingAgendaViewController.swift; sourceTree = "<group>"; };
+		34F7B3A41E31D33E00030BC2 /* LiveAuthDialog_iPad.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = LiveAuthDialog_iPad.xib; path = Pods/LiveSDK/src/LiveSDK/Library/Internal/LiveAuthDialog_iPad.xib; sourceTree = SOURCE_ROOT; };
 		34FED38C1B044BF1006B414C /* maintainPanes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = maintainPanes.swift; sourceTree = "<group>"; };
 		8D27096CBF35CB77F5123AA2 /* Pods-EvesCRMTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EvesCRMTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-EvesCRMTests/Pods-EvesCRMTests.debug.xcconfig"; sourceTree = "<group>"; };
 		92959BF0D8483C131E7E26F7 /* Pods_EvesCRMTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_EvesCRMTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -453,6 +455,7 @@
 		340650681ADDF8FF00C90CBB /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				34F7B3A41E31D33E00030BC2 /* LiveAuthDialog_iPad.xib */,
 				342A36691E2DBC9800D512B8 /* GoogleService-Info.plist */,
 				344DC1F91BA1146600DBCE3D /* TextExpander.framework */,
 				34F199BB1AF6046A00963ABF /* EvesCRM.entitlements */,
@@ -721,6 +724,7 @@
 				344F226C1AF1DC20002C373E /* ENSDKResources.bundle in Resources */,
 				340650781ADDF8FF00C90CBB /* LaunchScreen.xib in Resources */,
 				340650751ADDF8FF00C90CBB /* Images.xcassets in Resources */,
+				34F7B3A51E31D33E00030BC2 /* LiveAuthDialog_iPad.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -681,6 +681,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
                 if myOneNoteNotebooks == nil
                 {
                     myOneNoteNotebooks = oneNoteNotebooks(inViewController: self)
+    //                myOneNoteNotebooks.getNoteBooks()
                 }
                 else
                 {
@@ -1359,25 +1360,24 @@ println("facebook ID = \(myFacebookID)")
                     {
                         myFullName = personContact.fullName
                     }
-                    
+
                     if myFullName != ""
                     {
                         let alert = UIAlertController(title: "OneNote", message:
-                            "Creating OneNote Section for this Person.  OneNote will open when complete.", preferredStyle: UIAlertControllerStyle.alert)
-                        
-                        self.present(alert, animated: false, completion: nil)
-                        
-                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
+                            "Creating OneNote Section for this Person.  OneNote will open when complete.", preferredStyle: .alert)
+
+                        alert.addAction(UIAlertAction(title: "OK", style: .default))
+
+                        present(alert, animated: true)
                         
                         myItemFound = myOneNoteNotebooks.checkExistenceOfPerson(myFullName)
                         if myItemFound
                         {
                             let alert = UIAlertController(title: "OneNote", message:
-                                "Entry already exists for this Person", preferredStyle: UIAlertControllerStyle.alert)
+                                "Entry already exists for this Person", preferredStyle: .alert)
+                            alert.addAction(UIAlertAction(title: "OK", style: .default))
                         
-                            self.present(alert, animated: false, completion: nil)
-                        
-                            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
+                            present(alert, animated: true)
                         }
                         else
                         {
@@ -1388,18 +1388,20 @@ println("facebook ID = \(myFacebookID)")
                     }
                 }
             
-                let myOneNoteUrlPath = myStartPage
-            
-                let myOneNoteUrl: URL = URL(string: myOneNoteUrlPath)!
-            
-                if UIApplication.shared.canOpenURL(myOneNoteUrl) == true
+                if myStartPage != ""
                 {
-                    UIApplication.shared.open(myOneNoteUrl, options: [:],
-                                              completionHandler: {
-                                                (success) in
-                                                print("Open myOneNoteUrl - \(myOneNoteUrl): \(success)")})
+                    let myOneNoteUrlPath = myStartPage
+                
+                    let myOneNoteUrl: URL = URL(string: myOneNoteUrlPath)!
+                
+                    if UIApplication.shared.canOpenURL(myOneNoteUrl) == true
+                    {
+                        UIApplication.shared.open(myOneNoteUrl, options: [:],
+                                                  completionHandler: {
+                                                    (success) in
+                                                    print("Open myOneNoteUrl - \(myOneNoteUrl): \(success)")})
+                    }
                 }
-            
             default:
                 NSLog("Do nothing")
         }

@@ -10,6 +10,9 @@ pod 'Google/SignIn'
 pod 'GoogleAPIClientForREST'
 pod 'SwiftyDropbox'
 pod 'OneDriveSDK'
+pod 'LiveSDK'
+pod 'AFNetworking'
+pod 'ADALiOS'
 end
 
 target 'EvesCRMTests' do
@@ -17,6 +20,9 @@ pod 'Google/SignIn'
 pod 'GoogleAPIClientForREST'
 pod 'SwiftyDropbox'
 pod 'OneDriveSDK'
+pod 'LiveSDK'
+pod 'AFNetworking'
+pod 'ADALiOS'
 end
 
 post_install do |installer|
