@@ -88,12 +88,10 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
     var myEvernoteGUID: String = ""
     var myDisplayType: String = ""
     var omniTableToRefresh: String = ""
-    var oneNoteTableToRefresh: String = ""
     var gmailTableToRefresh: String = ""
     var hangoutsTableToRefresh: String = ""
     var facebookTableToRefresh: String = ""
 
-    var oneNoteLinkArray: [String] = Array()
     var omniLinkArray: [String] = Array()
     
     var document: MyDocument?
@@ -105,10 +103,8 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
     
 //    var dbRestClient: DBRestClient?
     
-  //  var eventDetails: [EKEvent] = Array()
     var eventDetails: iOSCalendar!
 
-//    var reminderDetails: [EKReminder] = Array()
     var reminderDetails: iOSReminder!
 
     var projectMemberArray: [String] = Array()
@@ -235,10 +231,12 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
         }
 
         labelName.text = ""
-    
-        notificationCenter.addObserver(self, selector: #selector(self.OneNoteNotebookGetSections), name: NotificationOneNoteNotebooksLoaded, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(self.OneNotePagesReady(_:)), name: NotificationOneNotePagesReady, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(self.OneNoteNoNotebookFound), name: NotificationOneNoteNoNotebookFound, object: nil)
+//Checked to keep
+        notificationCenter.addObserver(self, selector: #selector(self.OneNoteConnected(_:)), name: NotificationOneNoteConnected, object: nil)
+
+        
+        
+        
         notificationCenter.addObserver(self, selector: #selector(self.EvernoteComplete), name: NotificationEvernoteComplete, object: nil)
         notificationCenter.addObserver(self, selector: #selector(self.myEvernoteUserDidFinish), name: NotificationEvernoteUserDidFinish, object: nil)
         notificationCenter.addObserver(self, selector: #selector(self.myGmailDidFinish), name: NotificationGmailDidFinish, object: nil)
@@ -676,16 +674,14 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
             case "OneNote":
                 writeRowToArray("Loading OneNote data.  Pane will refresh when finished", inTable: &workArray)
             
-                oneNoteTableToRefresh = inTable
-            
                 if myOneNoteNotebooks == nil
                 {
                     myOneNoteNotebooks = oneNoteNotebooks(inViewController: self)
-    //                myOneNoteNotebooks.getNoteBooks()
+                    myOneNoteNotebooks.delegate = self
                 }
                 else
                 {
-                    OneNoteNotebookGetSections()
+                    myOneNoteNotebooks.buildDisplayString(searchString: labelName.text!)
                 }
             
             case "GMail":
@@ -1072,21 +1068,10 @@ println("facebook ID = \(myFacebookID)")
                 {
                     loadProject(Int(projectMemberArray[rowID])!, teamID: myCurrentTeam.teamID)
                 }
-            
-        case "OneNote":
-            let myOneNoteUrlPath = myOneNoteNotebooks.pages[rowID].urlCallback
-  
-          //  let myEnUrlPath = stringByChangingChars(myTempPath, " ", "%20")
-            let myOneNoteUrl: URL = URL(string: myOneNoteUrlPath)!
-            
-            if UIApplication.shared.canOpenURL(myOneNoteUrl) == true
-            {
-                UIApplication.shared.open(myOneNoteUrl, options: [:],
-                                          completionHandler: {
-                                            (success) in
-                                            print("Open myOneNoteUrl - \(myOneNoteUrl): \(success)")})
-            }
 
+        case "OneNote":
+            myOneNoteNotebooks.openOneNote(rowID: rowID)
+            
         case "GMail":
             hideFields()
             
@@ -1317,91 +1302,55 @@ println("facebook ID = \(myFacebookID)")
                 evc.eventStore = globalEventStore
                 evc.editViewDelegate = self
                 self.present(evc, animated: true, completion: nil)
-          
+
             case "OneNote":
-                var myItemFound: Bool = false
-                var myStartPage: String = ""
-            
-                // First check, if a project does the notebook exist already, or if a person, does the Section in People notebook exist
-            
+                // First check that the page will not be a duplicate
+                
+                var searchString: String = ""
+                
                 if myDisplayType == "Project"
                 {
-                    let alert = UIAlertController(title: "OneNote", message:
-                        "Creating OneNote Notebook for this Project.  OneNote will open when complete.", preferredStyle: UIAlertControllerStyle.alert)
-                    
-                    self.present(alert, animated: false, completion: nil)
-                    
-                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
-                    
-
-                    myItemFound = myOneNoteNotebooks.checkExistenceOfNotebook(mySelectedProject.projectName)
-                    if myItemFound
-                    {
-                        let alert = UIAlertController(title: "OneNote", message:
-                            "Notebook already exists for this Project", preferredStyle: UIAlertControllerStyle.alert)
-                    
-                        self.present(alert, animated: false, completion: nil)
-                    
-                        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
-                    }
-                    else
-                    {
-                        myStartPage = self.myOneNoteNotebooks.createNewNotebookForProject(self.mySelectedProject.projectName)
-                    }
+                    searchString = mySelectedProject.projectName
+                }
+                else if myDisplayType == "Context"
+                {
+                    searchString = myContextName
                 }
                 else
                 {
-                    var myFullName: String = ""
-                    if myDisplayType == "Context"
+                    searchString = personContact.fullName
+                }
+                
+                if searchString != ""
+                {
+                    if myOneNoteNotebooks.checkForExistingPage(pageType: myDisplayType, pageName: searchString)
                     {
-                        myFullName = myContextName
-                    }
-                    else
-                    {
-                        myFullName = personContact.fullName
-                    }
+                        // Duplicate found
 
-                    if myFullName != ""
-                    {
-                        let alert = UIAlertController(title: "OneNote", message:
-                            "Creating OneNote Section for this Person.  OneNote will open when complete.", preferredStyle: .alert)
-
-                        alert.addAction(UIAlertAction(title: "OK", style: .default))
-
-                        present(alert, animated: true)
-                        
-                        myItemFound = myOneNoteNotebooks.checkExistenceOfPerson(myFullName)
-                        if myItemFound
+                        if myDisplayType == "Project"
+                        {
+                            let alert = UIAlertController(title: "OneNote", message:
+                                "Notebook already exists for this Project", preferredStyle: .alert)
+                            
+                            alert.addAction(UIAlertAction(title: "OK", style: .default))
+                            
+                            self.present(alert, animated: false)
+                        }
+                        else
                         {
                             let alert = UIAlertController(title: "OneNote", message:
                                 "Entry already exists for this Person", preferredStyle: .alert)
                             alert.addAction(UIAlertAction(title: "OK", style: .default))
-                        
+                            
                             present(alert, animated: true)
                         }
-                        else
-                        {
-                            // Create a Section for the Person and add an initial page
-                            
-                           myStartPage = myOneNoteNotebooks.createNewSectionForPerson(myFullName)
-                        }
+                    }
+                    else
+                    {  // No duplicates so we can add the page
+                        myOneNoteNotebooks.addPage(pageType: myDisplayType, pageName: searchString)
                     }
                 }
-            
-                if myStartPage != ""
-                {
-                    let myOneNoteUrlPath = myStartPage
-                
-                    let myOneNoteUrl: URL = URL(string: myOneNoteUrlPath)!
-                
-                    if UIApplication.shared.canOpenURL(myOneNoteUrl) == true
-                    {
-                        UIApplication.shared.open(myOneNoteUrl, options: [:],
-                                                  completionHandler: {
-                                                    (success) in
-                                                    print("Open myOneNoteUrl - \(myOneNoteUrl): \(success)")})
-                    }
-                }
+    
             default:
                 NSLog("Do nothing")
         }
@@ -1597,12 +1546,11 @@ println("facebook ID = \(myFacebookID)")
         else
         {
             let alert = UIAlertController(title: "Evernote", message:
-                "Unable to load Evernote for this Note", preferredStyle: UIAlertControllerStyle.alert)
-            
-            self.present(alert, animated: false, completion: nil)
-            
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
-                handler: nil))
+                "Unable to load Evernote for this Note", preferredStyle: .alert)
+
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+
+            self.present(alert, animated: false)
         }
     }
 
@@ -1666,12 +1614,11 @@ println("facebook ID = \(myFacebookID)")
     func myDropboxFileLoadFailed(_ error:NSError)
     {
         let alert = UIAlertController(title: "Dropbox", message:
-            "Unable to load Dropbox file.  Error = \(error)", preferredStyle: UIAlertControllerStyle.alert)
-        
-        self.present(alert, animated: false, completion: nil)
-        
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
-            handler: nil))
+            "Unable to load Dropbox file.  Error = \(error)", preferredStyle: .alert)
+
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+
+        self.present(alert, animated: false)
     }
     
     func myDropboxFileProgress(_ fileName: String, progress:CGFloat)
@@ -2294,115 +2241,6 @@ print("Dropbox status = \(progress)")
         }
 
         self.dismiss(animated: true, completion:nil)
-    }
-
-    func OneNoteNotebookGetSections()
-    {
-        DispatchQueue.global(qos: .userInitiated).async
-            { // 1
-               /* Disabling this code in order to use the OneNote search API instead
-                if self.myDisplayType == "Project"
-                {
-                    self.myOneNoteNotebooks.getNotesForProject(self.labelName.text!)
-                }
-                else
-                {
-                    self.myOneNoteNotebooks.getNotesForPerson(self.labelName.text!)
-                }
-                */
-                self.myOneNoteNotebooks.searchOneNote(self.labelName.text!)
-            }
-    }
-
-    func OneNoteNoNotebookFound()
-    {
-        var myDisplay: [TableData] = Array()
-        
-        writeRowToArray("No matching OneNote Notebook found", inTable: &myDisplay)
-        
-        switch oneNoteTableToRefresh
-        {
-        case "Table1":
-            table1Contents = myDisplay
-            dataTable1.reloadData()
-            
-        case "Table2":
-            table2Contents = myDisplay
-            dataTable2.reloadData()
-            
-        case "Table3":
-            table3Contents = myDisplay
-            dataTable3.reloadData()
-            
-        case "Table4":
-            table4Contents = myDisplay
-            dataTable4.reloadData()
-            
-        default:
-            print("OneNoteNotebookGetSections: oneNoteTableToRefresh hit default for some reason")
-        }
-    }
-    
-    func OneNotePagesReady(_ notification: Notification)
-    {
-        var myDisplay: [TableData] = Array()
-
-        for myPage in myOneNoteNotebooks.pages
-        {
-            let dateFormat = DateFormatter.Style.medium
-            let timeFormat = DateFormatter.Style.short
-            let myDateFormatter = DateFormatter()
-            myDateFormatter.dateStyle = dateFormat
-            myDateFormatter.timeStyle = timeFormat
-            
-            let myDate = myDateFormatter.string(from: myPage.lastModifiedTime as Date)
-
-            var myString: String = ""
-            
-            myString = "\(myPage.title)\n"
-            myString += "Last modified : \(myDate)"
-            writeRowToArray(myString, inTable: &myDisplay)
-        }
-        
-        if myDisplay.count == 0
-        {
-            writeRowToArray("No matching OneNote pages found", inTable: &myDisplay)
-        }
-        
-        switch oneNoteTableToRefresh
-        {
-            case "Table1":
-                table1Contents = myDisplay
-                DispatchQueue.main.async
-                {
-                        self.dataTable1.reloadData() // reload table/data or whatever here. However you want.
-                }
-            
-            case "Table2":
-                table2Contents = myDisplay
-                DispatchQueue.main.async
-                {
-                        self.dataTable2.reloadData() // reload table/data or whatever here. However you want.
-                }
-            
-            case "Table3":
-                table3Contents = myDisplay
-                DispatchQueue.main.async
-                {
-                        self.dataTable3.reloadData() // reload table/data or whatever here. However you want.
-                }
-            
-            case "Table4":
-                table4Contents = myDisplay
-                
-                DispatchQueue.main.async
-                {
-                    self.dataTable4.reloadData() // reload table/data or whatever here. However you want.
-                }
-            
-            default:
-                print("OneNoteNotebookGetSections: oneNoteTableToRefresh hit default for some reason")
-        }
     }
     
     func myGmailDidFinish()
@@ -3333,28 +3171,36 @@ print("Dropbox status = \(progress)")
         dropBoxClass.searchFiles("")
     }
     
+    func OneNoteConnected(_ notification: Notification)
+    {
+        self.myOneNoteNotebooks.buildDisplayString(searchString: self.labelName.text!)
+    }
+
     func displayResults(sourceService: String, resultsArray: [TableData])
     {
         // Look through the available pans to fins the one that matches the returned service
-        if TableTypeButton1.currentTitle == sourceService
-        {
-            table1Contents = resultsArray
-            dataTable1.reloadData()
-        }
-        else if TableTypeButton2.currentTitle == sourceService
-        {
-            table2Contents = resultsArray
-            dataTable2.reloadData()
-        }
-        else if TableTypeButton3.currentTitle == sourceService
-        {
-            table3Contents = resultsArray
-            dataTable3.reloadData()
-        }
-        else //if TableTypeButton4.currentTitle == sourceService
-        {
-            table4Contents = resultsArray
-            dataTable4.reloadData()
-        }
+ //       DispatchQueue.global(qos: .default).sync
+ //       {
+            if getFirstPartofString(self.TableTypeButton1.currentTitle!) == sourceService
+            {
+                self.table1Contents = resultsArray
+                self.dataTable1.reloadData()
+            }
+            else if getFirstPartofString(self.TableTypeButton2.currentTitle!) == sourceService
+            {
+                self.table2Contents = resultsArray
+                self.dataTable2.reloadData()
+            }
+            else if getFirstPartofString(self.TableTypeButton3.currentTitle!) == sourceService
+            {
+                self.table3Contents = resultsArray
+                self.dataTable3.reloadData()
+            }
+            else if getFirstPartofString(self.TableTypeButton4.currentTitle!) == sourceService
+            {
+                self.table4Contents = resultsArray
+                self.dataTable4.reloadData()
+            }
+   //     }
     }
 }

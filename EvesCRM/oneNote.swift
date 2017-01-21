@@ -273,7 +273,6 @@ class oneNoteSection: NSObject
                                 }
          
                                 let myDateFormatter = DateFormatter()
-//                                myDateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
                                 
                                 if myTempString.characters.count == 19
                                 {
@@ -588,13 +587,10 @@ class oneNoteNotebook: NSObject
                             
                         default:
                             let _ = 1
-//                            NSLog("Notebook - splitString - Do nothing")
                         }
                     }
                 }
             }
-      //      mySection.OneNoteData = myOneNoteData
-     //       mySection.getPages(mySection.name)
             
             return mySection
         }
@@ -612,7 +608,12 @@ class oneNoteNotebook: NSObject
             print("\n\n")
         }
     }
+}
 
+struct oneNoteDisplay
+{
+    var displayData: TableData!
+    var page: oneNotePage!
 }
 
 class oneNoteNotebooks: NSObject
@@ -621,19 +622,22 @@ class oneNoteNotebooks: NSObject
     fileprivate var mySourceViewController: UIViewController!
     fileprivate var myOneNoteData: oneNoteData!
     fileprivate var myPages: [oneNotePage]!
-        
-    var pages: [oneNotePage]
-    {
-        get
-        {
-            return myPages
-        }
-    }
     
+    private var displayData: [oneNoteDisplay] = Array()
+    
+    var delegate: internalCommunicationDelegate!
+    
+//    var pages: [oneNotePage]
+//    {
+//        get
+//        {
+//            return myPages
+//        }
+//    }
+//    
     init(inViewController: UIViewController)
     {
         super.init()
-        notificationCenter.addObserver(self, selector: #selector(oneNoteNotebooks.OneNoteConnected(_:)), name: NotificationOneNoteConnected, object: nil)
 
         if myOneNoteData != nil
         {
@@ -648,14 +652,6 @@ class oneNoteNotebooks: NSObject
             myOneNoteData = oneNoteData()
             myOneNoteData.sourceViewController = inViewController
         }
-    }
-    
-    func OneNoteConnected(_ notification: Notification)
-    {
-        myOneNoteData.QueryType = "Notebooks"
-        let myReturnString = myOneNoteData.getData("https://www.onenote.com/api/v1.0/notebooks")
-        splitString(myReturnString)
-        notificationCenter.post(name: NotificationOneNoteNotebooksLoaded, object: nil)
     }
     
     fileprivate func splitString(_ inString: String)
@@ -737,8 +733,6 @@ class oneNoteNotebooks: NSObject
                         
                     default:
                         let _ = 1
-
-  //                      NSLog("Notebooks - splitString - Do nothing")
                     }
                 }
                 myNotebooks.append(myNotebook)
@@ -763,13 +757,10 @@ class oneNoteNotebooks: NSObject
     func getNotesForProject(_ inProject: String)
     {
         var myWorkingArray: [oneNotePage] = []
-        var myNotebookFound: Bool = false
-        
         for myNotebook in myNotebooks
         {
             if myNotebook.name == inProject
             {
-                myNotebookFound = true
                 // We have a matching project, so now work with this one
                 
                 // See if we have already processed for this Notebook, if we have then there is np need to reload
@@ -793,15 +784,6 @@ class oneNoteNotebooks: NSObject
           
                 myPages = myWorkingArray
             }
-        }
-
-        if myNotebookFound
-        {
-            notificationCenter.post(name: NotificationOneNotePagesReady, object: nil)
-        }
-        else
-        {
-            notificationCenter.post(name: NotificationOneNoteNoNotebookFound, object: nil)
         }
     }
 
@@ -838,12 +820,17 @@ class oneNoteNotebooks: NSObject
                 myPages = myWorkingArray
             }
         }
-        notificationCenter.post(name: NotificationOneNotePagesReady, object: nil)
     }
     
     func checkExistenceOfNotebook(_ inNotebookName: String) -> Bool
     {
         var ret_val: Bool = false
+        
+        if myNotebooks.count == 0
+        {
+            let myReturnString = myOneNoteData.getData("https://www.onenote.com/api/v1.0/notebooks")
+            splitString(myReturnString)
+        }
         
         for myNotebook in myNotebooks
         {
@@ -860,6 +847,12 @@ class oneNoteNotebooks: NSObject
     func checkExistenceOfPerson(_ inPersonName: String) -> Bool
     {
         var ret_val: Bool = false
+        
+        if myNotebooks.count == 0
+        {
+            let myReturnString = myOneNoteData.getData("https://www.onenote.com/api/v1.0/notebooks")
+            splitString(myReturnString)
+        }
         
         for myNotebook in myNotebooks
         {
@@ -946,16 +939,16 @@ class oneNoteNotebooks: NSObject
         return ret_val
     }
     
-    func searchOneNote(_ inSearchString: String)
-    {
-        let mySearchTerm: String = "https://www.onenote.com/api/v1.0/pages?search=\(inSearchString)&orderby=lastModifiedTime desc"
-        let escapedAddress = mySearchTerm.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)
-
-        let myReturnString = myOneNoteData.getData(escapedAddress!)
-        splitSearchString(myReturnString)
-        
-        notificationCenter.post(name: NotificationOneNotePagesReady, object: nil)
-    }
+//    func searchOneNote(_ inSearchString: String)
+//    {
+//        let mySearchTerm: String = "https://www.onenote.com/api/v1.0/pages?search=\(inSearchString)&orderby=lastModifiedTime desc"
+//        let escapedAddress = mySearchTerm.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)
+//
+//        let myReturnString = myOneNoteData.getData(escapedAddress!)
+//        splitSearchString(myReturnString)
+//        
+//        notificationCenter.post(name: NotificationOneNotePagesReady, object: nil)
+//    }
     
     fileprivate func splitSearchString(_ inString: String)
     {
@@ -1074,6 +1067,118 @@ class oneNoteNotebooks: NSObject
             }
         }
     }
+    
+    func buildDisplayString(searchString: String)
+    {
+        var returnArray: [TableData] = Array()
+        
+        displayData.removeAll()
+        
+        // Search through OneNote to get the data
+        
+        let mySearchTerm: String = "https://www.onenote.com/api/v1.0/pages?search=\(searchString)&orderby=lastModifiedTime desc"
+        let escapedAddress = mySearchTerm.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)
+        
+        let myReturnString = myOneNoteData.getData(escapedAddress!)
+        splitSearchString(myReturnString)
+        
+        let dateFormat = DateFormatter.Style.medium
+        let timeFormat = DateFormatter.Style.short
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = dateFormat
+        myDateFormatter.timeStyle = timeFormat
+        
+        for myPage in myPages
+        {
+            let myDate = myDateFormatter.string(from: myPage.lastModifiedTime as Date)
+            
+            let myString = "\(myPage.title)\nLast modified : \(myDate)"
+            
+            let tempEntry = TableData(displayText: myString)
+            let tempDisplay = oneNoteDisplay(displayData: tempEntry, page: myPage)
+            
+            displayData.append(tempDisplay)
+            returnArray.append(tempEntry)
+        }
+        
+        if displayData.count == 0
+        {
+            let tempEntry = TableData(displayText: "No matching OneNote Notebook found")
+            let tempDisplay = oneNoteDisplay(displayData: tempEntry, page: nil)
+            
+            displayData.append(tempDisplay)
+            returnArray.append(tempEntry)
+        }
+        
+        delegate.displayResults(sourceService: "OneNote", resultsArray: returnArray)
+    }
+    
+    func openOneNote(rowID: Int)
+    {
+        let myOneNoteUrlPath = displayData[rowID].page.urlCallback
+        
+        let myOneNoteUrl: URL = URL(string: myOneNoteUrlPath)!
+        
+        if UIApplication.shared.canOpenURL(myOneNoteUrl) == true
+        {
+            UIApplication.shared.open(myOneNoteUrl, options: [:],
+                                      completionHandler:
+            {
+                (success) in
+                    let _ = 1
+            })
+        }
+    }
+    
+    func checkForExistingPage(pageType: String, pageName: String) -> Bool
+    {
+        if pageType == "Project"
+        {
+            if checkExistenceOfNotebook(pageName)
+            {
+                return true
+            }
+        }
+        else
+        {
+            if checkExistenceOfPerson(pageName)
+            {
+                return true
+            }
+        }
+        
+        return false
+    }
+    
+    func addPage(pageType: String, pageName: String)
+    {
+        var myStartPage: String = ""
+        if pageType == "Project"
+        {
+            myStartPage = createNewNotebookForProject(pageName)
+        }
+        else
+        {
+            myStartPage = createNewSectionForPerson(pageName)
+        }
+        
+        if myStartPage != ""
+        {
+            let myOneNoteUrlPath = myStartPage
+            
+            let myOneNoteUrl: URL = URL(string: myOneNoteUrlPath)!
+            
+            if UIApplication.shared.canOpenURL(myOneNoteUrl) == true
+            {
+                UIApplication.shared.open(myOneNoteUrl, options: [:],
+                                          completionHandler:
+                {
+                    (success) in
+                        let _ = 1
+                })
+            }
+        }
+    }
 }
 
 class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLConnectionDataDelegate
@@ -1145,7 +1250,6 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
     func createOneNoteObject(_ inName: String, inType: String, inParent: String) -> String
     {
         var ret_val: String = ""
-//        var response: NSURLResponse?
         
         var myCommand: String = ""
         var myBody: String = ""
@@ -1177,7 +1281,6 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
             
             myOneNoteFinished = false
             let url: URL = URL(string: myCommand)!
-            //        let request = NSMutableURLRequest(url: url)
             var request = URLRequest(url: url)
             request.httpMethod = "POST"
             request.httpBody = presentation
@@ -1187,19 +1290,6 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
             {
                 request.setValue("Bearer \(liveClient.session.accessToken!)", forHTTPHeaderField: "Authorization")
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                
-                // Send the HTTP request
-                
-  //          let result: NSData?
-  //              do
-  //              {
-  //                  result = try NSURLConnection.sendSynchronousRequest(request, returningResponse:&response)
-  //              }
-  //              catch let error1 as NSError
-  //              {
-  //                  NSLog("createOneNoteObject\(error1)")
- //                   result = nil
- //               }
                 
                 let session = URLSession.shared
                 
@@ -1236,32 +1326,6 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
                 
                 task.resume()
                 sem.wait()
-
-     /*
-                let httpResponse = response as? NSHTTPURLResponse
-                
-                let status = httpResponse!.statusCode
-                
-                let myReturnString = NSString(data: result!, encoding: NSUTF8StringEncoding) as! String
-                
-                if status == 201
-                {
-                    switch inType
-                    {
-                        case "Notebook" :
-                            ret_val = processNotebookCreateReturn(myReturnString)
-                        
-                        case "Section" :
-                            ret_val = processNotebookCreateReturn(myReturnString)
-
-                        default: print("createOneNoteObject: invalid type passed in")
-                    }
-                }
-                else
-                {
-                    print("oneNoteData: createOneNoteObject: There was an error accessing the OneNote data. Response code: \(status)")
-                }
-*/
             }
         }
     
@@ -1271,7 +1335,6 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
     func createOneNotePage(_ inName: String, inType: String, inParent: String) -> String
     {
         var ret_val: String = ""
-//        var response: NSURLResponse?
         
         var myCommand: String = ""
         var myBody: String = ""
@@ -1300,7 +1363,6 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
             
             myOneNoteFinished = false
             let url: URL = URL(string: myCommand)!
-            //        let request = NSMutableURLRequest(url: url)
             var request = URLRequest(url: url)
             request.httpMethod = "POST"
             request.httpBody = presentation
@@ -1310,20 +1372,6 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
             {
                 request.setValue("Bearer \(liveClient.session.accessToken!)", forHTTPHeaderField: "Authorization")
                 request.setValue("text/html", forHTTPHeaderField: "Content-Type")
-                
-                // Send the HTTP request
-                
-          /*  let result: NSData?
-                do
-                {
-                    result = try NSURLConnection.sendSynchronousRequest(request, returningResponse:&response)
-                }
-                catch let error1 as NSError
-                {
-                    NSLog("createOneNotePage\(error1)")
-                    result = nil
-                }
-              */
                 
                 let session = URLSession.shared
                 
@@ -1350,26 +1398,7 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
                 
                 task.resume()
                 sem.wait()
-                
-                
-                /*
-                let httpResponse = response as? NSHTTPURLResponse
-                
-                let status = httpResponse!.statusCode
-                
-                let myReturnString = NSString(data: result!, encoding: NSUTF8StringEncoding) as! String
-                
-                if status == 201
-                {
-                    ret_val = processPageCreateReturn(myReturnString)
-                }
-                else
-                {
-                    print("oneNoteData: createOneNotePage: There was an error accessing the OneNote data. Response code: \(status)")
-                }
-*/
-            }
-            
+            }            
         }
         
         return ret_val
@@ -1472,11 +1501,11 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
         return ret_val
     }
     
-    func getData(_ inURLString: String) -> String
+    func getData(_ URLString: String) -> String
     {
         var myReturnString: String = ""
 
-        myInString = inURLString
+        myInString = URLString
         
         if !myOneNoteConnected
         {
@@ -1487,21 +1516,21 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
         }
         else
         {
-            myReturnString = performGetData(inURLString)
+            myReturnString = performGetData(URLString)
         }
         return myReturnString
     }
     
-    fileprivate func performGetData(_ inURLString: String) -> String
+    fileprivate func performGetData(_ URLString: String) -> String
     {
         var myReturnString: String = ""
         
         myOneNoteFinished = false
-        let url: URL = URL(string: inURLString)!
+        let url: URL = URL(string: URLString)!
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         request.cachePolicy = NSURLRequest.CachePolicy.reloadIgnoringLocalCacheData
-        
+
         if liveClient.session != nil
         {
             request.setValue("Bearer \(liveClient.session.accessToken!)", forHTTPHeaderField: "Authorization")
