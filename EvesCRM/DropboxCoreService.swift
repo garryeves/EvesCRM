@@ -35,20 +35,28 @@ import SwiftyDropbox
 //    func myDropboxFileLoadSearchFailed(_ error:NSError)
 //}
 
+struct dropBoxDisplay
+{
+    var displayData: TableData!
+    var file: String!
+}
+
 class dropboxService: NSObject
 {
-    /*  Some work to do
-Note that a DBSession can be linked with more than one Dropbox, for example you could allow users to connect with both their work and personal Dropboxes. In that case, you'll want to use the -[DBRestClient initWithSession:userId:] method to specify the account. You can get an array of all connected accounts from [DBSession sharedSession].userIds.
-
-*/
-//    fileprivate var dbRestClient: DBRestClient?
-//    var delegate: MyDropboxCoreDelegate?
-    
     private var dBoxClient: DropboxClient!
+    private var myFiles: [dropBoxDisplay] = Array()
     
     var delegate: internalCommunicationDelegate!
     
     var searchString: String = ""
+    
+    var files: [dropBoxDisplay]
+    {
+        get
+        {
+            return myFiles
+        }
+    }
     
     override init()
     {
@@ -70,8 +78,6 @@ Note that a DBSession can be linked with more than one Dropbox, for example you 
         {
             notificationCenter.post(name: NotificationDropBoxReady, object: nil)
         }
-//        let accountManager = DBSession(appKey: "1qayzo6cmw8v6nr", appSecret: "739onip24zh142y", root: kDBRootDropbox)
-//        DBSession.setSharedSession(accountManager)
     }
     
     func assignClient()
@@ -88,39 +94,71 @@ Note that a DBSession can be linked with more than one Dropbox, for example you 
         {
             dBoxClient = DropboxClientsManager.authorizedClient
         }
+        
+        myFiles.removeAll()
+        
+        let sem = DispatchSemaphore(value: 0);
 
         dBoxClient.files.search(path: path, query: searchString, mode: .filenameAndContent).response
             { response, error in
-                if let response = response
+                if let workingResponse = response
                 {
-                    if response.matches.count > 0
+                    for myMatch in workingResponse.matches
                     {
-                        for myMatch in response.matches
-                        {
-    //                        print("Desc = \(myMatch.description)")
-    //                        print("Metadata = \(myMatch.metadata)")
-    //                        
-    //                        print("Name = \(myMatch.metadata.name)")
-    //                        print("pathDisplay = \(myMatch.metadata.pathDisplay)")
-    //                        
-                            let tempData = TableData(displayText: "\(myMatch.metadata.pathDisplay!)")
-                            returnArray.append(tempData)
-                        }
-                    }
-                    else
-                    {
-                        let tempData = TableData(displayText: "No files found")
+                        let tempData = TableData(displayText: "\(myMatch.metadata.pathDisplay!)")
+                        
                         returnArray.append(tempData)
+                        let tempEntry = dropBoxDisplay(displayData: tempData, file: "\(myMatch.metadata.pathDisplay!)")
+                        
+                        self.myFiles.append(tempEntry)
                     }
-                    self.delegate.displayResults(sourceService: "DropBox", resultsArray: returnArray)
                 }
                 else if let error = error
                 {
                     print(error)
                 }
+                sem.signal()
             }
         
+        sem.wait()
+        
+        if myFiles.count == 0
+        {
+            let tempData = TableData(displayText: "No Files Found")
+            
+            returnArray.append(tempData)
+            let tempEntry = dropBoxDisplay(displayData: tempData, file: "")
+            
+            myFiles.append(tempEntry)
+        }
+        
+        delegate.displayResults(sourceService: "DropBox", resultsArray: returnArray)
     }
+    
+    func openDropBox(rowID: Int)
+    {
+        // Dropbox does not currently support URL scheme links to files, so this just does nothing.  It is here in case Dropbo introduces support
+//        if myFiles[rowID].file != ""
+//        {
+//            let myPath = " \(myFiles[rowID].file!)"
+//            
+//            let escapedString = myPath.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+//            
+//            let fullPath = "dbapi-8://1/viewLink?url=\(escapedString!)"
+//            let myUrl: URL = URL(string: fullPath)!
+//            
+//            if UIApplication.shared.canOpenURL(URL(string: "dropbox://")!)
+//            {
+//                UIApplication.shared.open(myUrl, options: [:],
+//                                          completionHandler:
+//                    {
+//                        (success) in
+//                        let _ = 1
+//                })
+//            }
+//        }
+    }
+
     
 //    func initiateAuthentication(_ viewController: UIViewController)
 //    {

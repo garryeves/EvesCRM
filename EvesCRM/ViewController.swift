@@ -77,21 +77,13 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
     
     var reBuildTableName: String = ""
     
-    var evernoteSession: ENSession!
-    var myEvernote: EvernoteDetails!
-    var evernotePass1: Bool = false
-    var EvernoteTargetTable: String = "'"
-    var myEvernoteShard: String = ""
-    var myEvernoteUserID: Int = 0
-    var EvernoteUserDone: Bool = false
-    var EvernoteAuthenticationDone: Bool = false
-    var myEvernoteGUID: String = ""
     var myDisplayType: String = ""
+
+    // Still to address
     var omniTableToRefresh: String = ""
     var gmailTableToRefresh: String = ""
     var hangoutsTableToRefresh: String = ""
     var facebookTableToRefresh: String = ""
-
     var omniLinkArray: [String] = Array()
     
     var document: MyDocument?
@@ -99,12 +91,14 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
     var ubiquityURL: URL?
     var metaDataQuery: NSMetadataQuery?
     
+    // Dropbox
     var dropBoxClass: dropboxService!
     
-//    var dbRestClient: DBRestClient?
+    // Evernote
+    var myEvernote: EvernoteDetails!
     
+    // Calendar
     var eventDetails: iOSCalendar!
-
     var reminderDetails: iOSReminder!
 
     var projectMemberArray: [String] = Array()
@@ -165,13 +159,6 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
             print("Calendar Case Default")
         }
 
-        // Now we will try and open Evernote
-        
-
-        evernoteSession = ENSession.shared()
-
-//        connectToEvernote()
-        
        // Initial population of contact list
         self.dataTable1.register(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
         self.dataTable2.register(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
@@ -223,22 +210,14 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
        
         TableOptions = Array()
 
-        myEvernote = EvernoteDetails(inSession: self.evernoteSession)
-        
-        if evernoteSession.isAuthenticated
-        {
-            getEvernoteUserDetails()
-        }
-
         labelName.text = ""
 //Checked to keep
         notificationCenter.addObserver(self, selector: #selector(self.OneNoteConnected(_:)), name: NotificationOneNoteConnected, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.evernoteAuthenticationDidFinish), name: NotificationEvernoteAuthenticationDidFinish, object: nil)
 
         
         
         
-        notificationCenter.addObserver(self, selector: #selector(self.EvernoteComplete), name: NotificationEvernoteComplete, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(self.myEvernoteUserDidFinish), name: NotificationEvernoteUserDidFinish, object: nil)
         notificationCenter.addObserver(self, selector: #selector(self.myGmailDidFinish), name: NotificationGmailDidFinish, object: nil)
         notificationCenter.addObserver(self, selector: #selector(self.myHangoutsDidFinish), name: NotificationHangoutsDidFinish, object: nil)
         notificationCenter.addObserver(self, selector: #selector(self.gmailSignedIn(_:)), name: NotificationGmailConnected, object: nil)
@@ -335,19 +314,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
         }
         else
         {
-            var myFullName: String
-            if myDisplayType == "Project"
-            {
-                myFullName = mySelectedProject.projectName
-            }
-            else if myDisplayType == "Context"
-            {
-                myFullName = myContextName
-            }
-            else
-            {
-                myFullName = personContact.fullName
-            }
+            let myFullName = buildSearchString()
 
             switch callingTable
             {
@@ -550,19 +517,8 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
             
         }
         
-        if myDisplayType == "Project"
-        {
-            labelName.text = mySelectedProject.projectName
-        }
-        else if myDisplayType == "Context"
-        {
-            labelName.text = myContextName
-        }
-        else
-        {
-            labelName.text = personContact.fullName
-        }
-                
+        labelName.text = buildSearchString()
+        
         let selectedType: String = getFirstPartofString(dataType)
         
         // This is where we have the logic to work out which type of data we are goign to populate with
@@ -625,24 +581,24 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
             
             case "Evernote":
                 writeRowToArray("Loading Evernote data.  Pane will refresh when finished", inTable: &workArray)
-                if myDisplayType == "Project"
+                
+                // Work out the searchString
+                
+                if myEvernote == nil
                 {
-                    myEvernote.findEvernoteNotes(mySelectedProject.projectName)
+                    myEvernote = EvernoteDetails(sourceView: self)
+                    myEvernote.searchString = buildSearchString()
+                    myEvernote.delegate = self
                 }
                 else
                 {
-                    var searchString: String = ""
-                    if myDisplayType == "Context"
+                    myEvernote.searchString = buildSearchString()
+                    myEvernote.delegate = self
+                    DispatchQueue.global(qos: .background).async
                     {
-                        searchString = myContextName
+                        self.myEvernote.findEvernoteNotes()
                     }
-                    else
-                    {
-                        searchString = personContact.fullName
-                    }
-                    myEvernote.findEvernoteNotes(searchString)
                 }
-                EvernoteTargetTable = inTable
 
             case "Project Membership":
                 // Project team membership details
@@ -957,34 +913,29 @@ println("facebook ID = \(myFacebookID)")
                 {
                     reBuildTableName = table
 
-                    var myFullName: String
-                    if myDisplayType == "Project"
+                    let myFullName = buildSearchString()
+
+                    openReminderEditView(reminderDetails.reminders[rowID].calendarItemIdentifier, inCalendarName: myFullName)
+                }
+            
+            case "Evernote":
+                if myEvernote.canDisplay(rowID: rowID)
+                {
+                    if myEvernote.shard == ""
                     {
-                        myFullName = mySelectedProject.projectName
-                    }
-                    else if myDisplayType == "Context"
-                    {
-                        myFullName = myContextName
+                        let alert = UIAlertController(title: "Evernote", message:
+                            "Unable to load Evernote for this Note", preferredStyle: .alert)
+                        
+                        alert.addAction(UIAlertAction(title: "OK", style: .default))
+                        
+                        self.present(alert, animated: false)
                     }
                     else
                     {
-                        myFullName = personContact.fullName
+                       myEvernote.openEvernote(rowID: rowID)
                     }
-                    openReminderEditView(reminderDetails.reminders[rowID].calendarItemIdentifier, inCalendarName: myFullName)
                 }
-            case "Evernote":
-                if myRowContents != "No Notes found"
-                {
-                    reBuildTableName = table
-                    
-                    var myEvernoteDataArray = myEvernote.getEvernoteDataArray()
-                    
-                    let myGuid = myEvernoteDataArray[rowID].identifier
-                    let myNoteRef = myEvernoteDataArray[rowID].NoteRef
-
-                    openEvernoteEditView(myGuid, inNoteRef: myNoteRef)
-                }
-
+            
             case "Omnifocus":
                 let myOmniUrlPath = omniLinkArray[rowID]
                
@@ -1071,6 +1022,9 @@ println("facebook ID = \(myFacebookID)")
 
         case "OneNote":
             myOneNoteNotebooks.openOneNote(rowID: rowID)
+            
+        case "DropBox":
+            dropBoxClass.openDropBox(rowID: rowID)
             
         case "GMail":
             hideFields()
@@ -1231,38 +1185,10 @@ println("facebook ID = \(myFacebookID)")
         switch selectedType
         {
             case "Reminders":
-                var myFullName: String
-                if myDisplayType == "Project"
-                {
-                    myFullName = mySelectedProject.projectName
-                }
-                else if myDisplayType == "Context"
-                {
-                    myFullName = myContextName
-                }
-                else
-                {
-                    myFullName = personContact.fullName
-                }
-
-                openReminderAddView(myFullName)
+                openReminderAddView(buildSearchString())
 
             case "Evernote":
-                var myFullName: String
-                if myDisplayType == "Project"
-                {
-                    myFullName = mySelectedProject.projectName
-                }
-                else if myDisplayType == "Context"
-                {
-                    myFullName = myContextName
-                }
-                else
-                {
-                    myFullName = personContact.fullName
-                }
-
-                openEvernoteAddView(myFullName)
+                myEvernote.addNote(title:  buildSearchString())
             
             case "Omnifocus":
                 var myOmniUrlPath: String
@@ -1306,20 +1232,7 @@ println("facebook ID = \(myFacebookID)")
             case "OneNote":
                 // First check that the page will not be a duplicate
                 
-                var searchString: String = ""
-                
-                if myDisplayType == "Project"
-                {
-                    searchString = mySelectedProject.projectName
-                }
-                else if myDisplayType == "Context"
-                {
-                    searchString = myContextName
-                }
-                else
-                {
-                    searchString = personContact.fullName
-                }
+                let searchString = buildSearchString()
                 
                 if searchString != ""
                 {
@@ -1498,96 +1411,6 @@ println("facebook ID = \(myFacebookID)")
         picker.dismiss(animated: true, completion: nil)
     }
 
-    func EvernoteComplete()
-    {
-        var myTable: [TableData] = Array()
-
-        myTable = myEvernote.getWriteString()
-        
-        switch EvernoteTargetTable
-        {
-        case "Table1":
-            table1Contents = myTable
-            dataTable1.reloadData()
-            
-        case "Table2":
-            table2Contents = myTable
-            dataTable2.reloadData()
-            
-        case "Table3":
-            table3Contents = myTable
-            dataTable3.reloadData()
-            
-        case "Table4":
-            table4Contents = myTable
-            dataTable4.reloadData()
-            
-        default:
-            print("EvernoteComplete has incorrect table")
-        }
-    }
-    
-    func openEvernoteEditView(_ inGUID: String, inNoteRef:ENNoteRef)
-    {
-        if myEvernoteShard != ""
-        {
-            let myEnUrlPath = "evernote:///view/\(myEvernoteUserID)/\(myEvernoteShard)/\(inGUID)/\(inGUID)/"
-
-            let myEnUrl: URL = URL(string: myEnUrlPath)!
-            
-            if UIApplication.shared.canOpenURL(myEnUrl) == true
-            {
-                UIApplication.shared.open(myEnUrl, options: [:],
-                                          completionHandler: {
-                                            (success) in
-                                            print("Open myEnUrl - \(myEnUrl): \(success)")})
-            }
-        }
-        else
-        {
-            let alert = UIAlertController(title: "Evernote", message:
-                "Unable to load Evernote for this Note", preferredStyle: .alert)
-
-            alert.addAction(UIAlertAction(title: "OK", style: .default))
-
-            self.present(alert, animated: false)
-        }
-    }
-
-    func openEvernoteAddView(_ inFullName: String)
-    {
-        // Lets build the date string
-        let myDateFormatter = DateFormatter()
-        
-        let dateFormat = DateFormatter.Style.medium
-        let timeFormat = DateFormatter.Style.short
-        myDateFormatter.dateStyle = dateFormat
-        myDateFormatter.timeStyle = timeFormat
-        
-        /* Instantiate the event store */
-        let myDate = myDateFormatter.string(from: Date())
-
-        
-        let myTempPath = "evernote://x-callback-url/new-note?type=text&title=\(inFullName) : \(myDate)"
-  
-        let myEnUrlPath = stringByChangingChars(myTempPath, inOldChar: " ", inNewChar: "%20")
-
-        let myEnUrl: URL = URL(string: myEnUrlPath)!
-        
-        if UIApplication.shared.canOpenURL(myEnUrl) == true
-        {
-            UIApplication.shared.open(myEnUrl, options: [:],
-                                      completionHandler: {
-                                        (success) in
-                                        print("Open myEnUrl - \(myEnUrl): \(success)")})
-        }
-    }
-        
-    func myEvernoteUserDidFinish()
-    {
-        print("Evernote user authenticated")
-    }
-    
     func openOmnifocusDropbox()
     {
 //GRE        dropboxCoreService.delegate = self
@@ -1804,18 +1627,8 @@ print("Dropbox status = \(progress)")
         {
             while let line = aStreamReader.nextLine()
             {
-                if myDisplayType == "Project"
-                {
-                    myFullName = mySelectedProject.projectName
-                }
-                else if myDisplayType == "Context"
-                {
-                    myFullName = myContextName
-                }
-                else
-                {
-                    myFullName = personContact.fullName
-                }
+                myFullName = buildSearchString()
+
                 if line.lowercased().range(of: myFullName.lowercased()) != nil
                 {
                     // need to format the string into the approriate format
@@ -2100,20 +1913,7 @@ print("Dropbox status = \(progress)")
         
         let myPanes = displayPanes()
         
-        var myButtonName: String = ""
-        
-        if myDisplayType == "Person"
-        {
-            myButtonName = personContact.fullName
-        }
-        else if myDisplayType == "Context"
-        {
-            myButtonName = myContextName
-        }
-        else
-        {
-            myButtonName = mySelectedProject.projectName
-        }
+        let myButtonName = buildSearchString()
         
         labelName.text = myButtonName
         
@@ -2148,27 +1948,6 @@ print("Dropbox status = \(progress)")
                 TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myButtonName), for: UIControlState())
             }
         }
-    }
-    
-    func getEvernoteUserDetails()
-    {
-        //Now we are authenticated we can get the used id and shard details
-        let myEnUserStore = evernoteSession.userStore
-        myEnUserStore?.getUserWithSuccess({
-            (findNotesResults) in
-            self.myEvernoteShard = (findNotesResults?.shardId)!
-            self.myEvernoteUserID = findNotesResults?.id as! Int
-            self.EvernoteUserDone = true
-            notificationCenter.post(name: NotificationEvernoteUserDidFinish, object: nil)
-            }
-            , failure: {
-                (findNotesError) in
-                print("Failure")
-                self.EvernoteUserDone = true
-                self.myEvernoteShard = ""
-                self.myEvernoteUserID = 0
-                notificationCenter.post(name: NotificationEvernoteUserDidFinish, object: nil)
-        })
     }
     
     func eventViewController(_ controller: EKEventViewController, didCompleteWith action: EKEventViewAction)
@@ -2545,7 +2324,6 @@ print("Dropbox status = \(progress)")
                     case "Settings":
                         let settingViewControl = self.storyboard!.instantiateViewController(withIdentifier: "Settings") as! settingsViewController
                         settingViewControl.delegate = self
-                        settingViewControl.evernoteSession = evernoteSession
  //GRE                       settingViewControl.dropboxCoreService = dropboxCoreService
                         
                         self.present(settingViewControl, animated: true, completion: nil)
@@ -3162,25 +2940,50 @@ print("Dropbox status = \(progress)")
         
         myDatabaseConnection.saveProcessedEmail(myWorkingGmailMessage.id, emailType: "GMail", processedDate: Date())
         NSLog("need something here to do the context")
-        
-
+    }
+    
+    func buildSearchString() -> String
+    {
+        if myDisplayType == "Project"
+        {
+            return mySelectedProject.projectName
+        }
+        else if myDisplayType == "Context"
+        {
+            return myContextName
+        }
+        else
+        {
+            return personContact.fullName
+        }
     }
     
     func dropBoxReady()
     {
-        dropBoxClass.searchFiles("")
+        DispatchQueue.global(qos: .background).async
+        {
+            self.dropBoxClass.searchFiles("")
+        }
     }
     
     func OneNoteConnected(_ notification: Notification)
     {
         self.myOneNoteNotebooks.buildDisplayString(searchString: self.labelName.text!)
     }
+    
+    func evernoteAuthenticationDidFinish()
+    {
+        DispatchQueue.global(qos: .background).async
+        {
+            self.myEvernote.findEvernoteNotes()
+        }
+    }
 
     func displayResults(sourceService: String, resultsArray: [TableData])
     {
         // Look through the available pans to fins the one that matches the returned service
- //       DispatchQueue.global(qos: .default).sync
- //       {
+        DispatchQueue.main.async
+        {
             if getFirstPartofString(self.TableTypeButton1.currentTitle!) == sourceService
             {
                 self.table1Contents = resultsArray
@@ -3201,6 +3004,6 @@ print("Dropbox status = \(progress)")
                 self.table4Contents = resultsArray
                 self.dataTable4.reloadData()
             }
-   //     }
+        }
     }
 }

@@ -71,7 +71,7 @@ class settingsViewController: UIViewController
         hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.left
         self.view.addGestureRecognizer(hideGestureRecognizer)
         
-        notificationCenter.addObserver(self, selector: #selector(settingsViewController.myEvernoteAuthenticationDidFinish), name: NotificationEvernoteAuthenticationDidFinish, object: nil)
+
         
         notificationCenter.addObserver(self, selector: #selector(settingsViewController.changeSettings(_:)), name: NotificationChangeSettings, object: nil)
         
@@ -199,43 +199,9 @@ class settingsViewController: UIViewController
     
     @IBAction func buttonConnectEvernoteClick(_ sender: UIButton)
     {
-        connectToEvernote()
+  //      connectToEvernote()
     }
 
-    //Evernote
-    
-    func connectToEvernote()
-    {
-        // Authenticate to Evernote if needed
-        
-        if !evernotePass1
-        {
-            evernoteSession.authenticate (with: self, preferRegistration:false, completion: {
-                (error: Error?) in
-                if error != nil
-                {
-                    // authentication failed
-                    // show an alert, etc
-                    // ...
-                }
-                else
-                {
-                    // authentication succeeded
-                    // do something now that we're authenticated
-                    // ...
-                    self.myEvernote = EvernoteDetails(inSession: self.evernoteSession)
-                }
-                notificationCenter.post(name: NotificationEvernoteAuthenticationDidFinish, object: nil)
-            })
-        }
-        
-        evernotePass1 = true  // This is to allow only one attempt to launch Evernote
-    }
-    
-    func myEvernoteAuthenticationDidFinish()
-    {
-        print("Evernote authenticated")
-    }
     
     func connectToDropbox()
     {

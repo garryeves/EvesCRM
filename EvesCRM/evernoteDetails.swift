@@ -9,141 +9,222 @@
 import Foundation
 import AddressBook
 
-
+struct evernoteDisplay
+{
+    var displayData: TableData!
+    var guid: String!
+}
 
 class EvernoteDetails
 {
-
-    fileprivate var retrievedData: [EvernoteData] = [EvernoteData]()
-    fileprivate var expectedSearchResults: Int = 0
-    fileprivate var tableContents:[TableData] = [TableData]()
     fileprivate var myENSession: ENSession!
-    fileprivate var isConnected = false
-    fileprivate var asyncDone = false
+    private var myEvernoteShard: String = ""
+    private var myEvernoteUserID: Int = 0
+    private var displayData: [evernoteDisplay] = Array()
     
-    init(inSession: ENSession)
-    {
-        if inSession.isAuthenticated
-        {
-            myENSession = inSession
-            isConnected = true
-        }
-    }
-
-/*    func parseEvernoteDetails(personSelected: ABRecord, inTableNumber: String)->[TableData]
-    {
-        var myString: String = ""
+    var searchString: String!
+    var delegate: internalCommunicationDelegate!
     
-        if !isConnected
+    init(sourceView: UIViewController)
+    {
+        myENSession = ENSession.shared()
+        if !myENSession.isAuthenticated
         {
-            myString = "Unable to connect to Evernote Service"
-            writeRowToArray(myString, &tableContents)
+            myENSession.authenticate (with: sourceView, preferRegistration:false, completion: {
+                (error: Error?) in
+                if error != nil
+                {
+                    // authentication failed
+                    // show an alert, etc
+                    // ...
+                    print("Error connecting to Evernote")
+                    notificationCenter.post(name: NotificationEvernoteAuthenticationDidFinish, object: nil)
+                }
+                else
+                {
+                    // authentication succeeded
+                    // do something now that we're authenticated
+                    // ...
+                    print("Connected to Evernote")
+                    self.getEvernoteUserDetails()
+                }
+            })
         }
         else
         {
-            findEvernoteNotes(personSelected, inTableNumber: inTableNumber)
+            getEvernoteUserDetails()
         }
-    
-        return tableContents
     }
-*/
-    func findEvernoteNotes(_ searchString: String)
+
+    var shard: String
     {
+        get
+        {
+            return myEvernoteShard
+        }
+    }
     
+    func getEvernoteUserDetails()
+    {
+        //Now we are authenticated we can get the used id and shard details
+        let myEnUserStore = myENSession.userStore
+        
+        myEnUserStore?.getUserWithSuccess({
+            (findNotesResults) in
+            self.myEvernoteShard = (findNotesResults?.shardId)!
+            self.myEvernoteUserID = findNotesResults?.id as! Int
+            notificationCenter.post(name: NotificationEvernoteAuthenticationDidFinish, object: nil)
+        }
+            , failure: {
+                (findNotesError) in
+                print("Failure")
+                self.myEvernoteShard = ""
+                self.myEvernoteUserID = 0
+                notificationCenter.post(name: NotificationEvernoteAuthenticationDidFinish, object: nil)
+        })
+    }
+    
+    func findEvernoteNotes()
+    {
         var searchText: ENNoteSearch!
         let searchNotebook: ENNotebook = ENNotebook()
         let searchScope: ENSessionSearchScope = ([ENSessionSearchScope.personal, ENSessionSearchScope.personalLinked, ENSessionSearchScope.business])
         let searchOrder = ENSessionSortOrder.recentlyUpdated
         let searchMaxResults: UInt = 100
     
-        var myDisplayStrings: [String] = Array()
+        var returnArray: [TableData] = Array()
 
-        tableContents.removeAll(keepingCapacity: false)
-        retrievedData.removeAll(keepingCapacity: false)
-        asyncDone = false
+        displayData.removeAll(keepingCapacity: false)
         
-        if !isConnected
+        if !myENSession.isAuthenticated
         {
-            let myString = "Unable to connect to Evernote Service"
-            writeRowToArray(myString, inTable: &tableContents)
+            let tempEntry = TableData(displayText: "Unable to connect to Evernote Service")
+            let tempDisplay = evernoteDisplay(displayData: tempEntry, guid: "")
+            
+            displayData.append(tempDisplay)
+            returnArray.append(tempEntry)
         }
         else
         {
             searchText = ENNoteSearch(search: searchString)
 
+            let sem = DispatchSemaphore(value: 0);
+            
             myENSession.findNotes(with: searchText, in: searchNotebook, orScope:searchScope, sortOrder: searchOrder, maxResults: searchMaxResults, completion: {
                 (findNotesResults, findNotesError) in
-
-                self.expectedSearchResults = (findNotesResults?.count)!
-                if (findNotesResults?.count)! > 0
+                for result in findNotesResults!
                 {
-                    for result in findNotesResults!
-                    {
-                        var myData: EvernoteData
-                        
-                        myData = EvernoteData()
-                        
-                        myData.title = (result as AnyObject).title!!
-                        myData.updateDate = (result as AnyObject).updated
-                        myData.createDate = (result as AnyObject).created
-                        myData.identifier = (result as AnyObject).noteRef!.guid
-                        myData.NoteRef = (result as AnyObject).noteRef
-  
-                        // Each ENSessionFindNotesResult has a noteRef along with other important metadata.
-                        
-                        // Seup Date format for display
-                        
-                        let startDateFormatter = DateFormatter()
-                        startDateFormatter.dateStyle = .medium
-                        startDateFormatter.timeStyle = .short
-                
-                        let lastUpdateDate = startDateFormatter.string(from: myData.updateDate)
+                    var myData: EvernoteData
+                    
+                    myData = EvernoteData()
+                    
+                    myData.title = (result as AnyObject).title!!
+                    myData.updateDate = (result as AnyObject).updated
+                    myData.identifier = (result as AnyObject).noteRef!.guid
 
-                        var myString = "\(myData.title)\n"
-                        
-                        myString += "last updated \(lastUpdateDate)"
-                        myDisplayStrings.append(myString)
-                        
-                        self.retrievedData.append(myData)
-                    }
-                    for displayString in myDisplayStrings
-                    {
-                        writeRowToArray(displayString, inTable: &self.tableContents)
-                    }
-                    notificationCenter.post(name: NotificationEvernoteComplete, object: nil)
+                    // Each ENSessionFindNotesResult has a noteRef along with other important metadata.
+                    
+                    // Seup Date format for display
+                    
+                    let startDateFormatter = DateFormatter()
+                    startDateFormatter.dateStyle = .medium
+                    startDateFormatter.timeStyle = .short
+            
+                    let lastUpdateDate = startDateFormatter.string(from: myData.updateDate)
+
+                    var myString = "\(myData.title)\n"
+                    myString += "last updated \(lastUpdateDate)"
+                    
+                    let tempEntry = TableData(displayText: myString)
+                    let tempDisplay = evernoteDisplay(displayData: tempEntry, guid: myData.identifier)
+                    
+                    self.displayData.append(tempDisplay)
+                    returnArray.append(tempEntry)
                 }
-                else
-                {
-                    writeRowToArray("No Notes found", inTable: &self.tableContents)
-                    notificationCenter.post(name: NotificationEvernoteComplete, object: nil)
-                }
+
                 if findNotesError != nil
                 {
-                    writeRowToArray("No Notes found - error", inTable: &self.tableContents)
-                    notificationCenter.post(name: NotificationEvernoteComplete, object: nil)
+                    let tempEntry = TableData(displayText: "No Notes found - error")
+                    let tempDisplay = evernoteDisplay(displayData: tempEntry, guid: "")
+                    
+                    self.displayData.append(tempDisplay)
+                    returnArray.append(tempEntry)
+
                 }
+                
+                sem.signal()
             })
+            sem.wait()
         }
+        
+        if displayData.count == 0
+        {
+            let tempEntry = TableData(displayText: "No Notes found")
+            let tempDisplay = evernoteDisplay(displayData: tempEntry, guid: "")
+            
+            displayData.append(tempDisplay)
+            returnArray.append(tempEntry)
+        }
+        
+        delegate.displayResults(sourceService: "Evernote", resultsArray: returnArray)
      }
 
-    func isAsyncDone()-> Bool
+    func canDisplay(rowID: Int) -> Bool
     {
-        return asyncDone
+        // Cherck to see if we can display the row
+        if displayData[rowID].guid != ""
+        {
+            return true
+        }
+        else
+        {
+            return false
+        }
     }
-
-
-    func getWriteString()->[TableData]
+    
+    func addNote(title: String)
     {
-        return tableContents
+        // Lets build the date string
+        let myDateFormatter = DateFormatter()
+        
+        let dateFormat = DateFormatter.Style.medium
+        let timeFormat = DateFormatter.Style.short
+        myDateFormatter.dateStyle = dateFormat
+        myDateFormatter.timeStyle = timeFormat
+        
+        /* Instantiate the event store */
+        let myDate = myDateFormatter.string(from: Date())
+        
+        let myTempPath = "evernote://x-callback-url/new-note?type=text&title=\(title) : \(myDate)"
+        
+        let myEnUrlPath = stringByChangingChars(myTempPath, inOldChar: " ", inNewChar: "%20")
+        
+        let myEnUrl: URL = URL(string: myEnUrlPath)!
+        
+        if UIApplication.shared.canOpenURL(myEnUrl) == true
+        {
+            UIApplication.shared.open(myEnUrl, options: [:],
+                                      completionHandler: {
+                                        (success) in
+                                        print("Open myEnUrl - \(myEnUrl): \(success)")})
+        }
     }
-
-    func isAuthenticated()-> Bool
+    
+    func openEvernote(rowID: Int)
     {
-        return myENSession.isAuthenticated
-    }
-
-    func getEvernoteDataArray()->[EvernoteData]
-    {
-        return retrievedData
+        if myEvernoteShard != ""
+        {
+            let myEnUrlPath = "evernote:///view/\(myEvernoteUserID)/\(myEvernoteShard)/\(displayData[rowID].guid!)/\(displayData[rowID].guid!)/"
+            
+            let myEnUrl: URL = URL(string: myEnUrlPath)!
+            
+            if UIApplication.shared.canOpenURL(myEnUrl) == true
+            {
+                UIApplication.shared.open(myEnUrl, options: [:],
+                                          completionHandler: {
+                                            (success) in
+                                            print("Open myEnUrl - \(myEnUrl): \(success)")})
+            }
+        }
     }
 }
