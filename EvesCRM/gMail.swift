@@ -263,7 +263,7 @@ class gmailMessage: NSObject
 
                 if decodedString != nil
                 {
-                    myBody = decodedString as! String
+                    myBody = decodedString! as String
                 }
             }
         }
@@ -784,7 +784,7 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
                     if status == 200
                     {
                         // this means data was retrieved OK
-                        myReturnString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue) as! String
+                        myReturnString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue)! as String
                     }
                     else if status == 201
                     {

@@ -238,7 +238,7 @@ class meetingAgendaItem
     {
         if myUpdateAllowed
         {
-            myDatabaseConnection.saveAgendaItem(myMeetingID, actualEndTime: myActualEndTime, actualStartTime: myActualStartTime, status: myStatus, decisionMade: myDecisionMade, discussionNotes: myDiscussionNotes, timeAllocation: myTimeAllocation, owner: myOwner, title: myTitle, agendaID: myAgendaID, meetingOrder: myMeetingOrder)
+            myDatabaseConnection.saveAgendaItem(myMeetingID, actualEndTime: myActualEndTime!, actualStartTime: myActualStartTime!, status: myStatus, decisionMade: myDecisionMade, discussionNotes: myDiscussionNotes, timeAllocation: myTimeAllocation, owner: myOwner, title: myTitle, agendaID: myAgendaID, meetingOrder: myMeetingOrder)
         
             if !saveCalled
             {
@@ -274,7 +274,7 @@ class meetingAgendaItem
         
         for myAgendaTask in myAgendaTasks
         {
-            let myNewTask = task(taskID: myAgendaTask.taskID as Int)
+            let myNewTask = task(taskID: myAgendaTask.taskID as! Int)
             myTasks.append(myNewTask)
         }
     }
@@ -537,7 +537,7 @@ class myCalendarItem
         myMinutes = inMeetingAgenda.minutes
         myLocation = inMeetingAgenda.location
         myMinutesType = inMeetingAgenda.minutesType
-        myTeamID = inMeetingAgenda.teamID as Int
+        myTeamID = inMeetingAgenda.teamID as! Int
         
         loadAttendees()
         loadAgendaItems()
@@ -1517,7 +1517,7 @@ class myCalendarItem
                 
                 for myItem2 in myData2
                 {
-                    let newTask = task(taskID: myItem2.taskID as Int)
+                    let newTask = task(taskID: myItem2.taskID as! Int)
                     myTaskList.append(newTask)
                 }
                 
@@ -1951,7 +1951,7 @@ class myCalendarItem
                 
                 for myItem2 in myData2
                 {
-                    let newTask = task(taskID: myItem2.taskID as Int)
+                    let newTask = task(taskID: myItem2.taskID as! Int)
                     myTaskList.append(newTask)
                 }
                 
@@ -2674,7 +2674,7 @@ class iOSCalendar
         
         /* Fetch all the meetings that fall between the starting and the ending dates */
         
-        return myDatabaseConnection.getAgendaForDateRange(startDate, inEndDate: endDate, inTeamID: myCurrentTeam.teamID)
+        return myDatabaseConnection.getAgendaForDateRange(startDate as NSDate, inEndDate: endDate as NSDate, inTeamID: myCurrentTeam.teamID)
     }
     
     fileprivate func storeEvent(_ inEvent: EKEvent, inAttendee: EKParticipant?, teamID: Int)
@@ -2964,7 +2964,7 @@ func parsePastMeeting(_ inMeetingID: String) -> [task]
             
             for myItem2 in myData2
             {
-                let newTask = task(taskID: myItem2.taskID as Int)
+                let newTask = task(taskID: myItem2.taskID as! Int)
                 if newTask.status != "Closed"
                 {
                     myArray.append(newTask)

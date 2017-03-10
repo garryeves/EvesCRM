@@ -174,9 +174,9 @@ class displayPane
             for myPane in fetchResults
             {
                 myPaneName = paneName
-                myPaneAvailable = myPane.pane_available as Bool
-                myPaneVisible = myPane.pane_visible as Bool
-                myPaneOrder = myPane.pane_order as Int
+                myPaneAvailable = myPane.pane_available as! Bool
+                myPaneVisible = myPane.pane_visible as! Bool
+                myPaneOrder = myPane.pane_order as! Int
                 paneLoaded = true
             }
         }

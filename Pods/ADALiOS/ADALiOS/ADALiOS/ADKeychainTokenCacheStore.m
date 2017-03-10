@@ -18,7 +18,7 @@
 
 #import <Security/Security.h>
 #import "ADALiOS.h"
-#import "ADKeyChainTokenCacheStore.h"
+#import "ADKeychainTokenCacheStore.h"
 #import "ADTokenCacheStoreItem.h"
 #import "NSString+ADHelperMethods.h"
 #import "ADTokenCacheStoreKey.h"

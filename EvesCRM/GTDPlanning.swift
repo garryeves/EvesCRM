@@ -54,7 +54,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         let myTeamArray = myDatabaseConnection.getAllTeams()
         for myTeamItem in myTeamArray
         {
-            let myTeam = team(inTeamID: myTeamItem.teamID as Int)
+            let myTeam = team(inTeamID: myTeamItem.teamID as! Int)
             myDisplayHeadArray.append(myTeam)
         }
         
@@ -811,7 +811,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     let myTeamArray = myDatabaseConnection.getAllTeams()
                     for myTeamItem in myTeamArray
                     {
-                        let myTeam = team(inTeamID: myTeamItem.teamID as Int)
+                        let myTeam = team(inTeamID: myTeamItem.teamID as! Int)
                         myDisplayHeadArray.append(myTeam)
                     }
                 
@@ -849,7 +849,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     let myTeamArray = myDatabaseConnection.getAllTeams()
                     for myTeamItem in myTeamArray
                     {
-                        let myTeam = team(inTeamID: myTeamItem.teamID as Int)
+                        let myTeam = team(inTeamID: myTeamItem.teamID as! Int)
                         myDisplayHeadArray.append(myTeam)
                     }
                     
@@ -1324,7 +1324,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                 let myTeamArray = myDatabaseConnection.getAllTeams()
                 for myTeamItem in myTeamArray
                 {
-                    let myTeam = team(inTeamID: myTeamItem.teamID as Int)
+                    let myTeam = team(inTeamID: myTeamItem.teamID as! Int)
                     myDisplayHeadArray.append(myTeam)
                 }
 

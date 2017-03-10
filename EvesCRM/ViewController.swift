@@ -459,6 +459,9 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
         {
         case "Table1":
             table1Contents = populateArrayDetails(inTable)
+            
+            populateArrayDetails(srcTable: inTable)
+            
             DispatchQueue.main.async
             {
                 self.dataTable1.reloadData()
@@ -466,6 +469,10 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
             
         case "Table2":
             table2Contents = populateArrayDetails(inTable)
+            
+            populateArrayDetails(srcTable: inTable)
+            
+            
             DispatchQueue.main.async
             {
                 self.dataTable2.reloadData()
@@ -473,6 +480,9 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
             
         case "Table3":
             table3Contents = populateArrayDetails(inTable)
+            
+            populateArrayDetails(srcTable: inTable)
+            
             DispatchQueue.main.async
             {
                 self.dataTable3.reloadData()
@@ -480,6 +490,9 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
             
         case "Table4":
             table4Contents = populateArrayDetails(inTable)
+            
+            populateArrayDetails(srcTable: inTable)
+            
             DispatchQueue.main.async
             {
                 self.dataTable4.reloadData()
@@ -491,13 +504,290 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
         }
     }
     
-    func populateArrayDetails(_ inTable: String) -> [TableData]
+    func populateArrayDetails(srcTable: String)
     {
         var workArray: [TableData] = [TableData]()
         var dataType: String = ""
         
         // First we need to work out the type of data in the table, we get this from the button
         
+        switch srcTable
+        {
+            case "Table1":
+                dataType = TableTypeButton1.currentTitle!
+                
+            case "Table2":
+                dataType = TableTypeButton2.currentTitle!
+                
+            case "Table3":
+                dataType = TableTypeButton3.currentTitle!
+                
+            case "Table4":
+                dataType = TableTypeButton4.currentTitle!
+                
+            default:
+                print("populateArrayDetails: inTable hit default for some reason")
+            
+        }
+        
+        labelName.text = buildSearchString()
+        
+        let selectedType: String = getFirstPartofString(dataType)
+        
+        // This is where we have the logic to work out which type of data we are goign to populate with
+        switch selectedType
+        {
+        case "Details":
+            if myDisplayType == "Project"
+            {
+                parseProjectDetails(mySelectedProject)
+            }
+            else if myDisplayType == "Context"
+            {
+                writeRowToArray("Context = \(myContextName)", inTable: &workArray)
+                displayResults(sourceService: "Details", resultsArray: workArray)
+            }
+            else
+            {
+                workArray = personContact.tableData
+                displayResults(sourceService: "Details", resultsArray: workArray)
+            }
+    GRE- todo
+        case "Calendar":
+            eventDetails = iOSCalendar(inEventStore: globalEventStore)
+            
+            if myDisplayType == "Project"
+            {
+                eventDetails.loadCalendarDetails(mySelectedProject.projectName, teamID: mySelectedProject.teamID)
+            }
+            else if myDisplayType == "Context"
+            {
+                writeRowToArray("No calendar entries found", inTable: &workArray)
+                displayResults(sourceService: "Calendar", resultsArray: workArray)
+            }
+            else
+            {
+                eventDetails.loadCalendarDetails(personContact.emailAddresses, teamID: myCurrentTeam.teamID)
+            }
+            workArray = eventDetails.displayEvent()
+            
+            if workArray.count == 0
+            {
+                writeRowToArray("No calendar entries found", inTable: &workArray)
+                displayResults(sourceService: "Calendar", resultsArray: workArray)
+            }
+            
+//        case "Reminders":
+//            reminderDetails = iOSReminder()
+//            var workingName: String = ""
+//            if myDisplayType == "Project"
+//            {
+//                reminderDetails.parseReminderDetails(mySelectedProject.projectName)
+//            }
+//            else
+//            {
+//                if myDisplayType == "Context"
+//                {
+//                    workingName = myContextName
+//                }
+//                else
+//                {
+//                    workingName = personContact.fullName
+//                }
+//                reminderDetails.parseReminderDetails(workingName)
+//            }
+//            workArray = reminderDetails.displayReminder()
+//            
+        case "Evernote":
+            writeRowToArray("Loading Evernote data.  Pane will refresh when finished", inTable: &workArray)
+            
+            // Work out the searchString
+            
+            if myEvernote == nil
+            {
+                myEvernote = EvernoteDetails(sourceView: self)
+                myEvernote.searchString = buildSearchString()
+                myEvernote.delegate = self
+            }
+            else
+            {
+                myEvernote.searchString = buildSearchString()
+                myEvernote.delegate = self
+                DispatchQueue.global(qos: .background).async
+                    {
+                        self.myEvernote.findEvernoteNotes()
+                }
+            }
+            
+//        case "Project Membership":
+//            // Project team membership details
+//            if myDisplayType == "Project"
+//            {
+//                workArray = displayTeamMembers(mySelectedProject, lookupArray: &projectMemberArray)
+//            }
+//            else
+//            {
+//                var searchString: String = ""
+//                if myDisplayType == "Context"
+//                {
+//                    searchString = myContextName
+//                }
+//                else
+//                {
+//                    searchString = personContact.fullName
+//                }
+//                workArray = displayProjectsForPerson(searchString, lookupArray: &projectMemberArray)
+//            }
+//            
+//        case "Omnifocus":
+//            writeRowToArray("Loading Omnifocus data.  Pane will refresh when finished", inTable: &workArray)
+//            
+//            omniTableToRefresh = inTable
+//            
+//            openOmnifocusDropbox()
+//            
+        case "OneNote":
+            writeRowToArray("Loading OneNote data.  Pane will refresh when finished", inTable: &workArray)
+            
+            if myOneNoteNotebooks == nil
+            {
+                myOneNoteNotebooks = oneNoteNotebooks(inViewController: self)
+                myOneNoteNotebooks.delegate = self
+            }
+            else
+            {
+                myOneNoteNotebooks.buildDisplayString(searchString: labelName.text!)
+            }
+            
+//        case "GMail":
+//            writeRowToArray("Loading GMail messages.  Pane will refresh when finished", inTable: &workArray)
+//            
+//            gmailTableToRefresh = inTable
+//            
+//            // Does connection to GmailData exist
+//            
+//            if myGmailData == nil
+//            {
+//                myGmailData = gmailData()
+//                myGmailData.sourceViewController = self
+//                myGmailData.connectToGmail()
+//            }
+//            else
+//            {
+//                loadGmail()
+//            }
+//            
+//        case "Hangouts":
+//            writeRowToArray("Loading Hangout messages.  Pane will refresh when finished", inTable: &workArray)
+//            
+//            hangoutsTableToRefresh = inTable
+//            
+//            if myGmailData == nil
+//            {
+//                myGmailData = gmailData()
+//                myGmailData.sourceViewController = self
+//                myGmailData.connectToGmail()
+//            }
+//            else
+//            {
+//                loadHangouts()
+//            }
+//            
+//        case "Tasks":
+//            myTaskItems.removeAll(keepingCapacity: false)
+//            
+//            var myReturnedData: [Task] = Array()
+//            if myDisplayType == "Project"
+//            {
+//                myReturnedData = myDatabaseConnection.getActiveTasksForProject(mySelectedProject.projectID)
+//            }
+//            else
+//            {
+//                // Get the context name
+//                var searchString: String = ""
+//                if myDisplayType == "Context"
+//                {
+//                    searchString = myContextName
+//                }
+//                else
+//                {
+//                    searchString = personContact.fullName
+//                }
+//                
+//                let myContext = myDatabaseConnection.getContextByName(searchString)
+//                
+//                if myContext.count != 0
+//                {
+//                    // Context retrieved
+//                    
+//                    // Get the tasks based on the retrieved context ID
+//                    
+//                    let myTaskContextList = myDatabaseConnection.getTasksForContext(myContext[0].contextID as! Int)
+//                    
+//                    for myTaskContext in myTaskContextList
+//                    {
+//                        // Get the context details
+//                        let myTaskList = myDatabaseConnection.getActiveTask(myTaskContext.taskID as! Int)
+//                        
+//                        for myTask in myTaskList
+//                        {  //append project details to work array
+//                            myReturnedData.append(myTask)
+//                        }
+//                    }
+//                }
+//            }
+//            
+//            // Sort workarray by dueDate, with oldest first
+//            myReturnedData.sort(by: {$0.dueDate.timeIntervalSinceNow < $1.dueDate.timeIntervalSinceNow})
+//            
+//            // Load calendar items array based on return array
+//            
+//            for myItem in myReturnedData
+//            {
+//                let myTempTask = task(taskID: myItem.taskID as! Int)
+//                
+//                myTaskItems.append(myTempTask)
+//            }
+//            
+//            workArray = buildTaskDisplay()
+//            
+//            if workArray.count == 0
+//            {
+//                writeRowToArray("No tasks found", inTable: &workArray)
+//            }
+//            
+
+        case "DropBox":
+            writeRowToArray("Loading DropBox data.  Pane will refresh when finished", inTable: &workArray)
+            
+            dropBoxClass = dropboxService()
+            dropBoxClass.delegate = self
+            if myDisplayType == "Context"
+            {
+                dropBoxClass.searchString = myContextName
+            }
+            else
+            {
+                dropBoxClass.searchString = personContact.fullName
+            }
+            dropBoxClass.setup(targetViewController: self)
+            
+        default:
+            print("populateArrayDetails: dataType hit default for some reason : \(selectedType)")
+        }
+    }
+
+    
+    
+    
+    
+    func populateArrayDetails(_ inTable: String) -> [TableData]
+    {
+        var workArray: [TableData] = [TableData]()
+        var dataType: String = ""
+        
+        // First we need to work out the type of data in the table, we get this from the button
+
         switch inTable
         {
             case "Table1":
@@ -524,40 +814,6 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
         // This is where we have the logic to work out which type of data we are goign to populate with
         switch selectedType
         {
-            case "Details":
-                if myDisplayType == "Project"
-                {
-                    workArray = parseProjectDetails(mySelectedProject)
-                }
-                else if myDisplayType == "Context"
-                {
-                    writeRowToArray("Context = \(myContextName)", inTable: &workArray)
-                }
-                else
-                {
-                    workArray = personContact.tableData
-                }
-            case "Calendar":
-                eventDetails = iOSCalendar(inEventStore: globalEventStore)
-
-                if myDisplayType == "Project"
-                {
-                    eventDetails.loadCalendarDetails(mySelectedProject.projectName, teamID: mySelectedProject.teamID)
-                }
-                else if myDisplayType == "Context"
-                {
-                    writeRowToArray("No calendar entries found", inTable: &workArray)
-                }
-                else
-                {
-                    eventDetails.loadCalendarDetails(personContact.emailAddresses, teamID: myCurrentTeam.teamID)
-                }
-                workArray = eventDetails.displayEvent()
-                
-                if workArray.count == 0
-                {
-                    writeRowToArray("No calendar entries found", inTable: &workArray)
-                }
             case "Reminders":
                 reminderDetails = iOSReminder()
                 var workingName: String = ""
@@ -579,26 +835,6 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
                 }
                 workArray = reminderDetails.displayReminder()
             
-            case "Evernote":
-                writeRowToArray("Loading Evernote data.  Pane will refresh when finished", inTable: &workArray)
-                
-                // Work out the searchString
-                
-                if myEvernote == nil
-                {
-                    myEvernote = EvernoteDetails(sourceView: self)
-                    myEvernote.searchString = buildSearchString()
-                    myEvernote.delegate = self
-                }
-                else
-                {
-                    myEvernote.searchString = buildSearchString()
-                    myEvernote.delegate = self
-                    DispatchQueue.global(qos: .background).async
-                    {
-                        self.myEvernote.findEvernoteNotes()
-                    }
-                }
 
             case "Project Membership":
                 // Project team membership details
@@ -627,18 +863,6 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
                 
                 openOmnifocusDropbox()
 
-            case "OneNote":
-                writeRowToArray("Loading OneNote data.  Pane will refresh when finished", inTable: &workArray)
-            
-                if myOneNoteNotebooks == nil
-                {
-                    myOneNoteNotebooks = oneNoteNotebooks(inViewController: self)
-                    myOneNoteNotebooks.delegate = self
-                }
-                else
-                {
-                    myOneNoteNotebooks.buildDisplayString(searchString: labelName.text!)
-                }
             
             case "GMail":
                 writeRowToArray("Loading GMail messages.  Pane will refresh when finished", inTable: &workArray)
@@ -703,12 +927,12 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
                     
                     // Get the tasks based on the retrieved context ID
                 
-                    let myTaskContextList = myDatabaseConnection.getTasksForContext(myContext[0].contextID as Int)
+                    let myTaskContextList = myDatabaseConnection.getTasksForContext(myContext[0].contextID as! Int)
                 
                     for myTaskContext in myTaskContextList
                     {
                         // Get the context details
-                        let myTaskList = myDatabaseConnection.getActiveTask(myTaskContext.taskID as Int)
+                        let myTaskList = myDatabaseConnection.getActiveTask(myTaskContext.taskID as! Int)
                     
                         for myTask in myTaskList
                         {  //append project details to work array
@@ -725,7 +949,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
             
             for myItem in myReturnedData
             {
-                let myTempTask = task(taskID: myItem.taskID as Int)
+                let myTempTask = task(taskID: myItem.taskID as! Int)
                 
                 myTaskItems.append(myTempTask)
             }
@@ -850,20 +1074,7 @@ println("facebook ID = \(myFacebookID)")
 
 */
             
-            case "DropBox":
-                writeRowToArray("Loading DropBox data.  Pane will refresh when finished", inTable: &workArray)
-                
-                dropBoxClass = dropboxService()
-                dropBoxClass.delegate = self
-                if myDisplayType == "Context"
-                {
-                    dropBoxClass.searchString = myContextName
-                }
-                else
-                {
-                    dropBoxClass.searchString = personContact.fullName
-                }
-                dropBoxClass.setup(targetViewController: self)                
+       
 
             default:
                 print("populateArrayDetails: dataType hit default for some reason : \(selectedType)")
@@ -905,7 +1116,7 @@ println("facebook ID = \(myFacebookID)")
         }
   
         let selectedType: String = getFirstPartofString(dataType)
-
+//GRE = here
         switch selectedType
         {
             case "Reminders":
@@ -1156,7 +1367,7 @@ println("facebook ID = \(myFacebookID)")
         // First we need to work out the type of data in the table, we get this from the button
         
         // Also depending on which table is clicked, we now need to do a check to make sure the row clicked is a valid task row.  If not then no need to try and edit it
-        
+ //gre - here
         switch sender.tag
         {
         case 1:
@@ -1862,7 +2073,7 @@ print("Dropbox status = \(progress)")
     func myMeetingsAgendaDidFinish(_ controller:meetingAgendaViewController)
     {
         controller.dismiss(animated: true, completion: nil)
-        _ = populateArrayDetails(calendarTable)
+        populateArrayDetails(srcTable: calendarTable)
         
         switch calendarTable
         {
@@ -1886,7 +2097,7 @@ print("Dropbox status = \(progress)")
     func myMeetingsDidFinish(_ controller:meetingsViewController)
     {
         controller.dismiss(animated: true, completion: nil)
-        _ = populateArrayDetails(calendarTable)
+        populateArrayDetails(srcTable: calendarTable)
         
         switch calendarTable
         {
@@ -2280,7 +2491,7 @@ print("Dropbox status = \(progress)")
             
             case "Project" :
                 let myProject = passedItem.displayObject as! Projects
-                loadProject(myProject.projectID as Int, teamID: myProject.teamID as Int)
+                loadProject(myProject.projectID as! Int, teamID: myProject.teamID as! Int)
             
             case "People":
                 if passedItem.displayString == "Address Book"
@@ -2979,6 +3190,17 @@ print("Dropbox status = \(progress)")
         }
     }
 
+    func parseProjectDetails(_ myProject: project)
+    {
+        var tableContents:[TableData] = [TableData]()
+        
+        writeRowToArray("Start Date = \(myProject.displayProjectStartDate)", inTable: &tableContents)
+        writeRowToArray("End Date = \(myProject.displayProjectEndDate)", inTable: &tableContents)
+        writeRowToArray("Status = \(myProject.projectStatus)", inTable: &tableContents)
+        
+        displayResults(sourceService: "Details", resultsArray: tableContents)
+    }
+    
     func displayResults(sourceService: String, resultsArray: [TableData])
     {
         // Look through the available pans to fins the one that matches the returned service

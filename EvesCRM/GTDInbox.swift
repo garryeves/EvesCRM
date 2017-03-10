@@ -282,23 +282,23 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
         {
             // Get list of tasks without a Project
     
-            let projectArray =  myDatabaseConnection.getTasksWithoutProject(myTeam.teamID as Int)
+            let projectArray =  myDatabaseConnection.getTasksWithoutProject(myTeam.teamID as! Int)
         
             // Get list of tasks without a context
             
-            let contextArray = myDatabaseConnection.getTaskWithoutContext(myTeam.teamID as Int)
+            let contextArray = myDatabaseConnection.getTaskWithoutContext(myTeam.teamID as! Int)
         
         
             for myProjectTask in projectArray
             {
-                let tempTask = task(taskID: myProjectTask.taskID as Int)
+                let tempTask = task(taskID: myProjectTask.taskID as! Int)
                 myTaskList.append(tempTask)
             }
             
             for myContextTask in contextArray
             {
                 // parse through array of tasks from project to see if the task from context already exists, if it does then no action needed, if does not exist then add the task from context
-                let tempTask = task(taskID: myContextTask.taskID as Int)
+                let tempTask = task(taskID: myContextTask.taskID as! Int)
                 
                 var taskFound: Bool = false
                 

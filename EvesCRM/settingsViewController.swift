@@ -32,8 +32,8 @@ class settingsViewController: UIViewController
     fileprivate var myEvernote: EvernoteDetails!
 //GRE    var dropboxCoreService: DropboxCoreService!
     
-    fileprivate var syncDate: Date!
-    fileprivate var syncStart: Date!
+    fileprivate var syncDate: NSDate!
+    fileprivate var syncStart: NSDate!
     fileprivate var firstLoadflag: Bool = true
 
     override func viewDidLoad()
@@ -234,12 +234,12 @@ class settingsViewController: UIViewController
         let backgroundQueue = DispatchQueue.global(qos: qualityOfServiceClass)
         backgroundQueue.async(execute: {
             
-            self.syncStart = Date()
+            self.syncStart = NSDate()
             
             let myDateFormatter = DateFormatter()
             myDateFormatter.dateStyle = DateFormatter.Style.short
                 
-            self.syncDate = myDateFormatter.date(from: "01/01/15")
+            self.syncDate = myDateFormatter.date(from: "01/01/15")! as NSDate
             
             myDBSync.refreshRunning = true
             // Delete the entries from the current tables
@@ -270,14 +270,14 @@ class settingsViewController: UIViewController
         let backgroundQueue = DispatchQueue.global(qos: qualityOfServiceClass)
         backgroundQueue.async(execute: {
         
-            self.syncStart = Date()
+            self.syncStart = NSDate()
         
             // Get the last sync date
         
             let myDateFormatter = DateFormatter()
             myDateFormatter.dateStyle = DateFormatter.Style.short
         
-            self.syncDate = myDateFormatter.date(from: "01/01/15")
+            self.syncDate = myDateFormatter.date(from: "01/01/15")! as NSDate
 
             myDBSync.refreshRunning = true
             // Delete the entries from the current tables

@@ -844,7 +844,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
          
             // get the meeting id, and remove the trailing portion in order to use in a search
             
-            let myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(passedMeeting.event.eventID, inMeetingStartDate: passedMeeting.event.startDate, inTeamID: myCurrentTeam.teamID)
+            let myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(passedMeeting.event.eventID, inMeetingStartDate: passedMeeting.event.startDate as NSDate, inTeamID: myCurrentTeam.teamID)
 
             if myItems.count > 0
             { // There is an previous meeting
@@ -865,7 +865,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
             
             // display remaining items, newest first
 
-            let myNonItems = myDatabaseConnection.searchPastAgendaWithoutPartialMeetingIDBeforeStart(passedMeeting.event.eventID, inMeetingStartDate: passedMeeting.event.startDate, inTeamID: myCurrentTeam.teamID)
+            let myNonItems = myDatabaseConnection.searchPastAgendaWithoutPartialMeetingIDBeforeStart(passedMeeting.event.eventID, inMeetingStartDate: passedMeeting.event.startDate as NSDate, inTeamID: myCurrentTeam.teamID)
             
             if myNonItems.count > 0
             { // There is an previous meeting
@@ -892,7 +892,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
             
             // list items prior to meeting date
             
-            let myItems = myDatabaseConnection.listAgendaReverseDateAfterStart(passedMeeting.event.startDate, inTeamID: myCurrentTeam.teamID)
+            let myItems = myDatabaseConnection.listAgendaReverseDateAfterStart(passedMeeting.event.startDate as NSDate, inTeamID: myCurrentTeam.teamID)
             
             if myItems.count > 0
             { // There is an previous meeting
@@ -985,11 +985,11 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
             if tempEventID.range(of: "/") != nil
             {
                 let myStringArr = tempEventID.components(separatedBy: "/")
-                myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(myStringArr[0], inMeetingStartDate: passedMeeting.event.startDate, inTeamID: myCurrentTeam.teamID)
+                myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(myStringArr[0], inMeetingStartDate: passedMeeting.event.startDate as NSDate, inTeamID: myCurrentTeam.teamID)
             }
             else
             {
-                myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(passedMeeting.event.eventID, inMeetingStartDate: passedMeeting.event.startDate, inTeamID: myCurrentTeam.teamID)
+                myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(passedMeeting.event.eventID, inMeetingStartDate: passedMeeting.event.startDate as NSDate, inTeamID: myCurrentTeam.teamID)
             }
             
             if myItems.count > 1

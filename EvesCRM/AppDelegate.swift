@@ -51,7 +51,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate
         var configureErr: NSError?
         GGLContext.sharedInstance().configureWithError(&configureErr)
         if configureErr != nil {
-            print("Error configuring the Google context: \(configureErr)")
+            print("Error configuring the Google context: \(String(describing: configureErr))")
         }
         
         GIDSignIn.sharedInstance().delegate = self
@@ -93,7 +93,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate
     func application(_ application: UIApplication, handleOpen url: URL) -> Bool
     {
         
-print("appdelegate application - handleOpenURL = \(url.scheme)")
+print("appdelegate application - handleOpenURL = \(String(describing: url.scheme))")
         var retVal: Bool = false
   
    /*
@@ -163,7 +163,7 @@ print("appdelegate application - handleOpenURL = \(url.scheme)")
     }
     
     func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool {
-print("appdelegate application - source Application = \(sourceApplication)")
+print("appdelegate application - source Application = \(String(describing: sourceApplication))")
 //print("appdelegate application - source Application URL = \(url.scheme)")
         
         var error: NSError?

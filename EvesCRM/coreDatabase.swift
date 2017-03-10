@@ -146,7 +146,7 @@ class coreDatabase: NSObject
         do
         {
             let fetchResults = try objectContext.fetch(fetchRequest)
-            return fetchResults[0].projectID as Int
+            return fetchResults[0].projectID as! Int
         }
         catch
         {
@@ -290,7 +290,7 @@ class coreDatabase: NSObject
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myItem in fetchResults
             {
-                retVal = myItem.roleID as Int
+                retVal = myItem.roleID as! Int
             }
         }
         catch
@@ -301,7 +301,7 @@ class coreDatabase: NSObject
         return retVal + 1
     }
     
-    func saveRole(_ roleName: String, teamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE", roleID: Int = 0)
+    func saveRole(_ roleName: String, teamID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE", roleID: Int = 0)
     {
         let myRoles = getRole(roleID)
  
@@ -316,7 +316,7 @@ class coreDatabase: NSObject
             mySelectedRole.teamID = NSNumber(value: teamID)
             if inUpdateType == "CODE"
             {
-                mySelectedRole.updateTime = Date()
+                mySelectedRole.updateTime =  Date()
                 mySelectedRole.updateType = "Add"
             }
             else
@@ -331,7 +331,7 @@ class coreDatabase: NSObject
             mySelectedRole.roleDescription = roleName
             if inUpdateType == "CODE"
             {
-                mySelectedRole.updateTime = Date()
+                mySelectedRole.updateTime =  Date()
                 if mySelectedRole.updateType != "Add"
                 {
                     mySelectedRole.updateType = "Update"
@@ -376,7 +376,7 @@ class coreDatabase: NSObject
         saveContext()
     }
 
-    func replaceRole(_ roleName: String, teamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE", roleID: Int = 0)
+    func replaceRole(_ roleName: String, teamID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE", roleID: Int = 0)
     {
         let mySelectedRole = Roles(context: objectContext)
                     
@@ -386,7 +386,7 @@ class coreDatabase: NSObject
         mySelectedRole.teamID = NSNumber(value: teamID)
         if inUpdateType == "CODE"
         {
-            mySelectedRole.updateTime = Date()
+            mySelectedRole.updateTime =  Date()
             mySelectedRole.updateType = "Add"
         }
         else
@@ -457,7 +457,7 @@ class coreDatabase: NSObject
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myStage in fetchResults
             {
-                myStage.updateTime = Date()
+                myStage.updateTime =  Date()
                 myStage.updateType = "Delete"
                 myCloudDB.saveRolesRecordToCloudKit(myStage)
             }
@@ -470,7 +470,7 @@ class coreDatabase: NSObject
         saveContext()
     }
     
-    func saveTeamMember(_ inProjectID: Int, inRoleID: Int, inPersonName: String, inNotes: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func saveTeamMember(_ inProjectID: Int, inRoleID: Int, inPersonName: String, inNotes: String, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         var myProjectTeam: ProjectTeamMembers!
         
@@ -484,7 +484,7 @@ class coreDatabase: NSObject
             myProjectTeam.projectMemberNotes = inNotes
             if inUpdateType == "CODE"
             {
-                myProjectTeam.updateTime = Date()
+                myProjectTeam.updateTime =  Date()
                 myProjectTeam.updateType = "Add"
             }
             else
@@ -500,7 +500,7 @@ class coreDatabase: NSObject
             myProjectTeam.projectMemberNotes = inNotes
             if inUpdateType == "CODE"
             {
-                myProjectTeam.updateTime = Date()
+                myProjectTeam.updateTime =  Date()
                 if myProjectTeam.updateType != "Add"
                 {
                     myProjectTeam.updateType = "Update"
@@ -516,7 +516,7 @@ class coreDatabase: NSObject
         saveContext()
     }
 
-    func replaceTeamMember(_ inProjectID: Int, inRoleID: Int, inPersonName: String, inNotes: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func replaceTeamMember(_ inProjectID: Int, inRoleID: Int, inPersonName: String, inNotes: String, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         let myProjectTeam = ProjectTeamMembers(context: objectContext)
         myProjectTeam.projectID = NSNumber(value: inProjectID)
@@ -525,7 +525,7 @@ class coreDatabase: NSObject
         myProjectTeam.projectMemberNotes = inNotes
         if inUpdateType == "CODE"
         {
-            myProjectTeam.updateTime = Date()
+            myProjectTeam.updateTime =  Date()
             myProjectTeam.updateType = "Add"
         }
         else
@@ -553,7 +553,7 @@ class coreDatabase: NSObject
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myStage in fetchResults
             {
-                myStage.updateTime = Date()
+                myStage.updateTime =  Date()
                 myStage.updateType = "Delete"
             }
         }
@@ -760,7 +760,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func updateDecodeValue(_ inCodeKey: String, inCodeValue: String, inCodeType: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func updateDecodeValue(_ inCodeKey: String, inCodeValue: String, inCodeType: String, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         // first check to see if decode exists, if not we create
         var myDecode: Decodes!
@@ -774,7 +774,7 @@ class coreDatabase: NSObject
             myDecode.decodeType = inCodeType
             if inUpdateType == "CODE"
             {
-                myDecode.updateTime = Date()
+                myDecode.updateTime =  Date()
                 myDecode.updateType = "Add"
             }
             else
@@ -800,7 +800,7 @@ class coreDatabase: NSObject
                 myDecode.decodeType = inCodeType
                 if inUpdateType == "CODE"
                 {
-                    myDecode.updateTime = Date()
+                    myDecode.updateTime =  Date()
                     if myDecode.updateType != "Add"
                     {
                         myDecode.updateType = "Update"
@@ -823,7 +823,7 @@ class coreDatabase: NSObject
         myCloudDB.saveDecodesRecordToCloudKit(myDecode, syncName: myDBSync.getSyncID())
     }
     
-    func replaceDecodeValue(_ inCodeKey: String, inCodeValue: String, inCodeType: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func replaceDecodeValue(_ inCodeKey: String, inCodeValue: String, inCodeType: String, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         let myDecode = Decodes(context: objectContext)
             
@@ -832,7 +832,7 @@ class coreDatabase: NSObject
         myDecode.decodeType = inCodeType
         if inUpdateType == "CODE"
         {
-            myDecode.updateTime = Date()
+            myDecode.updateTime =  Date()
             myDecode.updateType = "Add"
         }
         else
@@ -903,7 +903,7 @@ class coreDatabase: NSObject
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myStage in fetchResults
             {
-                myStage.updateTime = Date()
+                myStage.updateTime =  Date()
                 myStage.updateType = "Delete"
                 
                 myCloudDB.saveStagesRecordToCloudKit(myStage)
@@ -973,7 +973,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func saveStage(_ stageDesc: String, teamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func saveStage(_ stageDesc: String, teamID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         var myStage: Stages!
         
@@ -987,7 +987,7 @@ class coreDatabase: NSObject
             myStage.teamID = NSNumber(value: teamID)
             if inUpdateType == "CODE"
             {
-                myStage.updateTime = Date()
+                myStage.updateTime =  Date()
                 myStage.updateType = "Add"
             }
             else
@@ -1001,7 +1001,7 @@ class coreDatabase: NSObject
             myStage = myStages[0]
             if inUpdateType == "CODE"
             {
-                myStage.updateTime = Date()
+                myStage.updateTime =  Date()
                 if myStage.updateType != "Add"
                 {
                     myStage.updateType = "Update"
@@ -1019,7 +1019,7 @@ class coreDatabase: NSObject
         myCloudDB.saveStagesRecordToCloudKit(myStage)
     }
     
-    func replaceStage(_ stageDesc: String, teamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func replaceStage(_ stageDesc: String, teamID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         let myStage = Stages(context: objectContext)
             
@@ -1027,7 +1027,7 @@ class coreDatabase: NSObject
         myStage.teamID = NSNumber(value: teamID)
         if inUpdateType == "CODE"
         {
-            myStage.updateTime = Date()
+            myStage.updateTime =  Date()
             myStage.updateType = "Add"
         }
         else
@@ -1054,7 +1054,7 @@ class coreDatabase: NSObject
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myStage in fetchResults
             {
-                myStage.updateTime = Date()
+                myStage.updateTime =  Date()
                 myStage.updateType = "Delete"
                 
                 myCloudDB.saveStagesRecordToCloudKit(myStage)
@@ -1067,7 +1067,7 @@ class coreDatabase: NSObject
         saveContext()
     }
     
-    func searchPastAgendaByPartialMeetingIDBeforeStart(_ inSearchText: String, inMeetingStartDate: Date, inTeamID: Int)->[MeetingAgenda]
+    func searchPastAgendaByPartialMeetingIDBeforeStart(_ inSearchText: String, inMeetingStartDate: NSDate, inTeamID: Int)->[MeetingAgenda]
     {
         let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
@@ -1098,7 +1098,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func searchPastAgendaWithoutPartialMeetingIDBeforeStart(_ inSearchText: String, inMeetingStartDate: Date, inTeamID: Int)->[MeetingAgenda]
+    func searchPastAgendaWithoutPartialMeetingIDBeforeStart(_ inSearchText: String, inMeetingStartDate: NSDate, inTeamID: Int)->[MeetingAgenda]
     {
         let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
@@ -1129,7 +1129,7 @@ class coreDatabase: NSObject
         }
     }
 
-    func listAgendaReverseDateBeforeStart(_ inMeetingStartDate: Date, inTeamID: Int)->[MeetingAgenda]
+    func listAgendaReverseDateBeforeStart(_ inMeetingStartDate: NSDate, inTeamID: Int)->[MeetingAgenda]
     {
         let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
@@ -1160,7 +1160,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func searchPastAgendaByPartialMeetingIDAfterStart(_ inSearchText: String, inMeetingStartDate: Date, inTeamID: Int)->[MeetingAgenda]
+    func searchPastAgendaByPartialMeetingIDAfterStart(_ inSearchText: String, inMeetingStartDate: NSDate, inTeamID: Int)->[MeetingAgenda]
     {
         let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
@@ -1191,7 +1191,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func searchPastAgendaWithoutPartialMeetingIDAfterStart(_ inSearchText: String, inMeetingStartDate: Date, inTeamID: Int)->[MeetingAgenda]
+    func searchPastAgendaWithoutPartialMeetingIDAfterStart(_ inSearchText: String, inMeetingStartDate: NSDate, inTeamID: Int)->[MeetingAgenda]
     {
         let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
@@ -1222,7 +1222,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func listAgendaReverseDateAfterStart(_ inMeetingStartDate: Date, inTeamID: Int)->[MeetingAgenda]
+    func listAgendaReverseDateAfterStart(_ inMeetingStartDate: NSDate, inTeamID: Int)->[MeetingAgenda]
     {
         let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
@@ -1258,7 +1258,7 @@ class coreDatabase: NSObject
         saveAgenda(inEvent.eventID, inPreviousMeetingID : inEvent.previousMinutes, inName: inEvent.title, inChair: inEvent.chair, inMinutes: inEvent.minutes, inLocation: inEvent.location, inStartTime: inEvent.startDate as Date, inEndTime: inEvent.endDate as Date, inMinutesType: inEvent.minutesType, inTeamID: inEvent.teamID)
     }
     
-    func saveAgenda(_ inMeetingID: String, inPreviousMeetingID : String, inName: String, inChair: String, inMinutes: String, inLocation: String, inStartTime: Date, inEndTime: Date, inMinutesType: String, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func saveAgenda(_ inMeetingID: String, inPreviousMeetingID : String, inName: String, inChair: String, inMinutes: String, inLocation: String, inStartTime: Date, inEndTime: Date, inMinutesType: String, inTeamID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         var myAgenda: MeetingAgenda
         
@@ -1279,7 +1279,7 @@ class coreDatabase: NSObject
             myAgenda.teamID = NSNumber(value: inTeamID)
             if inUpdateType == "CODE"
             {
-                myAgenda.updateTime = Date()
+                myAgenda.updateTime =  Date()
                 myAgenda.updateType = "Add"
             }
             else
@@ -1302,7 +1302,7 @@ class coreDatabase: NSObject
             myAgenda.teamID = NSNumber(value: inTeamID)
             if inUpdateType == "CODE"
             {
-                myAgenda.updateTime = Date()
+                myAgenda.updateTime =  Date()
                 if myAgenda.updateType != "Add"
                 {
                     myAgenda.updateType = "Update"
@@ -1318,7 +1318,7 @@ class coreDatabase: NSObject
         saveContext()
     }
 
-    func replaceAgenda(_ inMeetingID: String, inPreviousMeetingID : String, inName: String, inChair: String, inMinutes: String, inLocation: String, inStartTime: Date, inEndTime: Date, inMinutesType: String, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func replaceAgenda(_ inMeetingID: String, inPreviousMeetingID : String, inName: String, inChair: String, inMinutes: String, inLocation: String, inStartTime: Date, inEndTime: Date, inMinutesType: String, inTeamID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         let myAgenda = MeetingAgenda(context: objectContext)
         myAgenda.meetingID = inMeetingID
@@ -1333,7 +1333,7 @@ class coreDatabase: NSObject
         myAgenda.teamID = NSNumber(value: inTeamID)
         if inUpdateType == "CODE"
         {
-            myAgenda.updateTime = Date()
+            myAgenda.updateTime =  Date()
             myAgenda.updateType = "Add"
         }
         else
@@ -1420,7 +1420,7 @@ class coreDatabase: NSObject
             for myResult in fetchResults
             {
                 myResult.previousMeetingID = inPreviousMeetingID
-                myResult.updateTime = Date()
+                myResult.updateTime =  Date()
                 if myResult.updateType != "Add"
                 {
                     myResult.updateType = "Update"
@@ -1462,7 +1462,7 @@ class coreDatabase: NSObject
         }
     }
    
-    func getAgendaForDateRange(_ inStartDate: Date, inEndDate: Date, inTeamID: Int)->[MeetingAgenda]
+    func getAgendaForDateRange(_ inStartDate: NSDate, inEndDate: NSDate, inTeamID: Int)->[MeetingAgenda]
     {
         let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
@@ -1570,7 +1570,7 @@ class coreDatabase: NSObject
         }
     }
 
-    func saveAttendee(_ meetingID: String, name: String, email: String,  type: String, status: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func saveAttendee(_ meetingID: String, name: String, email: String,  type: String, status: String, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         var myPerson: MeetingAttendees!
         
@@ -1586,7 +1586,7 @@ class coreDatabase: NSObject
             myPerson.type = type
             if inUpdateType == "CODE"
             {
-                myPerson.updateTime = Date()
+                myPerson.updateTime =  Date()
                 myPerson.updateType = "Add"
             }
             else
@@ -1603,7 +1603,7 @@ class coreDatabase: NSObject
             myPerson.type = type
             if inUpdateType == "CODE"
             {
-                myPerson.updateTime = Date()
+                myPerson.updateTime =  Date()
                 if myPerson.updateType != "Add"
                 {
                     myPerson.updateType = "Update"
@@ -1619,7 +1619,7 @@ class coreDatabase: NSObject
         saveContext()
     }
 
-    func replaceAttendee(_ meetingID: String, name: String, email: String,  type: String, status: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func replaceAttendee(_ meetingID: String, name: String, email: String,  type: String, status: String, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         let myPerson = MeetingAttendees(context: objectContext)
         myPerson.meetingID = meetingID
@@ -1629,7 +1629,7 @@ class coreDatabase: NSObject
         myPerson.type = type
         if inUpdateType == "CODE"
         {
-            myPerson.updateTime = Date()
+            myPerson.updateTime =  Date()
             myPerson.updateType = "Add"
         }
         else
@@ -1657,7 +1657,7 @@ class coreDatabase: NSObject
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myMeeting in fetchResults
             {
-                myMeeting.updateTime = Date()
+                myMeeting.updateTime =  Date()
                 myMeeting.updateType = "Delete"
             }
         }
@@ -1700,7 +1700,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func saveAgendaItem(_ meetingID: String, actualEndTime: Date, actualStartTime: Date, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int, owner: String, title: String, agendaID: Int, meetingOrder: Int,  inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func saveAgendaItem(_ meetingID: String, actualEndTime: Date, actualStartTime: Date, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int, owner: String, title: String, agendaID: Int, meetingOrder: Int,  inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         var mySavedItem: MeetingAgendaItem
         
@@ -1723,7 +1723,7 @@ class coreDatabase: NSObject
             
             if inUpdateType == "CODE"
             {
-                mySavedItem.updateTime = Date()
+                mySavedItem.updateTime =  Date()
                 mySavedItem.updateType = "Add"
             }
             else
@@ -1747,7 +1747,7 @@ class coreDatabase: NSObject
 
             if inUpdateType == "CODE"
             {
-                mySavedItem.updateTime = Date()
+                mySavedItem.updateTime =  Date()
                 if mySavedItem.updateType != "Add"
                 {
                     mySavedItem.updateType = "Update"
@@ -1763,7 +1763,7 @@ class coreDatabase: NSObject
         saveContext()
     }
     
-    func replaceAgendaItem(_ meetingID: String, actualEndTime: Date, actualStartTime: Date, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int, owner: String, title: String, agendaID: Int, meetingOrder: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func replaceAgendaItem(_ meetingID: String, actualEndTime: Date, actualStartTime: Date, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int, owner: String, title: String, agendaID: Int, meetingOrder: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         let mySavedItem = MeetingAgendaItem(context: objectContext)
         mySavedItem.meetingID = meetingID
@@ -1780,7 +1780,7 @@ class coreDatabase: NSObject
 
         if inUpdateType == "CODE"
         {
-            mySavedItem.updateTime = Date()
+            mySavedItem.updateTime =  Date()
             mySavedItem.updateType = "Add"
         }
         else
@@ -1839,7 +1839,7 @@ class coreDatabase: NSObject
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myMeeting in fetchResults
             {
-                myMeeting.updateTime = Date()
+                myMeeting.updateTime =  Date()
                 myMeeting.updateType = "Delete"
             }
         }
@@ -1867,7 +1867,7 @@ class coreDatabase: NSObject
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myMeeting in fetchResults
             {
-                myMeeting.updateTime = Date()
+                myMeeting.updateTime =  Date()
                 myMeeting.updateType = "Delete"
             }
         }
@@ -1879,7 +1879,7 @@ class coreDatabase: NSObject
         saveContext()
     }
 
-    func saveTask(_ inTaskID: Int, inTitle: String, inDetails: String, inDueDate: Date, inStartDate: Date, inStatus: String, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int, inEstimatedTimeType: String, inProjectID: Int, inCompletionDate: Date, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inFlagged: Bool, inUrgency: String, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func saveTask(_ inTaskID: Int, inTitle: String, inDetails: String, inDueDate: Date, inStartDate: Date, inStatus: String, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int, inEstimatedTimeType: String, inProjectID: Int, inCompletionDate: Date, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inFlagged: Bool, inUrgency: String, inTeamID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         var myTask: Task!
         
@@ -1909,7 +1909,7 @@ class coreDatabase: NSObject
             
             if inUpdateType == "CODE"
             {
-                myTask.updateTime = Date()
+                myTask.updateTime =  Date()
                 myTask.updateType = "Add"
             }
             else
@@ -1941,7 +1941,7 @@ class coreDatabase: NSObject
             
             if inUpdateType == "CODE"
             {
-                myTask.updateTime = Date()
+                myTask.updateTime =  Date()
                 if myTask.updateType != "Add"
                 {
                     myTask.updateType = "Update"
@@ -1958,7 +1958,7 @@ class coreDatabase: NSObject
         saveContext()
     }
     
-    func replaceTask(_ inTaskID: Int, inTitle: String, inDetails: String, inDueDate: Date, inStartDate: Date, inStatus: String, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int, inEstimatedTimeType: String, inProjectID: Int, inCompletionDate: Date, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inFlagged: Bool, inUrgency: String, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func replaceTask(_ inTaskID: Int, inTitle: String, inDetails: String, inDueDate: Date, inStartDate: Date, inStatus: String, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int, inEstimatedTimeType: String, inProjectID: Int, inCompletionDate: Date, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inFlagged: Bool, inUrgency: String, inTeamID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         let myTask = Task(context: objectContext)
         myTask.taskID = NSNumber(value: inTaskID)
@@ -1982,7 +1982,7 @@ class coreDatabase: NSObject
         
         if inUpdateType == "CODE"
         {
-            myTask.updateTime = Date()
+            myTask.updateTime =  Date()
             myTask.updateType = "Add"
         }
         else
@@ -2009,7 +2009,7 @@ class coreDatabase: NSObject
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myStage in fetchResults
             {
-                myStage.updateTime = Date()
+                myStage.updateTime =  Date()
                 myStage.updateType = "Delete"
             }
         }
@@ -2103,7 +2103,7 @@ class coreDatabase: NSObject
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-       let predicate = NSPredicate(format: "(projectID = \(projectID)) && (updateType != \"Delete\") && (status != \"Deleted\") && (status != \"Complete\") && (status != \"Pause\") && ((startDate == %@) || (startDate <= %@))", getDefaultDate() as CVarArg, Date() as CVarArg)
+       let predicate = NSPredicate(format: "(projectID = \(projectID)) && (updateType != \"Delete\") && (status != \"Deleted\") && (status != \"Complete\") && (status != \"Pause\") && ((startDate == %@) || (startDate <= %@))", (getDefaultDate() as NSDate) as CVarArg,  NSDate() as CVarArg)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -2272,7 +2272,7 @@ class coreDatabase: NSObject
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(taskID == \(taskID)) && (updateType != \"Delete\") && (status != \"Deleted\") && (status != \"Complete\") && ((startDate == %@) || (startDate <= %@))", getDefaultDate() as CVarArg, Date() as CVarArg)
+        let predicate = NSPredicate(format: "(taskID == \(taskID)) && (updateType != \"Delete\") && (status != \"Deleted\") && (status != \"Complete\") && ((startDate == %@) || (startDate <= %@))", (getDefaultDate() as NSDate) as CVarArg, NSDate() as CVarArg)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -2331,7 +2331,7 @@ class coreDatabase: NSObject
         }
     }
    
-    func savePredecessorTask(_ inTaskID: Int, inPredecessorID: Int, inPredecessorType: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func savePredecessorTask(_ inTaskID: Int, inPredecessorID: Int, inPredecessorType: String, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         var myTask: TaskPredecessor!
         
@@ -2345,7 +2345,7 @@ class coreDatabase: NSObject
             myTask.predecessorType = inPredecessorType
             if inUpdateType == "CODE"
             {
-                myTask.updateTime = Date()
+                myTask.updateTime =  Date()
                 myTask.updateType = "Add"
             }
             else
@@ -2360,7 +2360,7 @@ class coreDatabase: NSObject
             myTask.predecessorType = inPredecessorType
             if inUpdateType == "CODE"
             {
-                myTask.updateTime = Date()
+                myTask.updateTime =  Date()
                 if myTask.updateType != "Add"
                 {
                     myTask.updateType = "Update"
@@ -2378,7 +2378,7 @@ class coreDatabase: NSObject
         myCloudDB.saveTaskPredecessorRecordToCloudKit(myTask)
     }
     
-    func replacePredecessorTask(_ inTaskID: Int, inPredecessorID: Int, inPredecessorType: String, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func replacePredecessorTask(_ inTaskID: Int, inPredecessorID: Int, inPredecessorType: String, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         let myTask = TaskPredecessor(context: objectContext)
         myTask.taskID = NSNumber(value: inTaskID)
@@ -2386,7 +2386,7 @@ class coreDatabase: NSObject
         myTask.predecessorType = inPredecessorType
         if inUpdateType == "CODE"
         {
-            myTask.updateTime = Date()
+            myTask.updateTime =  Date()
             myTask.updateType = "Add"
         }
         else
@@ -2414,7 +2414,7 @@ class coreDatabase: NSObject
             for myStage in fetchResults
             {
                 myStage.predecessorType = inPredecessorType
-                myStage.updateTime = Date()
+                myStage.updateTime =  Date()
                 if myStage.updateType != "Add"
                 {
                     myStage.updateType = "Update"
@@ -2446,7 +2446,7 @@ class coreDatabase: NSObject
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myStage in fetchResults
             {
-                myStage.updateTime = Date()
+                myStage.updateTime =  Date()
                 myStage.updateType = "Delete"
                 
                 myCloudDB.saveTaskPredecessorRecordToCloudKit(myStage)
@@ -2460,7 +2460,7 @@ class coreDatabase: NSObject
         saveContext()
     }
     
-    func saveProject(_ inProjectID: Int, inProjectEndDate: Date, inProjectName: String, inProjectStartDate: Date, inProjectStatus: String, inReviewFrequency: Int, inLastReviewDate: Date, inGTDItemID: Int, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func saveProject(_ inProjectID: Int, inProjectEndDate: Date, inProjectName: String, inProjectStartDate: Date, inProjectStatus: String, inReviewFrequency: Int, inLastReviewDate: Date, inGTDItemID: Int, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inTeamID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         var myProject: Projects!
         
@@ -2484,7 +2484,7 @@ class coreDatabase: NSObject
             
             if inUpdateType == "CODE"
             {
-                myProject.updateTime = Date()
+                myProject.updateTime =  Date()
                 myProject.updateType = "Add"
             }
             else
@@ -2509,7 +2509,7 @@ class coreDatabase: NSObject
             myProject.teamID = NSNumber(value: inTeamID)
             if inUpdateType == "CODE"
             {
-                myProject.updateTime = Date()
+                myProject.updateTime =  Date()
                 if myProject.updateType != "Add"
                 {
                     myProject.updateType = "Update"
@@ -2525,7 +2525,7 @@ class coreDatabase: NSObject
         saveContext()
     }
 
-    func replaceProject(_ inProjectID: Int, inProjectEndDate: Date, inProjectName: String, inProjectStartDate: Date, inProjectStatus: String, inReviewFrequency: Int, inLastReviewDate: Date, inGTDItemID: Int, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func replaceProject(_ inProjectID: Int, inProjectEndDate: Date, inProjectName: String, inProjectStartDate: Date, inProjectStatus: String, inReviewFrequency: Int, inLastReviewDate: Date, inGTDItemID: Int, inRepeatInterval: Int, inRepeatType: String, inRepeatBase: String, inTeamID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
 
         let myProject = Projects(context: objectContext)
@@ -2544,7 +2544,7 @@ class coreDatabase: NSObject
         
         if inUpdateType == "CODE"
         {
-            myProject.updateTime = Date()
+            myProject.updateTime =  Date()
             myProject.updateType = "Add"
         }
         else
@@ -2565,7 +2565,7 @@ class coreDatabase: NSObject
         if myProjects.count > 0
         { // Update
             myProject = myProjects[0]
-            myProject.updateTime = Date()
+            myProject.updateTime =  Date()
             myProject.updateType = "Delete"
         }
         
@@ -2579,17 +2579,17 @@ class coreDatabase: NSObject
         { // Update
             myProjectNote = myTeams[0]
             myProjectNote.updateType = "Delete"
-            myProjectNote.updateTime = Date()
+            myProjectNote.updateTime =  Date()
         }
         
         saveContext()
     }
     
-    func saveTaskUpdate(_ inTaskID: Int, inDetails: String, inSource: String, inUpdateDate: Date = Date(), inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func saveTaskUpdate(_ inTaskID: Int, inDetails: String, inSource: String, inUpdateDate: Date =  Date(), inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         var myTaskUpdate: TaskUpdates!
 
-        if getTaskUpdate(inTaskID, updateDate: inUpdateDate).count == 0
+        if getTaskUpdate(inTaskID, updateDate: inUpdateDate as NSDate).count == 0
         {
             myTaskUpdate = TaskUpdates(context: objectContext)
             myTaskUpdate.taskID = NSNumber(value: inTaskID)
@@ -2598,7 +2598,7 @@ class coreDatabase: NSObject
             myTaskUpdate.source = inSource
             if inUpdateType == "CODE"
             {
-                myTaskUpdate.updateTime = Date()
+                myTaskUpdate.updateTime =  Date()
                 myTaskUpdate.updateType = "Add"
             }
             else
@@ -2611,7 +2611,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func replaceTaskUpdate(_ inTaskID: Int, inDetails: String, inSource: String, inUpdateDate: Date = Date(), inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func replaceTaskUpdate(_ inTaskID: Int, inDetails: String, inSource: String, inUpdateDate: Date =  Date(), inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
 
         let myTaskUpdate = TaskUpdates(context: objectContext)
@@ -2621,7 +2621,7 @@ class coreDatabase: NSObject
         myTaskUpdate.source = inSource
         if inUpdateType == "CODE"
         {
-            myTaskUpdate.updateTime = Date()
+            myTaskUpdate.updateTime =  Date()
             myTaskUpdate.updateType = "Add"
         }
         else
@@ -2633,7 +2633,7 @@ class coreDatabase: NSObject
         saveContext()
     }
 
-    func getTaskUpdate(_ taskID: Int, updateDate: Date)->[TaskUpdates]
+    func getTaskUpdate(_ taskID: Int, updateDate: NSDate)->[TaskUpdates]
     {
         let fetchRequest = NSFetchRequest<TaskUpdates>(entityName: "TaskUpdates")
         
@@ -2689,7 +2689,7 @@ class coreDatabase: NSObject
         }
     }
 
-    func saveContext(_ inContextID: Int, inName: String, inEmail: String, inAutoEmail: String, inParentContext: Int, inStatus: String, inPersonID: Int, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func saveContext(_ inContextID: Int, inName: String, inEmail: String, inAutoEmail: String, inParentContext: Int, inStatus: String, inPersonID: Int, inTeamID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         var myContext: Context!
         
@@ -2708,7 +2708,7 @@ class coreDatabase: NSObject
             myContext.teamID = NSNumber(value: inTeamID)
             if inUpdateType == "CODE"
             {
-                myContext.updateTime = Date()
+                myContext.updateTime =  Date()
 
                 myContext.updateType = "Add"
             }
@@ -2730,7 +2730,7 @@ class coreDatabase: NSObject
             myContext.teamID = NSNumber(value: inTeamID)
             if inUpdateType == "CODE"
             {
-                myContext.updateTime = Date()
+                myContext.updateTime =  Date()
                 if myContext.updateType != "Add"
                 {
                     myContext.updateType = "Update"
@@ -2746,7 +2746,7 @@ class coreDatabase: NSObject
          saveContext()
     }
     
-    func replaceContext(_ inContextID: Int, inName: String, inEmail: String, inAutoEmail: String, inParentContext: Int, inStatus: String, inPersonID: Int, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func replaceContext(_ inContextID: Int, inName: String, inEmail: String, inAutoEmail: String, inParentContext: Int, inStatus: String, inPersonID: Int, inTeamID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         let myContext = Context(context: objectContext)
         myContext.contextID = NSNumber(value: inContextID)
@@ -2759,7 +2759,7 @@ class coreDatabase: NSObject
         myContext.teamID = NSNumber(value: inTeamID)
         if inUpdateType == "CODE"
         {
-            myContext.updateTime = Date()
+            myContext.updateTime =  Date()
             myContext.updateType = "Add"
         }
         else
@@ -2778,7 +2778,7 @@ class coreDatabase: NSObject
         if myContexts.count > 0
         {
             let myContext = myContexts[0]
-            myContext.updateTime = Date()
+            myContext.updateTime =  Date()
             myContext.updateType = "Delete"
         }
         
@@ -2789,7 +2789,7 @@ class coreDatabase: NSObject
         if myContexts2.count > 0
         {
             let myContext = myContexts[0]
-            myContext.updateTime = Date()
+            myContext.updateTime =  Date()
             myContext.updateType = "Delete"
         }
         
@@ -2940,7 +2940,7 @@ class coreDatabase: NSObject
         }
     }
 
-    func saveTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func saveTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         var myContext: TaskContext!
         
@@ -2953,7 +2953,7 @@ class coreDatabase: NSObject
             myContext.taskID = NSNumber(value: inTaskID)
             if inUpdateType == "CODE"
             {
-                myContext.updateTime = Date()
+                myContext.updateTime =  Date()
                 myContext.updateType = "Add"
             }
             else
@@ -2967,7 +2967,7 @@ class coreDatabase: NSObject
             myContext = myContexts[0]
             if inUpdateType == "CODE"
             {
-                myContext.updateTime = Date()
+                myContext.updateTime =  Date()
                 if myContext.updateType != "Add"
                 {
                     myContext.updateType = "Update"
@@ -2985,7 +2985,7 @@ class coreDatabase: NSObject
         myCloudDB.saveTaskContextRecordToCloudKit(myContext)
     }
 
-    func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
 
         let myContext = TaskContext(context: objectContext)
@@ -2993,7 +2993,7 @@ class coreDatabase: NSObject
         myContext.taskID = NSNumber(value: inTaskID)
         if inUpdateType == "CODE"
         {
-            myContext.updateTime = Date()
+            myContext.updateTime =  Date()
             myContext.updateType = "Add"
         }
         else
@@ -3019,7 +3019,7 @@ class coreDatabase: NSObject
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myStage in fetchResults
             {
-                myStage.updateTime = Date()
+                myStage.updateTime =  Date()
                 myStage.updateType = "Delete"
             }
         }
@@ -3103,7 +3103,7 @@ class coreDatabase: NSObject
         }
     }
 
-    func saveGTDLevel(_ inGTDLevel: Int, inLevelName: String, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func saveGTDLevel(_ inGTDLevel: Int, inLevelName: String, inTeamID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         var myGTD: GTDLevel!
         
@@ -3119,7 +3119,7 @@ class coreDatabase: NSObject
             if inUpdateType == "CODE"
             {
                 myGTD.updateType = "Add"
-                myGTD.updateTime = Date()
+                myGTD.updateTime =  Date()
             }
             else
             {
@@ -3133,7 +3133,7 @@ class coreDatabase: NSObject
             myGTD.levelName = inLevelName
             if inUpdateType == "CODE"
             {
-                myGTD.updateTime = Date()
+                myGTD.updateTime =  Date()
                 if myGTD.updateType != "Add"
                 {
                     myGTD.updateType = "Update"
@@ -3149,7 +3149,7 @@ class coreDatabase: NSObject
         saveContext()
     }
     
-    func replaceGTDLevel(_ inGTDLevel: Int, inLevelName: String, inTeamID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func replaceGTDLevel(_ inGTDLevel: Int, inLevelName: String, inTeamID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         let myGTD = GTDLevel(context: objectContext)
         myGTD.gTDLevel = inGTDLevel as NSNumber?
@@ -3159,7 +3159,7 @@ class coreDatabase: NSObject
         if inUpdateType == "CODE"
         {
             myGTD.updateType = "Add"
-            myGTD.updateTime = Date()
+            myGTD.updateTime =  Date()
         }
         else
         {
@@ -3216,7 +3216,7 @@ class coreDatabase: NSObject
                 myGTD = fetchResults[0]
                 //   myGTD.gTDLevel = newGTDLevel
                 myGTD.setValue(newGTDLevel, forKey: "gTDLevel")
-                myGTD.updateTime = Date()
+                myGTD.updateTime =  Date()
                 if myGTD.updateType != "Add"
                 {
                     myGTD.updateType = "Update"
@@ -3239,7 +3239,7 @@ class coreDatabase: NSObject
         if myGTDItems.count > 0
         { // Update
             myGTD = myGTDItems[0]
-            myGTD.updateTime = Date()
+            myGTD.updateTime =  Date()
             myGTD.updateType = "Delete"
         }
         
@@ -3276,7 +3276,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func saveGTDItem(_ inGTDItemID: Int, inParentID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String, inLastReviewDate: Date, inReviewFrequency: Int, inReviewPeriod: String, inPredecessor: Int, inGTDLevel: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func saveGTDItem(_ inGTDItemID: Int, inParentID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String, inLastReviewDate: Date, inReviewFrequency: Int, inReviewPeriod: String, inPredecessor: Int, inGTDLevel: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         var myGTD: GTDItem!
         
@@ -3298,7 +3298,7 @@ class coreDatabase: NSObject
             myGTD.gTDLevel = inGTDLevel as NSNumber?
             if inUpdateType == "CODE"
             {
-                myGTD.updateTime = Date()
+                myGTD.updateTime =  Date()
                 myGTD.updateType = "Add"
             }
             else
@@ -3313,7 +3313,7 @@ class coreDatabase: NSObject
             myGTD.gTDParentID = inParentID as NSNumber?
             myGTD.title = inTitle
             myGTD.status = inStatus
-            myGTD.updateTime = Date()
+            myGTD.updateTime =  Date()
             myGTD.teamID = inTeamID as NSNumber?
             myGTD.note = inNote
             myGTD.lastReviewDate = inLastReviewDate
@@ -3338,7 +3338,7 @@ class coreDatabase: NSObject
         saveContext()
     }
     
-    func replaceGTDItem(_ inGTDItemID: Int, inParentID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String, inLastReviewDate: Date, inReviewFrequency: Int, inReviewPeriod: String, inPredecessor: Int, inGTDLevel: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func replaceGTDItem(_ inGTDItemID: Int, inParentID: Int, inTitle: String, inStatus: String, inTeamID: Int, inNote: String, inLastReviewDate: Date, inReviewFrequency: Int, inReviewPeriod: String, inPredecessor: Int, inGTDLevel: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         let myGTD = GTDItem(context: objectContext)
         myGTD.gTDItemID = inGTDItemID as NSNumber?
@@ -3354,7 +3354,7 @@ class coreDatabase: NSObject
         myGTD.gTDLevel = inGTDLevel as NSNumber?
         if inUpdateType == "CODE"
         {
-            myGTD.updateTime = Date()
+            myGTD.updateTime =  Date()
             myGTD.updateType = "Add"
         }
         else
@@ -3375,7 +3375,7 @@ class coreDatabase: NSObject
         if myGTDItems.count > 0
         { // Update
             myGTD = myGTDItems[0]
-            myGTD.updateTime = Date()
+            myGTD.updateTime =  Date()
             myGTD.updateType = "Delete"
         }
         saveContext()
@@ -3504,7 +3504,7 @@ class coreDatabase: NSObject
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myStage in fetchResults
             {
-                myStage.updateTime = Date()
+                myStage.updateTime =  Date()
                 myStage.updateType = "Delete"
             }
         }
@@ -3523,7 +3523,7 @@ class coreDatabase: NSObject
             let fetchResults2 = try objectContext.fetch(fetchRequest2)
             for myStage in fetchResults2
             {
-                myStage.updateTime = Date()
+                myStage.updateTime =  Date()
                 myStage.updateType = "Delete"
             }
         }
@@ -3545,7 +3545,7 @@ class coreDatabase: NSObject
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myPane in fetchResults
             {
-                myPane.updateTime = Date()
+                myPane.updateTime =  Date()
                 myPane.updateType = "Delete"
             }
         }
@@ -3643,7 +3643,7 @@ class coreDatabase: NSObject
                     myPane.pane_visible = true
                 }
                 
-                myPane.updateTime = Date()
+                myPane.updateTime =  Date()
                 if myPane.updateType != "Add"
                 {
                     myPane.updateType = "Update"
@@ -3675,7 +3675,7 @@ class coreDatabase: NSObject
             for myPane in fetchResults
             {
                 myPane.pane_order = NSNumber(value: paneOrder)
-                myPane.updateTime = Date()
+                myPane.updateTime =  Date()
                 if myPane.updateType != "Add"
                 {
                     myPane.updateType = "Update"
@@ -3691,7 +3691,7 @@ class coreDatabase: NSObject
         saveContext()
     }
     
-    func savePane(_ inPaneName:String, inPaneAvailable: Bool, inPaneVisible: Bool, inPaneOrder: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func savePane(_ inPaneName:String, inPaneAvailable: Bool, inPaneVisible: Bool, inPaneOrder: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         var myPane: Panes!
         
@@ -3708,7 +3708,7 @@ class coreDatabase: NSObject
             myPane.pane_order = NSNumber(value: inPaneOrder)
             if inUpdateType == "CODE"
             {
-                myPane.updateTime = Date()
+                myPane.updateTime =  Date()
                 myPane.updateType = "Add"
             }
             else
@@ -3725,7 +3725,7 @@ class coreDatabase: NSObject
             myPane.pane_order = NSNumber(value: inPaneOrder)
             if inUpdateType == "CODE"
             {
-                myPane.updateTime = Date()
+                myPane.updateTime =  Date()
                 if myPane.updateType != "Add"
                 {
                     myPane.updateType = "Update"
@@ -3743,7 +3743,7 @@ class coreDatabase: NSObject
         myCloudDB.savePanesRecordToCloudKit(myPane)
     }
     
-    func replacePane(_ inPaneName:String, inPaneAvailable: Bool, inPaneVisible: Bool, inPaneOrder: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func replacePane(_ inPaneName:String, inPaneAvailable: Bool, inPaneVisible: Bool, inPaneOrder: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         let myPane = Panes(context: objectContext)
             
@@ -3753,7 +3753,7 @@ class coreDatabase: NSObject
         myPane.pane_order = NSNumber(value: inPaneOrder)
         if inUpdateType == "CODE"
         {
-            myPane.updateTime = Date()
+            myPane.updateTime =  Date()
             myPane.updateType = "Add"
         }
         else
@@ -3775,7 +3775,7 @@ class coreDatabase: NSObject
             let fetchResults1 = try objectContext.fetch(fetchRequest1)
             for myMeeting in fetchResults1
             {
-                myMeeting.updateTime = Date()
+                myMeeting.updateTime =  Date()
                 myMeeting.updateType = "Delete"
             }
         }
@@ -3794,7 +3794,7 @@ class coreDatabase: NSObject
             let fetchResults2 = try objectContext.fetch(fetchRequest2)
             for myMeeting2 in fetchResults2
             {
-                myMeeting2.updateTime = Date()
+                myMeeting2.updateTime =  Date()
                 myMeeting2.updateType = "Delete"
             }
         }
@@ -3812,7 +3812,7 @@ class coreDatabase: NSObject
             let fetchResults3 = try objectContext.fetch(fetchRequest3)
             for myMeeting3 in fetchResults3
             {
-                myMeeting3.updateTime = Date()
+                myMeeting3.updateTime =  Date()
                 myMeeting3.updateType = "Delete"
             }
         }
@@ -3830,7 +3830,7 @@ class coreDatabase: NSObject
             let fetchResults4 = try objectContext.fetch(fetchRequest4)
             for myMeeting4 in fetchResults4
             {
-                myMeeting4.updateTime = Date()
+                myMeeting4.updateTime =  Date()
                 myMeeting4.updateType = "Delete"
             }
         }
@@ -3848,7 +3848,7 @@ class coreDatabase: NSObject
             let fetchResults6 = try objectContext.fetch(fetchRequest6)
             for myMeeting6 in fetchResults6
             {
-                myMeeting6.updateTime = Date()
+                myMeeting6.updateTime =  Date()
                 myMeeting6.updateType = "Delete"
             }
         }
@@ -3870,7 +3870,7 @@ class coreDatabase: NSObject
             let fetchResults1 = try objectContext.fetch(fetchRequest1)
             for myMeeting in fetchResults1
             {
-                myMeeting.updateTime = Date()
+                myMeeting.updateTime =  Date()
                 myMeeting.updateType = "Delete"
             }
         }
@@ -3889,7 +3889,7 @@ class coreDatabase: NSObject
             let fetchResults2 = try objectContext.fetch(fetchRequest2)
             for myMeeting2 in fetchResults2
             {
-                myMeeting2.updateTime = Date()
+                myMeeting2.updateTime =  Date()
                 myMeeting2.updateType = "Delete"
             }
         }
@@ -3907,7 +3907,7 @@ class coreDatabase: NSObject
             let fetchResults3 = try objectContext.fetch(fetchRequest3)
             for myMeeting3 in fetchResults3
             {
-                myMeeting3.updateTime = Date()
+                myMeeting3.updateTime =  Date()
                 myMeeting3.updateType = "Delete"
             }
         }
@@ -3924,7 +3924,7 @@ class coreDatabase: NSObject
             let fetchResults4 = try objectContext.fetch(fetchRequest4)
             for myMeeting4 in fetchResults4
             {
-                myMeeting4.updateTime = Date()
+                myMeeting4.updateTime =  Date()
                 myMeeting4.updateType = "Delete"
             }
         }
@@ -3992,7 +3992,7 @@ class coreDatabase: NSObject
         myTask.agendaID = NSNumber(value: inAgendaID)
         myTask.meetingID = inMeetingID
         myTask.taskID = NSNumber(value: inTaskID)
-        myTask.updateTime = Date()
+        myTask.updateTime =  Date()
         myTask.updateType = "Add"
         
         saveContext()
@@ -4006,7 +4006,7 @@ class coreDatabase: NSObject
         myTask.agendaID = NSNumber(value: inAgendaID)
         myTask.meetingID = inMeetingID
         myTask.taskID = NSNumber(value: inTaskID)
-        myTask.updateTime = Date()
+        myTask.updateTime =  Date()
         myTask.updateType = "Add"
 
         saveContext()
@@ -4036,7 +4036,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func saveMeetingTask(_ agendaID: Int, meetingID: String, taskID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func saveMeetingTask(_ agendaID: Int, meetingID: String, taskID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         var myTask: MeetingTasks
         
@@ -4050,7 +4050,7 @@ class coreDatabase: NSObject
             myTask.taskID = NSNumber(value: taskID)
             if inUpdateType == "CODE"
             {
-                myTask.updateTime = Date()
+                myTask.updateTime =  Date()
                 myTask.updateType = "Add"
             }
             else
@@ -4064,7 +4064,7 @@ class coreDatabase: NSObject
             myTask = myTaskList[0]
             if inUpdateType == "CODE"
             {
-                myTask.updateTime = Date()
+                myTask.updateTime =  Date()
                 if myTask.updateType != "Add"
                 {
                     myTask.updateType = "Update"
@@ -4080,7 +4080,7 @@ class coreDatabase: NSObject
         saveContext()
     }
 
-    func replaceMeetingTask(_ agendaID: Int, meetingID: String, taskID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func replaceMeetingTask(_ agendaID: Int, meetingID: String, taskID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         let myTask = MeetingTasks(context: objectContext)
         myTask.agendaID = NSNumber(value: agendaID)
@@ -4088,7 +4088,7 @@ class coreDatabase: NSObject
         myTask.taskID = NSNumber(value: taskID)
         if inUpdateType == "CODE"
         {
-            myTask.updateTime = Date()
+            myTask.updateTime =  Date()
             myTask.updateType = "Add"
         }
         else
@@ -4116,7 +4116,7 @@ class coreDatabase: NSObject
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myItem in fetchResults
             {
-                myItem.updateTime = Date()
+                myItem.updateTime =  Date()
                 myItem.updateType = "Delete"
             }
         }
@@ -4161,7 +4161,7 @@ class coreDatabase: NSObject
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myItem in fetchResults
             {
-                myItem.updateTime = Date()
+                myItem.updateTime =  Date()
                 myItem.updateType = "Delete"
             }
         }
@@ -4180,7 +4180,7 @@ class coreDatabase: NSObject
             let fetchResults2 = try objectContext.fetch(fetchRequest2)
             for myItem2 in fetchResults2
             {
-                myItem2.updateTime = Date()
+                myItem2.updateTime =  Date()
                 myItem2.updateType = "Delete"
             }
         }
@@ -5225,7 +5225,7 @@ class coreDatabase: NSObject
         saveContext()
     }
     
-    func saveTeam(_ inTeamID: Int, inName: String, inStatus: String, inNote: String, inType: String, inPredecessor: Int, inExternalID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func saveTeam(_ inTeamID: Int, inName: String, inStatus: String, inNote: String, inType: String, inPredecessor: Int, inExternalID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         var myTeam: Team!
         
@@ -5243,7 +5243,7 @@ class coreDatabase: NSObject
             myTeam.externalID = NSNumber(value: inExternalID)
             if inUpdateType == "CODE"
             {
-                myTeam.updateTime = Date()
+                myTeam.updateTime =  Date()
                 myTeam.updateType = "Add"
             }
             else
@@ -5267,7 +5267,7 @@ class coreDatabase: NSObject
                 {
                     myTeam.updateType = "Update"
                 }
-                myTeam.updateTime = Date()
+                myTeam.updateTime =  Date()
             }
             else
             {
@@ -5279,7 +5279,7 @@ class coreDatabase: NSObject
         saveContext()
     }
     
-    func replaceTeam(_ inTeamID: Int, inName: String, inStatus: String, inNote: String, inType: String, inPredecessor: Int, inExternalID: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func replaceTeam(_ inTeamID: Int, inName: String, inStatus: String, inNote: String, inType: String, inPredecessor: Int, inExternalID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         let myTeam = Team(context: persistentContainer.viewContext)
         myTeam.teamID = NSNumber(value: inTeamID)
@@ -5291,7 +5291,7 @@ class coreDatabase: NSObject
         myTeam.externalID = NSNumber(value: inExternalID)
         if inUpdateType == "CODE"
         {
-            myTeam.updateTime = Date()
+            myTeam.updateTime =  Date()
             myTeam.updateType = "Add"
         }
         else
@@ -5441,7 +5441,7 @@ class coreDatabase: NSObject
         saveContext()
     }
     
-    func saveProjectNote(_ inProjectID: Int, inNote: String, inReviewPeriod: String, inPredecessor: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func saveProjectNote(_ inProjectID: Int, inNote: String, inReviewPeriod: String, inPredecessor: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         var myProjectNote: ProjectNote!
         
@@ -5457,7 +5457,7 @@ class coreDatabase: NSObject
             myProjectNote.predecessor = NSNumber(value: inPredecessor)
             if inUpdateType == "CODE"
             {
-                myProjectNote.updateTime = Date()
+                myProjectNote.updateTime =  Date()
                 myProjectNote.updateType = "Add"
             }
             else
@@ -5478,7 +5478,7 @@ class coreDatabase: NSObject
                 {
                     myProjectNote.updateType = "Update"
                 }
-                myProjectNote.updateTime = Date()
+                myProjectNote.updateTime =  Date()
             }
             else
             {
@@ -5490,7 +5490,7 @@ class coreDatabase: NSObject
         saveContext()
     }
  
-    func replaceProjectNote(_ inProjectID: Int, inNote: String, inReviewPeriod: String, inPredecessor: Int, inUpdateTime: Date = Date(), inUpdateType: String = "CODE")
+    func replaceProjectNote(_ inProjectID: Int, inNote: String, inReviewPeriod: String, inPredecessor: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         let myProjectNote = ProjectNote(context: objectContext)
         myProjectNote.projectID = NSNumber(value: inProjectID)
@@ -5500,7 +5500,7 @@ class coreDatabase: NSObject
         myProjectNote.predecessor = NSNumber(value: inPredecessor)
         if inUpdateType == "CODE"
         {
-            myProjectNote.updateTime = Date()
+            myProjectNote.updateTime =  Date()
             myProjectNote.updateType = "Add"
         }
         else
@@ -5653,7 +5653,7 @@ class coreDatabase: NSObject
                 for myItem in fetchResults
                 {
                     myItem.teamID = NSNumber(value: inTeamID)
-                    maxID = myItem.contextID as Int
+                    maxID = myItem.contextID as! Int
                 }
             }
             
@@ -5689,7 +5689,7 @@ class coreDatabase: NSObject
                 for myItem in fetchResults
                 {
                     myItem.teamID = NSNumber(value: inTeamID)
-                    maxID = myItem.projectID as Int
+                    maxID = myItem.projectID as! Int
                 }
             }
             
@@ -5725,7 +5725,7 @@ class coreDatabase: NSObject
                 for myItem in fetchResults
                 {
                     myItem.teamID = NSNumber(value: inTeamID)
-                    maxID = myItem.roleID as Int
+                    maxID = myItem.roleID as! Int
                 }
             }
             
@@ -5785,7 +5785,7 @@ class coreDatabase: NSObject
                 for myItem in fetchResults
                 {
                     myItem.teamID = NSNumber(value: inTeamID)
-                    maxID = myItem.taskID as Int
+                    maxID = myItem.taskID as! Int
                 }
             }
             
@@ -5802,7 +5802,7 @@ class coreDatabase: NSObject
         saveContext()
     }
 
-    func saveContext1_1(_ contextID: Int, predecessor: Int, contextType: String, updateTime: Date = Date(), updateType: String = "CODE")
+    func saveContext1_1(_ contextID: Int, predecessor: Int, contextType: String, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myContext: Context1_1!
         
@@ -5816,7 +5816,7 @@ class coreDatabase: NSObject
             myContext.contextType = contextType
             if updateType == "CODE"
             {
-                myContext.updateTime = Date()
+                myContext.updateTime =  Date()
                 myContext.updateType = "Add"
 
             }
@@ -5833,7 +5833,7 @@ class coreDatabase: NSObject
             myContext.contextType = contextType
             if updateType == "CODE"
             {
-                myContext.updateTime = Date()
+                myContext.updateTime =  Date()
                 if myContext.updateType != "Add"
                 {
                     myContext.updateType = "Update"
@@ -5849,7 +5849,7 @@ class coreDatabase: NSObject
         saveContext()
     }
     
-    func replaceContext1_1(_ contextID: Int, predecessor: Int, contextType: String, updateTime: Date = Date(), updateType: String = "CODE")
+    func replaceContext1_1(_ contextID: Int, predecessor: Int, contextType: String, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myContext = Context1_1(context: objectContext)
         myContext.contextID = contextID as NSNumber?
@@ -5857,7 +5857,7 @@ class coreDatabase: NSObject
         myContext.contextType = contextType
         if updateType == "CODE"
         {
-            myContext.updateTime = Date()
+            myContext.updateTime =  Date()
             myContext.updateType = "Add"
         }
         else
@@ -5967,7 +5967,7 @@ class coreDatabase: NSObject
         performTidyDecodes("(decode_name == \"Outline\")")
     }
     
-    func getContextsForSync(_ inLastSyncDate: Date) -> [Context]
+    func getContextsForSync(_ inLastSyncDate: NSDate) -> [Context]
     {
         let fetchRequest = NSFetchRequest<Context>(entityName: "Context")
 
@@ -5989,7 +5989,7 @@ class coreDatabase: NSObject
         }
     }
 
-    func getContexts1_1ForSync(_ inLastSyncDate: Date) -> [Context1_1]
+    func getContexts1_1ForSync(_ inLastSyncDate: NSDate) -> [Context1_1]
     {
         let fetchRequest = NSFetchRequest<Context1_1>(entityName: "Context1_1")
      
@@ -6011,7 +6011,7 @@ class coreDatabase: NSObject
         }
     }
 
-    func getDecodesForSync(_ inLastSyncDate: Date) -> [Decodes]
+    func getDecodesForSync(_ inLastSyncDate: NSDate) -> [Decodes]
     {
         let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
         
@@ -6033,7 +6033,7 @@ class coreDatabase: NSObject
         }
     }
 
-    func getGTDItemsForSync(_ inLastSyncDate: Date) -> [GTDItem]
+    func getGTDItemsForSync(_ inLastSyncDate: NSDate) -> [GTDItem]
     {
         let fetchRequest = NSFetchRequest<GTDItem>(entityName: "GTDItem")
         
@@ -6055,7 +6055,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func getGTDLevelsForSync(_ inLastSyncDate: Date) -> [GTDLevel]
+    func getGTDLevelsForSync(_ inLastSyncDate: NSDate) -> [GTDLevel]
     {
         let fetchRequest = NSFetchRequest<GTDLevel>(entityName: "GTDLevel")
         
@@ -6077,7 +6077,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func getMeetingAgendasForSync(_ inLastSyncDate: Date) -> [MeetingAgenda]
+    func getMeetingAgendasForSync(_ inLastSyncDate: NSDate) -> [MeetingAgenda]
     {
         let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
@@ -6099,7 +6099,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func getMeetingAgendaItemsForSync(_ inLastSyncDate: Date) -> [MeetingAgendaItem]
+    func getMeetingAgendaItemsForSync(_ inLastSyncDate: NSDate) -> [MeetingAgendaItem]
     {
         let fetchRequest = NSFetchRequest<MeetingAgendaItem>(entityName: "MeetingAgendaItem")
         
@@ -6121,7 +6121,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func getMeetingAttendeesForSync(_ inLastSyncDate: Date) -> [MeetingAttendees]
+    func getMeetingAttendeesForSync(_ inLastSyncDate: NSDate) -> [MeetingAttendees]
     {
         let fetchRequest = NSFetchRequest<MeetingAttendees>(entityName: "MeetingAttendees")
         
@@ -6143,7 +6143,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func getMeetingSupportingDocsForSync(_ inLastSyncDate: Date) -> [MeetingSupportingDocs]
+    func getMeetingSupportingDocsForSync(_ inLastSyncDate: NSDate) -> [MeetingSupportingDocs]
     {
         let fetchRequest = NSFetchRequest<MeetingSupportingDocs>(entityName: "MeetingSupportingDocs")
         
@@ -6165,7 +6165,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func getMeetingTasksForSync(_ inLastSyncDate: Date) -> [MeetingTasks]
+    func getMeetingTasksForSync(_ inLastSyncDate: NSDate) -> [MeetingTasks]
     {
         let fetchRequest = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
@@ -6187,7 +6187,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func getPanesForSync(_ inLastSyncDate: Date) -> [Panes]
+    func getPanesForSync(_ inLastSyncDate: NSDate) -> [Panes]
     {
         let fetchRequest = NSFetchRequest<Panes>(entityName: "Panes")
         
@@ -6209,7 +6209,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func getProjectsForSync(_ inLastSyncDate: Date) -> [Projects]
+    func getProjectsForSync(_ inLastSyncDate: NSDate) -> [Projects]
     {
         let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
         
@@ -6231,7 +6231,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func getProjectNotesForSync(_ inLastSyncDate: Date) -> [ProjectNote]
+    func getProjectNotesForSync(_ inLastSyncDate: NSDate) -> [ProjectNote]
     {
         let fetchRequest = NSFetchRequest<ProjectNote>(entityName: "ProjectNote")
         
@@ -6253,7 +6253,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func getProjectTeamMembersForSync(_ inLastSyncDate: Date) -> [ProjectTeamMembers]
+    func getProjectTeamMembersForSync(_ inLastSyncDate: NSDate) -> [ProjectTeamMembers]
     {
         let fetchRequest = NSFetchRequest<ProjectTeamMembers>(entityName: "ProjectTeamMembers")
         
@@ -6275,7 +6275,7 @@ class coreDatabase: NSObject
         }
     }
 
-    func getRolesForSync(_ inLastSyncDate: Date) -> [Roles]
+    func getRolesForSync(_ inLastSyncDate: NSDate) -> [Roles]
     {
         let fetchRequest = NSFetchRequest<Roles>(entityName: "Roles")
         
@@ -6297,7 +6297,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func getStagesForSync(_ inLastSyncDate: Date) -> [Stages]
+    func getStagesForSync(_ inLastSyncDate: NSDate) -> [Stages]
     {
         let fetchRequest = NSFetchRequest<Stages>(entityName: "Stages")
         
@@ -6319,7 +6319,7 @@ class coreDatabase: NSObject
         }
     }
 
-    func getTaskForSync(_ inLastSyncDate: Date) -> [Task]
+    func getTaskForSync(_ inLastSyncDate: NSDate) -> [Task]
     {
         let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
@@ -6341,7 +6341,7 @@ class coreDatabase: NSObject
         }
     }
 
-    func getTaskAttachmentsForSync(_ inLastSyncDate: Date) -> [TaskAttachment]
+    func getTaskAttachmentsForSync(_ inLastSyncDate: NSDate) -> [TaskAttachment]
     {
         let fetchRequest = NSFetchRequest<TaskAttachment>(entityName: "TaskAttachment")
         
@@ -6363,7 +6363,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func getTaskContextsForSync(_ inLastSyncDate: Date) -> [TaskContext]
+    func getTaskContextsForSync(_ inLastSyncDate: NSDate) -> [TaskContext]
     {
         let fetchRequest = NSFetchRequest<TaskContext>(entityName: "TaskContext")
         
@@ -6385,7 +6385,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func getTaskPredecessorsForSync(_ inLastSyncDate: Date) -> [TaskPredecessor]
+    func getTaskPredecessorsForSync(_ inLastSyncDate: NSDate) -> [TaskPredecessor]
     {
         let fetchRequest = NSFetchRequest<TaskPredecessor>(entityName: "TaskPredecessor")
         
@@ -6407,7 +6407,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func getTaskUpdatesForSync(_ inLastSyncDate: Date) -> [TaskUpdates]
+    func getTaskUpdatesForSync(_ inLastSyncDate: NSDate) -> [TaskUpdates]
     {
         let fetchRequest = NSFetchRequest<TaskUpdates>(entityName: "TaskUpdates")
         
@@ -6429,7 +6429,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func getTeamsForSync(_ inLastSyncDate: Date) -> [Team]
+    func getTeamsForSync(_ inLastSyncDate: NSDate) -> [Team]
     {
         let fetchRequest = NSFetchRequest<Team>(entityName: "Team")
         
@@ -6451,7 +6451,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func getProcessedEmailsForSync(_ inLastSyncDate: Date) -> [ProcessedEmails]
+    func getProcessedEmailsForSync(_ inLastSyncDate: NSDate) -> [ProcessedEmails]
     {
         let fetchRequest = NSFetchRequest<ProcessedEmails>(entityName: "ProcessedEmails")
         
@@ -6473,7 +6473,7 @@ class coreDatabase: NSObject
         }
     }
 
-    func getOutlineForSync(_ inLastSyncDate: Date) -> [Outline]
+    func getOutlineForSync(_ inLastSyncDate: NSDate) -> [Outline]
     {
         let fetchRequest = NSFetchRequest<Outline>(entityName: "Outline")
         
@@ -6495,7 +6495,7 @@ class coreDatabase: NSObject
         }
     }
     
-    func getOutlineDetailsForSync(_ inLastSyncDate: Date) -> [OutlineDetails]
+    func getOutlineDetailsForSync(_ inLastSyncDate: NSDate) -> [OutlineDetails]
     {
         let fetchRequest = NSFetchRequest<OutlineDetails>(entityName: "OutlineDetails")
         

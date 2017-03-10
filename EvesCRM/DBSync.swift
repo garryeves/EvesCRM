@@ -46,8 +46,8 @@ class DBSync: NSObject
                 }
                 else
                 {
-                    var syncDate: Date!
-                    let syncStart = Date()
+                    var syncDate: NSDate!
+                    let syncStart = NSDate()
         
                     // Get the last sync date
         
@@ -58,7 +58,7 @@ class DBSync: NSObject
                         let myDateFormatter = DateFormatter()
                         myDateFormatter.dateStyle = DateFormatter.Style.short
             
-                        syncDate = myDateFormatter.date(from: "01/01/15")
+                        syncDate = myDateFormatter.date(from: "01/01/15")! as NSDate
                     }
                     else
                     {
@@ -67,7 +67,7 @@ class DBSync: NSObject
                         let myDateFormatter = DateFormatter()
                         myDateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZZ"
             
-                        let tempSyncDate = myDateFormatter.date(from: lastSyncDate)
+                        let tempSyncDate = myDateFormatter.date(from: lastSyncDate)! as NSDate
                         
                         // We want to sync everything changes in the last month so need to do some date math
                         
@@ -76,7 +76,7 @@ class DBSync: NSObject
                         syncDate = myCalendar.date(
                             byAdding: .hour,
                             value: -1,
-                            to: tempSyncDate!)!
+                            to: tempSyncDate as Date)! as NSDate
                     }
 
                     // Load
@@ -140,7 +140,7 @@ class DBSync: NSObject
         notificationCenter.post(name: NotificationDBSyncCompleted, object: nil)
     }
     
-    func syncToCloudKit(_ inDate: Date)
+    func syncToCloudKit(_ inDate: NSDate)
     {
         progressMessage("syncToCloudKit Context")
         myCloudDB.saveContextToCloudKit(inDate)
@@ -193,7 +193,7 @@ class DBSync: NSObject
         notificationCenter.post(name: NotificationCloudSyncFinished, object: nil)
     }
     
-    func syncFromCloudKit(_ inDate: Date)
+    func syncFromCloudKit(_ inDate: NSDate)
     {
         progressMessage("syncFromCloudKit Context")
         myCloudDB.updateContextInCoreData(inDate)

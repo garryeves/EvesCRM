@@ -512,7 +512,7 @@ class workingGTDItem: NSObject
                 
                 if boolAddProject
                 {
-                    let myNewChild = project(inProjectID: myItem.projectID as Int)
+                    let myNewChild = project(inProjectID: myItem.projectID as! Int)
                     myChildren.append(myNewChild)
                 }
             }
@@ -985,17 +985,17 @@ class project: NSObject // 10k level
         for myProject in myProjects
         {
             myProjectEndDate = myProject.projectEndDate
-            myProjectID = myProject.projectID as Int
+            myProjectID = myProject.projectID as! Int
             myProjectName = myProject.projectName
             myProjectStartDate = myProject.projectStartDate
             myProjectStatus = myProject.projectStatus
-            myReviewFrequency = myProject.reviewFrequency as Int
+            myReviewFrequency = myProject.reviewFrequency as! Int
             myLastReviewDate = myProject.lastReviewDate
-            myGTDItemID = myProject.areaID as Int
-            myRepeatInterval = myProject.repeatInterval as Int
+            myGTDItemID = myProject.areaID as! Int
+            myRepeatInterval = myProject.repeatInterval as! Int
             myRepeatType = myProject.repeatType
             myRepeatBase = myProject.repeatBase
-            myTeamID = myProject.teamID as Int
+            myTeamID = myProject.teamID as! Int
                 
             // load team members
         
@@ -1021,7 +1021,7 @@ class project: NSObject // 10k level
                 {
                     myNote = myItem.note
                     myReviewPeriod = myItem.reviewPeriod
-                    myPredecessor = myItem.predecessor as Int
+                    myPredecessor = myItem.predecessor as! Int
                 }
             }
         }
@@ -1035,7 +1035,7 @@ class project: NSObject // 10k level
             
         for myTeamMember in myProjectTeamMembers
         {
-            let myMember = projectTeamMember(inProjectID: myTeamMember.projectID as Int, inTeamMember: myTeamMember.teamMember, inRoleID: myTeamMember.roleID as Int, inTeamID: myTeamID )
+            let myMember = projectTeamMember(inProjectID: myTeamMember.projectID as! Int, inTeamMember: myTeamMember.teamMember, inRoleID: myTeamMember.roleID as! Int, inTeamID: myTeamID )
             
             myMember.projectMemberNotes = myTeamMember.projectMemberNotes
             
@@ -1076,7 +1076,7 @@ class project: NSObject // 10k level
         
         for myProjectTask in myProjectTasks
         {
-            let myNewTask = task(taskID: myProjectTask.taskID as Int)
+            let myNewTask = task(taskID: myProjectTask.taskID as! Int)
             myTasks.append(myNewTask)
         }
     }
@@ -1191,7 +1191,7 @@ class project: NSObject // 10k level
             
             for myTeamMember in myProjectTeamMembers
             {
-                let myMember = projectTeamMember(inProjectID: newProject.projectID as Int, inTeamMember: myTeamMember.teamMember, inRoleID: myTeamMember.roleID as Int, inTeamID: myTeamID )
+                let myMember = projectTeamMember(inProjectID: newProject.projectID as Int, inTeamMember: myTeamMember.teamMember, inRoleID: myTeamMember.roleID as! Int, inTeamID: myTeamID )
                 
                 myMember.projectMemberNotes = myTeamMember.projectMemberNotes
             }
@@ -1209,20 +1209,20 @@ class project: NSObject // 10k level
                 myNewTask.status = "Open"
                 myNewTask.priority = myProjectTask.priority
                 myNewTask.energyLevel = myProjectTask.energyLevel
-                myNewTask.estimatedTime = myProjectTask.estimatedTime as Int
+                myNewTask.estimatedTime = myProjectTask.estimatedTime as! Int
                 myNewTask.estimatedTimeType = myProjectTask.estimatedTimeType
                 myNewTask.projectID = newProject.projectID
-                myNewTask.repeatInterval = myProjectTask.repeatInterval as Int
+                myNewTask.repeatInterval = myProjectTask.repeatInterval as! Int
                 myNewTask.repeatType = myProjectTask.repeatType
                 myNewTask.repeatBase = myProjectTask.repeatBase
-                myNewTask.flagged = myProjectTask.flagged as Bool
+                myNewTask.flagged = myProjectTask.flagged as! Bool
                 myNewTask.urgency = myProjectTask.urgency
      
-                let myContextList = myDatabaseConnection.getContextsForTask(myProjectTask.taskID as Int)
+                let myContextList = myDatabaseConnection.getContextsForTask(myProjectTask.taskID as! Int)
                 
                 for myContextItem in myContextList
                 {
-                    myNewTask.addContext(myContextItem.contextID as Int)
+                    myNewTask.addContext(myContextItem.contextID as! Int)
                 }
             }
         }
@@ -1521,7 +1521,7 @@ class task: NSObject
             
             if tempProject.count > 0
             {
-                myTeamID = tempProject[0].teamID as Int
+                myTeamID = tempProject[0].teamID as! Int
             }
             
             save()
@@ -1683,7 +1683,7 @@ class task: NSObject
         
         for myTask in myTaskData
         {
-            myTaskID = myTask.taskID as Int
+            myTaskID = myTask.taskID as! Int
             myTitle = myTask.title
             myDetails = myTask.details
             myDueDate = myTask.dueDate
@@ -1691,16 +1691,16 @@ class task: NSObject
             myStatus = myTask.status
             myPriority = myTask.priority
             myEnergyLevel = myTask.energyLevel
-            myEstimatedTime = myTask.estimatedTime as Int
+            myEstimatedTime = myTask.estimatedTime as! Int
             myEstimatedTimeType = myTask.estimatedTimeType
-            myProjectID = myTask.projectID as Int
+            myProjectID = myTask.projectID as! Int
             myCompletionDate = myTask.completionDate
-            myRepeatInterval = myTask.repeatInterval as Int
+            myRepeatInterval = myTask.repeatInterval as! Int
             myRepeatType = myTask.repeatType
             myRepeatBase = myTask.repeatBase
-            myFlagged = myTask.flagged as Bool
+            myFlagged = myTask.flagged as! Bool
             myUrgency = myTask.urgency
-            myTeamID = myTask.teamID as Int
+            myTeamID = myTask.teamID as! Int
             
             // get contexts
             
@@ -1709,7 +1709,7 @@ class task: NSObject
             
             for myContextItem in myContextList
             {
-                let myNewContext = context(contextID: myContextItem.contextID as Int)
+                let myNewContext = context(contextID: myContextItem.contextID as! Int)
                 myContexts.append(myNewContext)
             }
             
@@ -1719,7 +1719,7 @@ class task: NSObject
             
             for myPredecessorItem in myPredecessorList
             {
-                let myNewPredecessor = taskPredecessor(inPredecessorID: myPredecessorItem.predecessorID as Int, inPredecessorType: myPredecessorItem.predecessorType)
+                let myNewPredecessor = taskPredecessor(inPredecessorID: myPredecessorItem.predecessorID as! Int, inPredecessorType: myPredecessorItem.predecessorType)
                 myPredecessors.append(myNewPredecessor)
             }
         }
@@ -1808,7 +1808,7 @@ class task: NSObject
         
         for myItem in myCheck
         {
-            let myRetrievedContext = context(contextID: myItem.contextID as Int)
+            let myRetrievedContext = context(contextID: myItem.contextID as! Int)
             if myRetrievedContext.name.lowercased() == myContext.name.lowercased()
             {
                 itemFound = true
@@ -1825,7 +1825,7 @@ class task: NSObject
         
             for myContextItem in myContextList
             {
-                let myNewContext = context(contextID: myContextItem.contextID as Int)
+                let myNewContext = context(contextID: myContextItem.contextID as! Int)
                 myContexts.append(myNewContext)
             }
         }
@@ -1840,7 +1840,7 @@ class task: NSObject
         
         for myContextItem in myContextList
         {
-            let myNewContext = context(contextID: myContextItem.contextID as Int)
+            let myNewContext = context(contextID: myContextItem.contextID as! Int)
             myContexts.append(myNewContext)
         }
     }
@@ -2611,14 +2611,14 @@ class context: NSObject
         
         for myContext in myContexts
         {
-            myContextID = myContext.contextID as Int
+            myContextID = myContext.contextID as! Int
             myName = myContext.name
             myEmail = myContext.email
             myAutoEmail = myContext.autoEmail
-            myParentContext = myContext.parentContext as Int
+            myParentContext = myContext.parentContext as! Int
             myStatus = myContext.status
-            myPersonID = myContext.personID as Int
-            myTeamID = myContext.teamID as Int
+            myPersonID = myContext.personID as! Int
+            myTeamID = myContext.teamID as! Int
             
             getContext1_1()
         }
@@ -2627,14 +2627,14 @@ class context: NSObject
     init(inContext: Context)
     {
         super.init()
-        myContextID = inContext.contextID as Int
+        myContextID = inContext.contextID as! Int
         myName = inContext.name
         myEmail = inContext.email
         myAutoEmail = inContext.autoEmail
-        myParentContext = inContext.parentContext as Int
+        myParentContext = inContext.parentContext as! Int
         myStatus = inContext.status
-        myPersonID = inContext.personID as Int
-        myTeamID = inContext.teamID as Int
+        myPersonID = inContext.personID as! Int
+        myTeamID = inContext.teamID as! Int
         
         getContext1_1()
     }
@@ -2783,7 +2783,7 @@ class taskUpdates: NSObject
     
     init(inUpdate: TaskUpdates)
     {
-        myTaskID = inUpdate.taskID as Int
+        myTaskID = inUpdate.taskID as! Int
         myUpdateDate = inUpdate.updateDate as Date!
         myDetails = inUpdate.details
         mySource = inUpdate.source
@@ -2861,17 +2861,17 @@ class tasks: NSObject
         for myTaskContext in myTaskContextList
         {
             // Get the context details
-            let myTaskList = myDatabaseConnection.getActiveTask(myTaskContext.taskID as Int)
+            let myTaskList = myDatabaseConnection.getActiveTask(myTaskContext.taskID as! Int)
             
             for myTask in myTaskList
             {  //append project details to work array
                 // check the project to see if it is on hold
                 
-                let myProject = project(inProjectID: myTask.projectID as Int)
+                let myProject = project(inProjectID: myTask.projectID as! Int)
                 
                 if myProject.projectStatus != "On Hold"
                 {
-                    let tempTask = task(taskID: myTask.taskID as Int)
+                    let tempTask = task(taskID: myTask.taskID as! Int)
                     myActiveTasks.append(tempTask)
                 }
             }
@@ -2890,7 +2890,7 @@ class tasks: NSObject
         
         for myItem in taskList
         {
-            let tempTask = task(taskID: myItem.taskID as Int)
+            let tempTask = task(taskID: myItem.taskID as! Int)
             
             myActiveTasks.append(tempTask)
         }
@@ -2906,7 +2906,7 @@ class tasks: NSObject
         
         for myItem in taskList
         {
-            let tempTask = task(taskID: myItem.taskID as Int)
+            let tempTask = task(taskID: myItem.taskID as! Int)
             
             myTasks.append(tempTask)
         }

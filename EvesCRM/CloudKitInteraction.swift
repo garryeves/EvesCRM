@@ -61,7 +61,7 @@ class CloudKitInteraction
         userInfo = UserInfo(container: container)        
     }
     
-    func saveContextToCloudKit(_ inLastSyncDate: Date)
+    func saveContextToCloudKit(_ inLastSyncDate: NSDate)
     {
 //        NSLog("Syncing Contexts")
         for myItem in myDatabaseConnection.getContextsForSync(inLastSyncDate)
@@ -75,7 +75,7 @@ class CloudKitInteraction
         }
     }
 
-    func saveDecodesToCloudKit(_ inLastSyncDate: Date, syncName: String)
+    func saveDecodesToCloudKit(_ inLastSyncDate: NSDate, syncName: String)
     {
 //        NSLog("Syncing Decodes")
         for myItem in myDatabaseConnection.getDecodesForSync(inLastSyncDate)
@@ -84,7 +84,7 @@ class CloudKitInteraction
         }
     }
 
-    func saveGTDItemToCloudKit(_ inLastSyncDate: Date)
+    func saveGTDItemToCloudKit(_ inLastSyncDate: NSDate)
     {
 //        NSLog("Syncing GTDItem")
         for myItem in myDatabaseConnection.getGTDItemsForSync(inLastSyncDate)
@@ -93,7 +93,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveGTDLevelToCloudKit(_ inLastSyncDate: Date)
+    func saveGTDLevelToCloudKit(_ inLastSyncDate: NSDate)
     {
 //        NSLog("Syncing GTDLevel")
         for myItem in myDatabaseConnection.getGTDLevelsForSync(inLastSyncDate)
@@ -102,7 +102,7 @@ class CloudKitInteraction
         }
     }
 
-    func saveMeetingAgendaToCloudKit(_ inLastSyncDate: Date)
+    func saveMeetingAgendaToCloudKit(_ inLastSyncDate: NSDate)
     {
 //        NSLog("Syncing Meeting Agenda")
         for myItem in myDatabaseConnection.getMeetingAgendasForSync(inLastSyncDate)
@@ -111,7 +111,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveMeetingAgendaItemToCloudKit(_ inLastSyncDate: Date)
+    func saveMeetingAgendaItemToCloudKit(_ inLastSyncDate: NSDate)
     {
 //        NSLog("Syncing meetingAgendaItems")
         for myItem in myDatabaseConnection.getMeetingAgendaItemsForSync(inLastSyncDate)
@@ -120,7 +120,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveMeetingAttendeesToCloudKit(_ inLastSyncDate: Date)
+    func saveMeetingAttendeesToCloudKit(_ inLastSyncDate: NSDate)
     {
 //        NSLog("Syncing MeetingAttendees")
         for myItem in myDatabaseConnection.getMeetingAttendeesForSync(inLastSyncDate)
@@ -129,7 +129,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveMeetingSupportingDocsToCloudKit(_ inLastSyncDate: Date)
+    func saveMeetingSupportingDocsToCloudKit(_ inLastSyncDate: NSDate)
     {
 //        NSLog("Syncing MeetingSupportingDocs")
         for myItem in myDatabaseConnection.getMeetingSupportingDocsForSync(inLastSyncDate)
@@ -138,7 +138,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveMeetingTasksToCloudKit(_ inLastSyncDate: Date)
+    func saveMeetingTasksToCloudKit(_ inLastSyncDate: NSDate)
     {
 //        NSLog("Syncing MeetingTasks")
         for myItem in myDatabaseConnection.getMeetingTasksForSync(inLastSyncDate)
@@ -147,7 +147,7 @@ class CloudKitInteraction
         }
     }
     
-    func savePanesToCloudKit(_ inLastSyncDate: Date)
+    func savePanesToCloudKit(_ inLastSyncDate: NSDate)
     {
 //        NSLog("Syncing Panes")
         for myItem in myDatabaseConnection.getPanesForSync(inLastSyncDate)
@@ -156,7 +156,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveProjectsToCloudKit(_ inLastSyncDate: Date)
+    func saveProjectsToCloudKit(_ inLastSyncDate: NSDate)
     {
 //        NSLog("Syncing Projects")
         for myItem in myDatabaseConnection.getProjectsForSync(inLastSyncDate)
@@ -170,7 +170,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveProjectTeamMembersToCloudKit(_ inLastSyncDate: Date)
+    func saveProjectTeamMembersToCloudKit(_ inLastSyncDate: NSDate)
     {
 //        NSLog("Syncing ProjectTeamMembers")
         for myItem in myDatabaseConnection.getProjectTeamMembersForSync(inLastSyncDate)
@@ -179,7 +179,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveRolesToCloudKit(_ inLastSyncDate: Date)
+    func saveRolesToCloudKit(_ inLastSyncDate: NSDate)
     {
 //        NSLog("Syncing Roles")
         for myItem in myDatabaseConnection.getRolesForSync(inLastSyncDate)
@@ -188,7 +188,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveStagesToCloudKit(_ inLastSyncDate: Date)
+    func saveStagesToCloudKit(_ inLastSyncDate: NSDate)
     {
 //        NSLog("Syncing Stages")
         for myItem in myDatabaseConnection.getStagesForSync(inLastSyncDate)
@@ -197,7 +197,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveTaskToCloudKit(_ inLastSyncDate: Date)
+    func saveTaskToCloudKit(_ inLastSyncDate: NSDate)
     {
 //        NSLog("Syncing Task")
         for myItem in myDatabaseConnection.getTaskForSync(inLastSyncDate)
@@ -206,7 +206,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveTaskAttachmentToCloudKit(_ inLastSyncDate: Date)
+    func saveTaskAttachmentToCloudKit(_ inLastSyncDate: NSDate)
     {
  //       NSLog("Syncing taskAttachments")
         for myItem in myDatabaseConnection.getTaskAttachmentsForSync(inLastSyncDate)
@@ -215,7 +215,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveTaskContextToCloudKit(_ inLastSyncDate: Date)
+    func saveTaskContextToCloudKit(_ inLastSyncDate: NSDate)
     {
 //        NSLog("Syncing TaskContext")
         for myItem in myDatabaseConnection.getTaskContextsForSync(inLastSyncDate)
@@ -224,7 +224,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveTaskPredecessorToCloudKit(_ inLastSyncDate: Date)
+    func saveTaskPredecessorToCloudKit(_ inLastSyncDate: NSDate)
     {
 //        NSLog("Syncing TaskPredecessor")
         for myItem in myDatabaseConnection.getTaskPredecessorsForSync(inLastSyncDate)
@@ -233,7 +233,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveTaskUpdatesToCloudKit(_ inLastSyncDate: Date)
+    func saveTaskUpdatesToCloudKit(_ inLastSyncDate: NSDate)
     {
 //        NSLog("Syncing TaskUpdates")
         for myItem in myDatabaseConnection.getTaskUpdatesForSync(inLastSyncDate)
@@ -242,7 +242,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveTeamToCloudKit(_ inLastSyncDate: Date)
+    func saveTeamToCloudKit(_ inLastSyncDate: NSDate)
     {
 //        NSLog("Syncing Team")
         for myItem in myDatabaseConnection.getTeamsForSync(inLastSyncDate)
@@ -251,7 +251,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveProcessedEmailsToCloudKit(_ inLastSyncDate: Date)
+    func saveProcessedEmailsToCloudKit(_ inLastSyncDate: NSDate)
     {
 //        NSLog("Syncing ProcessedEmails")
         for myItem in myDatabaseConnection.getProcessedEmailsForSync(inLastSyncDate)
@@ -260,7 +260,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveOutlineToCloudKit(_ inLastSyncDate: Date)
+    func saveOutlineToCloudKit(_ inLastSyncDate: NSDate)
     {
         //        NSLog("Syncing ProcessedEmails")
         for myItem in myDatabaseConnection.getOutlineForSync(inLastSyncDate)
@@ -269,7 +269,7 @@ class CloudKitInteraction
         }
     }
     
-    func saveOutlineDetailsToCloudKit(_ inLastSyncDate: Date)
+    func saveOutlineDetailsToCloudKit(_ inLastSyncDate: NSDate)
     {
         //        NSLog("Syncing ProcessedEmails")
         for myItem in myDatabaseConnection.getOutlineDetailsForSync(inLastSyncDate)
@@ -278,7 +278,7 @@ class CloudKitInteraction
         }
     }
     
-    func updateContextInCoreData(_ inLastSyncDate: Date)
+    func updateContextInCoreData(_ inLastSyncDate: NSDate)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -295,7 +295,7 @@ class CloudKitInteraction
         
     }
     
-    func updateDecodesInCoreData(_ inLastSyncDate: Date)
+    func updateDecodesInCoreData(_ inLastSyncDate: NSDate)
     {
         let sem = DispatchSemaphore(value: 0);
 
@@ -312,7 +312,7 @@ class CloudKitInteraction
         sem.wait()
     }
     
-    func updateGTDItemInCoreData(_ inLastSyncDate: Date)
+    func updateGTDItemInCoreData(_ inLastSyncDate: NSDate)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -329,7 +329,7 @@ class CloudKitInteraction
         sem.wait()
     }
     
-    func updateGTDLevelInCoreData(_ inLastSyncDate: Date)
+    func updateGTDLevelInCoreData(_ inLastSyncDate: NSDate)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -346,7 +346,7 @@ class CloudKitInteraction
         sem.wait()
     }
     
-    func updateMeetingAgendaInCoreData(_ inLastSyncDate: Date)
+    func updateMeetingAgendaInCoreData(_ inLastSyncDate: NSDate)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -363,7 +363,7 @@ class CloudKitInteraction
         sem.wait()
     }
     
-    func updateMeetingAgendaItemInCoreData(_ inLastSyncDate: Date)
+    func updateMeetingAgendaItemInCoreData(_ inLastSyncDate: NSDate)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -380,7 +380,7 @@ class CloudKitInteraction
         sem.wait()
     }
     
-    func updateMeetingAttendeesInCoreData(_ inLastSyncDate: Date)
+    func updateMeetingAttendeesInCoreData(_ inLastSyncDate: NSDate)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -397,7 +397,7 @@ class CloudKitInteraction
         sem.wait()
     }
     
-    func updateMeetingSupportingDocsInCoreData(_ inLastSyncDate: Date)
+    func updateMeetingSupportingDocsInCoreData(_ inLastSyncDate: NSDate)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -415,7 +415,7 @@ class CloudKitInteraction
         sem.wait()
     }
     
-    func updateMeetingTasksInCoreData(_ inLastSyncDate: Date)
+    func updateMeetingTasksInCoreData(_ inLastSyncDate: NSDate)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -432,7 +432,7 @@ class CloudKitInteraction
         sem.wait()
     }
     
-    func updatePanesInCoreData(_ inLastSyncDate: Date)
+    func updatePanesInCoreData(_ inLastSyncDate: NSDate)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -449,7 +449,7 @@ class CloudKitInteraction
         sem.wait()
     }
     
-    func updateProjectsInCoreData(_ inLastSyncDate: Date)
+    func updateProjectsInCoreData(_ inLastSyncDate: NSDate)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -466,7 +466,7 @@ class CloudKitInteraction
         sem.wait()
     }
     
-    func updateProjectTeamMembersInCoreData(_ inLastSyncDate: Date)
+    func updateProjectTeamMembersInCoreData(_ inLastSyncDate: NSDate)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -483,7 +483,7 @@ class CloudKitInteraction
         sem.wait()
     }
     
-    func updateRolesInCoreData(_ inLastSyncDate: Date)
+    func updateRolesInCoreData(_ inLastSyncDate: NSDate)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -500,7 +500,7 @@ class CloudKitInteraction
         sem.wait()
     }
     
-    func updateStagesInCoreData(_ inLastSyncDate: Date)
+    func updateStagesInCoreData(_ inLastSyncDate: NSDate)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -517,7 +517,7 @@ class CloudKitInteraction
         sem.wait()
     }
     
-    func updateTaskInCoreData(_ inLastSyncDate: Date)
+    func updateTaskInCoreData(_ inLastSyncDate: NSDate)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -534,7 +534,7 @@ class CloudKitInteraction
         sem.wait()
     }
     
-    func updateTaskAttachmentInCoreData(_ inLastSyncDate: Date)
+    func updateTaskAttachmentInCoreData(_ inLastSyncDate: NSDate)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -552,7 +552,7 @@ class CloudKitInteraction
         sem.wait()
     }
     
-    func updateTaskContextInCoreData(_ inLastSyncDate: Date)
+    func updateTaskContextInCoreData(_ inLastSyncDate: NSDate)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -569,7 +569,7 @@ class CloudKitInteraction
         sem.wait()
     }
     
-    func updateTaskPredecessorInCoreData(_ inLastSyncDate: Date)
+    func updateTaskPredecessorInCoreData(_ inLastSyncDate: NSDate)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -586,7 +586,7 @@ class CloudKitInteraction
         sem.wait()
     }
     
-    func updateTaskUpdatesInCoreData(_ inLastSyncDate: Date)
+    func updateTaskUpdatesInCoreData(_ inLastSyncDate: NSDate)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -603,7 +603,7 @@ class CloudKitInteraction
         sem.wait()
     }
     
-    func updateTeamInCoreData(_ inLastSyncDate: Date)
+    func updateTeamInCoreData(_ inLastSyncDate: NSDate)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -620,7 +620,7 @@ class CloudKitInteraction
         sem.wait()
     }
     
-    func updateProcessedEmailsInCoreData(_ inLastSyncDate: Date)
+    func updateProcessedEmailsInCoreData(_ inLastSyncDate: NSDate)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -637,7 +637,7 @@ class CloudKitInteraction
         sem.wait()
     }
     
-    func updateOutlineInCoreData(_ inLastSyncDate: Date)
+    func updateOutlineInCoreData(_ inLastSyncDate: NSDate)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -654,7 +654,7 @@ class CloudKitInteraction
         sem.wait()
     }
     
-    func updateOutlineDetailsInCoreData(_ inLastSyncDate: Date)
+    func updateOutlineDetailsInCoreData(_ inLastSyncDate: NSDate)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -1143,7 +1143,7 @@ class CloudKitInteraction
         myDateFormatter.dateStyle = DateFormatter.Style.short
         let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as! CVarArg)
         let query: CKQuery = CKQuery(recordType: "Context", predicate: predicate)
         var predecessor: Int = 0
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
@@ -1185,7 +1185,7 @@ class CloudKitInteraction
         myDateFormatter.dateStyle = DateFormatter.Style.short
         let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as! CVarArg)
         let query: CKQuery = CKQuery(recordType: "Decodes", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1206,7 +1206,7 @@ class CloudKitInteraction
         myDateFormatter.dateStyle = DateFormatter.Style.short
         let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as! CVarArg)
         let query: CKQuery = CKQuery(recordType: "GTDItem", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1241,7 +1241,7 @@ class CloudKitInteraction
         myDateFormatter.dateStyle = DateFormatter.Style.short
         let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as! CVarArg)
         let query: CKQuery = CKQuery(recordType: "GTDLevel", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1268,7 +1268,7 @@ class CloudKitInteraction
         myDateFormatter.dateStyle = DateFormatter.Style.short
         let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as! CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1302,7 +1302,7 @@ class CloudKitInteraction
         myDateFormatter.dateStyle = DateFormatter.Style.short
         let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as! CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1337,7 +1337,7 @@ class CloudKitInteraction
         myDateFormatter.dateStyle = DateFormatter.Style.short
         let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as! CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingAttendees", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1366,7 +1366,7 @@ class CloudKitInteraction
         myDateFormatter.dateStyle = DateFormatter.Style.short
         let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as! CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             // for record in results!
@@ -1397,7 +1397,7 @@ class CloudKitInteraction
         myDateFormatter.dateStyle = DateFormatter.Style.short
         let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as! CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingTasks", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1424,7 +1424,7 @@ class CloudKitInteraction
         myDateFormatter.dateStyle = DateFormatter.Style.short
         let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as! CVarArg)
         let query: CKQuery = CKQuery(recordType: "Panes", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1452,7 +1452,7 @@ class CloudKitInteraction
         myDateFormatter.dateStyle = DateFormatter.Style.short
         let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as! CVarArg)
         let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1493,7 +1493,7 @@ class CloudKitInteraction
         myDateFormatter.dateStyle = DateFormatter.Style.short
         let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as! CVarArg)
         let query: CKQuery = CKQuery(recordType: "ProjectTeamMembers", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1521,7 +1521,7 @@ class CloudKitInteraction
         myDateFormatter.dateStyle = DateFormatter.Style.short
         let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as! CVarArg)
         let query: CKQuery = CKQuery(recordType: "Roles", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1548,7 +1548,7 @@ class CloudKitInteraction
         myDateFormatter.dateStyle = DateFormatter.Style.short
         let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as! CVarArg)
         let query: CKQuery = CKQuery(recordType: "Stages", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1574,7 +1574,7 @@ class CloudKitInteraction
         myDateFormatter.dateStyle = DateFormatter.Style.short
         let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as! CVarArg)
         let query: CKQuery = CKQuery(recordType: "Task", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1616,7 +1616,7 @@ class CloudKitInteraction
         myDateFormatter.dateStyle = DateFormatter.Style.short
         let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as! CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskAttachment", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             //   for record in results!
@@ -1644,7 +1644,7 @@ class CloudKitInteraction
         myDateFormatter.dateStyle = DateFormatter.Style.short
         let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as! CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskContext", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1670,7 +1670,7 @@ class CloudKitInteraction
         myDateFormatter.dateStyle = DateFormatter.Style.short
         let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as! CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskPredecessor", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1697,7 +1697,7 @@ class CloudKitInteraction
         myDateFormatter.dateStyle = DateFormatter.Style.short
         let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as! CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskUpdates", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1725,7 +1725,7 @@ class CloudKitInteraction
         myDateFormatter.dateStyle = DateFormatter.Style.short
         let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as! CVarArg)
 
         let query: CKQuery = CKQuery(recordType: "Team", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
@@ -1757,7 +1757,7 @@ class CloudKitInteraction
         myDateFormatter.dateStyle = DateFormatter.Style.short
         let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as! CVarArg)
         let query: CKQuery = CKQuery(recordType: "ProcessedEmails", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1784,7 +1784,7 @@ class CloudKitInteraction
         myDateFormatter.dateStyle = DateFormatter.Style.short
         let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as! CVarArg)
         let query: CKQuery = CKQuery(recordType: "Outline", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1813,7 +1813,7 @@ class CloudKitInteraction
         myDateFormatter.dateStyle = DateFormatter.Style.short
         let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as! CVarArg)
         let query: CKQuery = CKQuery(recordType: "OutlineDetails", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1847,7 +1847,7 @@ class CloudKitInteraction
     
     func saveContextRecordToCloudKit(_ sourceRecord: Context)
     {
-        let predicate = NSPredicate(format: "(contextID == \(sourceRecord.contextID as Int)) && (teamID == \(sourceRecord.teamID as Int))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(contextID == \(sourceRecord.contextID as! Int)) && (teamID == \(sourceRecord.teamID as! Int))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Context", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -1858,7 +1858,7 @@ class CloudKitInteraction
                 {
                     // Lets go and get the additional details from the context1_1 table
                     
-                    let tempContext1_1 = myDatabaseConnection.getContext1_1(sourceRecord.contextID as Int)
+                    let tempContext1_1 = myDatabaseConnection.getContext1_1(sourceRecord.contextID as! Int)
                     
                     var myPredecessor: Int = 0
                     var myContextType: String = ""
@@ -2335,7 +2335,7 @@ class CloudKitInteraction
     
     func saveMeetingAgendaRecordToCloudKit(_ sourceRecord: MeetingAgenda)
     {
-        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID)\") && (actualTeamID == \(sourceRecord.teamID as Int))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID)\") && (actualTeamID == \(sourceRecord.teamID as! Int))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -2556,7 +2556,7 @@ class CloudKitInteraction
     
     func saveMeetingSupportingDocsRecordToCloudKit(_ sourceRecord: MeetingSupportingDocs)
     {
-        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID)\") && (agendaID == \(sourceRecord.agendaID as Int))") // better be accurate to get only the
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID)\") && (agendaID == \(sourceRecord.agendaID as! Int))") // better be accurate to get only the
         let query = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -2620,7 +2620,7 @@ class CloudKitInteraction
     
     func saveMeetingTasksRecordToCloudKit(_ sourceRecord: MeetingTasks)
     {
-        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID)\") && (agendaID == \(sourceRecord.agendaID as Int)) && (taskID == \(sourceRecord.taskID as Int))") // better be accurate to get only the
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID)\") && (agendaID == \(sourceRecord.agendaID as! Int)) && (taskID == \(sourceRecord.taskID as! Int))") // better be accurate to get only the
         let query = CKQuery(recordType: "MeetingTasks", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -2748,7 +2748,7 @@ class CloudKitInteraction
     
     func saveProjectsRecordToCloudKit(_ sourceRecord: Projects)
     {
-        let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID as Int))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID as! Int))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Projects", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -2760,7 +2760,7 @@ class CloudKitInteraction
                     
                     // First need to get additional info from other table
                     
-                    let tempProjectNote = myDatabaseConnection.getProjectNote(sourceRecord.projectID as Int)
+                    let tempProjectNote = myDatabaseConnection.getProjectNote(sourceRecord.projectID as! Int)
                     
                     var myNote: String = ""
                     var myReviewPeriod: String = ""
@@ -2770,7 +2770,7 @@ class CloudKitInteraction
                     {
                         myNote = tempProjectNote[0].note
                         myReviewPeriod = tempProjectNote[0].reviewPeriod
-                        myPredecessor = tempProjectNote[0].predecessor as Int
+                        myPredecessor = tempProjectNote[0].predecessor as! Int
                     }
                     
                     if records!.count > 0
@@ -2851,7 +2851,7 @@ class CloudKitInteraction
     
     func saveProjectNoteRecordToCloudKit(_ sourceRecord: ProjectNote)
     {
-        let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID as Int))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID as! Int))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Projects", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -2919,7 +2919,7 @@ class CloudKitInteraction
 
     func saveProjectTeamMembersRecordToCloudKit(_ sourceRecord: ProjectTeamMembers)
     {
-        let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID as Int)) && (teamMember == \"\(sourceRecord.teamMember)\")") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID as! Int)) && (teamMember == \"\(sourceRecord.teamMember)\")") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "ProjectTeamMembers", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -2983,7 +2983,7 @@ class CloudKitInteraction
     
     func saveRolesRecordToCloudKit(_ sourceRecord: Roles)
     {
-        let predicate = NSPredicate(format: "(roleID == \(sourceRecord.roleID as Int))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(roleID == \(sourceRecord.roleID as! Int))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Roles", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -3045,7 +3045,7 @@ class CloudKitInteraction
     
     func saveStagesRecordToCloudKit(_ sourceRecord: Stages)
     {
-        let predicate = NSPredicate(format: "(stageDescription == \"\(sourceRecord.stageDescription)\") && (teamID == \(sourceRecord.teamID as Int))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(stageDescription == \"\(sourceRecord.stageDescription)\") && (teamID == \(sourceRecord.teamID as! Int))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Stages", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -3105,7 +3105,7 @@ class CloudKitInteraction
 
     func saveTaskRecordToCloudKit(_ sourceRecord: Task)
     {
-        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as Int))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as! Int))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Task", predicate: predicate)
         
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
@@ -3199,7 +3199,7 @@ class CloudKitInteraction
     
     func saveTaskAttachmentRecordToCloudKit(_ sourceRecord: TaskAttachment)
     {
-        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as Int)) && (title == \"\(sourceRecord.title)\")") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as! Int)) && (title == \"\(sourceRecord.title)\")") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "TaskAttachment", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -3262,7 +3262,7 @@ class CloudKitInteraction
     
     func saveTaskContextRecordToCloudKit(_ sourceRecord: TaskContext)
     {
-        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as Int)) && (contextID == \(sourceRecord.contextID as Int))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as! Int)) && (contextID == \(sourceRecord.contextID as! Int))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "TaskContext", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -3323,7 +3323,7 @@ class CloudKitInteraction
     
     func saveTaskPredecessorRecordToCloudKit(_ sourceRecord: TaskPredecessor)
     {
-        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as Int)) && (predecessorID == \(sourceRecord.predecessorID as Int))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as! Int)) && (predecessorID == \(sourceRecord.predecessorID as! Int))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "TaskPredecessor", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -3385,7 +3385,7 @@ class CloudKitInteraction
     
     func saveTaskUpdatesRecordToCloudKit(_ sourceRecord: TaskUpdates)
     {
-        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as Int)) && (updateDate == %@)", sourceRecord.updateDate as CVarArg) // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as! Int)) && (updateDate == %@)", sourceRecord.updateDate as! CVarArg) // better be accurate to get only the record you need
         let query = CKQuery(recordType: "TaskUpdates", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -3449,7 +3449,7 @@ class CloudKitInteraction
     
     func saveTeamRecordToCloudKit(_ sourceRecord: Team)
     {
-        let predicate = NSPredicate(format: "(teamID == \(sourceRecord.teamID as Int))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(teamID == \(sourceRecord.teamID as! Int))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Team", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil
@@ -4522,7 +4522,7 @@ class CloudKitInteraction
             }
             else
             {
-                NSLog("Error = \(error)")
+                NSLog("Error = \(String(describing: error))")
             }
         }
     }

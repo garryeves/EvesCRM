@@ -1301,7 +1301,7 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
                     
                     let status = httpResponse!.statusCode
                     
-                    let myReturnString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue) as! String
+                    let myReturnString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue)! as String
                     
                     if status == 201
                     {
@@ -1383,7 +1383,7 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
                     
                     let status = httpResponse!.statusCode
                     
-                    let myReturnString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue) as! String
+                    let myReturnString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue)! as String
                     
                     if status == 201
                     {
@@ -1548,7 +1548,7 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
                 if status == 200
                 {
                     // this means data was retrieved OK
-                    myReturnString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue) as! String
+                    myReturnString = NSString(data: data!, encoding: String.Encoding.utf8.rawValue)! as String
                 }
                 else if status == 201
                 {
@@ -1557,7 +1557,7 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
                 else
                 {
                     print("oneNoteData: connectionDidFinishLoading: There was an error accessing the OneNote data. Response code: \(status)")
-                    print("Error = \(error)")
+                    print("Error = \(String(describing: error))")
                 }
                 sem.signal()
             })

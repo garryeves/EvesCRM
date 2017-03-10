@@ -165,13 +165,13 @@ class team: NSObject
         
         for myItem in myTeam
         {
-            myTeamID = myItem.teamID as Int
+            myTeamID = myItem.teamID as! Int
             myName = myItem.name
             myStatus = myItem.status
             myType = myItem.type
             myNote = myItem.note
-            myPredecessor = myItem.predecessor as Int
-            myExternalID = myItem.externalID as Int
+            myPredecessor = myItem.predecessor as! Int
+            myExternalID = myItem.externalID as! Int
         }
  
         loadRoles()

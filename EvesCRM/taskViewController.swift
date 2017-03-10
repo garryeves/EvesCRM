@@ -620,9 +620,9 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         
         for myTeamItem in myDatabaseConnection.getMyTeams(myID)
         {
-            if myTeamItem.teamID as Int != passedTask.teamID
+            if myTeamItem.teamID as! Int != passedTask.teamID
             {
-                let myProjects = myDatabaseConnection.getProjects(myTeamItem.teamID as Int)
+                let myProjects = myDatabaseConnection.getProjects(myTeamItem.teamID as! Int)
                 for myProject in myProjects
                 {
                     pickerOptions.append(myProject.projectName)
@@ -711,8 +711,8 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         
             if pickerTarget == "Project"
             {
-                getProjectName(myProjectDetails[mySelectedRow - 1].projectID as Int)
-                passedTask.projectID = myProjectDetails[mySelectedRow - 1].projectID as Int
+                getProjectName(myProjectDetails[mySelectedRow - 1].projectID as! Int)
+                passedTask.projectID = myProjectDetails[mySelectedRow - 1].projectID as! Int
             }
         
             if pickerTarget == "RepeatPeriod"
@@ -968,7 +968,7 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         else
         {
             btnProject.setTitle(myProjects[0].projectName, for: .normal)
-            myProjectID = myProjects[0].projectID as Int
+            myProjectID = myProjects[0].projectID as! Int
         }
     }
     

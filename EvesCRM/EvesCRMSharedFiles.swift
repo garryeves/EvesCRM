@@ -373,18 +373,6 @@ func populateRoles(_ inTeamID: Int)
     }
 }
 
-func parseProjectDetails(_ myProject: project)->[TableData]
-{
-    var tableContents:[TableData] = [TableData]()
-        
-    writeRowToArray("Start Date = \(myProject.displayProjectStartDate)", inTable: &tableContents)
-    writeRowToArray("End Date = \(myProject.displayProjectEndDate)", inTable: &tableContents)
-    writeRowToArray("Status = \(myProject.projectStatus)", inTable: &tableContents)
-    
-    return tableContents
-}
-
-
 func displayTeamMembers(_ inProject: project, lookupArray: inout [String])->[TableData]
 {
     var tableContents:[TableData] = [TableData]()
@@ -427,17 +415,17 @@ func displayProjectsForPerson(_ inPerson: String, lookupArray: inout [String]) -
     {
         for myProject in myProjects
         {
-            let myDetails = myDatabaseConnection.getProjectDetails(myProject.projectID as Int)
+            let myDetails = myDatabaseConnection.getProjectDetails(myProject.projectID as! Int)
         
             if myDetails[0].projectStatus != "Archived"
             {
                 titleText = myDetails[0].projectName
                 titleText += " : "
-                titleText += myDatabaseConnection.getRoleDescription(myProject.roleID, inTeamID: myDetails[0].teamID as Int)
+                titleText += myDatabaseConnection.getRoleDescription(myProject.roleID, inTeamID: myDetails[0].teamID as! Int)
                 
                 lookupArray.append(myProject.projectID.stringValue)
                 
-                let projectObject = project(inProjectID: myDetails[0].projectID as Int)
+                let projectObject = project(inProjectID: myDetails[0].projectID as! Int)
 
                 writeRowToArray(titleText, table: &tableContents, targetObject: projectObject)
             }

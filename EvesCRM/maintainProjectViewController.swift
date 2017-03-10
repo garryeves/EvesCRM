@@ -635,7 +635,7 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
             {
                 let newPersonRole = mySelectedRow - 1
                 
-                mySelectedTeamMember.roleID = myRoles[newPersonRole].roleID as Int
+                mySelectedTeamMember.roleID = myRoles[newPersonRole].roleID as! Int
                 
                 inProjectObject.loadTeamMembers()
                 mySelectedRoles = inProjectObject.teamMembers
