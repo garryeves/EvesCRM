@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import CoreData
+import CloudKit
 
 class team: NSObject
 {
@@ -308,5 +310,472 @@ class team: NSObject
         myCloudDB.saveTeamRecordToCloudKit(myTeam)
         
         saveCalled = false
+    }
+}
+
+extension coreDatabase
+{
+    func clearDeletedTeam(predicate: NSPredicate)
+    {
+        let fetchRequest22 = NSFetchRequest<Team>(entityName: "Team")
+        
+        // Set the predicate on the fetch request
+        fetchRequest22.predicate = predicate
+        do
+        {
+            let fetchResults22 = try objectContext.fetch(fetchRequest22)
+            for myItem22 in fetchResults22
+            {
+                objectContext.delete(myItem22 as NSManagedObject)
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+    }
+    
+    func clearSyncedTeam(predicate: NSPredicate)
+    {
+        let fetchRequest22 = NSFetchRequest<Team>(entityName: "Team")
+        // Set the predicate on the fetch request
+        fetchRequest22.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults22 = try objectContext.fetch(fetchRequest22)
+            for myItem22 in fetchResults22
+            {
+                myItem22.updateType = ""
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+    }
+    
+    func saveTeam(_ inTeamID: Int, inName: String, inStatus: String, inNote: String, inType: String, inPredecessor: Int, inExternalID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    {
+        var myTeam: Team!
+        
+        let myTeams = getTeam(inTeamID)
+        
+        if myTeams.count == 0
+        { // Add
+            myTeam = Team(context: objectContext)
+            myTeam.teamID = NSNumber(value: inTeamID)
+            myTeam.name = inName
+            myTeam.status = inStatus
+            myTeam.note = inNote
+            myTeam.type = inType
+            myTeam.predecessor = NSNumber(value: inPredecessor)
+            myTeam.externalID = NSNumber(value: inExternalID)
+            if inUpdateType == "CODE"
+            {
+                myTeam.updateTime =  Date()
+                myTeam.updateType = "Add"
+            }
+            else
+            {
+                myTeam.updateTime = inUpdateTime
+                myTeam.updateType = inUpdateType
+            }
+        }
+        else
+        { // Update
+            myTeam = myTeams[0]
+            myTeam.name = inName
+            myTeam.status = inStatus
+            myTeam.note = inNote
+            myTeam.type = inType
+            myTeam.predecessor = NSNumber(value: inPredecessor)
+            myTeam.externalID = NSNumber(value: inExternalID)
+            if inUpdateType == "CODE"
+            {
+                if myTeam.updateType != "Add"
+                {
+                    myTeam.updateType = "Update"
+                }
+                myTeam.updateTime =  Date()
+            }
+            else
+            {
+                myTeam.updateTime = inUpdateTime
+                myTeam.updateType = inUpdateType
+            }
+        }
+        
+        saveContext()
+    }
+    
+    func replaceTeam(_ inTeamID: Int, inName: String, inStatus: String, inNote: String, inType: String, inPredecessor: Int, inExternalID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    {
+        let myTeam = Team(context: persistentContainer.viewContext)
+        myTeam.teamID = NSNumber(value: inTeamID)
+        myTeam.name = inName
+        myTeam.status = inStatus
+        myTeam.note = inNote
+        myTeam.type = inType
+        myTeam.predecessor = NSNumber(value: inPredecessor)
+        myTeam.externalID = NSNumber(value: inExternalID)
+        if inUpdateType == "CODE"
+        {
+            myTeam.updateTime =  Date()
+            myTeam.updateType = "Add"
+        }
+        else
+        {
+            myTeam.updateTime = inUpdateTime
+            myTeam.updateType = inUpdateType
+        }
+        
+        saveContext()
+        self.refreshObject(myTeam)
+    }
+    
+    func getTeam(_ inTeamID: Int)->[Team]
+    {
+        let fetchRequest = NSFetchRequest<Team>(entityName: "Team")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(inTeamID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func getAllTeams()->[Team]
+    {
+        let fetchRequest = NSFetchRequest<Team>(entityName: "Team")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        let sortDescriptor = NSSortDescriptor(key: "name", ascending: true)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func getMyTeams(_ myID: String)->[Team]
+    {
+        let fetchRequest = NSFetchRequest<Team>(entityName: "Team")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        let sortDescriptor = NSSortDescriptor(key: "name", ascending: true)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func getTeamsCount() -> Int
+    {
+        let fetchRequest = NSFetchRequest<Team>(entityName: "Team")
+        fetchRequest.shouldRefreshRefetchedObjects = true
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults.count
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return 0
+        }
+    }
+    
+    func deleteAllTeams()
+    {
+        let fetchRequest = NSFetchRequest<Team>(entityName: "Team")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            for myItem in fetchResults
+            {
+                objectContext.delete(myItem as NSManagedObject)
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+        
+        deleteAllGTDLevelRecords()
+    }
+    
+    func getTeamsForSync(_ inLastSyncDate: NSDate) -> [Team]
+    {
+        let fetchRequest = NSFetchRequest<Team>(entityName: "Team")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+
+    func deleteAllTeamRecords()
+    {
+        let fetchRequest22 = NSFetchRequest<Team>(entityName: "Team")
+        
+        do
+        {
+            let fetchResults22 = try objectContext.fetch(fetchRequest22)
+            for myItem22 in fetchResults22
+            {
+                self.objectContext.delete(myItem22 as NSManagedObject)
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+    }
+}
+
+
+extension CloudKitInteraction
+{
+    func saveTeamToCloudKit(_ inLastSyncDate: NSDate)
+    {
+        //        NSLog("Syncing Team")
+        for myItem in myDatabaseConnection.getTeamsForSync(inLastSyncDate)
+        {
+            saveTeamRecordToCloudKit(myItem)
+        }
+    }
+    
+    func updateTeamInCoreData(_ inLastSyncDate: NSDate)
+    {
+        let sem = DispatchSemaphore(value: 0);
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
+        let query: CKQuery = CKQuery(recordType: "Team", predicate: predicate)
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+            for record in results!
+            {
+                self.updateTeamRecord(record)
+            }
+            sem.signal()
+        })
+        
+        sem.wait()
+    }
+    
+    func deleteTeam()
+    {
+        let sem = DispatchSemaphore(value: 0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "Team", predicate: predicate)
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performDelete(myRecordList)
+            sem.signal()
+        })
+        sem.wait()
+    }
+
+    func replaceTeamInCoreData()
+    {
+        let sem = DispatchSemaphore(value: 0);
+        
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = DateFormatter.Style.short
+        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        
+        let query: CKQuery = CKQuery(recordType: "Team", predicate: predicate)
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+            for record in results!
+            {
+                let teamID = record.object(forKey: "teamID") as! Int
+                let updateTime = record.object(forKey: "updateTime") as! Date
+                let updateType = record.object(forKey: "updateType") as! String
+                let name = record.object(forKey: "name") as! String
+                let note = record.object(forKey: "note") as! String
+                let status = record.object(forKey: "status") as! String
+                let type = record.object(forKey: "type") as! String
+                let predecessor = record.object(forKey: "predecessor") as! Int
+                let externalID = record.object(forKey: "externalID") as! Int
+                
+                myDatabaseConnection.replaceTeam(teamID, inName: name, inStatus: status, inNote: note, inType: type, inPredecessor: predecessor, inExternalID: externalID, inUpdateTime: updateTime, inUpdateType: updateType)
+            }
+            sem.signal()
+        })
+        
+        sem.wait()
+    }
+    
+    func saveTeamRecordToCloudKit(_ sourceRecord: Team)
+    {
+        let predicate = NSPredicate(format: "(teamID == \(sourceRecord.teamID as! Int))") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "Team", predicate: predicate)
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
+            if error != nil
+            {
+                NSLog("Error querying records: \(error!.localizedDescription)")
+            }
+            else
+            {
+                if records!.count > 0
+                {
+                    let record = records!.first// as! CKRecord
+                    // Now you have grabbed your existing record from iCloud
+                    // Apply whatever changes you want
+                    record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                    record!.setValue(sourceRecord.name, forKey: "name")
+                    record!.setValue(sourceRecord.note, forKey: "note")
+                    record!.setValue(sourceRecord.status, forKey: "status")
+                    record!.setValue(sourceRecord.type, forKey: "type")
+                    record!.setValue(sourceRecord.predecessor, forKey: "predecessor")
+                    record!.setValue(sourceRecord.externalID, forKey: "externalID")
+                    
+                    
+                    // Save this record again
+                    self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
+                        if saveError != nil
+                        {
+                            NSLog("Error saving record: \(saveError!.localizedDescription)")
+                        }
+                        else
+                        {
+                            if debugMessages
+                            {
+                                NSLog("Successfully updated record!")
+                            }
+                        }
+                    })
+                }
+                else
+                {  // Insert
+                    let record = CKRecord(recordType: "Team")
+                    record.setValue(sourceRecord.teamID, forKey: "teamID")
+                    record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    record.setValue(sourceRecord.updateType, forKey: "updateType")
+                    record.setValue(sourceRecord.name, forKey: "name")
+                    record.setValue(sourceRecord.note, forKey: "note")
+                    record.setValue(sourceRecord.status, forKey: "status")
+                    record.setValue(sourceRecord.type, forKey: "type")
+                    record.setValue(sourceRecord.predecessor, forKey: "predecessor")
+                    record.setValue(sourceRecord.externalID, forKey: "externalID")
+                    
+                    self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
+                        if saveError != nil
+                        {
+                            NSLog("Error saving record: \(saveError!.localizedDescription)")
+                        }
+                        else
+                        {
+                            if debugMessages
+                            {
+                                NSLog("Successfully saved record!")
+                            }
+                        }
+                    })
+                }
+            }
+        })
+    }
+    
+    func updateTeamRecord(_ sourceRecord: CKRecord)
+    {
+        let teamID = sourceRecord.object(forKey: "teamID") as! Int
+        var updateTime = Date()
+        if sourceRecord.object(forKey: "updateTime") != nil
+        {
+            updateTime = sourceRecord.object(forKey: "updateTime") as! Date
+        }
+        
+        var updateType = ""
+        
+        if sourceRecord.object(forKey: "updateType") != nil
+        {
+            updateType = sourceRecord.object(forKey: "updateType") as! String
+        }
+        let name = sourceRecord.object(forKey: "name") as! String
+        let note = sourceRecord.object(forKey: "note") as! String
+        let status = sourceRecord.object(forKey: "status") as! String
+        let type = sourceRecord.object(forKey: "type") as! String
+        let predecessor = sourceRecord.object(forKey: "predecessor") as! Int
+        let externalID = sourceRecord.object(forKey: "externalID") as! Int
+        
+        myDatabaseConnection.saveTeam(teamID, inName: name, inStatus: status, inNote: note, inType: type, inPredecessor: predecessor, inExternalID: externalID, inUpdateTime: updateTime, inUpdateType: updateType)
     }
 }

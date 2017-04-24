@@ -9,412 +9,8 @@
 import Foundation
 import AddressBook
 import EventKit
-
-class meetingAgendaItem
-{
-    fileprivate var myActualEndTime: Date!
-    fileprivate var myActualStartTime: Date!
-    fileprivate var myStatus: String = ""
-    fileprivate var myDecisionMade: String = ""
-    fileprivate var myDiscussionNotes: String = ""
-    fileprivate var myTimeAllocation: Int = 0
-    fileprivate var myOwner: String = ""
-    fileprivate var myTitle: String = ""
-    fileprivate var myAgendaID: Int = 0
-    fileprivate var myTasks: [task] = Array()
-    fileprivate var myMeetingID: String = ""
-    fileprivate var myUpdateAllowed: Bool = true
-    fileprivate var myMeetingOrder: Int = 0
-    fileprivate var saveCalled: Bool = false
-
-    var actualEndTime: Date?
-    {
-        get
-        {
-            return myActualEndTime
-        }
-        set
-        {
-            myActualEndTime = newValue
-            save()
-        }
-    }
-    
-    var actualStartTime: Date?
-    {
-        get
-        {
-            return myActualStartTime
-        }
-        set
-        {
-            myActualStartTime = newValue
-            save()
-        }
-    }
-    
-    var status: String
-    {
-        get
-        {
-            return myStatus
-        }
-        set
-        {
-            myStatus = newValue
-            save()
-        }
-    }
-    
-    var decisionMade: String
-    {
-        get
-        {
-            return myDecisionMade
-        }
-        set
-        {
-            myDecisionMade = newValue
-            save()
-        }
-    }
-    
-    var discussionNotes: String
-    {
-        get
-        {
-            return myDiscussionNotes
-        }
-        set
-        {
-            myDiscussionNotes = newValue
-            save()
-        }
-    }
-    
-    var timeAllocation: Int
-    {
-        get
-        {
-            return myTimeAllocation
-        }
-        set
-        {
-            myTimeAllocation = newValue
-            save()
-        }
-    }
-    
-    var owner: String
-    {
-        get
-        {
-            return myOwner
-        }
-        set
-        {
-            myOwner = newValue
-            save()
-        }
-    }
-    
-    var title: String
-    {
-        get
-        {
-            return myTitle
-        }
-        set
-        {
-            myTitle = newValue
-            save()
-        }
-    }
-    
-    var agendaID: Int
-    {
-        get
-        {
-            return myAgendaID
-        }
-        set
-        {
-            myAgendaID = newValue
-            save()
-        }
-    }
-
-    var meetingOrder: Int
-        {
-        get
-        {
-            return myMeetingOrder
-        }
-        set
-        {
-            myMeetingOrder = newValue
-            save()
-        }
-    }
-
-    var tasks: [task]
-    {
-        get
-        {
-            return myTasks
-        }
-    }
-    
-    init(inMeetingID: String)
-    {
-        myMeetingID = inMeetingID
-        myTitle = "New Item"
-        myTimeAllocation = 10
-        myActualEndTime = getDefaultDate() as Date!
-        myActualStartTime = getDefaultDate() as Date!
-        
-        let tempAgendaItems = myDatabaseConnection.loadAgendaItem(myMeetingID)
-        
-        myAgendaID = tempAgendaItems.count + 1
-        
-        save()
-    }
-    
-    init(inMeetingID: String, inAgendaID: Int)
-    {
-        myMeetingID = inMeetingID
-        
-        let tempAgendaItems = myDatabaseConnection.loadSpecificAgendaItem(myMeetingID, inAgendaID: inAgendaID)
-     
-        if tempAgendaItems.count > 0
-        {
-            myAgendaID = tempAgendaItems[0].agendaID as! Int
-            myTitle = tempAgendaItems[0].title!
-            myOwner = tempAgendaItems[0].owner!
-            myTimeAllocation = tempAgendaItems[0].timeAllocation as! Int
-            myDiscussionNotes = tempAgendaItems[0].discussionNotes!
-            myDecisionMade = tempAgendaItems[0].decisionMade!
-            myStatus = tempAgendaItems[0].status!
-            if tempAgendaItems[0].meetingOrder != nil
-            {
-                myMeetingOrder = tempAgendaItems[0].meetingOrder as! Int
-            }
-            myActualStartTime = tempAgendaItems[0].actualStartTime
-            myActualEndTime = tempAgendaItems[0].actualEndTime
-        }
-        else
-        {
-            myAgendaID = 0
-        }
-    }
-    
-    init(rowType: String)
-    {
-        switch rowType
-        {
-            case "Welcome" :
-                myTitle = "Welcome"
-                myTimeAllocation = 5
-            
-            case "PreviousMinutes" :
-                myTitle = "Review of previous meeting actions"
-                myTimeAllocation = 10
-            
-            case "Close" :
-                myTitle = "Close meeting"
-                myTimeAllocation = 1
-            
-            default:
-                myTitle = "Unknown item"
-                myTimeAllocation = 10
-        }
-        
-        myStatus = "Open"
-        myOwner = "All"
-        myUpdateAllowed = false
-    }
-    
-    func save()
-    {
-        if myUpdateAllowed
-        {
-            myDatabaseConnection.saveAgendaItem(myMeetingID, actualEndTime: myActualEndTime!, actualStartTime: myActualStartTime!, status: myStatus, decisionMade: myDecisionMade, discussionNotes: myDiscussionNotes, timeAllocation: myTimeAllocation, owner: myOwner, title: myTitle, agendaID: myAgendaID, meetingOrder: myMeetingOrder)
-        
-            if !saveCalled
-            {
-                saveCalled = true
-                let _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.performSave), userInfo: nil, repeats: false)
-            }
-        }
-    }
-    
-    @objc func performSave()
-    {        
-        let myAgendaItem = myDatabaseConnection.loadSpecificAgendaItem(myMeetingID, inAgendaID: myAgendaID)[0]
-        
-        myCloudDB.saveMeetingAgendaItemRecordToCloudKit(myAgendaItem)
-        
-        saveCalled = false
-    }
-    
-    func delete()
-    {
-        // call code to perform the delete
-        if myUpdateAllowed
-        {
-            myDatabaseConnection.deleteAgendaItem(myMeetingID, agendaID: myAgendaID)
-        }
-    }
-    
-    func loadTasks()
-    {
-        myTasks.removeAll()
-        
-        let myAgendaTasks = myDatabaseConnection.getAgendaTasks(myMeetingID, inAgendaID:myAgendaID)
-        
-        for myAgendaTask in myAgendaTasks
-        {
-            let myNewTask = task(taskID: myAgendaTask.taskID as! Int)
-            myTasks.append(myNewTask)
-        }
-    }
-    
-    func addTask(_ inTask: task)
-    {
-        // Is there ale=ready a link between the agenda and the task, if there is then no need to save
-        let myCheck = myDatabaseConnection.getAgendaTask(myAgendaID, inMeetingID: myMeetingID, inTaskID: inTask.taskID)
-        
-        if myCheck.count == 0
-        {
-            // Associate Agenda to Task
-            myDatabaseConnection.saveAgendaTask(myAgendaID, inMeetingID: myMeetingID, inTaskID: inTask.taskID)
-        }
-        
-        // reload the tasks array
-        loadTasks()
-    }
-    
-    func removeTask(_ inTask: task)
-    {
-        // Associate Agenda to Task
-        myDatabaseConnection.deleteAgendaTask(myAgendaID, inMeetingID: myMeetingID, inTaskID: inTask.taskID)
-        
-        // reload the tasks array
-        loadTasks()
-    }
-}
-
-class meetingAttendee
-{
-    fileprivate var myMeetingID: String = ""
-    fileprivate var myName: String = ""
-    fileprivate var myEmailAddress: String = ""
-    fileprivate var myType: String = ""
-    fileprivate var myStatus: String = ""
-    fileprivate var saveCalled: Bool = false
- 
-    var name: String
-    {
-        get
-        {
-            return myName
-        }
-        set
-        {
-            myName = newValue
-        }
-    }
-
-    var emailAddress: String
-    {
-        get
-        {
-            return myEmailAddress
-        }
-        set
-        {
-            myEmailAddress = newValue
-        }
-    }
-
-    var type: String
-    {
-        get
-        {
-            return myType
-        }
-        set
-        {
-            myType = newValue
-        }
-    }
-
-    var status: String
-    {
-        get
-        {
-            return myStatus
-        }
-        set
-        {
-            myStatus = newValue
-        }
-    }
-    
-    var meetingID: String
-    {
-        get
-        {
-            return myMeetingID
-        }
-        set
-        {
-            myMeetingID = newValue
-        }
-    }
-    
-    func load(_ meetingID: String, name: String)
-    {
-        let myAttendees = myDatabaseConnection.checkMeetingsForAttendee(name, meetingID: meetingID)
-        
-        if myAttendees.count > 0
-        {
-            for myItem in myAttendees
-            {
-                myMeetingID = myItem.meetingID
-                myName = myItem.name
-                myEmailAddress = myItem.email
-                myType = myItem.type
-                myStatus = myItem.attendenceStatus
-            }
-        }
-    }
-    
-    func delete()
-    {
-        myDatabaseConnection.deleteAttendee(myMeetingID, name: myName)
-    }
-    
-    func save()
-    {
-        myDatabaseConnection.saveAttendee(myMeetingID, name: myName, email: myEmailAddress,  type: myType, status: myStatus)
-        
-        if !saveCalled
-        {
-            saveCalled = true
-            let _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.performSave), userInfo: nil, repeats: false)
-        }
-    }
-    
-    @objc func performSave()
-    {
-        let myMeeting = myDatabaseConnection.checkMeetingsForAttendee(myName, meetingID: myMeetingID)[0]
-        
-        myCloudDB.saveMeetingAttendeesRecordToCloudKit(myMeeting)
-        
-        saveCalled = false
-    }
-}
+import CoreData
+import CloudKit
 
 class myCalendarItem
 {
@@ -2990,3 +2586,755 @@ func parsePastMeeting(_ inMeetingID: String) -> [task]
     return myReturnArray
 }
 
+extension coreDatabase
+{
+    func searchPastAgendaByPartialMeetingIDBeforeStart(_ inSearchText: String, inMeetingStartDate: NSDate, inTeamID: Int)->[MeetingAgenda]
+    {
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "(meetingID contains \"\(inSearchText)\") && (startTime <= %@) && (updateType != \"Delete\") && (teamID == \(inTeamID))", inMeetingStartDate as CVarArg)
+        
+        let sortDescriptor = NSSortDescriptor(key: "startTime", ascending: false)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func searchPastAgendaWithoutPartialMeetingIDBeforeStart(_ inSearchText: String, inMeetingStartDate: NSDate, inTeamID: Int)->[MeetingAgenda]
+    {
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "(teamID == \(inTeamID))  && (updateType != \"Delete\") && (startTime <= %@) && (not meetingID contains \"\(inSearchText)\") ", inMeetingStartDate as CVarArg)
+        
+        let sortDescriptor = NSSortDescriptor(key: "startTime", ascending: false)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func listAgendaReverseDateBeforeStart(_ inMeetingStartDate: NSDate, inTeamID: Int)->[MeetingAgenda]
+    {
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "(startTime <= %@) && (updateType != \"Delete\") && (teamID == \(inTeamID))", inMeetingStartDate as CVarArg)
+        
+        let sortDescriptor = NSSortDescriptor(key: "startTime", ascending: false)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func searchPastAgendaByPartialMeetingIDAfterStart(_ inSearchText: String, inMeetingStartDate: NSDate, inTeamID: Int)->[MeetingAgenda]
+    {
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "(meetingID contains \"\(inSearchText)\") && (startTime >= %@) && (updateType != \"Delete\") && (teamID == \(inTeamID))", inMeetingStartDate as CVarArg)
+        
+        let sortDescriptor = NSSortDescriptor(key: "startTime", ascending: false)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func searchPastAgendaWithoutPartialMeetingIDAfterStart(_ inSearchText: String, inMeetingStartDate: NSDate, inTeamID: Int)->[MeetingAgenda]
+    {
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(inTeamID)) && NOT (meetingID contains \"\(inSearchText)\") && (startTime >= %@)", inMeetingStartDate as CVarArg)
+        
+        let sortDescriptor = NSSortDescriptor(key: "startTime", ascending: false)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func listAgendaReverseDateAfterStart(_ inMeetingStartDate: NSDate, inTeamID: Int)->[MeetingAgenda]
+    {
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "(startTime >= %@) && (updateType != \"Delete\") && (teamID == \(inTeamID))", inMeetingStartDate as CVarArg)
+        
+        let sortDescriptor = NSSortDescriptor(key: "startTime", ascending: false)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func createAgenda(_ inEvent: myCalendarItem)
+    {
+        saveAgenda(inEvent.eventID, inPreviousMeetingID : inEvent.previousMinutes, inName: inEvent.title, inChair: inEvent.chair, inMinutes: inEvent.minutes, inLocation: inEvent.location, inStartTime: inEvent.startDate as Date, inEndTime: inEvent.endDate as Date, inMinutesType: inEvent.minutesType, inTeamID: inEvent.teamID)
+    }
+    
+    func saveAgenda(_ inMeetingID: String, inPreviousMeetingID : String, inName: String, inChair: String, inMinutes: String, inLocation: String, inStartTime: Date, inEndTime: Date, inMinutesType: String, inTeamID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    {
+        var myAgenda: MeetingAgenda
+        
+        let myAgendas = loadAgenda(inMeetingID, inTeamID: inTeamID)
+        
+        if myAgendas.count == 0
+        {
+            myAgenda = MeetingAgenda(context: objectContext)
+            myAgenda.meetingID = inMeetingID
+            myAgenda.previousMeetingID = inPreviousMeetingID
+            myAgenda.name = inName
+            myAgenda.chair = inChair
+            myAgenda.minutes = inMinutes
+            myAgenda.location = inLocation
+            myAgenda.startTime = inStartTime
+            myAgenda.endTime = inEndTime
+            myAgenda.minutesType = inMinutesType
+            myAgenda.teamID = NSNumber(value: inTeamID)
+            if inUpdateType == "CODE"
+            {
+                myAgenda.updateTime =  Date()
+                myAgenda.updateType = "Add"
+            }
+            else
+            {
+                myAgenda.updateTime = inUpdateTime
+                myAgenda.updateType = inUpdateType
+            }
+        }
+        else
+        {
+            myAgenda = myAgendas[0]
+            myAgenda.previousMeetingID = inPreviousMeetingID
+            myAgenda.name = inName
+            myAgenda.chair = inChair
+            myAgenda.minutes = inMinutes
+            myAgenda.location = inLocation
+            myAgenda.startTime = inStartTime
+            myAgenda.endTime = inEndTime
+            myAgenda.minutesType = inMinutesType
+            myAgenda.teamID = NSNumber(value: inTeamID)
+            if inUpdateType == "CODE"
+            {
+                myAgenda.updateTime =  Date()
+                if myAgenda.updateType != "Add"
+                {
+                    myAgenda.updateType = "Update"
+                }
+            }
+            else
+            {
+                myAgenda.updateTime = inUpdateTime
+                myAgenda.updateType = inUpdateType
+            }
+        }
+        
+        saveContext()
+    }
+    
+    func replaceAgenda(_ inMeetingID: String, inPreviousMeetingID : String, inName: String, inChair: String, inMinutes: String, inLocation: String, inStartTime: Date, inEndTime: Date, inMinutesType: String, inTeamID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    {
+        let myAgenda = MeetingAgenda(context: objectContext)
+        myAgenda.meetingID = inMeetingID
+        myAgenda.previousMeetingID = inPreviousMeetingID
+        myAgenda.name = inName
+        myAgenda.chair = inChair
+        myAgenda.minutes = inMinutes
+        myAgenda.location = inLocation
+        myAgenda.startTime = inStartTime
+        myAgenda.endTime = inEndTime
+        myAgenda.minutesType = inMinutesType
+        myAgenda.teamID = NSNumber(value: inTeamID)
+        if inUpdateType == "CODE"
+        {
+            myAgenda.updateTime =  Date()
+            myAgenda.updateType = "Add"
+        }
+        else
+        {
+            myAgenda.updateTime = inUpdateTime
+            myAgenda.updateType = inUpdateType
+        }
+        
+        saveContext()
+    }
+    
+    func loadPreviousAgenda(_ inMeetingID: String, inTeamID: Int)->[MeetingAgenda]
+    {
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "(previousMeetingID == \"\(inMeetingID)\") && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func loadAgenda(_ inMeetingID: String, inTeamID: Int)->[MeetingAgenda]
+    {
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "(meetingID == \"\(inMeetingID)\") && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func updatePreviousAgendaID(_ inPreviousMeetingID: String, inMeetingID: String, inTeamID: Int)
+    {
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "(meetingID == \"\(inMeetingID)\") && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            for myResult in fetchResults
+            {
+                myResult.previousMeetingID = inPreviousMeetingID
+                myResult.updateTime =  Date()
+                if myResult.updateType != "Add"
+                {
+                    myResult.updateType = "Update"
+                }
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+    }
+    
+    func loadAgendaForProject(_ inProjectName: String, inTeamID: Int)->[MeetingAgenda]
+    {
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "(name contains \"\(inProjectName)\") && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func getAgendaForDateRange(_ inStartDate: NSDate, inEndDate: NSDate, inTeamID: Int)->[MeetingAgenda]
+    {
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        predicate = NSPredicate(format: "(startTime >= %@) && (endTime <= %@) && (updateType != \"Delete\") && (teamID == \(inTeamID))", inStartDate as CVarArg, inEndDate as CVarArg)
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+
+    func resetMeetings()
+    {
+        let fetchRequest1 = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults1 = try objectContext.fetch(fetchRequest1)
+            for myMeeting in fetchResults1
+            {
+                myMeeting.updateTime =  Date()
+                myMeeting.updateType = "Delete"
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+        
+        resetMeetingAttendees()
+        
+        resetMeetingAgendaItems()
+        
+        resetMeetingTasks()
+        
+        resetMeetingSupportingDocs()        
+    }
+    
+    func clearDeletedMeetingAgenda(predicate: NSPredicate)
+    {
+        let fetchRequest5 = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
+        
+        // Set the predicate on the fetch request
+        fetchRequest5.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults5 = try objectContext.fetch(fetchRequest5)
+            for myItem5 in fetchResults5
+            {
+                objectContext.delete(myItem5 as NSManagedObject)
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+    }
+    
+    func clearSyncedMeetingAgenda(predicate: NSPredicate)
+    {
+        let fetchRequest5 = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
+        
+        // Set the predicate on the fetch request
+        fetchRequest5.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults5 = try objectContext.fetch(fetchRequest5)
+            for myItem5 in fetchResults5
+            {
+                myItem5.updateType = ""
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+    }
+
+    func initialiseTeamForMeetingAgenda(_ inTeamID: Int)
+    {
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            if fetchResults.count > 0
+            {
+                for myItem in fetchResults
+                {
+                    myItem.teamID = NSNumber(value: inTeamID)
+                }
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+    }
+
+    func getMeetingAgendasForSync(_ inLastSyncDate: NSDate) -> [MeetingAgenda]
+    {
+        let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+
+    func deleteAllMeetingAgendaRecords()
+    {
+        let fetchRequest5 = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
+        do
+        {
+            let fetchResults5 = try objectContext.fetch(fetchRequest5)
+            for myItem5 in fetchResults5
+            {
+                self.objectContext.delete(myItem5 as NSManagedObject)
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+    }
+}
+
+extension CloudKitInteraction
+{
+    func saveMeetingAgendaToCloudKit(_ inLastSyncDate: NSDate)
+    {
+        //        NSLog("Syncing Meeting Agenda")
+        for myItem in myDatabaseConnection.getMeetingAgendasForSync(inLastSyncDate)
+        {
+            saveMeetingAgendaRecordToCloudKit(myItem)
+        }
+    }
+
+    func updateMeetingAgendaInCoreData(_ inLastSyncDate: NSDate)
+    {
+        let sem = DispatchSemaphore(value: 0);
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
+        let query: CKQuery = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+            for record in results!
+            {
+                self.updateMeetingAgendaRecord(record)
+            }
+            sem.signal()
+        })
+        
+        sem.wait()
+    }
+
+    func deleteMeetingAgenda()
+    {
+        let sem = DispatchSemaphore(value: 0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performDelete(myRecordList)
+            sem.signal()
+        })
+        sem.wait()
+    }
+
+    func replaceMeetingAgendaInCoreData()
+    {
+        let sem = DispatchSemaphore(value: 0);
+        
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = DateFormatter.Style.short
+        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let query: CKQuery = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+            for record in results!
+            {
+                let meetingID = record.object(forKey: "meetingID") as! String
+                let updateTime = record.object(forKey: "updateTime") as! Date
+                let updateType = record.object(forKey: "updateType") as! String
+                let chair = record.object(forKey: "chair") as! String
+                let endTime = record.object(forKey: "endTime") as! Date
+                let location = record.object(forKey: "location") as! String
+                let minutes = record.object(forKey: "minutes") as! String
+                let minutesType = record.object(forKey: "minutesType") as! String
+                let name = record.object(forKey: "name") as! String
+                let previousMeetingID = record.object(forKey: "previousMeetingID") as! String
+                let startTime = record.object(forKey: "meetingStartTime") as! Date
+                let teamID = record.object(forKey: "actualTeamID") as! Int
+                
+                myDatabaseConnection.replaceAgenda(meetingID, inPreviousMeetingID : previousMeetingID, inName: name, inChair: chair, inMinutes: minutes, inLocation: location, inStartTime: startTime, inEndTime: endTime, inMinutesType: minutesType, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+            }
+            sem.signal()
+        })
+        
+        sem.wait()
+    }
+
+    func saveMeetingAgendaRecordToCloudKit(_ sourceRecord: MeetingAgenda)
+    {
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID)\") && (actualTeamID == \(sourceRecord.teamID as! Int))") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
+            if error != nil
+            {
+                NSLog("Error querying records: \(error!.localizedDescription)")
+            }
+            else
+            {
+                if records!.count > 0
+                {
+                    let record = records!.first// as! CKRecord
+                    // Now you have grabbed your existing record from iCloud
+                    // Apply whatever changes you want
+                    record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                    record!.setValue(sourceRecord.chair, forKey: "chair")
+                    record!.setValue(sourceRecord.endTime, forKey: "endTime")
+                    record!.setValue(sourceRecord.location, forKey: "location")
+                    record!.setValue(sourceRecord.minutes, forKey: "minutes")
+                    record!.setValue(sourceRecord.minutesType, forKey: "minutesType")
+                    record!.setValue(sourceRecord.name, forKey: "name")
+                    record!.setValue(sourceRecord.previousMeetingID, forKey: "previousMeetingID")
+                    record!.setValue(sourceRecord.startTime, forKey: "meetingStartTime")
+                    
+                    // Save this record again
+                    self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
+                        if saveError != nil
+                        {
+                            NSLog("Error saving record: \(saveError!.localizedDescription)")
+                        }
+                        else
+                        {
+                            if debugMessages
+                            {
+                                NSLog("Successfully updated record!")
+                            }
+                        }
+                    })
+                }
+                else
+                {  // Insert
+                    let record = CKRecord(recordType: "MeetingAgenda")
+                    record.setValue(sourceRecord.meetingID, forKey: "meetingID")
+                    record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    record.setValue(sourceRecord.updateType, forKey: "updateType")
+                    record.setValue(sourceRecord.chair, forKey: "chair")
+                    record.setValue(sourceRecord.endTime, forKey: "endTime")
+                    record.setValue(sourceRecord.location, forKey: "location")
+                    record.setValue(sourceRecord.minutes, forKey: "minutes")
+                    record.setValue(sourceRecord.minutesType, forKey: "minutesType")
+                    record.setValue(sourceRecord.name, forKey: "name")
+                    record.setValue(sourceRecord.previousMeetingID, forKey: "previousMeetingID")
+                    record.setValue(sourceRecord.startTime, forKey: "meetingStartTime")
+                    record.setValue(sourceRecord.teamID, forKey: "actualTeamID")
+                    
+                    self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
+                        if saveError != nil
+                        {
+                            NSLog("Error saving record: \(saveError!.localizedDescription)")
+                        }
+                        else
+                        {
+                            if debugMessages
+                            {
+                                NSLog("Successfully saved record!")
+                            }
+                        }
+                    })
+                }
+            }
+        })
+    }
+
+    func updateMeetingAgendaRecord(_ sourceRecord: CKRecord)
+    {
+        let meetingID = sourceRecord.object(forKey: "meetingID") as! String
+        var updateTime = Date()
+        if sourceRecord.object(forKey: "updateTime") != nil
+        {
+            updateTime = sourceRecord.object(forKey: "updateTime") as! Date
+        }
+        
+        var updateType = ""
+        
+        if sourceRecord.object(forKey: "updateType") != nil
+        {
+            updateType = sourceRecord.object(forKey: "updateType") as! String
+        }
+        let chair = sourceRecord.object(forKey: "chair") as! String
+        let endTime = sourceRecord.object(forKey: "endTime") as! Date
+        let location = sourceRecord.object(forKey: "location") as! String
+        let minutes = sourceRecord.object(forKey: "minutes") as! String
+        let minutesType = sourceRecord.object(forKey: "minutesType") as! String
+        let name = sourceRecord.object(forKey: "name") as! String
+        let previousMeetingID = sourceRecord.object(forKey: "previousMeetingID") as! String
+        let startTime = sourceRecord.object(forKey: "meetingStartTime") as! Date
+        let teamID = sourceRecord.object(forKey: "actualTeamID") as! Int
+        
+        myDatabaseConnection.saveAgenda(meetingID, inPreviousMeetingID : previousMeetingID, inName: name, inChair: chair, inMinutes: minutes, inLocation: location, inStartTime: startTime, inEndTime: endTime, inMinutesType: minutesType, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+    }
+}

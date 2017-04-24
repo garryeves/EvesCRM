@@ -10,6 +10,8 @@ import Foundation
 import AddressBook
 import GoogleSignIn
 import GoogleAPIClientForREST
+import CoreData
+import CloudKit
 
 //import AppKit
 
@@ -967,3 +969,360 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
 }
     
 #endif
+
+extension coreDatabase
+{
+    func clearDeletedProcessedEmails(predicate: NSPredicate)
+    {
+        let fetchRequest27 = NSFetchRequest<ProcessedEmails>(entityName: "ProcessedEmails")
+        
+        // Set the predicate on the fetch request
+        fetchRequest27.predicate = predicate
+        do
+        {
+            let fetchResults27 = try objectContext.fetch(fetchRequest27)
+            for myItem27 in fetchResults27
+            {
+                objectContext.delete(myItem27 as NSManagedObject)
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+    }
+    
+    func clearSyncedProcessedEmails(predicate: NSPredicate)
+    {
+        let fetchRequest27 = NSFetchRequest<ProcessedEmails>(entityName: "ProcessedEmails")
+        // Set the predicate on the fetch request
+        fetchRequest27.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults27 = try objectContext.fetch(fetchRequest27)
+            for myItem27 in fetchResults27
+            {
+                myItem27.updateType = ""
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+    }
+    
+    func getProcessedEmailsForSync(_ inLastSyncDate: NSDate) -> [ProcessedEmails]
+    {
+        let fetchRequest = NSFetchRequest<ProcessedEmails>(entityName: "ProcessedEmails")
+        
+        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
+        // Execute the fetch request, and cast the results to an array of  objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+
+    func deleteAllProcessedEmailRecords()
+    {
+        let fetchRequest27 = NSFetchRequest<ProcessedEmails>(entityName: "ProcessedEmails")
+        
+        do
+        {
+            let fetchResults27 = try objectContext.fetch(fetchRequest27)
+            for myItem27 in fetchResults27
+            {
+                self.objectContext.delete(myItem27 as NSManagedObject)
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+        
+        saveContext()
+    }
+    
+    func saveProcessedEmail(_ emailID: String, emailType: String, processedDate: Date, updateTime: Date = Date(), updateType: String = "CODE")
+    {
+        var myEmail: ProcessedEmails!
+        
+        let myEmailItems = getProcessedEmail(emailID)
+        
+        if myEmailItems.count == 0
+        { // Add
+            myEmail = ProcessedEmails(context: objectContext)
+            myEmail.emailID = emailID
+            myEmail.emailType = emailType
+            myEmail.processedDate = processedDate
+            
+            if updateType == "CODE"
+            {
+                myEmail.updateTime = Date()
+                myEmail.updateType = "Add"
+            }
+            else
+            {
+                myEmail.updateTime = updateTime
+                myEmail.updateType = updateType
+            }
+        }
+        else
+        { // Update
+            myEmail = myEmailItems[0]
+            myEmail.emailType = emailType
+            myEmail.processedDate = processedDate
+            if updateType == "CODE"
+            {
+                if myEmail.updateType != "Add"
+                {
+                    myEmail.updateType = "Update"
+                }
+            }
+            else
+            {
+                myEmail.updateTime = updateTime
+                myEmail.updateType = updateType
+            }
+        }
+        
+        saveContext()
+        
+        myCloudDB.saveProcessedEmailsRecordToCloudKit(myEmail)
+    }
+    
+    func replaceProcessedEmail(_ emailID: String, emailType: String, processedDate: Date, updateTime: Date = Date(), updateType: String = "CODE")
+    {
+        let myEmail = ProcessedEmails(context: objectContext)
+        myEmail.emailID = emailID
+        myEmail.emailType = emailType
+        myEmail.processedDate = processedDate
+        
+        if updateType == "CODE"
+        {
+            myEmail.updateTime = Date()
+            myEmail.updateType = "Add"
+        }
+        else
+        {
+            myEmail.updateTime = updateTime
+            myEmail.updateType = updateType
+        }
+        
+        saveContext()
+    }
+    
+    func deleteProcessedEmail(_ emailID: String)
+    {
+        var myEmail: ProcessedEmails!
+        
+        let myEmailItems = getProcessedEmail(emailID)
+        
+        if myEmailItems.count > 0
+        { // Update
+            myEmail = myEmailItems[0]
+            myEmail.updateTime = Date()
+            myEmail.updateType = "Delete"
+        }
+        
+        saveContext()
+    }
+    
+    func getProcessedEmail(_ emailID: String)->[ProcessedEmails]
+    {
+        let fetchRequest = NSFetchRequest<ProcessedEmails>(entityName: "ProcessedEmails")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(emailID == \"\(emailID)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+}
+
+extension CloudKitInteraction
+{
+    func saveProcessedEmailsToCloudKit(_ inLastSyncDate: NSDate)
+    {
+        //        NSLog("Syncing ProcessedEmails")
+        for myItem in myDatabaseConnection.getProcessedEmailsForSync(inLastSyncDate)
+        {
+            saveProcessedEmailsRecordToCloudKit(myItem)
+        }
+    }
+
+    func updateProcessedEmailsInCoreData(_ inLastSyncDate: NSDate)
+    {
+        let sem = DispatchSemaphore(value: 0);
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
+        let query: CKQuery = CKQuery(recordType: "ProcessedEmails", predicate: predicate)
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+            for record in results!
+            {
+                self.updateProcessedEmailsRecord(record)
+            }
+            sem.signal()
+        })
+        
+        sem.wait()
+    }
+
+    func deleteProcessedEmails()
+    {
+        let sem = DispatchSemaphore(value: 0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "ProcessedEmails", predicate: predicate)
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performDelete(myRecordList)
+            sem.signal()
+        })
+        sem.wait()
+    }
+
+    func replaceProcessedEmailsInCoreData()
+    {
+        let sem = DispatchSemaphore(value: 0);
+        
+        let myDateFormatter = DateFormatter()
+        myDateFormatter.dateStyle = DateFormatter.Style.short
+        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
+        
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let query: CKQuery = CKQuery(recordType: "ProcessedEmails", predicate: predicate)
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+            for record in results!
+            {
+                let emailID = record.object(forKey: "emailID") as! String
+                let updateTime = record.object(forKey: "updateTime") as! Date
+                let updateType = record.object(forKey: "updateType") as! String
+                let emailType = record.object(forKey: "emailType") as! String
+                let processedDate = record.object(forKey: "processedDate") as! Date
+                
+                myDatabaseConnection.replaceProcessedEmail(emailID, emailType: emailType, processedDate: processedDate, updateTime: updateTime, updateType: updateType)
+            }
+            sem.signal()
+        })
+        
+        sem.wait()
+    }
+
+    func saveProcessedEmailsRecordToCloudKit(_ sourceRecord: ProcessedEmails)
+    {
+        let predicate = NSPredicate(format: "(emailID == \"\(sourceRecord.emailID!)\")") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "ProcessedEmails", predicate: predicate)
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
+            if error != nil
+            {
+                NSLog("Error querying records: \(error!.localizedDescription)")
+            }
+            else
+            {
+                if records!.count > 0
+                {
+                    let record = records!.first// as! CKRecord
+                    // Now you have grabbed your existing record from iCloud
+                    // Apply whatever changes you want
+                    record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                    record!.setValue(sourceRecord.emailType, forKey: "emailType")
+                    record!.setValue(sourceRecord.processedDate, forKey: "processedDate")
+                    
+                    // Save this record again
+                    self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
+                        if saveError != nil
+                        {
+                            NSLog("Error saving record: \(saveError!.localizedDescription)")
+                        }
+                        else
+                        {
+                            if debugMessages
+                            {
+                                NSLog("Successfully updated record!")
+                            }
+                        }
+                    })
+                }
+                else
+                {  // Insert
+                    let record = CKRecord(recordType: "ProcessedEmails")
+                    record.setValue(sourceRecord.emailID, forKey: "emailID")
+                    record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    record.setValue(sourceRecord.updateType, forKey: "updateType")
+                    record.setValue(sourceRecord.emailType, forKey: "emailType")
+                    record.setValue(sourceRecord.processedDate, forKey: "processedDate")
+                    
+                    self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
+                        if saveError != nil
+                        {
+                            NSLog("Error saving record: \(saveError!.localizedDescription)")
+                        }
+                        else
+                        {
+                            if debugMessages
+                            {
+                                NSLog("Successfully saved record!")
+                            }
+                        }
+                    })
+                }
+            }
+        })
+    }
+
+    func updateProcessedEmailsRecord(_ sourceRecord: CKRecord)
+    {
+        let emailID = sourceRecord.object(forKey: "emailID") as! String
+        var updateTime = Date()
+        if sourceRecord.object(forKey: "updateTime") != nil
+        {
+            updateTime = sourceRecord.object(forKey: "updateTime") as! Date
+        }
+        
+        var updateType = ""
+        
+        if sourceRecord.object(forKey: "updateType") != nil
+        {
+            updateType = sourceRecord.object(forKey: "updateType") as! String
+        }
+        let emailType = sourceRecord.object(forKey: "emailType") as! String
+        let processedDate = sourceRecord.object(forKey: "processedDate") as! Date
+        
+        myDatabaseConnection.saveProcessedEmail(emailID, emailType: emailType, processedDate: processedDate, updateTime: updateTime, updateType: updateType)
+    }
+}

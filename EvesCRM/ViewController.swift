@@ -552,7 +552,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
                 workArray = personContact.tableData
                 displayResults(sourceService: "Details", resultsArray: workArray)
             }
-    GRE- todo
+  //  GRE- todo
         case "Calendar":
             eventDetails = iOSCalendar(inEventStore: globalEventStore)
             
