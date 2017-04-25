@@ -87,11 +87,11 @@ class meetingAttendee
         {
             for myItem in myAttendees
             {
-                myMeetingID = myItem.meetingID
-                myName = myItem.name
-                myEmailAddress = myItem.email
-                myType = myItem.type
-                myStatus = myItem.attendenceStatus
+                myMeetingID = myItem.meetingID!
+                myName = myItem.name!
+                myEmailAddress = myItem.email!
+                myType = myItem.type!
+                myStatus = myItem.attendenceStatus!
             }
         }
     }
@@ -221,12 +221,12 @@ extension coreDatabase
             myPerson.type = type
             if inUpdateType == "CODE"
             {
-                myPerson.updateTime =  Date()
+                myPerson.updateTime =  NSDate()
                 myPerson.updateType = "Add"
             }
             else
             {
-                myPerson.updateTime = inUpdateTime
+                myPerson.updateTime = inUpdateTime as NSDate
                 myPerson.updateType = inUpdateType
             }
         }
@@ -238,7 +238,7 @@ extension coreDatabase
             myPerson.type = type
             if inUpdateType == "CODE"
             {
-                myPerson.updateTime =  Date()
+                myPerson.updateTime =  NSDate()
                 if myPerson.updateType != "Add"
                 {
                     myPerson.updateType = "Update"
@@ -246,7 +246,7 @@ extension coreDatabase
             }
             else
             {
-                myPerson.updateTime = inUpdateTime
+                myPerson.updateTime = inUpdateTime as NSDate
                 myPerson.updateType = inUpdateType
             }
         }
@@ -264,12 +264,12 @@ extension coreDatabase
         myPerson.type = type
         if inUpdateType == "CODE"
         {
-            myPerson.updateTime =  Date()
+            myPerson.updateTime =  NSDate()
             myPerson.updateType = "Add"
         }
         else
         {
-            myPerson.updateTime = inUpdateTime
+            myPerson.updateTime = inUpdateTime as NSDate
             myPerson.updateType = inUpdateType
         }
         
@@ -292,7 +292,7 @@ extension coreDatabase
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myMeeting in fetchResults
             {
-                myMeeting.updateTime =  Date()
+                myMeeting.updateTime =  NSDate()
                 myMeeting.updateType = "Delete"
             }
         }
@@ -314,7 +314,7 @@ extension coreDatabase
             let fetchResults2 = try objectContext.fetch(fetchRequest2)
             for myMeeting2 in fetchResults2
             {
-                myMeeting2.updateTime =  Date()
+                myMeeting2.updateTime =  NSDate()
                 myMeeting2.updateType = "Delete"
             }
         }
@@ -496,7 +496,7 @@ extension CloudKitInteraction
 
     func saveMeetingAttendeesRecordToCloudKit(_ sourceRecord: MeetingAttendees)
     {
-        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID)\") && (name = \"\(sourceRecord.name)\")") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (name = \"\(sourceRecord.name!)\")") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "MeetingAttendees", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil

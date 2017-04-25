@@ -120,7 +120,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
                 
                 let myReturnedData = myDatabaseConnection.getActiveTasksForProject(myProject.projectID as! Int)
                 
-                let displayObject = createMenuItem("\(myProject.projectName) (\(myReturnedData.count))", inType: "Project", inObject: myProject)
+                let displayObject = createMenuItem("\(myProject.projectName!) (\(myReturnedData.count))", inType: "Project", inObject: myProject)
                 //displayObject.section = "\(myTeam.teamID)"
                 displayObject.section = teamObject.childSection
                 

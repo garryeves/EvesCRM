@@ -145,6 +145,7 @@
 		340DB47D1EADD6CA0077EE23 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25751EAAFD2D00A41EE9 /* ViewController.swift */; };
 		340DB47E1EADD6CE0077EE23 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25731EAAFD2D00A41EE9 /* AppDelegate.swift */; };
 		340DB47F1EADD6CE0077EE23 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25731EAAFD2D00A41EE9 /* AppDelegate.swift */; };
+		344062041EAF70DB00E745C8 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 344062031EAF70DB00E745C8 /* CloudKit.framework */; };
 		34BA25741EAAFD2D00A41EE9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25731EAAFD2D00A41EE9 /* AppDelegate.swift */; };
 		34BA25761EAAFD2D00A41EE9 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25751EAAFD2D00A41EE9 /* ViewController.swift */; };
 		34BA25791EAAFD2D00A41EE9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34BA25771EAAFD2D00A41EE9 /* Main.storyboard */; };
@@ -239,6 +240,8 @@
 		3406276B1EAF07EF002700BB /* ProjectTeamMembers+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ProjectTeamMembers+CoreDataProperties.swift"; path = "../ProjectTeamMembers+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		340627781EAF0BAD002700BB /* UserInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UserInfo.swift; path = ../../EvesCRM/UserInfo.swift; sourceTree = "<group>"; };
 		3406277A1EAF0BE6002700BB /* projectteamMemberClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = projectteamMemberClass.swift; path = ../../EvesCRM/projectteamMemberClass.swift; sourceTree = "<group>"; };
+		344062011EAF70D600E745C8 /* Meeting Dashboard.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Meeting Dashboard.entitlements"; sourceTree = "<group>"; };
+		344062031EAF70DB00E745C8 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		34BA25701EAAFD2D00A41EE9 /* Meeting Dashboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Meeting Dashboard.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		34BA25731EAAFD2D00A41EE9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		34BA25751EAAFD2D00A41EE9 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -282,6 +285,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				344062041EAF70DB00E745C8 /* CloudKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -302,6 +306,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		344062021EAF70DB00E745C8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				344062031EAF70DB00E745C8 /* CloudKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		34BA25671EAAFD2D00A41EE9 = {
 			isa = PBXGroup;
 			children = (
@@ -309,6 +321,7 @@
 				34BA258A1EAAFD2D00A41EE9 /* Meeting DashboardTests */,
 				34BA25951EAAFD2D00A41EE9 /* Meeting DashboardUITests */,
 				34BA25711EAAFD2D00A41EE9 /* Products */,
+				344062021EAF70DB00E745C8 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -325,6 +338,7 @@
 		34BA25721EAAFD2D00A41EE9 /* Meeting Dashboard */ = {
 			isa = PBXGroup;
 			children = (
+				344062011EAF70D600E745C8 /* Meeting Dashboard.entitlements */,
 				34BA25A41EAB03B400A41EE9 /* Database */,
 				34BA25A51EAB03BE00A41EE9 /* Classes */,
 				34BA25A61EAB03D500A41EE9 /* Views */,
@@ -504,6 +518,14 @@
 						CreatedOnToolsVersion = 8.3.2;
 						DevelopmentTeam = 76YDDNPU7W;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Push = {
+								enabled = 1;
+							};
+							com.apple.iCloud = {
+								enabled = 1;
+							};
+						};
 					};
 					34BA25861EAAFD2D00A41EE9 = {
 						CreatedOnToolsVersion = 8.3.2;
@@ -897,6 +919,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Meeting Dashboard/Meeting Dashboard.entitlements";
 				DEVELOPMENT_TEAM = 76YDDNPU7W;
 				INFOPLIST_FILE = "Meeting Dashboard/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -910,6 +933,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Meeting Dashboard/Meeting Dashboard.entitlements";
 				DEVELOPMENT_TEAM = 76YDDNPU7W;
 				INFOPLIST_FILE = "Meeting Dashboard/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

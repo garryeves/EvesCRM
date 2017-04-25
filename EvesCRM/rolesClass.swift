@@ -49,7 +49,7 @@ extension coreDatabase
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myStage in fetchResults
             {
-                myStage.updateTime = Date()
+                myStage.updateTime = NSDate()
                 myStage.updateType = "Delete"
                 myCloudDB.saveRolesRecordToCloudKit(myStage)
             }
@@ -105,12 +105,12 @@ extension coreDatabase
             mySelectedRole.teamID = NSNumber(value: teamID)
             if inUpdateType == "CODE"
             {
-                mySelectedRole.updateTime =  Date()
+                mySelectedRole.updateTime =  NSDate()
                 mySelectedRole.updateType = "Add"
             }
             else
             {
-                mySelectedRole.updateTime = inUpdateTime
+                mySelectedRole.updateTime = inUpdateTime as NSDate
                 mySelectedRole.updateType = inUpdateType
             }
         }
@@ -120,7 +120,7 @@ extension coreDatabase
             mySelectedRole.roleDescription = roleName
             if inUpdateType == "CODE"
             {
-                mySelectedRole.updateTime =  Date()
+                mySelectedRole.updateTime =  NSDate()
                 if mySelectedRole.updateType != "Add"
                 {
                     mySelectedRole.updateType = "Update"
@@ -128,7 +128,7 @@ extension coreDatabase
             }
             else
             {
-                mySelectedRole.updateTime = inUpdateTime
+                mySelectedRole.updateTime = inUpdateTime as NSDate
                 mySelectedRole.updateType = inUpdateType
             }
         }
@@ -151,14 +151,14 @@ extension coreDatabase
             mySelectedRole.roleID = NSNumber(value: roleID)
             mySelectedRole.roleDescription = roleName
             mySelectedRole.teamID = NSNumber(value: teamID)
-            mySelectedRole.updateTime = inUpdateTime
+            mySelectedRole.updateTime = inUpdateTime as NSDate
             mySelectedRole.updateType = inUpdateType
         }
         else
         {
             mySelectedRole = myRoles[0]
             mySelectedRole.roleDescription = roleName
-            mySelectedRole.updateTime = inUpdateTime
+            mySelectedRole.updateTime = inUpdateTime as NSDate
             mySelectedRole.updateType = inUpdateType
         }
         
@@ -175,12 +175,12 @@ extension coreDatabase
         mySelectedRole.teamID = NSNumber(value: teamID)
         if inUpdateType == "CODE"
         {
-            mySelectedRole.updateTime =  Date()
+            mySelectedRole.updateTime =  NSDate()
             mySelectedRole.updateType = "Add"
         }
         else
         {
-            mySelectedRole.updateTime = inUpdateTime
+            mySelectedRole.updateTime = inUpdateTime as NSDate
             mySelectedRole.updateType = inUpdateType
         }
         
@@ -246,7 +246,7 @@ extension coreDatabase
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myStage in fetchResults
             {
-                myStage.updateTime =  Date()
+                myStage.updateTime =  NSDate()
                 myStage.updateType = "Delete"
                 myCloudDB.saveRolesRecordToCloudKit(myStage)
             }
@@ -277,7 +277,7 @@ extension coreDatabase
             }
             else
             {
-                return fetchResults[0].roleDescription
+                return fetchResults[0].roleDescription!
             }
         }
         catch

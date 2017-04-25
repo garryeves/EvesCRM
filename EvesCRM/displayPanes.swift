@@ -33,7 +33,7 @@ class displayPanes
             {
                 let myPane = displayPane()
                 
-                myPane.loadPane(myEntry.pane_name)
+                myPane.loadPane(myEntry.pane_name!)
                 
                 myPanes.append(myPane)
             }
@@ -252,7 +252,7 @@ extension coreDatabase
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myPane in fetchResults
             {
-                myPane.updateTime =  Date()
+                myPane.updateTime =  NSDate()
                 myPane.updateType = "Delete"
             }
         }
@@ -350,7 +350,7 @@ extension coreDatabase
                     myPane.pane_visible = true
                 }
                 
-                myPane.updateTime =  Date()
+                myPane.updateTime =  NSDate()
                 if myPane.updateType != "Add"
                 {
                     myPane.updateType = "Update"
@@ -382,7 +382,7 @@ extension coreDatabase
             for myPane in fetchResults
             {
                 myPane.pane_order = NSNumber(value: paneOrder)
-                myPane.updateTime =  Date()
+                myPane.updateTime =  NSDate()
                 if myPane.updateType != "Add"
                 {
                     myPane.updateType = "Update"
@@ -415,12 +415,12 @@ extension coreDatabase
             myPane.pane_order = NSNumber(value: inPaneOrder)
             if inUpdateType == "CODE"
             {
-                myPane.updateTime =  Date()
+                myPane.updateTime =  NSDate()
                 myPane.updateType = "Add"
             }
             else
             {
-                myPane.updateTime = inUpdateTime
+                myPane.updateTime = inUpdateTime as NSDate
                 myPane.updateType = inUpdateType
             }
         }
@@ -432,7 +432,7 @@ extension coreDatabase
             myPane.pane_order = NSNumber(value: inPaneOrder)
             if inUpdateType == "CODE"
             {
-                myPane.updateTime =  Date()
+                myPane.updateTime =  NSDate()
                 if myPane.updateType != "Add"
                 {
                     myPane.updateType = "Update"
@@ -440,7 +440,7 @@ extension coreDatabase
             }
             else
             {
-                myPane.updateTime = inUpdateTime
+                myPane.updateTime = inUpdateTime as NSDate
                 myPane.updateType = inUpdateType
             }
         }
@@ -460,12 +460,12 @@ extension coreDatabase
         myPane.pane_order = NSNumber(value: inPaneOrder)
         if inUpdateType == "CODE"
         {
-            myPane.updateTime =  Date()
+            myPane.updateTime =  NSDate()
             myPane.updateType = "Add"
         }
         else
         {
-            myPane.updateTime = inUpdateTime
+            myPane.updateTime = inUpdateTime as NSDate
             myPane.updateType = inUpdateType
         }
         
@@ -640,7 +640,7 @@ extension CloudKitInteraction
 
     func savePanesRecordToCloudKit(_ sourceRecord: Panes)
     {
-        let predicate = NSPredicate(format: "(pane_name == \"\(sourceRecord.pane_name)\")") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(pane_name == \"\(sourceRecord.pane_name!)\")") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Panes", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil

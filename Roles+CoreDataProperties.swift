@@ -1,0 +1,25 @@
+//
+//  Roles+CoreDataProperties.swift
+//  
+//
+//  Created by Garry Eves on 25/4/17.
+//
+//
+
+import Foundation
+import CoreData
+
+
+extension Roles {
+
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<Roles> {
+        return NSFetchRequest<Roles>(entityName: "Roles")
+    }
+
+    @NSManaged public var roleDescription: String?
+    @NSManaged public var roleID: NSNumber?
+    @NSManaged public var teamID: NSNumber?
+    @NSManaged public var updateTime: NSDate?
+    @NSManaged public var updateType: String?
+
+}

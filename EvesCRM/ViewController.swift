@@ -943,7 +943,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
             }
             
             // Sort workarray by dueDate, with oldest first
-            myReturnedData.sort(by: {$0.dueDate.timeIntervalSinceNow < $1.dueDate.timeIntervalSinceNow})
+            myReturnedData.sort(by: {$0.dueDate!.timeIntervalSinceNow < $1.dueDate!.timeIntervalSinceNow})
             
             // Load calendar items array based on return array
             
@@ -2766,7 +2766,7 @@ print("Dropbox status = \(progress)")
             }
             else
             {
-                myString += myData[0].projectName
+                myString += myData[0].projectName!
             }
 
             myString += "   Due: "

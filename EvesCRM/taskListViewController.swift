@@ -56,7 +56,7 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
                 {
                     if myMeetingRecord.previousMeetingID != ""
                     {
-                        let myOutstandingTasks = parsePastMeeting(myMeetingRecord.previousMeetingID)
+                        let myOutstandingTasks = parsePastMeeting(myMeetingRecord.previousMeetingID!)
                     
                         if myOutstandingTasks.count > 0
                         {

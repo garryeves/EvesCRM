@@ -195,11 +195,11 @@ extension coreDatabase
             if inUpdateType == "CODE"
             {
                 myGTD.updateType = "Add"
-                myGTD.updateTime =  Date()
+                myGTD.updateTime =  NSDate()
             }
             else
             {
-                myGTD.updateTime = inUpdateTime
+                myGTD.updateTime = inUpdateTime as NSDate
                 myGTD.updateType = inUpdateType
             }
         }
@@ -209,7 +209,7 @@ extension coreDatabase
             myGTD.levelName = inLevelName
             if inUpdateType == "CODE"
             {
-                myGTD.updateTime =  Date()
+                myGTD.updateTime =  NSDate()
                 if myGTD.updateType != "Add"
                 {
                     myGTD.updateType = "Update"
@@ -217,7 +217,7 @@ extension coreDatabase
             }
             else
             {
-                myGTD.updateTime = inUpdateTime
+                myGTD.updateTime = inUpdateTime as NSDate
                 myGTD.updateType = inUpdateType
             }
         }
@@ -235,11 +235,11 @@ extension coreDatabase
         if inUpdateType == "CODE"
         {
             myGTD.updateType = "Add"
-            myGTD.updateTime =  Date()
+            myGTD.updateTime =  NSDate()
         }
         else
         {
-            myGTD.updateTime = inUpdateTime
+            myGTD.updateTime = inUpdateTime as NSDate
             myGTD.updateType = inUpdateType
         }
         
@@ -292,7 +292,7 @@ extension coreDatabase
                 myGTD = fetchResults[0]
                 //   myGTD.gTDLevel = newGTDLevel
                 myGTD.setValue(newGTDLevel, forKey: "gTDLevel")
-                myGTD.updateTime =  Date()
+                myGTD.updateTime =  NSDate()
                 if myGTD.updateType != "Add"
                 {
                     myGTD.updateType = "Update"
@@ -315,7 +315,7 @@ extension coreDatabase
         if myGTDItems.count > 0
         { // Update
             myGTD = myGTDItems[0]
-            myGTD.updateTime =  Date()
+            myGTD.updateTime =  NSDate()
             myGTD.updateType = "Delete"
         }
         

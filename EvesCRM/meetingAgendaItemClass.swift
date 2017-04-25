@@ -199,8 +199,8 @@ class meetingAgendaItem
             {
                 myMeetingOrder = tempAgendaItems[0].meetingOrder as! Int
             }
-            myActualStartTime = tempAgendaItems[0].actualStartTime
-            myActualEndTime = tempAgendaItems[0].actualEndTime
+            myActualStartTime = tempAgendaItems[0].actualStartTime! as Date
+            myActualEndTime = tempAgendaItems[0].actualEndTime! as Date
         }
         else
         {
@@ -348,8 +348,8 @@ extension coreDatabase
             mySavedItem = MeetingAgendaItem(context: objectContext)
             mySavedItem.meetingID = meetingID
             mySavedItem.agendaID = agendaID as NSNumber?
-            mySavedItem.actualEndTime = actualEndTime
-            mySavedItem.actualStartTime = actualStartTime
+            mySavedItem.actualEndTime = actualEndTime as NSDate
+            mySavedItem.actualStartTime = actualStartTime as NSDate
             mySavedItem.status = status
             mySavedItem.decisionMade = decisionMade
             mySavedItem.discussionNotes = discussionNotes
@@ -360,20 +360,20 @@ extension coreDatabase
             
             if inUpdateType == "CODE"
             {
-                mySavedItem.updateTime =  Date()
+                mySavedItem.updateTime =  NSDate()
                 mySavedItem.updateType = "Add"
             }
             else
             {
-                mySavedItem.updateTime = inUpdateTime
+                mySavedItem.updateTime = inUpdateTime as NSDate
                 mySavedItem.updateType = inUpdateType
             }
         }
         else
         {
             mySavedItem = myAgendaItem[0]
-            mySavedItem.actualEndTime = actualEndTime
-            mySavedItem.actualStartTime = actualStartTime
+            mySavedItem.actualEndTime = actualEndTime as NSDate
+            mySavedItem.actualStartTime = actualStartTime as NSDate
             mySavedItem.status = status
             mySavedItem.decisionMade = decisionMade
             mySavedItem.discussionNotes = discussionNotes
@@ -384,7 +384,7 @@ extension coreDatabase
             
             if inUpdateType == "CODE"
             {
-                mySavedItem.updateTime =  Date()
+                mySavedItem.updateTime =  NSDate()
                 if mySavedItem.updateType != "Add"
                 {
                     mySavedItem.updateType = "Update"
@@ -392,7 +392,7 @@ extension coreDatabase
             }
             else
             {
-                mySavedItem.updateTime = inUpdateTime
+                mySavedItem.updateTime = inUpdateTime as NSDate
                 mySavedItem.updateType = inUpdateType
             }
         }
@@ -405,8 +405,8 @@ extension coreDatabase
         let mySavedItem = MeetingAgendaItem(context: objectContext)
         mySavedItem.meetingID = meetingID
         mySavedItem.agendaID = agendaID as NSNumber?
-        mySavedItem.actualEndTime = actualEndTime
-        mySavedItem.actualStartTime = actualStartTime
+        mySavedItem.actualEndTime = actualEndTime as NSDate
+        mySavedItem.actualStartTime = actualStartTime as NSDate
         mySavedItem.status = status
         mySavedItem.decisionMade = decisionMade
         mySavedItem.discussionNotes = discussionNotes
@@ -417,12 +417,12 @@ extension coreDatabase
         
         if inUpdateType == "CODE"
         {
-            mySavedItem.updateTime =  Date()
+            mySavedItem.updateTime =  NSDate()
             mySavedItem.updateType = "Add"
         }
         else
         {
-            mySavedItem.updateTime = inUpdateTime
+            mySavedItem.updateTime = inUpdateTime as NSDate
             mySavedItem.updateType = inUpdateType
         }
         
@@ -476,7 +476,7 @@ extension coreDatabase
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myMeeting in fetchResults
             {
-                myMeeting.updateTime =  Date()
+                myMeeting.updateTime =  NSDate()
                 myMeeting.updateType = "Delete"
             }
         }
@@ -504,7 +504,7 @@ extension coreDatabase
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myMeeting in fetchResults
             {
-                myMeeting.updateTime =  Date()
+                myMeeting.updateTime =  NSDate()
                 myMeeting.updateType = "Delete"
             }
         }
@@ -525,7 +525,7 @@ extension coreDatabase
             let fetchResults3 = try objectContext.fetch(fetchRequest3)
             for myMeeting3 in fetchResults3
             {
-                myMeeting3.updateTime =  Date()
+                myMeeting3.updateTime =  NSDate()
                 myMeeting3.updateType = "Delete"
             }
         }
@@ -638,7 +638,7 @@ extension coreDatabase
             let fetchResults1 = try objectContext.fetch(fetchRequest1)
             for myMeeting in fetchResults1
             {
-                myMeeting.updateTime =  Date()
+                myMeeting.updateTime =  NSDate()
                 myMeeting.updateType = "Delete"
             }
         }
@@ -706,7 +706,7 @@ extension coreDatabase
         myTask.agendaID = NSNumber(value: inAgendaID)
         myTask.meetingID = inMeetingID
         myTask.taskID = NSNumber(value: inTaskID)
-        myTask.updateTime =  Date()
+        myTask.updateTime =  NSDate()
         myTask.updateType = "Add"
         
         saveContext()
@@ -720,7 +720,7 @@ extension coreDatabase
         myTask.agendaID = NSNumber(value: inAgendaID)
         myTask.meetingID = inMeetingID
         myTask.taskID = NSNumber(value: inTaskID)
-        myTask.updateTime =  Date()
+        myTask.updateTime =  NSDate()
         myTask.updateType = "Add"
         
         saveContext()
@@ -764,12 +764,12 @@ extension coreDatabase
             myTask.taskID = NSNumber(value: taskID)
             if inUpdateType == "CODE"
             {
-                myTask.updateTime =  Date()
+                myTask.updateTime =  NSDate()
                 myTask.updateType = "Add"
             }
             else
             {
-                myTask.updateTime = inUpdateTime
+                myTask.updateTime = inUpdateTime as NSDate
                 myTask.updateType = inUpdateType
             }
         }
@@ -778,7 +778,7 @@ extension coreDatabase
             myTask = myTaskList[0]
             if inUpdateType == "CODE"
             {
-                myTask.updateTime =  Date()
+                myTask.updateTime =  NSDate()
                 if myTask.updateType != "Add"
                 {
                     myTask.updateType = "Update"
@@ -786,7 +786,7 @@ extension coreDatabase
             }
             else
             {
-                myTask.updateTime = inUpdateTime
+                myTask.updateTime = inUpdateTime as NSDate
                 myTask.updateType = inUpdateType
             }
         }
@@ -802,12 +802,12 @@ extension coreDatabase
         myTask.taskID = NSNumber(value: taskID)
         if inUpdateType == "CODE"
         {
-            myTask.updateTime =  Date()
+            myTask.updateTime =  NSDate()
             myTask.updateType = "Add"
         }
         else
         {
-            myTask.updateTime = inUpdateTime
+            myTask.updateTime = inUpdateTime as NSDate
             myTask.updateType = inUpdateType
         }
         saveContext()
@@ -830,7 +830,7 @@ extension coreDatabase
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myItem in fetchResults
             {
-                myItem.updateTime =  Date()
+                myItem.updateTime =  NSDate()
                 myItem.updateType = "Delete"
             }
         }
@@ -1235,7 +1235,7 @@ extension CloudKitInteraction
 
     func saveMeetingTasksRecordToCloudKit(_ sourceRecord: MeetingTasks)
     {
-        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID)\") && (agendaID == \(sourceRecord.agendaID as! Int)) && (taskID == \(sourceRecord.taskID as! Int))") // better be accurate to get only the
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID as! Int)) && (taskID == \(sourceRecord.taskID as! Int))") // better be accurate to get only the
         let query = CKQuery(recordType: "MeetingTasks", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil

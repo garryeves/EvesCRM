@@ -71,7 +71,7 @@ extension coreDatabase
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myStage in fetchResults
             {
-                myStage.updateTime =  Date()
+                myStage.updateTime =  NSDate()
                 myStage.updateType = "Delete"
                 
                 myCloudDB.saveStagesRecordToCloudKit(myStage)
@@ -155,12 +155,12 @@ extension coreDatabase
             myStage.teamID = NSNumber(value: teamID)
             if inUpdateType == "CODE"
             {
-                myStage.updateTime =  Date()
+                myStage.updateTime =  NSDate()
                 myStage.updateType = "Add"
             }
             else
             {
-                myStage.updateTime = inUpdateTime
+                myStage.updateTime = inUpdateTime as NSDate
                 myStage.updateType = inUpdateType
             }
         }
@@ -169,7 +169,7 @@ extension coreDatabase
             myStage = myStages[0]
             if inUpdateType == "CODE"
             {
-                myStage.updateTime =  Date()
+                myStage.updateTime =  NSDate()
                 if myStage.updateType != "Add"
                 {
                     myStage.updateType = "Update"
@@ -177,7 +177,7 @@ extension coreDatabase
             }
             else
             {
-                myStage.updateTime = inUpdateTime
+                myStage.updateTime = inUpdateTime as NSDate
                 myStage.updateType = inUpdateType
             }
         }
@@ -195,12 +195,12 @@ extension coreDatabase
         myStage.teamID = NSNumber(value: teamID)
         if inUpdateType == "CODE"
         {
-            myStage.updateTime =  Date()
+            myStage.updateTime =  NSDate()
             myStage.updateType = "Add"
         }
         else
         {
-            myStage.updateTime = inUpdateTime
+            myStage.updateTime = inUpdateTime as NSDate
             myStage.updateType = inUpdateType
         }
         
@@ -222,7 +222,7 @@ extension coreDatabase
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myStage in fetchResults
             {
-                myStage.updateTime =  Date()
+                myStage.updateTime =  NSDate()
                 myStage.updateType = "Delete"
                 
                 myCloudDB.saveStagesRecordToCloudKit(myStage)
@@ -425,7 +425,7 @@ extension CloudKitInteraction
 
     func saveStagesRecordToCloudKit(_ sourceRecord: Stages)
     {
-        let predicate = NSPredicate(format: "(stageDescription == \"\(sourceRecord.stageDescription)\") && (teamID == \(sourceRecord.teamID as! Int))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(stageDescription == \"\(sourceRecord.stageDescription!)\") && (teamID == \(sourceRecord.teamID as! Int))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Stages", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil

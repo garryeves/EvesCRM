@@ -136,12 +136,12 @@ extension coreDatabase
             myProjectTeam.projectMemberNotes = inNotes
             if inUpdateType == "CODE"
             {
-                myProjectTeam.updateTime =  Date()
+                myProjectTeam.updateTime =  NSDate()
                 myProjectTeam.updateType = "Add"
             }
             else
             {
-                myProjectTeam.updateTime = inUpdateTime
+                myProjectTeam.updateTime = inUpdateTime as NSDate
                 myProjectTeam.updateType = inUpdateType
             }
         }
@@ -152,7 +152,7 @@ extension coreDatabase
             myProjectTeam.projectMemberNotes = inNotes
             if inUpdateType == "CODE"
             {
-                myProjectTeam.updateTime =  Date()
+                myProjectTeam.updateTime =  NSDate()
                 if myProjectTeam.updateType != "Add"
                 {
                     myProjectTeam.updateType = "Update"
@@ -160,7 +160,7 @@ extension coreDatabase
             }
             else
             {
-                myProjectTeam.updateTime = inUpdateTime
+                myProjectTeam.updateTime = inUpdateTime as NSDate
                 myProjectTeam.updateType = inUpdateType
             }
         }
@@ -177,12 +177,12 @@ extension coreDatabase
         myProjectTeam.projectMemberNotes = inNotes
         if inUpdateType == "CODE"
         {
-            myProjectTeam.updateTime =  Date()
+            myProjectTeam.updateTime =  NSDate()
             myProjectTeam.updateType = "Add"
         }
         else
         {
-            myProjectTeam.updateTime = inUpdateTime
+            myProjectTeam.updateTime = inUpdateTime as NSDate
             myProjectTeam.updateType = inUpdateType
         }
         
@@ -205,7 +205,7 @@ extension coreDatabase
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myStage in fetchResults
             {
-                myStage.updateTime =  Date()
+                myStage.updateTime =  NSDate()
                 myStage.updateType = "Delete"
             }
         }
@@ -301,7 +301,7 @@ extension coreDatabase
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myStage in fetchResults
             {
-                myStage.updateTime =  Date()
+                myStage.updateTime =  NSDate()
                 myStage.updateType = "Delete"
             }
         }
@@ -481,7 +481,7 @@ extension CloudKitInteraction
 
     func saveProjectTeamMembersRecordToCloudKit(_ sourceRecord: ProjectTeamMembers)
     {
-        let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID as! Int)) && (teamMember == \"\(sourceRecord.teamMember)\")") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID as! Int)) && (teamMember == \"\(sourceRecord.teamMember!)\")") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "ProjectTeamMembers", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil

@@ -98,12 +98,12 @@ extension coreDatabase
             myContext.taskID = NSNumber(value: inTaskID)
             if inUpdateType == "CODE"
             {
-                myContext.updateTime =  Date()
+                myContext.updateTime =  NSDate()
                 myContext.updateType = "Add"
             }
             else
             {
-                myContext.updateTime = inUpdateTime
+                myContext.updateTime = inUpdateTime as NSDate
                 myContext.updateType = inUpdateType
             }
         }
@@ -112,7 +112,7 @@ extension coreDatabase
             myContext = myContexts[0]
             if inUpdateType == "CODE"
             {
-                myContext.updateTime =  Date()
+                myContext.updateTime =  NSDate()
                 if myContext.updateType != "Add"
                 {
                     myContext.updateType = "Update"
@@ -120,7 +120,7 @@ extension coreDatabase
             }
             else
             {
-                myContext.updateTime = inUpdateTime
+                myContext.updateTime = inUpdateTime as NSDate
                 myContext.updateType = inUpdateType
             }
         }
@@ -138,12 +138,12 @@ extension coreDatabase
         myContext.taskID = NSNumber(value: inTaskID)
         if inUpdateType == "CODE"
         {
-            myContext.updateTime =  Date()
+            myContext.updateTime =  NSDate()
             myContext.updateType = "Add"
         }
         else
         {
-            myContext.updateTime = inUpdateTime
+            myContext.updateTime = inUpdateTime as NSDate
             myContext.updateType = inUpdateType
         }
         saveContext()
@@ -164,7 +164,7 @@ extension coreDatabase
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myStage in fetchResults
             {
-                myStage.updateTime =  Date()
+                myStage.updateTime =  NSDate()
                 myStage.updateType = "Delete"
             }
         }
@@ -257,7 +257,7 @@ extension coreDatabase
             let fetchResults3 = try objectContext.fetch(fetchRequest3)
             for myMeeting3 in fetchResults3
             {
-                myMeeting3.updateTime =  Date()
+                myMeeting3.updateTime =  NSDate()
                 myMeeting3.updateType = "Delete"
             }
         }

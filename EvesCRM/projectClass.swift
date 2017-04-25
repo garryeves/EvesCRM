@@ -337,17 +337,17 @@ class project: NSObject // 10k level
         
         for myProject in myProjects
         {
-            myProjectEndDate = myProject.projectEndDate as Date
+            myProjectEndDate = myProject.projectEndDate! as Date
             myProjectID = myProject.projectID as! Int
-            myProjectName = myProject.projectName
-            myProjectStartDate = myProject.projectStartDate
-            myProjectStatus = myProject.projectStatus
+            myProjectName = myProject.projectName!
+            myProjectStartDate = myProject.projectStartDate! as Date
+            myProjectStatus = myProject.projectStatus!
             myReviewFrequency = myProject.reviewFrequency as! Int
-            myLastReviewDate = myProject.lastReviewDate
+            myLastReviewDate = myProject.lastReviewDate! as Date
             myGTDItemID = myProject.areaID as! Int
             myRepeatInterval = myProject.repeatInterval as! Int
-            myRepeatType = myProject.repeatType
-            myRepeatBase = myProject.repeatBase
+            myRepeatType = myProject.repeatType!
+            myRepeatBase = myProject.repeatBase!
             myTeamID = myProject.teamID as! Int
             
             // load team members
@@ -372,8 +372,8 @@ class project: NSObject // 10k level
             {
                 for myItem in myNotes
                 {
-                    myNote = myItem.note
-                    myReviewPeriod = myItem.reviewPeriod
+                    myNote = myItem.note!
+                    myReviewPeriod = myItem.reviewPeriod!
                     myPredecessor = myItem.predecessor as! Int
                 }
             }
@@ -388,9 +388,9 @@ class project: NSObject // 10k level
         
         for myTeamMember in myProjectTeamMembers
         {
-            let myMember = projectTeamMember(inProjectID: myTeamMember.projectID as! Int, inTeamMember: myTeamMember.teamMember, inRoleID: myTeamMember.roleID as! Int, inTeamID: myTeamID )
+            let myMember = projectTeamMember(inProjectID: myTeamMember.projectID as! Int, inTeamMember: myTeamMember.teamMember!, inRoleID: myTeamMember.roleID as! Int, inTeamID: myTeamID )
             
-            myMember.projectMemberNotes = myTeamMember.projectMemberNotes
+            myMember.projectMemberNotes = myTeamMember.projectMemberNotes!
             
             // Due to an error I am commenting this out, not using this field at the moment, so hopefully will not be an issue
             //  println("name \(myTeamMember.teamMember)")
@@ -544,9 +544,9 @@ class project: NSObject // 10k level
             
             for myTeamMember in myProjectTeamMembers
             {
-                let myMember = projectTeamMember(inProjectID: newProject.projectID as Int, inTeamMember: myTeamMember.teamMember, inRoleID: myTeamMember.roleID as! Int, inTeamID: myTeamID )
+                let myMember = projectTeamMember(inProjectID: newProject.projectID as Int, inTeamMember: myTeamMember.teamMember!, inRoleID: myTeamMember.roleID as! Int, inTeamID: myTeamID )
                 
-                myMember.projectMemberNotes = myTeamMember.projectMemberNotes
+                myMember.projectMemberNotes = myTeamMember.projectMemberNotes!
             }
             
             // Populate tasks, but have the marked as Open
@@ -557,19 +557,19 @@ class project: NSObject // 10k level
             {
                 let myNewTask = task(inTeamID: myTeamID)
                 
-                myNewTask.title = myProjectTask.title
-                myNewTask.details = myProjectTask.details
+                myNewTask.title = myProjectTask.title!
+                myNewTask.details = myProjectTask.details!
                 myNewTask.status = "Open"
-                myNewTask.priority = myProjectTask.priority
-                myNewTask.energyLevel = myProjectTask.energyLevel
+                myNewTask.priority = myProjectTask.priority!
+                myNewTask.energyLevel = myProjectTask.energyLevel!
                 myNewTask.estimatedTime = myProjectTask.estimatedTime as! Int
-                myNewTask.estimatedTimeType = myProjectTask.estimatedTimeType
+                myNewTask.estimatedTimeType = myProjectTask.estimatedTimeType!
                 myNewTask.projectID = newProject.projectID
                 myNewTask.repeatInterval = myProjectTask.repeatInterval as! Int
-                myNewTask.repeatType = myProjectTask.repeatType
-                myNewTask.repeatBase = myProjectTask.repeatBase
+                myNewTask.repeatType = myProjectTask.repeatType!
+                myNewTask.repeatBase = myProjectTask.repeatBase!
                 myNewTask.flagged = myProjectTask.flagged as! Bool
-                myNewTask.urgency = myProjectTask.urgency
+                myNewTask.urgency = myProjectTask.urgency!
                 
                 let myContextList = myDatabaseConnection.getContextsForTask(myProjectTask.taskID as! Int)
                 
@@ -786,12 +786,12 @@ extension coreDatabase
         { // Add
             myProject = Projects(context: objectContext)
             myProject.projectID = NSNumber(value: inProjectID)
-            myProject.projectEndDate = inProjectEndDate
+            myProject.projectEndDate = inProjectEndDate as NSDate
             myProject.projectName = inProjectName
-            myProject.projectStartDate = inProjectStartDate
+            myProject.projectStartDate = inProjectStartDate as NSDate
             myProject.projectStatus = inProjectStatus
             myProject.reviewFrequency = NSNumber(value: inReviewFrequency)
-            myProject.lastReviewDate = inLastReviewDate
+            myProject.lastReviewDate = inLastReviewDate as NSDate
             myProject.areaID = NSNumber(value: inGTDItemID)
             myProject.repeatInterval = NSNumber(value: inRepeatInterval)
             myProject.repeatType = inRepeatType
@@ -800,24 +800,24 @@ extension coreDatabase
             
             if inUpdateType == "CODE"
             {
-                myProject.updateTime =  Date()
+                myProject.updateTime =  NSDate()
                 myProject.updateType = "Add"
             }
             else
             {
-                myProject.updateTime = inUpdateTime
+                myProject.updateTime = inUpdateTime as NSDate
                 myProject.updateType = inUpdateType
             }
         }
         else
         { // Update
             myProject = myProjects[0]
-            myProject.projectEndDate = inProjectEndDate
+            myProject.projectEndDate = inProjectEndDate as NSDate
             myProject.projectName = inProjectName
-            myProject.projectStartDate = inProjectStartDate
+            myProject.projectStartDate = inProjectStartDate as NSDate
             myProject.projectStatus = inProjectStatus
             myProject.reviewFrequency = NSNumber(value: inReviewFrequency)
-            myProject.lastReviewDate = inLastReviewDate
+            myProject.lastReviewDate = inLastReviewDate as NSDate
             myProject.areaID = NSNumber(value: inGTDItemID)
             myProject.repeatInterval = NSNumber(value: inRepeatInterval)
             myProject.repeatType = inRepeatType
@@ -825,7 +825,7 @@ extension coreDatabase
             myProject.teamID = NSNumber(value: inTeamID)
             if inUpdateType == "CODE"
             {
-                myProject.updateTime =  Date()
+                myProject.updateTime =  NSDate()
                 if myProject.updateType != "Add"
                 {
                     myProject.updateType = "Update"
@@ -833,7 +833,7 @@ extension coreDatabase
             }
             else
             {
-                myProject.updateTime = inUpdateTime
+                myProject.updateTime = inUpdateTime as NSDate
                 myProject.updateType = inUpdateType
             }
         }
@@ -846,12 +846,12 @@ extension coreDatabase
         
         let myProject = Projects(context: objectContext)
         myProject.projectID = NSNumber(value: inProjectID)
-        myProject.projectEndDate = inProjectEndDate
+        myProject.projectEndDate = inProjectEndDate as NSDate
         myProject.projectName = inProjectName
-        myProject.projectStartDate = inProjectStartDate
+        myProject.projectStartDate = inProjectStartDate as NSDate
         myProject.projectStatus = inProjectStatus
         myProject.reviewFrequency = NSNumber(value: inReviewFrequency)
-        myProject.lastReviewDate = inLastReviewDate
+        myProject.lastReviewDate = inLastReviewDate as NSDate
         myProject.areaID = NSNumber(value: inGTDItemID)
         myProject.repeatInterval = NSNumber(value: inRepeatInterval)
         myProject.repeatType = inRepeatType
@@ -860,12 +860,12 @@ extension coreDatabase
         
         if inUpdateType == "CODE"
         {
-            myProject.updateTime =  Date()
+            myProject.updateTime =  NSDate()
             myProject.updateType = "Add"
         }
         else
         {
-            myProject.updateTime = inUpdateTime
+            myProject.updateTime = inUpdateTime as NSDate
             myProject.updateType = inUpdateType
         }
         
@@ -881,7 +881,7 @@ extension coreDatabase
         if myProjects.count > 0
         { // Update
             myProject = myProjects[0]
-            myProject.updateTime =  Date()
+            myProject.updateTime =  NSDate()
             myProject.updateType = "Delete"
         }
         
@@ -895,7 +895,7 @@ extension coreDatabase
         { // Update
             myProjectNote = myTeams[0]
             myProjectNote.updateType = "Delete"
-            myProjectNote.updateTime =  Date()
+            myProjectNote.updateTime =  NSDate()
         }
         
         saveContext()
@@ -911,7 +911,7 @@ extension coreDatabase
             let fetchResults2 = try objectContext.fetch(fetchRequest2)
             for myStage in fetchResults2
             {
-                myStage.updateTime =  Date()
+                myStage.updateTime =  NSDate()
                 myStage.updateType = "Delete"
             }
         }
@@ -1006,12 +1006,12 @@ extension coreDatabase
             myProjectNote.predecessor = NSNumber(value: inPredecessor)
             if inUpdateType == "CODE"
             {
-                myProjectNote.updateTime =  Date()
+                myProjectNote.updateTime =  NSDate()
                 myProjectNote.updateType = "Add"
             }
             else
             {
-                myProjectNote.updateTime = inUpdateTime
+                myProjectNote.updateTime = inUpdateTime as NSDate
                 myProjectNote.updateType = inUpdateType
             }
         }
@@ -1027,11 +1027,11 @@ extension coreDatabase
                 {
                     myProjectNote.updateType = "Update"
                 }
-                myProjectNote.updateTime =  Date()
+                myProjectNote.updateTime =  NSDate()
             }
             else
             {
-                myProjectNote.updateTime = inUpdateTime
+                myProjectNote.updateTime = inUpdateTime as NSDate
                 myProjectNote.updateType = inUpdateType
             }
         }
@@ -1049,12 +1049,12 @@ extension coreDatabase
         myProjectNote.predecessor = NSNumber(value: inPredecessor)
         if inUpdateType == "CODE"
         {
-            myProjectNote.updateTime =  Date()
+            myProjectNote.updateTime =  NSDate()
             myProjectNote.updateType = "Add"
         }
         else
         {
-            myProjectNote.updateTime = inUpdateTime
+            myProjectNote.updateTime = inUpdateTime as NSDate
             myProjectNote.updateType = inUpdateType
         }
         
@@ -1331,8 +1331,8 @@ extension CloudKitInteraction
                 
                 if tempProjectNote.count > 0
                 {
-                    myNote = tempProjectNote[0].note
-                    myReviewPeriod = tempProjectNote[0].reviewPeriod
+                    myNote = tempProjectNote[0].note!
+                    myReviewPeriod = tempProjectNote[0].reviewPeriod!
                     myPredecessor = tempProjectNote[0].predecessor as! Int
                 }
                 

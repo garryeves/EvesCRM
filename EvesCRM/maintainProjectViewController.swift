@@ -83,7 +83,7 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         
         let statusOptions = mySelectedTeam.stages
         
-        statusSelected = statusOptions[0].stageDescription
+        statusSelected = statusOptions[0].stageDescription!
         teamMembersLabel.isHidden = false
 
         
@@ -352,7 +352,7 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         pickerDisplayArray.append("")
         for myItem in myRoles
         {
-            pickerDisplayArray.append(myItem.roleDescription)
+            pickerDisplayArray.append(myItem.roleDescription!)
         }
         
         btnSelectPicker.setTitle("Select Role", for: UIControlState())
@@ -441,7 +441,7 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         
         for myItem in myStages
         {
-            pickerDisplayArray.append(myItem.stageDescription)
+            pickerDisplayArray.append(myItem.stageDescription!)
             if myItem.stageDescription == inProjectObject.projectStatus
             {
                 selectedRow = rowCount
@@ -644,7 +644,7 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
             
             if pickerTarget == "Stage"
             {
-                inProjectObject.projectStatus = myStages[mySelectedRow - 1].stageDescription
+                inProjectObject.projectStatus = myStages[mySelectedRow - 1].stageDescription!
                 btnProjectStage.setTitle(inProjectObject.projectStatus, for: UIControlState())
             }
             

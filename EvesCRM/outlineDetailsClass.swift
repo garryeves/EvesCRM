@@ -118,12 +118,12 @@ extension coreDatabase
             
             if updateType == "CODE"
             {
-                myOutline.updateTime = Date()
+                myOutline.updateTime = NSDate()
                 myOutline.updateType = "Add"
             }
             else
             {
-                myOutline.updateTime = updateTime
+                myOutline.updateTime = updateTime as NSDate
                 myOutline.updateType = updateType
             }
         }
@@ -145,7 +145,7 @@ extension coreDatabase
             }
             else
             {
-                myOutline.updateTime = updateTime
+                myOutline.updateTime = updateTime as NSDate
                 myOutline.updateType = updateType
             }
         }
@@ -168,12 +168,12 @@ extension coreDatabase
         
         if updateType == "CODE"
         {
-            myOutline.updateTime = Date()
+            myOutline.updateTime = NSDate()
             myOutline.updateType = "Add"
         }
         else
         {
-            myOutline.updateTime = updateTime
+            myOutline.updateTime = updateTime as NSDate
             myOutline.updateType = updateType
         }
         
@@ -189,7 +189,7 @@ extension coreDatabase
         if myOutlineItems.count > 0
         { // Update
             myOutline = myOutlineItems[0]
-            myOutline.updateTime = Date()
+            myOutline.updateTime = NSDate()
             myOutline.updateType = "Delete"
         }
         

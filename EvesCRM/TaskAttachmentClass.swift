@@ -180,7 +180,7 @@ extension CloudKitInteraction
 
     func saveTaskAttachmentRecordToCloudKit(_ sourceRecord: TaskAttachment)
     {
-        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as! Int)) && (title == \"\(sourceRecord.title)\")") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as! Int)) && (title == \"\(sourceRecord.title!)\")") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "TaskAttachment", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil

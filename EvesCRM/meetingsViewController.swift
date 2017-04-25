@@ -124,9 +124,9 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
             {
                 let startDateFormatter = DateFormatter()
                 startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
+                let myDisplayDate = startDateFormatter.string(from: myItem.startTime! as Date)
             
-                let myDisplayString = "\(myItem.name) - \(myDisplayDate)"
+                let myDisplayString = "\(myItem.name!) - \(myDisplayDate)"
             
                 btnPreviousMinutes.setTitle(myDisplayString, for: .normal)
             }
@@ -142,9 +142,9 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
             {
                 let startDateFormatter = DateFormatter()
                 startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
+                let myDisplayDate = startDateFormatter.string(from: myItem.startTime! as Date)
                 
-                let myDisplayString = "\(myItem.name) - \(myDisplayDate)"
+                let myDisplayString = "\(myItem.name!) - \(myDisplayDate)"
                 
                 btnNextMeeting.setTitle(myDisplayString, for: .normal)
             }
@@ -390,14 +390,14 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                     {
                         let startDateFormatter = DateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                        let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
+                        let myDisplayDate = startDateFormatter.string(from: myItem.startTime! as Date)
                     
-                        let calendarOption: UIAlertController = UIAlertController(title: "Existing meeting found", message: "A meeting \(myItem.name) - \(myDisplayDate) has this set as previous meeting.  Do you want to continue, which will clear the previous meeting from the original meeting?  ", preferredStyle: .actionSheet)
+                        let calendarOption: UIAlertController = UIAlertController(title: "Existing meeting found", message: "A meeting \(myItem.name!) - \(myDisplayDate) has this set as previous meeting.  Do you want to continue, which will clear the previous meeting from the original meeting?  ", preferredStyle: .actionSheet)
                     
                         let myYes = UIAlertAction(title: "Yes, update the details", style: .default, handler: { (action: UIAlertAction) -> () in
                             // go and update the previous meeting
                         
-                            myDatabaseConnection.updatePreviousAgendaID("", inMeetingID: myItem.meetingID, inTeamID: myCurrentTeam.teamID)
+                            myDatabaseConnection.updatePreviousAgendaID("", inMeetingID: myItem.meetingID!, inTeamID: myCurrentTeam.teamID)
                         
                             self.passedMeeting.event.previousMinutes = self.pickerEventArray[self.mySelectedRow]
                         
@@ -411,9 +411,9 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                                 {
                                     let startDateFormatter = DateFormatter()
                                     startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                                    let myDisplayDate = startDateFormatter.string(from: myDisplayItem.startTime)
+                                    let myDisplayDate = startDateFormatter.string(from: myDisplayItem.startTime! as Date)
                                 
-                                    let myDisplayString = "\(myDisplayItem.name) - \(myDisplayDate)"
+                                    let myDisplayString = "\(myDisplayItem.name!) - \(myDisplayDate)"
                                 
                                     self.btnPreviousMinutes.setTitle(myDisplayString, for: .normal)
                                     self.btnDisplayPreviousMeeting.isHidden = false
@@ -448,9 +448,9 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                         {
                             let startDateFormatter = DateFormatter()
                             startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                            let myDisplayDate = startDateFormatter.string(from: myDisplayItem.startTime)
+                            let myDisplayDate = startDateFormatter.string(from: myDisplayItem.startTime! as Date)
                         
-                            let myDisplayString = "\(myDisplayItem.name) - \(myDisplayDate)"
+                            let myDisplayString = "\(myDisplayItem.name!) - \(myDisplayDate)"
                         
                             btnPreviousMinutes.setTitle(myDisplayString, for: .normal)
                             
@@ -475,9 +475,9 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                         {
                             let startDateFormatter = DateFormatter()
                             startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                            let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
+                            let myDisplayDate = startDateFormatter.string(from: myItem.startTime! as Date)
                         
-                            let calendarOption: UIAlertController = UIAlertController(title: "Existing meeting found", message: "A meeting \(myItem.name) - \(myDisplayDate) has this set as next meeting.  Do you want to continue, which will clear the next meeting from the original meeting?  ", preferredStyle: .actionSheet)
+                            let calendarOption: UIAlertController = UIAlertController(title: "Existing meeting found", message: "A meeting \(myItem.name!) - \(myDisplayDate) has this set as next meeting.  Do you want to continue, which will clear the next meeting from the original meeting?  ", preferredStyle: .actionSheet)
                         
                             let myYes = UIAlertAction(title: "Yes, update the details", style: .default, handler: { (action: UIAlertAction) -> () in
                             // go and update the previous meeting
@@ -515,9 +515,9 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                                     {
                                         let startDateFormatter = DateFormatter()
                                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                                        let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
+                                        let myDisplayDate = startDateFormatter.string(from: myItem.startTime! as Date)
                                     
-                                        let myDisplayString = "\(myItem.name) - \(myDisplayDate)"
+                                        let myDisplayString = "\(myItem.name!) - \(myDisplayDate)"
                                     
                                         self.btnNextMeeting.setTitle(myDisplayString, for: .normal)
                                         
@@ -578,9 +578,9 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                                 {
                                     let startDateFormatter = DateFormatter()
                                     startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                                    let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
+                                    let myDisplayDate = startDateFormatter.string(from: myItem.startTime! as Date)
                                 
-                                    let myDisplayString = "\(myItem.name) - \(myDisplayDate)"
+                                    let myDisplayString = "\(myItem.name!) - \(myDisplayDate)"
                                 
                                     btnNextMeeting.setTitle(myDisplayString, for: .normal)
                                     btnDisplayNextMeeting.isHidden = false
@@ -628,9 +628,9 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                         {
                             let startDateFormatter = DateFormatter()
                             startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                            let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
+                            let myDisplayDate = startDateFormatter.string(from: myItem.startTime! as Date)
                         
-                            let myDisplayString = "\(myItem.name) - \(myDisplayDate)"
+                            let myDisplayString = "\(myItem.name!) - \(myDisplayDate)"
                         
                             btnNextMeeting.setTitle(myDisplayString, for: .normal)
                         }
@@ -854,11 +854,11 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                     { // Not this meeting meeting
                         let startDateFormatter = DateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                        let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
+                        let myDisplayDate = startDateFormatter.string(from: myItem.startTime! as Date)
                         
-                        pickerOptions.append("\(myItem.name) - \(myDisplayDate)")
-                        pickerEventArray.append(myItem.meetingID)
-                        pickerStartDateArray.append(myItem.startTime)
+                        pickerOptions.append("\(myItem.name!) - \(myDisplayDate)")
+                        pickerEventArray.append(myItem.meetingID!)
+                        pickerStartDateArray.append(myItem.startTime! as Date)
                     }
                 }
             }
@@ -875,11 +875,11 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                     { // Not this meeting meeting
                         let startDateFormatter = DateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                        let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
+                        let myDisplayDate = startDateFormatter.string(from: myItem.startTime! as Date)
                         
-                        pickerOptions.append("\(myItem.name) - \(myDisplayDate)")
-                        pickerEventArray.append(myItem.meetingID)
-                        pickerStartDateArray.append(myItem.startTime)
+                        pickerOptions.append("\(myItem.name!) - \(myDisplayDate)")
+                        pickerEventArray.append(myItem.meetingID!)
+                        pickerStartDateArray.append(myItem.startTime! as Date)
                     }
                 }
             }
@@ -902,11 +902,11 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                     { // Not this meeting meeting
                         let startDateFormatter = DateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                        let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
+                        let myDisplayDate = startDateFormatter.string(from: myItem.startTime! as Date)
                         
-                        pickerOptions.append("\(myItem.name) - \(myDisplayDate)")
-                        pickerEventArray.append(myItem.meetingID)
-                        pickerStartDateArray.append(myItem.startTime)
+                        pickerOptions.append("\(myItem.name!) - \(myDisplayDate)")
+                        pickerEventArray.append(myItem.meetingID!)
+                        pickerStartDateArray.append(myItem.startTime! as Date)
                     }
                 }
             }
@@ -1000,11 +1000,11 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
                     { // Not this meeting meeting
                         let startDateFormatter = DateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                        let myDisplayDate = startDateFormatter.string(from: myItem.startTime as Date)
+                        let myDisplayDate = startDateFormatter.string(from: myItem.startTime! as Date)
                         
-                        pickerOptions.append("\(myItem.name) - \(myDisplayDate)")
-                        pickerEventArray.append(myItem.meetingID)
-                        pickerStartDateArray.append(myItem.startTime as Date)
+                        pickerOptions.append("\(myItem.name!) - \(myDisplayDate)")
+                        pickerEventArray.append(myItem.meetingID!)
+                        pickerStartDateArray.append(myItem.startTime! as Date)
                     }
                 }
             }

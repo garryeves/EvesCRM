@@ -86,7 +86,7 @@ class tasks: NSObject
         
         var taskList = myDatabaseConnection.getActiveTasksForProject(projectID)
         
-        taskList.sort(by: {$0.dueDate.timeIntervalSinceNow < $1.dueDate.timeIntervalSinceNow})
+        taskList.sort(by: {$0.dueDate!.timeIntervalSinceNow < $1.dueDate!.timeIntervalSinceNow})
         
         for myItem in taskList
         {
@@ -102,7 +102,7 @@ class tasks: NSObject
         
         var taskList = myDatabaseConnection.getTasksForProject(projectID)
         
-        taskList.sort(by: {$0.dueDate.timeIntervalSinceNow < $1.dueDate.timeIntervalSinceNow})
+        taskList.sort(by: {$0.dueDate!.timeIntervalSinceNow < $1.dueDate!.timeIntervalSinceNow})
         
         for myItem in taskList
         {
@@ -506,22 +506,22 @@ class task: NSObject
         for myTask in myTaskData
         {
             myTaskID = myTask.taskID as! Int
-            myTitle = myTask.title
-            myDetails = myTask.details
-            myDueDate = myTask.dueDate
-            myStartDate = myTask.startDate
-            myStatus = myTask.status
-            myPriority = myTask.priority
-            myEnergyLevel = myTask.energyLevel
+            myTitle = myTask.title!
+            myDetails = myTask.details!
+            myDueDate = myTask.dueDate! as Date
+            myStartDate = myTask.startDate! as Date
+            myStatus = myTask.status!
+            myPriority = myTask.priority!
+            myEnergyLevel = myTask.energyLevel!
             myEstimatedTime = myTask.estimatedTime as! Int
-            myEstimatedTimeType = myTask.estimatedTimeType
+            myEstimatedTimeType = myTask.estimatedTimeType!
             myProjectID = myTask.projectID as! Int
-            myCompletionDate = myTask.completionDate
+            myCompletionDate = myTask.completionDate! as Date
             myRepeatInterval = myTask.repeatInterval as! Int
-            myRepeatType = myTask.repeatType
-            myRepeatBase = myTask.repeatBase
+            myRepeatType = myTask.repeatType!
+            myRepeatBase = myTask.repeatBase!
             myFlagged = myTask.flagged as! Bool
-            myUrgency = myTask.urgency
+            myUrgency = myTask.urgency!
             myTeamID = myTask.teamID as! Int
             
             // get contexts
@@ -541,7 +541,7 @@ class task: NSObject
             
             for myPredecessorItem in myPredecessorList
             {
-                let myNewPredecessor = taskPredecessor(inPredecessorID: myPredecessorItem.predecessorID as! Int, inPredecessorType: myPredecessorItem.predecessorType)
+                let myNewPredecessor = taskPredecessor(inPredecessorID: myPredecessorItem.predecessorID as! Int, inPredecessorType: myPredecessorItem.predecessorType!)
                 myPredecessors.append(myNewPredecessor)
             }
         }
@@ -749,7 +749,7 @@ class task: NSObject
             
             if myData3.count != 0
             {
-                myLine = "Project: \(myData3[0].projectName)"
+                myLine = "Project: \(myData3[0].projectName!)"
                 myExportString = writeLine(myExportString, inLineString: myLine)
                 myExportString = writeLine(myExportString, inLineString: "")
             }
@@ -865,7 +865,7 @@ class task: NSObject
             
             if myData3.count != 0
             {
-                myLine = "Project: \(myData3[0].projectName)"
+                myLine = "Project: \(myData3[0].projectName!)"
                 myExportString = writeHTMLLine(myExportString, inLineString: myLine)
                 myExportString = writeHTMLLine(myExportString, inLineString: "")
             }
@@ -1036,15 +1036,15 @@ extension coreDatabase
             myTask.taskID = NSNumber(value: inTaskID)
             myTask.title = inTitle
             myTask.details = inDetails
-            myTask.dueDate = inDueDate
-            myTask.startDate = inStartDate
+            myTask.dueDate = inDueDate as NSDate
+            myTask.startDate = inStartDate as NSDate
             myTask.status = inStatus
             myTask.priority = inPriority
             myTask.energyLevel = inEnergyLevel
             myTask.estimatedTime = NSNumber(value: inEstimatedTime)
             myTask.estimatedTimeType = inEstimatedTimeType
             myTask.projectID = NSNumber(value: inProjectID)
-            myTask.completionDate = inCompletionDate
+            myTask.completionDate = inCompletionDate as NSDate
             myTask.repeatInterval = NSNumber(value: inRepeatInterval)
             myTask.repeatType = inRepeatType
             myTask.repeatBase = inRepeatBase
@@ -1054,12 +1054,12 @@ extension coreDatabase
             
             if inUpdateType == "CODE"
             {
-                myTask.updateTime =  Date()
+                myTask.updateTime =  NSDate()
                 myTask.updateType = "Add"
             }
             else
             {
-                myTask.updateTime = inUpdateTime
+                myTask.updateTime = inUpdateTime as NSDate
                 myTask.updateType = inUpdateType
             }
         }
@@ -1068,15 +1068,15 @@ extension coreDatabase
             myTask = myTasks[0]
             myTask.title = inTitle
             myTask.details = inDetails
-            myTask.dueDate = inDueDate
-            myTask.startDate = inStartDate
+            myTask.dueDate = inDueDate as NSDate
+            myTask.startDate = inStartDate as NSDate
             myTask.status = inStatus
             myTask.priority = inPriority
             myTask.energyLevel = inEnergyLevel
             myTask.estimatedTime = NSNumber(value: inEstimatedTime)
             myTask.estimatedTimeType = inEstimatedTimeType
             myTask.projectID = NSNumber(value: inProjectID)
-            myTask.completionDate = inCompletionDate
+            myTask.completionDate = inCompletionDate as NSDate
             myTask.repeatInterval = NSNumber(value: inRepeatInterval)
             myTask.repeatType = inRepeatType
             myTask.repeatBase = inRepeatBase
@@ -1086,7 +1086,7 @@ extension coreDatabase
             
             if inUpdateType == "CODE"
             {
-                myTask.updateTime =  Date()
+                myTask.updateTime =  NSDate()
                 if myTask.updateType != "Add"
                 {
                     myTask.updateType = "Update"
@@ -1094,7 +1094,7 @@ extension coreDatabase
             }
             else
             {
-                myTask.updateTime = inUpdateTime
+                myTask.updateTime = inUpdateTime as NSDate
                 myTask.updateType = inUpdateType
             }
             
@@ -1109,15 +1109,15 @@ extension coreDatabase
         myTask.taskID = NSNumber(value: inTaskID)
         myTask.title = inTitle
         myTask.details = inDetails
-        myTask.dueDate = inDueDate
-        myTask.startDate = inStartDate
+        myTask.dueDate = inDueDate as NSDate
+        myTask.startDate = inStartDate as NSDate
         myTask.status = inStatus
         myTask.priority = inPriority
         myTask.energyLevel = inEnergyLevel
         myTask.estimatedTime = NSNumber(value: inEstimatedTime)
         myTask.estimatedTimeType = inEstimatedTimeType
         myTask.projectID = NSNumber(value: inProjectID)
-        myTask.completionDate = inCompletionDate
+        myTask.completionDate = inCompletionDate as NSDate
         myTask.repeatInterval = NSNumber(value: inRepeatInterval)
         myTask.repeatType = inRepeatType
         myTask.repeatBase = inRepeatBase
@@ -1127,12 +1127,12 @@ extension coreDatabase
         
         if inUpdateType == "CODE"
         {
-            myTask.updateTime =  Date()
+            myTask.updateTime =  NSDate()
             myTask.updateType = "Add"
         }
         else
         {
-            myTask.updateTime = inUpdateTime
+            myTask.updateTime = inUpdateTime as NSDate
             myTask.updateType = inUpdateType
         }
         
@@ -1154,7 +1154,7 @@ extension coreDatabase
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myStage in fetchResults
             {
-                myStage.updateTime =  Date()
+                myStage.updateTime =  NSDate()
                 myStage.updateType = "Delete"
             }
         }
@@ -1248,7 +1248,7 @@ extension coreDatabase
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectID = \(projectID)) && (updateType != \"Delete\") && (status != \"Deleted\") && (status != \"Complete\") && (status != \"Pause\") && ((startDate == %@) || (startDate <= %@))", (getDefaultDate() as NSDate) as CVarArg,  NSDate() as CVarArg)
+        let predicate = NSPredicate(format: "(projectID = \(projectID)) && (updateType != \"Delete\") && (status != \"Deleted\") && (status != \"Complete\") && (status != \"Pause\") && ((startDate == %@) || (startDate <= %@))", (getDefaultDate()) as CVarArg,  NSDate() as CVarArg)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1344,7 +1344,7 @@ extension coreDatabase
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(taskID == \(taskID)) && (updateType != \"Delete\") && (status != \"Deleted\") && (status != \"Complete\") && ((startDate == %@) || (startDate <= %@))", (getDefaultDate() as NSDate) as CVarArg, NSDate() as CVarArg)
+        let predicate = NSPredicate(format: "(taskID == \(taskID)) && (updateType != \"Delete\") && (status != \"Deleted\") && (status != \"Complete\") && ((startDate == %@) || (startDate <= %@))", (getDefaultDate()) as CVarArg, NSDate() as CVarArg)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1391,7 +1391,7 @@ extension coreDatabase
             let fetchResults2 = try objectContext.fetch(fetchRequest2)
             for myMeeting2 in fetchResults2
             {
-                myMeeting2.updateTime =  Date()
+                myMeeting2.updateTime =  NSDate()
                 myMeeting2.updateType = "Delete"
             }
         }

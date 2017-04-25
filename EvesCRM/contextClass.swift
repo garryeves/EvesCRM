@@ -422,11 +422,11 @@ class context: NSObject
         for myContext in myContexts
         {
             myContextID = myContext.contextID as! Int
-            myName = myContext.name
-            myEmail = myContext.email
-            myAutoEmail = myContext.autoEmail
+            myName = myContext.name!
+            myEmail = myContext.email!
+            myAutoEmail = myContext.autoEmail!
             myParentContext = myContext.parentContext as! Int
-            myStatus = myContext.status
+            myStatus = myContext.status!
             myPersonID = myContext.personID as! Int
             myTeamID = myContext.teamID as! Int
             
@@ -438,11 +438,11 @@ class context: NSObject
     {
         super.init()
         myContextID = inContext.contextID as! Int
-        myName = inContext.name
-        myEmail = inContext.email
-        myAutoEmail = inContext.autoEmail
+        myName = inContext.name!
+        myEmail = inContext.email!
+        myAutoEmail = inContext.autoEmail!
         myParentContext = inContext.parentContext as! Int
-        myStatus = inContext.status
+        myStatus = inContext.status!
         myPersonID = inContext.personID as! Int
         myTeamID = inContext.teamID as! Int
         
@@ -535,13 +535,13 @@ extension coreDatabase
             myContext.teamID = NSNumber(value: inTeamID)
             if inUpdateType == "CODE"
             {
-                myContext.updateTime =  Date()
+                myContext.updateTime =  NSDate()
                 
                 myContext.updateType = "Add"
             }
             else
             {
-                myContext.updateTime = inUpdateTime
+                myContext.updateTime = inUpdateTime as NSDate
                 myContext.updateType = inUpdateType
             }
         }
@@ -557,7 +557,7 @@ extension coreDatabase
             myContext.teamID = NSNumber(value: inTeamID)
             if inUpdateType == "CODE"
             {
-                myContext.updateTime =  Date()
+                myContext.updateTime =  NSDate()
                 if myContext.updateType != "Add"
                 {
                     myContext.updateType = "Update"
@@ -565,7 +565,7 @@ extension coreDatabase
             }
             else
             {
-                myContext.updateTime = inUpdateTime
+                myContext.updateTime = inUpdateTime as NSDate
                 myContext.updateType = inUpdateType
             }
         }
@@ -586,12 +586,12 @@ extension coreDatabase
         myContext.teamID = NSNumber(value: inTeamID)
         if inUpdateType == "CODE"
         {
-            myContext.updateTime =  Date()
+            myContext.updateTime =  NSDate()
             myContext.updateType = "Add"
         }
         else
         {
-            myContext.updateTime = inUpdateTime
+            myContext.updateTime = inUpdateTime as NSDate
             myContext.updateType = inUpdateType
         }
         
@@ -605,7 +605,7 @@ extension coreDatabase
         if myContexts.count > 0
         {
             let myContext = myContexts[0]
-            myContext.updateTime =  Date()
+            myContext.updateTime =  NSDate()
             myContext.updateType = "Delete"
         }
         
@@ -616,7 +616,7 @@ extension coreDatabase
         if myContexts2.count > 0
         {
             let myContext = myContexts[0]
-            myContext.updateTime =  Date()
+            myContext.updateTime =  NSDate()
             myContext.updateType = "Delete"
         }
         
@@ -777,7 +777,7 @@ extension coreDatabase
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myItem in fetchResults
             {
-                myItem.updateTime =  Date()
+                myItem.updateTime =  NSDate()
                 myItem.updateType = "Delete"
             }
         }
@@ -925,13 +925,13 @@ extension coreDatabase
             myContext.contextType = contextType
             if updateType == "CODE"
             {
-                myContext.updateTime =  Date()
+                myContext.updateTime =  NSDate()
                 myContext.updateType = "Add"
                 
             }
             else
             {
-                myContext.updateTime = updateTime
+                myContext.updateTime = updateTime as NSDate
                 myContext.updateType = updateType
             }
         }
@@ -942,7 +942,7 @@ extension coreDatabase
             myContext.contextType = contextType
             if updateType == "CODE"
             {
-                myContext.updateTime =  Date()
+                myContext.updateTime =  NSDate()
                 if myContext.updateType != "Add"
                 {
                     myContext.updateType = "Update"
@@ -950,7 +950,7 @@ extension coreDatabase
             }
             else
             {
-                myContext.updateTime = updateTime
+                myContext.updateTime = updateTime as NSDate
                 myContext.updateType = updateType
             }
         }
@@ -966,12 +966,12 @@ extension coreDatabase
         myContext.contextType = contextType
         if updateType == "CODE"
         {
-            myContext.updateTime =  Date()
+            myContext.updateTime =  NSDate()
             myContext.updateType = "Add"
         }
         else
         {
-            myContext.updateTime = updateTime
+            myContext.updateTime = updateTime as NSDate
             myContext.updateType = updateType
         }
         

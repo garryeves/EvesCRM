@@ -30,7 +30,7 @@ extension coreDatabase
             }
             else
             {
-                return fetchResults[0].decode_value
+                return fetchResults[0].decode_value!
             }
         }
         catch
@@ -76,12 +76,12 @@ extension coreDatabase
             myDecode.decodeType = inCodeType
             if inUpdateType == "CODE"
             {
-                myDecode.updateTime =  Date()
+                myDecode.updateTime =  NSDate()
                 myDecode.updateType = "Add"
             }
             else
             {
-                myDecode.updateTime = inUpdateTime
+                myDecode.updateTime = inUpdateTime as NSDate
                 myDecode.updateType = inUpdateType
             }
         }
@@ -102,7 +102,7 @@ extension coreDatabase
                 myDecode.decodeType = inCodeType
                 if inUpdateType == "CODE"
                 {
-                    myDecode.updateTime =  Date()
+                    myDecode.updateTime =  NSDate()
                     if myDecode.updateType != "Add"
                     {
                         myDecode.updateType = "Update"
@@ -110,7 +110,7 @@ extension coreDatabase
                 }
                 else
                 {
-                    myDecode.updateTime = inUpdateTime
+                    myDecode.updateTime = inUpdateTime as NSDate
                     myDecode.updateType = inUpdateType
                 }
             }
@@ -134,12 +134,12 @@ extension coreDatabase
         myDecode.decodeType = inCodeType
         if inUpdateType == "CODE"
         {
-            myDecode.updateTime =  Date()
+            myDecode.updateTime =  NSDate()
             myDecode.updateType = "Add"
         }
         else
         {
-            myDecode.updateTime = inUpdateTime
+            myDecode.updateTime = inUpdateTime as NSDate
             myDecode.updateType = inUpdateType
         }
         
@@ -213,7 +213,7 @@ extension coreDatabase
             if fetchResults.count > 0
             {
                 // Increment table value by 1 and save back to database
-                storeInt = Int(fetchResults[0].decode_value)! + 1
+                storeInt = Int(fetchResults[0].decode_value!)! + 1
             }
         }
         catch
@@ -253,7 +253,7 @@ extension coreDatabase
             else
             {
                 // Increment table value by 1 and save back to database
-                let storeint = Int(fetchResults[0].decode_value)! + 1
+                let storeint = Int(fetchResults[0].decode_value!)! + 1
                 
                 let storeKey = "\(storeint)"
                 updateDecodeValue(inTableName, inCodeValue: storeKey, inCodeType: "hidden")
@@ -451,7 +451,7 @@ extension CloudKitInteraction
 
     func saveDecodesRecordToCloudKit(_ sourceRecord: Decodes, syncName: String)
     {
-        let predicate = NSPredicate(format: "(decode_name == \"\(sourceRecord.decode_name)\")") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(decode_name == \"\(sourceRecord.decode_name!)\")") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Decodes", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -468,10 +468,10 @@ extension CloudKitInteraction
                     
                     let record = records!.first// as! CKRecord
                     
-                    switch sourceRecord.decode_name
+                    switch sourceRecord.decode_name!
                     {
                     case "Context" :
-                        let localValue = Int(sourceRecord.decode_value)
+                        let localValue = Int(sourceRecord.decode_value!)
                         let tempValue = record!.object(forKey: "decode_value")! as CKRecordValue
                         let remoteValue = Int(tempValue as! String)
                         
@@ -485,7 +485,7 @@ extension CloudKitInteraction
                         }
                         
                     case "Projects" :
-                        let localValue = Int(sourceRecord.decode_value)
+                        let localValue = Int(sourceRecord.decode_value!)
                         let tempValue = record!.object(forKey: "decode_value")! as CKRecordValue
                         let remoteValue = Int(tempValue as! String)
                         
@@ -499,7 +499,7 @@ extension CloudKitInteraction
                         }
                         
                     case "GTDItem" :
-                        let localValue = Int(sourceRecord.decode_value)
+                        let localValue = Int(sourceRecord.decode_value!)
                         let tempValue = record!.object(forKey: "decode_value")! as CKRecordValue
                         let remoteValue = Int(tempValue as! String)
                         
@@ -513,7 +513,7 @@ extension CloudKitInteraction
                         }
                         
                     case "Team" :
-                        let localValue = Int(sourceRecord.decode_value)
+                        let localValue = Int(sourceRecord.decode_value!)
                         let tempValue = record!.object(forKey: "decode_value")! as CKRecordValue
                         let remoteValue = Int(tempValue as! String)
                         
@@ -527,7 +527,7 @@ extension CloudKitInteraction
                         }
                         
                     case "Roles" :
-                        let localValue = Int(sourceRecord.decode_value)
+                        let localValue = Int(sourceRecord.decode_value!)
                         let tempValue = record!.object(forKey: "decode_value")! as CKRecordValue
                         let remoteValue = Int(tempValue as! String)
                         
@@ -541,7 +541,7 @@ extension CloudKitInteraction
                         }
                         
                     case "Task" :
-                        let localValue = Int(sourceRecord.decode_value)
+                        let localValue = Int(sourceRecord.decode_value!)
                         let tempValue = record!.object(forKey: "decode_value")! as CKRecordValue
                         let remoteValue = Int(tempValue as! String)
                         
@@ -555,7 +555,7 @@ extension CloudKitInteraction
                         }
                         
                     case "Device" :
-                        let localValue = Int(sourceRecord.decode_value)
+                        let localValue = Int(sourceRecord.decode_value!)
                         let tempValue = record!.object(forKey: "decode_value")! as CKRecordValue
                         let remoteValue = Int(tempValue as! String)
                         
@@ -571,7 +571,7 @@ extension CloudKitInteraction
                     default:
                         updateRecord = true
                         
-                        if sourceRecord.decode_name.hasPrefix("\(coreDatabaseName) Sync")
+                        if sourceRecord.decode_name!.hasPrefix("\(coreDatabaseName) Sync")
                         {
                             if syncName == sourceRecord.decode_name
                             {
@@ -627,7 +627,7 @@ extension CloudKitInteraction
                         {
                             if debugMessages
                             {
-                                NSLog("Successfully saved record! \(sourceRecord.decode_name)")
+                                NSLog("Successfully saved record! \(sourceRecord.decode_name!)")
                             }
                         }
                     })

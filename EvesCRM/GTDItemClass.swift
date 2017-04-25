@@ -238,7 +238,7 @@ class workingGTDItem: NSObject
                 myStatus = myItem.status!
                 myTeamID = myItem.teamID as! Int
                 myNote = myItem.note!
-                myLastReviewDate = myItem.lastReviewDate
+                myLastReviewDate = myItem.lastReviewDate! as Date
                 myReviewFrequency = myItem.reviewFrequency as! Int
                 myReviewPeriod = myItem.reviewPeriod!
                 myPredecessor = myItem.predecessor as! Int
@@ -336,9 +336,9 @@ class workingGTDItem: NSObject
                 // Check to see if the start date is in the future
                 var boolAddProject: Bool = true
                 
-                if myItem.projectStartDate != getDefaultDate()
+                if myItem.projectStartDate! != (getDefaultDate() as NSDate)
                 {
-                    if myItem.projectStartDate.compare(Date()) == ComparisonResult.orderedDescending
+                    if myItem.projectStartDate?.compare(Date()) == ComparisonResult.orderedDescending
                     {  // Start date is in future
                         boolAddProject = false
                     }
@@ -425,19 +425,19 @@ extension coreDatabase
             myGTD.status = inStatus
             myGTD.teamID = inTeamID as NSNumber?
             myGTD.note = inNote
-            myGTD.lastReviewDate = inLastReviewDate
+            myGTD.lastReviewDate = inLastReviewDate as NSDate
             myGTD.reviewFrequency = inReviewFrequency as NSNumber?
             myGTD.reviewPeriod = inReviewPeriod
             myGTD.predecessor = inPredecessor as NSNumber?
             myGTD.gTDLevel = inGTDLevel as NSNumber?
             if inUpdateType == "CODE"
             {
-                myGTD.updateTime =  Date()
+                myGTD.updateTime =  NSDate()
                 myGTD.updateType = "Add"
             }
             else
             {
-                myGTD.updateTime = inUpdateTime
+                myGTD.updateTime = inUpdateTime as NSDate
                 myGTD.updateType = inUpdateType
             }
         }
@@ -447,10 +447,10 @@ extension coreDatabase
             myGTD.gTDParentID = inParentID as NSNumber?
             myGTD.title = inTitle
             myGTD.status = inStatus
-            myGTD.updateTime =  Date()
+            myGTD.updateTime =  NSDate()
             myGTD.teamID = inTeamID as NSNumber?
             myGTD.note = inNote
-            myGTD.lastReviewDate = inLastReviewDate
+            myGTD.lastReviewDate = inLastReviewDate as NSDate
             myGTD.reviewFrequency = inReviewFrequency as NSNumber?
             myGTD.reviewPeriod = inReviewPeriod
             myGTD.predecessor = inPredecessor as NSNumber?
@@ -464,7 +464,7 @@ extension coreDatabase
             }
             else
             {
-                myGTD.updateTime = inUpdateTime
+                myGTD.updateTime = inUpdateTime as NSDate
                 myGTD.updateType = inUpdateType
             }
         }
@@ -481,19 +481,19 @@ extension coreDatabase
         myGTD.status = inStatus
         myGTD.teamID = inTeamID as NSNumber?
         myGTD.note = inNote
-        myGTD.lastReviewDate = inLastReviewDate
+        myGTD.lastReviewDate = inLastReviewDate as NSDate
         myGTD.reviewFrequency = inReviewFrequency as NSNumber?
         myGTD.reviewPeriod = inReviewPeriod
         myGTD.predecessor = inPredecessor as NSNumber?
         myGTD.gTDLevel = inGTDLevel as NSNumber?
         if inUpdateType == "CODE"
         {
-            myGTD.updateTime =  Date()
+            myGTD.updateTime =  NSDate()
             myGTD.updateType = "Add"
         }
         else
         {
-            myGTD.updateTime = inUpdateTime
+            myGTD.updateTime = inUpdateTime as NSDate
             myGTD.updateType = inUpdateType
         }
         
@@ -509,7 +509,7 @@ extension coreDatabase
         if myGTDItems.count > 0
         { // Update
             myGTD = myGTDItems[0]
-            myGTD.updateTime =  Date()
+            myGTD.updateTime =  NSDate()
             myGTD.updateType = "Delete"
         }
         saveContext()

@@ -612,7 +612,7 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         
         for myProject in myProjects
         {
-            pickerOptions.append(myProject.projectName)
+            pickerOptions.append(myProject.projectName!)
             myProjectDetails.append(myProject)
         }
         
@@ -625,7 +625,7 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
                 let myProjects = myDatabaseConnection.getProjects(myTeamItem.teamID as! Int)
                 for myProject in myProjects
                 {
-                    pickerOptions.append(myProject.projectName)
+                    pickerOptions.append(myProject.projectName!)
                     myProjectDetails.append(myProject)
                 }
             }

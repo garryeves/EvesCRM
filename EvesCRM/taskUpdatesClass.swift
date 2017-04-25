@@ -91,8 +91,8 @@ class taskUpdates: NSObject
     {
         myTaskID = inUpdate.taskID as! Int
         myUpdateDate = inUpdate.updateDate as Date!
-        myDetails = inUpdate.details
-        mySource = inUpdate.source
+        myDetails = inUpdate.details!
+        mySource = inUpdate.source!
     }
     
     func save()
@@ -126,17 +126,17 @@ extension coreDatabase
         {
             myTaskUpdate = TaskUpdates(context: objectContext)
             myTaskUpdate.taskID = NSNumber(value: inTaskID)
-            myTaskUpdate.updateDate = inUpdateDate
+            myTaskUpdate.updateDate = inUpdateDate as NSDate
             myTaskUpdate.details = inDetails
             myTaskUpdate.source = inSource
             if inUpdateType == "CODE"
             {
-                myTaskUpdate.updateTime =  Date()
+                myTaskUpdate.updateTime =  NSDate()
                 myTaskUpdate.updateType = "Add"
             }
             else
             {
-                myTaskUpdate.updateTime = inUpdateTime
+                myTaskUpdate.updateTime = inUpdateTime as NSDate
                 myTaskUpdate.updateType = inUpdateType
             }
             
@@ -149,17 +149,17 @@ extension coreDatabase
         
         let myTaskUpdate = TaskUpdates(context: objectContext)
         myTaskUpdate.taskID = NSNumber(value: inTaskID)
-        myTaskUpdate.updateDate = inUpdateDate
+        myTaskUpdate.updateDate = inUpdateDate as NSDate
         myTaskUpdate.details = inDetails
         myTaskUpdate.source = inSource
         if inUpdateType == "CODE"
         {
-            myTaskUpdate.updateTime =  Date()
+            myTaskUpdate.updateTime =  NSDate()
             myTaskUpdate.updateType = "Add"
         }
         else
         {
-            myTaskUpdate.updateTime = inUpdateTime
+            myTaskUpdate.updateTime = inUpdateTime as NSDate
             myTaskUpdate.updateType = inUpdateType
         }
         
@@ -231,7 +231,7 @@ extension coreDatabase
             let fetchResults4 = try objectContext.fetch(fetchRequest4)
             for myMeeting4 in fetchResults4
             {
-                myMeeting4.updateTime =  Date()
+                myMeeting4.updateTime =  NSDate()
                 myMeeting4.updateType = "Delete"
             }
         }
@@ -411,7 +411,7 @@ extension CloudKitInteraction
 
     func saveTaskUpdatesRecordToCloudKit(_ sourceRecord: TaskUpdates)
     {
-        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as! Int)) && (updateDate == %@)", sourceRecord.updateDate as CVarArg) // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as! Int)) && (updateDate == %@)", sourceRecord.updateDate!) // better be accurate to get only the record you need
         let query = CKQuery(recordType: "TaskUpdates", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil

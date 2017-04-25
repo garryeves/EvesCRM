@@ -86,12 +86,12 @@ extension coreDatabase
             myTask.predecessorType = inPredecessorType
             if inUpdateType == "CODE"
             {
-                myTask.updateTime =  Date()
+                myTask.updateTime =  NSDate()
                 myTask.updateType = "Add"
             }
             else
             {
-                myTask.updateTime = inUpdateTime
+                myTask.updateTime = inUpdateTime as NSDate
                 myTask.updateType = inUpdateType
             }
         }
@@ -101,7 +101,7 @@ extension coreDatabase
             myTask.predecessorType = inPredecessorType
             if inUpdateType == "CODE"
             {
-                myTask.updateTime =  Date()
+                myTask.updateTime =  NSDate()
                 if myTask.updateType != "Add"
                 {
                     myTask.updateType = "Update"
@@ -109,7 +109,7 @@ extension coreDatabase
             }
             else
             {
-                myTask.updateTime = inUpdateTime
+                myTask.updateTime = inUpdateTime as NSDate
                 myTask.updateType = inUpdateType
             }
         }
@@ -127,12 +127,12 @@ extension coreDatabase
         myTask.predecessorType = inPredecessorType
         if inUpdateType == "CODE"
         {
-            myTask.updateTime =  Date()
+            myTask.updateTime =  NSDate()
             myTask.updateType = "Add"
         }
         else
         {
-            myTask.updateTime = inUpdateTime
+            myTask.updateTime = inUpdateTime as NSDate
             myTask.updateType = inUpdateType
         }
         
@@ -155,7 +155,7 @@ extension coreDatabase
             for myStage in fetchResults
             {
                 myStage.predecessorType = inPredecessorType
-                myStage.updateTime =  Date()
+                myStage.updateTime =  NSDate()
                 if myStage.updateType != "Add"
                 {
                     myStage.updateType = "Update"
@@ -187,7 +187,7 @@ extension coreDatabase
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myStage in fetchResults
             {
-                myStage.updateTime =  Date()
+                myStage.updateTime =  NSDate()
                 myStage.updateType = "Delete"
                 
                 myCloudDB.saveTaskPredecessorRecordToCloudKit(myStage)

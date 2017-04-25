@@ -168,10 +168,10 @@ class team: NSObject
         for myItem in myTeam
         {
             myTeamID = myItem.teamID as! Int
-            myName = myItem.name
-            myStatus = myItem.status
-            myType = myItem.type
-            myNote = myItem.note
+            myName = myItem.name!
+            myStatus = myItem.status!
+            myType = myItem.type!
+            myNote = myItem.note!
             myPredecessor = myItem.predecessor as! Int
             myExternalID = myItem.externalID as! Int
         }
@@ -378,12 +378,12 @@ extension coreDatabase
             myTeam.externalID = NSNumber(value: inExternalID)
             if inUpdateType == "CODE"
             {
-                myTeam.updateTime =  Date()
+                myTeam.updateTime =  NSDate()
                 myTeam.updateType = "Add"
             }
             else
             {
-                myTeam.updateTime = inUpdateTime
+                myTeam.updateTime = inUpdateTime as NSDate
                 myTeam.updateType = inUpdateType
             }
         }
@@ -402,11 +402,11 @@ extension coreDatabase
                 {
                     myTeam.updateType = "Update"
                 }
-                myTeam.updateTime =  Date()
+                myTeam.updateTime =  NSDate()
             }
             else
             {
-                myTeam.updateTime = inUpdateTime
+                myTeam.updateTime = inUpdateTime as NSDate
                 myTeam.updateType = inUpdateType
             }
         }
@@ -426,12 +426,12 @@ extension coreDatabase
         myTeam.externalID = NSNumber(value: inExternalID)
         if inUpdateType == "CODE"
         {
-            myTeam.updateTime =  Date()
+            myTeam.updateTime =  NSDate()
             myTeam.updateType = "Add"
         }
         else
         {
-            myTeam.updateTime = inUpdateTime
+            myTeam.updateTime = inUpdateTime as NSDate
             myTeam.updateType = inUpdateType
         }
         

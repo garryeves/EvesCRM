@@ -419,11 +419,11 @@ func displayProjectsForPerson(_ inPerson: String, lookupArray: inout [String]) -
         
             if myDetails[0].projectStatus != "Archived"
             {
-                titleText = myDetails[0].projectName
+                titleText = myDetails[0].projectName!
                 titleText += " : "
-                titleText += myDatabaseConnection.getRoleDescription(myProject.roleID, inTeamID: myDetails[0].teamID as! Int)
+                titleText += myDatabaseConnection.getRoleDescription(myProject.roleID!, inTeamID: myDetails[0].teamID as! Int)
                 
-                lookupArray.append(myProject.projectID.stringValue)
+                lookupArray.append((myProject.projectID?.stringValue)!)
                 
                 let projectObject = project(inProjectID: myDetails[0].projectID as! Int)
 

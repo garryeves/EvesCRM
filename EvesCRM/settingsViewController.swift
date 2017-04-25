@@ -128,7 +128,7 @@ class settingsViewController: UIViewController
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "reuseStepper", for: indexPath as IndexPath) as! mySettingStepper
                 cell.lblKey.text = myDecodes[indexPath.row].decode_name
                 cell.lblValue.text = myDecodes[indexPath.row].decode_value
-                cell.myStepper.value = NSString(string: myDecodes[indexPath.row].decode_value).doubleValue
+                cell.myStepper.value = NSString(string: myDecodes[indexPath.row].decode_value!).doubleValue
                 cell.lookupKey = myDecodes[indexPath.row].decodeType
                 
                 if (indexPath.row % 2 == 0)  // was .row

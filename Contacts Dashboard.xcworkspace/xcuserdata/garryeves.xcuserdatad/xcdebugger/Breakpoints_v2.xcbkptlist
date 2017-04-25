@@ -286,7 +286,7 @@
             startingLineNumber = "148"
             endingLineNumber = "148"
             landmarkName = "openDropBox(rowID:)"
-            landmarkType = "7">
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -302,7 +302,7 @@
             startingLineNumber = "150"
             endingLineNumber = "150"
             landmarkName = "openDropBox(rowID:)"
-            landmarkType = "7">
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -318,7 +318,7 @@
             startingLineNumber = "106"
             endingLineNumber = "106"
             landmarkName = "searchFiles(_:)"
-            landmarkType = "7">
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -334,7 +334,7 @@
             startingLineNumber = "125"
             endingLineNumber = "125"
             landmarkName = "searchFiles(_:)"
-            landmarkType = "7">
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -350,7 +350,7 @@
             startingLineNumber = "135"
             endingLineNumber = "135"
             landmarkName = "searchFiles(_:)"
-            landmarkType = "7">
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -366,7 +366,7 @@
             startingLineNumber = "108"
             endingLineNumber = "108"
             landmarkName = "searchFiles(_:)"
-            landmarkType = "7">
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -382,7 +382,7 @@
             startingLineNumber = "100"
             endingLineNumber = "100"
             landmarkName = "searchFiles(_:)"
-            landmarkType = "7">
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -398,7 +398,7 @@
             startingLineNumber = "123"
             endingLineNumber = "123"
             landmarkName = "searchFiles(_:)"
-            landmarkType = "7">
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -430,7 +430,7 @@
             startingLineNumber = "152"
             endingLineNumber = "152"
             landmarkName = "openDropBox(rowID:)"
-            landmarkType = "7">
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy

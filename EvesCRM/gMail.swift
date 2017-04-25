@@ -1070,16 +1070,16 @@ extension coreDatabase
             myEmail = ProcessedEmails(context: objectContext)
             myEmail.emailID = emailID
             myEmail.emailType = emailType
-            myEmail.processedDate = processedDate
+            myEmail.processedDate = processedDate as NSDate
             
             if updateType == "CODE"
             {
-                myEmail.updateTime = Date()
+                myEmail.updateTime = NSDate()
                 myEmail.updateType = "Add"
             }
             else
             {
-                myEmail.updateTime = updateTime
+                myEmail.updateTime = updateTime as NSDate
                 myEmail.updateType = updateType
             }
         }
@@ -1087,7 +1087,7 @@ extension coreDatabase
         { // Update
             myEmail = myEmailItems[0]
             myEmail.emailType = emailType
-            myEmail.processedDate = processedDate
+            myEmail.processedDate = processedDate as NSDate
             if updateType == "CODE"
             {
                 if myEmail.updateType != "Add"
@@ -1097,7 +1097,7 @@ extension coreDatabase
             }
             else
             {
-                myEmail.updateTime = updateTime
+                myEmail.updateTime = updateTime as NSDate
                 myEmail.updateType = updateType
             }
         }
@@ -1112,16 +1112,16 @@ extension coreDatabase
         let myEmail = ProcessedEmails(context: objectContext)
         myEmail.emailID = emailID
         myEmail.emailType = emailType
-        myEmail.processedDate = processedDate
+        myEmail.processedDate = processedDate as NSDate
         
         if updateType == "CODE"
         {
-            myEmail.updateTime = Date()
+            myEmail.updateTime = NSDate()
             myEmail.updateType = "Add"
         }
         else
         {
-            myEmail.updateTime = updateTime
+            myEmail.updateTime = updateTime as NSDate
             myEmail.updateType = updateType
         }
         
@@ -1137,7 +1137,7 @@ extension coreDatabase
         if myEmailItems.count > 0
         { // Update
             myEmail = myEmailItems[0]
-            myEmail.updateTime = Date()
+            myEmail.updateTime = NSDate()
             myEmail.updateType = "Delete"
         }
         

@@ -65,16 +65,16 @@ class myCalendarItem
         if mySavedValues.count > 0
         {
             myEvent = inEvent
-            myTitle = mySavedValues[0].name
-            myStartDate = mySavedValues[0].startTime
-            myEndDate = mySavedValues[0].endTime
-            myLocation = mySavedValues[0].location
-            myPreviousMinutes = mySavedValues[0].previousMeetingID
-            myEventID = mySavedValues[0].meetingID
-            myChair = mySavedValues[0].chair
-            myMinutes = mySavedValues[0].minutes
-            myLocation = mySavedValues[0].location
-            myMinutesType = mySavedValues[0].minutesType
+            myTitle = mySavedValues[0].name!
+            myStartDate = mySavedValues[0].startTime! as Date
+            myEndDate = mySavedValues[0].endTime! as Date
+            myLocation = mySavedValues[0].location!
+            myPreviousMinutes = mySavedValues[0].previousMeetingID!
+            myEventID = mySavedValues[0].meetingID!
+            myChair = mySavedValues[0].chair!
+            myMinutes = mySavedValues[0].minutes!
+            myLocation = mySavedValues[0].location!
+            myMinutesType = mySavedValues[0].minutesType!
             mySavedData = true
         }
         else
@@ -123,16 +123,16 @@ class myCalendarItem
         endDateFormatter.timeStyle = timeFormat
         myEventStore = inEventStore
         
-        myTitle = inMeetingAgenda.name
+        myTitle = inMeetingAgenda.name!
         myStartDate = inMeetingAgenda.startTime as Date!
         myEndDate = inMeetingAgenda.endTime as Date!
-        myLocation = inMeetingAgenda.location
-        myPreviousMinutes = inMeetingAgenda.previousMeetingID
-        myEventID = inMeetingAgenda.meetingID
-        myChair = inMeetingAgenda.chair
-        myMinutes = inMeetingAgenda.minutes
-        myLocation = inMeetingAgenda.location
-        myMinutesType = inMeetingAgenda.minutesType
+        myLocation = inMeetingAgenda.location!
+        myPreviousMinutes = inMeetingAgenda.previousMeetingID!
+        myEventID = inMeetingAgenda.meetingID!
+        myChair = inMeetingAgenda.chair!
+        myMinutes = inMeetingAgenda.minutes!
+        myLocation = inMeetingAgenda.location!
+        myMinutesType = inMeetingAgenda.minutesType!
         myTeamID = inMeetingAgenda.teamID as! Int
         
         loadAttendees()
@@ -146,16 +146,16 @@ class myCalendarItem
         
         if mySavedValues.count > 0
         {
-            myTitle = mySavedValues[0].name
-            myStartDate = mySavedValues[0].startTime
-            myEndDate = mySavedValues[0].endTime
-            myLocation = mySavedValues[0].location
-            myPreviousMinutes = mySavedValues[0].previousMeetingID
-            myEventID = mySavedValues[0].meetingID
-            myChair = mySavedValues[0].chair
-            myMinutes = mySavedValues[0].minutes
-            myLocation = mySavedValues[0].location
-            myMinutesType = mySavedValues[0].minutesType
+            myTitle = mySavedValues[0].name!
+            myStartDate = mySavedValues[0].startTime! as Date
+            myEndDate = mySavedValues[0].endTime! as Date
+            myLocation = mySavedValues[0].location!
+            myPreviousMinutes = mySavedValues[0].previousMeetingID!
+            myEventID = mySavedValues[0].meetingID!
+            myChair = mySavedValues[0].chair!
+            myMinutes = mySavedValues[0].minutes!
+            myLocation = mySavedValues[0].location!
+            myMinutesType = mySavedValues[0].minutesType!
             mySavedData = true
         }
 
@@ -455,7 +455,7 @@ class myCalendarItem
             
                 for myItem in myItems
                 {
-                    retVal = myItem.meetingID
+                    retVal = myItem.meetingID!
                 }
             }
             
@@ -722,10 +722,10 @@ class myCalendarItem
         
         if mySavedValues.count > 0
         {
-            myPreviousMinutes = mySavedValues[0].previousMeetingID
-            myChair = mySavedValues[0].chair
-            myMinutes = mySavedValues[0].minutes
-            myMinutesType = mySavedValues[0].minutesType
+            myPreviousMinutes = mySavedValues[0].previousMeetingID!
+            myChair = mySavedValues[0].chair!
+            myMinutes = mySavedValues[0].minutes!
+            myMinutesType = mySavedValues[0].minutesType!
             mySavedData = true
         }
         
@@ -764,7 +764,7 @@ class myCalendarItem
         { // No calendar event has been loaded, so go straight from table
             for savedAttendee in mySavedValues
             {
-                initaliseAttendee(savedAttendee.name, inEmailAddress: savedAttendee.email, inType: savedAttendee.type, inStatus: savedAttendee.attendenceStatus)
+                initaliseAttendee(savedAttendee.name!, inEmailAddress: savedAttendee.email!, inType: savedAttendee.type!, inStatus: savedAttendee.attendenceStatus!)
             }
         }
         else
@@ -777,10 +777,10 @@ class myCalendarItem
                     for savedAttendee in mySavedValues
                     {
                         inviteeFound = false
-                        tempName = savedAttendee.name
-                        tempStatus = savedAttendee.attendenceStatus
-                        tempEmail = savedAttendee.email
-                        tempType = savedAttendee.type
+                        tempName = savedAttendee.name!
+                        tempStatus = savedAttendee.attendenceStatus!
+                        tempEmail = savedAttendee.email!
+                        tempType = savedAttendee.type!
                     
                         if myEvent!.hasAttendees
                         {
@@ -873,7 +873,7 @@ class myCalendarItem
                             inviteeFound = false
                             for checkAttendee in mySavedValues
                             {
-                                tempName = checkAttendee.name
+                                tempName = checkAttendee.name!
                                 if invitee.name == tempName
                                 {
                                     // Invitee found
@@ -942,7 +942,7 @@ class myCalendarItem
             { // In the past so we just used the entried from the table
                 for savedAttendee in mySavedValues
                 {
-                    initaliseAttendee(savedAttendee.name, inEmailAddress: savedAttendee.email, inType: savedAttendee.type, inStatus: savedAttendee.attendenceStatus)
+                    initaliseAttendee(savedAttendee.name!, inEmailAddress: savedAttendee.email!, inType: savedAttendee.type!, inStatus: savedAttendee.attendenceStatus!)
                 }
             }
         }
@@ -1082,9 +1082,9 @@ class myCalendarItem
             {
                 let startDateFormatter = DateFormatter()
                 startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
+                let myDisplayDate = startDateFormatter.string(from: myItem.startTime! as Date)
                 
-                let myDisplayString = "\(myItem.name) - \(myDisplayDate)"
+                let myDisplayString = "\(myItem.name!) - \(myDisplayDate)"
                 
                 myLine = "Previous Meeting: \(myDisplayString)"
                 myExportString = writeLine(myExportString, inLineString: myLine)
@@ -1142,7 +1142,7 @@ class myCalendarItem
                     }
                     else
                     {
-                        myLine += "||\(myData3[0].projectName)"
+                        myLine += "||\(myData3[0].projectName!)"
                     }
                     
                     if myTask.displayDueDate == ""
@@ -1218,7 +1218,7 @@ class myCalendarItem
                     }
                     else
                     {
-                        myLine += "||\(myData3[0].projectName)"
+                        myLine += "||\(myData3[0].projectName!)"
                     }
                     
                     if myTask.displayDueDate == ""
@@ -1325,7 +1325,7 @@ class myCalendarItem
                         }
                         else
                         {
-                            myLine += "||\(myData3[0].projectName)"
+                            myLine += "||\(myData3[0].projectName!)"
                         }
                         
                         if myTask.displayDueDate == ""
@@ -1426,9 +1426,9 @@ class myCalendarItem
             {
                 let startDateFormatter = DateFormatter()
                 startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
+                let myDisplayDate = startDateFormatter.string(from: myItem.startTime! as Date)
                 
-                let myDisplayString = "\(myItem.name) - \(myDisplayDate)"
+                let myDisplayString = "\(myItem.name!) - \(myDisplayDate)"
                 
                 myExportString = writeLine(myExportString, inLineString: "")
                 myExportString = writeLine(myExportString, inLineString: "")
@@ -1520,9 +1520,9 @@ class myCalendarItem
             {
                 let startDateFormatter = DateFormatter()
                 startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
+                let myDisplayDate = startDateFormatter.string(from: myItem.startTime! as Date)
                 
-                let myDisplayString = "\(myItem.name) - \(myDisplayDate)"
+                let myDisplayString = "\(myItem.name!) - \(myDisplayDate)"
                 
                 myLine = "Previous Meeting: \(myDisplayString)"
                 myExportString = writeHTMLLine(myExportString, inLineString: myLine)
@@ -1578,7 +1578,7 @@ class myCalendarItem
                     }
                     else
                     {
-                        myTaskTable += "<td>\(myData3[0].projectName)</td>"
+                        myTaskTable += "<td>\(myData3[0].projectName!)</td>"
                     }
                     
                     if myTask.displayDueDate == ""
@@ -1655,7 +1655,7 @@ class myCalendarItem
                     }
                     else
                     {
-                        myTaskTable += "<td>\(myData3[0].projectName)</td>"
+                        myTaskTable += "<td>\(myData3[0].projectName!)</td>"
                     }
                         
                     if myTask.displayDueDate == ""
@@ -1763,7 +1763,7 @@ class myCalendarItem
                         }
                         else
                         {
-                            myTaskTable += "<td>\(myData3[0].projectName)</td>"
+                            myTaskTable += "<td>\(myData3[0].projectName!)</td>"
                         }
                         
                         if myTask.displayDueDate == ""
@@ -1870,9 +1870,9 @@ class myCalendarItem
             {
                 let startDateFormatter = DateFormatter()
                 startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
-                let myDisplayDate = startDateFormatter.string(from: myItem.startTime)
+                let myDisplayDate = startDateFormatter.string(from: myItem.startTime! as Date)
                 
-                let myDisplayString = "\(myItem.name) - \(myDisplayDate)"
+                let myDisplayString = "\(myItem.name!) - \(myDisplayDate)"
                 
                 myExportString = writeHTMLLine(myExportString, inLineString: "")
                 myExportString = writeHTMLLine(myExportString, inLineString: "")
@@ -2046,7 +2046,7 @@ class iOSCalendar
         
         for myMeeting in myMeetingArray
         {
-            let myAttendeeList = myDatabaseConnection.loadAttendees(myMeeting.meetingID)
+            let myAttendeeList = myDatabaseConnection.loadAttendees(myMeeting.meetingID!)
 
             for myAttendee in myAttendeeList
             {
@@ -2086,7 +2086,7 @@ class iOSCalendar
         
         for myMeeting in myMeetingArray
         {
-            if myMeeting.name.lowercased().range(of: inSearchString.lowercased()) != nil
+            if myMeeting.name?.lowercased().range(of: inSearchString.lowercased()) != nil
             {
                 // Check to see if there is already an entry for this meeting, as if there is we do not need to add it
                 meetingFound = false
@@ -2101,7 +2101,7 @@ class iOSCalendar
                     
                     if myCheck.title == myMeeting.name
                     {  // Meeting names are the same
-                        if myCheck.startDate == myMeeting.startTime as Date
+                        if myCheck.startDate == myMeeting.startTime! as Date
                         { // Dates are the same
                             dateMatch = true
                             break
@@ -2556,7 +2556,7 @@ func parsePastMeeting(_ inMeetingID: String) -> [task]
         for myItem in myData
         {
             var myArray: [task] = Array()
-            let myData2 = myDatabaseConnection.getMeetingsTasks(myItem.meetingID)
+            let myData2 = myDatabaseConnection.getMeetingsTasks(myItem.meetingID!)
             
             for myItem2 in myData2
             {
@@ -2569,7 +2569,7 @@ func parsePastMeeting(_ inMeetingID: String) -> [task]
             
             if myItem.previousMeetingID != ""
             {
-                myReturnArray = parsePastMeeting(myItem.previousMeetingID)
+                myReturnArray = parsePastMeeting(myItem.previousMeetingID!)
                 
                 for myWork in myArray
                 {
@@ -2794,18 +2794,18 @@ extension coreDatabase
             myAgenda.chair = inChair
             myAgenda.minutes = inMinutes
             myAgenda.location = inLocation
-            myAgenda.startTime = inStartTime
-            myAgenda.endTime = inEndTime
+            myAgenda.startTime = inStartTime as NSDate
+            myAgenda.endTime = inEndTime as NSDate
             myAgenda.minutesType = inMinutesType
             myAgenda.teamID = NSNumber(value: inTeamID)
             if inUpdateType == "CODE"
             {
-                myAgenda.updateTime =  Date()
+                myAgenda.updateTime =  NSDate()
                 myAgenda.updateType = "Add"
             }
             else
             {
-                myAgenda.updateTime = inUpdateTime
+                myAgenda.updateTime = inUpdateTime as NSDate
                 myAgenda.updateType = inUpdateType
             }
         }
@@ -2817,13 +2817,13 @@ extension coreDatabase
             myAgenda.chair = inChair
             myAgenda.minutes = inMinutes
             myAgenda.location = inLocation
-            myAgenda.startTime = inStartTime
-            myAgenda.endTime = inEndTime
+            myAgenda.startTime = inStartTime as NSDate
+            myAgenda.endTime = inEndTime as NSDate
             myAgenda.minutesType = inMinutesType
             myAgenda.teamID = NSNumber(value: inTeamID)
             if inUpdateType == "CODE"
             {
-                myAgenda.updateTime =  Date()
+                myAgenda.updateTime =  NSDate()
                 if myAgenda.updateType != "Add"
                 {
                     myAgenda.updateType = "Update"
@@ -2831,7 +2831,7 @@ extension coreDatabase
             }
             else
             {
-                myAgenda.updateTime = inUpdateTime
+                myAgenda.updateTime = inUpdateTime as NSDate
                 myAgenda.updateType = inUpdateType
             }
         }
@@ -2848,18 +2848,18 @@ extension coreDatabase
         myAgenda.chair = inChair
         myAgenda.minutes = inMinutes
         myAgenda.location = inLocation
-        myAgenda.startTime = inStartTime
-        myAgenda.endTime = inEndTime
+        myAgenda.startTime = inStartTime as NSDate
+        myAgenda.endTime = inEndTime as NSDate
         myAgenda.minutesType = inMinutesType
         myAgenda.teamID = NSNumber(value: inTeamID)
         if inUpdateType == "CODE"
         {
-            myAgenda.updateTime =  Date()
+            myAgenda.updateTime =  NSDate()
             myAgenda.updateType = "Add"
         }
         else
         {
-            myAgenda.updateTime = inUpdateTime
+            myAgenda.updateTime = inUpdateTime as NSDate
             myAgenda.updateType = inUpdateType
         }
         
@@ -2941,7 +2941,7 @@ extension coreDatabase
             for myResult in fetchResults
             {
                 myResult.previousMeetingID = inPreviousMeetingID
-                myResult.updateTime =  Date()
+                myResult.updateTime =  NSDate()
                 if myResult.updateType != "Add"
                 {
                     myResult.updateType = "Update"
@@ -3020,7 +3020,7 @@ extension coreDatabase
             let fetchResults1 = try objectContext.fetch(fetchRequest1)
             for myMeeting in fetchResults1
             {
-                myMeeting.updateTime =  Date()
+                myMeeting.updateTime =  NSDate()
                 myMeeting.updateType = "Delete"
             }
         }
@@ -3236,7 +3236,7 @@ extension CloudKitInteraction
 
     func saveMeetingAgendaRecordToCloudKit(_ sourceRecord: MeetingAgenda)
     {
-        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID)\") && (actualTeamID == \(sourceRecord.teamID as! Int))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (actualTeamID == \(sourceRecord.teamID as! Int))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil

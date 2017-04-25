@@ -112,7 +112,7 @@ extension coreDatabase
             let fetchResults6 = try objectContext.fetch(fetchRequest6)
             for myMeeting6 in fetchResults6
             {
-                myMeeting6.updateTime =  Date()
+                myMeeting6.updateTime =  NSDate()
                 myMeeting6.updateType = "Delete"
             }
         }
@@ -205,7 +205,7 @@ extension CloudKitInteraction
 
     func saveMeetingSupportingDocsRecordToCloudKit(_ sourceRecord: MeetingSupportingDocs)
     {
-        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID)\") && (agendaID == \(sourceRecord.agendaID as! Int))") // better be accurate to get only the
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID as! Int))") // better be accurate to get only the
         let query = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
