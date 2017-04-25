@@ -561,6 +561,7 @@
 				344726601B54D6A800BEFF0B /* coreDatabase.swift */,
 				344B6ACC1BA7B3B600A5377B /* CloudKitInteraction.swift */,
 				343B3F1D1B83045D0053777B /* DBSync.swift */,
+				34BA26551EAD933400A41EE9 /* EvesCRMDatabase.swift */,
 				34A578BC1B5F6110008D3D8E /* Context.swift */,
 				347FF2051B93FB6600133D62 /* Context1_1.swift */,
 				34DF7AD21BBCE72A000E3B09 /* Context1_1+CoreDataProperties.swift */,
@@ -631,7 +632,6 @@
 				34BA264C1EAD8D3900A41EE9 /* outlineClass.swift */,
 				34BA264F1EAD901300A41EE9 /* rolesClass.swift */,
 				34BA26521EAD912100A41EE9 /* stageClass.swift */,
-				34BA26551EAD933400A41EE9 /* EvesCRMDatabase.swift */,
 			);
 			name = "My Classes";
 			sourceTree = "<group>";

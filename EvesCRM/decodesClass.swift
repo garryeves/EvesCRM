@@ -204,7 +204,6 @@ extension coreDatabase
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         
-        
         var storeInt: Int = 1
         
         // Execute the fetch request, and cast the results to an array of  objects
@@ -225,8 +224,8 @@ extension coreDatabase
         
         if storeInt > 0
         {
-            let myValue = "CloudKit Sync \(storeInt)"
-            defaults.set(myValue, forKey: "EvesCRM")
+            let myValue = "\(coreDatabaseName) Sync \(storeInt)"
+            defaults.set(myValue, forKey: coreDatabaseName)
             
             updateDecodeValue("Device", inCodeValue:  "\(storeInt)", inCodeType: "hidden")
         }
@@ -572,7 +571,7 @@ extension CloudKitInteraction
                     default:
                         updateRecord = true
                         
-                        if sourceRecord.decode_name.hasPrefix("CloudKit Sync")
+                        if sourceRecord.decode_name.hasPrefix("\(coreDatabaseName) Sync")
                         {
                             if syncName == sourceRecord.decode_name
                             {

@@ -337,7 +337,7 @@ class project: NSObject // 10k level
         
         for myProject in myProjects
         {
-            myProjectEndDate = myProject.projectEndDate
+            myProjectEndDate = myProject.projectEndDate as Date
             myProjectID = myProject.projectID as! Int
             myProjectName = myProject.projectName
             myProjectStartDate = myProject.projectStartDate

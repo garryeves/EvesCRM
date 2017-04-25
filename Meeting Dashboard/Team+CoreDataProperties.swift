@@ -2,7 +2,7 @@
 //  Team+CoreDataProperties.swift
 //  Meeting Dashboard
 //
-//  Created by Garry Eves on 22/4/17.
+//  Created by Garry Eves on 25/4/17.
 //  Copyright © 2017 Garry Eves. All rights reserved.
 //
 
@@ -16,14 +16,14 @@ extension Team {
         return NSFetchRequest<Team>(entityName: "Team")
     }
 
-    @NSManaged public var externalID: NSObject?
-    @NSManaged public var name: NSObject?
-    @NSManaged public var note: NSObject?
-    @NSManaged public var predecessor: NSObject?
-    @NSManaged public var status: NSObject?
-    @NSManaged public var teamID: NSObject?
-    @NSManaged public var type: NSObject?
-    @NSManaged public var updateTime: NSObject?
-    @NSManaged public var updateType: NSObject?
+    @NSManaged public var externalID: Int32
+    @NSManaged public var name: String?
+    @NSManaged public var note: String?
+    @NSManaged public var predecessor: Int32
+    @NSManaged public var status: String?
+    @NSManaged public var teamID: Int32
+    @NSManaged public var type: String?
+    @NSManaged public var updateTime: NSDate?
+    @NSManaged public var updateType: String?
 
 }

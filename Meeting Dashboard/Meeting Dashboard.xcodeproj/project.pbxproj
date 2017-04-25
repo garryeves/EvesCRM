@@ -7,6 +7,144 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		340626BE1EAF0297002700BB /* Meeting_Dashboard.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 34BA257A1EAAFD2D00A41EE9 /* Meeting_Dashboard.xcdatamodeld */; };
+		340626BF1EAF0297002700BB /* Meeting_Dashboard.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 34BA257A1EAAFD2D00A41EE9 /* Meeting_Dashboard.xcdatamodeld */; };
+		340627061EAF0479002700BB /* Roles+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340626F81EAF0479002700BB /* Roles+CoreDataClass.swift */; };
+		340627071EAF0479002700BB /* Roles+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340626F81EAF0479002700BB /* Roles+CoreDataClass.swift */; };
+		340627081EAF0479002700BB /* Roles+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340626F81EAF0479002700BB /* Roles+CoreDataClass.swift */; };
+		340627091EAF0479002700BB /* Context+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340626F91EAF0479002700BB /* Context+CoreDataClass.swift */; };
+		3406270A1EAF0479002700BB /* Context+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340626F91EAF0479002700BB /* Context+CoreDataClass.swift */; };
+		3406270B1EAF0479002700BB /* Context+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340626F91EAF0479002700BB /* Context+CoreDataClass.swift */; };
+		3406270C1EAF0479002700BB /* Context1_1+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340626FA1EAF0479002700BB /* Context1_1+CoreDataClass.swift */; };
+		3406270D1EAF0479002700BB /* Context1_1+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340626FA1EAF0479002700BB /* Context1_1+CoreDataClass.swift */; };
+		3406270E1EAF0479002700BB /* Context1_1+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340626FA1EAF0479002700BB /* Context1_1+CoreDataClass.swift */; };
+		3406270F1EAF0479002700BB /* Decodes+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340626FB1EAF0479002700BB /* Decodes+CoreDataClass.swift */; };
+		340627101EAF0479002700BB /* Decodes+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340626FB1EAF0479002700BB /* Decodes+CoreDataClass.swift */; };
+		340627111EAF0479002700BB /* Decodes+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340626FB1EAF0479002700BB /* Decodes+CoreDataClass.swift */; };
+		340627121EAF0479002700BB /* MeetingAgenda+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340626FC1EAF0479002700BB /* MeetingAgenda+CoreDataClass.swift */; };
+		340627131EAF0479002700BB /* MeetingAgenda+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340626FC1EAF0479002700BB /* MeetingAgenda+CoreDataClass.swift */; };
+		340627141EAF0479002700BB /* MeetingAgenda+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340626FC1EAF0479002700BB /* MeetingAgenda+CoreDataClass.swift */; };
+		340627151EAF0479002700BB /* MeetingAgendaItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340626FD1EAF0479002700BB /* MeetingAgendaItem+CoreDataClass.swift */; };
+		340627161EAF0479002700BB /* MeetingAgendaItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340626FD1EAF0479002700BB /* MeetingAgendaItem+CoreDataClass.swift */; };
+		340627171EAF0479002700BB /* MeetingAgendaItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340626FD1EAF0479002700BB /* MeetingAgendaItem+CoreDataClass.swift */; };
+		340627181EAF0479002700BB /* MeetingAttendees+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340626FE1EAF0479002700BB /* MeetingAttendees+CoreDataClass.swift */; };
+		340627191EAF0479002700BB /* MeetingAttendees+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340626FE1EAF0479002700BB /* MeetingAttendees+CoreDataClass.swift */; };
+		3406271A1EAF0479002700BB /* MeetingAttendees+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340626FE1EAF0479002700BB /* MeetingAttendees+CoreDataClass.swift */; };
+		3406271B1EAF0479002700BB /* MeetingSupportingDocs+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340626FF1EAF0479002700BB /* MeetingSupportingDocs+CoreDataClass.swift */; };
+		3406271C1EAF0479002700BB /* MeetingSupportingDocs+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340626FF1EAF0479002700BB /* MeetingSupportingDocs+CoreDataClass.swift */; };
+		3406271D1EAF0479002700BB /* MeetingSupportingDocs+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340626FF1EAF0479002700BB /* MeetingSupportingDocs+CoreDataClass.swift */; };
+		3406271E1EAF0479002700BB /* MeetingTasks+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627001EAF0479002700BB /* MeetingTasks+CoreDataClass.swift */; };
+		3406271F1EAF0479002700BB /* MeetingTasks+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627001EAF0479002700BB /* MeetingTasks+CoreDataClass.swift */; };
+		340627201EAF0479002700BB /* MeetingTasks+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627001EAF0479002700BB /* MeetingTasks+CoreDataClass.swift */; };
+		340627211EAF0479002700BB /* Projects+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627011EAF0479002700BB /* Projects+CoreDataClass.swift */; };
+		340627221EAF0479002700BB /* Projects+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627011EAF0479002700BB /* Projects+CoreDataClass.swift */; };
+		340627231EAF0479002700BB /* Projects+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627011EAF0479002700BB /* Projects+CoreDataClass.swift */; };
+		340627241EAF0479002700BB /* Task+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627021EAF0479002700BB /* Task+CoreDataClass.swift */; };
+		340627251EAF0479002700BB /* Task+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627021EAF0479002700BB /* Task+CoreDataClass.swift */; };
+		340627261EAF0479002700BB /* Task+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627021EAF0479002700BB /* Task+CoreDataClass.swift */; };
+		340627271EAF0479002700BB /* TaskContext+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627031EAF0479002700BB /* TaskContext+CoreDataClass.swift */; };
+		340627281EAF0479002700BB /* TaskContext+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627031EAF0479002700BB /* TaskContext+CoreDataClass.swift */; };
+		340627291EAF0479002700BB /* TaskContext+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627031EAF0479002700BB /* TaskContext+CoreDataClass.swift */; };
+		3406272A1EAF0479002700BB /* TaskUpdates+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627041EAF0479002700BB /* TaskUpdates+CoreDataClass.swift */; };
+		3406272B1EAF0479002700BB /* TaskUpdates+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627041EAF0479002700BB /* TaskUpdates+CoreDataClass.swift */; };
+		3406272C1EAF0479002700BB /* TaskUpdates+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627041EAF0479002700BB /* TaskUpdates+CoreDataClass.swift */; };
+		3406272D1EAF0479002700BB /* Team+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627051EAF0479002700BB /* Team+CoreDataClass.swift */; };
+		3406272E1EAF0479002700BB /* Team+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627051EAF0479002700BB /* Team+CoreDataClass.swift */; };
+		3406272F1EAF0479002700BB /* Team+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627051EAF0479002700BB /* Team+CoreDataClass.swift */; };
+		3406273E1EAF0546002700BB /* Context1_1+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627301EAF0546002700BB /* Context1_1+CoreDataProperties.swift */; };
+		3406273F1EAF0546002700BB /* Context1_1+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627301EAF0546002700BB /* Context1_1+CoreDataProperties.swift */; };
+		340627401EAF0546002700BB /* Context1_1+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627301EAF0546002700BB /* Context1_1+CoreDataProperties.swift */; };
+		340627411EAF0546002700BB /* MeetingAgenda+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627311EAF0546002700BB /* MeetingAgenda+CoreDataProperties.swift */; };
+		340627421EAF0546002700BB /* MeetingAgenda+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627311EAF0546002700BB /* MeetingAgenda+CoreDataProperties.swift */; };
+		340627431EAF0546002700BB /* MeetingAgenda+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627311EAF0546002700BB /* MeetingAgenda+CoreDataProperties.swift */; };
+		340627441EAF0546002700BB /* MeetingAttendees+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627321EAF0546002700BB /* MeetingAttendees+CoreDataProperties.swift */; };
+		340627451EAF0546002700BB /* MeetingAttendees+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627321EAF0546002700BB /* MeetingAttendees+CoreDataProperties.swift */; };
+		340627461EAF0546002700BB /* MeetingAttendees+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627321EAF0546002700BB /* MeetingAttendees+CoreDataProperties.swift */; };
+		340627471EAF0546002700BB /* TaskContext+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627331EAF0546002700BB /* TaskContext+CoreDataProperties.swift */; };
+		340627481EAF0546002700BB /* TaskContext+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627331EAF0546002700BB /* TaskContext+CoreDataProperties.swift */; };
+		340627491EAF0546002700BB /* TaskContext+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627331EAF0546002700BB /* TaskContext+CoreDataProperties.swift */; };
+		3406274A1EAF0546002700BB /* Task+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627341EAF0546002700BB /* Task+CoreDataProperties.swift */; };
+		3406274B1EAF0546002700BB /* Task+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627341EAF0546002700BB /* Task+CoreDataProperties.swift */; };
+		3406274C1EAF0546002700BB /* Task+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627341EAF0546002700BB /* Task+CoreDataProperties.swift */; };
+		3406274D1EAF0546002700BB /* MeetingAgendaItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627351EAF0546002700BB /* MeetingAgendaItem+CoreDataProperties.swift */; };
+		3406274E1EAF0546002700BB /* MeetingAgendaItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627351EAF0546002700BB /* MeetingAgendaItem+CoreDataProperties.swift */; };
+		3406274F1EAF0546002700BB /* MeetingAgendaItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627351EAF0546002700BB /* MeetingAgendaItem+CoreDataProperties.swift */; };
+		340627501EAF0546002700BB /* Projects+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627361EAF0546002700BB /* Projects+CoreDataProperties.swift */; };
+		340627511EAF0546002700BB /* Projects+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627361EAF0546002700BB /* Projects+CoreDataProperties.swift */; };
+		340627521EAF0546002700BB /* Projects+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627361EAF0546002700BB /* Projects+CoreDataProperties.swift */; };
+		340627531EAF0546002700BB /* Context+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627371EAF0546002700BB /* Context+CoreDataProperties.swift */; };
+		340627541EAF0546002700BB /* Context+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627371EAF0546002700BB /* Context+CoreDataProperties.swift */; };
+		340627551EAF0546002700BB /* Context+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627371EAF0546002700BB /* Context+CoreDataProperties.swift */; };
+		340627561EAF0546002700BB /* TaskUpdates+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627381EAF0546002700BB /* TaskUpdates+CoreDataProperties.swift */; };
+		340627571EAF0546002700BB /* TaskUpdates+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627381EAF0546002700BB /* TaskUpdates+CoreDataProperties.swift */; };
+		340627581EAF0546002700BB /* TaskUpdates+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627381EAF0546002700BB /* TaskUpdates+CoreDataProperties.swift */; };
+		340627591EAF0546002700BB /* MeetingSupportingDocs+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627391EAF0546002700BB /* MeetingSupportingDocs+CoreDataProperties.swift */; };
+		3406275A1EAF0546002700BB /* MeetingSupportingDocs+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627391EAF0546002700BB /* MeetingSupportingDocs+CoreDataProperties.swift */; };
+		3406275B1EAF0546002700BB /* MeetingSupportingDocs+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627391EAF0546002700BB /* MeetingSupportingDocs+CoreDataProperties.swift */; };
+		3406275C1EAF0546002700BB /* MeetingTasks+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406273A1EAF0546002700BB /* MeetingTasks+CoreDataProperties.swift */; };
+		3406275D1EAF0546002700BB /* MeetingTasks+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406273A1EAF0546002700BB /* MeetingTasks+CoreDataProperties.swift */; };
+		3406275E1EAF0546002700BB /* MeetingTasks+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406273A1EAF0546002700BB /* MeetingTasks+CoreDataProperties.swift */; };
+		3406275F1EAF0546002700BB /* Roles+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406273B1EAF0546002700BB /* Roles+CoreDataProperties.swift */; };
+		340627601EAF0546002700BB /* Roles+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406273B1EAF0546002700BB /* Roles+CoreDataProperties.swift */; };
+		340627611EAF0546002700BB /* Roles+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406273B1EAF0546002700BB /* Roles+CoreDataProperties.swift */; };
+		340627621EAF0546002700BB /* Team+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406273C1EAF0546002700BB /* Team+CoreDataProperties.swift */; };
+		340627631EAF0546002700BB /* Team+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406273C1EAF0546002700BB /* Team+CoreDataProperties.swift */; };
+		340627641EAF0546002700BB /* Team+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406273C1EAF0546002700BB /* Team+CoreDataProperties.swift */; };
+		340627651EAF0546002700BB /* Decodes+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406273D1EAF0546002700BB /* Decodes+CoreDataProperties.swift */; };
+		340627661EAF0546002700BB /* Decodes+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406273D1EAF0546002700BB /* Decodes+CoreDataProperties.swift */; };
+		340627671EAF0546002700BB /* Decodes+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406273D1EAF0546002700BB /* Decodes+CoreDataProperties.swift */; };
+		3406276C1EAF07EF002700BB /* ProjectNote+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627681EAF07EF002700BB /* ProjectNote+CoreDataClass.swift */; };
+		3406276D1EAF07EF002700BB /* ProjectNote+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627681EAF07EF002700BB /* ProjectNote+CoreDataClass.swift */; };
+		3406276E1EAF07EF002700BB /* ProjectNote+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627681EAF07EF002700BB /* ProjectNote+CoreDataClass.swift */; };
+		3406276F1EAF07EF002700BB /* ProjectNote+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627691EAF07EF002700BB /* ProjectNote+CoreDataProperties.swift */; };
+		340627701EAF07EF002700BB /* ProjectNote+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627691EAF07EF002700BB /* ProjectNote+CoreDataProperties.swift */; };
+		340627711EAF07EF002700BB /* ProjectNote+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627691EAF07EF002700BB /* ProjectNote+CoreDataProperties.swift */; };
+		340627721EAF07EF002700BB /* ProjectTeamMembers+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406276A1EAF07EF002700BB /* ProjectTeamMembers+CoreDataClass.swift */; };
+		340627731EAF07EF002700BB /* ProjectTeamMembers+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406276A1EAF07EF002700BB /* ProjectTeamMembers+CoreDataClass.swift */; };
+		340627741EAF07EF002700BB /* ProjectTeamMembers+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406276A1EAF07EF002700BB /* ProjectTeamMembers+CoreDataClass.swift */; };
+		340627751EAF07EF002700BB /* ProjectTeamMembers+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406276B1EAF07EF002700BB /* ProjectTeamMembers+CoreDataProperties.swift */; };
+		340627761EAF07EF002700BB /* ProjectTeamMembers+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406276B1EAF07EF002700BB /* ProjectTeamMembers+CoreDataProperties.swift */; };
+		340627771EAF07EF002700BB /* ProjectTeamMembers+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406276B1EAF07EF002700BB /* ProjectTeamMembers+CoreDataProperties.swift */; };
+		340627791EAF0BAD002700BB /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 340627781EAF0BAD002700BB /* UserInfo.swift */; };
+		3406277B1EAF0BE6002700BB /* projectteamMemberClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406277A1EAF0BE6002700BB /* projectteamMemberClass.swift */; };
+		340DB4581EADD5B30077EE23 /* DBSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990DD1EADD198005B2718 /* DBSync.swift */; };
+		340DB4591EADD5B30077EE23 /* DBSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990DD1EADD198005B2718 /* DBSync.swift */; };
+		340DB45A1EADD5B60077EE23 /* meetingsDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990B91EADCD69005B2718 /* meetingsDatabase.swift */; };
+		340DB45B1EADD5B60077EE23 /* meetingsDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990B91EADCD69005B2718 /* meetingsDatabase.swift */; };
+		340DB45C1EADD5BD0077EE23 /* CalendarDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990DB1EADCF49005B2718 /* CalendarDetails.swift */; };
+		340DB45D1EADD5BD0077EE23 /* CalendarDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990DB1EADCF49005B2718 /* CalendarDetails.swift */; };
+		340DB45E1EADD5BF0077EE23 /* contextClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990C11EADCEF4005B2718 /* contextClass.swift */; };
+		340DB45F1EADD5C00077EE23 /* contextClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990C11EADCEF4005B2718 /* contextClass.swift */; };
+		340DB4601EADD5C20077EE23 /* decodesClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990BC1EADCEE0005B2718 /* decodesClass.swift */; };
+		340DB4611EADD5C30077EE23 /* decodesClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990BC1EADCEE0005B2718 /* decodesClass.swift */; };
+		340DB4621EADD5C60077EE23 /* displayPanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990C21EADCEF4005B2718 /* displayPanes.swift */; };
+		340DB4631EADD5C60077EE23 /* displayPanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990C21EADCEF4005B2718 /* displayPanes.swift */; };
+		340DB4641EADD5CB0077EE23 /* maintainPanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990C71EADCF07005B2718 /* maintainPanes.swift */; };
+		340DB4651EADD5CC0077EE23 /* maintainPanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990C71EADCF07005B2718 /* maintainPanes.swift */; };
+		340DB4661EADD5CF0077EE23 /* meetingSupportingDocsClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990C81EADCF07005B2718 /* meetingSupportingDocsClass.swift */; };
+		340DB4671EADD5D00077EE23 /* meetingSupportingDocsClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990C81EADCF07005B2718 /* meetingSupportingDocsClass.swift */; };
+		340DB4681EADD5D30077EE23 /* meetingAgendaItemClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990BF1EADCEF4005B2718 /* meetingAgendaItemClass.swift */; };
+		340DB4691EADD5D30077EE23 /* meetingAgendaItemClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990BF1EADCEF4005B2718 /* meetingAgendaItemClass.swift */; };
+		340DB46A1EADD5D70077EE23 /* meetingAttendeeClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990C01EADCEF4005B2718 /* meetingAttendeeClass.swift */; };
+		340DB46B1EADD5D80077EE23 /* meetingAttendeeClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990C01EADCEF4005B2718 /* meetingAttendeeClass.swift */; };
+		340DB46C1EADD5DB0077EE23 /* projectClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990CB1EADCF19005B2718 /* projectClass.swift */; };
+		340DB46D1EADD5DB0077EE23 /* projectClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990CB1EADCF19005B2718 /* projectClass.swift */; };
+		340DB46E1EADD5DE0077EE23 /* rolesClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990CD1EADCF19005B2718 /* rolesClass.swift */; };
+		340DB46F1EADD5DF0077EE23 /* rolesClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990CD1EADCF19005B2718 /* rolesClass.swift */; };
+		340DB4721EADD5E40077EE23 /* taskClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990D31EADCF2B005B2718 /* taskClass.swift */; };
+		340DB4731EADD5E50077EE23 /* taskClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990D31EADCF2B005B2718 /* taskClass.swift */; };
+		340DB4741EADD5E80077EE23 /* taskContextsClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990D41EADCF2B005B2718 /* taskContextsClass.swift */; };
+		340DB4751EADD5E90077EE23 /* taskContextsClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990D41EADCF2B005B2718 /* taskContextsClass.swift */; };
+		340DB4761EADD5EC0077EE23 /* taskPredecessorClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990D51EADCF2B005B2718 /* taskPredecessorClass.swift */; };
+		340DB4771EADD5EC0077EE23 /* taskPredecessorClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990D51EADCF2B005B2718 /* taskPredecessorClass.swift */; };
+		340DB4781EADD5EF0077EE23 /* taskUpdatesClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990D61EADCF2B005B2718 /* taskUpdatesClass.swift */; };
+		340DB4791EADD5F00077EE23 /* taskUpdatesClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990D61EADCF2B005B2718 /* taskUpdatesClass.swift */; };
+		340DB47A1EADD5F30077EE23 /* teamClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990BB1EADCEE0005B2718 /* teamClass.swift */; };
+		340DB47B1EADD5F30077EE23 /* teamClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990BB1EADCEE0005B2718 /* teamClass.swift */; };
+		340DB47C1EADD6CA0077EE23 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25751EAAFD2D00A41EE9 /* ViewController.swift */; };
+		340DB47D1EADD6CA0077EE23 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25751EAAFD2D00A41EE9 /* ViewController.swift */; };
+		340DB47E1EADD6CE0077EE23 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25731EAAFD2D00A41EE9 /* AppDelegate.swift */; };
+		340DB47F1EADD6CE0077EE23 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25731EAAFD2D00A41EE9 /* AppDelegate.swift */; };
 		34BA25741EAAFD2D00A41EE9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25731EAAFD2D00A41EE9 /* AppDelegate.swift */; };
 		34BA25761EAAFD2D00A41EE9 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25751EAAFD2D00A41EE9 /* ViewController.swift */; };
 		34BA25791EAAFD2D00A41EE9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34BA25771EAAFD2D00A41EE9 /* Main.storyboard */; };
@@ -21,90 +159,32 @@
 		34BA25AC1EAB05DA00A41EE9 /* EvesCRMSharedFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25AB1EAB05DA00A41EE9 /* EvesCRMSharedFiles.swift */; };
 		34BA25AD1EAB05DA00A41EE9 /* EvesCRMSharedFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25AB1EAB05DA00A41EE9 /* EvesCRMSharedFiles.swift */; };
 		34BA25AE1EAB05DA00A41EE9 /* EvesCRMSharedFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25AB1EAB05DA00A41EE9 /* EvesCRMSharedFiles.swift */; };
-		34BA25C91EAB0D3E00A41EE9 /* Team+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25AF1EAB0D3E00A41EE9 /* Team+CoreDataClass.swift */; };
-		34BA25CA1EAB0D3E00A41EE9 /* Team+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25AF1EAB0D3E00A41EE9 /* Team+CoreDataClass.swift */; };
-		34BA25CB1EAB0D3E00A41EE9 /* Team+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25AF1EAB0D3E00A41EE9 /* Team+CoreDataClass.swift */; };
-		34BA25CC1EAB0D3E00A41EE9 /* Team+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B01EAB0D3E00A41EE9 /* Team+CoreDataProperties.swift */; };
-		34BA25CD1EAB0D3E00A41EE9 /* Team+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B01EAB0D3E00A41EE9 /* Team+CoreDataProperties.swift */; };
-		34BA25CE1EAB0D3E00A41EE9 /* Team+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B01EAB0D3E00A41EE9 /* Team+CoreDataProperties.swift */; };
-		34BA25CF1EAB0D3E00A41EE9 /* MeetingAttendees+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B11EAB0D3E00A41EE9 /* MeetingAttendees+CoreDataClass.swift */; };
-		34BA25D01EAB0D3E00A41EE9 /* MeetingAttendees+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B11EAB0D3E00A41EE9 /* MeetingAttendees+CoreDataClass.swift */; };
-		34BA25D11EAB0D3E00A41EE9 /* MeetingAttendees+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B11EAB0D3E00A41EE9 /* MeetingAttendees+CoreDataClass.swift */; };
-		34BA25D21EAB0D3E00A41EE9 /* MeetingAttendees+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B21EAB0D3E00A41EE9 /* MeetingAttendees+CoreDataProperties.swift */; };
-		34BA25D31EAB0D3E00A41EE9 /* MeetingAttendees+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B21EAB0D3E00A41EE9 /* MeetingAttendees+CoreDataProperties.swift */; };
-		34BA25D41EAB0D3E00A41EE9 /* MeetingAttendees+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B21EAB0D3E00A41EE9 /* MeetingAttendees+CoreDataProperties.swift */; };
-		34BA25D51EAB0D3E00A41EE9 /* Projects+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B31EAB0D3E00A41EE9 /* Projects+CoreDataClass.swift */; };
-		34BA25D61EAB0D3E00A41EE9 /* Projects+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B31EAB0D3E00A41EE9 /* Projects+CoreDataClass.swift */; };
-		34BA25D71EAB0D3E00A41EE9 /* Projects+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B31EAB0D3E00A41EE9 /* Projects+CoreDataClass.swift */; };
-		34BA25D81EAB0D3E00A41EE9 /* Projects+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B41EAB0D3E00A41EE9 /* Projects+CoreDataProperties.swift */; };
-		34BA25D91EAB0D3E00A41EE9 /* Projects+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B41EAB0D3E00A41EE9 /* Projects+CoreDataProperties.swift */; };
-		34BA25DA1EAB0D3E00A41EE9 /* Projects+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B41EAB0D3E00A41EE9 /* Projects+CoreDataProperties.swift */; };
-		34BA25DB1EAB0D3E00A41EE9 /* Context1_1+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B51EAB0D3E00A41EE9 /* Context1_1+CoreDataClass.swift */; };
-		34BA25DC1EAB0D3E00A41EE9 /* Context1_1+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B51EAB0D3E00A41EE9 /* Context1_1+CoreDataClass.swift */; };
-		34BA25DD1EAB0D3E00A41EE9 /* Context1_1+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B51EAB0D3E00A41EE9 /* Context1_1+CoreDataClass.swift */; };
-		34BA25DE1EAB0D3E00A41EE9 /* Context1_1+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B61EAB0D3E00A41EE9 /* Context1_1+CoreDataProperties.swift */; };
-		34BA25DF1EAB0D3E00A41EE9 /* Context1_1+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B61EAB0D3E00A41EE9 /* Context1_1+CoreDataProperties.swift */; };
-		34BA25E01EAB0D3E00A41EE9 /* Context1_1+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B61EAB0D3E00A41EE9 /* Context1_1+CoreDataProperties.swift */; };
-		34BA25E11EAB0D3E00A41EE9 /* TaskContext+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B71EAB0D3E00A41EE9 /* TaskContext+CoreDataClass.swift */; };
-		34BA25E21EAB0D3E00A41EE9 /* TaskContext+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B71EAB0D3E00A41EE9 /* TaskContext+CoreDataClass.swift */; };
-		34BA25E31EAB0D3E00A41EE9 /* TaskContext+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B71EAB0D3E00A41EE9 /* TaskContext+CoreDataClass.swift */; };
-		34BA25E41EAB0D3E00A41EE9 /* TaskContext+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B81EAB0D3E00A41EE9 /* TaskContext+CoreDataProperties.swift */; };
-		34BA25E51EAB0D3E00A41EE9 /* TaskContext+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B81EAB0D3E00A41EE9 /* TaskContext+CoreDataProperties.swift */; };
-		34BA25E61EAB0D3E00A41EE9 /* TaskContext+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B81EAB0D3E00A41EE9 /* TaskContext+CoreDataProperties.swift */; };
-		34BA25E71EAB0D3E00A41EE9 /* Task+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B91EAB0D3E00A41EE9 /* Task+CoreDataClass.swift */; };
-		34BA25E81EAB0D3E00A41EE9 /* Task+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B91EAB0D3E00A41EE9 /* Task+CoreDataClass.swift */; };
-		34BA25E91EAB0D3E00A41EE9 /* Task+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25B91EAB0D3E00A41EE9 /* Task+CoreDataClass.swift */; };
-		34BA25EA1EAB0D3E00A41EE9 /* Task+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25BA1EAB0D3E00A41EE9 /* Task+CoreDataProperties.swift */; };
-		34BA25EB1EAB0D3E00A41EE9 /* Task+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25BA1EAB0D3E00A41EE9 /* Task+CoreDataProperties.swift */; };
-		34BA25EC1EAB0D3E00A41EE9 /* Task+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25BA1EAB0D3E00A41EE9 /* Task+CoreDataProperties.swift */; };
-		34BA25ED1EAB0D3E00A41EE9 /* MeetingSupportingDocs+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25BB1EAB0D3E00A41EE9 /* MeetingSupportingDocs+CoreDataClass.swift */; };
-		34BA25EE1EAB0D3E00A41EE9 /* MeetingSupportingDocs+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25BB1EAB0D3E00A41EE9 /* MeetingSupportingDocs+CoreDataClass.swift */; };
-		34BA25EF1EAB0D3E00A41EE9 /* MeetingSupportingDocs+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25BB1EAB0D3E00A41EE9 /* MeetingSupportingDocs+CoreDataClass.swift */; };
-		34BA25F01EAB0D3E00A41EE9 /* MeetingSupportingDocs+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25BC1EAB0D3E00A41EE9 /* MeetingSupportingDocs+CoreDataProperties.swift */; };
-		34BA25F11EAB0D3E00A41EE9 /* MeetingSupportingDocs+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25BC1EAB0D3E00A41EE9 /* MeetingSupportingDocs+CoreDataProperties.swift */; };
-		34BA25F21EAB0D3E00A41EE9 /* MeetingSupportingDocs+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25BC1EAB0D3E00A41EE9 /* MeetingSupportingDocs+CoreDataProperties.swift */; };
-		34BA25F31EAB0D3E00A41EE9 /* MeetingAgenda+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25BD1EAB0D3E00A41EE9 /* MeetingAgenda+CoreDataClass.swift */; };
-		34BA25F41EAB0D3E00A41EE9 /* MeetingAgenda+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25BD1EAB0D3E00A41EE9 /* MeetingAgenda+CoreDataClass.swift */; };
-		34BA25F51EAB0D3E00A41EE9 /* MeetingAgenda+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25BD1EAB0D3E00A41EE9 /* MeetingAgenda+CoreDataClass.swift */; };
-		34BA25F61EAB0D3E00A41EE9 /* MeetingAgenda+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25BE1EAB0D3E00A41EE9 /* MeetingAgenda+CoreDataProperties.swift */; };
-		34BA25F71EAB0D3E00A41EE9 /* MeetingAgenda+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25BE1EAB0D3E00A41EE9 /* MeetingAgenda+CoreDataProperties.swift */; };
-		34BA25F81EAB0D3E00A41EE9 /* MeetingAgenda+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25BE1EAB0D3E00A41EE9 /* MeetingAgenda+CoreDataProperties.swift */; };
-		34BA25F91EAB0D3E00A41EE9 /* TaskUpdates+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25BF1EAB0D3E00A41EE9 /* TaskUpdates+CoreDataClass.swift */; };
-		34BA25FA1EAB0D3E00A41EE9 /* TaskUpdates+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25BF1EAB0D3E00A41EE9 /* TaskUpdates+CoreDataClass.swift */; };
-		34BA25FB1EAB0D3E00A41EE9 /* TaskUpdates+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25BF1EAB0D3E00A41EE9 /* TaskUpdates+CoreDataClass.swift */; };
-		34BA25FC1EAB0D3E00A41EE9 /* TaskUpdates+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25C01EAB0D3E00A41EE9 /* TaskUpdates+CoreDataProperties.swift */; };
-		34BA25FD1EAB0D3E00A41EE9 /* TaskUpdates+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25C01EAB0D3E00A41EE9 /* TaskUpdates+CoreDataProperties.swift */; };
-		34BA25FE1EAB0D3E00A41EE9 /* TaskUpdates+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25C01EAB0D3E00A41EE9 /* TaskUpdates+CoreDataProperties.swift */; };
-		34BA25FF1EAB0D3E00A41EE9 /* MeetingTasks+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25C11EAB0D3E00A41EE9 /* MeetingTasks+CoreDataClass.swift */; };
-		34BA26001EAB0D3E00A41EE9 /* MeetingTasks+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25C11EAB0D3E00A41EE9 /* MeetingTasks+CoreDataClass.swift */; };
-		34BA26011EAB0D3E00A41EE9 /* MeetingTasks+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25C11EAB0D3E00A41EE9 /* MeetingTasks+CoreDataClass.swift */; };
-		34BA26021EAB0D3E00A41EE9 /* MeetingTasks+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25C21EAB0D3E00A41EE9 /* MeetingTasks+CoreDataProperties.swift */; };
-		34BA26031EAB0D3E00A41EE9 /* MeetingTasks+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25C21EAB0D3E00A41EE9 /* MeetingTasks+CoreDataProperties.swift */; };
-		34BA26041EAB0D3E00A41EE9 /* MeetingTasks+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25C21EAB0D3E00A41EE9 /* MeetingTasks+CoreDataProperties.swift */; };
-		34BA26051EAB0D3E00A41EE9 /* Decodes+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25C31EAB0D3E00A41EE9 /* Decodes+CoreDataClass.swift */; };
-		34BA26061EAB0D3E00A41EE9 /* Decodes+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25C31EAB0D3E00A41EE9 /* Decodes+CoreDataClass.swift */; };
-		34BA26071EAB0D3E00A41EE9 /* Decodes+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25C31EAB0D3E00A41EE9 /* Decodes+CoreDataClass.swift */; };
-		34BA26081EAB0D3E00A41EE9 /* Decodes+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25C41EAB0D3E00A41EE9 /* Decodes+CoreDataProperties.swift */; };
-		34BA26091EAB0D3E00A41EE9 /* Decodes+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25C41EAB0D3E00A41EE9 /* Decodes+CoreDataProperties.swift */; };
-		34BA260A1EAB0D3E00A41EE9 /* Decodes+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25C41EAB0D3E00A41EE9 /* Decodes+CoreDataProperties.swift */; };
-		34BA260B1EAB0D3E00A41EE9 /* MeetingAgendaItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25C51EAB0D3E00A41EE9 /* MeetingAgendaItem+CoreDataClass.swift */; };
-		34BA260C1EAB0D3E00A41EE9 /* MeetingAgendaItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25C51EAB0D3E00A41EE9 /* MeetingAgendaItem+CoreDataClass.swift */; };
-		34BA260D1EAB0D3E00A41EE9 /* MeetingAgendaItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25C51EAB0D3E00A41EE9 /* MeetingAgendaItem+CoreDataClass.swift */; };
-		34BA260E1EAB0D3E00A41EE9 /* MeetingAgendaItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25C61EAB0D3E00A41EE9 /* MeetingAgendaItem+CoreDataProperties.swift */; };
-		34BA260F1EAB0D3E00A41EE9 /* MeetingAgendaItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25C61EAB0D3E00A41EE9 /* MeetingAgendaItem+CoreDataProperties.swift */; };
-		34BA26101EAB0D3E00A41EE9 /* MeetingAgendaItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25C61EAB0D3E00A41EE9 /* MeetingAgendaItem+CoreDataProperties.swift */; };
-		34BA26111EAB0D3E00A41EE9 /* Context+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25C71EAB0D3E00A41EE9 /* Context+CoreDataClass.swift */; };
-		34BA26121EAB0D3E00A41EE9 /* Context+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25C71EAB0D3E00A41EE9 /* Context+CoreDataClass.swift */; };
-		34BA26131EAB0D3E00A41EE9 /* Context+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25C71EAB0D3E00A41EE9 /* Context+CoreDataClass.swift */; };
-		34BA26141EAB0D3E00A41EE9 /* Context+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25C81EAB0D3E00A41EE9 /* Context+CoreDataProperties.swift */; };
-		34BA26151EAB0D3E00A41EE9 /* Context+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25C81EAB0D3E00A41EE9 /* Context+CoreDataProperties.swift */; };
-		34BA26161EAB0D3E00A41EE9 /* Context+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25C81EAB0D3E00A41EE9 /* Context+CoreDataProperties.swift */; };
 		34BA26181EAB0DCD00A41EE9 /* CloudKitInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA26171EAB0DCD00A41EE9 /* CloudKitInteraction.swift */; };
 		34BA26191EAB0DCD00A41EE9 /* CloudKitInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA26171EAB0DCD00A41EE9 /* CloudKitInteraction.swift */; };
 		34BA261A1EAB0DCD00A41EE9 /* CloudKitInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA26171EAB0DCD00A41EE9 /* CloudKitInteraction.swift */; };
 		34BA261C1EAB0DDE00A41EE9 /* coreDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA261B1EAB0DDE00A41EE9 /* coreDatabase.swift */; };
 		34BA261D1EAB0DDE00A41EE9 /* coreDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA261B1EAB0DDE00A41EE9 /* coreDatabase.swift */; };
 		34BA261E1EAB0DDE00A41EE9 /* coreDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA261B1EAB0DDE00A41EE9 /* coreDatabase.swift */; };
+		34E990BA1EADCD69005B2718 /* meetingsDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990B91EADCD69005B2718 /* meetingsDatabase.swift */; };
+		34E990BD1EADCEE0005B2718 /* teamClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990BB1EADCEE0005B2718 /* teamClass.swift */; };
+		34E990BE1EADCEE0005B2718 /* decodesClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990BC1EADCEE0005B2718 /* decodesClass.swift */; };
+		34E990C31EADCEF4005B2718 /* meetingAgendaItemClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990BF1EADCEF4005B2718 /* meetingAgendaItemClass.swift */; };
+		34E990C41EADCEF4005B2718 /* meetingAttendeeClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990C01EADCEF4005B2718 /* meetingAttendeeClass.swift */; };
+		34E990C51EADCEF4005B2718 /* contextClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990C11EADCEF4005B2718 /* contextClass.swift */; };
+		34E990C61EADCEF4005B2718 /* displayPanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990C21EADCEF4005B2718 /* displayPanes.swift */; };
+		34E990C91EADCF07005B2718 /* maintainPanes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990C71EADCF07005B2718 /* maintainPanes.swift */; };
+		34E990CA1EADCF07005B2718 /* meetingSupportingDocsClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990C81EADCF07005B2718 /* meetingSupportingDocsClass.swift */; };
+		34E990CF1EADCF19005B2718 /* projectClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990CB1EADCF19005B2718 /* projectClass.swift */; };
+		34E990D11EADCF19005B2718 /* rolesClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990CD1EADCF19005B2718 /* rolesClass.swift */; };
+		34E990D71EADCF2B005B2718 /* taskClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990D31EADCF2B005B2718 /* taskClass.swift */; };
+		34E990D81EADCF2B005B2718 /* taskContextsClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990D41EADCF2B005B2718 /* taskContextsClass.swift */; };
+		34E990D91EADCF2B005B2718 /* taskPredecessorClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990D51EADCF2B005B2718 /* taskPredecessorClass.swift */; };
+		34E990DA1EADCF2B005B2718 /* taskUpdatesClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990D61EADCF2B005B2718 /* taskUpdatesClass.swift */; };
+		34E990DC1EADCF49005B2718 /* CalendarDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990DB1EADCF49005B2718 /* CalendarDetails.swift */; };
+		34E990DE1EADD198005B2718 /* DBSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990DD1EADD198005B2718 /* DBSync.swift */; };
+		34E990E01EADD1F2005B2718 /* notificationDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990DF1EADD1F2005B2718 /* notificationDefinitions.swift */; };
+		34E990E11EADD1F2005B2718 /* notificationDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990DF1EADD1F2005B2718 /* notificationDefinitions.swift */; };
+		34E990E21EADD1F2005B2718 /* notificationDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990DF1EADD1F2005B2718 /* notificationDefinitions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -125,6 +205,40 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		340626F81EAF0479002700BB /* Roles+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Roles+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		340626F91EAF0479002700BB /* Context+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Context+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		340626FA1EAF0479002700BB /* Context1_1+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Context1_1+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		340626FB1EAF0479002700BB /* Decodes+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Decodes+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		340626FC1EAF0479002700BB /* MeetingAgenda+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MeetingAgenda+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		340626FD1EAF0479002700BB /* MeetingAgendaItem+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MeetingAgendaItem+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		340626FE1EAF0479002700BB /* MeetingAttendees+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MeetingAttendees+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		340626FF1EAF0479002700BB /* MeetingSupportingDocs+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MeetingSupportingDocs+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		340627001EAF0479002700BB /* MeetingTasks+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MeetingTasks+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		340627011EAF0479002700BB /* Projects+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Projects+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		340627021EAF0479002700BB /* Task+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Task+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		340627031EAF0479002700BB /* TaskContext+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "TaskContext+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		340627041EAF0479002700BB /* TaskUpdates+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "TaskUpdates+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		340627051EAF0479002700BB /* Team+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Team+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		340627301EAF0546002700BB /* Context1_1+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Context1_1+CoreDataProperties.swift"; path = "../Context1_1+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		340627311EAF0546002700BB /* MeetingAgenda+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingAgenda+CoreDataProperties.swift"; path = "../MeetingAgenda+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		340627321EAF0546002700BB /* MeetingAttendees+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingAttendees+CoreDataProperties.swift"; path = "../MeetingAttendees+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		340627331EAF0546002700BB /* TaskContext+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TaskContext+CoreDataProperties.swift"; path = "../TaskContext+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		340627341EAF0546002700BB /* Task+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Task+CoreDataProperties.swift"; path = "../Task+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		340627351EAF0546002700BB /* MeetingAgendaItem+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingAgendaItem+CoreDataProperties.swift"; path = "../MeetingAgendaItem+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		340627361EAF0546002700BB /* Projects+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Projects+CoreDataProperties.swift"; path = "../Projects+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		340627371EAF0546002700BB /* Context+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Context+CoreDataProperties.swift"; path = "../Context+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		340627381EAF0546002700BB /* TaskUpdates+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TaskUpdates+CoreDataProperties.swift"; path = "../TaskUpdates+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		340627391EAF0546002700BB /* MeetingSupportingDocs+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingSupportingDocs+CoreDataProperties.swift"; path = "../MeetingSupportingDocs+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		3406273A1EAF0546002700BB /* MeetingTasks+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingTasks+CoreDataProperties.swift"; path = "../MeetingTasks+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		3406273B1EAF0546002700BB /* Roles+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Roles+CoreDataProperties.swift"; path = "../Roles+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		3406273C1EAF0546002700BB /* Team+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Team+CoreDataProperties.swift"; path = "../Team+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		3406273D1EAF0546002700BB /* Decodes+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Decodes+CoreDataProperties.swift"; path = "../Decodes+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		340627681EAF07EF002700BB /* ProjectNote+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ProjectNote+CoreDataClass.swift"; path = "../ProjectNote+CoreDataClass.swift"; sourceTree = "<group>"; };
+		340627691EAF07EF002700BB /* ProjectNote+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ProjectNote+CoreDataProperties.swift"; path = "../ProjectNote+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		3406276A1EAF07EF002700BB /* ProjectTeamMembers+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ProjectTeamMembers+CoreDataClass.swift"; path = "../ProjectTeamMembers+CoreDataClass.swift"; sourceTree = "<group>"; };
+		3406276B1EAF07EF002700BB /* ProjectTeamMembers+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ProjectTeamMembers+CoreDataProperties.swift"; path = "../ProjectTeamMembers+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		340627781EAF0BAD002700BB /* UserInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UserInfo.swift; path = ../../EvesCRM/UserInfo.swift; sourceTree = "<group>"; };
+		3406277A1EAF0BE6002700BB /* projectteamMemberClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = projectteamMemberClass.swift; path = ../../EvesCRM/projectteamMemberClass.swift; sourceTree = "<group>"; };
 		34BA25701EAAFD2D00A41EE9 /* Meeting Dashboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Meeting Dashboard.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		34BA25731EAAFD2D00A41EE9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		34BA25751EAAFD2D00A41EE9 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -141,34 +255,26 @@
 		34BA25981EAAFD2D00A41EE9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		34BA25A71EAB04CF00A41EE9 /* mainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = mainViewController.swift; sourceTree = "<group>"; };
 		34BA25AB1EAB05DA00A41EE9 /* EvesCRMSharedFiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EvesCRMSharedFiles.swift; path = ../../EvesCRM/EvesCRMSharedFiles.swift; sourceTree = "<group>"; };
-		34BA25AF1EAB0D3E00A41EE9 /* Team+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Team+CoreDataClass.swift"; path = "../Team+CoreDataClass.swift"; sourceTree = "<group>"; };
-		34BA25B01EAB0D3E00A41EE9 /* Team+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Team+CoreDataProperties.swift"; path = "../Team+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		34BA25B11EAB0D3E00A41EE9 /* MeetingAttendees+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingAttendees+CoreDataClass.swift"; path = "../MeetingAttendees+CoreDataClass.swift"; sourceTree = "<group>"; };
-		34BA25B21EAB0D3E00A41EE9 /* MeetingAttendees+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingAttendees+CoreDataProperties.swift"; path = "../MeetingAttendees+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		34BA25B31EAB0D3E00A41EE9 /* Projects+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Projects+CoreDataClass.swift"; path = "../Projects+CoreDataClass.swift"; sourceTree = "<group>"; };
-		34BA25B41EAB0D3E00A41EE9 /* Projects+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Projects+CoreDataProperties.swift"; path = "../Projects+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		34BA25B51EAB0D3E00A41EE9 /* Context1_1+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Context1_1+CoreDataClass.swift"; path = "../Context1_1+CoreDataClass.swift"; sourceTree = "<group>"; };
-		34BA25B61EAB0D3E00A41EE9 /* Context1_1+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Context1_1+CoreDataProperties.swift"; path = "../Context1_1+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		34BA25B71EAB0D3E00A41EE9 /* TaskContext+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TaskContext+CoreDataClass.swift"; path = "../TaskContext+CoreDataClass.swift"; sourceTree = "<group>"; };
-		34BA25B81EAB0D3E00A41EE9 /* TaskContext+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TaskContext+CoreDataProperties.swift"; path = "../TaskContext+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		34BA25B91EAB0D3E00A41EE9 /* Task+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Task+CoreDataClass.swift"; path = "../Task+CoreDataClass.swift"; sourceTree = "<group>"; };
-		34BA25BA1EAB0D3E00A41EE9 /* Task+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Task+CoreDataProperties.swift"; path = "../Task+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		34BA25BB1EAB0D3E00A41EE9 /* MeetingSupportingDocs+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingSupportingDocs+CoreDataClass.swift"; path = "../MeetingSupportingDocs+CoreDataClass.swift"; sourceTree = "<group>"; };
-		34BA25BC1EAB0D3E00A41EE9 /* MeetingSupportingDocs+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingSupportingDocs+CoreDataProperties.swift"; path = "../MeetingSupportingDocs+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		34BA25BD1EAB0D3E00A41EE9 /* MeetingAgenda+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingAgenda+CoreDataClass.swift"; path = "../MeetingAgenda+CoreDataClass.swift"; sourceTree = "<group>"; };
-		34BA25BE1EAB0D3E00A41EE9 /* MeetingAgenda+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingAgenda+CoreDataProperties.swift"; path = "../MeetingAgenda+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		34BA25BF1EAB0D3E00A41EE9 /* TaskUpdates+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TaskUpdates+CoreDataClass.swift"; path = "../TaskUpdates+CoreDataClass.swift"; sourceTree = "<group>"; };
-		34BA25C01EAB0D3E00A41EE9 /* TaskUpdates+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TaskUpdates+CoreDataProperties.swift"; path = "../TaskUpdates+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		34BA25C11EAB0D3E00A41EE9 /* MeetingTasks+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingTasks+CoreDataClass.swift"; path = "../MeetingTasks+CoreDataClass.swift"; sourceTree = "<group>"; };
-		34BA25C21EAB0D3E00A41EE9 /* MeetingTasks+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingTasks+CoreDataProperties.swift"; path = "../MeetingTasks+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		34BA25C31EAB0D3E00A41EE9 /* Decodes+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Decodes+CoreDataClass.swift"; path = "../Decodes+CoreDataClass.swift"; sourceTree = "<group>"; };
-		34BA25C41EAB0D3E00A41EE9 /* Decodes+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Decodes+CoreDataProperties.swift"; path = "../Decodes+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		34BA25C51EAB0D3E00A41EE9 /* MeetingAgendaItem+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingAgendaItem+CoreDataClass.swift"; path = "../MeetingAgendaItem+CoreDataClass.swift"; sourceTree = "<group>"; };
-		34BA25C61EAB0D3E00A41EE9 /* MeetingAgendaItem+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingAgendaItem+CoreDataProperties.swift"; path = "../MeetingAgendaItem+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		34BA25C71EAB0D3E00A41EE9 /* Context+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Context+CoreDataClass.swift"; path = "../Context+CoreDataClass.swift"; sourceTree = "<group>"; };
-		34BA25C81EAB0D3E00A41EE9 /* Context+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Context+CoreDataProperties.swift"; path = "../Context+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		34BA26171EAB0DCD00A41EE9 /* CloudKitInteraction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CloudKitInteraction.swift; path = ../../EvesCRM/CloudKitInteraction.swift; sourceTree = "<group>"; };
 		34BA261B1EAB0DDE00A41EE9 /* coreDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = coreDatabase.swift; path = ../../EvesCRM/coreDatabase.swift; sourceTree = "<group>"; };
+		34E990B91EADCD69005B2718 /* meetingsDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = meetingsDatabase.swift; sourceTree = "<group>"; };
+		34E990BB1EADCEE0005B2718 /* teamClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = teamClass.swift; path = ../../EvesCRM/teamClass.swift; sourceTree = "<group>"; };
+		34E990BC1EADCEE0005B2718 /* decodesClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = decodesClass.swift; path = ../../EvesCRM/decodesClass.swift; sourceTree = "<group>"; };
+		34E990BF1EADCEF4005B2718 /* meetingAgendaItemClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = meetingAgendaItemClass.swift; path = ../../EvesCRM/meetingAgendaItemClass.swift; sourceTree = "<group>"; };
+		34E990C01EADCEF4005B2718 /* meetingAttendeeClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = meetingAttendeeClass.swift; path = ../../EvesCRM/meetingAttendeeClass.swift; sourceTree = "<group>"; };
+		34E990C11EADCEF4005B2718 /* contextClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = contextClass.swift; path = ../../EvesCRM/contextClass.swift; sourceTree = "<group>"; };
+		34E990C21EADCEF4005B2718 /* displayPanes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = displayPanes.swift; path = ../../EvesCRM/displayPanes.swift; sourceTree = "<group>"; };
+		34E990C71EADCF07005B2718 /* maintainPanes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = maintainPanes.swift; path = ../../EvesCRM/maintainPanes.swift; sourceTree = "<group>"; };
+		34E990C81EADCF07005B2718 /* meetingSupportingDocsClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = meetingSupportingDocsClass.swift; path = ../../EvesCRM/meetingSupportingDocsClass.swift; sourceTree = "<group>"; };
+		34E990CB1EADCF19005B2718 /* projectClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = projectClass.swift; path = ../../EvesCRM/projectClass.swift; sourceTree = "<group>"; };
+		34E990CD1EADCF19005B2718 /* rolesClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = rolesClass.swift; path = ../../EvesCRM/rolesClass.swift; sourceTree = "<group>"; };
+		34E990D31EADCF2B005B2718 /* taskClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = taskClass.swift; path = ../../EvesCRM/taskClass.swift; sourceTree = "<group>"; };
+		34E990D41EADCF2B005B2718 /* taskContextsClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = taskContextsClass.swift; path = ../../EvesCRM/taskContextsClass.swift; sourceTree = "<group>"; };
+		34E990D51EADCF2B005B2718 /* taskPredecessorClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = taskPredecessorClass.swift; path = ../../EvesCRM/taskPredecessorClass.swift; sourceTree = "<group>"; };
+		34E990D61EADCF2B005B2718 /* taskUpdatesClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = taskUpdatesClass.swift; path = ../../EvesCRM/taskUpdatesClass.swift; sourceTree = "<group>"; };
+		34E990DB1EADCF49005B2718 /* CalendarDetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CalendarDetails.swift; path = ../../EvesCRM/CalendarDetails.swift; sourceTree = "<group>"; };
+		34E990DD1EADD198005B2718 /* DBSync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DBSync.swift; path = ../../EvesCRM/DBSync.swift; sourceTree = "<group>"; };
+		34E990DF1EADD1F2005B2718 /* notificationDefinitions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = notificationDefinitions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -251,33 +357,42 @@
 			children = (
 				34BA261B1EAB0DDE00A41EE9 /* coreDatabase.swift */,
 				34BA26171EAB0DCD00A41EE9 /* CloudKitInteraction.swift */,
-				34BA25AF1EAB0D3E00A41EE9 /* Team+CoreDataClass.swift */,
-				34BA25B01EAB0D3E00A41EE9 /* Team+CoreDataProperties.swift */,
-				34BA25B11EAB0D3E00A41EE9 /* MeetingAttendees+CoreDataClass.swift */,
-				34BA25B21EAB0D3E00A41EE9 /* MeetingAttendees+CoreDataProperties.swift */,
-				34BA25B31EAB0D3E00A41EE9 /* Projects+CoreDataClass.swift */,
-				34BA25B41EAB0D3E00A41EE9 /* Projects+CoreDataProperties.swift */,
-				34BA25B51EAB0D3E00A41EE9 /* Context1_1+CoreDataClass.swift */,
-				34BA25B61EAB0D3E00A41EE9 /* Context1_1+CoreDataProperties.swift */,
-				34BA25B71EAB0D3E00A41EE9 /* TaskContext+CoreDataClass.swift */,
-				34BA25B81EAB0D3E00A41EE9 /* TaskContext+CoreDataProperties.swift */,
-				34BA25B91EAB0D3E00A41EE9 /* Task+CoreDataClass.swift */,
-				34BA25BA1EAB0D3E00A41EE9 /* Task+CoreDataProperties.swift */,
-				34BA25BB1EAB0D3E00A41EE9 /* MeetingSupportingDocs+CoreDataClass.swift */,
-				34BA25BC1EAB0D3E00A41EE9 /* MeetingSupportingDocs+CoreDataProperties.swift */,
-				34BA25BD1EAB0D3E00A41EE9 /* MeetingAgenda+CoreDataClass.swift */,
-				34BA25BE1EAB0D3E00A41EE9 /* MeetingAgenda+CoreDataProperties.swift */,
-				34BA25BF1EAB0D3E00A41EE9 /* TaskUpdates+CoreDataClass.swift */,
-				34BA25C01EAB0D3E00A41EE9 /* TaskUpdates+CoreDataProperties.swift */,
-				34BA25C11EAB0D3E00A41EE9 /* MeetingTasks+CoreDataClass.swift */,
-				34BA25C21EAB0D3E00A41EE9 /* MeetingTasks+CoreDataProperties.swift */,
-				34BA25C31EAB0D3E00A41EE9 /* Decodes+CoreDataClass.swift */,
-				34BA25C41EAB0D3E00A41EE9 /* Decodes+CoreDataProperties.swift */,
-				34BA25C51EAB0D3E00A41EE9 /* MeetingAgendaItem+CoreDataClass.swift */,
-				34BA25C61EAB0D3E00A41EE9 /* MeetingAgendaItem+CoreDataProperties.swift */,
-				34BA25C71EAB0D3E00A41EE9 /* Context+CoreDataClass.swift */,
-				34BA25C81EAB0D3E00A41EE9 /* Context+CoreDataProperties.swift */,
+				34E990DD1EADD198005B2718 /* DBSync.swift */,
+				340627781EAF0BAD002700BB /* UserInfo.swift */,
+				34E990B91EADCD69005B2718 /* meetingsDatabase.swift */,
 				34BA257A1EAAFD2D00A41EE9 /* Meeting_Dashboard.xcdatamodeld */,
+				340626F91EAF0479002700BB /* Context+CoreDataClass.swift */,
+				340627371EAF0546002700BB /* Context+CoreDataProperties.swift */,
+				340626FA1EAF0479002700BB /* Context1_1+CoreDataClass.swift */,
+				340627301EAF0546002700BB /* Context1_1+CoreDataProperties.swift */,
+				340626FB1EAF0479002700BB /* Decodes+CoreDataClass.swift */,
+				3406273D1EAF0546002700BB /* Decodes+CoreDataProperties.swift */,
+				340626FC1EAF0479002700BB /* MeetingAgenda+CoreDataClass.swift */,
+				340627311EAF0546002700BB /* MeetingAgenda+CoreDataProperties.swift */,
+				340626FD1EAF0479002700BB /* MeetingAgendaItem+CoreDataClass.swift */,
+				340627351EAF0546002700BB /* MeetingAgendaItem+CoreDataProperties.swift */,
+				340626FE1EAF0479002700BB /* MeetingAttendees+CoreDataClass.swift */,
+				340627321EAF0546002700BB /* MeetingAttendees+CoreDataProperties.swift */,
+				340626FF1EAF0479002700BB /* MeetingSupportingDocs+CoreDataClass.swift */,
+				340627391EAF0546002700BB /* MeetingSupportingDocs+CoreDataProperties.swift */,
+				340627001EAF0479002700BB /* MeetingTasks+CoreDataClass.swift */,
+				3406273A1EAF0546002700BB /* MeetingTasks+CoreDataProperties.swift */,
+				340627011EAF0479002700BB /* Projects+CoreDataClass.swift */,
+				340627361EAF0546002700BB /* Projects+CoreDataProperties.swift */,
+				340627681EAF07EF002700BB /* ProjectNote+CoreDataClass.swift */,
+				340627691EAF07EF002700BB /* ProjectNote+CoreDataProperties.swift */,
+				3406276A1EAF07EF002700BB /* ProjectTeamMembers+CoreDataClass.swift */,
+				3406276B1EAF07EF002700BB /* ProjectTeamMembers+CoreDataProperties.swift */,
+				340626F81EAF0479002700BB /* Roles+CoreDataClass.swift */,
+				3406273B1EAF0546002700BB /* Roles+CoreDataProperties.swift */,
+				340627021EAF0479002700BB /* Task+CoreDataClass.swift */,
+				340627341EAF0546002700BB /* Task+CoreDataProperties.swift */,
+				340627031EAF0479002700BB /* TaskContext+CoreDataClass.swift */,
+				340627331EAF0546002700BB /* TaskContext+CoreDataProperties.swift */,
+				340627041EAF0479002700BB /* TaskUpdates+CoreDataClass.swift */,
+				340627381EAF0546002700BB /* TaskUpdates+CoreDataProperties.swift */,
+				340627051EAF0479002700BB /* Team+CoreDataClass.swift */,
+				3406273C1EAF0546002700BB /* Team+CoreDataProperties.swift */,
 			);
 			name = Database;
 			sourceTree = "<group>";
@@ -285,7 +400,24 @@
 		34BA25A51EAB03BE00A41EE9 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				34E990DB1EADCF49005B2718 /* CalendarDetails.swift */,
+				34E990C11EADCEF4005B2718 /* contextClass.swift */,
+				34E990BC1EADCEE0005B2718 /* decodesClass.swift */,
+				34E990C21EADCEF4005B2718 /* displayPanes.swift */,
 				34BA25AB1EAB05DA00A41EE9 /* EvesCRMSharedFiles.swift */,
+				34E990C71EADCF07005B2718 /* maintainPanes.swift */,
+				34E990C81EADCF07005B2718 /* meetingSupportingDocsClass.swift */,
+				34E990BF1EADCEF4005B2718 /* meetingAgendaItemClass.swift */,
+				34E990C01EADCEF4005B2718 /* meetingAttendeeClass.swift */,
+				34E990CB1EADCF19005B2718 /* projectClass.swift */,
+				3406277A1EAF0BE6002700BB /* projectteamMemberClass.swift */,
+				34E990CD1EADCF19005B2718 /* rolesClass.swift */,
+				34E990D31EADCF2B005B2718 /* taskClass.swift */,
+				34E990D41EADCF2B005B2718 /* taskContextsClass.swift */,
+				34E990D51EADCF2B005B2718 /* taskPredecessorClass.swift */,
+				34E990D61EADCF2B005B2718 /* taskUpdatesClass.swift */,
+				34E990BB1EADCEE0005B2718 /* teamClass.swift */,
+				34E990DF1EADD1F2005B2718 /* notificationDefinitions.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -439,39 +571,65 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				34BA25C91EAB0D3E00A41EE9 /* Team+CoreDataClass.swift in Sources */,
-				34BA25D21EAB0D3E00A41EE9 /* MeetingAttendees+CoreDataProperties.swift in Sources */,
-				34BA25CF1EAB0D3E00A41EE9 /* MeetingAttendees+CoreDataClass.swift in Sources */,
-				34BA25DE1EAB0D3E00A41EE9 /* Context1_1+CoreDataProperties.swift in Sources */,
-				34BA25DB1EAB0D3E00A41EE9 /* Context1_1+CoreDataClass.swift in Sources */,
+				3406274D1EAF0546002700BB /* MeetingAgendaItem+CoreDataProperties.swift in Sources */,
+				34E990CF1EADCF19005B2718 /* projectClass.swift in Sources */,
+				340627471EAF0546002700BB /* TaskContext+CoreDataProperties.swift in Sources */,
+				340627561EAF0546002700BB /* TaskUpdates+CoreDataProperties.swift in Sources */,
+				34E990D81EADCF2B005B2718 /* taskContextsClass.swift in Sources */,
+				340627121EAF0479002700BB /* MeetingAgenda+CoreDataClass.swift in Sources */,
+				34E990D91EADCF2B005B2718 /* taskPredecessorClass.swift in Sources */,
+				34E990D11EADCF19005B2718 /* rolesClass.swift in Sources */,
+				340627211EAF0479002700BB /* Projects+CoreDataClass.swift in Sources */,
+				3406276C1EAF07EF002700BB /* ProjectNote+CoreDataClass.swift in Sources */,
 				34BA25AC1EAB05DA00A41EE9 /* EvesCRMSharedFiles.swift in Sources */,
-				34BA25E11EAB0D3E00A41EE9 /* TaskContext+CoreDataClass.swift in Sources */,
-				34BA25ED1EAB0D3E00A41EE9 /* MeetingSupportingDocs+CoreDataClass.swift in Sources */,
-				34BA260B1EAB0D3E00A41EE9 /* MeetingAgendaItem+CoreDataClass.swift in Sources */,
-				34BA25F61EAB0D3E00A41EE9 /* MeetingAgenda+CoreDataProperties.swift in Sources */,
-				34BA25F01EAB0D3E00A41EE9 /* MeetingSupportingDocs+CoreDataProperties.swift in Sources */,
-				34BA25D81EAB0D3E00A41EE9 /* Projects+CoreDataProperties.swift in Sources */,
-				34BA25E41EAB0D3E00A41EE9 /* TaskContext+CoreDataProperties.swift in Sources */,
-				34BA25FF1EAB0D3E00A41EE9 /* MeetingTasks+CoreDataClass.swift in Sources */,
-				34BA260E1EAB0D3E00A41EE9 /* MeetingAgendaItem+CoreDataProperties.swift in Sources */,
-				34BA26051EAB0D3E00A41EE9 /* Decodes+CoreDataClass.swift in Sources */,
+				3406273E1EAF0546002700BB /* Context1_1+CoreDataProperties.swift in Sources */,
+				3406276F1EAF07EF002700BB /* ProjectNote+CoreDataProperties.swift in Sources */,
+				340627151EAF0479002700BB /* MeetingAgendaItem+CoreDataClass.swift in Sources */,
+				340627501EAF0546002700BB /* Projects+CoreDataProperties.swift in Sources */,
+				34E990BD1EADCEE0005B2718 /* teamClass.swift in Sources */,
+				3406271E1EAF0479002700BB /* MeetingTasks+CoreDataClass.swift in Sources */,
+				34E990DC1EADCF49005B2718 /* CalendarDetails.swift in Sources */,
+				340627241EAF0479002700BB /* Task+CoreDataClass.swift in Sources */,
+				34E990C51EADCEF4005B2718 /* contextClass.swift in Sources */,
+				3406275F1EAF0546002700BB /* Roles+CoreDataProperties.swift in Sources */,
+				34E990DE1EADD198005B2718 /* DBSync.swift in Sources */,
+				340627181EAF0479002700BB /* MeetingAttendees+CoreDataClass.swift in Sources */,
+				3406275C1EAF0546002700BB /* MeetingTasks+CoreDataProperties.swift in Sources */,
+				3406270C1EAF0479002700BB /* Context1_1+CoreDataClass.swift in Sources */,
+				34E990BA1EADCD69005B2718 /* meetingsDatabase.swift in Sources */,
 				34BA257C1EAAFD2D00A41EE9 /* Meeting_Dashboard.xcdatamodeld in Sources */,
-				34BA25EA1EAB0D3E00A41EE9 /* Task+CoreDataProperties.swift in Sources */,
-				34BA25E71EAB0D3E00A41EE9 /* Task+CoreDataClass.swift in Sources */,
 				34BA26181EAB0DCD00A41EE9 /* CloudKitInteraction.swift in Sources */,
-				34BA25CC1EAB0D3E00A41EE9 /* Team+CoreDataProperties.swift in Sources */,
-				34BA25F31EAB0D3E00A41EE9 /* MeetingAgenda+CoreDataClass.swift in Sources */,
+				34E990C91EADCF07005B2718 /* maintainPanes.swift in Sources */,
+				340627061EAF0479002700BB /* Roles+CoreDataClass.swift in Sources */,
+				34E990CA1EADCF07005B2718 /* meetingSupportingDocsClass.swift in Sources */,
 				34BA25761EAAFD2D00A41EE9 /* ViewController.swift in Sources */,
+				340627621EAF0546002700BB /* Team+CoreDataProperties.swift in Sources */,
+				3406277B1EAF0BE6002700BB /* projectteamMemberClass.swift in Sources */,
+				34E990C61EADCEF4005B2718 /* displayPanes.swift in Sources */,
+				340627751EAF07EF002700BB /* ProjectTeamMembers+CoreDataProperties.swift in Sources */,
+				3406274A1EAF0546002700BB /* Task+CoreDataProperties.swift in Sources */,
+				340627791EAF0BAD002700BB /* UserInfo.swift in Sources */,
+				3406271B1EAF0479002700BB /* MeetingSupportingDocs+CoreDataClass.swift in Sources */,
+				3406272D1EAF0479002700BB /* Team+CoreDataClass.swift in Sources */,
 				34BA25741EAAFD2D00A41EE9 /* AppDelegate.swift in Sources */,
-				34BA26141EAB0D3E00A41EE9 /* Context+CoreDataProperties.swift in Sources */,
-				34BA26021EAB0D3E00A41EE9 /* MeetingTasks+CoreDataProperties.swift in Sources */,
+				340627721EAF07EF002700BB /* ProjectTeamMembers+CoreDataClass.swift in Sources */,
+				340627411EAF0546002700BB /* MeetingAgenda+CoreDataProperties.swift in Sources */,
+				34E990D71EADCF2B005B2718 /* taskClass.swift in Sources */,
+				34E990DA1EADCF2B005B2718 /* taskUpdatesClass.swift in Sources */,
+				340627441EAF0546002700BB /* MeetingAttendees+CoreDataProperties.swift in Sources */,
+				340627091EAF0479002700BB /* Context+CoreDataClass.swift in Sources */,
 				34BA25A81EAB04CF00A41EE9 /* mainViewController.swift in Sources */,
-				34BA26111EAB0D3E00A41EE9 /* Context+CoreDataClass.swift in Sources */,
-				34BA25FC1EAB0D3E00A41EE9 /* TaskUpdates+CoreDataProperties.swift in Sources */,
-				34BA25D51EAB0D3E00A41EE9 /* Projects+CoreDataClass.swift in Sources */,
-				34BA26081EAB0D3E00A41EE9 /* Decodes+CoreDataProperties.swift in Sources */,
-				34BA25F91EAB0D3E00A41EE9 /* TaskUpdates+CoreDataClass.swift in Sources */,
+				340627271EAF0479002700BB /* TaskContext+CoreDataClass.swift in Sources */,
+				340627591EAF0546002700BB /* MeetingSupportingDocs+CoreDataProperties.swift in Sources */,
+				34E990E01EADD1F2005B2718 /* notificationDefinitions.swift in Sources */,
+				34E990BE1EADCEE0005B2718 /* decodesClass.swift in Sources */,
+				34E990C41EADCEF4005B2718 /* meetingAttendeeClass.swift in Sources */,
+				340627651EAF0546002700BB /* Decodes+CoreDataProperties.swift in Sources */,
+				34E990C31EADCEF4005B2718 /* meetingAgendaItemClass.swift in Sources */,
+				340627531EAF0546002700BB /* Context+CoreDataProperties.swift in Sources */,
 				34BA261C1EAB0DDE00A41EE9 /* coreDatabase.swift in Sources */,
+				3406270F1EAF0479002700BB /* Decodes+CoreDataClass.swift in Sources */,
+				3406272A1EAF0479002700BB /* TaskUpdates+CoreDataClass.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -479,37 +637,64 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				34BA260F1EAB0D3E00A41EE9 /* MeetingAgendaItem+CoreDataProperties.swift in Sources */,
+				3406275D1EAF0546002700BB /* MeetingTasks+CoreDataProperties.swift in Sources */,
+				340DB45C1EADD5BD0077EE23 /* CalendarDetails.swift in Sources */,
+				340627251EAF0479002700BB /* Task+CoreDataClass.swift in Sources */,
+				340627071EAF0479002700BB /* Roles+CoreDataClass.swift in Sources */,
 				34BA25AD1EAB05DA00A41EE9 /* EvesCRMSharedFiles.swift in Sources */,
-				34BA26061EAB0D3E00A41EE9 /* Decodes+CoreDataClass.swift in Sources */,
+				340626BE1EAF0297002700BB /* Meeting_Dashboard.xcdatamodeld in Sources */,
+				340DB45E1EADD5BF0077EE23 /* contextClass.swift in Sources */,
+				340627541EAF0546002700BB /* Context+CoreDataProperties.swift in Sources */,
 				34BA258C1EAAFD2D00A41EE9 /* Meeting_DashboardTests.swift in Sources */,
-				34BA25E81EAB0D3E00A41EE9 /* Task+CoreDataClass.swift in Sources */,
-				34BA260C1EAB0D3E00A41EE9 /* MeetingAgendaItem+CoreDataClass.swift in Sources */,
-				34BA25FA1EAB0D3E00A41EE9 /* TaskUpdates+CoreDataClass.swift in Sources */,
-				34BA26001EAB0D3E00A41EE9 /* MeetingTasks+CoreDataClass.swift in Sources */,
-				34BA25CA1EAB0D3E00A41EE9 /* Team+CoreDataClass.swift in Sources */,
-				34BA26031EAB0D3E00A41EE9 /* MeetingTasks+CoreDataProperties.swift in Sources */,
-				34BA25D31EAB0D3E00A41EE9 /* MeetingAttendees+CoreDataProperties.swift in Sources */,
+				3406271F1EAF0479002700BB /* MeetingTasks+CoreDataClass.swift in Sources */,
+				340627221EAF0479002700BB /* Projects+CoreDataClass.swift in Sources */,
+				340DB4781EADD5EF0077EE23 /* taskUpdatesClass.swift in Sources */,
+				340DB4741EADD5E80077EE23 /* taskContextsClass.swift in Sources */,
+				340627511EAF0546002700BB /* Projects+CoreDataProperties.swift in Sources */,
+				340DB4581EADD5B30077EE23 /* DBSync.swift in Sources */,
+				340DB4761EADD5EC0077EE23 /* taskPredecessorClass.swift in Sources */,
+				3406274B1EAF0546002700BB /* Task+CoreDataProperties.swift in Sources */,
+				340627101EAF0479002700BB /* Decodes+CoreDataClass.swift in Sources */,
 				34BA261D1EAB0DDE00A41EE9 /* coreDatabase.swift in Sources */,
-				34BA26121EAB0D3E00A41EE9 /* Context+CoreDataClass.swift in Sources */,
-				34BA25FD1EAB0D3E00A41EE9 /* TaskUpdates+CoreDataProperties.swift in Sources */,
-				34BA25EE1EAB0D3E00A41EE9 /* MeetingSupportingDocs+CoreDataClass.swift in Sources */,
-				34BA26091EAB0D3E00A41EE9 /* Decodes+CoreDataProperties.swift in Sources */,
-				34BA25E51EAB0D3E00A41EE9 /* TaskContext+CoreDataProperties.swift in Sources */,
-				34BA25D01EAB0D3E00A41EE9 /* MeetingAttendees+CoreDataClass.swift in Sources */,
-				34BA25D91EAB0D3E00A41EE9 /* Projects+CoreDataProperties.swift in Sources */,
-				34BA25E21EAB0D3E00A41EE9 /* TaskContext+CoreDataClass.swift in Sources */,
-				34BA25D61EAB0D3E00A41EE9 /* Projects+CoreDataClass.swift in Sources */,
-				34BA25F41EAB0D3E00A41EE9 /* MeetingAgenda+CoreDataClass.swift in Sources */,
+				340DB4721EADD5E40077EE23 /* taskClass.swift in Sources */,
+				340627761EAF07EF002700BB /* ProjectTeamMembers+CoreDataProperties.swift in Sources */,
+				340DB4681EADD5D30077EE23 /* meetingAgendaItemClass.swift in Sources */,
+				340DB47A1EADD5F30077EE23 /* teamClass.swift in Sources */,
+				340627191EAF0479002700BB /* MeetingAttendees+CoreDataClass.swift in Sources */,
+				340DB4641EADD5CB0077EE23 /* maintainPanes.swift in Sources */,
+				3406273F1EAF0546002700BB /* Context1_1+CoreDataProperties.swift in Sources */,
+				340627451EAF0546002700BB /* MeetingAttendees+CoreDataProperties.swift in Sources */,
+				340627131EAF0479002700BB /* MeetingAgenda+CoreDataClass.swift in Sources */,
+				340DB4661EADD5CF0077EE23 /* meetingSupportingDocsClass.swift in Sources */,
+				340DB47C1EADD6CA0077EE23 /* ViewController.swift in Sources */,
+				340DB4621EADD5C60077EE23 /* displayPanes.swift in Sources */,
 				34BA26191EAB0DCD00A41EE9 /* CloudKitInteraction.swift in Sources */,
+				340627161EAF0479002700BB /* MeetingAgendaItem+CoreDataClass.swift in Sources */,
 				34BA25A91EAB04CF00A41EE9 /* mainViewController.swift in Sources */,
-				34BA25CD1EAB0D3E00A41EE9 /* Team+CoreDataProperties.swift in Sources */,
-				34BA26151EAB0D3E00A41EE9 /* Context+CoreDataProperties.swift in Sources */,
-				34BA25DC1EAB0D3E00A41EE9 /* Context1_1+CoreDataClass.swift in Sources */,
-				34BA25EB1EAB0D3E00A41EE9 /* Task+CoreDataProperties.swift in Sources */,
-				34BA25DF1EAB0D3E00A41EE9 /* Context1_1+CoreDataProperties.swift in Sources */,
-				34BA25F11EAB0D3E00A41EE9 /* MeetingSupportingDocs+CoreDataProperties.swift in Sources */,
-				34BA25F71EAB0D3E00A41EE9 /* MeetingAgenda+CoreDataProperties.swift in Sources */,
+				3406270A1EAF0479002700BB /* Context+CoreDataClass.swift in Sources */,
+				3406276D1EAF07EF002700BB /* ProjectNote+CoreDataClass.swift in Sources */,
+				340627421EAF0546002700BB /* MeetingAgenda+CoreDataProperties.swift in Sources */,
+				340DB45A1EADD5B60077EE23 /* meetingsDatabase.swift in Sources */,
+				34E990E11EADD1F2005B2718 /* notificationDefinitions.swift in Sources */,
+				3406272E1EAF0479002700BB /* Team+CoreDataClass.swift in Sources */,
+				340627701EAF07EF002700BB /* ProjectNote+CoreDataProperties.swift in Sources */,
+				340627731EAF07EF002700BB /* ProjectTeamMembers+CoreDataClass.swift in Sources */,
+				340DB46E1EADD5DE0077EE23 /* rolesClass.swift in Sources */,
+				3406272B1EAF0479002700BB /* TaskUpdates+CoreDataClass.swift in Sources */,
+				340627631EAF0546002700BB /* Team+CoreDataProperties.swift in Sources */,
+				3406271C1EAF0479002700BB /* MeetingSupportingDocs+CoreDataClass.swift in Sources */,
+				340DB46A1EADD5D70077EE23 /* meetingAttendeeClass.swift in Sources */,
+				340627481EAF0546002700BB /* TaskContext+CoreDataProperties.swift in Sources */,
+				3406274E1EAF0546002700BB /* MeetingAgendaItem+CoreDataProperties.swift in Sources */,
+				3406275A1EAF0546002700BB /* MeetingSupportingDocs+CoreDataProperties.swift in Sources */,
+				340627601EAF0546002700BB /* Roles+CoreDataProperties.swift in Sources */,
+				3406270D1EAF0479002700BB /* Context1_1+CoreDataClass.swift in Sources */,
+				340DB4601EADD5C20077EE23 /* decodesClass.swift in Sources */,
+				340DB46C1EADD5DB0077EE23 /* projectClass.swift in Sources */,
+				340627281EAF0479002700BB /* TaskContext+CoreDataClass.swift in Sources */,
+				340DB47E1EADD6CE0077EE23 /* AppDelegate.swift in Sources */,
+				340627661EAF0546002700BB /* Decodes+CoreDataProperties.swift in Sources */,
+				340627571EAF0546002700BB /* TaskUpdates+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -517,37 +702,64 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				34BA26101EAB0D3E00A41EE9 /* MeetingAgendaItem+CoreDataProperties.swift in Sources */,
+				3406275E1EAF0546002700BB /* MeetingTasks+CoreDataProperties.swift in Sources */,
+				340DB45D1EADD5BD0077EE23 /* CalendarDetails.swift in Sources */,
+				340627261EAF0479002700BB /* Task+CoreDataClass.swift in Sources */,
+				340627081EAF0479002700BB /* Roles+CoreDataClass.swift in Sources */,
 				34BA25AE1EAB05DA00A41EE9 /* EvesCRMSharedFiles.swift in Sources */,
-				34BA26071EAB0D3E00A41EE9 /* Decodes+CoreDataClass.swift in Sources */,
+				340626BF1EAF0297002700BB /* Meeting_Dashboard.xcdatamodeld in Sources */,
+				340DB45F1EADD5C00077EE23 /* contextClass.swift in Sources */,
+				340627551EAF0546002700BB /* Context+CoreDataProperties.swift in Sources */,
 				34BA25971EAAFD2D00A41EE9 /* Meeting_DashboardUITests.swift in Sources */,
-				34BA25E91EAB0D3E00A41EE9 /* Task+CoreDataClass.swift in Sources */,
-				34BA260D1EAB0D3E00A41EE9 /* MeetingAgendaItem+CoreDataClass.swift in Sources */,
-				34BA25FB1EAB0D3E00A41EE9 /* TaskUpdates+CoreDataClass.swift in Sources */,
-				34BA26011EAB0D3E00A41EE9 /* MeetingTasks+CoreDataClass.swift in Sources */,
-				34BA25CB1EAB0D3E00A41EE9 /* Team+CoreDataClass.swift in Sources */,
-				34BA26041EAB0D3E00A41EE9 /* MeetingTasks+CoreDataProperties.swift in Sources */,
-				34BA25D41EAB0D3E00A41EE9 /* MeetingAttendees+CoreDataProperties.swift in Sources */,
+				340627201EAF0479002700BB /* MeetingTasks+CoreDataClass.swift in Sources */,
+				340627231EAF0479002700BB /* Projects+CoreDataClass.swift in Sources */,
+				340DB4791EADD5F00077EE23 /* taskUpdatesClass.swift in Sources */,
+				340DB4751EADD5E90077EE23 /* taskContextsClass.swift in Sources */,
+				340627521EAF0546002700BB /* Projects+CoreDataProperties.swift in Sources */,
+				340DB4591EADD5B30077EE23 /* DBSync.swift in Sources */,
+				340DB4771EADD5EC0077EE23 /* taskPredecessorClass.swift in Sources */,
+				3406274C1EAF0546002700BB /* Task+CoreDataProperties.swift in Sources */,
+				340627111EAF0479002700BB /* Decodes+CoreDataClass.swift in Sources */,
 				34BA261E1EAB0DDE00A41EE9 /* coreDatabase.swift in Sources */,
-				34BA26131EAB0D3E00A41EE9 /* Context+CoreDataClass.swift in Sources */,
-				34BA25FE1EAB0D3E00A41EE9 /* TaskUpdates+CoreDataProperties.swift in Sources */,
-				34BA25EF1EAB0D3E00A41EE9 /* MeetingSupportingDocs+CoreDataClass.swift in Sources */,
-				34BA260A1EAB0D3E00A41EE9 /* Decodes+CoreDataProperties.swift in Sources */,
-				34BA25E61EAB0D3E00A41EE9 /* TaskContext+CoreDataProperties.swift in Sources */,
-				34BA25D11EAB0D3E00A41EE9 /* MeetingAttendees+CoreDataClass.swift in Sources */,
-				34BA25DA1EAB0D3E00A41EE9 /* Projects+CoreDataProperties.swift in Sources */,
-				34BA25E31EAB0D3E00A41EE9 /* TaskContext+CoreDataClass.swift in Sources */,
-				34BA25D71EAB0D3E00A41EE9 /* Projects+CoreDataClass.swift in Sources */,
-				34BA25F51EAB0D3E00A41EE9 /* MeetingAgenda+CoreDataClass.swift in Sources */,
+				340DB4731EADD5E50077EE23 /* taskClass.swift in Sources */,
+				340627771EAF07EF002700BB /* ProjectTeamMembers+CoreDataProperties.swift in Sources */,
+				340DB4691EADD5D30077EE23 /* meetingAgendaItemClass.swift in Sources */,
+				340DB47B1EADD5F30077EE23 /* teamClass.swift in Sources */,
+				3406271A1EAF0479002700BB /* MeetingAttendees+CoreDataClass.swift in Sources */,
+				340DB4651EADD5CC0077EE23 /* maintainPanes.swift in Sources */,
+				340627401EAF0546002700BB /* Context1_1+CoreDataProperties.swift in Sources */,
+				340627461EAF0546002700BB /* MeetingAttendees+CoreDataProperties.swift in Sources */,
+				340627141EAF0479002700BB /* MeetingAgenda+CoreDataClass.swift in Sources */,
+				340DB4671EADD5D00077EE23 /* meetingSupportingDocsClass.swift in Sources */,
+				340DB47D1EADD6CA0077EE23 /* ViewController.swift in Sources */,
+				340DB4631EADD5C60077EE23 /* displayPanes.swift in Sources */,
 				34BA261A1EAB0DCD00A41EE9 /* CloudKitInteraction.swift in Sources */,
+				340627171EAF0479002700BB /* MeetingAgendaItem+CoreDataClass.swift in Sources */,
 				34BA25AA1EAB04CF00A41EE9 /* mainViewController.swift in Sources */,
-				34BA25CE1EAB0D3E00A41EE9 /* Team+CoreDataProperties.swift in Sources */,
-				34BA26161EAB0D3E00A41EE9 /* Context+CoreDataProperties.swift in Sources */,
-				34BA25DD1EAB0D3E00A41EE9 /* Context1_1+CoreDataClass.swift in Sources */,
-				34BA25EC1EAB0D3E00A41EE9 /* Task+CoreDataProperties.swift in Sources */,
-				34BA25E01EAB0D3E00A41EE9 /* Context1_1+CoreDataProperties.swift in Sources */,
-				34BA25F21EAB0D3E00A41EE9 /* MeetingSupportingDocs+CoreDataProperties.swift in Sources */,
-				34BA25F81EAB0D3E00A41EE9 /* MeetingAgenda+CoreDataProperties.swift in Sources */,
+				3406270B1EAF0479002700BB /* Context+CoreDataClass.swift in Sources */,
+				3406276E1EAF07EF002700BB /* ProjectNote+CoreDataClass.swift in Sources */,
+				340627431EAF0546002700BB /* MeetingAgenda+CoreDataProperties.swift in Sources */,
+				340DB45B1EADD5B60077EE23 /* meetingsDatabase.swift in Sources */,
+				34E990E21EADD1F2005B2718 /* notificationDefinitions.swift in Sources */,
+				3406272F1EAF0479002700BB /* Team+CoreDataClass.swift in Sources */,
+				340627711EAF07EF002700BB /* ProjectNote+CoreDataProperties.swift in Sources */,
+				340627741EAF07EF002700BB /* ProjectTeamMembers+CoreDataClass.swift in Sources */,
+				340DB46F1EADD5DF0077EE23 /* rolesClass.swift in Sources */,
+				3406272C1EAF0479002700BB /* TaskUpdates+CoreDataClass.swift in Sources */,
+				340627641EAF0546002700BB /* Team+CoreDataProperties.swift in Sources */,
+				3406271D1EAF0479002700BB /* MeetingSupportingDocs+CoreDataClass.swift in Sources */,
+				340DB46B1EADD5D80077EE23 /* meetingAttendeeClass.swift in Sources */,
+				340627491EAF0546002700BB /* TaskContext+CoreDataProperties.swift in Sources */,
+				3406274F1EAF0546002700BB /* MeetingAgendaItem+CoreDataProperties.swift in Sources */,
+				3406275B1EAF0546002700BB /* MeetingSupportingDocs+CoreDataProperties.swift in Sources */,
+				340627611EAF0546002700BB /* Roles+CoreDataProperties.swift in Sources */,
+				3406270E1EAF0479002700BB /* Context1_1+CoreDataClass.swift in Sources */,
+				340DB4611EADD5C30077EE23 /* decodesClass.swift in Sources */,
+				340DB46D1EADD5DB0077EE23 /* projectClass.swift in Sources */,
+				340627291EAF0479002700BB /* TaskContext+CoreDataClass.swift in Sources */,
+				340DB47F1EADD6CE0077EE23 /* AppDelegate.swift in Sources */,
+				340627671EAF0546002700BB /* Decodes+CoreDataProperties.swift in Sources */,
+				340627581EAF0546002700BB /* TaskUpdates+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -627,7 +839,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -672,7 +884,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -784,6 +996,7 @@
 				34BA259D1EAAFD2D00A41EE9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		34BA259E1EAAFD2D00A41EE9 /* Build configuration list for PBXNativeTarget "Meeting DashboardTests" */ = {
 			isa = XCConfigurationList;
@@ -792,6 +1005,7 @@
 				34BA25A01EAAFD2D00A41EE9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		34BA25A11EAAFD2D00A41EE9 /* Build configuration list for PBXNativeTarget "Meeting DashboardUITests" */ = {
 			isa = XCConfigurationList;
@@ -800,6 +1014,7 @@
 				34BA25A31EAAFD2D00A41EE9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 

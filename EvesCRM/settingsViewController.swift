@@ -297,7 +297,7 @@ class settingsViewController: UIViewController
         
         let dateString = "\(syncStart)"
         
-        myDatabaseConnection.updateDecodeValue("CloudKit Sync", inCodeValue: dateString, inCodeType: "hidden")
+        myDatabaseConnection.updateDecodeValue("\(coreDatabaseName) Sync", inCodeValue: dateString, inCodeType: "hidden")
         
         lblRefreshMessage.isHidden = true
         colDecodes.isHidden = false
