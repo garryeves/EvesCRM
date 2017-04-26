@@ -55,106 +55,6 @@
 		3436F9451B28113E0085C58A /* GTMOAuth2ViewTouch.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3436F9431B28113E0085C58A /* GTMOAuth2ViewTouch.xib */; };
 		343B3F1E1B83045D0053777B /* DBSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 343B3F1D1B83045D0053777B /* DBSync.swift */; };
 		343B3F1F1B83045D0053777B /* DBSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 343B3F1D1B83045D0053777B /* DBSync.swift */; };
-		344062371EAF724400E745C8 /* Team+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062051EAF724400E745C8 /* Team+CoreDataClass.swift */; };
-		344062381EAF724400E745C8 /* Team+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062051EAF724400E745C8 /* Team+CoreDataClass.swift */; };
-		344062391EAF724400E745C8 /* Team+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062061EAF724400E745C8 /* Team+CoreDataProperties.swift */; };
-		3440623A1EAF724400E745C8 /* Team+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062061EAF724400E745C8 /* Team+CoreDataProperties.swift */; };
-		3440623B1EAF724400E745C8 /* ProcessedEmails+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062071EAF724400E745C8 /* ProcessedEmails+CoreDataClass.swift */; };
-		3440623C1EAF724400E745C8 /* ProcessedEmails+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062071EAF724400E745C8 /* ProcessedEmails+CoreDataClass.swift */; };
-		3440623D1EAF724400E745C8 /* ProcessedEmails+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062081EAF724400E745C8 /* ProcessedEmails+CoreDataProperties.swift */; };
-		3440623E1EAF724400E745C8 /* ProcessedEmails+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062081EAF724400E745C8 /* ProcessedEmails+CoreDataProperties.swift */; };
-		3440623F1EAF724400E745C8 /* MeetingSupportingDocs+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062091EAF724400E745C8 /* MeetingSupportingDocs+CoreDataClass.swift */; };
-		344062401EAF724400E745C8 /* MeetingSupportingDocs+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062091EAF724400E745C8 /* MeetingSupportingDocs+CoreDataClass.swift */; };
-		344062411EAF724400E745C8 /* MeetingSupportingDocs+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440620A1EAF724400E745C8 /* MeetingSupportingDocs+CoreDataProperties.swift */; };
-		344062421EAF724400E745C8 /* MeetingSupportingDocs+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440620A1EAF724400E745C8 /* MeetingSupportingDocs+CoreDataProperties.swift */; };
-		344062431EAF724400E745C8 /* TaskPredecessor+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440620B1EAF724400E745C8 /* TaskPredecessor+CoreDataClass.swift */; };
-		344062441EAF724400E745C8 /* TaskPredecessor+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440620B1EAF724400E745C8 /* TaskPredecessor+CoreDataClass.swift */; };
-		344062451EAF724400E745C8 /* TaskPredecessor+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440620C1EAF724400E745C8 /* TaskPredecessor+CoreDataProperties.swift */; };
-		344062461EAF724400E745C8 /* TaskPredecessor+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440620C1EAF724400E745C8 /* TaskPredecessor+CoreDataProperties.swift */; };
-		344062471EAF724400E745C8 /* ProjectNote+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440620D1EAF724400E745C8 /* ProjectNote+CoreDataClass.swift */; };
-		344062481EAF724400E745C8 /* ProjectNote+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440620D1EAF724400E745C8 /* ProjectNote+CoreDataClass.swift */; };
-		344062491EAF724400E745C8 /* ProjectNote+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440620E1EAF724400E745C8 /* ProjectNote+CoreDataProperties.swift */; };
-		3440624A1EAF724400E745C8 /* ProjectNote+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440620E1EAF724400E745C8 /* ProjectNote+CoreDataProperties.swift */; };
-		3440624B1EAF724400E745C8 /* Projects+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440620F1EAF724400E745C8 /* Projects+CoreDataClass.swift */; };
-		3440624C1EAF724400E745C8 /* Projects+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440620F1EAF724400E745C8 /* Projects+CoreDataClass.swift */; };
-		3440624D1EAF724400E745C8 /* Projects+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062101EAF724400E745C8 /* Projects+CoreDataProperties.swift */; };
-		3440624E1EAF724400E745C8 /* Projects+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062101EAF724400E745C8 /* Projects+CoreDataProperties.swift */; };
-		3440624F1EAF724400E745C8 /* TaskContext+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062111EAF724400E745C8 /* TaskContext+CoreDataClass.swift */; };
-		344062501EAF724400E745C8 /* TaskContext+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062111EAF724400E745C8 /* TaskContext+CoreDataClass.swift */; };
-		344062511EAF724400E745C8 /* TaskContext+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062121EAF724400E745C8 /* TaskContext+CoreDataProperties.swift */; };
-		344062521EAF724400E745C8 /* TaskContext+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062121EAF724400E745C8 /* TaskContext+CoreDataProperties.swift */; };
-		344062531EAF724400E745C8 /* GTDItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062131EAF724400E745C8 /* GTDItem+CoreDataClass.swift */; };
-		344062541EAF724400E745C8 /* GTDItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062131EAF724400E745C8 /* GTDItem+CoreDataClass.swift */; };
-		344062551EAF724400E745C8 /* GTDItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062141EAF724400E745C8 /* GTDItem+CoreDataProperties.swift */; };
-		344062561EAF724400E745C8 /* GTDItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062141EAF724400E745C8 /* GTDItem+CoreDataProperties.swift */; };
-		344062571EAF724400E745C8 /* GTDLevel+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062151EAF724400E745C8 /* GTDLevel+CoreDataClass.swift */; };
-		344062581EAF724400E745C8 /* GTDLevel+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062151EAF724400E745C8 /* GTDLevel+CoreDataClass.swift */; };
-		344062591EAF724400E745C8 /* GTDLevel+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062161EAF724400E745C8 /* GTDLevel+CoreDataProperties.swift */; };
-		3440625A1EAF724400E745C8 /* GTDLevel+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062161EAF724400E745C8 /* GTDLevel+CoreDataProperties.swift */; };
-		3440625B1EAF724400E745C8 /* MeetingAttendees+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062171EAF724400E745C8 /* MeetingAttendees+CoreDataClass.swift */; };
-		3440625C1EAF724400E745C8 /* MeetingAttendees+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062171EAF724400E745C8 /* MeetingAttendees+CoreDataClass.swift */; };
-		3440625D1EAF724400E745C8 /* MeetingAttendees+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062181EAF724400E745C8 /* MeetingAttendees+CoreDataProperties.swift */; };
-		3440625E1EAF724400E745C8 /* MeetingAttendees+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062181EAF724400E745C8 /* MeetingAttendees+CoreDataProperties.swift */; };
-		3440625F1EAF724400E745C8 /* Task+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062191EAF724400E745C8 /* Task+CoreDataClass.swift */; };
-		344062601EAF724400E745C8 /* Task+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062191EAF724400E745C8 /* Task+CoreDataClass.swift */; };
-		344062611EAF724400E745C8 /* Task+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440621A1EAF724400E745C8 /* Task+CoreDataProperties.swift */; };
-		344062621EAF724400E745C8 /* Task+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440621A1EAF724400E745C8 /* Task+CoreDataProperties.swift */; };
-		344062631EAF724400E745C8 /* TaskAttachment+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440621B1EAF724400E745C8 /* TaskAttachment+CoreDataClass.swift */; };
-		344062641EAF724400E745C8 /* TaskAttachment+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440621B1EAF724400E745C8 /* TaskAttachment+CoreDataClass.swift */; };
-		344062651EAF724400E745C8 /* TaskAttachment+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440621C1EAF724400E745C8 /* TaskAttachment+CoreDataProperties.swift */; };
-		344062661EAF724400E745C8 /* TaskAttachment+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440621C1EAF724400E745C8 /* TaskAttachment+CoreDataProperties.swift */; };
-		344062671EAF724400E745C8 /* MeetingAgendaItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440621D1EAF724400E745C8 /* MeetingAgendaItem+CoreDataClass.swift */; };
-		344062681EAF724400E745C8 /* MeetingAgendaItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440621D1EAF724400E745C8 /* MeetingAgendaItem+CoreDataClass.swift */; };
-		344062691EAF724400E745C8 /* MeetingAgendaItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440621E1EAF724400E745C8 /* MeetingAgendaItem+CoreDataProperties.swift */; };
-		3440626A1EAF724400E745C8 /* MeetingAgendaItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440621E1EAF724400E745C8 /* MeetingAgendaItem+CoreDataProperties.swift */; };
-		3440626B1EAF724400E745C8 /* Context+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440621F1EAF724400E745C8 /* Context+CoreDataClass.swift */; };
-		3440626C1EAF724400E745C8 /* Context+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440621F1EAF724400E745C8 /* Context+CoreDataClass.swift */; };
-		3440626D1EAF724400E745C8 /* Context+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062201EAF724400E745C8 /* Context+CoreDataProperties.swift */; };
-		3440626E1EAF724400E745C8 /* Context+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062201EAF724400E745C8 /* Context+CoreDataProperties.swift */; };
-		3440626F1EAF724400E745C8 /* Roles+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062211EAF724400E745C8 /* Roles+CoreDataClass.swift */; };
-		344062701EAF724400E745C8 /* Roles+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062211EAF724400E745C8 /* Roles+CoreDataClass.swift */; };
-		344062711EAF724400E745C8 /* Roles+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062221EAF724400E745C8 /* Roles+CoreDataProperties.swift */; };
-		344062721EAF724400E745C8 /* Roles+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062221EAF724400E745C8 /* Roles+CoreDataProperties.swift */; };
-		344062731EAF724400E745C8 /* Panes+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062231EAF724400E745C8 /* Panes+CoreDataClass.swift */; };
-		344062741EAF724400E745C8 /* Panes+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062231EAF724400E745C8 /* Panes+CoreDataClass.swift */; };
-		344062751EAF724400E745C8 /* Panes+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062241EAF724400E745C8 /* Panes+CoreDataProperties.swift */; };
-		344062761EAF724400E745C8 /* Panes+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062241EAF724400E745C8 /* Panes+CoreDataProperties.swift */; };
-		344062771EAF724400E745C8 /* Decodes+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062251EAF724400E745C8 /* Decodes+CoreDataClass.swift */; };
-		344062781EAF724400E745C8 /* Decodes+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062251EAF724400E745C8 /* Decodes+CoreDataClass.swift */; };
-		344062791EAF724400E745C8 /* Decodes+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062261EAF724400E745C8 /* Decodes+CoreDataProperties.swift */; };
-		3440627A1EAF724400E745C8 /* Decodes+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062261EAF724400E745C8 /* Decodes+CoreDataProperties.swift */; };
-		3440627B1EAF724400E745C8 /* TaskUpdates+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062271EAF724400E745C8 /* TaskUpdates+CoreDataClass.swift */; };
-		3440627C1EAF724400E745C8 /* TaskUpdates+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062271EAF724400E745C8 /* TaskUpdates+CoreDataClass.swift */; };
-		3440627D1EAF724400E745C8 /* TaskUpdates+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062281EAF724400E745C8 /* TaskUpdates+CoreDataProperties.swift */; };
-		3440627E1EAF724400E745C8 /* TaskUpdates+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062281EAF724400E745C8 /* TaskUpdates+CoreDataProperties.swift */; };
-		3440627F1EAF724400E745C8 /* Outline+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062291EAF724400E745C8 /* Outline+CoreDataClass.swift */; };
-		344062801EAF724400E745C8 /* Outline+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062291EAF724400E745C8 /* Outline+CoreDataClass.swift */; };
-		344062811EAF724400E745C8 /* Outline+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440622A1EAF724400E745C8 /* Outline+CoreDataProperties.swift */; };
-		344062821EAF724400E745C8 /* Outline+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440622A1EAF724400E745C8 /* Outline+CoreDataProperties.swift */; };
-		344062831EAF724400E745C8 /* OutlineDetails+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440622B1EAF724400E745C8 /* OutlineDetails+CoreDataClass.swift */; };
-		344062841EAF724400E745C8 /* OutlineDetails+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440622B1EAF724400E745C8 /* OutlineDetails+CoreDataClass.swift */; };
-		344062851EAF724400E745C8 /* OutlineDetails+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440622C1EAF724400E745C8 /* OutlineDetails+CoreDataProperties.swift */; };
-		344062861EAF724400E745C8 /* OutlineDetails+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440622C1EAF724400E745C8 /* OutlineDetails+CoreDataProperties.swift */; };
-		344062871EAF724400E745C8 /* ProjectTeamMembers+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440622D1EAF724400E745C8 /* ProjectTeamMembers+CoreDataClass.swift */; };
-		344062881EAF724400E745C8 /* ProjectTeamMembers+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440622D1EAF724400E745C8 /* ProjectTeamMembers+CoreDataClass.swift */; };
-		344062891EAF724400E745C8 /* ProjectTeamMembers+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440622E1EAF724400E745C8 /* ProjectTeamMembers+CoreDataProperties.swift */; };
-		3440628A1EAF724400E745C8 /* ProjectTeamMembers+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440622E1EAF724400E745C8 /* ProjectTeamMembers+CoreDataProperties.swift */; };
-		3440628B1EAF724400E745C8 /* MeetingAgenda+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440622F1EAF724400E745C8 /* MeetingAgenda+CoreDataClass.swift */; };
-		3440628C1EAF724400E745C8 /* MeetingAgenda+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440622F1EAF724400E745C8 /* MeetingAgenda+CoreDataClass.swift */; };
-		3440628D1EAF724400E745C8 /* MeetingAgenda+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062301EAF724400E745C8 /* MeetingAgenda+CoreDataProperties.swift */; };
-		3440628E1EAF724400E745C8 /* MeetingAgenda+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062301EAF724400E745C8 /* MeetingAgenda+CoreDataProperties.swift */; };
-		3440628F1EAF724400E745C8 /* MeetingTasks+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062311EAF724400E745C8 /* MeetingTasks+CoreDataClass.swift */; };
-		344062901EAF724400E745C8 /* MeetingTasks+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062311EAF724400E745C8 /* MeetingTasks+CoreDataClass.swift */; };
-		344062911EAF724400E745C8 /* MeetingTasks+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062321EAF724400E745C8 /* MeetingTasks+CoreDataProperties.swift */; };
-		344062921EAF724400E745C8 /* MeetingTasks+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062321EAF724400E745C8 /* MeetingTasks+CoreDataProperties.swift */; };
-		344062931EAF724400E745C8 /* Context1_1+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062331EAF724400E745C8 /* Context1_1+CoreDataClass.swift */; };
-		344062941EAF724400E745C8 /* Context1_1+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062331EAF724400E745C8 /* Context1_1+CoreDataClass.swift */; };
-		344062951EAF724400E745C8 /* Context1_1+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062341EAF724400E745C8 /* Context1_1+CoreDataProperties.swift */; };
-		344062961EAF724400E745C8 /* Context1_1+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062341EAF724400E745C8 /* Context1_1+CoreDataProperties.swift */; };
-		344062971EAF724400E745C8 /* Stages+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062351EAF724400E745C8 /* Stages+CoreDataClass.swift */; };
-		344062981EAF724400E745C8 /* Stages+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062351EAF724400E745C8 /* Stages+CoreDataClass.swift */; };
-		344062991EAF724400E745C8 /* Stages+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062361EAF724400E745C8 /* Stages+CoreDataProperties.swift */; };
-		3440629A1EAF724400E745C8 /* Stages+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344062361EAF724400E745C8 /* Stages+CoreDataProperties.swift */; };
 		344726611B54D6A800BEFF0B /* coreDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344726601B54D6A800BEFF0B /* coreDatabase.swift */; };
 		344726621B54D6A800BEFF0B /* coreDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344726601B54D6A800BEFF0B /* coreDatabase.swift */; };
 		344B6ACD1BA7B3B600A5377B /* CloudKitInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344B6ACC1BA7B3B600A5377B /* CloudKitInteraction.swift */; };
@@ -191,6 +91,108 @@
 		348E6D4C1ADF74C800697268 /* ContactDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348E6D4A1ADF74C800697268 /* ContactDetails.swift */; };
 		349331C91B705756004AA569 /* SideBarTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349331C81B705756004AA569 /* SideBarTableViewController.swift */; };
 		349331CF1B70576C004AA569 /* SideBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349331CE1B70576C004AA569 /* SideBar.swift */; };
+		349A0D2D1EB0437B00F68594 /* Decodes+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0CFC1EB0437B00F68594 /* Decodes+CoreDataClass.swift */; };
+		349A0D2E1EB0437B00F68594 /* Decodes+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0CFC1EB0437B00F68594 /* Decodes+CoreDataClass.swift */; };
+		349A0D2F1EB0437B00F68594 /* Decodes+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0CFD1EB0437B00F68594 /* Decodes+CoreDataProperties.swift */; };
+		349A0D301EB0437B00F68594 /* Decodes+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0CFD1EB0437B00F68594 /* Decodes+CoreDataProperties.swift */; };
+		349A0D311EB0437B00F68594 /* OutlineDetails+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0CFE1EB0437B00F68594 /* OutlineDetails+CoreDataClass.swift */; };
+		349A0D321EB0437B00F68594 /* OutlineDetails+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0CFE1EB0437B00F68594 /* OutlineDetails+CoreDataClass.swift */; };
+		349A0D331EB0437B00F68594 /* OutlineDetails+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0CFF1EB0437B00F68594 /* OutlineDetails+CoreDataProperties.swift */; };
+		349A0D341EB0437B00F68594 /* OutlineDetails+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0CFF1EB0437B00F68594 /* OutlineDetails+CoreDataProperties.swift */; };
+		349A0D351EB0437B00F68594 /* ProcessedEmails+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D001EB0437B00F68594 /* ProcessedEmails+CoreDataClass.swift */; };
+		349A0D361EB0437B00F68594 /* ProcessedEmails+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D001EB0437B00F68594 /* ProcessedEmails+CoreDataClass.swift */; };
+		349A0D371EB0437B00F68594 /* ProcessedEmails+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D011EB0437B00F68594 /* ProcessedEmails+CoreDataProperties.swift */; };
+		349A0D381EB0437B00F68594 /* ProcessedEmails+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D011EB0437B00F68594 /* ProcessedEmails+CoreDataProperties.swift */; };
+		349A0D391EB0437B00F68594 /* TaskPredecessor+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D021EB0437B00F68594 /* TaskPredecessor+CoreDataClass.swift */; };
+		349A0D3A1EB0437B00F68594 /* TaskPredecessor+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D021EB0437B00F68594 /* TaskPredecessor+CoreDataClass.swift */; };
+		349A0D3B1EB0437B00F68594 /* TaskPredecessor+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D031EB0437B00F68594 /* TaskPredecessor+CoreDataProperties.swift */; };
+		349A0D3C1EB0437B00F68594 /* TaskPredecessor+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D031EB0437B00F68594 /* TaskPredecessor+CoreDataProperties.swift */; };
+		349A0D3D1EB0437B00F68594 /* TaskContext+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D041EB0437B00F68594 /* TaskContext+CoreDataProperties.swift */; };
+		349A0D3E1EB0437B00F68594 /* TaskContext+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D041EB0437B00F68594 /* TaskContext+CoreDataProperties.swift */; };
+		349A0D3F1EB0437B00F68594 /* ProjectNote+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D051EB0437B00F68594 /* ProjectNote+CoreDataClass.swift */; };
+		349A0D401EB0437B00F68594 /* ProjectNote+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D051EB0437B00F68594 /* ProjectNote+CoreDataClass.swift */; };
+		349A0D411EB0437B00F68594 /* ProjectNote+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D061EB0437B00F68594 /* ProjectNote+CoreDataProperties.swift */; };
+		349A0D421EB0437B00F68594 /* ProjectNote+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D061EB0437B00F68594 /* ProjectNote+CoreDataProperties.swift */; };
+		349A0D431EB0437B00F68594 /* GTDLevel+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D071EB0437B00F68594 /* GTDLevel+CoreDataClass.swift */; };
+		349A0D441EB0437B00F68594 /* GTDLevel+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D071EB0437B00F68594 /* GTDLevel+CoreDataClass.swift */; };
+		349A0D451EB0437B00F68594 /* GTDLevel+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D081EB0437B00F68594 /* GTDLevel+CoreDataProperties.swift */; };
+		349A0D461EB0437B00F68594 /* GTDLevel+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D081EB0437B00F68594 /* GTDLevel+CoreDataProperties.swift */; };
+		349A0D471EB0437B00F68594 /* Task+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D091EB0437B00F68594 /* Task+CoreDataClass.swift */; };
+		349A0D481EB0437B00F68594 /* Task+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D091EB0437B00F68594 /* Task+CoreDataClass.swift */; };
+		349A0D491EB0437B00F68594 /* Task+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D0A1EB0437B00F68594 /* Task+CoreDataProperties.swift */; };
+		349A0D4A1EB0437B00F68594 /* Task+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D0A1EB0437B00F68594 /* Task+CoreDataProperties.swift */; };
+		349A0D4B1EB0437B00F68594 /* MeetingAgenda+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D0B1EB0437B00F68594 /* MeetingAgenda+CoreDataClass.swift */; };
+		349A0D4C1EB0437B00F68594 /* MeetingAgenda+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D0B1EB0437B00F68594 /* MeetingAgenda+CoreDataClass.swift */; };
+		349A0D4D1EB0437B00F68594 /* MeetingAgenda+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D0C1EB0437B00F68594 /* MeetingAgenda+CoreDataProperties.swift */; };
+		349A0D4E1EB0437B00F68594 /* MeetingAgenda+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D0C1EB0437B00F68594 /* MeetingAgenda+CoreDataProperties.swift */; };
+		349A0D4F1EB0437B00F68594 /* Panes+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D0D1EB0437B00F68594 /* Panes+CoreDataClass.swift */; };
+		349A0D501EB0437B00F68594 /* Panes+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D0D1EB0437B00F68594 /* Panes+CoreDataClass.swift */; };
+		349A0D511EB0437B00F68594 /* Panes+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D0E1EB0437B00F68594 /* Panes+CoreDataProperties.swift */; };
+		349A0D521EB0437B00F68594 /* Panes+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D0E1EB0437B00F68594 /* Panes+CoreDataProperties.swift */; };
+		349A0D531EB0437B00F68594 /* TaskAttachment+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D0F1EB0437B00F68594 /* TaskAttachment+CoreDataClass.swift */; };
+		349A0D541EB0437B00F68594 /* TaskAttachment+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D0F1EB0437B00F68594 /* TaskAttachment+CoreDataClass.swift */; };
+		349A0D551EB0437B00F68594 /* TaskAttachment+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D101EB0437B00F68594 /* TaskAttachment+CoreDataProperties.swift */; };
+		349A0D561EB0437B00F68594 /* TaskAttachment+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D101EB0437B00F68594 /* TaskAttachment+CoreDataProperties.swift */; };
+		349A0D571EB0437B00F68594 /* Context1_1+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D111EB0437B00F68594 /* Context1_1+CoreDataClass.swift */; };
+		349A0D581EB0437B00F68594 /* Context1_1+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D111EB0437B00F68594 /* Context1_1+CoreDataClass.swift */; };
+		349A0D591EB0437B00F68594 /* Context1_1+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D121EB0437B00F68594 /* Context1_1+CoreDataProperties.swift */; };
+		349A0D5A1EB0437B00F68594 /* Context1_1+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D121EB0437B00F68594 /* Context1_1+CoreDataProperties.swift */; };
+		349A0D5B1EB0437B00F68594 /* TaskUpdates+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D131EB0437B00F68594 /* TaskUpdates+CoreDataClass.swift */; };
+		349A0D5C1EB0437B00F68594 /* TaskUpdates+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D131EB0437B00F68594 /* TaskUpdates+CoreDataClass.swift */; };
+		349A0D5D1EB0437B00F68594 /* TaskUpdates+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D141EB0437B00F68594 /* TaskUpdates+CoreDataProperties.swift */; };
+		349A0D5E1EB0437B00F68594 /* TaskUpdates+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D141EB0437B00F68594 /* TaskUpdates+CoreDataProperties.swift */; };
+		349A0D5F1EB0437B00F68594 /* MeetingTasks+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D151EB0437B00F68594 /* MeetingTasks+CoreDataClass.swift */; };
+		349A0D601EB0437B00F68594 /* MeetingTasks+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D151EB0437B00F68594 /* MeetingTasks+CoreDataClass.swift */; };
+		349A0D611EB0437B00F68594 /* MeetingTasks+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D161EB0437B00F68594 /* MeetingTasks+CoreDataProperties.swift */; };
+		349A0D621EB0437B00F68594 /* MeetingTasks+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D161EB0437B00F68594 /* MeetingTasks+CoreDataProperties.swift */; };
+		349A0D631EB0437B00F68594 /* Team+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D171EB0437B00F68594 /* Team+CoreDataClass.swift */; };
+		349A0D641EB0437B00F68594 /* Team+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D171EB0437B00F68594 /* Team+CoreDataClass.swift */; };
+		349A0D651EB0437B00F68594 /* Team+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D181EB0437B00F68594 /* Team+CoreDataProperties.swift */; };
+		349A0D661EB0437B00F68594 /* Team+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D181EB0437B00F68594 /* Team+CoreDataProperties.swift */; };
+		349A0D671EB0437B00F68594 /* MeetingSupportingDocs+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D191EB0437B00F68594 /* MeetingSupportingDocs+CoreDataClass.swift */; };
+		349A0D681EB0437B00F68594 /* MeetingSupportingDocs+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D191EB0437B00F68594 /* MeetingSupportingDocs+CoreDataClass.swift */; };
+		349A0D691EB0437B00F68594 /* MeetingSupportingDocs+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D1A1EB0437B00F68594 /* MeetingSupportingDocs+CoreDataProperties.swift */; };
+		349A0D6A1EB0437B00F68594 /* MeetingSupportingDocs+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D1A1EB0437B00F68594 /* MeetingSupportingDocs+CoreDataProperties.swift */; };
+		349A0D6B1EB0437B00F68594 /* Projects+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D1B1EB0437B00F68594 /* Projects+CoreDataClass.swift */; };
+		349A0D6C1EB0437B00F68594 /* Projects+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D1B1EB0437B00F68594 /* Projects+CoreDataClass.swift */; };
+		349A0D6D1EB0437B00F68594 /* Projects+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D1C1EB0437B00F68594 /* Projects+CoreDataProperties.swift */; };
+		349A0D6E1EB0437B00F68594 /* Projects+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D1C1EB0437B00F68594 /* Projects+CoreDataProperties.swift */; };
+		349A0D6F1EB0437B00F68594 /* Roles+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D1D1EB0437B00F68594 /* Roles+CoreDataClass.swift */; };
+		349A0D701EB0437B00F68594 /* Roles+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D1D1EB0437B00F68594 /* Roles+CoreDataClass.swift */; };
+		349A0D711EB0437B00F68594 /* Roles+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D1E1EB0437B00F68594 /* Roles+CoreDataProperties.swift */; };
+		349A0D721EB0437B00F68594 /* Roles+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D1E1EB0437B00F68594 /* Roles+CoreDataProperties.swift */; };
+		349A0D731EB0437B00F68594 /* Stages+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D1F1EB0437B00F68594 /* Stages+CoreDataClass.swift */; };
+		349A0D741EB0437B00F68594 /* Stages+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D1F1EB0437B00F68594 /* Stages+CoreDataClass.swift */; };
+		349A0D751EB0437B00F68594 /* Stages+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D201EB0437B00F68594 /* Stages+CoreDataProperties.swift */; };
+		349A0D761EB0437B00F68594 /* Stages+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D201EB0437B00F68594 /* Stages+CoreDataProperties.swift */; };
+		349A0D771EB0437B00F68594 /* MeetingAgendaItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D211EB0437B00F68594 /* MeetingAgendaItem+CoreDataClass.swift */; };
+		349A0D781EB0437B00F68594 /* MeetingAgendaItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D211EB0437B00F68594 /* MeetingAgendaItem+CoreDataClass.swift */; };
+		349A0D791EB0437B00F68594 /* MeetingAgendaItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D221EB0437B00F68594 /* MeetingAgendaItem+CoreDataProperties.swift */; };
+		349A0D7A1EB0437B00F68594 /* MeetingAgendaItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D221EB0437B00F68594 /* MeetingAgendaItem+CoreDataProperties.swift */; };
+		349A0D7B1EB0437B00F68594 /* MeetingAttendees+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D231EB0437B00F68594 /* MeetingAttendees+CoreDataClass.swift */; };
+		349A0D7C1EB0437B00F68594 /* MeetingAttendees+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D231EB0437B00F68594 /* MeetingAttendees+CoreDataClass.swift */; };
+		349A0D7D1EB0437B00F68594 /* MeetingAttendees+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D241EB0437B00F68594 /* MeetingAttendees+CoreDataProperties.swift */; };
+		349A0D7E1EB0437B00F68594 /* MeetingAttendees+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D241EB0437B00F68594 /* MeetingAttendees+CoreDataProperties.swift */; };
+		349A0D7F1EB0437B00F68594 /* Outline+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D251EB0437B00F68594 /* Outline+CoreDataClass.swift */; };
+		349A0D801EB0437B00F68594 /* Outline+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D251EB0437B00F68594 /* Outline+CoreDataClass.swift */; };
+		349A0D811EB0437B00F68594 /* Outline+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D261EB0437B00F68594 /* Outline+CoreDataProperties.swift */; };
+		349A0D821EB0437B00F68594 /* Outline+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D261EB0437B00F68594 /* Outline+CoreDataProperties.swift */; };
+		349A0D831EB0437B00F68594 /* ProjectTeamMembers+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D271EB0437B00F68594 /* ProjectTeamMembers+CoreDataClass.swift */; };
+		349A0D841EB0437B00F68594 /* ProjectTeamMembers+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D271EB0437B00F68594 /* ProjectTeamMembers+CoreDataClass.swift */; };
+		349A0D851EB0437B00F68594 /* ProjectTeamMembers+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D281EB0437B00F68594 /* ProjectTeamMembers+CoreDataProperties.swift */; };
+		349A0D861EB0437B00F68594 /* ProjectTeamMembers+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D281EB0437B00F68594 /* ProjectTeamMembers+CoreDataProperties.swift */; };
+		349A0D871EB0437B00F68594 /* GTDItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D291EB0437B00F68594 /* GTDItem+CoreDataClass.swift */; };
+		349A0D881EB0437B00F68594 /* GTDItem+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D291EB0437B00F68594 /* GTDItem+CoreDataClass.swift */; };
+		349A0D891EB0437B00F68594 /* GTDItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D2A1EB0437B00F68594 /* GTDItem+CoreDataProperties.swift */; };
+		349A0D8A1EB0437B00F68594 /* GTDItem+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D2A1EB0437B00F68594 /* GTDItem+CoreDataProperties.swift */; };
+		349A0D8B1EB0437B00F68594 /* Context+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D2B1EB0437B00F68594 /* Context+CoreDataClass.swift */; };
+		349A0D8C1EB0437B00F68594 /* Context+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D2B1EB0437B00F68594 /* Context+CoreDataClass.swift */; };
+		349A0D8D1EB0437B00F68594 /* Context+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D2C1EB0437B00F68594 /* Context+CoreDataProperties.swift */; };
+		349A0D8E1EB0437B00F68594 /* Context+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D2C1EB0437B00F68594 /* Context+CoreDataProperties.swift */; };
+		349A0D901EB0449800F68594 /* TaskContext+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D8F1EB0449800F68594 /* TaskContext+CoreDataClass.swift */; };
+		349A0D911EB0449800F68594 /* TaskContext+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349A0D8F1EB0449800F68594 /* TaskContext+CoreDataClass.swift */; };
+		349A0D9F1EB07BFD00F68594 /* GTD.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 349A0D9E1EB07BFC00F68594 /* GTD.storyboard */; };
+		349A0DA01EB07BFD00F68594 /* GTD.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 349A0D9E1EB07BFC00F68594 /* GTD.storyboard */; };
 		34B375921E2F19AA00A75335 /* DropboxCoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344C4CEF1E2F00D7005AE173 /* DropboxCoreService.swift */; };
 		34B3BDA01AF0979E00C5B09D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3406506F1ADDF8FF00C90CBB /* ViewController.swift */; };
 		34B525391B130F1C00093250 /* oneNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B525381B130F1C00093250 /* oneNote.swift */; };
@@ -250,6 +252,16 @@
 		34DF7ACC1BBCB18F000E3B09 /* maintainContextsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF7ACA1BBCB18F000E3B09 /* maintainContextsViewController.swift */; };
 		34E92AE81B9D5B3400F158F3 /* teamMaintenanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E92AE71B9D5B3400F158F3 /* teamMaintenanceViewController.swift */; };
 		34E92AE91B9D5B3400F158F3 /* teamMaintenanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E92AE71B9D5B3400F158F3 /* teamMaintenanceViewController.swift */; };
+		34EA77431EB07E8400D7DD1F /* team.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34EA77411EB07E8400D7DD1F /* team.storyboard */; };
+		34EA77441EB07E8400D7DD1F /* team.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34EA77411EB07E8400D7DD1F /* team.storyboard */; };
+		34EA77461EB07EBC00D7DD1F /* tasks.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34EA77451EB07EBC00D7DD1F /* tasks.storyboard */; };
+		34EA77471EB07EBC00D7DD1F /* tasks.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34EA77451EB07EBC00D7DD1F /* tasks.storyboard */; };
+		34EA774A1EB07EF000D7DD1F /* meetings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34EA77481EB07EF000D7DD1F /* meetings.storyboard */; };
+		34EA774B1EB07EF000D7DD1F /* meetings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34EA77481EB07EF000D7DD1F /* meetings.storyboard */; };
+		34EA774D1EB07F1700D7DD1F /* projects.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34EA774C1EB07F1700D7DD1F /* projects.storyboard */; };
+		34EA774E1EB07F1700D7DD1F /* projects.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34EA774C1EB07F1700D7DD1F /* projects.storyboard */; };
+		34EA77511EB07F3200D7DD1F /* contexts.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34EA774F1EB07F3200D7DD1F /* contexts.storyboard */; };
+		34EA77521EB07F3200D7DD1F /* contexts.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34EA774F1EB07F3200D7DD1F /* contexts.storyboard */; };
 		34F199BF1AF6060200963ABF /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34F199BE1AF6060200963ABF /* CoreData.framework */; };
 		34F199C11AF6ECE900963ABF /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34F199C01AF6ECE900963ABF /* CloudKit.framework */; };
 		34F35BD31B6B3F7000A19ACE /* taskUpdatesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F35BD21B6B3F7000A19ACE /* taskUpdatesViewController.swift */; };
@@ -322,56 +334,6 @@
 		3436F9431B28113E0085C58A /* GTMOAuth2ViewTouch.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GTMOAuth2ViewTouch.xib; sourceTree = "<group>"; };
 		343B3F181B82CA930053777B /* EvesCRM 16.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 16.xcdatamodel"; sourceTree = "<group>"; };
 		343B3F1D1B83045D0053777B /* DBSync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DBSync.swift; sourceTree = "<group>"; };
-		344062051EAF724400E745C8 /* Team+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Team+CoreDataClass.swift"; path = "../Team+CoreDataClass.swift"; sourceTree = "<group>"; };
-		344062061EAF724400E745C8 /* Team+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Team+CoreDataProperties.swift"; path = "../Team+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		344062071EAF724400E745C8 /* ProcessedEmails+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ProcessedEmails+CoreDataClass.swift"; path = "../ProcessedEmails+CoreDataClass.swift"; sourceTree = "<group>"; };
-		344062081EAF724400E745C8 /* ProcessedEmails+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ProcessedEmails+CoreDataProperties.swift"; path = "../ProcessedEmails+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		344062091EAF724400E745C8 /* MeetingSupportingDocs+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingSupportingDocs+CoreDataClass.swift"; path = "../MeetingSupportingDocs+CoreDataClass.swift"; sourceTree = "<group>"; };
-		3440620A1EAF724400E745C8 /* MeetingSupportingDocs+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingSupportingDocs+CoreDataProperties.swift"; path = "../MeetingSupportingDocs+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		3440620B1EAF724400E745C8 /* TaskPredecessor+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TaskPredecessor+CoreDataClass.swift"; path = "../TaskPredecessor+CoreDataClass.swift"; sourceTree = "<group>"; };
-		3440620C1EAF724400E745C8 /* TaskPredecessor+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TaskPredecessor+CoreDataProperties.swift"; path = "../TaskPredecessor+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		3440620D1EAF724400E745C8 /* ProjectNote+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ProjectNote+CoreDataClass.swift"; path = "../ProjectNote+CoreDataClass.swift"; sourceTree = "<group>"; };
-		3440620E1EAF724400E745C8 /* ProjectNote+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ProjectNote+CoreDataProperties.swift"; path = "../ProjectNote+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		3440620F1EAF724400E745C8 /* Projects+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Projects+CoreDataClass.swift"; path = "../Projects+CoreDataClass.swift"; sourceTree = "<group>"; };
-		344062101EAF724400E745C8 /* Projects+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Projects+CoreDataProperties.swift"; path = "../Projects+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		344062111EAF724400E745C8 /* TaskContext+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TaskContext+CoreDataClass.swift"; path = "../TaskContext+CoreDataClass.swift"; sourceTree = "<group>"; };
-		344062121EAF724400E745C8 /* TaskContext+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TaskContext+CoreDataProperties.swift"; path = "../TaskContext+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		344062131EAF724400E745C8 /* GTDItem+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "GTDItem+CoreDataClass.swift"; path = "../GTDItem+CoreDataClass.swift"; sourceTree = "<group>"; };
-		344062141EAF724400E745C8 /* GTDItem+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "GTDItem+CoreDataProperties.swift"; path = "../GTDItem+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		344062151EAF724400E745C8 /* GTDLevel+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "GTDLevel+CoreDataClass.swift"; path = "../GTDLevel+CoreDataClass.swift"; sourceTree = "<group>"; };
-		344062161EAF724400E745C8 /* GTDLevel+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "GTDLevel+CoreDataProperties.swift"; path = "../GTDLevel+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		344062171EAF724400E745C8 /* MeetingAttendees+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingAttendees+CoreDataClass.swift"; path = "../MeetingAttendees+CoreDataClass.swift"; sourceTree = "<group>"; };
-		344062181EAF724400E745C8 /* MeetingAttendees+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingAttendees+CoreDataProperties.swift"; path = "../MeetingAttendees+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		344062191EAF724400E745C8 /* Task+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Task+CoreDataClass.swift"; path = "../Task+CoreDataClass.swift"; sourceTree = "<group>"; };
-		3440621A1EAF724400E745C8 /* Task+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Task+CoreDataProperties.swift"; path = "../Task+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		3440621B1EAF724400E745C8 /* TaskAttachment+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TaskAttachment+CoreDataClass.swift"; path = "../TaskAttachment+CoreDataClass.swift"; sourceTree = "<group>"; };
-		3440621C1EAF724400E745C8 /* TaskAttachment+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TaskAttachment+CoreDataProperties.swift"; path = "../TaskAttachment+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		3440621D1EAF724400E745C8 /* MeetingAgendaItem+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingAgendaItem+CoreDataClass.swift"; path = "../MeetingAgendaItem+CoreDataClass.swift"; sourceTree = "<group>"; };
-		3440621E1EAF724400E745C8 /* MeetingAgendaItem+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingAgendaItem+CoreDataProperties.swift"; path = "../MeetingAgendaItem+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		3440621F1EAF724400E745C8 /* Context+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Context+CoreDataClass.swift"; path = "../Context+CoreDataClass.swift"; sourceTree = "<group>"; };
-		344062201EAF724400E745C8 /* Context+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Context+CoreDataProperties.swift"; path = "../Context+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		344062211EAF724400E745C8 /* Roles+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Roles+CoreDataClass.swift"; path = "../Roles+CoreDataClass.swift"; sourceTree = "<group>"; };
-		344062221EAF724400E745C8 /* Roles+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Roles+CoreDataProperties.swift"; path = "../Roles+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		344062231EAF724400E745C8 /* Panes+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Panes+CoreDataClass.swift"; path = "../Panes+CoreDataClass.swift"; sourceTree = "<group>"; };
-		344062241EAF724400E745C8 /* Panes+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Panes+CoreDataProperties.swift"; path = "../Panes+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		344062251EAF724400E745C8 /* Decodes+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Decodes+CoreDataClass.swift"; path = "../Decodes+CoreDataClass.swift"; sourceTree = "<group>"; };
-		344062261EAF724400E745C8 /* Decodes+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Decodes+CoreDataProperties.swift"; path = "../Decodes+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		344062271EAF724400E745C8 /* TaskUpdates+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TaskUpdates+CoreDataClass.swift"; path = "../TaskUpdates+CoreDataClass.swift"; sourceTree = "<group>"; };
-		344062281EAF724400E745C8 /* TaskUpdates+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TaskUpdates+CoreDataProperties.swift"; path = "../TaskUpdates+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		344062291EAF724400E745C8 /* Outline+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Outline+CoreDataClass.swift"; path = "../Outline+CoreDataClass.swift"; sourceTree = "<group>"; };
-		3440622A1EAF724400E745C8 /* Outline+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Outline+CoreDataProperties.swift"; path = "../Outline+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		3440622B1EAF724400E745C8 /* OutlineDetails+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "OutlineDetails+CoreDataClass.swift"; path = "../OutlineDetails+CoreDataClass.swift"; sourceTree = "<group>"; };
-		3440622C1EAF724400E745C8 /* OutlineDetails+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "OutlineDetails+CoreDataProperties.swift"; path = "../OutlineDetails+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		3440622D1EAF724400E745C8 /* ProjectTeamMembers+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ProjectTeamMembers+CoreDataClass.swift"; path = "../ProjectTeamMembers+CoreDataClass.swift"; sourceTree = "<group>"; };
-		3440622E1EAF724400E745C8 /* ProjectTeamMembers+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ProjectTeamMembers+CoreDataProperties.swift"; path = "../ProjectTeamMembers+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		3440622F1EAF724400E745C8 /* MeetingAgenda+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingAgenda+CoreDataClass.swift"; path = "../MeetingAgenda+CoreDataClass.swift"; sourceTree = "<group>"; };
-		344062301EAF724400E745C8 /* MeetingAgenda+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingAgenda+CoreDataProperties.swift"; path = "../MeetingAgenda+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		344062311EAF724400E745C8 /* MeetingTasks+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingTasks+CoreDataClass.swift"; path = "../MeetingTasks+CoreDataClass.swift"; sourceTree = "<group>"; };
-		344062321EAF724400E745C8 /* MeetingTasks+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingTasks+CoreDataProperties.swift"; path = "../MeetingTasks+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		344062331EAF724400E745C8 /* Context1_1+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Context1_1+CoreDataClass.swift"; path = "../Context1_1+CoreDataClass.swift"; sourceTree = "<group>"; };
-		344062341EAF724400E745C8 /* Context1_1+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Context1_1+CoreDataProperties.swift"; path = "../Context1_1+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		344062351EAF724400E745C8 /* Stages+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Stages+CoreDataClass.swift"; path = "../Stages+CoreDataClass.swift"; sourceTree = "<group>"; };
-		344062361EAF724400E745C8 /* Stages+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Stages+CoreDataProperties.swift"; path = "../Stages+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		3443A4A31B6F2F4400B0D63A /* EvesCRM 9.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 9.xcdatamodel"; sourceTree = "<group>"; };
 		344726601B54D6A800BEFF0B /* coreDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = coreDatabase.swift; sourceTree = "<group>"; };
 		3448297D1BC1E9A8000EFEA4 /* EvesCRM 25.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 25.xcdatamodel"; sourceTree = "<group>"; };
@@ -408,6 +370,58 @@
 		349331B81B704457004AA569 /* EvesCRM 10.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 10.xcdatamodel"; sourceTree = "<group>"; };
 		349331C81B705756004AA569 /* SideBarTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SideBarTableViewController.swift; sourceTree = "<group>"; };
 		349331CE1B70576C004AA569 /* SideBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SideBar.swift; sourceTree = "<group>"; };
+		349A0CFB1EB03F6300F68594 /* EvesCRM 28.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 28.xcdatamodel"; sourceTree = "<group>"; };
+		349A0CFC1EB0437B00F68594 /* Decodes+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Decodes+CoreDataClass.swift"; path = "../Decodes+CoreDataClass.swift"; sourceTree = "<group>"; };
+		349A0CFD1EB0437B00F68594 /* Decodes+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Decodes+CoreDataProperties.swift"; path = "../Decodes+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		349A0CFE1EB0437B00F68594 /* OutlineDetails+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "OutlineDetails+CoreDataClass.swift"; path = "../OutlineDetails+CoreDataClass.swift"; sourceTree = "<group>"; };
+		349A0CFF1EB0437B00F68594 /* OutlineDetails+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "OutlineDetails+CoreDataProperties.swift"; path = "../OutlineDetails+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		349A0D001EB0437B00F68594 /* ProcessedEmails+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ProcessedEmails+CoreDataClass.swift"; path = "../ProcessedEmails+CoreDataClass.swift"; sourceTree = "<group>"; };
+		349A0D011EB0437B00F68594 /* ProcessedEmails+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ProcessedEmails+CoreDataProperties.swift"; path = "../ProcessedEmails+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		349A0D021EB0437B00F68594 /* TaskPredecessor+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TaskPredecessor+CoreDataClass.swift"; path = "../TaskPredecessor+CoreDataClass.swift"; sourceTree = "<group>"; };
+		349A0D031EB0437B00F68594 /* TaskPredecessor+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TaskPredecessor+CoreDataProperties.swift"; path = "../TaskPredecessor+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		349A0D041EB0437B00F68594 /* TaskContext+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TaskContext+CoreDataProperties.swift"; path = "../TaskContext+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		349A0D051EB0437B00F68594 /* ProjectNote+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ProjectNote+CoreDataClass.swift"; path = "../ProjectNote+CoreDataClass.swift"; sourceTree = "<group>"; };
+		349A0D061EB0437B00F68594 /* ProjectNote+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ProjectNote+CoreDataProperties.swift"; path = "../ProjectNote+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		349A0D071EB0437B00F68594 /* GTDLevel+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "GTDLevel+CoreDataClass.swift"; path = "../GTDLevel+CoreDataClass.swift"; sourceTree = "<group>"; };
+		349A0D081EB0437B00F68594 /* GTDLevel+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "GTDLevel+CoreDataProperties.swift"; path = "../GTDLevel+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		349A0D091EB0437B00F68594 /* Task+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Task+CoreDataClass.swift"; path = "../Task+CoreDataClass.swift"; sourceTree = "<group>"; };
+		349A0D0A1EB0437B00F68594 /* Task+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Task+CoreDataProperties.swift"; path = "../Task+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		349A0D0B1EB0437B00F68594 /* MeetingAgenda+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingAgenda+CoreDataClass.swift"; path = "../MeetingAgenda+CoreDataClass.swift"; sourceTree = "<group>"; };
+		349A0D0C1EB0437B00F68594 /* MeetingAgenda+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingAgenda+CoreDataProperties.swift"; path = "../MeetingAgenda+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		349A0D0D1EB0437B00F68594 /* Panes+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Panes+CoreDataClass.swift"; path = "../Panes+CoreDataClass.swift"; sourceTree = "<group>"; };
+		349A0D0E1EB0437B00F68594 /* Panes+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Panes+CoreDataProperties.swift"; path = "../Panes+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		349A0D0F1EB0437B00F68594 /* TaskAttachment+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TaskAttachment+CoreDataClass.swift"; path = "../TaskAttachment+CoreDataClass.swift"; sourceTree = "<group>"; };
+		349A0D101EB0437B00F68594 /* TaskAttachment+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TaskAttachment+CoreDataProperties.swift"; path = "../TaskAttachment+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		349A0D111EB0437B00F68594 /* Context1_1+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Context1_1+CoreDataClass.swift"; path = "../Context1_1+CoreDataClass.swift"; sourceTree = "<group>"; };
+		349A0D121EB0437B00F68594 /* Context1_1+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Context1_1+CoreDataProperties.swift"; path = "../Context1_1+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		349A0D131EB0437B00F68594 /* TaskUpdates+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TaskUpdates+CoreDataClass.swift"; path = "../TaskUpdates+CoreDataClass.swift"; sourceTree = "<group>"; };
+		349A0D141EB0437B00F68594 /* TaskUpdates+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TaskUpdates+CoreDataProperties.swift"; path = "../TaskUpdates+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		349A0D151EB0437B00F68594 /* MeetingTasks+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingTasks+CoreDataClass.swift"; path = "../MeetingTasks+CoreDataClass.swift"; sourceTree = "<group>"; };
+		349A0D161EB0437B00F68594 /* MeetingTasks+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingTasks+CoreDataProperties.swift"; path = "../MeetingTasks+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		349A0D171EB0437B00F68594 /* Team+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Team+CoreDataClass.swift"; path = "../Team+CoreDataClass.swift"; sourceTree = "<group>"; };
+		349A0D181EB0437B00F68594 /* Team+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Team+CoreDataProperties.swift"; path = "../Team+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		349A0D191EB0437B00F68594 /* MeetingSupportingDocs+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingSupportingDocs+CoreDataClass.swift"; path = "../MeetingSupportingDocs+CoreDataClass.swift"; sourceTree = "<group>"; };
+		349A0D1A1EB0437B00F68594 /* MeetingSupportingDocs+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingSupportingDocs+CoreDataProperties.swift"; path = "../MeetingSupportingDocs+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		349A0D1B1EB0437B00F68594 /* Projects+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Projects+CoreDataClass.swift"; path = "../Projects+CoreDataClass.swift"; sourceTree = "<group>"; };
+		349A0D1C1EB0437B00F68594 /* Projects+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Projects+CoreDataProperties.swift"; path = "../Projects+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		349A0D1D1EB0437B00F68594 /* Roles+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Roles+CoreDataClass.swift"; path = "../Roles+CoreDataClass.swift"; sourceTree = "<group>"; };
+		349A0D1E1EB0437B00F68594 /* Roles+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Roles+CoreDataProperties.swift"; path = "../Roles+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		349A0D1F1EB0437B00F68594 /* Stages+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Stages+CoreDataClass.swift"; path = "../Stages+CoreDataClass.swift"; sourceTree = "<group>"; };
+		349A0D201EB0437B00F68594 /* Stages+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Stages+CoreDataProperties.swift"; path = "../Stages+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		349A0D211EB0437B00F68594 /* MeetingAgendaItem+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingAgendaItem+CoreDataClass.swift"; path = "../MeetingAgendaItem+CoreDataClass.swift"; sourceTree = "<group>"; };
+		349A0D221EB0437B00F68594 /* MeetingAgendaItem+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingAgendaItem+CoreDataProperties.swift"; path = "../MeetingAgendaItem+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		349A0D231EB0437B00F68594 /* MeetingAttendees+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingAttendees+CoreDataClass.swift"; path = "../MeetingAttendees+CoreDataClass.swift"; sourceTree = "<group>"; };
+		349A0D241EB0437B00F68594 /* MeetingAttendees+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "MeetingAttendees+CoreDataProperties.swift"; path = "../MeetingAttendees+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		349A0D251EB0437B00F68594 /* Outline+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Outline+CoreDataClass.swift"; path = "../Outline+CoreDataClass.swift"; sourceTree = "<group>"; };
+		349A0D261EB0437B00F68594 /* Outline+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Outline+CoreDataProperties.swift"; path = "../Outline+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		349A0D271EB0437B00F68594 /* ProjectTeamMembers+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ProjectTeamMembers+CoreDataClass.swift"; path = "../ProjectTeamMembers+CoreDataClass.swift"; sourceTree = "<group>"; };
+		349A0D281EB0437B00F68594 /* ProjectTeamMembers+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ProjectTeamMembers+CoreDataProperties.swift"; path = "../ProjectTeamMembers+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		349A0D291EB0437B00F68594 /* GTDItem+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "GTDItem+CoreDataClass.swift"; path = "../GTDItem+CoreDataClass.swift"; sourceTree = "<group>"; };
+		349A0D2A1EB0437B00F68594 /* GTDItem+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "GTDItem+CoreDataProperties.swift"; path = "../GTDItem+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		349A0D2B1EB0437B00F68594 /* Context+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Context+CoreDataClass.swift"; path = "../Context+CoreDataClass.swift"; sourceTree = "<group>"; };
+		349A0D2C1EB0437B00F68594 /* Context+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Context+CoreDataProperties.swift"; path = "../Context+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		349A0D8F1EB0449800F68594 /* TaskContext+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "TaskContext+CoreDataClass.swift"; sourceTree = SOURCE_ROOT; };
+		349A0D9E1EB07BFC00F68594 /* GTD.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = GTD.storyboard; sourceTree = "<group>"; };
 		349C4D3D1B033AF300EC8099 /* EvesCRM 4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 4.xcdatamodel"; sourceTree = "<group>"; };
 		34A578B11B5F5F93008D3D8E /* EvesCRM 7.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 7.xcdatamodel"; sourceTree = "<group>"; };
 		34B4C7DC1B8190D50098F6BC /* EvesCRM 15.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 15.xcdatamodel"; sourceTree = "<group>"; };
@@ -450,6 +464,11 @@
 		34DF7AD51BBD03D9000E3B09 /* EvesCRM 24.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 24.xcdatamodel"; sourceTree = "<group>"; };
 		34E92AD31B9D163D00F158F3 /* EvesCRM 20.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 20.xcdatamodel"; sourceTree = "<group>"; };
 		34E92AE71B9D5B3400F158F3 /* teamMaintenanceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = teamMaintenanceViewController.swift; sourceTree = "<group>"; };
+		34EA77421EB07E8400D7DD1F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/team.storyboard; sourceTree = "<group>"; };
+		34EA77451EB07EBC00D7DD1F /* tasks.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = tasks.storyboard; sourceTree = "<group>"; };
+		34EA77491EB07EF000D7DD1F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/meetings.storyboard; sourceTree = "<group>"; };
+		34EA774C1EB07F1700D7DD1F /* projects.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = projects.storyboard; sourceTree = "<group>"; };
+		34EA77501EB07F3200D7DD1F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/contexts.storyboard; sourceTree = "<group>"; };
 		34F199BB1AF6046A00963ABF /* EvesCRM.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = EvesCRM.entitlements; sourceTree = "<group>"; };
 		34F199BE1AF6060200963ABF /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		34F199C01AF6ECE900963ABF /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
@@ -555,6 +574,12 @@
 				342F46CD1B9FC7D0004BAC9D /* KDRearrangeableCollectionViewFlowLayout */,
 				340650681ADDF8FF00C90CBB /* Supporting Files */,
 				340650711ADDF8FF00C90CBB /* Main.storyboard */,
+				34EA774F1EB07F3200D7DD1F /* contexts.storyboard */,
+				34EA774C1EB07F1700D7DD1F /* projects.storyboard */,
+				34EA77481EB07EF000D7DD1F /* meetings.storyboard */,
+				34EA77451EB07EBC00D7DD1F /* tasks.storyboard */,
+				34EA77411EB07E8400D7DD1F /* team.storyboard */,
+				349A0D9E1EB07BFC00F68594 /* GTD.storyboard */,
 				3406506C1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld */,
 				34948C1D1B87018300C1F12D /* Database Tables */,
 				34948C231B8701E400C1F12D /* My ViewControllers */,
@@ -617,56 +642,56 @@
 				343B3F1D1B83045D0053777B /* DBSync.swift */,
 				34BA26551EAD933400A41EE9 /* EvesCRMDatabase.swift */,
 				344B6ACF1BA7B47500A5377B /* UserInfo.swift */,
-				3440621F1EAF724400E745C8 /* Context+CoreDataClass.swift */,
-				344062201EAF724400E745C8 /* Context+CoreDataProperties.swift */,
-				344062331EAF724400E745C8 /* Context1_1+CoreDataClass.swift */,
-				344062341EAF724400E745C8 /* Context1_1+CoreDataProperties.swift */,
-				344062251EAF724400E745C8 /* Decodes+CoreDataClass.swift */,
-				344062261EAF724400E745C8 /* Decodes+CoreDataProperties.swift */,
-				344062131EAF724400E745C8 /* GTDItem+CoreDataClass.swift */,
-				344062141EAF724400E745C8 /* GTDItem+CoreDataProperties.swift */,
-				344062151EAF724400E745C8 /* GTDLevel+CoreDataClass.swift */,
-				344062161EAF724400E745C8 /* GTDLevel+CoreDataProperties.swift */,
-				3440621D1EAF724400E745C8 /* MeetingAgendaItem+CoreDataClass.swift */,
-				3440621E1EAF724400E745C8 /* MeetingAgendaItem+CoreDataProperties.swift */,
-				3440622F1EAF724400E745C8 /* MeetingAgenda+CoreDataClass.swift */,
-				344062301EAF724400E745C8 /* MeetingAgenda+CoreDataProperties.swift */,
-				344062171EAF724400E745C8 /* MeetingAttendees+CoreDataClass.swift */,
-				344062181EAF724400E745C8 /* MeetingAttendees+CoreDataProperties.swift */,
-				344062091EAF724400E745C8 /* MeetingSupportingDocs+CoreDataClass.swift */,
-				3440620A1EAF724400E745C8 /* MeetingSupportingDocs+CoreDataProperties.swift */,
-				344062311EAF724400E745C8 /* MeetingTasks+CoreDataClass.swift */,
-				344062321EAF724400E745C8 /* MeetingTasks+CoreDataProperties.swift */,
-				344062071EAF724400E745C8 /* ProcessedEmails+CoreDataClass.swift */,
-				344062081EAF724400E745C8 /* ProcessedEmails+CoreDataProperties.swift */,
-				3440620F1EAF724400E745C8 /* Projects+CoreDataClass.swift */,
-				344062101EAF724400E745C8 /* Projects+CoreDataProperties.swift */,
-				3440620D1EAF724400E745C8 /* ProjectNote+CoreDataClass.swift */,
-				3440620E1EAF724400E745C8 /* ProjectNote+CoreDataProperties.swift */,
-				3440622D1EAF724400E745C8 /* ProjectTeamMembers+CoreDataClass.swift */,
-				3440622E1EAF724400E745C8 /* ProjectTeamMembers+CoreDataProperties.swift */,
-				344062211EAF724400E745C8 /* Roles+CoreDataClass.swift */,
-				344062221EAF724400E745C8 /* Roles+CoreDataProperties.swift */,
-				344062291EAF724400E745C8 /* Outline+CoreDataClass.swift */,
-				3440622A1EAF724400E745C8 /* Outline+CoreDataProperties.swift */,
-				3440622B1EAF724400E745C8 /* OutlineDetails+CoreDataClass.swift */,
-				3440622C1EAF724400E745C8 /* OutlineDetails+CoreDataProperties.swift */,
-				344062231EAF724400E745C8 /* Panes+CoreDataClass.swift */,
-				344062241EAF724400E745C8 /* Panes+CoreDataProperties.swift */,
-				344062191EAF724400E745C8 /* Task+CoreDataClass.swift */,
-				3440621A1EAF724400E745C8 /* Task+CoreDataProperties.swift */,
-				3440621B1EAF724400E745C8 /* TaskAttachment+CoreDataClass.swift */,
-				3440621C1EAF724400E745C8 /* TaskAttachment+CoreDataProperties.swift */,
-				344062111EAF724400E745C8 /* TaskContext+CoreDataClass.swift */,
-				344062121EAF724400E745C8 /* TaskContext+CoreDataProperties.swift */,
-				3440620B1EAF724400E745C8 /* TaskPredecessor+CoreDataClass.swift */,
-				3440620C1EAF724400E745C8 /* TaskPredecessor+CoreDataProperties.swift */,
-				344062271EAF724400E745C8 /* TaskUpdates+CoreDataClass.swift */,
-				344062281EAF724400E745C8 /* TaskUpdates+CoreDataProperties.swift */,
-				344062351EAF724400E745C8 /* Stages+CoreDataClass.swift */,
-				344062361EAF724400E745C8 /* Stages+CoreDataProperties.swift */,
-				344062051EAF724400E745C8 /* Team+CoreDataClass.swift */,
-				344062061EAF724400E745C8 /* Team+CoreDataProperties.swift */,
+				349A0D2B1EB0437B00F68594 /* Context+CoreDataClass.swift */,
+				349A0D2C1EB0437B00F68594 /* Context+CoreDataProperties.swift */,
+				349A0D111EB0437B00F68594 /* Context1_1+CoreDataClass.swift */,
+				349A0D121EB0437B00F68594 /* Context1_1+CoreDataProperties.swift */,
+				349A0CFC1EB0437B00F68594 /* Decodes+CoreDataClass.swift */,
+				349A0CFD1EB0437B00F68594 /* Decodes+CoreDataProperties.swift */,
+				349A0D291EB0437B00F68594 /* GTDItem+CoreDataClass.swift */,
+				349A0D2A1EB0437B00F68594 /* GTDItem+CoreDataProperties.swift */,
+				349A0D071EB0437B00F68594 /* GTDLevel+CoreDataClass.swift */,
+				349A0D081EB0437B00F68594 /* GTDLevel+CoreDataProperties.swift */,
+				349A0D0B1EB0437B00F68594 /* MeetingAgenda+CoreDataClass.swift */,
+				349A0D0C1EB0437B00F68594 /* MeetingAgenda+CoreDataProperties.swift */,
+				349A0D211EB0437B00F68594 /* MeetingAgendaItem+CoreDataClass.swift */,
+				349A0D221EB0437B00F68594 /* MeetingAgendaItem+CoreDataProperties.swift */,
+				349A0D231EB0437B00F68594 /* MeetingAttendees+CoreDataClass.swift */,
+				349A0D241EB0437B00F68594 /* MeetingAttendees+CoreDataProperties.swift */,
+				349A0D151EB0437B00F68594 /* MeetingTasks+CoreDataClass.swift */,
+				349A0D161EB0437B00F68594 /* MeetingTasks+CoreDataProperties.swift */,
+				349A0D191EB0437B00F68594 /* MeetingSupportingDocs+CoreDataClass.swift */,
+				349A0D1A1EB0437B00F68594 /* MeetingSupportingDocs+CoreDataProperties.swift */,
+				349A0D251EB0437B00F68594 /* Outline+CoreDataClass.swift */,
+				349A0D261EB0437B00F68594 /* Outline+CoreDataProperties.swift */,
+				349A0CFE1EB0437B00F68594 /* OutlineDetails+CoreDataClass.swift */,
+				349A0CFF1EB0437B00F68594 /* OutlineDetails+CoreDataProperties.swift */,
+				349A0D0D1EB0437B00F68594 /* Panes+CoreDataClass.swift */,
+				349A0D0E1EB0437B00F68594 /* Panes+CoreDataProperties.swift */,
+				349A0D001EB0437B00F68594 /* ProcessedEmails+CoreDataClass.swift */,
+				349A0D011EB0437B00F68594 /* ProcessedEmails+CoreDataProperties.swift */,
+				349A0D1B1EB0437B00F68594 /* Projects+CoreDataClass.swift */,
+				349A0D1C1EB0437B00F68594 /* Projects+CoreDataProperties.swift */,
+				349A0D051EB0437B00F68594 /* ProjectNote+CoreDataClass.swift */,
+				349A0D061EB0437B00F68594 /* ProjectNote+CoreDataProperties.swift */,
+				349A0D271EB0437B00F68594 /* ProjectTeamMembers+CoreDataClass.swift */,
+				349A0D281EB0437B00F68594 /* ProjectTeamMembers+CoreDataProperties.swift */,
+				349A0D1D1EB0437B00F68594 /* Roles+CoreDataClass.swift */,
+				349A0D1E1EB0437B00F68594 /* Roles+CoreDataProperties.swift */,
+				349A0D1F1EB0437B00F68594 /* Stages+CoreDataClass.swift */,
+				349A0D201EB0437B00F68594 /* Stages+CoreDataProperties.swift */,
+				349A0D091EB0437B00F68594 /* Task+CoreDataClass.swift */,
+				349A0D0A1EB0437B00F68594 /* Task+CoreDataProperties.swift */,
+				349A0D0F1EB0437B00F68594 /* TaskAttachment+CoreDataClass.swift */,
+				349A0D101EB0437B00F68594 /* TaskAttachment+CoreDataProperties.swift */,
+				349A0D8F1EB0449800F68594 /* TaskContext+CoreDataClass.swift */,
+				349A0D041EB0437B00F68594 /* TaskContext+CoreDataProperties.swift */,
+				349A0D021EB0437B00F68594 /* TaskPredecessor+CoreDataClass.swift */,
+				349A0D031EB0437B00F68594 /* TaskPredecessor+CoreDataProperties.swift */,
+				349A0D131EB0437B00F68594 /* TaskUpdates+CoreDataClass.swift */,
+				349A0D141EB0437B00F68594 /* TaskUpdates+CoreDataProperties.swift */,
+				349A0D171EB0437B00F68594 /* Team+CoreDataClass.swift */,
+				349A0D181EB0437B00F68594 /* Team+CoreDataProperties.swift */,
 			);
 			name = "Database Tables";
 			sourceTree = "<group>";
@@ -865,11 +890,17 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34EA774D1EB07F1700D7DD1F /* projects.storyboard in Resources */,
+				34EA77461EB07EBC00D7DD1F /* tasks.storyboard in Resources */,
+				349A0D9F1EB07BFD00F68594 /* GTD.storyboard in Resources */,
+				34EA774A1EB07EF000D7DD1F /* meetings.storyboard in Resources */,
 				3436F9441B28113E0085C58A /* GTMOAuth2ViewTouch.xib in Resources */,
 				342A366A1E2DBC9800D512B8 /* GoogleService-Info.plist in Resources */,
+				34EA77431EB07E8400D7DD1F /* team.storyboard in Resources */,
 				340650731ADDF8FF00C90CBB /* Main.storyboard in Resources */,
 				340C7CB71B900FE900ECC4FB /* Resource in Resources */,
 				344F226C1AF1DC20002C373E /* ENSDKResources.bundle in Resources */,
+				34EA77511EB07F3200D7DD1F /* contexts.storyboard in Resources */,
 				340650781ADDF8FF00C90CBB /* LaunchScreen.xib in Resources */,
 				340650751ADDF8FF00C90CBB /* Images.xcassets in Resources */,
 				34F7B3A51E31D33E00030BC2 /* LiveAuthDialog_iPad.xib in Resources */,
@@ -880,10 +911,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34EA77521EB07F3200D7DD1F /* contexts.storyboard in Resources */,
 				3436F9451B28113E0085C58A /* GTMOAuth2ViewTouch.xib in Resources */,
+				34EA77441EB07E8400D7DD1F /* team.storyboard in Resources */,
+				34EA77471EB07EBC00D7DD1F /* tasks.storyboard in Resources */,
 				340C7CB81B900FE900ECC4FB /* Resource in Resources */,
 				342A366B1E2DBC9800D512B8 /* GoogleService-Info.plist in Resources */,
+				34EA774E1EB07F1700D7DD1F /* projects.storyboard in Resources */,
 				341DD2371AECA9FF001DCF65 /* Main.storyboard in Resources */,
+				34EA774B1EB07EF000D7DD1F /* meetings.storyboard in Resources */,
+				349A0DA01EB07BFD00F68594 /* GTD.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -987,88 +1024,93 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				344062371EAF724400E745C8 /* Team+CoreDataClass.swift in Sources */,
 				34349B521B92C26200C5EFF8 /* GTDEditViewController.swift in Sources */,
-				344062511EAF724400E745C8 /* TaskContext+CoreDataProperties.swift in Sources */,
-				344062631EAF724400E745C8 /* TaskAttachment+CoreDataClass.swift in Sources */,
-				344062671EAF724400E745C8 /* MeetingAgendaItem+CoreDataClass.swift in Sources */,
 				342852311B8EA38C003D188F /* teamClass.swift in Sources */,
-				3440626D1EAF724400E745C8 /* Context+CoreDataProperties.swift in Sources */,
-				3440624D1EAF724400E745C8 /* Projects+CoreDataProperties.swift in Sources */,
 				34BA26381EAC634200A41EE9 /* taskPredecessorClass.swift in Sources */,
+				349A0D4D1EB0437B00F68594 /* MeetingAgenda+CoreDataProperties.swift in Sources */,
+				349A0D5F1EB0437B00F68594 /* MeetingTasks+CoreDataClass.swift in Sources */,
 				342A357C1B5F727200D6DB29 /* taskViewController.swift in Sources */,
+				349A0D901EB0449800F68594 /* TaskContext+CoreDataClass.swift in Sources */,
+				349A0D491EB0437B00F68594 /* Task+CoreDataProperties.swift in Sources */,
 				347EE4231B8D6AC50044D569 /* GTDPlanningTabController.swift in Sources */,
 				344B6AD01BA7B47500A5377B /* UserInfo.swift in Sources */,
-				344062991EAF724400E745C8 /* Stages+CoreDataProperties.swift in Sources */,
-				344062531EAF724400E745C8 /* GTDItem+CoreDataClass.swift in Sources */,
 				342F46D21B9FC804004BAC9D /* KDRearrangeableCollectionViewFlowLayout.swift in Sources */,
 				340F84A71B79BE220028439B /* taskListViewController.swift in Sources */,
-				3440625B1EAF724400E745C8 /* MeetingAttendees+CoreDataClass.swift in Sources */,
-				344062831EAF724400E745C8 /* OutlineDetails+CoreDataClass.swift in Sources */,
+				349A0D311EB0437B00F68594 /* OutlineDetails+CoreDataClass.swift in Sources */,
+				349A0D611EB0437B00F68594 /* MeetingTasks+CoreDataProperties.swift in Sources */,
 				3410561E1B589D92002B0ED9 /* AgendaItemViewController.swift in Sources */,
-				344062711EAF724400E745C8 /* Roles+CoreDataProperties.swift in Sources */,
 				34BA26531EAD912100A41EE9 /* stageClass.swift in Sources */,
+				349A0D8B1EB0437B00F68594 /* Context+CoreDataClass.swift in Sources */,
+				349A0D791EB0437B00F68594 /* MeetingAgendaItem+CoreDataProperties.swift in Sources */,
 				34841A1D1E272D5800B96BB2 /* notificationDefinitions.swift in Sources */,
+				349A0D851EB0437B00F68594 /* ProjectTeamMembers+CoreDataProperties.swift in Sources */,
+				349A0D511EB0437B00F68594 /* Panes+CoreDataProperties.swift in Sources */,
+				349A0D651EB0437B00F68594 /* Team+CoreDataProperties.swift in Sources */,
+				349A0D571EB0437B00F68594 /* Context1_1+CoreDataClass.swift in Sources */,
+				349A0D631EB0437B00F68594 /* Team+CoreDataClass.swift in Sources */,
+				349A0D731EB0437B00F68594 /* Stages+CoreDataClass.swift in Sources */,
 				344726611B54D6A800BEFF0B /* coreDatabase.swift in Sources */,
+				349A0D4F1EB0437B00F68594 /* Panes+CoreDataClass.swift in Sources */,
 				34BA26291EAC57D000A41EE9 /* contextClass.swift in Sources */,
+				349A0D2D1EB0437B00F68594 /* Decodes+CoreDataClass.swift in Sources */,
 				34B9C0111B26BA70005E52F9 /* gMail.swift in Sources */,
 				34F35BDE1B6B549000A19ACE /* meetingTabViewController.swift in Sources */,
 				347EE41C1B8D68620044D569 /* GTDPlanning.swift in Sources */,
 				346D5E021AE5F9C700F858E7 /* CalendarDetails.swift in Sources */,
+				349A0D531EB0437B00F68594 /* TaskAttachment+CoreDataClass.swift in Sources */,
+				349A0D6F1EB0437B00F68594 /* Roles+CoreDataClass.swift in Sources */,
 				34BA263B1EAC64DE00A41EE9 /* taskUpdatesClass.swift in Sources */,
 				34BA26441EAC684B00A41EE9 /* taskClass.swift in Sources */,
+				349A0D331EB0437B00F68594 /* OutlineDetails+CoreDataProperties.swift in Sources */,
+				349A0D551EB0437B00F68594 /* TaskAttachment+CoreDataProperties.swift in Sources */,
 				34BA26351EAC61F700A41EE9 /* projectteamMemberClass.swift in Sources */,
+				349A0D691EB0437B00F68594 /* MeetingSupportingDocs+CoreDataProperties.swift in Sources */,
 				34B525391B130F1C00093250 /* oneNote.swift in Sources */,
-				344062571EAF724400E745C8 /* GTDLevel+CoreDataClass.swift in Sources */,
-				344062591EAF724400E745C8 /* GTDLevel+CoreDataProperties.swift in Sources */,
-				3440628D1EAF724400E745C8 /* MeetingAgenda+CoreDataProperties.swift in Sources */,
+				349A0D391EB0437B00F68594 /* TaskPredecessor+CoreDataClass.swift in Sources */,
 				34BA26561EAD933400A41EE9 /* EvesCRMDatabase.swift in Sources */,
+				349A0D771EB0437B00F68594 /* MeetingAgendaItem+CoreDataClass.swift in Sources */,
+				349A0D3D1EB0437B00F68594 /* TaskContext+CoreDataProperties.swift in Sources */,
+				349A0D3F1EB0437B00F68594 /* ProjectNote+CoreDataClass.swift in Sources */,
+				349A0D811EB0437B00F68594 /* Outline+CoreDataProperties.swift in Sources */,
+				349A0D4B1EB0437B00F68594 /* MeetingAgenda+CoreDataClass.swift in Sources */,
+				349A0D431EB0437B00F68594 /* GTDLevel+CoreDataClass.swift in Sources */,
 				349331C91B705756004AA569 /* SideBarTableViewController.swift in Sources */,
-				344062431EAF724400E745C8 /* TaskPredecessor+CoreDataClass.swift in Sources */,
 				346B70DE1AF70B8F005E1BC2 /* maintainProjectViewController.swift in Sources */,
+				349A0D5D1EB0437B00F68594 /* TaskUpdates+CoreDataProperties.swift in Sources */,
 				34111C3A1AEC898B003090EB /* reminderViewController.swift in Sources */,
-				344062391EAF724400E745C8 /* Team+CoreDataProperties.swift in Sources */,
+				349A0D2F1EB0437B00F68594 /* Decodes+CoreDataProperties.swift in Sources */,
 				34BA264D1EAD8D3A00A41EE9 /* outlineClass.swift in Sources */,
+				349A0D6D1EB0437B00F68594 /* Projects+CoreDataProperties.swift in Sources */,
 				34BA262F1EAC5F0C00A41EE9 /* GTDLevelClass.swift in Sources */,
-				344062651EAF724400E745C8 /* TaskAttachment+CoreDataProperties.swift in Sources */,
-				344062971EAF724400E745C8 /* Stages+CoreDataClass.swift in Sources */,
-				344062891EAF724400E745C8 /* ProjectTeamMembers+CoreDataProperties.swift in Sources */,
 				34BA26501EAD901300A41EE9 /* rolesClass.swift in Sources */,
 				342F46D01B9FC804004BAC9D /* KDRearrangeableCollectionViewCell.swift in Sources */,
-				344062731EAF724400E745C8 /* Panes+CoreDataClass.swift in Sources */,
+				349A0D891EB0437B00F68594 /* GTDItem+CoreDataProperties.swift in Sources */,
+				349A0D711EB0437B00F68594 /* Roles+CoreDataProperties.swift in Sources */,
+				349A0D831EB0437B00F68594 /* ProjectTeamMembers+CoreDataClass.swift in Sources */,
 				3406E6C11B9E772800A5F0F9 /* teamDecodesViewController.swift in Sources */,
 				34BA26321EAC607B00A41EE9 /* GTDItemClass.swift in Sources */,
-				344062411EAF724400E745C8 /* MeetingSupportingDocs+CoreDataProperties.swift in Sources */,
-				3440625D1EAF724400E745C8 /* MeetingAttendees+CoreDataProperties.swift in Sources */,
-				3440628F1EAF724400E745C8 /* MeetingTasks+CoreDataClass.swift in Sources */,
-				3440628B1EAF724400E745C8 /* MeetingAgenda+CoreDataClass.swift in Sources */,
-				3440627B1EAF724400E745C8 /* TaskUpdates+CoreDataClass.swift in Sources */,
-				3440625F1EAF724400E745C8 /* Task+CoreDataClass.swift in Sources */,
 				347518D91AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift in Sources */,
+				349A0D351EB0437B00F68594 /* ProcessedEmails+CoreDataClass.swift in Sources */,
 				34BA26201EAC470600A41EE9 /* meetingAgendaItemClass.swift in Sources */,
-				344062691EAF724400E745C8 /* MeetingAgendaItem+CoreDataProperties.swift in Sources */,
 				34C74F8C1BB508A30083AF2E /* GTDInbox.swift in Sources */,
-				344062611EAF724400E745C8 /* Task+CoreDataProperties.swift in Sources */,
 				340650701ADDF8FF00C90CBB /* ViewController.swift in Sources */,
-				344062851EAF724400E745C8 /* OutlineDetails+CoreDataProperties.swift in Sources */,
+				349A0D671EB0437B00F68594 /* MeetingSupportingDocs+CoreDataClass.swift in Sources */,
+				349A0D591EB0437B00F68594 /* Context1_1+CoreDataProperties.swift in Sources */,
+				349A0D7F1EB0437B00F68594 /* Outline+CoreDataClass.swift in Sources */,
 				34BDECAA1B008846008C9F3F /* displayPanes.swift in Sources */,
 				34F35BE51B6B54A200A19ACE /* meetingAgendaViewController.swift in Sources */,
-				3440624B1EAF724400E745C8 /* Projects+CoreDataClass.swift in Sources */,
-				344062791EAF724400E745C8 /* Decodes+CoreDataProperties.swift in Sources */,
-				3440626B1EAF724400E745C8 /* Context+CoreDataClass.swift in Sources */,
-				344062871EAF724400E745C8 /* ProjectTeamMembers+CoreDataClass.swift in Sources */,
+				349A0D5B1EB0437B00F68594 /* TaskUpdates+CoreDataClass.swift in Sources */,
+				349A0D471EB0437B00F68594 /* Task+CoreDataClass.swift in Sources */,
+				349A0D451EB0437B00F68594 /* GTDLevel+CoreDataProperties.swift in Sources */,
 				34BA26261EAC555500A41EE9 /* meetingSupportingDocsClass.swift in Sources */,
 				348E6D4B1ADF74C800697268 /* ContactDetails.swift in Sources */,
 				34BA26471EAD8A9300A41EE9 /* decodesClass.swift in Sources */,
-				344062551EAF724400E745C8 /* GTDItem+CoreDataProperties.swift in Sources */,
-				3440627F1EAF724400E745C8 /* Outline+CoreDataClass.swift in Sources */,
 				344B6ACD1BA7B3B600A5377B /* CloudKitInteraction.swift in Sources */,
 				3406506B1ADDF8FF00C90CBB /* AppDelegate.swift in Sources */,
-				3440623F1EAF724400E745C8 /* MeetingSupportingDocs+CoreDataClass.swift in Sources */,
-				344062471EAF724400E745C8 /* ProjectNote+CoreDataClass.swift in Sources */,
+				349A0D3B1EB0437B00F68594 /* TaskPredecessor+CoreDataProperties.swift in Sources */,
+				349A0D6B1EB0437B00F68594 /* Projects+CoreDataClass.swift in Sources */,
+				349A0D8D1EB0437B00F68594 /* Context+CoreDataProperties.swift in Sources */,
 				342C0A221B4B844D00A73CA5 /* meetingsViewController.swift in Sources */,
-				344062911EAF724400E745C8 /* MeetingTasks+CoreDataProperties.swift in Sources */,
-				344062451EAF724400E745C8 /* TaskPredecessor+CoreDataProperties.swift in Sources */,
 				341E08C71B01B1B90036202D /* settingsViewController.swift in Sources */,
 				343B3F1E1B83045D0053777B /* DBSync.swift in Sources */,
 				34E92AE81B9D5B3400F158F3 /* teamMaintenanceViewController.swift in Sources */,
@@ -1076,29 +1118,24 @@
 				34BA262C1EAC5C3A00A41EE9 /* projectClass.swift in Sources */,
 				342F46D51B9FC817004BAC9D /* KDRearrangeableCollectionViewDelegate.swift in Sources */,
 				34F35BD31B6B3F7000A19ACE /* taskUpdatesViewController.swift in Sources */,
-				344062951EAF724400E745C8 /* Context1_1+CoreDataProperties.swift in Sources */,
-				344062771EAF724400E745C8 /* Decodes+CoreDataClass.swift in Sources */,
 				34B7242E1BB62C7700C7AE34 /* startViewController.swift in Sources */,
-				3440624F1EAF724400E745C8 /* TaskContext+CoreDataClass.swift in Sources */,
 				349331CF1B70576C004AA569 /* SideBar.swift in Sources */,
-				344062751EAF724400E745C8 /* Panes+CoreDataProperties.swift in Sources */,
-				344062811EAF724400E745C8 /* Outline+CoreDataProperties.swift in Sources */,
+				349A0D7D1EB0437B00F68594 /* MeetingAttendees+CoreDataProperties.swift in Sources */,
 				344F22721AF1DFF3002C373E /* evernoteDetails.swift in Sources */,
-				3440626F1EAF724400E745C8 /* Roles+CoreDataClass.swift in Sources */,
 				34BA264A1EAD8C2400A41EE9 /* outlineDetailsClass.swift in Sources */,
 				34BA263E1EAC662A00A41EE9 /* taskContextsClass.swift in Sources */,
-				3440623B1EAF724400E745C8 /* ProcessedEmails+CoreDataClass.swift in Sources */,
+				349A0D751EB0437B00F68594 /* Stages+CoreDataProperties.swift in Sources */,
 				341F230B1AFB2DD600FC2883 /* Dropbox.m in Sources */,
+				349A0D371EB0437B00F68594 /* ProcessedEmails+CoreDataProperties.swift in Sources */,
 				3406506E1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld in Sources */,
+				349A0D871EB0437B00F68594 /* GTDItem+CoreDataClass.swift in Sources */,
 				34BA26231EAC474000A41EE9 /* meetingAttendeeClass.swift in Sources */,
 				34FED38D1B044BF1006B414C /* maintainPanes.swift in Sources */,
 				34BA26411EAC677C00A41EE9 /* TaskAttachmentClass.swift in Sources */,
-				3440623D1EAF724400E745C8 /* ProcessedEmails+CoreDataProperties.swift in Sources */,
-				344062931EAF724400E745C8 /* Context1_1+CoreDataClass.swift in Sources */,
+				349A0D411EB0437B00F68594 /* ProjectNote+CoreDataProperties.swift in Sources */,
+				349A0D7B1EB0437B00F68594 /* MeetingAttendees+CoreDataClass.swift in Sources */,
 				344C4CF01E2F00D7005AE173 /* DropboxCoreService.swift in Sources */,
 				34DF7ACB1BBCB18F000E3B09 /* maintainContextsViewController.swift in Sources */,
-				344062491EAF724400E745C8 /* ProjectNote+CoreDataProperties.swift in Sources */,
-				3440627D1EAF724400E745C8 /* TaskUpdates+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1106,111 +1143,111 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				344062921EAF724400E745C8 /* MeetingTasks+CoreDataProperties.swift in Sources */,
+				349A0D601EB0437B00F68594 /* MeetingTasks+CoreDataClass.swift in Sources */,
 				34BA262D1EAC5C3A00A41EE9 /* projectClass.swift in Sources */,
-				344062681EAF724400E745C8 /* MeetingAgendaItem+CoreDataClass.swift in Sources */,
 				34BA26211EAC470600A41EE9 /* meetingAgendaItemClass.swift in Sources */,
-				344062861EAF724400E745C8 /* OutlineDetails+CoreDataProperties.swift in Sources */,
+				349A0D441EB0437B00F68594 /* GTDLevel+CoreDataClass.swift in Sources */,
 				34BA263C1EAC64DE00A41EE9 /* taskUpdatesClass.swift in Sources */,
-				344062421EAF724400E745C8 /* MeetingSupportingDocs+CoreDataProperties.swift in Sources */,
+				349A0D821EB0437B00F68594 /* Outline+CoreDataProperties.swift in Sources */,
+				349A0D341EB0437B00F68594 /* OutlineDetails+CoreDataProperties.swift in Sources */,
 				342C0A181B4B7CED00A73CA5 /* MeetingTasks.swift in Sources */,
 				34B3BDA01AF0979E00C5B09D /* ViewController.swift in Sources */,
+				349A0D501EB0437B00F68594 /* Panes+CoreDataClass.swift in Sources */,
+				349A0D5A1EB0437B00F68594 /* Context1_1+CoreDataProperties.swift in Sources */,
+				349A0D801EB0437B00F68594 /* Outline+CoreDataClass.swift in Sources */,
 				34B7242F1BB62C7700C7AE34 /* startViewController.swift in Sources */,
-				344062841EAF724400E745C8 /* OutlineDetails+CoreDataClass.swift in Sources */,
+				349A0D701EB0437B00F68594 /* Roles+CoreDataClass.swift in Sources */,
+				349A0D741EB0437B00F68594 /* Stages+CoreDataClass.swift in Sources */,
 				34BA26241EAC474000A41EE9 /* meetingAttendeeClass.swift in Sources */,
-				344062721EAF724400E745C8 /* Roles+CoreDataProperties.swift in Sources */,
-				344062981EAF724400E745C8 /* Stages+CoreDataClass.swift in Sources */,
 				34BA262A1EAC57D000A41EE9 /* contextClass.swift in Sources */,
-				344062481EAF724400E745C8 /* ProjectNote+CoreDataClass.swift in Sources */,
-				344062621EAF724400E745C8 /* Task+CoreDataProperties.swift in Sources */,
+				349A0D521EB0437B00F68594 /* Panes+CoreDataProperties.swift in Sources */,
+				349A0D841EB0437B00F68594 /* ProjectTeamMembers+CoreDataClass.swift in Sources */,
 				341F230C1AFB2DD600FC2883 /* Dropbox.m in Sources */,
+				349A0D911EB0449800F68594 /* TaskContext+CoreDataClass.swift in Sources */,
+				349A0D4C1EB0437B00F68594 /* MeetingAgenda+CoreDataClass.swift in Sources */,
+				349A0D8E1EB0437B00F68594 /* Context+CoreDataProperties.swift in Sources */,
+				349A0D8A1EB0437B00F68594 /* GTDItem+CoreDataProperties.swift in Sources */,
 				342F46D61B9FC817004BAC9D /* KDRearrangeableCollectionViewDelegate.swift in Sources */,
+				349A0D881EB0437B00F68594 /* GTDItem+CoreDataClass.swift in Sources */,
 				346B70DF1AF70B8F005E1BC2 /* maintainProjectViewController.swift in Sources */,
-				344062821EAF724400E745C8 /* Outline+CoreDataProperties.swift in Sources */,
-				3440627A1EAF724400E745C8 /* Decodes+CoreDataProperties.swift in Sources */,
-				344062781EAF724400E745C8 /* Decodes+CoreDataClass.swift in Sources */,
 				343B3F1F1B83045D0053777B /* DBSync.swift in Sources */,
-				344062641EAF724400E745C8 /* TaskAttachment+CoreDataClass.swift in Sources */,
+				349A0D541EB0437B00F68594 /* TaskAttachment+CoreDataClass.swift in Sources */,
 				34BA263F1EAC662A00A41EE9 /* taskContextsClass.swift in Sources */,
-				3440624C1EAF724400E745C8 /* Projects+CoreDataClass.swift in Sources */,
 				34627D241B60B1C80096DAC4 /* taskManagementClasses.swift in Sources */,
-				344062881EAF724400E745C8 /* ProjectTeamMembers+CoreDataClass.swift in Sources */,
+				349A0D481EB0437B00F68594 /* Task+CoreDataClass.swift in Sources */,
 				34B375921E2F19AA00A75335 /* DropboxCoreService.swift in Sources */,
+				349A0D8C1EB0437B00F68594 /* Context+CoreDataClass.swift in Sources */,
+				349A0D5C1EB0437B00F68594 /* TaskUpdates+CoreDataClass.swift in Sources */,
+				349A0D681EB0437B00F68594 /* MeetingSupportingDocs+CoreDataClass.swift in Sources */,
 				34F35BE61B6B54A200A19ACE /* meetingAgendaViewController.swift in Sources */,
 				34E92AE91B9D5B3400F158F3 /* teamMaintenanceViewController.swift in Sources */,
+				349A0D4E1EB0437B00F68594 /* MeetingAgenda+CoreDataProperties.swift in Sources */,
 				34BA26511EAD901300A41EE9 /* rolesClass.swift in Sources */,
-				3440625E1EAF724400E745C8 /* MeetingAttendees+CoreDataProperties.swift in Sources */,
+				349A0D761EB0437B00F68594 /* Stages+CoreDataProperties.swift in Sources */,
+				349A0D661EB0437B00F68594 /* Team+CoreDataProperties.swift in Sources */,
 				344B6AD11BA7B47500A5377B /* UserInfo.swift in Sources */,
-				344062701EAF724400E745C8 /* Roles+CoreDataClass.swift in Sources */,
-				344062661EAF724400E745C8 /* TaskAttachment+CoreDataProperties.swift in Sources */,
-				3440626C1EAF724400E745C8 /* Context+CoreDataClass.swift in Sources */,
+				349A0D321EB0437B00F68594 /* OutlineDetails+CoreDataClass.swift in Sources */,
+				349A0D2E1EB0437B00F68594 /* Decodes+CoreDataClass.swift in Sources */,
 				34BA26361EAC61F700A41EE9 /* projectteamMemberClass.swift in Sources */,
 				34F35BD41B6B3F7000A19ACE /* taskUpdatesViewController.swift in Sources */,
-				3440624A1EAF724400E745C8 /* ProjectNote+CoreDataProperties.swift in Sources */,
-				3440623C1EAF724400E745C8 /* ProcessedEmails+CoreDataClass.swift in Sources */,
-				344062741EAF724400E745C8 /* Panes+CoreDataClass.swift in Sources */,
 				3403BA451B02FFEC0043D52C /* settingsViewController.swift in Sources */,
-				344062801EAF724400E745C8 /* Outline+CoreDataClass.swift in Sources */,
-				3440627C1EAF724400E745C8 /* TaskUpdates+CoreDataClass.swift in Sources */,
 				34BA264E1EAD8D3A00A41EE9 /* outlineClass.swift in Sources */,
-				3440628E1EAF724400E745C8 /* MeetingAgenda+CoreDataProperties.swift in Sources */,
 				34BA264B1EAD8C2400A41EE9 /* outlineDetailsClass.swift in Sources */,
-				344062601EAF724400E745C8 /* Task+CoreDataClass.swift in Sources */,
-				3440628C1EAF724400E745C8 /* MeetingAgenda+CoreDataClass.swift in Sources */,
-				344062381EAF724400E745C8 /* Team+CoreDataClass.swift in Sources */,
-				3440627E1EAF724400E745C8 /* TaskUpdates+CoreDataProperties.swift in Sources */,
 				34FED38E1B044BF1006B414C /* maintainPanes.swift in Sources */,
-				344062401EAF724400E745C8 /* MeetingSupportingDocs+CoreDataClass.swift in Sources */,
 				346D5E031AE5F9C700F858E7 /* CalendarDetails.swift in Sources */,
-				344062961EAF724400E745C8 /* Context1_1+CoreDataProperties.swift in Sources */,
 				34B9C0121B26BA70005E52F9 /* gMail.swift in Sources */,
+				349A0D7A1EB0437B00F68594 /* MeetingAgendaItem+CoreDataProperties.swift in Sources */,
 				340F84A81B79BE220028439B /* taskListViewController.swift in Sources */,
-				3440626E1EAF724400E745C8 /* Context+CoreDataProperties.swift in Sources */,
+				349A0D781EB0437B00F68594 /* MeetingAgendaItem+CoreDataClass.swift in Sources */,
 				342C0A231B4B844D00A73CA5 /* meetingsViewController.swift in Sources */,
-				344062441EAF724400E745C8 /* TaskPredecessor+CoreDataClass.swift in Sources */,
+				349A0D641EB0437B00F68594 /* Team+CoreDataClass.swift in Sources */,
+				349A0D421EB0437B00F68594 /* ProjectNote+CoreDataProperties.swift in Sources */,
 				34C74F8D1BB508A30083AF2E /* GTDInbox.swift in Sources */,
+				349A0D3A1EB0437B00F68594 /* TaskPredecessor+CoreDataClass.swift in Sources */,
 				34BA26451EAC684B00A41EE9 /* taskClass.swift in Sources */,
-				3440623E1EAF724400E745C8 /* ProcessedEmails+CoreDataProperties.swift in Sources */,
+				349A0D7E1EB0437B00F68594 /* MeetingAttendees+CoreDataProperties.swift in Sources */,
 				344726621B54D6A800BEFF0B /* coreDatabase.swift in Sources */,
 				34BA26271EAC555500A41EE9 /* meetingSupportingDocsClass.swift in Sources */,
-				3440625C1EAF724400E745C8 /* MeetingAttendees+CoreDataClass.swift in Sources */,
-				344062541EAF724400E745C8 /* GTDItem+CoreDataClass.swift in Sources */,
 				34BA26481EAD8A9300A41EE9 /* decodesClass.swift in Sources */,
-				344062901EAF724400E745C8 /* MeetingTasks+CoreDataClass.swift in Sources */,
+				349A0D7C1EB0437B00F68594 /* MeetingAttendees+CoreDataClass.swift in Sources */,
+				349A0D621EB0437B00F68594 /* MeetingTasks+CoreDataProperties.swift in Sources */,
 				342F46D31B9FC804004BAC9D /* KDRearrangeableCollectionViewFlowLayout.swift in Sources */,
-				3440629A1EAF724400E745C8 /* Stages+CoreDataProperties.swift in Sources */,
-				3440626A1EAF724400E745C8 /* MeetingAgendaItem+CoreDataProperties.swift in Sources */,
 				344B6ACE1BA7B3B600A5377B /* CloudKitInteraction.swift in Sources */,
-				344062761EAF724400E745C8 /* Panes+CoreDataProperties.swift in Sources */,
 				34BA26571EAD933400A41EE9 /* EvesCRMDatabase.swift in Sources */,
+				349A0D5E1EB0437B00F68594 /* TaskUpdates+CoreDataProperties.swift in Sources */,
 				34B5253A1B130F1C00093250 /* oneNote.swift in Sources */,
-				344062561EAF724400E745C8 /* GTDItem+CoreDataProperties.swift in Sources */,
-				344062581EAF724400E745C8 /* GTDLevel+CoreDataClass.swift in Sources */,
-				3440625A1EAF724400E745C8 /* GTDLevel+CoreDataProperties.swift in Sources */,
-				3440628A1EAF724400E745C8 /* ProjectTeamMembers+CoreDataProperties.swift in Sources */,
+				349A0D4A1EB0437B00F68594 /* Task+CoreDataProperties.swift in Sources */,
 				34841A221E272D5F00B96BB2 /* notificationDefinitions.swift in Sources */,
+				349A0D561EB0437B00F68594 /* TaskAttachment+CoreDataProperties.swift in Sources */,
+				349A0D6C1EB0437B00F68594 /* Projects+CoreDataClass.swift in Sources */,
+				349A0D3E1EB0437B00F68594 /* TaskContext+CoreDataProperties.swift in Sources */,
 				34BA26391EAC634200A41EE9 /* taskPredecessorClass.swift in Sources */,
+				349A0D401EB0437B00F68594 /* ProjectNote+CoreDataClass.swift in Sources */,
 				346B70F31AF75F47005E1BC2 /* EvesCRM.xcdatamodeld in Sources */,
+				349A0D581EB0437B00F68594 /* Context1_1+CoreDataClass.swift in Sources */,
 				34BA26331EAC607B00A41EE9 /* GTDItemClass.swift in Sources */,
-				344062461EAF724400E745C8 /* TaskPredecessor+CoreDataProperties.swift in Sources */,
 				34DF7ACC1BBCB18F000E3B09 /* maintainContextsViewController.swift in Sources */,
+				349A0D861EB0437B00F68594 /* ProjectTeamMembers+CoreDataProperties.swift in Sources */,
 				342852321B8EA38C003D188F /* teamClass.swift in Sources */,
+				349A0D721EB0437B00F68594 /* Roles+CoreDataProperties.swift in Sources */,
+				349A0D3C1EB0437B00F68594 /* TaskPredecessor+CoreDataProperties.swift in Sources */,
 				347EE4241B8D6AC50044D569 /* GTDPlanningTabController.swift in Sources */,
+				349A0D361EB0437B00F68594 /* ProcessedEmails+CoreDataClass.swift in Sources */,
 				3410561F1B589D92002B0ED9 /* AgendaItemViewController.swift in Sources */,
+				349A0D6A1EB0437B00F68594 /* MeetingSupportingDocs+CoreDataProperties.swift in Sources */,
 				347EE41D1B8D68620044D569 /* GTDPlanning.swift in Sources */,
 				347518DC1AE3635100FF1C46 /* EvesCRMSharedFiles.swift in Sources */,
-				344062521EAF724400E745C8 /* TaskContext+CoreDataProperties.swift in Sources */,
 				34BA26541EAD912100A41EE9 /* stageClass.swift in Sources */,
-				3440623A1EAF724400E745C8 /* Team+CoreDataProperties.swift in Sources */,
 				342F46D11B9FC804004BAC9D /* KDRearrangeableCollectionViewCell.swift in Sources */,
 				34BA26421EAC677C00A41EE9 /* TaskAttachmentClass.swift in Sources */,
+				349A0D301EB0437B00F68594 /* Decodes+CoreDataProperties.swift in Sources */,
 				342F46D91B9FC826004BAC9D /* LICENCE.md in Sources */,
-				3440624E1EAF724400E745C8 /* Projects+CoreDataProperties.swift in Sources */,
+				349A0D381EB0437B00F68594 /* ProcessedEmails+CoreDataProperties.swift in Sources */,
+				349A0D461EB0437B00F68594 /* GTDLevel+CoreDataProperties.swift in Sources */,
 				34F35BDF1B6B549000A19ACE /* meetingTabViewController.swift in Sources */,
 				340650841ADDF8FF00C90CBB /* EvesCRMTests.swift in Sources */,
-				344062941EAF724400E745C8 /* Context1_1+CoreDataClass.swift in Sources */,
-				344062501EAF724400E745C8 /* TaskContext+CoreDataClass.swift in Sources */,
 				34BA26301EAC5F0C00A41EE9 /* GTDLevelClass.swift in Sources */,
+				349A0D6E1EB0437B00F68594 /* Projects+CoreDataProperties.swift in Sources */,
 				348E6D4C1ADF74C800697268 /* ContactDetails.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1240,6 +1277,30 @@
 				340650771ADDF8FF00C90CBB /* Base */,
 			);
 			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+		34EA77411EB07E8400D7DD1F /* team.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				34EA77421EB07E8400D7DD1F /* Base */,
+			);
+			name = team.storyboard;
+			sourceTree = "<group>";
+		};
+		34EA77481EB07EF000D7DD1F /* meetings.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				34EA77491EB07EF000D7DD1F /* Base */,
+			);
+			name = meetings.storyboard;
+			sourceTree = "<group>";
+		};
+		34EA774F1EB07F3200D7DD1F /* contexts.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				34EA77501EB07F3200D7DD1F /* Base */,
+			);
+			name = contexts.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -1624,6 +1685,7 @@
 		3406506C1ADDF8FF00C90CBB /* EvesCRM.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				349A0CFB1EB03F6300F68594 /* EvesCRM 28.xcdatamodel */,
 				34F28C741E29CBCF00878FAD /* EvesCRM 27.xcdatamodel */,
 				34B71C1F1C3CDB10002AE2E7 /* EvesCRM 29.xcdatamodel */,
 				344829821BC1FE30000EFEA4 /* EvesCRM 26.xcdatamodel */,
@@ -1653,7 +1715,7 @@
 				346B70F21AF75EFE005E1BC2 /* EvesCRM 2.xcdatamodel */,
 				3406506D1ADDF8FF00C90CBB /* EvesCRM.xcdatamodel */,
 			);
-			currentVersion = 34F28C741E29CBCF00878FAD /* EvesCRM 27.xcdatamodel */;
+			currentVersion = 349A0CFB1EB03F6300F68594 /* EvesCRM 28.xcdatamodel */;
 			path = EvesCRM.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

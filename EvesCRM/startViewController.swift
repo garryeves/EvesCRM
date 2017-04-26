@@ -65,7 +65,7 @@ class startViewController: UIViewController
             
             decodeString = myDatabaseConnection.getDecodeValue("Default Team")
             
-            let tempID = Int(decodeString)
+            let tempID = Int32(decodeString)
             
             if tempID == nil
             {

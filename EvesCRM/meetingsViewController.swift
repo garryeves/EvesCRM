@@ -249,7 +249,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
     }
     
     //    func collectionView(_ collectionView: UICollectionView, cellForItemAtIndexPath indexPath: IndexPath) -> UICollectionViewCell
-    func collectionView(_ collectionView: UICollectionView, cellForItem indexPath: IndexPath) -> UICollectionViewCell
+    @objc(collectionView:cellForItemAtIndexPath:) func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {
         var cell : myAttendeeDisplayItem!
             
@@ -663,7 +663,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
     
     @IBAction func btnDisplayPreviousMeeting(_ sender: UIButton)
     {
-        let meetingViewControl = self.storyboard!.instantiateViewController(withIdentifier: "MeetingsTab") as! meetingTabViewController
+        let meetingViewControl = meetingStoryboard.instantiateViewController(withIdentifier: "MeetingsTab") as! meetingTabViewController
         
         let targetPassedMeeting = MeetingModel()
         targetPassedMeeting.actionType = passedMeeting.actionType
@@ -697,7 +697,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate, SMTEFillDele
     
     @IBAction func btnDisplayNextMeeting(_ sender: UIButton)
     {
-        let meetingViewControl = self.storyboard!.instantiateViewController(withIdentifier: "MeetingsTab") as! meetingTabViewController
+        let meetingViewControl = meetingStoryboard.instantiateViewController(withIdentifier: "MeetingsTab") as! meetingTabViewController
         
         let targetPassedMeeting = MeetingModel()
         targetPassedMeeting.actionType = passedMeeting.actionType

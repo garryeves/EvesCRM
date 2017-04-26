@@ -94,7 +94,7 @@ class teamDecodesViewController: UIViewController, SMTEFillDelegate
     }
     
     //    func collectionView(_ collectionView: UICollectionView, cellForItemAtIndexPath indexPath: IndexPath) -> UICollectionViewCell
-    func collectionView(_ collectionView: UICollectionView, cellForItem indexPath: IndexPath) -> UICollectionViewCell
+    @objc(collectionView:cellForItemAtIndexPath:) func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {
         if collectionView == colRoles
         {
@@ -526,7 +526,7 @@ class mySettingRoles: UICollectionViewCell
 {
     @IBOutlet weak var lblRole: UILabel!
     @IBOutlet weak var btnRemove: UIButton!
-    var teamID: Int = 0
+    var teamID: Int32 = 0
     
     override func layoutSubviews()
     {
@@ -545,7 +545,7 @@ class mySettingStages: UICollectionViewCell
 {
     @IBOutlet weak var lblRole: UILabel!
     @IBOutlet weak var btnRemove: UIButton!
-    var teamID: Int = 0
+    var teamID: Int32 = 0
     
     override func layoutSubviews()
     {

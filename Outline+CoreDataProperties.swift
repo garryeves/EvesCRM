@@ -2,7 +2,7 @@
 //  Outline+CoreDataProperties.swift
 //  
 //
-//  Created by Garry Eves on 25/4/17.
+//  Created by Garry Eves on 26/4/17.
 //
 //
 
@@ -16,8 +16,8 @@ extension Outline {
         return NSFetchRequest<Outline>(entityName: "Outline")
     }
 
-    @NSManaged public var outlineID: NSNumber?
-    @NSManaged public var parentID: NSNumber?
+    @NSManaged public var outlineID: Int32
+    @NSManaged public var parentID: Int32
     @NSManaged public var parentType: String?
     @NSManaged public var status: String?
     @NSManaged public var title: String?

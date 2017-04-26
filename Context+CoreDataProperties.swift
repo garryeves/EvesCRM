@@ -2,7 +2,7 @@
 //  Context+CoreDataProperties.swift
 //  
 //
-//  Created by Garry Eves on 25/4/17.
+//  Created by Garry Eves on 26/4/17.
 //
 //
 
@@ -17,13 +17,13 @@ extension Context {
     }
 
     @NSManaged public var autoEmail: String?
-    @NSManaged public var contextID: NSNumber?
+    @NSManaged public var contextID: Int32
     @NSManaged public var email: String?
     @NSManaged public var name: String?
-    @NSManaged public var parentContext: NSNumber?
-    @NSManaged public var personID: NSNumber?
+    @NSManaged public var parentContext: Int32
+    @NSManaged public var personID: Int32
     @NSManaged public var status: String?
-    @NSManaged public var teamID: NSNumber?
+    @NSManaged public var teamID: Int32
     @NSManaged public var updateTime: NSDate?
     @NSManaged public var updateType: String?
 

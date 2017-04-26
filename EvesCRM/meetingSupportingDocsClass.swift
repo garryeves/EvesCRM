@@ -205,7 +205,7 @@ extension CloudKitInteraction
 
     func saveMeetingSupportingDocsRecordToCloudKit(_ sourceRecord: MeetingSupportingDocs)
     {
-        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID as! Int))") // better be accurate to get only the
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID))") // better be accurate to get only the
         let query = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil

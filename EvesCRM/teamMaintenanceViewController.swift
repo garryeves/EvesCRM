@@ -140,7 +140,7 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
     }
     
     //    func collectionView(_ collectionView: UICollectionView, cellForItemAtIndexPath indexPath: IndexPath) -> UICollectionViewCell
-    func collectionView(_ collectionView: UICollectionView, cellForItem indexPath: IndexPath) -> UICollectionViewCell
+    @objc(collectionView:cellForItemAtIndexPath:) func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {
         if collectionView == colContext
         {
@@ -222,7 +222,7 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
         
             // We now need to update the underlying database tables
 
-            myGTDHierarchy[fromIndexPath.item].moveLevel(toIndexPath.item + 1)
+            myGTDHierarchy[fromIndexPath.item].moveLevel(Int32(toIndexPath.item + 1))
             
             loadHierarchy()
             for myItem in myGTDHierarchy

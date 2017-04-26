@@ -2,118 +2,10 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Team+CoreDataClass.swift">
-   </FileRef>
-   <FileRef
-      location = "group:Team+CoreDataProperties.swift">
-   </FileRef>
-   <FileRef
-      location = "group:ProcessedEmails+CoreDataClass.swift">
-   </FileRef>
-   <FileRef
-      location = "group:ProcessedEmails+CoreDataProperties.swift">
-   </FileRef>
-   <FileRef
-      location = "group:MeetingSupportingDocs+CoreDataClass.swift">
-   </FileRef>
-   <FileRef
-      location = "group:MeetingSupportingDocs+CoreDataProperties.swift">
-   </FileRef>
-   <FileRef
-      location = "group:TaskPredecessor+CoreDataClass.swift">
-   </FileRef>
-   <FileRef
-      location = "group:TaskPredecessor+CoreDataProperties.swift">
-   </FileRef>
-   <FileRef
-      location = "group:ProjectNote+CoreDataClass.swift">
-   </FileRef>
-   <FileRef
-      location = "group:ProjectNote+CoreDataProperties.swift">
-   </FileRef>
-   <FileRef
-      location = "group:Projects+CoreDataClass.swift">
-   </FileRef>
-   <FileRef
-      location = "group:Projects+CoreDataProperties.swift">
-   </FileRef>
-   <FileRef
-      location = "group:TaskContext+CoreDataClass.swift">
-   </FileRef>
-   <FileRef
-      location = "group:TaskContext+CoreDataProperties.swift">
-   </FileRef>
-   <FileRef
-      location = "group:GTDItem+CoreDataClass.swift">
-   </FileRef>
-   <FileRef
-      location = "group:GTDItem+CoreDataProperties.swift">
-   </FileRef>
-   <FileRef
-      location = "group:GTDLevel+CoreDataClass.swift">
-   </FileRef>
-   <FileRef
-      location = "group:GTDLevel+CoreDataProperties.swift">
-   </FileRef>
-   <FileRef
-      location = "group:MeetingAttendees+CoreDataClass.swift">
-   </FileRef>
-   <FileRef
-      location = "group:MeetingAttendees+CoreDataProperties.swift">
-   </FileRef>
-   <FileRef
-      location = "group:Task+CoreDataClass.swift">
-   </FileRef>
-   <FileRef
-      location = "group:Task+CoreDataProperties.swift">
-   </FileRef>
-   <FileRef
-      location = "group:TaskAttachment+CoreDataClass.swift">
-   </FileRef>
-   <FileRef
-      location = "group:TaskAttachment+CoreDataProperties.swift">
-   </FileRef>
-   <FileRef
-      location = "group:MeetingAgendaItem+CoreDataClass.swift">
-   </FileRef>
-   <FileRef
-      location = "group:MeetingAgendaItem+CoreDataProperties.swift">
-   </FileRef>
-   <FileRef
-      location = "group:Context+CoreDataClass.swift">
-   </FileRef>
-   <FileRef
-      location = "group:Context+CoreDataProperties.swift">
-   </FileRef>
-   <FileRef
-      location = "group:Roles+CoreDataClass.swift">
-   </FileRef>
-   <FileRef
-      location = "group:Roles+CoreDataProperties.swift">
-   </FileRef>
-   <FileRef
-      location = "group:Panes+CoreDataClass.swift">
-   </FileRef>
-   <FileRef
-      location = "group:Panes+CoreDataProperties.swift">
-   </FileRef>
-   <FileRef
       location = "group:Decodes+CoreDataClass.swift">
    </FileRef>
    <FileRef
       location = "group:Decodes+CoreDataProperties.swift">
-   </FileRef>
-   <FileRef
-      location = "group:TaskUpdates+CoreDataClass.swift">
-   </FileRef>
-   <FileRef
-      location = "group:TaskUpdates+CoreDataProperties.swift">
-   </FileRef>
-   <FileRef
-      location = "group:Outline+CoreDataClass.swift">
-   </FileRef>
-   <FileRef
-      location = "group:Outline+CoreDataProperties.swift">
    </FileRef>
    <FileRef
       location = "group:OutlineDetails+CoreDataClass.swift">
@@ -122,10 +14,37 @@
       location = "group:OutlineDetails+CoreDataProperties.swift">
    </FileRef>
    <FileRef
-      location = "group:ProjectTeamMembers+CoreDataClass.swift">
+      location = "group:ProcessedEmails+CoreDataClass.swift">
    </FileRef>
    <FileRef
-      location = "group:ProjectTeamMembers+CoreDataProperties.swift">
+      location = "group:ProcessedEmails+CoreDataProperties.swift">
+   </FileRef>
+   <FileRef
+      location = "group:TaskPredecessor+CoreDataClass.swift">
+   </FileRef>
+   <FileRef
+      location = "group:TaskPredecessor+CoreDataProperties.swift">
+   </FileRef>
+   <FileRef
+      location = "group:TaskContext+CoreDataProperties.swift">
+   </FileRef>
+   <FileRef
+      location = "group:ProjectNote+CoreDataClass.swift">
+   </FileRef>
+   <FileRef
+      location = "group:ProjectNote+CoreDataProperties.swift">
+   </FileRef>
+   <FileRef
+      location = "group:GTDLevel+CoreDataClass.swift">
+   </FileRef>
+   <FileRef
+      location = "group:GTDLevel+CoreDataProperties.swift">
+   </FileRef>
+   <FileRef
+      location = "group:Task+CoreDataClass.swift">
+   </FileRef>
+   <FileRef
+      location = "group:Task+CoreDataProperties.swift">
    </FileRef>
    <FileRef
       location = "group:MeetingAgenda+CoreDataClass.swift">
@@ -134,10 +53,16 @@
       location = "group:MeetingAgenda+CoreDataProperties.swift">
    </FileRef>
    <FileRef
-      location = "group:MeetingTasks+CoreDataClass.swift">
+      location = "group:Panes+CoreDataClass.swift">
    </FileRef>
    <FileRef
-      location = "group:MeetingTasks+CoreDataProperties.swift">
+      location = "group:Panes+CoreDataProperties.swift">
+   </FileRef>
+   <FileRef
+      location = "group:TaskAttachment+CoreDataClass.swift">
+   </FileRef>
+   <FileRef
+      location = "group:TaskAttachment+CoreDataProperties.swift">
    </FileRef>
    <FileRef
       location = "group:Context1_1+CoreDataClass.swift">
@@ -146,10 +71,82 @@
       location = "group:Context1_1+CoreDataProperties.swift">
    </FileRef>
    <FileRef
+      location = "group:TaskUpdates+CoreDataClass.swift">
+   </FileRef>
+   <FileRef
+      location = "group:TaskUpdates+CoreDataProperties.swift">
+   </FileRef>
+   <FileRef
+      location = "group:MeetingTasks+CoreDataClass.swift">
+   </FileRef>
+   <FileRef
+      location = "group:MeetingTasks+CoreDataProperties.swift">
+   </FileRef>
+   <FileRef
+      location = "group:Team+CoreDataClass.swift">
+   </FileRef>
+   <FileRef
+      location = "group:Team+CoreDataProperties.swift">
+   </FileRef>
+   <FileRef
+      location = "group:MeetingSupportingDocs+CoreDataClass.swift">
+   </FileRef>
+   <FileRef
+      location = "group:MeetingSupportingDocs+CoreDataProperties.swift">
+   </FileRef>
+   <FileRef
+      location = "group:Projects+CoreDataClass.swift">
+   </FileRef>
+   <FileRef
+      location = "group:Projects+CoreDataProperties.swift">
+   </FileRef>
+   <FileRef
+      location = "group:Roles+CoreDataClass.swift">
+   </FileRef>
+   <FileRef
+      location = "group:Roles+CoreDataProperties.swift">
+   </FileRef>
+   <FileRef
       location = "group:Stages+CoreDataClass.swift">
    </FileRef>
    <FileRef
       location = "group:Stages+CoreDataProperties.swift">
+   </FileRef>
+   <FileRef
+      location = "group:MeetingAgendaItem+CoreDataClass.swift">
+   </FileRef>
+   <FileRef
+      location = "group:MeetingAgendaItem+CoreDataProperties.swift">
+   </FileRef>
+   <FileRef
+      location = "group:MeetingAttendees+CoreDataClass.swift">
+   </FileRef>
+   <FileRef
+      location = "group:MeetingAttendees+CoreDataProperties.swift">
+   </FileRef>
+   <FileRef
+      location = "group:Outline+CoreDataClass.swift">
+   </FileRef>
+   <FileRef
+      location = "group:Outline+CoreDataProperties.swift">
+   </FileRef>
+   <FileRef
+      location = "group:ProjectTeamMembers+CoreDataClass.swift">
+   </FileRef>
+   <FileRef
+      location = "group:ProjectTeamMembers+CoreDataProperties.swift">
+   </FileRef>
+   <FileRef
+      location = "group:GTDItem+CoreDataClass.swift">
+   </FileRef>
+   <FileRef
+      location = "group:GTDItem+CoreDataProperties.swift">
+   </FileRef>
+   <FileRef
+      location = "group:Context+CoreDataClass.swift">
+   </FileRef>
+   <FileRef
+      location = "group:Context+CoreDataProperties.swift">
    </FileRef>
    <FileRef
       location = "group:Contacts Dashboard.xcodeproj">

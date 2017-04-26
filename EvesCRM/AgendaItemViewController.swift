@@ -155,7 +155,7 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, SMTEFillDe
     }
     
     //    func collectionView(_ collectionView: UICollectionView, cellForItemAtIndexPath indexPath: IndexPath) -> UICollectionViewCell
-    func collectionView(_ collectionView: UICollectionView, cellForItem indexPath: IndexPath) -> UICollectionViewCell
+    @objc(collectionView:cellForItemAtIndexPath:) func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {
         var cell : myTaskItem!
  
@@ -251,7 +251,7 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, SMTEFillDe
     
     @IBAction func btnAddAction(_ sender: UIButton)
     {
-        let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "tasks") as! taskViewController
+        let popoverContent = tasksStoryboard.instantiateViewController(withIdentifier: "tasks") as! taskViewController
         popoverContent.modalPresentationStyle = .popover
         let popover = popoverContent.popoverPresentationController
         popover!.sourceView = sender
@@ -301,7 +301,7 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, SMTEFillDe
     
     @IBAction func txtTimeAllocation(_ sender: UITextField)
     {
-        agendaItem.timeAllocation = Int(txtTimeAllocation.text!)!
+        agendaItem.timeAllocation = Int16(txtTimeAllocation.text!)!
     }
     
     func textViewDidEndEditing(_ textView: UITextView)
@@ -359,7 +359,7 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, SMTEFillDe
         let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .actionSheet)
         
         let myOption1 = UIAlertAction(title: "Edit Action", style: .default, handler: { (action: UIAlertAction) -> () in
-            let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "tasks") as! taskViewController
+            let popoverContent = tasksStoryboard.instantiateViewController(withIdentifier: "tasks") as! taskViewController
             popoverContent.modalPresentationStyle = .popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
@@ -376,7 +376,7 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, SMTEFillDe
         })
         
         let myOption2 = UIAlertAction(title: "Action Updates", style: .default, handler: { (action: UIAlertAction) -> () in
-            let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "taskUpdate") as! taskUpdatesViewController
+            let popoverContent = tasksStoryboard.instantiateViewController(withIdentifier: "taskUpdate") as! taskUpdatesViewController
             popoverContent.modalPresentationStyle = .popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self

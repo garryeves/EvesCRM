@@ -122,7 +122,7 @@ class MaintainContextsViewController: UIViewController, CNContactPickerDelegate/
     }
     
     //    func collectionView(_ collectionView: UICollectionView, cellForItemAtIndexPath indexPath: IndexPath) -> UICollectionViewCell
-    func collectionView(_ collectionView: UICollectionView, cellForItem indexPath: IndexPath) -> UICollectionViewCell
+    @objc(collectionView:cellForItemAtIndexPath:) func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {
         
         
@@ -226,7 +226,7 @@ class MaintainContextsViewController: UIViewController, CNContactPickerDelegate/
         
         newContext.name = fullname!
         newContext.contextType = "Person"
-        newContext.personID = Int(contact.identifier)!
+        newContext.personID = Int32(contact.identifier)!
         newContext.status = "Open"
         
         let contextList = contexts()

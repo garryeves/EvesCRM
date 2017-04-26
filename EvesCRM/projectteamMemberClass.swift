@@ -12,18 +12,18 @@ import CloudKit
 
 class projectTeamMember: NSObject
 {
-    fileprivate var myProjectID: Int = 0
+    fileprivate var myProjectID: Int32 = 0
     fileprivate var myProjectMemberNotes: String = ""
-    fileprivate var myRoleID: Int = 0
+    fileprivate var myRoleID: Int32 = 0
     fileprivate var myTeamMember: String = ""
-    fileprivate var myTeamID: Int = 0
+    fileprivate var myTeamID: Int32 = 0
     fileprivate var saveCalled: Bool = false
     
-    var projectID: Int
+    var projectID: Int32
     {
         get
         {
-            return myProjectID as Int
+            return myProjectID
         }
         set
         {
@@ -45,11 +45,11 @@ class projectTeamMember: NSObject
         }
     }
     
-    var roleID: Int
+    var roleID: Int32
     {
         get
         {
-            return myRoleID as Int
+            return myRoleID
         }
         set
         {
@@ -62,7 +62,7 @@ class projectTeamMember: NSObject
     {
         get
         {
-            return myDatabaseConnection.getRoleDescription(NSNumber(value: myRoleID as Int), inTeamID: myTeamID)
+            return myDatabaseConnection.getRoleDescription(myRoleID, inTeamID: myTeamID)
         }
     }
     
@@ -79,7 +79,7 @@ class projectTeamMember: NSObject
         }
     }
     
-    init(inProjectID: Int, inTeamMember: String, inRoleID: Int, inTeamID: Int)
+    init(inProjectID: Int32, inTeamMember: String, inRoleID: Int32, inTeamID: Int32)
     {
         super.init()
         myProjectID = inProjectID
@@ -122,7 +122,7 @@ class projectTeamMember: NSObject
 
 extension coreDatabase
 {
-    func saveTeamMember(_ inProjectID: Int, inRoleID: Int, inPersonName: String, inNotes: String, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func saveTeamMember(_ inProjectID: Int32, inRoleID: Int32, inPersonName: String, inNotes: String, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         var myProjectTeam: ProjectTeamMembers!
         
@@ -130,9 +130,9 @@ extension coreDatabase
         if myProjectTeamRecords.count == 0
         { // Add
             myProjectTeam = ProjectTeamMembers(context: objectContext)
-            myProjectTeam.projectID = NSNumber(value: inProjectID)
+            myProjectTeam.projectID = inProjectID
             myProjectTeam.teamMember = inPersonName
-            myProjectTeam.roleID = NSNumber(value: inRoleID)
+            myProjectTeam.roleID = inRoleID
             myProjectTeam.projectMemberNotes = inNotes
             if inUpdateType == "CODE"
             {
@@ -148,7 +148,7 @@ extension coreDatabase
         else
         { // Update
             myProjectTeam = myProjectTeamRecords[0]
-            myProjectTeam.roleID = NSNumber(value: inRoleID)
+            myProjectTeam.roleID = inRoleID
             myProjectTeam.projectMemberNotes = inNotes
             if inUpdateType == "CODE"
             {
@@ -168,12 +168,12 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceTeamMember(_ inProjectID: Int, inRoleID: Int, inPersonName: String, inNotes: String, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func replaceTeamMember(_ inProjectID: Int32, inRoleID: Int32, inPersonName: String, inNotes: String, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         let myProjectTeam = ProjectTeamMembers(context: objectContext)
-        myProjectTeam.projectID = NSNumber(value: inProjectID)
+        myProjectTeam.projectID = inProjectID
         myProjectTeam.teamMember = inPersonName
-        myProjectTeam.roleID = NSNumber(value: inRoleID)
+        myProjectTeam.roleID = inRoleID
         myProjectTeam.projectMemberNotes = inNotes
         if inUpdateType == "CODE"
         {
@@ -190,7 +190,7 @@ extension coreDatabase
         self.refreshObject(myProjectTeam)
     }
     
-    func deleteTeamMember(_ inProjectID: Int, inPersonName: String)
+    func deleteTeamMember(_ inProjectID: Int32, inPersonName: String)
     {
         let fetchRequest = NSFetchRequest<ProjectTeamMembers>(entityName: "ProjectTeamMembers")
         
@@ -216,7 +216,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func getTeamMemberRecord(_ inProjectID: Int, inPersonName: String)->[ProjectTeamMembers]
+    func getTeamMemberRecord(_ inProjectID: Int32, inPersonName: String)->[ProjectTeamMembers]
     {
         let fetchRequest = NSFetchRequest<ProjectTeamMembers>(entityName: "ProjectTeamMembers")
         
@@ -240,7 +240,7 @@ extension coreDatabase
         }
     }
     
-    func getTeamMembers(_ inProjectID: NSNumber)->[ProjectTeamMembers]
+    func getTeamMembers(_ inProjectID: Int32)->[ProjectTeamMembers]
     {
         let fetchRequest = NSFetchRequest<ProjectTeamMembers>(entityName: "ProjectTeamMembers")
         
@@ -464,11 +464,11 @@ extension CloudKitInteraction
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
-                let projectID = record.object(forKey: "projectID") as! Int
+                let projectID = record.object(forKey: "projectID") as! Int32
                 let teamMember = record.object(forKey: "teamMember") as! String
                 let updateTime = record.object(forKey: "updateTime") as! Date
                 let updateType = record.object(forKey: "updateType") as! String
-                let roleID = record.object(forKey: "roleID") as! Int
+                let roleID = record.object(forKey: "roleID") as! Int32
                 let projectMemberNotes = record.object(forKey: "projectMemberNotes") as! String
                 
                 myDatabaseConnection.replaceTeamMember(projectID, inRoleID: roleID, inPersonName: teamMember, inNotes: projectMemberNotes, inUpdateTime: updateTime, inUpdateType: updateType)
@@ -481,7 +481,7 @@ extension CloudKitInteraction
 
     func saveProjectTeamMembersRecordToCloudKit(_ sourceRecord: ProjectTeamMembers)
     {
-        let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID as! Int)) && (teamMember == \"\(sourceRecord.teamMember!)\")") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID)) && (teamMember == \"\(sourceRecord.teamMember!)\")") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "ProjectTeamMembers", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -545,7 +545,7 @@ extension CloudKitInteraction
 
     func updateProjectTeamMembersRecord(_ sourceRecord: CKRecord)
     {
-        let projectID = sourceRecord.object(forKey: "projectID") as! Int
+        let projectID = sourceRecord.object(forKey: "projectID") as! Int32
         let teamMember = sourceRecord.object(forKey: "teamMember") as! String
         var updateTime = Date()
         if sourceRecord.object(forKey: "updateTime") != nil
@@ -559,7 +559,7 @@ extension CloudKitInteraction
         {
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
-        let roleID = sourceRecord.object(forKey: "roleID") as! Int
+        let roleID = sourceRecord.object(forKey: "roleID") as! Int32
         let projectMemberNotes = sourceRecord.object(forKey: "projectMemberNotes") as! String
         
         myDatabaseConnection.saveTeamMember(projectID, inRoleID: roleID, inPersonName: teamMember, inNotes: projectMemberNotes, inUpdateTime: updateTime, inUpdateType: updateType)

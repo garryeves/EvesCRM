@@ -2,7 +2,7 @@
 //  TaskAttachment+CoreDataProperties.swift
 //  
 //
-//  Created by Garry Eves on 25/4/17.
+//  Created by Garry Eves on 26/4/17.
 //
 //
 
@@ -17,7 +17,7 @@ extension TaskAttachment {
     }
 
     @NSManaged public var attachment: NSData?
-    @NSManaged public var taskID: NSNumber?
+    @NSManaged public var taskID: Int32
     @NSManaged public var title: String?
     @NSManaged public var updateTime: NSDate?
     @NSManaged public var updateType: String?

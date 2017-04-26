@@ -99,7 +99,7 @@ extension coreDatabase
         saveContext()
     }
 
-    func saveOutline(_ outlineID: Int, parentID: Int, parentType: String, title: String, status: String, updateTime: Date = Date(), updateType: String = "CODE")
+    func saveOutline(_ outlineID: Int32, parentID: Int32, parentType: String, title: String, status: String, updateTime: Date = Date(), updateType: String = "CODE")
     {
         var myOutline: Outline!
         
@@ -108,8 +108,8 @@ extension coreDatabase
         if myOutlineItems.count == 0
         { // Add
             myOutline = Outline(context: objectContext)
-            myOutline.outlineID = outlineID as NSNumber?
-            myOutline.parentID = parentID as NSNumber?
+            myOutline.outlineID = outlineID
+            myOutline.parentID = parentID
             myOutline.parentType = parentType
             myOutline.title = title
             myOutline.status = status
@@ -128,7 +128,7 @@ extension coreDatabase
         else
         { // Update
             myOutline = myOutlineItems[0]
-            myOutline.parentID = parentID as NSNumber?
+            myOutline.parentID = parentID
             myOutline.parentType = parentType
             myOutline.title = title
             myOutline.status = status
@@ -151,11 +151,11 @@ extension coreDatabase
         myCloudDB.saveOutlineRecordToCloudKit(myOutline)
     }
     
-    func replaceOutline(_ outlineID: Int, parentID: Int, parentType: String, title: String, status: String, updateTime: Date = Date(), updateType: String = "CODE")
+    func replaceOutline(_ outlineID: Int32, parentID: Int32, parentType: String, title: String, status: String, updateTime: Date = Date(), updateType: String = "CODE")
     {
         let myOutline = Outline(context: objectContext)
-        myOutline.outlineID = outlineID as NSNumber?
-        myOutline.parentID = parentID as NSNumber?
+        myOutline.outlineID = outlineID
+        myOutline.parentID = parentID
         myOutline.parentType = parentType
         myOutline.title = title
         myOutline.status = status
@@ -174,7 +174,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteOutline(_ outlineID: Int)
+    func deleteOutline(_ outlineID: Int32)
     {
         var myOutline: Outline!
         
@@ -189,7 +189,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func getOutline(_ outlineID: Int)->[Outline]
+    func getOutline(_ outlineID: Int32)->[Outline]
     {
         let fetchRequest = NSFetchRequest<Outline>(entityName: "Outline")
         
@@ -273,8 +273,8 @@ extension CloudKitInteraction
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
-                let outlineID = record.object(forKey: "outlineID") as! Int
-                let parentID = record.object(forKey: "parentID") as! Int
+                let outlineID = record.object(forKey: "outlineID") as! Int32
+                let parentID = record.object(forKey: "parentID") as! Int32
                 let parentType = record.object(forKey: "parentType") as! String
                 let title = record.object(forKey: "title") as! String
                 let status = record.object(forKey: "status") as! String
@@ -291,7 +291,7 @@ extension CloudKitInteraction
 
     func saveOutlineRecordToCloudKit(_ sourceRecord: Outline)
     {
-        let predicate = NSPredicate(format: "(outlineID == \(sourceRecord.outlineID!))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(outlineID == \(sourceRecord.outlineID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Outline", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -358,7 +358,7 @@ extension CloudKitInteraction
 
     func updateOutlineRecord(_ sourceRecord: CKRecord)
     {
-        let outlineID = sourceRecord.object(forKey: "outlineID") as! Int
+        let outlineID = sourceRecord.object(forKey: "outlineID") as! Int32
         var updateTime = Date()
         if sourceRecord.object(forKey: "updateTime") != nil
         {
@@ -371,7 +371,7 @@ extension CloudKitInteraction
         {
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
-        let parentID = sourceRecord.object(forKey: "parentID") as! Int
+        let parentID = sourceRecord.object(forKey: "parentID") as! Int32
         let parentType = sourceRecord.object(forKey: "parentType") as! String
         let title = sourceRecord.object(forKey: "title") as! String
         let status = sourceRecord.object(forKey: "status") as! String

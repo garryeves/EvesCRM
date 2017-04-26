@@ -126,7 +126,7 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
     
     @IBAction func txtFrequency(_ sender: UITextField)
     {
-        inGTDObject.reviewFrequency = Int(txtFrequency.text!)!
+        inGTDObject.reviewFrequency = Int16(txtFrequency.text!)!
     }
     
     @IBAction func txtTitle(_ sender: UITextField)
@@ -351,7 +351,7 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
         
         inGTDObject.note = txtNotes.text
         inGTDObject.title = txtTitle.text!
-        inGTDObject.reviewFrequency = Int(txtFrequency.text!)!
+        inGTDObject.reviewFrequency = Int16(txtFrequency.text!)!
 
         return true
     }

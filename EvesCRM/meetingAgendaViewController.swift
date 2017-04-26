@@ -147,7 +147,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
     }
     
     //    func collectionView(_ collectionView: UICollectionView, cellForItemAtIndexPath indexPath: IndexPath) -> UICollectionViewCell
-    func collectionView(_ collectionView: UICollectionView, cellForItem indexPath: IndexPath) -> UICollectionViewCell
+    @objc(collectionView:cellForItemAtIndexPath:) func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {
         var cell: myMovableAgendaItem!
      
@@ -163,7 +163,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
 
         myWorkingTime = myCalendar.date(
             byAdding: .minute,
-            value: myAgendaList[indexPath.row].timeAllocation,
+            value: Int(myAgendaList[indexPath.row].timeAllocation),
             to: myWorkingTime)!
         
         if (indexPath.row % 2 == 0)  // was .row
@@ -186,7 +186,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
         
         if myAgendaList[itemToUpdate].agendaID == 0
         {  // This is a previous meeting tasks row, so call the task list
-            let taskListViewControl = self.storyboard!.instantiateViewController(withIdentifier: "taskList") as! taskListViewController
+            let taskListViewControl = tasksStoryboard.instantiateViewController(withIdentifier: "taskList") as! taskListViewController
             taskListViewControl.delegate = self
             taskListViewControl.myTaskListType = "Meeting"
             taskListViewControl.myMeetingID = passedMeeting.event.previousMinutes
@@ -195,7 +195,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
         }
         else
         {  // This is a normal Agenda item so call the Agenda item screen
-            let agendaViewControl = self.storyboard!.instantiateViewController(withIdentifier: "AgendaItems") as! agendaItemViewController
+            let agendaViewControl = meetingStoryboard.instantiateViewController(withIdentifier: "AgendaItems") as! agendaItemViewController
             agendaViewControl.delegate = self
             agendaViewControl.event = passedMeeting.event
             agendaViewControl.actionType = passedMeeting.actionType
@@ -263,7 +263,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
                 
                 while loopCount < toIndexPath.item
                 {
-                    myAgendaList[loopCount].meetingOrder = loopCount + 2
+                    myAgendaList[loopCount].meetingOrder = Int32(loopCount + 2)
                     loopCount += 1
                 }
             }
@@ -277,7 +277,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
                 
                 while loopCount <= fromIndexPath.item
                 {
-                    myAgendaList[loopCount].meetingOrder = loopCount
+                    myAgendaList[loopCount].meetingOrder = Int32(loopCount)
                     loopCount += 1
                 }
             }
@@ -332,7 +332,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
             }
             else
             {
-                agendaItem.timeAllocation = Int(txtTimeAllocation.text!)!
+                agendaItem.timeAllocation = Int16(txtTimeAllocation.text!)!
             }
             if btnOwner.currentTitle != "Select Owner"
             {

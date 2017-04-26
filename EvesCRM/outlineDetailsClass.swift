@@ -99,7 +99,7 @@ extension coreDatabase
         saveContext()
     }
 
-    func saveOutlineDetail(_ outlineID: Int, lineID: Int, lineOrder: Int, parentLine: Int, lineText: String, lineType: String, checkBoxValue: Bool, updateTime: Date = Date(), updateType: String = "CODE")
+    func saveOutlineDetail(_ outlineID: Int32, lineID: Int32, lineOrder: Int32, parentLine: Int32, lineText: String, lineType: String, checkBoxValue: Bool, updateTime: Date = Date(), updateType: String = "CODE")
     {
         var myOutline: OutlineDetails!
         
@@ -108,10 +108,10 @@ extension coreDatabase
         if myOutlineItems.count == 0
         { // Add
             myOutline = OutlineDetails(context: objectContext)
-            myOutline.outlineID = outlineID as NSNumber?
-            myOutline.lineID = lineID as NSNumber?
-            myOutline.lineOrder = lineOrder as NSNumber?
-            myOutline.parentLine = parentLine as NSNumber?
+            myOutline.outlineID = outlineID
+            myOutline.lineID = lineID
+            myOutline.lineOrder = lineOrder
+            myOutline.parentLine = parentLine
             myOutline.lineText = lineText
             myOutline.lineType = lineType
             myOutline.checkBoxValue = checkBoxValue as NSNumber?
@@ -130,8 +130,8 @@ extension coreDatabase
         else
         { // Update
             myOutline = myOutlineItems[0]
-            myOutline.lineOrder = lineOrder as NSNumber?
-            myOutline.parentLine = parentLine as NSNumber?
+            myOutline.lineOrder = lineOrder
+            myOutline.parentLine = parentLine
             myOutline.lineText = lineText
             myOutline.lineType = lineType
             myOutline.checkBoxValue = checkBoxValue as NSNumber?
@@ -155,13 +155,13 @@ extension coreDatabase
         myCloudDB.saveOutlineDetailsRecordToCloudKit(myOutline)
     }
     
-    func replaceOutlineDetails(_ outlineID: Int, lineID: Int, lineOrder: Int, parentLine: Int, lineText: String, lineType: String, checkBoxValue: Bool, updateTime: Date = Date(), updateType: String = "CODE")
+    func replaceOutlineDetails(_ outlineID: Int32, lineID: Int32, lineOrder: Int32, parentLine: Int32, lineText: String, lineType: String, checkBoxValue: Bool, updateTime: Date = Date(), updateType: String = "CODE")
     {
         let myOutline = OutlineDetails(context: objectContext)
-        myOutline.outlineID = outlineID as NSNumber?
-        myOutline.lineID = lineID as NSNumber?
-        myOutline.lineOrder = lineOrder as NSNumber?
-        myOutline.parentLine = parentLine as NSNumber?
+        myOutline.outlineID = outlineID
+        myOutline.lineID = lineID
+        myOutline.lineOrder = lineOrder
+        myOutline.parentLine = parentLine
         myOutline.lineText = lineText
         myOutline.lineType = lineType
         myOutline.checkBoxValue = checkBoxValue as NSNumber?
@@ -180,7 +180,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteOutlineDetails(_ outlineID: Int, lineID: Int)
+    func deleteOutlineDetails(_ outlineID: Int32, lineID: Int32)
     {
         var myOutline: OutlineDetails!
         
@@ -196,7 +196,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func getOutlineDetails(_ outlineID: Int, lineID: Int)->[OutlineDetails]
+    func getOutlineDetails(_ outlineID: Int32, lineID: Int32)->[OutlineDetails]
     {
         let fetchRequest = NSFetchRequest<OutlineDetails>(entityName: "OutlineDetails")
         
@@ -280,10 +280,10 @@ extension CloudKitInteraction
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
-                let outlineID = record.object(forKey: "outlineID") as! Int
-                let lineID = record.object(forKey: "lineID") as! Int
-                let lineOrder = record.object(forKey: "lineOrder") as! Int
-                let parentLine = record.object(forKey: "parentLine") as! Int
+                let outlineID = record.object(forKey: "outlineID") as! Int32
+                let lineID = record.object(forKey: "lineID") as! Int32
+                let lineOrder = record.object(forKey: "lineOrder") as! Int32
+                let parentLine = record.object(forKey: "parentLine") as! Int32
                 let lineText = record.object(forKey: "lineText") as! String
                 let lineType = record.object(forKey: "lineType") as! String
                 
@@ -308,7 +308,7 @@ extension CloudKitInteraction
 
     func saveOutlineDetailsRecordToCloudKit(_ sourceRecord: OutlineDetails)
     {
-        let predicate = NSPredicate(format: "(outlineID == \(sourceRecord.outlineID!)) && (lineID == \(sourceRecord.lineID!))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(outlineID == \(sourceRecord.outlineID)) && (lineID == \(sourceRecord.lineID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "OutlineDetails", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -394,7 +394,7 @@ extension CloudKitInteraction
 
     func updateOutlineDetailsRecord(_ sourceRecord: CKRecord)
     {
-        let outlineID = sourceRecord.object(forKey: "outlineID") as! Int
+        let outlineID = sourceRecord.object(forKey: "outlineID") as! Int32
         var updateTime = Date()
         if sourceRecord.object(forKey: "updateTime") != nil
         {
@@ -407,9 +407,9 @@ extension CloudKitInteraction
         {
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
-        let lineID = sourceRecord.object(forKey: "lineID") as! Int
-        let lineOrder = sourceRecord.object(forKey: "lineOrder") as! Int
-        let parentLine = sourceRecord.object(forKey: "parentLine") as! Int
+        let lineID = sourceRecord.object(forKey: "lineID") as! Int32
+        let lineOrder = sourceRecord.object(forKey: "lineOrder") as! Int32
+        let parentLine = sourceRecord.object(forKey: "parentLine") as! Int32
         let lineText = sourceRecord.object(forKey: "lineText") as! String
         let lineType = sourceRecord.object(forKey: "lineType") as! String
         

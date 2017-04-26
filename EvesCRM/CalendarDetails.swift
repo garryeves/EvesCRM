@@ -32,7 +32,7 @@ class myCalendarItem
     fileprivate var myNextMeeting: String = ""
     fileprivate var myMinutesType: String = ""
     fileprivate var myAgendaItems: [meetingAgendaItem] = Array()
-    fileprivate var myTeamID: Int = 0
+    fileprivate var myTeamID: Int32 = 0
 
     // Seup Date format for display
     fileprivate var startDateFormatter = DateFormatter()
@@ -50,7 +50,7 @@ class myCalendarItem
     fileprivate var mySavedData: Bool = false
     fileprivate var saveCalled: Bool = false
 
-    init(inEventStore: EKEventStore, inEvent: EKEvent, inAttendee: EKParticipant?, teamID: Int)
+    init(inEventStore: EKEventStore, inEvent: EKEvent, inAttendee: EKParticipant?, teamID: Int32)
     {
         startDateFormatter.dateStyle = dateFormat
         startDateFormatter.timeStyle = timeFormat
@@ -101,15 +101,15 @@ class myCalendarItem
                 {
                     myRecurrenceFrequency = (myItem as AnyObject).interval
                     let testFrequency: EKRecurrenceFrequency = (myItem as AnyObject).frequency
-                    myRecurrence = Int(testFrequency.rawValue)
+                    myRecurrence = testFrequency.rawValue
                 }
             }
         }
         // Need to validate this works when displaying by person and also by project
         if inAttendee != nil
         {
-            myStatus = Int(inAttendee!.participantStatus.rawValue)
-            myType = Int(inAttendee!.participantType.rawValue)
+            myStatus = inAttendee!.participantStatus.rawValue
+            myType = inAttendee!.participantType.rawValue
         }
         
         loadAttendees()
@@ -133,13 +133,13 @@ class myCalendarItem
         myMinutes = inMeetingAgenda.minutes!
         myLocation = inMeetingAgenda.location!
         myMinutesType = inMeetingAgenda.minutesType!
-        myTeamID = inMeetingAgenda.teamID as! Int
+        myTeamID = inMeetingAgenda.teamID
         
         loadAttendees()
         loadAgendaItems()
     }
     
-    init(inEventStore: EKEventStore, inMeetingID: String, teamID: Int)
+    init(inEventStore: EKEventStore, inMeetingID: String, teamID: Int32)
     {
         myTeamID = teamID
         let mySavedValues = myDatabaseConnection.loadAgenda(inMeetingID, inTeamID: myTeamID)
@@ -554,7 +554,7 @@ class myCalendarItem
         }
     }
     
-    var teamID: Int
+    var teamID: Int32
     {
         get
         {
@@ -965,11 +965,11 @@ class myCalendarItem
         
         if mySavedValues.count > 0
         {
-            var runningMeetingOrder: Int = 0
+            var runningMeetingOrder: Int32 = 0
             
             for savedAgenda in mySavedValues
             {
-                let myAgendaItem =  meetingAgendaItem(inMeetingID: savedAgenda.meetingID!, inAgendaID:savedAgenda.agendaID as! Int)
+                let myAgendaItem =  meetingAgendaItem(inMeetingID: savedAgenda.meetingID!, inAgendaID: savedAgenda.agendaID)
                 if myAgendaItem.meetingOrder == 0
                 {
                     myAgendaItem.meetingOrder += runningMeetingOrder
@@ -984,7 +984,7 @@ class myCalendarItem
         }
     }
         
-    func updateAgendaItems(_ inAgendaID: Int, inTitle: String, inOwner: String, inStatus: String, inDecisionMade: String, inDiscussionNotes: String, inTimeAllocation: Int, inActualStartTime: Date, inActualEndTime: Date)
+    func updateAgendaItems(_ inAgendaID: Int32, inTitle: String, inOwner: String, inStatus: String, inDecisionMade: String, inDiscussionNotes: String, inTimeAllocation: Int16, inActualStartTime: Date, inActualEndTime: Date)
     {
         for myAgendaItem in myAgendaItems
         {
@@ -1113,7 +1113,7 @@ class myCalendarItem
                 
                 for myItem2 in myData2
                 {
-                    let newTask = task(taskID: myItem2.taskID as! Int)
+                    let newTask = task(taskID: myItem2.taskID)
                     myTaskList.append(newTask)
                 }
                 
@@ -1404,7 +1404,7 @@ class myCalendarItem
                 
                 myWorkingTime = myCalendar.date(
                     byAdding: .minute,
-                    value: myItem.timeAllocation,
+                    value: Int(myItem.timeAllocation),
                     to: myWorkingTime!)!
                 
             }
@@ -1547,7 +1547,7 @@ class myCalendarItem
                 
                 for myItem2 in myData2
                 {
-                    let newTask = task(taskID: myItem2.taskID as! Int)
+                    let newTask = task(taskID: myItem2.taskID)
                     myTaskList.append(newTask)
                 }
                 
@@ -1846,7 +1846,7 @@ class myCalendarItem
                 
                 myWorkingTime = myCalendar.date(
                     byAdding: .minute,
-                    value: myItem.timeAllocation,
+                    value: Int(myItem.timeAllocation),
                     to: myWorkingTime!)!
                 
             }
@@ -1977,7 +1977,7 @@ class iOSCalendar
         }
     }
     
-    func loadCalendarDetails(_ emailAddresses: [String], teamID: Int)
+    func loadCalendarDetails(_ emailAddresses: [String], teamID: Int32)
     {
         for myEmail in emailAddresses
         {
@@ -1990,7 +1990,7 @@ class iOSCalendar
          eventDetails.sort(by: {$0.startDate.timeIntervalSinceNow < $1.startDate.timeIntervalSinceNow})
     }
     
-    func loadCalendarForEvent(_ inEventID: String, inStartDate: Date, teamID: Int)
+    func loadCalendarForEvent(_ inEventID: String, inStartDate: Date, teamID: Int32)
     {
         /* The end date */
         //Calculate - Days * hours * mins * secs
@@ -2025,7 +2025,7 @@ class iOSCalendar
         }
     }
     
-    func loadCalendarDetails(_ projectName: String, teamID: Int)
+    func loadCalendarDetails(_ projectName: String, teamID: Int32)
     {
         parseCalendarByProject(projectName, teamID: teamID)
         
@@ -2129,7 +2129,7 @@ class iOSCalendar
         }
     }
     
-    fileprivate func parseCalendarByEmail(_ inEmail: String, teamID: Int)
+    fileprivate func parseCalendarByEmail(_ inEmail: String, teamID: Int32)
     {
         let events = getEventsForDateRange()
         
@@ -2178,7 +2178,7 @@ class iOSCalendar
         }
     }
     
-    fileprivate func parseCalendarByProject(_ inProject: String, teamID: Int)
+    fileprivate func parseCalendarByProject(_ inProject: String, teamID: Int32)
     {
         let events = getEventsForDateRange()
         
@@ -2273,7 +2273,7 @@ class iOSCalendar
         return myDatabaseConnection.getAgendaForDateRange(startDate as NSDate, inEndDate: endDate as NSDate, inTeamID: myCurrentTeam.teamID)
     }
     
-    fileprivate func storeEvent(_ inEvent: EKEvent, inAttendee: EKParticipant?, teamID: Int)
+    fileprivate func storeEvent(_ inEvent: EKEvent, inAttendee: EKParticipant?, teamID: Int32)
     {
         let calendarEntry = myCalendarItem(inEventStore: myEventStore, inEvent: inEvent, inAttendee: inAttendee, teamID: teamID)
         
@@ -2560,7 +2560,7 @@ func parsePastMeeting(_ inMeetingID: String) -> [task]
             
             for myItem2 in myData2
             {
-                let newTask = task(taskID: myItem2.taskID as! Int)
+                let newTask = task(taskID: myItem2.taskID)
                 if newTask.status != "Closed"
                 {
                     myArray.append(newTask)
@@ -2588,7 +2588,7 @@ func parsePastMeeting(_ inMeetingID: String) -> [task]
 
 extension coreDatabase
 {
-    func searchPastAgendaByPartialMeetingIDBeforeStart(_ inSearchText: String, inMeetingStartDate: NSDate, inTeamID: Int)->[MeetingAgenda]
+    func searchPastAgendaByPartialMeetingIDBeforeStart(_ inSearchText: String, inMeetingStartDate: NSDate, inTeamID: Int32)->[MeetingAgenda]
     {
         let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
@@ -2619,7 +2619,7 @@ extension coreDatabase
         }
     }
     
-    func searchPastAgendaWithoutPartialMeetingIDBeforeStart(_ inSearchText: String, inMeetingStartDate: NSDate, inTeamID: Int)->[MeetingAgenda]
+    func searchPastAgendaWithoutPartialMeetingIDBeforeStart(_ inSearchText: String, inMeetingStartDate: NSDate, inTeamID: Int32)->[MeetingAgenda]
     {
         let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
@@ -2650,7 +2650,7 @@ extension coreDatabase
         }
     }
     
-    func listAgendaReverseDateBeforeStart(_ inMeetingStartDate: NSDate, inTeamID: Int)->[MeetingAgenda]
+    func listAgendaReverseDateBeforeStart(_ inMeetingStartDate: NSDate, inTeamID: Int32)->[MeetingAgenda]
     {
         let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
@@ -2681,7 +2681,7 @@ extension coreDatabase
         }
     }
     
-    func searchPastAgendaByPartialMeetingIDAfterStart(_ inSearchText: String, inMeetingStartDate: NSDate, inTeamID: Int)->[MeetingAgenda]
+    func searchPastAgendaByPartialMeetingIDAfterStart(_ inSearchText: String, inMeetingStartDate: NSDate, inTeamID: Int32)->[MeetingAgenda]
     {
         let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
@@ -2712,7 +2712,7 @@ extension coreDatabase
         }
     }
     
-    func searchPastAgendaWithoutPartialMeetingIDAfterStart(_ inSearchText: String, inMeetingStartDate: NSDate, inTeamID: Int)->[MeetingAgenda]
+    func searchPastAgendaWithoutPartialMeetingIDAfterStart(_ inSearchText: String, inMeetingStartDate: NSDate, inTeamID: Int32)->[MeetingAgenda]
     {
         let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
@@ -2743,7 +2743,7 @@ extension coreDatabase
         }
     }
     
-    func listAgendaReverseDateAfterStart(_ inMeetingStartDate: NSDate, inTeamID: Int)->[MeetingAgenda]
+    func listAgendaReverseDateAfterStart(_ inMeetingStartDate: NSDate, inTeamID: Int32)->[MeetingAgenda]
     {
         let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
@@ -2779,7 +2779,7 @@ extension coreDatabase
         saveAgenda(inEvent.eventID, inPreviousMeetingID : inEvent.previousMinutes, inName: inEvent.title, inChair: inEvent.chair, inMinutes: inEvent.minutes, inLocation: inEvent.location, inStartTime: inEvent.startDate as Date, inEndTime: inEvent.endDate as Date, inMinutesType: inEvent.minutesType, inTeamID: inEvent.teamID)
     }
     
-    func saveAgenda(_ inMeetingID: String, inPreviousMeetingID : String, inName: String, inChair: String, inMinutes: String, inLocation: String, inStartTime: Date, inEndTime: Date, inMinutesType: String, inTeamID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func saveAgenda(_ inMeetingID: String, inPreviousMeetingID : String, inName: String, inChair: String, inMinutes: String, inLocation: String, inStartTime: Date, inEndTime: Date, inMinutesType: String, inTeamID: Int32, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         var myAgenda: MeetingAgenda
         
@@ -2797,7 +2797,7 @@ extension coreDatabase
             myAgenda.startTime = inStartTime as NSDate
             myAgenda.endTime = inEndTime as NSDate
             myAgenda.minutesType = inMinutesType
-            myAgenda.teamID = NSNumber(value: inTeamID)
+            myAgenda.teamID = inTeamID
             if inUpdateType == "CODE"
             {
                 myAgenda.updateTime =  NSDate()
@@ -2820,7 +2820,7 @@ extension coreDatabase
             myAgenda.startTime = inStartTime as NSDate
             myAgenda.endTime = inEndTime as NSDate
             myAgenda.minutesType = inMinutesType
-            myAgenda.teamID = NSNumber(value: inTeamID)
+            myAgenda.teamID = inTeamID
             if inUpdateType == "CODE"
             {
                 myAgenda.updateTime =  NSDate()
@@ -2839,7 +2839,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceAgenda(_ inMeetingID: String, inPreviousMeetingID : String, inName: String, inChair: String, inMinutes: String, inLocation: String, inStartTime: Date, inEndTime: Date, inMinutesType: String, inTeamID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func replaceAgenda(_ inMeetingID: String, inPreviousMeetingID : String, inName: String, inChair: String, inMinutes: String, inLocation: String, inStartTime: Date, inEndTime: Date, inMinutesType: String, inTeamID: Int32, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         let myAgenda = MeetingAgenda(context: objectContext)
         myAgenda.meetingID = inMeetingID
@@ -2851,7 +2851,7 @@ extension coreDatabase
         myAgenda.startTime = inStartTime as NSDate
         myAgenda.endTime = inEndTime as NSDate
         myAgenda.minutesType = inMinutesType
-        myAgenda.teamID = NSNumber(value: inTeamID)
+        myAgenda.teamID = inTeamID
         if inUpdateType == "CODE"
         {
             myAgenda.updateTime =  NSDate()
@@ -2866,7 +2866,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func loadPreviousAgenda(_ inMeetingID: String, inTeamID: Int)->[MeetingAgenda]
+    func loadPreviousAgenda(_ inMeetingID: String, inTeamID: Int32)->[MeetingAgenda]
     {
         let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
@@ -2893,7 +2893,7 @@ extension coreDatabase
         }
     }
     
-    func loadAgenda(_ inMeetingID: String, inTeamID: Int)->[MeetingAgenda]
+    func loadAgenda(_ inMeetingID: String, inTeamID: Int32)->[MeetingAgenda]
     {
         let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
@@ -2920,7 +2920,7 @@ extension coreDatabase
         }
     }
     
-    func updatePreviousAgendaID(_ inPreviousMeetingID: String, inMeetingID: String, inTeamID: Int)
+    func updatePreviousAgendaID(_ inPreviousMeetingID: String, inMeetingID: String, inTeamID: Int32)
     {
         let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
@@ -2956,7 +2956,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func loadAgendaForProject(_ inProjectName: String, inTeamID: Int)->[MeetingAgenda]
+    func loadAgendaForProject(_ inProjectName: String, inTeamID: Int32)->[MeetingAgenda]
     {
         let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
@@ -2983,7 +2983,7 @@ extension coreDatabase
         }
     }
     
-    func getAgendaForDateRange(_ inStartDate: NSDate, inEndDate: NSDate, inTeamID: Int)->[MeetingAgenda]
+    func getAgendaForDateRange(_ inStartDate: NSDate, inEndDate: NSDate, inTeamID: Int32)->[MeetingAgenda]
     {
         let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
@@ -3088,7 +3088,7 @@ extension coreDatabase
         saveContext()
     }
 
-    func initialiseTeamForMeetingAgenda(_ inTeamID: Int)
+    func initialiseTeamForMeetingAgenda(_ inTeamID: Int32)
     {
         let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
@@ -3100,7 +3100,7 @@ extension coreDatabase
             {
                 for myItem in fetchResults
                 {
-                    myItem.teamID = NSNumber(value: inTeamID)
+                    myItem.teamID = inTeamID
                 }
             }
         }
@@ -3224,7 +3224,7 @@ extension CloudKitInteraction
                 let name = record.object(forKey: "name") as! String
                 let previousMeetingID = record.object(forKey: "previousMeetingID") as! String
                 let startTime = record.object(forKey: "meetingStartTime") as! Date
-                let teamID = record.object(forKey: "actualTeamID") as! Int
+                let teamID = record.object(forKey: "actualTeamID") as! Int32
                 
                 myDatabaseConnection.replaceAgenda(meetingID, inPreviousMeetingID : previousMeetingID, inName: name, inChair: chair, inMinutes: minutes, inLocation: location, inStartTime: startTime, inEndTime: endTime, inMinutesType: minutesType, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
             }
@@ -3236,7 +3236,7 @@ extension CloudKitInteraction
 
     func saveMeetingAgendaRecordToCloudKit(_ sourceRecord: MeetingAgenda)
     {
-        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (actualTeamID == \(sourceRecord.teamID as! Int))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (actualTeamID == \(sourceRecord.teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -3333,7 +3333,7 @@ extension CloudKitInteraction
         let name = sourceRecord.object(forKey: "name") as! String
         let previousMeetingID = sourceRecord.object(forKey: "previousMeetingID") as! String
         let startTime = sourceRecord.object(forKey: "meetingStartTime") as! Date
-        let teamID = sourceRecord.object(forKey: "actualTeamID") as! Int
+        let teamID = sourceRecord.object(forKey: "actualTeamID") as! Int32
         
         myDatabaseConnection.saveAgenda(meetingID, inPreviousMeetingID : previousMeetingID, inName: name, inChair: chair, inMinutes: minutes, inLocation: location, inStartTime: startTime, inEndTime: endTime, inMinutesType: minutesType, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
     }

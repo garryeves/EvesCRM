@@ -107,7 +107,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
         
         for myTeamItem in myDatabaseConnection.getMyTeams(myID)
         {
-            let myTeam = team(inTeamID: myTeamItem.teamID as! Int)
+            let myTeam = team(inTeamID: myTeamItem.teamID)
             let teamObject = createMenuItem(myTeam.name, inType: "Disclosure", inObject: myTeam)
             teamObject.type = "disclosure"
             teamObject.section = doingObject.childSection
@@ -118,7 +118,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
             {
                 // Get the number of items in the project
                 
-                let myReturnedData = myDatabaseConnection.getActiveTasksForProject(myProject.projectID as! Int)
+                let myReturnedData = myDatabaseConnection.getActiveTasksForProject(myProject.projectID)
                 
                 let displayObject = createMenuItem("\(myProject.projectName!) (\(myReturnedData.count))", inType: "Project", inObject: myProject)
                 //displayObject.section = "\(myTeam.teamID)"
@@ -343,7 +343,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
     
     #endif
     
-    func getContextCount(_ contextID: Int) -> Int
+    func getContextCount(_ contextID: Int32) -> Int
     {
         var retVal: Int = 0
         
@@ -351,7 +351,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
         for myItem in myDatabaseConnection.getTasksForContext(contextID)
         {
             // get items that are open
-            if myDatabaseConnection.getActiveTask(myItem.taskID as! Int).count > 0
+            if myDatabaseConnection.getActiveTask(myItem.taskID).count > 0
             {
                 retVal += 1
             }

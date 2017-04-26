@@ -12,13 +12,13 @@ import CloudKit
 
 class team: NSObject
 {
-    fileprivate var myTeamID: Int = 0
+    fileprivate var myTeamID: Int32 = 0
     fileprivate var myName: String = "New"
     fileprivate var myNote: String = ""
     fileprivate var myStatus: String = ""
     fileprivate var myType: String = ""
-    fileprivate var myPredecessor: Int = 0
-    fileprivate var myExternalID: Int = 0
+    fileprivate var myPredecessor: Int32 = 0
+    fileprivate var myExternalID: Int32 = 0
     fileprivate var myRoles: [Roles]!
     fileprivate var myStages:[Stages]!
     fileprivate var myGTD: [workingGTDLevel] = Array()
@@ -26,7 +26,7 @@ class team: NSObject
     fileprivate var myContexts: [context] = Array()
     fileprivate var saveCalled: Bool = false
     
-    var teamID: Int
+    var teamID: Int32
     {
         get
         {
@@ -78,7 +78,7 @@ class team: NSObject
         }
     }
     
-    var predecessor: Int
+    var predecessor: Int32
     {
         get
         {
@@ -91,7 +91,7 @@ class team: NSObject
         }
     }
     
-    var externalID: Int
+    var externalID: Int32
     {
         get
         {
@@ -157,7 +157,7 @@ class team: NSObject
         }
     }
 
-    init(inTeamID: Int)
+    init(inTeamID: Int32)
     {
         super.init()
         
@@ -167,13 +167,13 @@ class team: NSObject
         
         for myItem in myTeam
         {
-            myTeamID = myItem.teamID as! Int
+            myTeamID = myItem.teamID
             myName = myItem.name!
             myStatus = myItem.status!
             myType = myItem.type!
             myNote = myItem.note!
-            myPredecessor = myItem.predecessor as! Int
-            myExternalID = myItem.externalID as! Int
+            myPredecessor = myItem.predecessor
+            myExternalID = myItem.externalID
         }
  
         loadRoles()
@@ -265,7 +265,7 @@ class team: NSObject
         myGTD.removeAll()
         for myItem in myDatabaseConnection.getGTDLevels(myTeamID)
         {
-            let myWorkingLevel = workingGTDLevel(inGTDLevel: myItem.gTDLevel as! Int, inTeamID: myTeamID)
+            let myWorkingLevel = workingGTDLevel(inGTDLevel: myItem.gTDLevel, inTeamID: myTeamID)
             myGTD.append(myWorkingLevel)
         }
 
@@ -277,7 +277,7 @@ class team: NSObject
         myGTDTopLevel.removeAll()
         for myItem in myDatabaseConnection.getGTDItemsForLevel(1, inTeamID: myTeamID)
         {
-            let myWorkingLevel = workingGTDItem(inGTDItemID: myItem.gTDItemID as! Int, inTeamID: myTeamID)
+            let myWorkingLevel = workingGTDItem(inGTDItemID: myItem.gTDItemID, inTeamID: myTeamID)
             myGTDTopLevel.append(myWorkingLevel)
         }
     }
@@ -360,7 +360,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func saveTeam(_ inTeamID: Int, inName: String, inStatus: String, inNote: String, inType: String, inPredecessor: Int, inExternalID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func saveTeam(_ inTeamID: Int32, inName: String, inStatus: String, inNote: String, inType: String, inPredecessor: Int32, inExternalID: Int32, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         var myTeam: Team!
         
@@ -369,13 +369,13 @@ extension coreDatabase
         if myTeams.count == 0
         { // Add
             myTeam = Team(context: objectContext)
-            myTeam.teamID = NSNumber(value: inTeamID)
+            myTeam.teamID = inTeamID
             myTeam.name = inName
             myTeam.status = inStatus
             myTeam.note = inNote
             myTeam.type = inType
-            myTeam.predecessor = NSNumber(value: inPredecessor)
-            myTeam.externalID = NSNumber(value: inExternalID)
+            myTeam.predecessor = inPredecessor
+            myTeam.externalID = inExternalID
             if inUpdateType == "CODE"
             {
                 myTeam.updateTime =  NSDate()
@@ -394,8 +394,8 @@ extension coreDatabase
             myTeam.status = inStatus
             myTeam.note = inNote
             myTeam.type = inType
-            myTeam.predecessor = NSNumber(value: inPredecessor)
-            myTeam.externalID = NSNumber(value: inExternalID)
+            myTeam.predecessor = inPredecessor
+            myTeam.externalID = inExternalID
             if inUpdateType == "CODE"
             {
                 if myTeam.updateType != "Add"
@@ -414,16 +414,16 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceTeam(_ inTeamID: Int, inName: String, inStatus: String, inNote: String, inType: String, inPredecessor: Int, inExternalID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func replaceTeam(_ inTeamID: Int32, inName: String, inStatus: String, inNote: String, inType: String, inPredecessor: Int32, inExternalID: Int32, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         let myTeam = Team(context: persistentContainer.viewContext)
-        myTeam.teamID = NSNumber(value: inTeamID)
+        myTeam.teamID = inTeamID
         myTeam.name = inName
         myTeam.status = inStatus
         myTeam.note = inNote
         myTeam.type = inType
-        myTeam.predecessor = NSNumber(value: inPredecessor)
-        myTeam.externalID = NSNumber(value: inExternalID)
+        myTeam.predecessor = inPredecessor
+        myTeam.externalID = inExternalID
         if inUpdateType == "CODE"
         {
             myTeam.updateTime =  NSDate()
@@ -439,7 +439,7 @@ extension coreDatabase
         self.refreshObject(myTeam)
     }
     
-    func getTeam(_ inTeamID: Int)->[Team]
+    func getTeam(_ inTeamID: Int32)->[Team]
     {
         let fetchRequest = NSFetchRequest<Team>(entityName: "Team")
         
@@ -664,15 +664,15 @@ extension CloudKitInteraction
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
-                let teamID = record.object(forKey: "teamID") as! Int
+                let teamID = record.object(forKey: "teamID") as! Int32
                 let updateTime = record.object(forKey: "updateTime") as! Date
                 let updateType = record.object(forKey: "updateType") as! String
                 let name = record.object(forKey: "name") as! String
                 let note = record.object(forKey: "note") as! String
                 let status = record.object(forKey: "status") as! String
                 let type = record.object(forKey: "type") as! String
-                let predecessor = record.object(forKey: "predecessor") as! Int
-                let externalID = record.object(forKey: "externalID") as! Int
+                let predecessor = record.object(forKey: "predecessor") as! Int32
+                let externalID = record.object(forKey: "externalID") as! Int32
                 
                 myDatabaseConnection.replaceTeam(teamID, inName: name, inStatus: status, inNote: note, inType: type, inPredecessor: predecessor, inExternalID: externalID, inUpdateTime: updateTime, inUpdateType: updateType)
             }
@@ -684,7 +684,7 @@ extension CloudKitInteraction
     
     func saveTeamRecordToCloudKit(_ sourceRecord: Team)
     {
-        let predicate = NSPredicate(format: "(teamID == \(sourceRecord.teamID as! Int))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(teamID == \(sourceRecord.teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Team", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -756,7 +756,7 @@ extension CloudKitInteraction
     
     func updateTeamRecord(_ sourceRecord: CKRecord)
     {
-        let teamID = sourceRecord.object(forKey: "teamID") as! Int
+        let teamID = sourceRecord.object(forKey: "teamID") as! Int32
         var updateTime = Date()
         if sourceRecord.object(forKey: "updateTime") != nil
         {
@@ -773,8 +773,8 @@ extension CloudKitInteraction
         let note = sourceRecord.object(forKey: "note") as! String
         let status = sourceRecord.object(forKey: "status") as! String
         let type = sourceRecord.object(forKey: "type") as! String
-        let predecessor = sourceRecord.object(forKey: "predecessor") as! Int
-        let externalID = sourceRecord.object(forKey: "externalID") as! Int
+        let predecessor = sourceRecord.object(forKey: "predecessor") as! Int32
+        let externalID = sourceRecord.object(forKey: "externalID") as! Int32
         
         myDatabaseConnection.saveTeam(teamID, inName: name, inStatus: status, inNote: note, inType: type, inPredecessor: predecessor, inExternalID: externalID, inUpdateTime: updateTime, inUpdateType: updateType)
     }

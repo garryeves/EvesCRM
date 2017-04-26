@@ -12,7 +12,7 @@ import CloudKit
 
 extension coreDatabase
 {
-    func getTaskWithoutContext(_ teamID: Int)->[Task]
+    func getTaskWithoutContext(_ teamID: Int32)->[Task]
     {
         // first get a list of all tasks that have a context
         
@@ -85,7 +85,7 @@ extension coreDatabase
         return myTaskArray
     }
 
-    func saveTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func saveTaskContext(_ inContextID: Int32, inTaskID: Int32, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         var myContext: TaskContext!
         
@@ -94,8 +94,8 @@ extension coreDatabase
         if myContexts.count == 0
         { // Add
             myContext = TaskContext(context: objectContext)
-            myContext.contextID = NSNumber(value: inContextID)
-            myContext.taskID = NSNumber(value: inTaskID)
+            myContext.contextID = inContextID
+            myContext.taskID = inTaskID
             if inUpdateType == "CODE"
             {
                 myContext.updateTime =  NSDate()
@@ -130,12 +130,12 @@ extension coreDatabase
         myCloudDB.saveTaskContextRecordToCloudKit(myContext)
     }
     
-    func replaceTaskContext(_ inContextID: Int, inTaskID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func replaceTaskContext(_ inContextID: Int32, inTaskID: Int32, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         
         let myContext = TaskContext(context: objectContext)
-        myContext.contextID = NSNumber(value: inContextID)
-        myContext.taskID = NSNumber(value: inTaskID)
+        myContext.contextID = inContextID
+        myContext.taskID = inTaskID
         if inUpdateType == "CODE"
         {
             myContext.updateTime =  NSDate()
@@ -149,7 +149,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteTaskContext(_ inContextID: Int, inTaskID: Int)
+    func deleteTaskContext(_ inContextID: Int32, inTaskID: Int32)
     {
         let fetchRequest = NSFetchRequest<TaskContext>(entityName: "TaskContext")
         
@@ -176,7 +176,7 @@ extension coreDatabase
         saveContext()
     }
     
-    private func getTaskContext(_ inContextID: Int, inTaskID: Int)->[TaskContext]
+    private func getTaskContext(_ inContextID: Int32, inTaskID: Int32)->[TaskContext]
     {
         let fetchRequest = NSFetchRequest<TaskContext>(entityName: "TaskContext")
         
@@ -200,7 +200,7 @@ extension coreDatabase
         }
     }
     
-    func getContextsForTask(_ inTaskID: Int)->[TaskContext]
+    func getContextsForTask(_ inTaskID: Int32)->[TaskContext]
     {
         let fetchRequest = NSFetchRequest<TaskContext>(entityName: "TaskContext")
         
@@ -224,7 +224,7 @@ extension coreDatabase
         }
     }
     
-    func getTasksForContext(_ inContextID: Int)->[TaskContext]
+    func getTasksForContext(_ inContextID: Int32)->[TaskContext]
     {
         let fetchRequest = NSFetchRequest<TaskContext>(entityName: "TaskContext")
         
@@ -419,8 +419,8 @@ extension CloudKitInteraction
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
-                let taskID = record.object(forKey: "taskID") as! Int
-                let contextID = record.object(forKey: "contextID") as! Int
+                let taskID = record.object(forKey: "taskID") as! Int32
+                let contextID = record.object(forKey: "contextID") as! Int32
                 let updateTime = record.object(forKey: "updateTime") as! Date
                 let updateType = record.object(forKey: "updateType") as! String
                 
@@ -434,7 +434,7 @@ extension CloudKitInteraction
 
     func saveTaskContextRecordToCloudKit(_ sourceRecord: TaskContext)
     {
-        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as! Int)) && (contextID == \(sourceRecord.contextID as! Int))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID)) && (contextID == \(sourceRecord.contextID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "TaskContext", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -495,8 +495,8 @@ extension CloudKitInteraction
 
     func updateTaskContextRecord(_ sourceRecord: CKRecord)
     {
-        let taskID = sourceRecord.object(forKey: "taskID") as! Int
-        let contextID = sourceRecord.object(forKey: "contextID") as! Int
+        let taskID = sourceRecord.object(forKey: "taskID") as! Int32
+        let contextID = sourceRecord.object(forKey: "contextID") as! Int32
         var updateTime = Date()
         if sourceRecord.object(forKey: "updateTime") != nil
         {

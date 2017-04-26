@@ -2,7 +2,7 @@
 //  ProjectNote+CoreDataProperties.swift
 //  
 //
-//  Created by Garry Eves on 25/4/17.
+//  Created by Garry Eves on 26/4/17.
 //
 //
 
@@ -17,8 +17,8 @@ extension ProjectNote {
     }
 
     @NSManaged public var note: String?
-    @NSManaged public var predecessor: NSNumber?
-    @NSManaged public var projectID: NSNumber?
+    @NSManaged public var predecessor: Int32
+    @NSManaged public var projectID: Int32
     @NSManaged public var reviewPeriod: String?
     @NSManaged public var updateTime: NSDate?
     @NSManaged public var updateType: String?

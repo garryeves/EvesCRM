@@ -2,7 +2,7 @@
 //  Context1_1+CoreDataProperties.swift
 //  
 //
-//  Created by Garry Eves on 25/4/17.
+//  Created by Garry Eves on 26/4/17.
 //
 //
 
@@ -16,9 +16,9 @@ extension Context1_1 {
         return NSFetchRequest<Context1_1>(entityName: "Context1_1")
     }
 
-    @NSManaged public var contextID: NSNumber?
+    @NSManaged public var contextID: Int32
     @NSManaged public var contextType: String?
-    @NSManaged public var predecessor: NSNumber?
+    @NSManaged public var predecessor: Int32
     @NSManaged public var updateTime: NSDate?
     @NSManaged public var updateType: String?
 

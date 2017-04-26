@@ -231,7 +231,7 @@ extension coreDatabase
         }
     }
     
-    func getNextID(_ inTableName: String, inInitialValue: Int = 1) -> Int
+    func getNextID(_ inTableName: String, inInitialValue: Int32 = 1) -> Int32
     {
         let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
         let predicate = NSPredicate(format: "(decode_name == \"\(inTableName)\") && (updateType != \"Delete\")")
@@ -253,7 +253,7 @@ extension coreDatabase
             else
             {
                 // Increment table value by 1 and save back to database
-                let storeint = Int(fetchResults[0].decode_value!)! + 1
+                let storeint = Int32(fetchResults[0].decode_value!)! + 1
                 
                 let storeKey = "\(storeint)"
                 updateDecodeValue(inTableName, inCodeValue: storeKey, inCodeType: "hidden")

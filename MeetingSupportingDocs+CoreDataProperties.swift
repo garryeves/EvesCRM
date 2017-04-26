@@ -2,7 +2,7 @@
 //  MeetingSupportingDocs+CoreDataProperties.swift
 //  
 //
-//  Created by Garry Eves on 25/4/17.
+//  Created by Garry Eves on 26/4/17.
 //
 //
 
@@ -16,7 +16,7 @@ extension MeetingSupportingDocs {
         return NSFetchRequest<MeetingSupportingDocs>(entityName: "MeetingSupportingDocs")
     }
 
-    @NSManaged public var agendaID: NSNumber?
+    @NSManaged public var agendaID: Int32
     @NSManaged public var attachmentPath: String?
     @NSManaged public var meetingID: String?
     @NSManaged public var title: String?

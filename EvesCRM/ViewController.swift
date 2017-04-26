@@ -927,12 +927,12 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
                     
                     // Get the tasks based on the retrieved context ID
                 
-                    let myTaskContextList = myDatabaseConnection.getTasksForContext(myContext[0].contextID as! Int)
+                    let myTaskContextList = myDatabaseConnection.getTasksForContext(myContext[0].contextID)
                 
                     for myTaskContext in myTaskContextList
                     {
                         // Get the context details
-                        let myTaskList = myDatabaseConnection.getActiveTask(myTaskContext.taskID as! Int)
+                        let myTaskList = myDatabaseConnection.getActiveTask(myTaskContext.taskID)
                     
                         for myTask in myTaskList
                         {  //append project details to work array
@@ -949,7 +949,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
             
             for myItem in myReturnedData
             {
-                let myTempTask = task(taskID: myItem.taskID as! Int)
+                let myTempTask = task(taskID: myItem.taskID)
                 
                 myTaskItems.append(myTempTask)
             }
@@ -1228,7 +1228,7 @@ println("facebook ID = \(myFacebookID)")
                 }
                 else
                 {
-                    loadProject(Int(projectMemberArray[rowID])!, teamID: myCurrentTeam.teamID)
+                    loadProject(Int32(projectMemberArray[rowID])!, teamID: myCurrentTeam.teamID)
                 }
 
         case "OneNote":
@@ -2057,7 +2057,7 @@ print("Dropbox status = \(progress)")
     
     func openMeetings(_ inType: String, workingTask: myCalendarItem)
     {
-        let meetingViewControl = self.storyboard!.instantiateViewController(withIdentifier: "MeetingsTab") as! meetingTabViewController
+        let meetingViewControl = meetingStoryboard.instantiateViewController(withIdentifier: "MeetingsTab") as! meetingTabViewController
         
         let myPassedMeeting = MeetingModel()
         myPassedMeeting.actionType = inType
@@ -2454,7 +2454,7 @@ print("Dropbox status = \(progress)")
                 switch passedItem.displayString
                 {
                     case "Planning":
-                        let projectViewControl = self.storyboard!.instantiateViewController(withIdentifier: "GTDPlanning") as! MaintainGTDPlanningViewController
+                        let projectViewControl = GTDStoryboard.instantiateViewController(withIdentifier: "GTDPlanning") as! MaintainGTDPlanningViewController
                         
                         let myPassedGTD = GTDModel()
                         
@@ -2466,14 +2466,14 @@ print("Dropbox status = \(progress)")
                         self.present(projectViewControl, animated: true, completion: nil)
  
                     case "Inbox":
-                        let GTDInboxViewControl = self.storyboard!.instantiateViewController(withIdentifier: "GTDInbox") as! GTDInboxViewController
+                        let GTDInboxViewControl = GTDStoryboard.instantiateViewController(withIdentifier: "GTDInbox") as! GTDInboxViewController
                     
                         GTDInboxViewControl.delegate = self
                         
                         self.present(GTDInboxViewControl, animated: true, completion: nil)
                     
                     case "Context":
-                        let projectViewControl = self.storyboard!.instantiateViewController(withIdentifier: "GTDPlanning") as! MaintainGTDPlanningViewController
+                        let projectViewControl = GTDStoryboard.instantiateViewController(withIdentifier: "GTDPlanning") as! MaintainGTDPlanningViewController
                     
                         let myPassedGTD = GTDModel()
                     
@@ -2491,7 +2491,7 @@ print("Dropbox status = \(progress)")
             
             case "Project" :
                 let myProject = passedItem.displayObject as! Projects
-                loadProject(myProject.projectID as! Int, teamID: myProject.teamID as! Int)
+                loadProject(myProject.projectID, teamID: myProject.teamID)
             
             case "People":
                 if passedItem.displayString == "Address Book"
@@ -2572,7 +2572,7 @@ print("Dropbox status = \(progress)")
                 }
             
             case "MaintainContexts":
-                let maintainContextViewControl = self.storyboard!.instantiateViewController(withIdentifier: "maintainContexts") as! MaintainContextsViewController
+                let maintainContextViewControl = contextsStoryboard.instantiateViewController(withIdentifier: "maintainContexts") as! MaintainContextsViewController
                     
                 maintainContextViewControl.delegate = self
                     
@@ -2596,7 +2596,7 @@ print("Dropbox status = \(progress)")
         self.view.bringSubview(toFront: target)
     }
     
-    func loadProject(_ projectID: Int, teamID: Int)
+    func loadProject(_ projectID: Int32, teamID: Int32)
     {
         TableTypeSelection1.isHidden = true
         setSelectionButton.isHidden = true
@@ -2793,7 +2793,7 @@ print("Dropbox status = \(progress)")
         let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .actionSheet)
         
         let myOption1 = UIAlertAction(title: "Edit Action", style: .default, handler: { (action: UIAlertAction) -> () in
-            let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "tasks") as! taskViewController
+            let popoverContent = tasksStoryboard.instantiateViewController(withIdentifier: "tasks") as! taskViewController
             popoverContent.modalPresentationStyle = .popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
@@ -2808,7 +2808,7 @@ print("Dropbox status = \(progress)")
         })
         
         let myOption2 = UIAlertAction(title: "Action Updates", style: .default, handler: { (action: UIAlertAction) -> () in
-            let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "taskUpdate") as! taskUpdatesViewController
+            let popoverContent = tasksStoryboard.instantiateViewController(withIdentifier: "taskUpdate") as! taskUpdatesViewController
             popoverContent.modalPresentationStyle = .popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self

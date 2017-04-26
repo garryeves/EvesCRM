@@ -12,7 +12,7 @@ import CloudKit
 
 class taskUpdates: NSObject
 {
-    fileprivate var myTaskID: Int = 0
+    fileprivate var myTaskID: Int32 = 0
     fileprivate var myUpdateDate: Date!
     fileprivate var myDetails: String = ""
     fileprivate var mySource: String = ""
@@ -81,7 +81,7 @@ class taskUpdates: NSObject
         }
     }
     
-    init(inTaskID: Int)
+    init(inTaskID: Int32)
     {
         myTaskID = inTaskID
         
@@ -89,7 +89,7 @@ class taskUpdates: NSObject
     
     init(inUpdate: TaskUpdates)
     {
-        myTaskID = inUpdate.taskID as! Int
+        myTaskID = inUpdate.taskID
         myUpdateDate = inUpdate.updateDate as Date!
         myDetails = inUpdate.details!
         mySource = inUpdate.source!
@@ -118,14 +118,14 @@ class taskUpdates: NSObject
 
 extension coreDatabase
 {
-    func saveTaskUpdate(_ inTaskID: Int, inDetails: String, inSource: String, inUpdateDate: Date =  Date(), inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func saveTaskUpdate(_ inTaskID: Int32, inDetails: String, inSource: String, inUpdateDate: Date =  Date(), inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         var myTaskUpdate: TaskUpdates!
         
         if getTaskUpdate(inTaskID, updateDate: inUpdateDate as NSDate).count == 0
         {
             myTaskUpdate = TaskUpdates(context: objectContext)
-            myTaskUpdate.taskID = NSNumber(value: inTaskID)
+            myTaskUpdate.taskID = inTaskID
             myTaskUpdate.updateDate = inUpdateDate as NSDate
             myTaskUpdate.details = inDetails
             myTaskUpdate.source = inSource
@@ -144,11 +144,11 @@ extension coreDatabase
         }
     }
     
-    func replaceTaskUpdate(_ inTaskID: Int, inDetails: String, inSource: String, inUpdateDate: Date =  Date(), inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func replaceTaskUpdate(_ inTaskID: Int32, inDetails: String, inSource: String, inUpdateDate: Date =  Date(), inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         
         let myTaskUpdate = TaskUpdates(context: objectContext)
-        myTaskUpdate.taskID = NSNumber(value: inTaskID)
+        myTaskUpdate.taskID = inTaskID
         myTaskUpdate.updateDate = inUpdateDate as NSDate
         myTaskUpdate.details = inDetails
         myTaskUpdate.source = inSource
@@ -166,7 +166,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func getTaskUpdate(_ taskID: Int, updateDate: NSDate)->[TaskUpdates]
+    func getTaskUpdate(_ taskID: Int32, updateDate: NSDate)->[TaskUpdates]
     {
         let fetchRequest = NSFetchRequest<TaskUpdates>(entityName: "TaskUpdates")
         
@@ -194,7 +194,7 @@ extension coreDatabase
         }
     }
     
-    func getTaskUpdates(_ inTaskID: Int)->[TaskUpdates]
+    func getTaskUpdates(_ inTaskID: Int32)->[TaskUpdates]
     {
         let fetchRequest = NSFetchRequest<TaskUpdates>(entityName: "TaskUpdates")
         
@@ -394,7 +394,7 @@ extension CloudKitInteraction
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
-                let taskID = record.object(forKey: "taskID") as! Int
+                let taskID = record.object(forKey: "taskID") as! Int32
                 let updateDate = record.object(forKey: "updateDate") as! Date
                 let updateTime = record.object(forKey: "updateTime") as! Date
                 let updateType = record.object(forKey: "updateType") as! String
@@ -411,7 +411,7 @@ extension CloudKitInteraction
 
     func saveTaskUpdatesRecordToCloudKit(_ sourceRecord: TaskUpdates)
     {
-        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID as! Int)) && (updateDate == %@)", sourceRecord.updateDate!) // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID)) && (updateDate == %@)", sourceRecord.updateDate!) // better be accurate to get only the record you need
         let query = CKQuery(recordType: "TaskUpdates", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -475,7 +475,7 @@ extension CloudKitInteraction
 
     func updateTaskUpdatesRecord(_ sourceRecord: CKRecord)
     {
-        let taskID = sourceRecord.object(forKey: "taskID") as! Int
+        let taskID = sourceRecord.object(forKey: "taskID") as! Int32
         let updateDate = sourceRecord.object(forKey: "updateDate") as! Date
         var updateTime = Date()
         if sourceRecord.object(forKey: "updateTime") != nil

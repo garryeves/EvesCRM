@@ -17,14 +17,14 @@ class meetingAgendaItem
     fileprivate var myStatus: String = ""
     fileprivate var myDecisionMade: String = ""
     fileprivate var myDiscussionNotes: String = ""
-    fileprivate var myTimeAllocation: Int = 0
+    fileprivate var myTimeAllocation: Int16 = 0
     fileprivate var myOwner: String = ""
     fileprivate var myTitle: String = ""
-    fileprivate var myAgendaID: Int = 0
+    fileprivate var myAgendaID: Int32 = 0
     fileprivate var myTasks: [task] = Array()
     fileprivate var myMeetingID: String = ""
     fileprivate var myUpdateAllowed: Bool = true
-    fileprivate var myMeetingOrder: Int = 0
+    fileprivate var myMeetingOrder: Int32 = 0
     fileprivate var saveCalled: Bool = false
     
     var actualEndTime: Date?
@@ -92,7 +92,7 @@ class meetingAgendaItem
         }
     }
     
-    var timeAllocation: Int
+    var timeAllocation: Int16
     {
         get
         {
@@ -131,7 +131,7 @@ class meetingAgendaItem
         }
     }
     
-    var agendaID: Int
+    var agendaID: Int32
     {
         get
         {
@@ -144,7 +144,7 @@ class meetingAgendaItem
         }
     }
     
-    var meetingOrder: Int
+    var meetingOrder: Int32
     {
         get
         {
@@ -175,12 +175,12 @@ class meetingAgendaItem
         
         let tempAgendaItems = myDatabaseConnection.loadAgendaItem(myMeetingID)
         
-        myAgendaID = tempAgendaItems.count + 1
+        myAgendaID = Int32(tempAgendaItems.count + 1)
         
         save()
     }
     
-    init(inMeetingID: String, inAgendaID: Int)
+    init(inMeetingID: String, inAgendaID: Int32)
     {
         myMeetingID = inMeetingID
         
@@ -188,17 +188,17 @@ class meetingAgendaItem
         
         if tempAgendaItems.count > 0
         {
-            myAgendaID = tempAgendaItems[0].agendaID as! Int
+            myAgendaID = tempAgendaItems[0].agendaID
             myTitle = tempAgendaItems[0].title!
             myOwner = tempAgendaItems[0].owner!
-            myTimeAllocation = tempAgendaItems[0].timeAllocation as! Int
+            myTimeAllocation = tempAgendaItems[0].timeAllocation
             myDiscussionNotes = tempAgendaItems[0].discussionNotes!
             myDecisionMade = tempAgendaItems[0].decisionMade!
             myStatus = tempAgendaItems[0].status!
-            if tempAgendaItems[0].meetingOrder != nil
-            {
-                myMeetingOrder = tempAgendaItems[0].meetingOrder as! Int
-            }
+ //           if tempAgendaItems[0].meetingOrder != nil
+ //           {
+                myMeetingOrder = tempAgendaItems[0].meetingOrder
+ //           }
             myActualStartTime = tempAgendaItems[0].actualStartTime! as Date
             myActualEndTime = tempAgendaItems[0].actualEndTime! as Date
         }
@@ -274,7 +274,7 @@ class meetingAgendaItem
         
         for myAgendaTask in myAgendaTasks
         {
-            let myNewTask = task(taskID: myAgendaTask.taskID as! Int)
+            let myNewTask = task(taskID: myAgendaTask.taskID)
             myTasks.append(myNewTask)
         }
     }
@@ -337,7 +337,7 @@ extension coreDatabase
         }
     }
     
-    func saveAgendaItem(_ meetingID: String, actualEndTime: Date, actualStartTime: Date, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int, owner: String, title: String, agendaID: Int, meetingOrder: Int,  inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func saveAgendaItem(_ meetingID: String, actualEndTime: Date, actualStartTime: Date, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int16, owner: String, title: String, agendaID: Int32, meetingOrder: Int32,  inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         var mySavedItem: MeetingAgendaItem
         
@@ -347,16 +347,16 @@ extension coreDatabase
         {
             mySavedItem = MeetingAgendaItem(context: objectContext)
             mySavedItem.meetingID = meetingID
-            mySavedItem.agendaID = agendaID as NSNumber?
+            mySavedItem.agendaID = agendaID
             mySavedItem.actualEndTime = actualEndTime as NSDate
             mySavedItem.actualStartTime = actualStartTime as NSDate
             mySavedItem.status = status
             mySavedItem.decisionMade = decisionMade
             mySavedItem.discussionNotes = discussionNotes
-            mySavedItem.timeAllocation = timeAllocation as NSNumber?
+            mySavedItem.timeAllocation = timeAllocation
             mySavedItem.owner = owner
             mySavedItem.title = title
-            mySavedItem.meetingOrder = meetingOrder as NSNumber?
+            mySavedItem.meetingOrder = meetingOrder
             
             if inUpdateType == "CODE"
             {
@@ -377,10 +377,10 @@ extension coreDatabase
             mySavedItem.status = status
             mySavedItem.decisionMade = decisionMade
             mySavedItem.discussionNotes = discussionNotes
-            mySavedItem.timeAllocation = timeAllocation as NSNumber?
+            mySavedItem.timeAllocation = timeAllocation
             mySavedItem.owner = owner
             mySavedItem.title = title
-            mySavedItem.meetingOrder = meetingOrder as NSNumber?
+            mySavedItem.meetingOrder = meetingOrder
             
             if inUpdateType == "CODE"
             {
@@ -400,20 +400,20 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceAgendaItem(_ meetingID: String, actualEndTime: Date, actualStartTime: Date, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int, owner: String, title: String, agendaID: Int, meetingOrder: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func replaceAgendaItem(_ meetingID: String, actualEndTime: Date, actualStartTime: Date, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int16, owner: String, title: String, agendaID: Int32, meetingOrder: Int32, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         let mySavedItem = MeetingAgendaItem(context: objectContext)
         mySavedItem.meetingID = meetingID
-        mySavedItem.agendaID = agendaID as NSNumber?
+        mySavedItem.agendaID = agendaID
         mySavedItem.actualEndTime = actualEndTime as NSDate
         mySavedItem.actualStartTime = actualStartTime as NSDate
         mySavedItem.status = status
         mySavedItem.decisionMade = decisionMade
         mySavedItem.discussionNotes = discussionNotes
-        mySavedItem.timeAllocation = timeAllocation as NSNumber?
+        mySavedItem.timeAllocation = timeAllocation
         mySavedItem.owner = owner
         mySavedItem.title = title
-        mySavedItem.meetingOrder = meetingOrder as NSNumber?
+        mySavedItem.meetingOrder = meetingOrder
         
         if inUpdateType == "CODE"
         {
@@ -429,7 +429,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func loadSpecificAgendaItem(_ inMeetingID: String, inAgendaID: Int)->[MeetingAgendaItem]
+    func loadSpecificAgendaItem(_ inMeetingID: String, inAgendaID: Int32)->[MeetingAgendaItem]
     {
         let fetchRequest = NSFetchRequest<MeetingAgendaItem>(entityName: "MeetingAgendaItem")
         
@@ -460,7 +460,7 @@ extension coreDatabase
         }
     }
     
-    func deleteAgendaItem(_ meetingID: String, agendaID: Int)
+    func deleteAgendaItem(_ meetingID: String, agendaID: Int32)
     {
         var predicate: NSPredicate
         
@@ -650,7 +650,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func getAgendaTasks(_ inMeetingID: String, inAgendaID: Int)->[MeetingTasks]
+    func getAgendaTasks(_ inMeetingID: String, inAgendaID: Int32)->[MeetingTasks]
     {
         let fetchRequest = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
@@ -698,14 +698,14 @@ extension coreDatabase
         }
     }
     
-    func saveAgendaTask(_ inAgendaID: Int, inMeetingID: String, inTaskID: Int)
+    func saveAgendaTask(_ inAgendaID: Int32, inMeetingID: String, inTaskID: Int32)
     {
         var myTask: MeetingTasks
         
         myTask = MeetingTasks(context: objectContext)
-        myTask.agendaID = NSNumber(value: inAgendaID)
+        myTask.agendaID = inAgendaID
         myTask.meetingID = inMeetingID
-        myTask.taskID = NSNumber(value: inTaskID)
+        myTask.taskID = inTaskID
         myTask.updateTime =  NSDate()
         myTask.updateType = "Add"
         
@@ -714,19 +714,19 @@ extension coreDatabase
         myCloudDB.saveMeetingTasksRecordToCloudKit(myTask)
     }
     
-    func replaceAgendaTask(_ inAgendaID: Int, inMeetingID: String, inTaskID: Int)
+    func replaceAgendaTask(_ inAgendaID: Int32, inMeetingID: String, inTaskID: Int32)
     {
         let myTask = MeetingTasks(context: objectContext)
-        myTask.agendaID = NSNumber(value: inAgendaID)
+        myTask.agendaID = inAgendaID
         myTask.meetingID = inMeetingID
-        myTask.taskID = NSNumber(value: inTaskID)
+        myTask.taskID = inTaskID
         myTask.updateTime =  NSDate()
         myTask.updateType = "Add"
         
         saveContext()
     }
     
-    func checkMeetingTask(_ meetingID: String, agendaID: Int, taskID: Int)->[MeetingTasks]
+    func checkMeetingTask(_ meetingID: String, agendaID: Int32, taskID: Int32)->[MeetingTasks]
     {
         let fetchRequest = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
@@ -750,7 +750,7 @@ extension coreDatabase
         }
     }
     
-    func saveMeetingTask(_ agendaID: Int, meetingID: String, taskID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func saveMeetingTask(_ agendaID: Int32, meetingID: String, taskID: Int32, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         var myTask: MeetingTasks
         
@@ -759,9 +759,9 @@ extension coreDatabase
         if myTaskList.count == 0
         {
             myTask = MeetingTasks(context: objectContext)
-            myTask.agendaID = NSNumber(value: agendaID)
+            myTask.agendaID = agendaID
             myTask.meetingID = meetingID
-            myTask.taskID = NSNumber(value: taskID)
+            myTask.taskID = taskID
             if inUpdateType == "CODE"
             {
                 myTask.updateTime =  NSDate()
@@ -794,12 +794,12 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceMeetingTask(_ agendaID: Int, meetingID: String, taskID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func replaceMeetingTask(_ agendaID: Int32, meetingID: String, taskID: Int32, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         let myTask = MeetingTasks(context: objectContext)
-        myTask.agendaID = NSNumber(value: agendaID)
+        myTask.agendaID = agendaID
         myTask.meetingID = meetingID
-        myTask.taskID = NSNumber(value: taskID)
+        myTask.taskID = taskID
         if inUpdateType == "CODE"
         {
             myTask.updateTime =  NSDate()
@@ -813,7 +813,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteAgendaTask(_ inAgendaID: Int, inMeetingID: String, inTaskID: Int)
+    func deleteAgendaTask(_ inAgendaID: Int32, inMeetingID: String, inTaskID: Int32)
     {
         let fetchRequest = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
@@ -841,7 +841,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func getAgendaTask(_ inAgendaID: Int, inMeetingID: String, inTaskID: Int)->[MeetingTasks]
+    func getAgendaTask(_ inAgendaID: Int32, inMeetingID: String, inTaskID: Int32)->[MeetingTasks]
     {
         let fetchRequest = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
@@ -1017,7 +1017,7 @@ extension CloudKitInteraction
             for record in results!
             {
                 let meetingID = record.object(forKey: "meetingID") as! String
-                let agendaID = record.object(forKey: "agendaID") as! Int
+                let agendaID = record.object(forKey: "agendaID") as! Int32
                 let updateTime = record.object(forKey: "updateTime") as! Date
                 let updateType = record.object(forKey: "updateType") as! String
                 let actualEndTime = record.object(forKey: "actualEndTime") as! Date
@@ -1026,9 +1026,9 @@ extension CloudKitInteraction
                 let discussionNotes = record.object(forKey: "discussionNotes") as! String
                 let owner = record.object(forKey: "owner") as! String
                 let status = record.object(forKey: "status") as! String
-                let timeAllocation = record.object(forKey: "timeAllocation") as! Int
+                let timeAllocation = record.object(forKey: "timeAllocation") as! Int16
                 let title = record.object(forKey: "title") as! String
-                let meetingOrder = record.object(forKey: "meetingOrder") as! Int
+                let meetingOrder = record.object(forKey: "meetingOrder") as! Int32
                 
                 myDatabaseConnection.replaceAgendaItem(meetingID, actualEndTime: actualEndTime, actualStartTime: actualStartTime, status: status, decisionMade: decisionMade, discussionNotes: discussionNotes, timeAllocation: timeAllocation, owner: owner, title: title, agendaID: agendaID, meetingOrder: meetingOrder, inUpdateTime: updateTime, inUpdateType: updateType)
             }
@@ -1040,7 +1040,7 @@ extension CloudKitInteraction
 
     func saveMeetingAgendaItemRecordToCloudKit(_ sourceRecord: MeetingAgendaItem)
     {
-        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID as! Int))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -1120,7 +1120,7 @@ extension CloudKitInteraction
     func updateMeetingAgendaItemRecord(_ sourceRecord: CKRecord)
     {
         let meetingID = sourceRecord.object(forKey: "meetingID") as! String
-        let agendaID = sourceRecord.object(forKey: "agendaID") as! Int
+        let agendaID = sourceRecord.object(forKey: "agendaID") as! Int32
         var updateTime = Date()
         if sourceRecord.object(forKey: "updateTime") != nil
         {
@@ -1155,9 +1155,9 @@ extension CloudKitInteraction
         let discussionNotes = sourceRecord.object(forKey: "discussionNotes") as! String
         let owner = sourceRecord.object(forKey: "owner") as! String
         let status = sourceRecord.object(forKey: "status") as! String
-        let timeAllocation = sourceRecord.object(forKey: "timeAllocation") as! Int
+        let timeAllocation = sourceRecord.object(forKey: "timeAllocation") as! Int16
         let title = sourceRecord.object(forKey: "title") as! String
-        let meetingOrder = sourceRecord.object(forKey: "meetingOrder") as! Int
+        let meetingOrder = sourceRecord.object(forKey: "meetingOrder") as! Int32
         
         myDatabaseConnection.saveAgendaItem(meetingID, actualEndTime: actualEndTime, actualStartTime: actualStartTime, status: status, decisionMade: decisionMade, discussionNotes: discussionNotes, timeAllocation: timeAllocation, owner: owner, title: title, agendaID: agendaID, meetingOrder: meetingOrder, inUpdateTime: updateTime, inUpdateType: updateType)
     }
@@ -1220,10 +1220,10 @@ extension CloudKitInteraction
             for record in results!
             {
                 let meetingID = record.object(forKey: "meetingID") as! String
-                let agendaID = record.object(forKey: "agendaID") as! Int
+                let agendaID = record.object(forKey: "agendaID") as! Int32
                 let updateTime = record.object(forKey: "updateTime") as! Date
                 let updateType = record.object(forKey: "updateType") as! String
-                let taskID = record.object(forKey: "taskID") as! Int
+                let taskID = record.object(forKey: "taskID") as! Int32
                 
                 myDatabaseConnection.replaceMeetingTask(agendaID, meetingID: meetingID, taskID: taskID, inUpdateTime: updateTime, inUpdateType: updateType)
             }
@@ -1235,7 +1235,7 @@ extension CloudKitInteraction
 
     func saveMeetingTasksRecordToCloudKit(_ sourceRecord: MeetingTasks)
     {
-        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID as! Int)) && (taskID == \(sourceRecord.taskID as! Int))") // better be accurate to get only the
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID)) && (taskID == \(sourceRecord.taskID))") // better be accurate to get only the
         let query = CKQuery(recordType: "MeetingTasks", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -1299,7 +1299,7 @@ extension CloudKitInteraction
     func updateMeetingTasksRecord(_ sourceRecord: CKRecord)
     {
         let meetingID = sourceRecord.object(forKey: "meetingID") as! String
-        let agendaID = sourceRecord.object(forKey: "agendaID") as! Int
+        let agendaID = sourceRecord.object(forKey: "agendaID") as! Int32
         var updateTime = Date()
         if sourceRecord.object(forKey: "updateTime") != nil
         {
@@ -1312,7 +1312,7 @@ extension CloudKitInteraction
         {
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
-        let taskID = sourceRecord.object(forKey: "taskID") as! Int
+        let taskID = sourceRecord.object(forKey: "taskID") as! Int32
         
         myDatabaseConnection.saveMeetingTask(agendaID, meetingID: meetingID, taskID: taskID, inUpdateTime: updateTime, inUpdateType: updateType)
     }

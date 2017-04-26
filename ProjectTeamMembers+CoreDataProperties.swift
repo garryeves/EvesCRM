@@ -2,7 +2,7 @@
 //  ProjectTeamMembers+CoreDataProperties.swift
 //  
 //
-//  Created by Garry Eves on 25/4/17.
+//  Created by Garry Eves on 26/4/17.
 //
 //
 
@@ -16,9 +16,9 @@ extension ProjectTeamMembers {
         return NSFetchRequest<ProjectTeamMembers>(entityName: "ProjectTeamMembers")
     }
 
-    @NSManaged public var projectID: NSNumber?
+    @NSManaged public var projectID: Int32
     @NSManaged public var projectMemberNotes: String?
-    @NSManaged public var roleID: NSNumber?
+    @NSManaged public var roleID: Int32
     @NSManaged public var teamMember: String?
     @NSManaged public var updateTime: NSDate?
     @NSManaged public var updateType: String?

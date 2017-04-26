@@ -148,7 +148,7 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
     }
     
     //    func collectionView(_ collectionView: UICollectionView, cellForItemAtIndexPath indexPath: IndexPath) -> UICollectionViewCell
-    func collectionView(_ collectionView: UICollectionView, cellForItem indexPath: IndexPath) -> UICollectionViewCell
+    @objc(collectionView:cellForItemAtIndexPath:) func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {
         if collectionView == colGTDInbox
         {
@@ -208,7 +208,7 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
     {
         if collectionView == colGTDInbox
         {
-            let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "tasks") as! taskViewController
+            let popoverContent = tasksStoryboard.instantiateViewController(withIdentifier: "tasks") as! taskViewController
             popoverContent.modalPresentationStyle = .popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
@@ -282,23 +282,23 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
         {
             // Get list of tasks without a Project
     
-            let projectArray =  myDatabaseConnection.getTasksWithoutProject(myTeam.teamID as! Int)
+            let projectArray =  myDatabaseConnection.getTasksWithoutProject(myTeam.teamID)
         
             // Get list of tasks without a context
             
-            let contextArray = myDatabaseConnection.getTaskWithoutContext(myTeam.teamID as! Int)
+            let contextArray = myDatabaseConnection.getTaskWithoutContext(myTeam.teamID)
         
         
             for myProjectTask in projectArray
             {
-                let tempTask = task(taskID: myProjectTask.taskID as! Int)
+                let tempTask = task(taskID: myProjectTask.taskID)
                 myTaskList.append(tempTask)
             }
             
             for myContextTask in contextArray
             {
                 // parse through array of tasks from project to see if the task from context already exists, if it does then no action needed, if does not exist then add the task from context
-                let tempTask = task(taskID: myContextTask.taskID as! Int)
+                let tempTask = task(taskID: myContextTask.taskID)
                 
                 var taskFound: Bool = false
                 
@@ -374,7 +374,7 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
     {
         let newTask = notification.userInfo!["task"] as! task
         
-        let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "tasks") as! taskViewController
+        let popoverContent = tasksStoryboard.instantiateViewController(withIdentifier: "tasks") as! taskViewController
         popoverContent.modalPresentationStyle = .popover
         let popover = popoverContent.popoverPresentationController
         popover!.delegate = self

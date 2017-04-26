@@ -64,7 +64,7 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
     fileprivate var pickerTarget: String = ""
     fileprivate var myStartDate: Date!
     fileprivate var myDueDate: Date!
-    fileprivate var myProjectID: Int = 0
+    fileprivate var myProjectID: Int32 = 0
     fileprivate var myProjectDetails: [Projects] = Array()
     fileprivate var mySelectedRow: Int = 0
     fileprivate var kbHeight: CGFloat!
@@ -273,7 +273,7 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
     }
     
     //    func collectionView(_ collectionView: UICollectionView, cellForItemAtIndexPath indexPath: IndexPath) -> UICollectionViewCell
-    func collectionView(_ collectionView: UICollectionView, cellForItem indexPath: IndexPath) -> UICollectionViewCell
+    @objc(collectionView:cellForItemAtIndexPath:) func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {
         var cell: myContextItem!
 
@@ -281,7 +281,7 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         
         cell.lblContext.text = passedTask.contexts[indexPath.row].name
         cell.btnRemove.setTitle("Remove", for: .normal)
-        cell.btnRemove.tag = passedTask.contexts[indexPath.row].contextID
+        cell.btnRemove.tag = Int(passedTask.contexts[indexPath.row].contextID)
          
         if (indexPath.row % 2 == 0)  // was .row
         {
@@ -620,9 +620,9 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         
         for myTeamItem in myDatabaseConnection.getMyTeams(myID)
         {
-            if myTeamItem.teamID as! Int != passedTask.teamID
+            if myTeamItem.teamID != passedTask.teamID
             {
-                let myProjects = myDatabaseConnection.getProjects(myTeamItem.teamID as! Int)
+                let myProjects = myDatabaseConnection.getProjects(myTeamItem.teamID)
                 for myProject in myProjects
                 {
                     pickerOptions.append(myProject.projectName!)
@@ -670,7 +670,7 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
     
     @IBAction func txtEstTime(_ sender: UITextField)
     {
-        passedTask.estimatedTime = Int(txtEstTime.text!)!
+        passedTask.estimatedTime = Int16(txtEstTime.text!)!
     }
     
     @IBAction func btnSelect(_ sender: UIButton)
@@ -711,8 +711,8 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         
             if pickerTarget == "Project"
             {
-                getProjectName(myProjectDetails[mySelectedRow - 1].projectID as! Int)
-                passedTask.projectID = myProjectDetails[mySelectedRow - 1].projectID as! Int
+                getProjectName(myProjectDetails[mySelectedRow - 1].projectID)
+                passedTask.projectID = myProjectDetails[mySelectedRow - 1].projectID
             }
         
             if pickerTarget == "RepeatPeriod"
@@ -782,7 +782,7 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
     
     @IBAction func txtRepeatInterval(_ sender: UITextField)
     {
-        passedTask.repeatInterval = Int(txtRepeatInterval.text!)!
+        passedTask.repeatInterval = Int16(txtRepeatInterval.text!)!
     }
     
     @IBAction func btnrepeatPeriod(_ sender: UIButton)
@@ -956,7 +956,7 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         btnRepeatBase.isHidden = true
     }
     
-    func getProjectName(_ projectID: Int)
+    func getProjectName(_ projectID: Int32)
     {
         let myProjects = myDatabaseConnection.getProjectDetails(projectID)
         
@@ -968,11 +968,11 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
         else
         {
             btnProject.setTitle(myProjects[0].projectName, for: .normal)
-            myProjectID = myProjects[0].projectID as! Int
+            myProjectID = myProjects[0].projectID
         }
     }
     
-    func setContext(_ inContextID: Int)
+    func setContext(_ inContextID: Int32)
     {
         passedTask.addContext(inContextID)
         
@@ -983,7 +983,7 @@ class taskViewController: UIViewController,  UITextViewDelegate, SMTEFillDelegat
     
     func removeTaskContext(_ notification: Notification)
     {
-        let contextToRemove = notification.userInfo!["itemNo"] as! Int
+        let contextToRemove = notification.userInfo!["itemNo"] as! Int32
         
         passedTask.removeContext(contextToRemove)
         

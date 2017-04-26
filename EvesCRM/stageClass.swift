@@ -12,7 +12,7 @@ import CloudKit
 
 extension coreDatabase
 {
-    func getStages(_ inTeamID: Int)->[Stages]
+    func getStages(_ inTeamID: Int32)->[Stages]
     {
         let fetchRequest = NSFetchRequest<Stages>(entityName: "Stages")
         
@@ -36,7 +36,7 @@ extension coreDatabase
         }
     }
     
-    func getVisibleStages(_ inTeamID: Int)->[Stages]
+    func getVisibleStages(_ inTeamID: Int32)->[Stages]
     {
         let fetchRequest = NSFetchRequest<Stages>(entityName: "Stages")
         
@@ -58,7 +58,7 @@ extension coreDatabase
         }
     }
     
-    func deleteAllStages(_ inTeamID: Int)
+    func deleteAllStages(_ inTeamID: Int32)
     {
         let fetchRequest = NSFetchRequest<Stages>(entityName: "Stages")
         let predicate = NSPredicate(format: "(teamID == \(inTeamID))")
@@ -84,7 +84,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func stageExists(_ inStageDesc:String, inTeamID: Int)-> Bool
+    func stageExists(_ inStageDesc:String, inTeamID: Int32)-> Bool
     {
         let fetchRequest = NSFetchRequest<Stages>(entityName: "Stages")
         
@@ -117,7 +117,7 @@ extension coreDatabase
         }
     }
     
-    func getStage(_ stageDesc:String, teamID: Int)->[Stages]
+    func getStage(_ stageDesc:String, teamID: Int32)->[Stages]
     {
         let fetchRequest = NSFetchRequest<Stages>(entityName: "Stages")
         
@@ -141,7 +141,7 @@ extension coreDatabase
         }
     }
     
-    func saveStage(_ stageDesc: String, teamID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func saveStage(_ stageDesc: String, teamID: Int32, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         var myStage: Stages!
         
@@ -152,7 +152,7 @@ extension coreDatabase
             myStage = Stages(context: objectContext)
             
             myStage.stageDescription = stageDesc
-            myStage.teamID = NSNumber(value: teamID)
+            myStage.teamID = teamID
             if inUpdateType == "CODE"
             {
                 myStage.updateTime =  NSDate()
@@ -187,12 +187,12 @@ extension coreDatabase
         myCloudDB.saveStagesRecordToCloudKit(myStage)
     }
     
-    func replaceStage(_ stageDesc: String, teamID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func replaceStage(_ stageDesc: String, teamID: Int32, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         let myStage = Stages(context: objectContext)
         
         myStage.stageDescription = stageDesc
-        myStage.teamID = NSNumber(value: teamID)
+        myStage.teamID = teamID
         if inUpdateType == "CODE"
         {
             myStage.updateTime =  NSDate()
@@ -207,7 +207,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteStageEntry(_ inStageDesc: String, inTeamID: Int)
+    func deleteStageEntry(_ inStageDesc: String, inTeamID: Int32)
     {
         let fetchRequest = NSFetchRequest<Stages>(entityName: "Stages")
         
@@ -283,7 +283,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func initialiseTeamForStages(_ inTeamID: Int)
+    func initialiseTeamForStages(_ inTeamID: Int32)
     {
         let fetchRequest = NSFetchRequest<Stages>(entityName: "Stages")
         
@@ -295,7 +295,7 @@ extension coreDatabase
             {
                 for myItem in fetchResults
                 {
-                    myItem.teamID = NSNumber(value: inTeamID)
+                    myItem.teamID = inTeamID
                 }
             }
         }
@@ -413,7 +413,7 @@ extension CloudKitInteraction
                 let stageDescription = record.object(forKey: "stageDescription") as! String
                 let updateTime = record.object(forKey: "updateTime") as! Date
                 let updateType = record.object(forKey: "updateType") as! String
-                let teamID = record.object(forKey: "teamID") as! Int
+                let teamID = record.object(forKey: "teamID") as! Int32
                 
                 myDatabaseConnection.replaceStage(stageDescription, teamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
             }
@@ -425,7 +425,7 @@ extension CloudKitInteraction
 
     func saveStagesRecordToCloudKit(_ sourceRecord: Stages)
     {
-        let predicate = NSPredicate(format: "(stageDescription == \"\(sourceRecord.stageDescription!)\") && (teamID == \(sourceRecord.teamID as! Int))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(stageDescription == \"\(sourceRecord.stageDescription!)\") && (teamID == \(sourceRecord.teamID)") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Stages", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -498,7 +498,7 @@ extension CloudKitInteraction
         {
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
-        let teamID = sourceRecord.object(forKey: "teamID") as! Int
+        let teamID = sourceRecord.object(forKey: "teamID") as! Int32
         
         myDatabaseConnection.saveStage(stageDescription, teamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
     }

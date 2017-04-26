@@ -27,6 +27,17 @@ var adbk: CNContactStore!
     // NSLog("Unexpected OS")
 #endif
 
+
+// Storyboards
+
+let contextsStoryboard = UIStoryboard(name: "contexts", bundle: nil)
+let projectsStoryboard = UIStoryboard(name: "projects", bundle: nil)
+let meetingStoryboard = UIStoryboard(name: "meeting", bundle: nil)
+let tasksStoryboard = UIStoryboard(name: "tasks", bundle: nil)
+let teamStoryboard = UIStoryboard(name: "team", bundle: nil)
+let GTDStoryboard = UIStoryboard(name: "GTD", bundle: nil)
+
+
 var myDatabaseConnection: coreDatabase!
 var myCloudDB: CloudKitInteraction!
 let myDBSync = DBSync()
@@ -356,7 +367,7 @@ func stringByChangingChars(_ inString: String, inOldChar: String, inNewChar: Str
     return myString
 }
 
-func populateRoles(_ inTeamID: Int)
+func populateRoles(_ inTeamID: Int32)
 {
     let initialRoles = ["Project Manager",
                         "Project Executive",
@@ -386,7 +397,7 @@ func displayTeamMembers(_ inProject: project, lookupArray: inout [String])->[Tab
     {
         titleText = myTeamMember.teamMember
         titleText += " : "
-        titleText += myDatabaseConnection.getRoleDescription(NSNumber(value: myTeamMember.roleID), inTeamID: inProject.teamID)
+        titleText += myDatabaseConnection.getRoleDescription(myTeamMember.roleID, inTeamID: inProject.teamID)
         
         lookupArray.append(myTeamMember.teamMember)
         
@@ -415,17 +426,17 @@ func displayProjectsForPerson(_ inPerson: String, lookupArray: inout [String]) -
     {
         for myProject in myProjects
         {
-            let myDetails = myDatabaseConnection.getProjectDetails(myProject.projectID as! Int)
+            let myDetails = myDatabaseConnection.getProjectDetails(myProject.projectID)
         
             if myDetails[0].projectStatus != "Archived"
             {
                 titleText = myDetails[0].projectName!
                 titleText += " : "
-                titleText += myDatabaseConnection.getRoleDescription(myProject.roleID!, inTeamID: myDetails[0].teamID as! Int)
+                titleText += myDatabaseConnection.getRoleDescription(myProject.roleID, inTeamID: myDetails[0].teamID)
                 
-                lookupArray.append((myProject.projectID?.stringValue)!)
+                lookupArray.append("\(myProject.projectID)")
                 
-                let projectObject = project(inProjectID: myDetails[0].projectID as! Int)
+                let projectObject = project(inProjectID: myDetails[0].projectID)
 
                 writeRowToArray(titleText, table: &tableContents, targetObject: projectObject)
             }
@@ -541,7 +552,7 @@ class StreamReader  {
 }
 
 
-func populateStages(_ inTeamID: Int)
+func populateStages(_ inTeamID: Int32)
 {
     let loadSet = ["Definition", "Initiation", "Planning", "Execution", "Monitoring & Control", "Closure", "Completed", "Archived", "On Hold"]
     
@@ -1341,11 +1352,11 @@ let myAttendenceStatus = [ "Attended",
                             "Apology",
                             "Delegated"]
 
-func calculateNewDate(_ inOriginalDate: Date, inDateBase: String, inInterval: Int, inPeriod: String) -> Date
+func calculateNewDate(_ inOriginalDate: Date, inDateBase: String, inInterval: Int16, inPeriod: String) -> Date
 {
     var addCalendarUnit: Calendar.Component!
-    var tempInterval: Int = inInterval
-    var returnDate: Date = Date()
+    var tempInterval = inInterval
+    var returnDate = Date()
     
     var calendar = Calendar.current
     
@@ -1380,13 +1391,13 @@ func calculateNewDate(_ inOriginalDate: Date, inDateBase: String, inInterval: In
         case "Completion Date":
             returnDate = calendar.date(
                 byAdding: addCalendarUnit,
-                value: tempInterval,
+                value: Int(tempInterval),
                 to: inOriginalDate)!
         
         case "Start Date":
             returnDate = calendar.date(
                 byAdding: addCalendarUnit,
-                value: tempInterval,
+                value: Int(tempInterval),
                 to: inOriginalDate)!
 
         case "1st of month":
@@ -1394,7 +1405,7 @@ func calculateNewDate(_ inOriginalDate: Date, inDateBase: String, inInterval: In
             
             let tempDate = calendar.date(
                 byAdding: addCalendarUnit,
-                value: tempInterval,
+                value: Int(tempInterval),
                 to: inOriginalDate)!
             
             var currentDateComponents = calendar.dateComponents([.year, .month], from: tempDate)
@@ -1407,7 +1418,7 @@ func calculateNewDate(_ inOriginalDate: Date, inDateBase: String, inInterval: In
         case "Monday":
             let tempDate = calendar.date(
                 byAdding: addCalendarUnit,
-                value: tempInterval,
+                value: Int(tempInterval),
                 to: inOriginalDate)!
             
             returnDate = calculateDateForWeekDay(tempDate, dayToFind: 2)
@@ -1415,7 +1426,7 @@ func calculateNewDate(_ inOriginalDate: Date, inDateBase: String, inInterval: In
         case "Tuesday":
             let tempDate = calendar.date(
                 byAdding: addCalendarUnit,
-                value: tempInterval,
+                value: Int(tempInterval),
                 to: inOriginalDate)!
             
             returnDate = calculateDateForWeekDay(tempDate, dayToFind: 3)
@@ -1423,7 +1434,7 @@ func calculateNewDate(_ inOriginalDate: Date, inDateBase: String, inInterval: In
         case "Wednesday":
             let tempDate = calendar.date(
                 byAdding: addCalendarUnit,
-                value: tempInterval,
+                value: Int(tempInterval),
                 to: inOriginalDate)!
             
             returnDate = calculateDateForWeekDay(tempDate, dayToFind: 4)
@@ -1431,7 +1442,7 @@ func calculateNewDate(_ inOriginalDate: Date, inDateBase: String, inInterval: In
         case "Thursday":
             let tempDate = calendar.date(
                 byAdding: addCalendarUnit,
-                value: tempInterval,
+                value: Int(tempInterval),
                 to: inOriginalDate)!
             
             returnDate = calculateDateForWeekDay(tempDate, dayToFind: 5)
@@ -1439,7 +1450,7 @@ func calculateNewDate(_ inOriginalDate: Date, inDateBase: String, inInterval: In
         case "Friday":
             let tempDate = calendar.date(
                 byAdding: addCalendarUnit,
-                value: tempInterval,
+                value: Int(tempInterval),
                 to: inOriginalDate)!
             
             returnDate = calculateDateForWeekDay(tempDate, dayToFind: 6)
@@ -1447,7 +1458,7 @@ func calculateNewDate(_ inOriginalDate: Date, inDateBase: String, inInterval: In
         case "Saturday":
             let tempDate = calendar.date(
                 byAdding: addCalendarUnit,
-                value: tempInterval,
+                value: Int(tempInterval),
                 to: inOriginalDate)!
             
             returnDate = calculateDateForWeekDay(tempDate, dayToFind: 7)
@@ -1455,7 +1466,7 @@ func calculateNewDate(_ inOriginalDate: Date, inDateBase: String, inInterval: In
         case "Sunday":
             let tempDate = calendar.date(
                 byAdding: addCalendarUnit,
-                value: tempInterval,
+                value: Int(tempInterval),
                 to: inOriginalDate)!
             
             returnDate = calculateDateForWeekDay(tempDate, dayToFind: 1)

@@ -72,7 +72,7 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
             
             for myItem in myData
             {
-                let newTask = task(taskID: myItem.taskID as! Int)
+                let newTask = task(taskID: myItem.taskID)
                 myTaskList.append(newTask)
             }
         }
@@ -124,7 +124,7 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
     }
     
     //    func collectionView(_ collectionView: UICollectionView, cellForItemAtIndexPath indexPath: IndexPath) -> UICollectionViewCell
-    func collectionView(_ collectionView: UICollectionView, cellForItem indexPath: IndexPath) -> UICollectionViewCell
+    @objc(collectionView:cellForItemAtIndexPath:) func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {
         var cell : myTaskListItem!
         
@@ -234,7 +234,7 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
         let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .actionSheet)
         
         let myOption1 = UIAlertAction(title: "Edit Action", style: .default, handler: { (action: UIAlertAction) -> () in
-            let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "tasks") as! taskViewController
+            let popoverContent = tasksStoryboard.instantiateViewController(withIdentifier: "tasks") as! taskViewController
             popoverContent.modalPresentationStyle = .popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
@@ -257,7 +257,7 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
         })
         
         let myOption2 = UIAlertAction(title: "Action Updates", style: .default, handler: { (action: UIAlertAction) -> () in
-            let popoverContent = self.storyboard?.instantiateViewController(withIdentifier: "taskUpdate") as! taskUpdatesViewController
+            let popoverContent = tasksStoryboard.instantiateViewController(withIdentifier: "taskUpdate") as! taskUpdatesViewController
             popoverContent.modalPresentationStyle = .popover
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self

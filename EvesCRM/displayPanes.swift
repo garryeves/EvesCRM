@@ -105,14 +105,14 @@ class displayPanes
 
     }
     
-    func setDisplayPane(_ inPane: String, inPaneOrder: Int)
+    func setDisplayPane(_ inPane: String, inPaneOrder: Int16)
     {
         // find the pane
         
         for myItem in myPanes
         {
             // "unset" current selection
-            if myItem.paneOrder == inPaneOrder
+            if myItem.paneOrder == Int16(inPaneOrder)
             {
                 myItem.paneOrder = 0
             }
@@ -120,7 +120,7 @@ class displayPanes
             // set the new order
             if myItem.paneName == inPane
             {
-                myItem.paneOrder = inPaneOrder
+                myItem.paneOrder = Int16(inPaneOrder)
             }
         }
     }
@@ -133,7 +133,7 @@ class displayPane
     fileprivate var myPaneName: String = ""
     fileprivate var myPaneAvailable: Bool = true
     fileprivate var myPaneVisible: Bool = true
-    fileprivate var myPaneOrder: Int = 0
+    fileprivate var myPaneOrder: Int16 = 0
     fileprivate var paneLoaded: Bool = false
     
     func savePane()
@@ -177,7 +177,7 @@ class displayPane
                 myPaneName = paneName
                 myPaneAvailable = myPane.pane_available as! Bool
                 myPaneVisible = myPane.pane_visible as! Bool
-                myPaneOrder = myPane.pane_order as! Int
+                myPaneOrder = myPane.pane_order
                 paneLoaded = true
             }
         }
@@ -226,7 +226,7 @@ class displayPane
         }
     }
 
-    var paneOrder: Int
+    var paneOrder: Int16
     {
         get
         {
@@ -235,7 +235,7 @@ class displayPane
         set
         {
             myPaneOrder = newValue
-            myDatabaseConnection.setPaneOrder(myPaneName, paneOrder: newValue)
+            myDatabaseConnection.setPaneOrder(myPaneName, paneOrder: Int16(newValue))
         }
     }
 }
@@ -366,7 +366,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func setPaneOrder(_ paneName: String, paneOrder: Int)
+    func setPaneOrder(_ paneName: String, paneOrder: Int16)
     {
         let fetchRequest = NSFetchRequest<Panes>(entityName: "Panes")
         
@@ -381,7 +381,7 @@ extension coreDatabase
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myPane in fetchResults
             {
-                myPane.pane_order = NSNumber(value: paneOrder)
+                myPane.pane_order = paneOrder
                 myPane.updateTime =  NSDate()
                 if myPane.updateType != "Add"
                 {
@@ -398,7 +398,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func savePane(_ inPaneName:String, inPaneAvailable: Bool, inPaneVisible: Bool, inPaneOrder: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func savePane(_ inPaneName:String, inPaneAvailable: Bool, inPaneVisible: Bool, inPaneOrder: Int16, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         var myPane: Panes!
         
@@ -412,7 +412,7 @@ extension coreDatabase
             myPane.pane_name = inPaneName
             myPane.pane_available = inPaneAvailable as NSNumber
             myPane.pane_visible = inPaneVisible as NSNumber
-            myPane.pane_order = NSNumber(value: inPaneOrder)
+            myPane.pane_order = inPaneOrder
             if inUpdateType == "CODE"
             {
                 myPane.updateTime =  NSDate()
@@ -429,7 +429,7 @@ extension coreDatabase
             myPane = myPanes[0]
             myPane.pane_available = inPaneAvailable as NSNumber
             myPane.pane_visible = inPaneVisible as NSNumber
-            myPane.pane_order = NSNumber(value: inPaneOrder)
+            myPane.pane_order = inPaneOrder
             if inUpdateType == "CODE"
             {
                 myPane.updateTime =  NSDate()
@@ -450,14 +450,14 @@ extension coreDatabase
         myCloudDB.savePanesRecordToCloudKit(myPane)
     }
     
-    func replacePane(_ inPaneName:String, inPaneAvailable: Bool, inPaneVisible: Bool, inPaneOrder: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func replacePane(_ inPaneName:String, inPaneAvailable: Bool, inPaneVisible: Bool, inPaneOrder: Int16, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         let myPane = Panes(context: objectContext)
         
         myPane.pane_name = inPaneName
         myPane.pane_available = inPaneAvailable as NSNumber
         myPane.pane_visible = inPaneVisible as NSNumber
-        myPane.pane_order = NSNumber(value: inPaneOrder)
+        myPane.pane_order = inPaneOrder
         if inUpdateType == "CODE"
         {
             myPane.updateTime =  NSDate()
@@ -627,7 +627,7 @@ extension CloudKitInteraction
                 let updateTime = record.object(forKey: "updateTime") as! Date
                 let updateType = record.object(forKey: "updateType") as! String
                 let pane_available = record.object(forKey: "pane_available") as! Bool
-                let pane_order = record.object(forKey: "pane_order") as! Int
+                let pane_order = record.object(forKey: "pane_order") as! Int16
                 let pane_visible = record.object(forKey: "pane_visible") as! Bool
                 
                 myDatabaseConnection.replacePane(pane_name, inPaneAvailable: pane_available, inPaneVisible: pane_visible, inPaneOrder: pane_order, inUpdateTime: updateTime, inUpdateType: updateType)
@@ -719,7 +719,7 @@ extension CloudKitInteraction
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
         let pane_available = sourceRecord.object(forKey: "pane_available") as! Bool
-        let pane_order = sourceRecord.object(forKey: "pane_order") as! Int
+        let pane_order = sourceRecord.object(forKey: "pane_order") as! Int16
         let pane_visible = sourceRecord.object(forKey: "pane_visible") as! Bool
         
         myDatabaseConnection.savePane(pane_name, inPaneAvailable: pane_available, inPaneVisible: pane_visible, inPaneOrder: pane_order, inUpdateTime: updateTime, inUpdateType: updateType)

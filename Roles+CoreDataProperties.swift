@@ -2,7 +2,7 @@
 //  Roles+CoreDataProperties.swift
 //  
 //
-//  Created by Garry Eves on 25/4/17.
+//  Created by Garry Eves on 26/4/17.
 //
 //
 
@@ -17,8 +17,8 @@ extension Roles {
     }
 
     @NSManaged public var roleDescription: String?
-    @NSManaged public var roleID: NSNumber?
-    @NSManaged public var teamID: NSNumber?
+    @NSManaged public var roleID: Int32
+    @NSManaged public var teamID: Int32
     @NSManaged public var updateTime: NSDate?
     @NSManaged public var updateType: String?
 

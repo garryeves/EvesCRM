@@ -13,11 +13,11 @@ import CloudKit
 class workingGTDLevel: NSObject
 {
     fileprivate var myTitle: String = "New"
-    fileprivate var myTeamID: Int = 0
-    fileprivate var myGTDLevel: Int = 0
+    fileprivate var myTeamID: Int32 = 0
+    fileprivate var myGTDLevel: Int32 = 0
     fileprivate var saveCalled: Bool = false
     
-    var GTDLevel: Int
+    var GTDLevel: Int32
     {
         get
         {
@@ -43,7 +43,7 @@ class workingGTDLevel: NSObject
         }
     }
     
-    var teamID: Int
+    var teamID: Int32
     {
         get
         {
@@ -51,7 +51,7 @@ class workingGTDLevel: NSObject
         }
     }
     
-    init(inGTDLevel: Int, inTeamID: Int)
+    init(inGTDLevel: Int32, inTeamID: Int32)
     {
         super.init()
         
@@ -62,12 +62,12 @@ class workingGTDLevel: NSObject
         for myItem in myGTDDetail
         {
             myTitle = myItem.levelName!
-            myTeamID = myItem.teamID as! Int
+            myTeamID = myItem.teamID
             myGTDLevel = inGTDLevel
         }
     }
     
-    init(inGTDLevel: Int, inLevelName: String, inTeamID: Int)
+    init(inGTDLevel: Int32, inLevelName: String, inTeamID: Int32)
     {
         super.init()
         
@@ -78,13 +78,13 @@ class workingGTDLevel: NSObject
         save()
     }
     
-    init(inLevelName: String, inTeamID: Int)
+    init(inLevelName: String, inTeamID: Int32)
     {
         super.init()
         
         let myGTDDetail = myDatabaseConnection.getGTDLevels(inTeamID)
         
-        myGTDLevel = myGTDDetail.count + 1
+        myGTDLevel = Int32(myGTDDetail.count + 1)
         myTeamID = inTeamID
         myTitle = inLevelName
         
@@ -135,12 +135,12 @@ class workingGTDLevel: NSObject
         }
     }
     
-    func moveLevel(_ newLevel: Int)
+    func moveLevel(_ newLevel: Int32)
     {
         if myGTDLevel > newLevel
         {
             // Move the existing entries first
-            var levelCount: Int = myGTDLevel - 1
+            var levelCount: Int32 = myGTDLevel - 1
             // Dirty workaround.  Set the level for the one we are moving to a so weirdwe can reset it at the end
             
             myDatabaseConnection.changeGTDLevel(myGTDLevel, newGTDLevel: -99, inTeamID: myTeamID)
@@ -159,7 +159,8 @@ class workingGTDLevel: NSObject
             NSLog("Moving down from location = \(myGTDLevel) name \(myTitle) new location = \(newLevel)")
             
             // Move the existing entries first
-            var levelCount: Int = myGTDLevel + 1
+            var levelCount: Int32 = myGTDLevel + Int32(1)
+            
             // Dirty workaround.  Set the level for the one we are moving to a so weirdwe can reset it at the end
             
             myDatabaseConnection.changeGTDLevel(myGTDLevel, newGTDLevel: -99, inTeamID: myTeamID)
@@ -179,7 +180,7 @@ class workingGTDLevel: NSObject
 
 extension coreDatabase
 {
-    func saveGTDLevel(_ inGTDLevel: Int, inLevelName: String, inTeamID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func saveGTDLevel(_ inGTDLevel: Int32, inLevelName: String, inTeamID: Int32, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         var myGTD: GTDLevel!
         
@@ -188,9 +189,9 @@ extension coreDatabase
         if myGTDItems.count == 0
         { // Add
             myGTD = GTDLevel(context: objectContext)
-            myGTD.gTDLevel = inGTDLevel as NSNumber?
+            myGTD.gTDLevel = inGTDLevel
             myGTD.levelName = inLevelName
-            myGTD.teamID = inTeamID as NSNumber?
+            myGTD.teamID = inTeamID
             
             if inUpdateType == "CODE"
             {
@@ -225,12 +226,12 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceGTDLevel(_ inGTDLevel: Int, inLevelName: String, inTeamID: Int, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func replaceGTDLevel(_ inGTDLevel: Int32, inLevelName: String, inTeamID: Int32, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
     {
         let myGTD = GTDLevel(context: objectContext)
-        myGTD.gTDLevel = inGTDLevel as NSNumber?
+        myGTD.gTDLevel = inGTDLevel
         myGTD.levelName = inLevelName
-        myGTD.teamID = inTeamID as NSNumber?
+        myGTD.teamID = inTeamID
         
         if inUpdateType == "CODE"
         {
@@ -246,7 +247,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func getGTDLevel(_ inGTDLevel: Int, inTeamID: Int)->[GTDLevel]
+    func getGTDLevel(_ inGTDLevel: Int32, inTeamID: Int32)->[GTDLevel]
     {
         let fetchRequest = NSFetchRequest<GTDLevel>(entityName: "GTDLevel")
         
@@ -270,7 +271,7 @@ extension coreDatabase
         }
     }
     
-    func changeGTDLevel(_ oldGTDLevel: Int, newGTDLevel: Int, inTeamID: Int)
+    func changeGTDLevel(_ oldGTDLevel: Int32, newGTDLevel: Int32, inTeamID: Int32)
     {
         var myGTD: GTDLevel!
         
@@ -306,7 +307,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteGTDLevel(_ inGTDLevel: Int, inTeamID: Int)
+    func deleteGTDLevel(_ inGTDLevel: Int32, inTeamID: Int32)
     {
         var myGTD: GTDLevel!
         
@@ -322,7 +323,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func getGTDLevels(_ inTeamID: Int)->[GTDLevel]
+    func getGTDLevels(_ inTeamID: Int32)->[GTDLevel]
     {
         let fetchRequest = NSFetchRequest<GTDLevel>(entityName: "GTDLevel")
         
@@ -500,10 +501,10 @@ extension CloudKitInteraction
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
-                let gTDLevel = record.object(forKey: "gTDLevel") as! Int
+                let gTDLevel = record.object(forKey: "gTDLevel") as! Int32
                 let updateTime = record.object(forKey: "updateTime") as! Date
                 let updateType = record.object( forKey: "updateType") as! String
-                let teamID = record.object(forKey: "teamID") as! Int
+                let teamID = record.object(forKey: "teamID") as! Int32
                 let levelName = record.object(forKey: "levelName") as! String
                 
                 myDatabaseConnection.replaceGTDLevel(gTDLevel, inLevelName: levelName, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
@@ -516,7 +517,7 @@ extension CloudKitInteraction
 
     func saveGTDLevelRecordToCloudKit(_ sourceRecord: GTDLevel)
     {
-        let predicate = NSPredicate(format: "(gTDLevel == \(sourceRecord.gTDLevel as! Int)) && (teamID == \(sourceRecord.teamID as! Int))") // better be accurate to get only the record you need
+    let predicate = NSPredicate(format: "(gTDLevel == \(sourceRecord.gTDLevel)) && (teamID == \(sourceRecord.teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "GTDLevel", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -578,7 +579,7 @@ extension CloudKitInteraction
 
     func updateGTDLevelRecord(_ sourceRecord: CKRecord)
     {
-        let gTDLevel = sourceRecord.object(forKey: "gTDLevel") as! Int
+        let gTDLevel = sourceRecord.object(forKey: "gTDLevel") as! Int32
         var updateTime = Date()
         if sourceRecord.object(forKey: "updateTime") != nil
         {
@@ -591,7 +592,7 @@ extension CloudKitInteraction
         {
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
-        let teamID = sourceRecord.object(forKey: "teamID") as! Int
+        let teamID = sourceRecord.object(forKey: "teamID") as! Int32
         let levelName = sourceRecord.object(forKey: "levelName") as! String
         
         myDatabaseConnection.saveGTDLevel(gTDLevel, inLevelName: levelName, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)

@@ -269,7 +269,7 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
     }
  
     //    func collectionView(_ collectionView: UICollectionView, cellForItemAtIndexPath indexPath: IndexPath) -> UICollectionViewCell
-    func collectionView(_ collectionView: UICollectionView, cellForItem indexPath: IndexPath) -> UICollectionViewCell
+    @objc(collectionView:cellForItemAtIndexPath:) func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellTeamMembers", for: indexPath) as! myProjectItem
         cell.btnAction.tag = indexPath.row
@@ -619,12 +619,12 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
     
     @IBAction func txtRepeatInterval(_ sender: UITextField)
     {
-        inProjectObject.repeatInterval = Int(txtRepeatInterval.text!)!
+        inProjectObject.repeatInterval = Int16(txtRepeatInterval.text!)!
     }
     
     @IBAction func txtReviewFrequency(_ sender: UITextField)
     {
-        inProjectObject.reviewFrequency = Int(txtReviewFrquency.text!)!
+        inProjectObject.reviewFrequency = Int16(txtReviewFrquency.text!)!
     }
     
     @IBAction func btnSelectPicker(_ sender: UIButton)
@@ -635,7 +635,7 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
             {
                 let newPersonRole = mySelectedRow - 1
                 
-                mySelectedTeamMember.roleID = myRoles[newPersonRole].roleID as! Int
+                mySelectedTeamMember.roleID = myRoles[newPersonRole].roleID
                 
                 inProjectObject.loadTeamMembers()
                 mySelectedRoles = inProjectObject.teamMembers

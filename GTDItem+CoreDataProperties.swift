@@ -2,7 +2,7 @@
 //  GTDItem+CoreDataProperties.swift
 //  
 //
-//  Created by Garry Eves on 25/4/17.
+//  Created by Garry Eves on 26/4/17.
 //
 //
 
@@ -16,16 +16,16 @@ extension GTDItem {
         return NSFetchRequest<GTDItem>(entityName: "GTDItem")
     }
 
-    @NSManaged public var gTDItemID: NSNumber?
-    @NSManaged public var gTDLevel: NSNumber?
-    @NSManaged public var gTDParentID: NSNumber?
+    @NSManaged public var gTDItemID: Int32
+    @NSManaged public var gTDLevel: Int32
+    @NSManaged public var gTDParentID: Int32
     @NSManaged public var lastReviewDate: NSDate?
     @NSManaged public var note: String?
-    @NSManaged public var predecessor: NSNumber?
-    @NSManaged public var reviewFrequency: NSNumber?
+    @NSManaged public var predecessor: Int32
+    @NSManaged public var reviewFrequency: Int16
     @NSManaged public var reviewPeriod: String?
     @NSManaged public var status: String?
-    @NSManaged public var teamID: NSNumber?
+    @NSManaged public var teamID: Int32
     @NSManaged public var title: String?
     @NSManaged public var updateTime: NSDate?
     @NSManaged public var updateType: String?

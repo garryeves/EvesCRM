@@ -2,7 +2,7 @@
 //  TaskContext+CoreDataProperties.swift
 //  
 //
-//  Created by Garry Eves on 25/4/17.
+//  Created by Garry Eves on 26/4/17.
 //
 //
 
@@ -16,8 +16,8 @@ extension TaskContext {
         return NSFetchRequest<TaskContext>(entityName: "TaskContext")
     }
 
-    @NSManaged public var contextID: NSNumber?
-    @NSManaged public var taskID: NSNumber?
+    @NSManaged public var contextID: Int32
+    @NSManaged public var taskID: Int32
     @NSManaged public var updateTime: NSDate?
     @NSManaged public var updateType: String?
 

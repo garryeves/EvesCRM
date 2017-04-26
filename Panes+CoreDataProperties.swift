@@ -2,7 +2,7 @@
 //  Panes+CoreDataProperties.swift
 //  
 //
-//  Created by Garry Eves on 25/4/17.
+//  Created by Garry Eves on 26/4/17.
 //
 //
 
@@ -18,7 +18,7 @@ extension Panes {
 
     @NSManaged public var pane_available: NSNumber?
     @NSManaged public var pane_name: String?
-    @NSManaged public var pane_order: NSNumber?
+    @NSManaged public var pane_order: Int16
     @NSManaged public var pane_visible: NSNumber?
     @NSManaged public var updateTime: NSDate?
     @NSManaged public var updateType: String?
