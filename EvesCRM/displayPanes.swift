@@ -520,11 +520,11 @@ extension coreDatabase
         saveContext()
     }
     
-    func getPanesForSync(_ inLastSyncDate: NSDate) -> [Panes]
+    func getPanesForSync(_ syncDate: Date) -> [Panes]
     {
         let fetchRequest = NSFetchRequest<Panes>(entityName: "Panes")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
@@ -566,20 +566,20 @@ extension coreDatabase
 
 extension CloudKitInteraction
 {
-    func savePanesToCloudKit(_ inLastSyncDate: NSDate)
+    func savePanesToCloudKit()
     {
         //        NSLog("Syncing Panes")
-        for myItem in myDatabaseConnection.getPanesForSync(inLastSyncDate)
+        for myItem in myDatabaseConnection.getPanesForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Panes"))
         {
             savePanesRecordToCloudKit(myItem)
         }
     }
 
-    func updatePanesInCoreData(_ inLastSyncDate: NSDate)
+    func updatePanesInCoreData()
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "Panes") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Panes", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -614,17 +614,17 @@ extension CloudKitInteraction
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = DateFormatter()
-        myDateFormatter.dateStyle = DateFormatter.Style.short
-        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
-        
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Panes", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let pane_name = record.object(forKey: "pane_name") as! String
-                let updateTime = record.object(forKey: "updateTime") as! Date
+                var updateTime = Date()
+                if record.object(forKey: "updateTime") != nil
+                {
+                    updateTime = record.object(forKey: "updateTime") as! Date
+                }
                 let updateType = record.object(forKey: "updateType") as! String
                 let pane_available = record.object(forKey: "pane_available") as! Bool
                 let pane_order = record.object(forKey: "pane_order") as! Int16

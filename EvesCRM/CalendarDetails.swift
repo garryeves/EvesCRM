@@ -3112,11 +3112,11 @@ extension coreDatabase
         saveContext()
     }
 
-    func getMeetingAgendasForSync(_ inLastSyncDate: NSDate) -> [MeetingAgenda]
+    func getMeetingAgendasForSync(_ syncDate: Date) -> [MeetingAgenda]
     {
         let fetchRequest = NSFetchRequest<MeetingAgenda>(entityName: "MeetingAgenda")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
@@ -3156,20 +3156,20 @@ extension coreDatabase
 
 extension CloudKitInteraction
 {
-    func saveMeetingAgendaToCloudKit(_ inLastSyncDate: NSDate)
+    func saveMeetingAgendaToCloudKit()
     {
         //        NSLog("Syncing Meeting Agenda")
-        for myItem in myDatabaseConnection.getMeetingAgendasForSync(inLastSyncDate)
+        for myItem in myDatabaseConnection.getMeetingAgendasForSync(myDatabaseConnection.getSyncDateForTable(tableName: "MeetingAgenda"))
         {
             saveMeetingAgendaRecordToCloudKit(myItem)
         }
     }
 
-    func updateMeetingAgendaInCoreData(_ inLastSyncDate: NSDate)
+    func updateMeetingAgendaInCoreData()
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingAgenda") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -3204,17 +3204,17 @@ extension CloudKitInteraction
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = DateFormatter()
-        myDateFormatter.dateStyle = DateFormatter.Style.short
-        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
-        
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let meetingID = record.object(forKey: "meetingID") as! String
-                let updateTime = record.object(forKey: "updateTime") as! Date
+                var updateTime = Date()
+                if record.object(forKey: "updateTime") != nil
+                {
+                    updateTime = record.object(forKey: "updateTime") as! Date
+                }
                 let updateType = record.object(forKey: "updateType") as! String
                 let chair = record.object(forKey: "chair") as! String
                 let endTime = record.object(forKey: "endTime") as! Date

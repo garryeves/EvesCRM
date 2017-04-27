@@ -58,7 +58,7 @@ class KDRearrangeableCollectionViewFlowLayout: UICollectionViewFlowLayout, UIGes
 
             collectionView.addGestureRecognizer(longPressGestureRecogniser)
 */
-            let longPressGestureRecogniser = UIPanGestureRecognizer(target: self, action: #selector(KDRearrangeableCollectionViewFlowLayout.handleGesture(_:)))
+            let longPressGestureRecogniser = UIPanGestureRecognizer(target: self, action: #selector(self.handleGesture(_:)))
             
             longPressGestureRecogniser.minimumNumberOfTouches = 1
             longPressGestureRecogniser.delegate = self

@@ -11,6 +11,17 @@ import CoreData
 import CloudKit
 
 let coreDatabaseName = "EvesCRM"
+let appName = "EvesCRM"
+
+// Storyboards
+
+let contextsStoryboard = UIStoryboard(name: "contexts", bundle: nil)
+let projectsStoryboard = UIStoryboard(name: "projects", bundle: nil)
+let meetingStoryboard = UIStoryboard(name: "meetings", bundle: nil)
+let tasksStoryboard = UIStoryboard(name: "tasks", bundle: nil)
+let teamStoryboard = UIStoryboard(name: "team", bundle: nil)
+let GTDStoryboard = UIStoryboard(name: "GTD", bundle: nil)
+
 
 extension coreDatabase
 {
@@ -351,107 +362,107 @@ extension CloudKitInteraction
 
 extension DBSync
 {
-    func syncToCloudKit(_ inDate: NSDate)
+    func syncToCloudKit()
     {
         progressMessage("syncToCloudKit Context")
-        myCloudDB.saveContextToCloudKit(inDate)
+        myCloudDB.saveContextToCloudKit()
         progressMessage("syncToCloudKit Decodes")
-        myCloudDB.saveDecodesToCloudKit(inDate, syncName: getSyncID())
+        myCloudDB.saveDecodesToCloudKit()
         progressMessage("syncToCloudKit GTD Item")
-        myCloudDB.saveGTDItemToCloudKit(inDate)
+        myCloudDB.saveGTDItemToCloudKit()
         progressMessage("syncToCloudKit GTD Level")
-        myCloudDB.saveGTDLevelToCloudKit(inDate)
+        myCloudDB.saveGTDLevelToCloudKit()
         progressMessage("syncToCloudKit MeetingAgenda")
-        myCloudDB.saveMeetingAgendaToCloudKit(inDate)
+        myCloudDB.saveMeetingAgendaToCloudKit()
         progressMessage("syncToCloudKit MeetingAGendaItem")
-        myCloudDB.saveMeetingAgendaItemToCloudKit(inDate)
+        myCloudDB.saveMeetingAgendaItemToCloudKit()
         progressMessage("syncToCloudKit MeetingAttendees")
-        myCloudDB.saveMeetingAttendeesToCloudKit(inDate)
+        myCloudDB.saveMeetingAttendeesToCloudKit()
         progressMessage("syncToCloudKit MeetingSupportingDocs")
-        myCloudDB.saveMeetingSupportingDocsToCloudKit(inDate)
+        myCloudDB.saveMeetingSupportingDocsToCloudKit()
         progressMessage("syncToCloudKit MeetingTasks")
-        myCloudDB.saveMeetingTasksToCloudKit(inDate)
+        myCloudDB.saveMeetingTasksToCloudKit()
         progressMessage("syncToCloudKit Panes")
-        myCloudDB.savePanesToCloudKit(inDate)
+        myCloudDB.savePanesToCloudKit()
         progressMessage("syncToCloudKit Projects")
-        myCloudDB.saveProjectsToCloudKit(inDate)
+        myCloudDB.saveProjectsToCloudKit()
         progressMessage("syncToCloudKit ProjectTeamMembers")
-        myCloudDB.saveProjectTeamMembersToCloudKit(inDate)
+        myCloudDB.saveProjectTeamMembersToCloudKit()
         progressMessage("syncToCloudKit Roles")
-        myCloudDB.saveRolesToCloudKit(inDate)
+        myCloudDB.saveRolesToCloudKit()
         progressMessage("syncToCloudKit Stages")
-        myCloudDB.saveStagesToCloudKit(inDate)
+        myCloudDB.saveStagesToCloudKit()
         progressMessage("syncToCloudKit Task")
-        myCloudDB.saveTaskToCloudKit(inDate)
+        myCloudDB.saveTaskToCloudKit()
         progressMessage("syncToCloudKit TaskAttachment")
-        myCloudDB.saveTaskAttachmentToCloudKit(inDate)
+        myCloudDB.saveTaskAttachmentToCloudKit()
         progressMessage("syncToCloudKit TaskContext")
-        myCloudDB.saveTaskContextToCloudKit(inDate)
+        myCloudDB.saveTaskContextToCloudKit()
         progressMessage("syncToCloudKit TaskPredecessor")
-        myCloudDB.saveTaskPredecessorToCloudKit(inDate)
+        myCloudDB.saveTaskPredecessorToCloudKit()
         progressMessage("syncToCloudKit TaskUpdates")
-        myCloudDB.saveTaskUpdatesToCloudKit(inDate)
+        myCloudDB.saveTaskUpdatesToCloudKit()
         progressMessage("syncToCloudKit Team")
-        myCloudDB.saveTeamToCloudKit(inDate)
+        myCloudDB.saveTeamToCloudKit()
         progressMessage("syncToCloudKit ProcessedEmails")
-        myCloudDB.saveProcessedEmailsToCloudKit(inDate)
+        myCloudDB.saveProcessedEmailsToCloudKit()
         progressMessage("syncToCloudKit Outline")
-        myCloudDB.saveOutlineToCloudKit(inDate)
+        myCloudDB.saveOutlineToCloudKit()
         progressMessage("syncToCloudKit OutlineDetails")
-        myCloudDB.saveOutlineDetailsToCloudKit(inDate)
+        myCloudDB.saveOutlineDetailsToCloudKit()
         
         
         notificationCenter.post(name: NotificationCloudSyncFinished, object: nil)
     }
     
-    func syncFromCloudKit(_ inDate: NSDate)
+    func syncFromCloudKit()
     {
         progressMessage("syncFromCloudKit Context")
-        myCloudDB.updateContextInCoreData(inDate)
+        myCloudDB.updateContextInCoreData()
         progressMessage("syncFromCloudKit Decodes")
-        myCloudDB.updateDecodesInCoreData(inDate)
+        myCloudDB.updateDecodesInCoreData()
         progressMessage("syncFromCloudKit GTD Item")
-        myCloudDB.updateGTDItemInCoreData(inDate)
+        myCloudDB.updateGTDItemInCoreData()
         progressMessage("syncFromCloudKit GTD Level")
-        myCloudDB.updateGTDLevelInCoreData(inDate)
+        myCloudDB.updateGTDLevelInCoreData()
         progressMessage("syncFromCloudKit MeetingAgenda")
-        myCloudDB.updateMeetingAgendaInCoreData(inDate)
+        myCloudDB.updateMeetingAgendaInCoreData()
         progressMessage("syncFromCloudKit MeetingAgendaItem")
-        myCloudDB.updateMeetingAgendaItemInCoreData(inDate)
+        myCloudDB.updateMeetingAgendaItemInCoreData()
         progressMessage("syncFromCloudKit MeetingAttendess")
-        myCloudDB.updateMeetingAttendeesInCoreData(inDate)
+        myCloudDB.updateMeetingAttendeesInCoreData()
         progressMessage("syncFromCloudKit MeetingSupportingDocs")
-        myCloudDB.updateMeetingSupportingDocsInCoreData(inDate)
+        myCloudDB.updateMeetingSupportingDocsInCoreData()
         progressMessage("syncFromCloudKit MeetingTasks")
-        myCloudDB.updateMeetingTasksInCoreData(inDate)
+        myCloudDB.updateMeetingTasksInCoreData()
         progressMessage("syncFromCloudKit Panes")
-        myCloudDB.updatePanesInCoreData(inDate)
+        myCloudDB.updatePanesInCoreData()
         progressMessage("syncFromCloudKit Projects")
-        myCloudDB.updateProjectsInCoreData(inDate)
+        myCloudDB.updateProjectsInCoreData()
         progressMessage("syncFromCloudKit ProjectTeamMembers")
-        myCloudDB.updateProjectTeamMembersInCoreData(inDate)
+        myCloudDB.updateProjectTeamMembersInCoreData()
         progressMessage("syncFromCloudKit Roles")
-        myCloudDB.updateRolesInCoreData(inDate)
+        myCloudDB.updateRolesInCoreData()
         progressMessage("syncFromCloudKit Stages")
-        myCloudDB.updateStagesInCoreData(inDate)
+        myCloudDB.updateStagesInCoreData()
         progressMessage("syncFromCloudKit Task")
-        myCloudDB.updateTaskInCoreData(inDate)
+        myCloudDB.updateTaskInCoreData()
         progressMessage("syncFromCloudKit TaskAttachment")
-        myCloudDB.updateTaskAttachmentInCoreData(inDate)
+        myCloudDB.updateTaskAttachmentInCoreData()
         progressMessage("syncFromCloudKit TaskContext")
-        myCloudDB.updateTaskContextInCoreData(inDate)
+        myCloudDB.updateTaskContextInCoreData()
         progressMessage("syncFromCloudKit TaskPredecessor")
-        myCloudDB.updateTaskPredecessorInCoreData(inDate)
+        myCloudDB.updateTaskPredecessorInCoreData()
         progressMessage("syncFromCloudKit TaskUpdates")
-        myCloudDB.updateTaskUpdatesInCoreData(inDate)
+        myCloudDB.updateTaskUpdatesInCoreData()
         progressMessage("syncFromCloudKit Team")
-        myCloudDB.updateTeamInCoreData(inDate)
+        myCloudDB.updateTeamInCoreData()
         progressMessage("syncFromCloudKit ProcessedEmails")
-        myCloudDB.updateProcessedEmailsInCoreData(inDate)
+        myCloudDB.updateProcessedEmailsInCoreData()
         progressMessage("syncFromCloudKit Outline")
-        myCloudDB.updateOutlineInCoreData(inDate)
+        myCloudDB.updateOutlineInCoreData()
         progressMessage("syncFromCloudKit OutlineDetails")
-        myCloudDB.updateOutlineDetailsInCoreData(inDate)
+        myCloudDB.updateOutlineDetailsInCoreData()
         
         notificationCenter.post(name: NotificationCloudSyncFinished, object: nil)
     }
@@ -535,4 +546,136 @@ extension DBSync
         myCloudDB.deleteOutline()
         myCloudDB.deleteOutlineDetails()
     }
+    
+    func setLastSyncDates(syncDate: Date)
+    {
+        progressMessage("setLastSyncDates Team")
+        myDatabaseConnection.setSyncDateforTable(tableName: "Team", syncDate: syncDate)
+        progressMessage("setLastSyncDates Context")
+        myDatabaseConnection.setSyncDateforTable(tableName: "Context", syncDate: syncDate)
+        progressMessage("setLastSyncDates Decodes")
+        myDatabaseConnection.setSyncDateforTable(tableName: "Decodes", syncDate: syncDate)
+        progressMessage("setLastSyncDates GTD Item")
+        myDatabaseConnection.setSyncDateforTable(tableName: "GTDItem", syncDate: syncDate)
+        progressMessage("setLastSyncDates GTD Level")
+        myDatabaseConnection.setSyncDateforTable(tableName: "GTDLevel", syncDate: syncDate)
+        progressMessage("setLastSyncDates MeetingAgenda")
+        myDatabaseConnection.setSyncDateforTable(tableName: "MeetingAgenda", syncDate: syncDate)
+        progressMessage("setLastSyncDates MeetingAgendaItem")
+        myDatabaseConnection.setSyncDateforTable(tableName: "MeetingAgendaItem", syncDate: syncDate)
+        progressMessage("setLastSyncDates MeetingAttendess")
+        myDatabaseConnection.setSyncDateforTable(tableName: "MeetingAttendess", syncDate: syncDate)
+        progressMessage("setLastSyncDates MeetingSupportingDocs")
+        myDatabaseConnection.setSyncDateforTable(tableName: "MeetingSupportingDocs", syncDate: syncDate)
+        progressMessage("setLastSyncDates MeetingTasks")
+        myDatabaseConnection.setSyncDateforTable(tableName: "MeetingTasks", syncDate: syncDate)
+        progressMessage("setLastSyncDates Panes")
+        myDatabaseConnection.setSyncDateforTable(tableName: "Panes", syncDate: syncDate)
+        progressMessage("setLastSyncDates Projects")
+        myDatabaseConnection.setSyncDateforTable(tableName: "Projects", syncDate: syncDate)
+        progressMessage("setLastSyncDates ProjectTeamMembers")
+        myDatabaseConnection.setSyncDateforTable(tableName: "ProjectTeamMembers", syncDate: syncDate)
+        progressMessage("setLastSyncDates Roles")
+        myDatabaseConnection.setSyncDateforTable(tableName: "Roles", syncDate: syncDate)
+        progressMessage("setLastSyncDates Stages")
+        myDatabaseConnection.setSyncDateforTable(tableName: "Stages", syncDate: syncDate)
+        progressMessage("setLastSyncDates Task")
+        myDatabaseConnection.setSyncDateforTable(tableName: "Task", syncDate: syncDate)
+        progressMessage("setLastSyncDates TaskAttachment")
+        myDatabaseConnection.setSyncDateforTable(tableName: "TaskAttachment", syncDate: syncDate)
+        progressMessage("setLastSyncDates TaskContext")
+        myDatabaseConnection.setSyncDateforTable(tableName: "TaskContext", syncDate: syncDate)
+        progressMessage("setLastSyncDates TaskPredecessor")
+        myDatabaseConnection.setSyncDateforTable(tableName: "TaskPredecessor", syncDate: syncDate)
+        progressMessage("setLastSyncDates TaskUpdates")
+        myDatabaseConnection.setSyncDateforTable(tableName: "TaskUpdates", syncDate: syncDate)
+        progressMessage("setLastSyncDates ProcessedEmails")
+        myDatabaseConnection.setSyncDateforTable(tableName: "ProcessedEmails", syncDate: syncDate)
+        progressMessage("setLastSyncDates Outline")
+        myDatabaseConnection.setSyncDateforTable(tableName: "Outline", syncDate: syncDate)
+        progressMessage("setLastSyncDates OutlineDetails")
+        myDatabaseConnection.setSyncDateforTable(tableName: "OutlineDetails", syncDate: syncDate)
+    }
+}
+
+struct EvernoteData
+{
+    fileprivate var myTitle: String
+    fileprivate var myUpdateDate: Date!
+    fileprivate var myCreateDate: Date!
+    fileprivate var myIdentifier: String
+    #if os(iOS)
+    fileprivate var myNoteRef: ENNoteRef!
+    #elseif os(OSX)
+    // NSLog("Evernote to be determined")
+    #else
+    //NSLog("Unexpected OS")
+    #endif
+    
+    
+    var title: String
+    {
+        get {
+            return myTitle
+        }
+        set {
+            myTitle = newValue
+        }
+    }
+    
+    var updateDate: Date
+    {
+        get {
+            return myUpdateDate
+        }
+        set {
+            myUpdateDate = newValue
+        }
+    }
+    
+    var createDate: Date
+    {
+        get {
+            return myCreateDate
+        }
+        set {
+            myCreateDate = newValue
+        }
+    }
+    
+    var identifier: String
+    {
+        get {
+            return myIdentifier
+        }
+        set {
+            myIdentifier = newValue
+        }
+    }
+    
+    #if os(iOS)
+    var NoteRef: ENNoteRef
+    {
+        get
+        {
+            return myNoteRef
+        }
+        set
+        {
+            myNoteRef = newValue
+        }
+    }
+    
+    #elseif os(OSX)
+    // Evernote to do
+    #else
+    //    NSLog("Unexpected OS")
+    #endif
+    
+    init()
+    {
+        self.myTitle = ""
+        self.myIdentifier = ""
+    }
+    
 }

@@ -101,7 +101,7 @@ class projectTeamMember: NSObject
         if !saveCalled
         {
             saveCalled = true
-            let _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(workingGTDLevel.performSave), userInfo: nil, repeats: false)
+            let _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.performSave), userInfo: nil, repeats: false)
         }
     }
     
@@ -361,11 +361,11 @@ extension coreDatabase
         saveContext()
     }
     
-    func getProjectTeamMembersForSync(_ inLastSyncDate: NSDate) -> [ProjectTeamMembers]
+    func getProjectTeamMembersForSync(_ syncDate: Date) -> [ProjectTeamMembers]
     {
         let fetchRequest = NSFetchRequest<ProjectTeamMembers>(entityName: "ProjectTeamMembers")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
@@ -407,20 +407,20 @@ extension coreDatabase
 
 extension CloudKitInteraction
 {
-    func saveProjectTeamMembersToCloudKit(_ inLastSyncDate: NSDate)
+    func saveProjectTeamMembersToCloudKit()
     {
         //        NSLog("Syncing ProjectTeamMembers")
-        for myItem in myDatabaseConnection.getProjectTeamMembersForSync(inLastSyncDate)
+        for myItem in myDatabaseConnection.getProjectTeamMembersForSync(myDatabaseConnection.getSyncDateForTable(tableName: "ProjectTeamMembers"))
         {
             saveProjectTeamMembersRecordToCloudKit(myItem)
         }
     }
 
-    func updateProjectTeamMembersInCoreData(_ inLastSyncDate: NSDate)
+    func updateProjectTeamMembersInCoreData()
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "ProjectTeamMembers") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "ProjectTeamMembers", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -455,18 +455,18 @@ extension CloudKitInteraction
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = DateFormatter()
-        myDateFormatter.dateStyle = DateFormatter.Style.short
-        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
-        
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "ProjectTeamMembers", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let projectID = record.object(forKey: "projectID") as! Int32
                 let teamMember = record.object(forKey: "teamMember") as! String
-                let updateTime = record.object(forKey: "updateTime") as! Date
+                var updateTime = Date()
+                if record.object(forKey: "updateTime") != nil
+                {
+                    updateTime = record.object(forKey: "updateTime") as! Date
+                }
                 let updateType = record.object(forKey: "updateType") as! String
                 let roleID = record.object(forKey: "roleID") as! Int32
                 let projectMemberNotes = record.object(forKey: "projectMemberNotes") as! String

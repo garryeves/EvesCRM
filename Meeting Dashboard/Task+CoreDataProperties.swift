@@ -2,7 +2,7 @@
 //  Task+CoreDataProperties.swift
 //  Meeting Dashboard
 //
-//  Created by Garry Eves on 25/4/17.
+//  Created by Garry Eves on 27/4/17.
 //  Copyright © 2017 Garry Eves. All rights reserved.
 //
 
@@ -22,7 +22,7 @@ extension Task {
     @NSManaged public var energyLevel: String?
     @NSManaged public var estimatedTime: Int16
     @NSManaged public var estimatedTimeType: String?
-    @NSManaged public var flagged: Bool
+    @NSManaged public var flagged: NSNumber?
     @NSManaged public var priority: String?
     @NSManaged public var projectID: Int32
     @NSManaged public var repeatBase: String?

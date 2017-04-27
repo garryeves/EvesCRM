@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 import CoreData
 
 protocol MySettingsDelegate{
@@ -63,23 +64,23 @@ class settingsViewController: UIViewController
 //GRE            ButtonConnectDropbox.isHidden = true
 //GRE        }
         
-        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(settingsViewController.handleSwipe(_:)))
+        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleSwipe(_:)))
         showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.right
         self.view.addGestureRecognizer(showGestureRecognizer)
         
-        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(settingsViewController.handleSwipe(_:)))
+        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleSwipe(_:)))
         hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.left
         self.view.addGestureRecognizer(hideGestureRecognizer)
         
 
         
-        notificationCenter.addObserver(self, selector: #selector(settingsViewController.changeSettings(_:)), name: NotificationChangeSettings, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.changeSettings(_:)), name: NotificationChangeSettings, object: nil)
         
-        notificationCenter.addObserver(self, selector: #selector(settingsViewController.syncToCloud), name: NotificationCloudSyncStart, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.syncToCloud), name: NotificationCloudSyncStart, object: nil)
         
-        notificationCenter.addObserver(self, selector: #selector(settingsViewController.syncToCloudDone), name: NotificationCloudSyncFinished, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.syncToCloudDone), name: NotificationCloudSyncFinished, object: nil)
         
-        notificationCenter.addObserver(self, selector: #selector(settingsViewController.syncFromCloud), name: NotificationCloudReLoadStart, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.syncFromCloud), name: NotificationCloudReLoadStart, object: nil)
         
         firstLoadflag = false
     }
@@ -286,7 +287,7 @@ class settingsViewController: UIViewController
         
             // Load
         
-            myDBSync.syncToCloudKit(self.syncDate)
+            myDBSync.syncToCloudKit()
             myDBSync.refreshRunning = false
         })
     }
@@ -297,7 +298,7 @@ class settingsViewController: UIViewController
         
         let dateString = "\(syncStart)"
         
-        myDatabaseConnection.updateDecodeValue("\(coreDatabaseName) Sync", inCodeValue: dateString, inCodeType: "hidden")
+        myDatabaseConnection.updateDecodeValue("\(appName) Sync", inCodeValue: dateString, inCodeType: "hidden")
         
         lblRefreshMessage.isHidden = true
         colDecodes.isHidden = false

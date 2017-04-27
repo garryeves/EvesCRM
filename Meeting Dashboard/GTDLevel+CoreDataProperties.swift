@@ -1,5 +1,5 @@
 //
-//  Roles+CoreDataProperties.swift
+//  GTDLevel+CoreDataProperties.swift
 //  Meeting Dashboard
 //
 //  Created by Garry Eves on 27/4/17.
@@ -10,14 +10,14 @@ import Foundation
 import CoreData
 
 
-extension Roles {
+extension GTDLevel {
 
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<Roles> {
-        return NSFetchRequest<Roles>(entityName: "Roles")
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<GTDLevel> {
+        return NSFetchRequest<GTDLevel>(entityName: "GTDLevel")
     }
 
-    @NSManaged public var roleDescription: String?
-    @NSManaged public var roleID: Int32
+    @NSManaged public var gTDLevel: Int32
+    @NSManaged public var levelName: String?
     @NSManaged public var teamID: Int32
     @NSManaged public var updateTime: NSDate?
     @NSManaged public var updateType: String?

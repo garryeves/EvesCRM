@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 import TextExpander
 
 class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearrangeableCollectionViewDelegate
@@ -69,7 +70,7 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
         txtNotes.layer.cornerRadius = 5.0
         txtNotes.layer.masksToBounds = true
         
-        notificationCenter.addObserver(self, selector: #selector(teamMaintenanceViewController.changeSettings(_:)), name: NotificationChangeSettings, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.changeSettings(_:)), name: NotificationChangeSettings, object: nil)
         
         // TextExpander
         textExpander = SMTEDelegateController()

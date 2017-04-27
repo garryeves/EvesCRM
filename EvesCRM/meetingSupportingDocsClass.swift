@@ -60,11 +60,11 @@ extension coreDatabase
         saveContext()
     }
     
-    func getMeetingSupportingDocsForSync(_ inLastSyncDate: NSDate) -> [MeetingSupportingDocs]
+    func getMeetingSupportingDocsForSync(_ syncDate: Date) -> [MeetingSupportingDocs]
     {
         let fetchRequest = NSFetchRequest<MeetingSupportingDocs>(entityName: "MeetingSupportingDocs")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
@@ -127,20 +127,20 @@ extension coreDatabase
 
 extension CloudKitInteraction
 {
-    func saveMeetingSupportingDocsToCloudKit(_ inLastSyncDate: NSDate)
+    func saveMeetingSupportingDocsToCloudKit()
     {
         //        NSLog("Syncing MeetingSupportingDocs")
-        for myItem in myDatabaseConnection.getMeetingSupportingDocsForSync(inLastSyncDate)
+        for myItem in myDatabaseConnection.getMeetingSupportingDocsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "MeetingSupportingDocs"))
         {
             saveMeetingSupportingDocsRecordToCloudKit(myItem)
         }
     }
 
-    func updateMeetingSupportingDocsInCoreData(_ inLastSyncDate: NSDate)
+    func updateMeetingSupportingDocsInCoreData()
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingSupportingDocs") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             // for record in results!
@@ -176,11 +176,7 @@ extension CloudKitInteraction
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = DateFormatter()
-        myDateFormatter.dateStyle = DateFormatter.Style.short
-        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
-        
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             // for record in results!

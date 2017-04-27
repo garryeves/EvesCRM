@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 import CoreData
 import Contacts
 import ContactsUI
@@ -87,11 +88,11 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         teamMembersLabel.isHidden = false
 
         
-        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(MaintainProjectViewController.handleSwipe(_:)))
+        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleSwipe(_:)))
         showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.right
         self.view.addGestureRecognizer(showGestureRecognizer)
         
-        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(MaintainProjectViewController.handleSwipe(_:)))
+        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleSwipe(_:)))
         hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.left
         self.view.addGestureRecognizer(hideGestureRecognizer)
 
@@ -194,9 +195,9 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         myCurrentViewController = MaintainProjectViewController()
         myCurrentViewController = self
         
-        notificationCenter.addObserver(self, selector: #selector(MaintainProjectViewController.addTeamMember(_:)), name: NotificationAddTeamMember, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(MaintainProjectViewController.changeRole(_:)), name: NotificationChangeRole, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(MaintainProjectViewController.performDeleteTeamMember(_:)), name: NotificationPerformDelete, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.addTeamMember(_:)), name: NotificationAddTeamMember, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.changeRole(_:)), name: NotificationChangeRole, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.performDeleteTeamMember(_:)), name: NotificationPerformDelete, object: nil)
 
     }
     
@@ -204,8 +205,8 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
     {
         super.viewWillAppear(animated)
         
-        notificationCenter.addObserver(self, selector: #selector(MaintainProjectViewController.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(MaintainProjectViewController.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool)

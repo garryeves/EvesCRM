@@ -371,11 +371,11 @@ extension coreDatabase
         saveContext()
     }
 
-    func getRolesForSync(_ inLastSyncDate: NSDate) -> [Roles]
+    func getRolesForSync(_ syncDate: Date) -> [Roles]
     {
         let fetchRequest = NSFetchRequest<Roles>(entityName: "Roles")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
@@ -418,20 +418,20 @@ extension coreDatabase
 
 extension CloudKitInteraction
 {
-    func saveRolesToCloudKit(_ inLastSyncDate: NSDate)
+    func saveRolesToCloudKit()
     {
         //        NSLog("Syncing Roles")
-        for myItem in myDatabaseConnection.getRolesForSync(inLastSyncDate)
+        for myItem in myDatabaseConnection.getRolesForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Roles"))
         {
             saveRolesRecordToCloudKit(myItem)
         }
     }
 
-    func updateRolesInCoreData(_ inLastSyncDate: NSDate)
+    func updateRolesInCoreData()
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "Roles") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Roles", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -466,17 +466,17 @@ extension CloudKitInteraction
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = DateFormatter()
-        myDateFormatter.dateStyle = DateFormatter.Style.short
-        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
-        
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Roles", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let roleID = record.object(forKey: "roleID") as! Int32
-                let updateTime = record.object(forKey: "updateTime") as! Date
+                var updateTime = Date()
+                if record.object(forKey: "updateTime") != nil
+                {
+                    updateTime = record.object(forKey: "updateTime") as! Date
+                }
                 let updateType = record.object(forKey: "updateType") as! String
                 let teamID = record.object(forKey: "teamID") as! Int32
                 let roleDescription = record.object(forKey: "roleDescription") as! String

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 import TextExpander
 
 class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDelegate

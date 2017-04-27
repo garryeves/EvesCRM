@@ -187,31 +187,32 @@ print("appdelegate application - source Application = \(String(describing: sourc
         else if "EvesCRM-fill-xc" == url.scheme
         {
             var textExpander: SMTEDelegateController!
-            if myCurrentViewController is agendaItemViewController
-            {
-                var tempController: agendaItemViewController!
-                tempController = myCurrentViewController as! agendaItemViewController
-                textExpander = tempController.textExpander
-            }
-            else if myCurrentViewController is meetingAgendaViewController
-            {
-                var tempController: meetingAgendaViewController!
-                tempController = myCurrentViewController as! meetingAgendaViewController
-                textExpander = tempController.textExpander
-            }
-            else if myCurrentViewController is taskViewController
-            {
-                var tempController: taskViewController!
-                tempController = myCurrentViewController as! taskViewController
-                textExpander = tempController.textExpander
-            }
-            else if myCurrentViewController is meetingsViewController
-            {
-                var tempController: meetingsViewController!
-                tempController = myCurrentViewController as! meetingsViewController
-                textExpander = tempController.textExpander
-            }
-            else if myCurrentViewController is reminderViewController
+//            if myCurrentViewController is agendaItemViewController
+//            {
+//                var tempController: agendaItemViewController!
+//                tempController = myCurrentViewController as! agendaItemViewController
+//                textExpander = tempController.textExpander
+//            }
+//            else if myCurrentViewController is meetingAgendaViewController
+//            {
+//                var tempController: meetingAgendaViewController!
+//                tempController = myCurrentViewController as! meetingAgendaViewController
+//                textExpander = tempController.textExpander
+//            }
+//            else if myCurrentViewController is taskViewController
+//            {
+//                var tempController: taskViewController!
+//                tempController = myCurrentViewController as! taskViewController
+//                textExpander = tempController.textExpander
+//            }
+//            else if myCurrentViewController is meetingsViewController
+//            {
+//                var tempController: meetingsViewController!
+//                tempController = myCurrentViewController as! meetingsViewController
+//                textExpander = tempController.textExpander
+//            }
+//            else if myCurrentViewController is reminderViewController
+            if myCurrentViewController is reminderViewController
             {
                 var tempController: reminderViewController!
                 tempController = myCurrentViewController as! reminderViewController
@@ -223,12 +224,12 @@ print("appdelegate application - source Application = \(String(describing: sourc
                 tempController = myCurrentViewController as! MaintainProjectViewController
                 textExpander = tempController.textExpander
             }
-            else if myCurrentViewController is taskUpdatesViewController
-            {
-                var tempController: taskUpdatesViewController!
-                tempController = myCurrentViewController as! taskUpdatesViewController
-                textExpander = tempController.textExpander
-            }
+//            else if myCurrentViewController is taskUpdatesViewController
+//            {
+//                var tempController: taskUpdatesViewController!
+//                tempController = myCurrentViewController as! taskUpdatesViewController
+//                textExpander = tempController.textExpander
+//            }
 
             
 //            var textExpander: SMTEDelegateController = tempController.textExpander

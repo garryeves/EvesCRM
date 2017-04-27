@@ -386,7 +386,7 @@ class context: NSObject
         if !saveCalled
         {
             saveCalled = true
-            let _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(workingGTDLevel.performSave), userInfo: nil, repeats: false)
+            let _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.performSave), userInfo: nil, repeats: false)
         }
     }
     
@@ -911,11 +911,11 @@ extension coreDatabase
         }
     }
     
-    func getContextsForSync(_ inLastSyncDate: NSDate) -> [Context]
+    func getContextsForSync(_ syncDate: Date) -> [Context]
     {
         let fetchRequest = NSFetchRequest<Context>(entityName: "Context")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
@@ -933,11 +933,11 @@ extension coreDatabase
         }
     }
     
-    func getContexts1_1ForSync(_ inLastSyncDate: NSDate) -> [Context1_1]
+    func getContexts1_1ForSync(_ syncDate: Date) -> [Context1_1]
     {
         let fetchRequest = NSFetchRequest<Context1_1>(entityName: "Context1_1")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
@@ -1003,25 +1003,25 @@ extension coreDatabase
 
 extension CloudKitInteraction
 {
-    func saveContextToCloudKit(_ inLastSyncDate: NSDate)
+    func saveContextToCloudKit()
     {
         //        NSLog("Syncing Contexts")
-        for myItem in myDatabaseConnection.getContextsForSync(inLastSyncDate)
+        for myItem in myDatabaseConnection.getContextsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Context"))
         {
             saveContextRecordToCloudKit(myItem)
         }
         
-        for myItem in myDatabaseConnection.getContexts1_1ForSync(inLastSyncDate)
+        for myItem in myDatabaseConnection.getContexts1_1ForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Context1_1"))
         {
             saveContext1_1RecordToCloudKit(myItem)
         }
     }
 
-    func updateContextInCoreData(_ inLastSyncDate: NSDate)
+    func updateContextInCoreData()
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "Context") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Context", predicate: predicate)
         
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
@@ -1070,11 +1070,7 @@ extension CloudKitInteraction
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = DateFormatter()
-        myDateFormatter.dateStyle = DateFormatter.Style.short
-        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
-        
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Context", predicate: predicate)
         var predecessor: Int32 = 0
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
@@ -1095,7 +1091,11 @@ extension CloudKitInteraction
                 {
                     predecessor = record.object(forKey: "predecessor") as! Int32
                 }
-                let updateTime = record.object(forKey: "updateTime") as! Date
+                var updateTime = Date()
+                if record.object(forKey: "updateTime") != nil
+                {
+                    updateTime = record.object(forKey: "updateTime") as! Date
+                }
                 let updateType = record.object(forKey: "updateType") as! String
                 
                 myDatabaseConnection.replaceContext(contextID, inName: name, inEmail: email, inAutoEmail: autoEmail, inParentContext: parentContext, inStatus: status, inPersonID: personID, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)

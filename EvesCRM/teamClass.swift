@@ -299,7 +299,7 @@ class team: NSObject
         if !saveCalled
         {
             saveCalled = true
-            let _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(team.performSave), userInfo: nil, repeats: false)
+            let _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.performSave), userInfo: nil, repeats: false)
         }
     }
     
@@ -560,11 +560,11 @@ extension coreDatabase
         deleteAllGTDLevelRecords()
     }
     
-    func getTeamsForSync(_ inLastSyncDate: NSDate) -> [Team]
+    func getTeamsForSync(_ syncDate: Date) -> [Team]
     {
         let fetchRequest = NSFetchRequest<Team>(entityName: "Team")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
@@ -606,20 +606,19 @@ extension coreDatabase
 
 extension CloudKitInteraction
 {
-    func saveTeamToCloudKit(_ inLastSyncDate: NSDate)
+    func saveTeamToCloudKit()
     {
-        //        NSLog("Syncing Team")
-        for myItem in myDatabaseConnection.getTeamsForSync(inLastSyncDate)
+        for myItem in myDatabaseConnection.getTeamsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Team"))
         {
             saveTeamRecordToCloudKit(myItem)
         }
     }
     
-    func updateTeamInCoreData(_ inLastSyncDate: NSDate)
+    func updateTeamInCoreData()
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "Team") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Team", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -654,18 +653,18 @@ extension CloudKitInteraction
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = DateFormatter()
-        myDateFormatter.dateStyle = DateFormatter.Style.short
-        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
-        
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(value: true)
         
         let query: CKQuery = CKQuery(recordType: "Team", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let teamID = record.object(forKey: "teamID") as! Int32
-                let updateTime = record.object(forKey: "updateTime") as! Date
+                var updateTime = Date()
+                if record.object(forKey: "updateTime") != nil
+                {
+                    updateTime = record.object(forKey: "updateTime") as! Date
+                }
                 let updateType = record.object(forKey: "updateType") as! String
                 let name = record.object(forKey: "name") as! String
                 let note = record.object(forKey: "note") as! String

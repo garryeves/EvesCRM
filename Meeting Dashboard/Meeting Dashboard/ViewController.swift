@@ -15,7 +15,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        
+ 
         myID = "dummy" // this is here for when I enable multiuser, to make it easy to implement
         
         lblDebug.text = ""
@@ -24,7 +24,6 @@ class ViewController: UIViewController {
         myCloudDB = CloudKitInteraction()
         
         Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.performInitialSync), userInfo: nil, repeats: false)
-
     }
 
     override func didReceiveMemoryWarning() {
@@ -71,7 +70,7 @@ class ViewController: UIViewController {
             
             decodeString = myDatabaseConnection.getDecodeValue("Default Team")
             
-            let tempID = Int(decodeString)
+            let tempID = Int32(decodeString)
             
             if tempID == nil
             {

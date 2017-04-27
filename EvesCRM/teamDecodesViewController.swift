@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 import TextExpander
 
 class teamDecodesViewController: UIViewController, SMTEFillDelegate
@@ -45,7 +46,7 @@ class teamDecodesViewController: UIViewController, SMTEFillDelegate
         
         // Load GTD
         
-        notificationCenter.addObserver(self, selector: #selector(teamDecodesViewController.changeSettings(_:)), name: NotificationTeamDecodeChangeSettings, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.changeSettings(_:)), name: NotificationTeamDecodeChangeSettings, object: nil)
         
         // TextExpander
         textExpander = SMTEDelegateController()

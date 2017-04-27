@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 class startViewController: UIViewController
 {
@@ -21,14 +22,14 @@ class startViewController: UIViewController
         
         myDatabaseConnection = coreDatabase()
         myCloudDB = CloudKitInteraction()
-
-        Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(startViewController.performInitialSync), userInfo: nil, repeats: false)
+        
+        Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.performInitialSync), userInfo: nil, repeats: false)
 
     }
     
     func performInitialSync()
     {
-        Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(startViewController.initialPopulationOfTables), userInfo: nil, repeats: false)
+        Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.initialPopulationOfTables), userInfo: nil, repeats: false)
         myDBSync.sync()
     }
     

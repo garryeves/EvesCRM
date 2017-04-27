@@ -284,7 +284,7 @@ class workingGTDItem: NSObject
         if !saveCalled
         {
             saveCalled = true
-            let _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(workingGTDLevel.performSave), userInfo: nil, repeats: false)
+            let _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.performSave), userInfo: nil, repeats: false)
         }
     }
     
@@ -673,11 +673,11 @@ extension coreDatabase
         saveContext()
     }
     
-    func getGTDItemsForSync(_ inLastSyncDate: NSDate) -> [GTDItem]
+    func getGTDItemsForSync(_ syncDate: Date) -> [GTDItem]
     {
         let fetchRequest = NSFetchRequest<GTDItem>(entityName: "GTDItem")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
@@ -718,20 +718,20 @@ extension coreDatabase
 
 extension CloudKitInteraction
 {
-    func saveGTDItemToCloudKit(_ inLastSyncDate: NSDate)
+    func saveGTDItemToCloudKit()
     {
         //        NSLog("Syncing GTDItem")
-        for myItem in myDatabaseConnection.getGTDItemsForSync(inLastSyncDate)
+        for myItem in myDatabaseConnection.getGTDItemsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "GTDItem"))
         {
             saveGTDItemRecordToCloudKit(myItem)
         }
     }
 
-    func updateGTDItemInCoreData(_ inLastSyncDate: NSDate)
+    func updateGTDItemInCoreData()
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "GTDItem") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "GTDItem", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -766,17 +766,17 @@ extension CloudKitInteraction
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = DateFormatter()
-        myDateFormatter.dateStyle = DateFormatter.Style.short
-        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
-        
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "GTDItem", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let gTDItemID = record.object(forKey: "gTDItemID") as! Int32
-                let updateTime = record.object(forKey: "updateTime") as! Date
+                var updateTime = Date()
+                if record.object(forKey: "updateTime") != nil
+                {
+                    updateTime = record.object(forKey: "updateTime") as! Date
+                }
                 let updateType = record.object(forKey: "updateType") as! String
                 let gTDParentID = record.object(forKey: "gTDParentID") as! Int32
                 let lastReviewDate = record.object(forKey: "lastReviewDate") as! Date

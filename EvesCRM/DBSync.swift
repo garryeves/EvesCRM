@@ -29,7 +29,6 @@ class DBSync: NSObject
     
     func sync()
     {
-        var dateString: String = ""
         if !refreshRunning
         {
             let iCloudConnected = myCloudDB.userInfo.loggedInToICloud()
@@ -38,67 +37,25 @@ class DBSync: NSObject
             {
                 if myDatabaseConnection.getTeamsCount() == 0
                 {  // Nothing in teams table so lets do a full sync
-                    notificationCenter.addObserver(self, selector: #selector(DBSync.DBReplaceDone), name: NotificationDBReplaceDone, object: nil)
+                    notificationCenter.addObserver(self, selector: #selector(self.DBReplaceDone), name: NotificationDBReplaceDone, object: nil)
                     replaceWithCloudKit()
                     
                     notificationCenter.post(name: NotificationDBReplaceDone, object: nil)
 
                 }
                 else
-                {
-                    var syncDate: NSDate!
-                    let syncStart = NSDate()
+                {                
+                    let newSyncDate = Date()
+                    
+                    syncToCloudKit()
         
-                    // Get the last sync date
+                    syncFromCloudKit()
         
-                    let lastSyncDate = myDatabaseConnection.getDecodeValue(getSyncID())
-        
-                    if lastSyncDate == "" || lastSyncDate == "nil" 
-                    {
-                        let myDateFormatter = DateFormatter()
-                        myDateFormatter.dateStyle = DateFormatter.Style.short
-            
-                        syncDate = myDateFormatter.date(from: "01/01/15")! as NSDate
-                    }
-                    else
-                    {
-                        // Convert string to date
-            
-                        let myDateFormatter = DateFormatter()
-                        myDateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss ZZZZ"
-            
-                        let tempSyncDate = myDateFormatter.date(from: lastSyncDate)! as NSDate
-                        
-                        // We want to sync everything changes in the last month so need to do some date math
-                        
-                        let myCalendar = Calendar.current
-                        
-                        syncDate = myCalendar.date(
-                            byAdding: .hour,
-                            value: -1,
-                            to: tempSyncDate as Date)! as NSDate
-                    }
-
-                    // Load
-                
-   //             NEXT 3 LINES TEMP FIX
-//let myDateFormatter = NSDateFormatter()
-//myDateFormatter.dateStyle = NSDateFormatterStyle.ShortStyle
-//syncDate = myDateFormatter.dateFromString("01/01/15")
-                
-                    syncToCloudKit(syncDate)
-        
-                    syncFromCloudKit(syncDate)
-        
-                    // Update last sync date
-        
-                    dateString = "\(syncStart)"
-
-                    myDatabaseConnection.updateDecodeValue(getSyncID(), inCodeValue: dateString, inCodeType: "hidden")
-
                     myDatabaseConnection.clearDeletedItems()
                     myDatabaseConnection.clearSyncedItems()
 
+                    setLastSyncDates(syncDate: newSyncDate)
+                    
                     if firstRun
                     {
                         myCloudDB.setupSubscriptions()
@@ -132,7 +89,7 @@ class DBSync: NSObject
         let syncDate: Date = myDateFormatter.date(from: "01/01/15")!
         let dateString = "\(syncDate)"
 
-        myDatabaseConnection.updateDecodeValue("\(coreDatabaseName) Sync", inCodeValue: dateString, inCodeType: "hidden")
+        myDatabaseConnection.updateDecodeValue("\(appName) Sync", inCodeValue: dateString, inCodeType: "hidden")
         
         myDatabaseConnection.clearDeletedItems()
         myDatabaseConnection.clearSyncedItems()
@@ -160,7 +117,7 @@ class DBSync: NSObject
     {
         let defaults = UserDefaults.standard
         
-        if let name = defaults.string(forKey: coreDatabaseName)
+        if let name = defaults.string(forKey: appName)
         {
             return name
         }
@@ -169,8 +126,7 @@ class DBSync: NSObject
             // get the next device ID
             myDatabaseConnection.setNextDeviceID()
             
-            let name = defaults.string(forKey: coreDatabaseName
-            )
+            let name = defaults.string(forKey: appName)
             
             return name!
         }

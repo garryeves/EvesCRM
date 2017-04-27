@@ -735,7 +735,7 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
     override init()
     {
         super.init()
-        notificationCenter.addObserver(self, selector: #selector(gmailData.gmailSignedIn(_:)), name: NotificationGmailSignedIn, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.gmailSignedIn(_:)), name: NotificationGmailSignedIn, object: nil)
     }
     
     func shouldSaveInKeychain() -> Bool
@@ -1017,11 +1017,11 @@ extension coreDatabase
         saveContext()
     }
     
-    func getProcessedEmailsForSync(_ inLastSyncDate: NSDate) -> [ProcessedEmails]
+    func getProcessedEmailsForSync(_ syncDate: Date) -> [ProcessedEmails]
     {
         let fetchRequest = NSFetchRequest<ProcessedEmails>(entityName: "ProcessedEmails")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
@@ -1171,20 +1171,20 @@ extension coreDatabase
 
 extension CloudKitInteraction
 {
-    func saveProcessedEmailsToCloudKit(_ inLastSyncDate: NSDate)
+    func saveProcessedEmailsToCloudKit()
     {
         //        NSLog("Syncing ProcessedEmails")
-        for myItem in myDatabaseConnection.getProcessedEmailsForSync(inLastSyncDate)
+        for myItem in myDatabaseConnection.getProcessedEmailsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "ProcessedEmails"))
         {
             saveProcessedEmailsRecordToCloudKit(myItem)
         }
     }
 
-    func updateProcessedEmailsInCoreData(_ inLastSyncDate: NSDate)
+    func updateProcessedEmailsInCoreData()
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "ProcessedEmails") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "ProcessedEmails", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1219,17 +1219,17 @@ extension CloudKitInteraction
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = DateFormatter()
-        myDateFormatter.dateStyle = DateFormatter.Style.short
-        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
-        
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "ProcessedEmails", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let emailID = record.object(forKey: "emailID") as! String
-                let updateTime = record.object(forKey: "updateTime") as! Date
+                var updateTime = Date()
+                if record.object(forKey: "updateTime") != nil
+                {
+                    updateTime = record.object(forKey: "updateTime") as! Date
+                }
                 let updateType = record.object(forKey: "updateType") as! String
                 let emailType = record.object(forKey: "emailType") as! String
                 let processedDate = record.object(forKey: "processedDate") as! Date

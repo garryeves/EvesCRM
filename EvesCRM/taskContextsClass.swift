@@ -316,11 +316,11 @@ extension coreDatabase
         saveContext()
     }
     
-    func getTaskContextsForSync(_ inLastSyncDate: NSDate) -> [TaskContext]
+    func getTaskContextsForSync(_ syncDate: Date) -> [TaskContext]
     {
         let fetchRequest = NSFetchRequest<TaskContext>(entityName: "TaskContext")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
@@ -362,20 +362,20 @@ extension coreDatabase
 
 extension CloudKitInteraction
 {
-    func saveTaskContextToCloudKit(_ inLastSyncDate: NSDate)
+    func saveTaskContextToCloudKit()
     {
         //        NSLog("Syncing TaskContext")
-        for myItem in myDatabaseConnection.getTaskContextsForSync(inLastSyncDate)
+        for myItem in myDatabaseConnection.getTaskContextsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "TaskContext"))
         {
             saveTaskContextRecordToCloudKit(myItem)
         }
     }
 
-    func updateTaskContextInCoreData(_ inLastSyncDate: NSDate)
+    func updateTaskContextInCoreData()
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "TaskContext") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskContext", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -410,18 +410,18 @@ extension CloudKitInteraction
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = DateFormatter()
-        myDateFormatter.dateStyle = DateFormatter.Style.short
-        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
-        
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "TaskContext", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let taskID = record.object(forKey: "taskID") as! Int32
                 let contextID = record.object(forKey: "contextID") as! Int32
-                let updateTime = record.object(forKey: "updateTime") as! Date
+                var updateTime = Date()
+                if record.object(forKey: "updateTime") != nil
+                {
+                    updateTime = record.object(forKey: "updateTime") as! Date
+                }
                 let updateType = record.object(forKey: "updateType") as! String
                 
                 myDatabaseConnection.replaceTaskContext(contextID, inTaskID: taskID, inUpdateTime: updateTime, inUpdateType: updateType)

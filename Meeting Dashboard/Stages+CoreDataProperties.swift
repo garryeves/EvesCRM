@@ -1,5 +1,5 @@
 //
-//  Roles+CoreDataProperties.swift
+//  Stages+CoreDataProperties.swift
 //  Meeting Dashboard
 //
 //  Created by Garry Eves on 27/4/17.
@@ -10,14 +10,13 @@ import Foundation
 import CoreData
 
 
-extension Roles {
+extension Stages {
 
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<Roles> {
-        return NSFetchRequest<Roles>(entityName: "Roles")
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<Stages> {
+        return NSFetchRequest<Stages>(entityName: "Stages")
     }
 
-    @NSManaged public var roleDescription: String?
-    @NSManaged public var roleID: Int32
+    @NSManaged public var stageDescription: String?
     @NSManaged public var teamID: Int32
     @NSManaged public var updateTime: NSDate?
     @NSManaged public var updateType: String?

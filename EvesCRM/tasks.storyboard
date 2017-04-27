@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="ipad9_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
         <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -16,7 +20,7 @@
                         <viewControllerLayoutGuide type="bottom" id="gU9-wd-DGI"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="OUb-j4-ZHS">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZJh-RX-hQ9" userLabel="lblTaskTitle">
@@ -40,7 +44,7 @@
                                 </variation>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Status" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="TPr-7z-ab0" userLabel="lblStatus">
-                                <rect key="frame" x="839" y="1008" width="55" height="21"/>
+                                <rect key="frame" x="583" y="666" width="55" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="55" id="BZE-L8-XkB">
                                         <variation key="heightClass=regular-widthClass=regular" constant="55"/>
@@ -56,20 +60,20 @@
                                 </variation>
                             </label>
                             <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="5" translatesAutoresizingMaskIntoConstraints="NO" id="eTG-qR-a16" userLabel="myDatePicker">
-                                <rect key="frame" x="352" y="575" width="320" height="216"/>
+                                <rect key="frame" x="224" y="404" width="320" height="216"/>
                                 <date key="date" timeIntervalSinceReferenceDate="459239227.95241803">
                                     <!--2015-07-22 06:27:07 +0000-->
                                 </date>
                             </datePicker>
                             <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Gbj-T1-K9a" userLabel="myPicker">
-                                <rect key="frame" x="352" y="120" width="320" height="216"/>
+                                <rect key="frame" x="224" y="120" width="320" height="216"/>
                                 <connections>
                                     <outlet property="dataSource" destination="Er5-bg-pW1" id="KTp-p1-o9z"/>
                                     <outlet property="delegate" destination="Er5-bg-pW1" id="P4a-Hc-w54"/>
                                 </connections>
                             </pickerView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="440-lX-cAE" userLabel="btnOwner">
-                                <rect key="frame" x="170" y="1328" width="724" height="30"/>
+                                <rect key="frame" x="170" y="986" width="414" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="qjq-de-NMd"/>
                                 </constraints>
@@ -81,7 +85,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="s76-qw-Nkq" userLabel="btnStatus">
-                                <rect key="frame" x="904" y="1008" width="100" height="30"/>
+                                <rect key="frame" x="648" y="666" width="100" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="100" id="B1H-G6-M0u"/>
                                 </constraints>
@@ -98,7 +102,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GRZ-7P-fgh" userLabel="btnSetTargetDate">
-                                <rect key="frame" x="458" y="811" width="107" height="30"/>
+                                <rect key="frame" x="330.5" y="640" width="107" height="30"/>
                                 <state key="normal" title="Set Target Date">
                                     <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
@@ -107,7 +111,7 @@
                                 </connections>
                             </button>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="DmT-Wl-60R" userLabel="txtEstTime">
-                                <rect key="frame" x="883" y="1128" width="50" height="30"/>
+                                <rect key="frame" x="573" y="786" width="50" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="RAB-Mo-gUQ"/>
                                 </constraints>
@@ -123,7 +127,7 @@
                                 </connections>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KU9-Dy-ZBi" userLabel="btnEstTimeInterval">
-                                <rect key="frame" x="943" y="1128" width="61" height="30"/>
+                                <rect key="frame" x="633" y="786" width="115" height="30"/>
                                 <state key="normal" title="Minutes">
                                     <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
@@ -132,7 +136,7 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Estimated Time" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IUw-lq-ef8" userLabel="lblEstTime">
-                                <rect key="frame" x="754" y="1128" width="119" height="21"/>
+                                <rect key="frame" x="444" y="786" width="119" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="119" id="ccb-KH-esQ"/>
                                 </constraints>
@@ -141,7 +145,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yiu-Ik-75X" userLabel="btnEnergy">
-                                <rect key="frame" x="829" y="1328" width="175" height="30"/>
+                                <rect key="frame" x="573" y="986" width="175" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="175" id="CsJ-xY-wPz"/>
                                 </constraints>
@@ -158,13 +162,13 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="New Context" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pNO-6m-l4o" userLabel="lblNewContext">
-                                <rect key="frame" x="303" y="79" width="99" height="21"/>
+                                <rect key="frame" x="175" y="79" width="99" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="z08-7Y-fWX" userLabel="btnNewContext">
-                                <rect key="frame" x="622" y="70" width="120" height="30"/>
+                                <rect key="frame" x="494" y="70" width="120" height="30"/>
                                 <state key="normal" title="Add New Context">
                                     <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
@@ -173,13 +177,13 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Project" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vJ5-ML-jOD" userLabel="lblProject">
-                                <rect key="frame" x="20" y="1008" width="55" height="21"/>
+                                <rect key="frame" x="20" y="666" width="55" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fl1-VX-LXV" userLabel="btnProject">
-                                <rect key="frame" x="157" y="1008" width="77" height="30"/>
+                                <rect key="frame" x="157" y="666" width="77" height="30"/>
                                 <state key="normal" title="Click to set">
                                     <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 </state>
@@ -188,7 +192,7 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Contexts" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="thm-Wk-5GC" userLabel="lblContexts">
-                                <rect key="frame" x="20" y="1088" width="69" height="30"/>
+                                <rect key="frame" x="20" y="746" width="69" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="rNi-R8-bHf"/>
                                 </constraints>
@@ -196,8 +200,8 @@
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="3Tt-dR-6zC" userLabel="colContexts">
-                                <rect key="frame" x="20" y="362" width="246" height="190"/>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="3Tt-dR-6zC" userLabel="colContexts">
+                                <rect key="frame" x="20" y="786" width="414" height="190"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="190" id="tor-3n-4s2"/>
@@ -210,7 +214,7 @@
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="reuseContext" id="Utq-QD-vhD" customClass="myContextItem" customModule="EvesCRM" customModuleProvider="target">
-                                        <rect key="frame" x="-1" y="0.0" width="248" height="50"/>
+                                        <rect key="frame" x="83" y="0.0" width="248" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="248" height="50"/>
@@ -287,8 +291,8 @@
                                     <outlet property="delegate" destination="Er5-bg-pW1" id="xmq-5p-hPr"/>
                                 </connections>
                             </collectionView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Urgency" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IY2-o5-X0i" userLabel="lblUrgency">
-                                <rect key="frame" x="276" y="522" width="119" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Urgency" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IY2-o5-X0i" userLabel="lblUrgency">
+                                <rect key="frame" x="444" y="946" width="119" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="119" id="ad9-jt-VZT"/>
                                 </constraints>
@@ -301,8 +305,8 @@
                                     </mask>
                                 </variation>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xyd-iv-quv" userLabel="btnUrgency">
-                                <rect key="frame" x="405" y="522" width="175" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xyd-iv-quv" userLabel="btnUrgency">
+                                <rect key="frame" x="573" y="946" width="175" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="175" id="U4I-PV-5gc"/>
                                 </constraints>
@@ -319,10 +323,10 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Due" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ihP-tf-7eL" userLabel="lblTargetDate">
-                                <rect key="frame" x="754" y="1208" width="65" height="21"/>
+                                <rect key="frame" x="444" y="866" width="119" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="119" id="ntd-z9-qIN">
-                                        <variation key="heightClass=regular-widthClass=regular" constant="65"/>
+                                        <variation key="heightClass=regular-widthClass=regular" constant="119"/>
                                     </constraint>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -335,7 +339,7 @@
                                 </variation>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gJG-Zq-x0r" userLabel="btnTargetDate">
-                                <rect key="frame" x="829" y="1208" width="175" height="30"/>
+                                <rect key="frame" x="573" y="866" width="175" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="175" id="Njn-6w-ZQX"/>
                                 </constraints>
@@ -351,11 +355,11 @@
                                     <action selector="btnTargetDate:" destination="Er5-bg-pW1" eventType="touchUpInside" id="u5i-45-gZG"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Start" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rNO-su-PMq" userLabel="lblStart">
-                                <rect key="frame" x="276" y="402" width="119" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Start" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rNO-su-PMq" userLabel="lblStart">
+                                <rect key="frame" x="444" y="826" width="119" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="119" id="bPC-hz-xNh">
-                                        <variation key="heightClass=regular-widthClass=regular" constant="65"/>
+                                        <variation key="heightClass=regular-widthClass=regular" constant="119"/>
                                     </constraint>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -367,8 +371,8 @@
                                     </mask>
                                 </variation>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vQz-XL-Pim" userLabel="btnStart">
-                                <rect key="frame" x="405" y="402" width="175" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vQz-XL-Pim" userLabel="btnStart">
+                                <rect key="frame" x="573" y="826" width="175" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="175" id="f9f-5e-dPI"/>
                                 </constraints>
@@ -384,8 +388,8 @@
                                     <action selector="btnStart:" destination="Er5-bg-pW1" eventType="touchUpInside" id="vRI-7g-ABN"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Priority" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZJO-tg-sQs" userLabel="lblPriority">
-                                <rect key="frame" x="276" y="482" width="119" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Priority" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZJO-tg-sQs" userLabel="lblPriority">
+                                <rect key="frame" x="444" y="906" width="119" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="119" id="DyR-cs-vDb"/>
                                 </constraints>
@@ -399,7 +403,7 @@
                                 </variation>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IjQ-S1-TPC" userLabel="btnSelect">
-                                <rect key="frame" x="412" y="356" width="200" height="30"/>
+                                <rect key="frame" x="284" y="356" width="200" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="200" id="FhA-Xu-CBA"/>
                                 </constraints>
@@ -416,7 +420,7 @@
                                 </connections>
                             </button>
                             <textField opaque="NO" clipsSubviews="YES" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="y3E-F9-dqm" userLabel="txtNewContext">
-                                <rect key="frame" x="412" y="70" width="200" height="30"/>
+                                <rect key="frame" x="284" y="70" width="200" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="200" id="nuF-so-N3G"/>
                                 </constraints>
@@ -429,13 +433,13 @@
                                 </variation>
                             </textField>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6Wo-tg-PEM">
-                                <rect key="frame" x="20" y="20" width="984" height="44"/>
+                                <rect key="frame" x="20" y="20" width="728" height="44"/>
                                 <items>
                                     <barButtonItem title="Item" id="3s0-ng-25i"/>
                                 </items>
                             </toolbar>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="uRN-ce-fxE" userLabel="txtTaskTitle">
-                                <rect key="frame" x="64" y="74" width="940" height="30"/>
+                                <rect key="frame" x="64" y="74" width="684" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                 <connections>
@@ -443,10 +447,10 @@
                                 </connections>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Energy" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OVq-kk-i4G" userLabel="lblEnergy">
-                                <rect key="frame" x="754" y="1328" width="65" height="30"/>
+                                <rect key="frame" x="444" y="986" width="119" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="119" id="ZOa-cf-Uym">
-                                        <variation key="heightClass=regular-widthClass=regular" constant="65"/>
+                                        <variation key="heightClass=regular-widthClass=regular" constant="119"/>
                                     </constraint>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -459,7 +463,7 @@
                                 </variation>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Repeat Every" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ZXw-sW-FoY" userLabel="lblRepeatEvery">
-                                <rect key="frame" x="20" y="1048" width="134" height="21"/>
+                                <rect key="frame" x="20" y="706" width="134" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="134" id="bGE-40-TgR"/>
                                 </constraints>
@@ -468,7 +472,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="from activity" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vq5-hl-xFl" userLabel="lblFromActivity">
-                                <rect key="frame" x="314" y="1048" width="102" height="21"/>
+                                <rect key="frame" x="314" y="706" width="102" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="102" id="WHf-Xo-CNJ"/>
                                 </constraints>
@@ -477,7 +481,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="IIO-8u-w3D" userLabel="txtRepeatInterval">
-                                <rect key="frame" x="164" y="1048" width="30" height="30"/>
+                                <rect key="frame" x="164" y="706" width="30" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="30" id="miH-DM-wZe"/>
                                 </constraints>
@@ -488,7 +492,7 @@
                                 </connections>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hAE-mF-mV6" userLabel="btnRepeatPeriod">
-                                <rect key="frame" x="204" y="1048" width="100" height="30"/>
+                                <rect key="frame" x="204" y="706" width="100" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="100" id="r40-Ln-MKT"/>
                                 </constraints>
@@ -498,14 +502,14 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2Fx-1y-s2R" userLabel="btnRepeatBase">
-                                <rect key="frame" x="426" y="1048" width="578" height="30"/>
+                                <rect key="frame" x="426" y="706" width="322" height="30"/>
                                 <state key="normal" title="Button"/>
                                 <connections>
                                     <action selector="btnRepeatBase:" destination="Er5-bg-pW1" eventType="touchUpInside" id="5kl-ZV-ZYk"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="X41-ms-r1v" userLabel="btnPriority">
-                                <rect key="frame" x="405" y="482" width="175" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="X41-ms-r1v" userLabel="btnPriority">
+                                <rect key="frame" x="573" y="906" width="175" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="175" id="sCg-wq-hkc"/>
                                 </constraints>
@@ -522,7 +526,7 @@
                                 </connections>
                             </button>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" tag="1" contentMode="scaleToFill" keyboardDismissMode="interactive" translatesAutoresizingMaskIntoConstraints="NO" id="mtU-vu-bZ4" userLabel="txtTaskDescription">
-                                <rect key="frame" x="20" y="145" width="984" height="853"/>
+                                <rect key="frame" x="20" y="145" width="728" height="511"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="80" id="Nvm-rl-7B8"/>
@@ -786,7 +790,6 @@
                             </mask>
                         </variation>
                     </view>
-                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="ipad12_9.fullscreen"/>
                     <connections>
                         <outlet property="btnEnergy" destination="yiu-Ik-75X" id="2cp-Va-Alk"/>
                         <outlet property="btnEstTimeInterval" destination="KU9-Dy-ZBi" id="fhK-rT-nie"/>
@@ -840,11 +843,11 @@
                         <viewControllerLayoutGuide type="bottom" id="cWI-n6-hLA"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="ccX-PS-bqC">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="4Nl-ZL-jOf" userLabel="colTaskList">
-                                <rect key="frame" x="20" y="20" width="984" height="1346"/>
+                                <rect key="frame" x="20" y="20" width="728" height="1004"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="jwm-Fw-VHc">
                                     <size key="itemSize" width="675" height="88"/>
@@ -854,7 +857,7 @@
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="taskCell" id="URY-UX-jCv" customClass="myTaskListItem" customModule="EvesCRM" customModuleProvider="target">
-                                        <rect key="frame" x="154.5" y="0.0" width="675" height="88"/>
+                                        <rect key="frame" x="27" y="0.0" width="675" height="88"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="675" height="88"/>
@@ -1075,7 +1078,6 @@
                             </mask>
                         </variation>
                     </view>
-                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="ipad12_9.fullscreen"/>
                     <connections>
                         <outlet property="colTaskList" destination="4Nl-ZL-jOf" id="9xi-Hy-bng"/>
                     </connections>
@@ -1093,7 +1095,7 @@
                         <viewControllerLayoutGuide type="bottom" id="Adn-eA-Oac"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="SgE-fE-SUM">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Add Update" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p8h-WL-IJA" userLabel="lblAddUpdate">
@@ -1123,7 +1125,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <textField opaque="NO" clipsSubviews="YES" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="4BO-lt-DuK" userLabel="txtUpdateSource">
-                                <rect key="frame" x="145" y="58" width="859" height="30"/>
+                                <rect key="frame" x="145" y="58" width="603" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="E9k-eZ-YDb"/>
                                 </constraints>
@@ -1136,7 +1138,7 @@
                                 </variation>
                             </textField>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" tag="1" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mFx-PD-fxZ" userLabel="txtUpdateDetails">
-                                <rect key="frame" x="143" y="98" width="861" height="120"/>
+                                <rect key="frame" x="143" y="98" width="605" height="120"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="120" id="9ki-ee-xcZ"/>
@@ -1150,7 +1152,7 @@
                                 </variation>
                             </textView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6iL-ce-5Me" userLabel="btnAddUpdate">
-                                <rect key="frame" x="471" y="228" width="82" height="30"/>
+                                <rect key="frame" x="343" y="228" width="82" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="1PL-Kc-8T7"/>
                                 </constraints>
@@ -1167,7 +1169,7 @@
                                 </connections>
                             </button>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="e5Y-iL-crc" userLabel="colHistory">
-                                <rect key="frame" x="28" y="268" width="968" height="1090"/>
+                                <rect key="frame" x="28" y="268" width="712" height="748"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="Bq4-AQ-oIS">
                                     <size key="itemSize" width="541" height="72"/>
@@ -1177,7 +1179,7 @@
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" reuseIdentifier="myHistoryCell" id="CLM-XI-yCX" customClass="myHistory" customModule="EvesCRM" customModuleProvider="target">
-                                        <rect key="frame" x="213.5" y="0.0" width="541" height="72"/>
+                                        <rect key="frame" x="85.5" y="0.0" width="541" height="72"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="541" height="72"/>
@@ -1323,7 +1325,6 @@
                             </mask>
                         </variation>
                     </view>
-                    <simulatedScreenMetrics key="simulatedDestinationMetrics" type="ipad12_9.fullscreen"/>
                     <connections>
                         <outlet property="btnAddUpdate" destination="6iL-ce-5Me" id="DwH-GE-WzE"/>
                         <outlet property="colHistory" destination="e5Y-iL-crc" id="d1J-ch-iCD"/>

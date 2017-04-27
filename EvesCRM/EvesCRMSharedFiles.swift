@@ -8,7 +8,7 @@
 
 import Foundation
 import EventKit
-
+import UIKit
 import Contacts
 
 var adbk: CNContactStore!
@@ -26,17 +26,6 @@ var adbk: CNContactStore!
 #else
     // NSLog("Unexpected OS")
 #endif
-
-
-// Storyboards
-
-let contextsStoryboard = UIStoryboard(name: "contexts", bundle: nil)
-let projectsStoryboard = UIStoryboard(name: "projects", bundle: nil)
-let meetingStoryboard = UIStoryboard(name: "meeting", bundle: nil)
-let tasksStoryboard = UIStoryboard(name: "tasks", bundle: nil)
-let teamStoryboard = UIStoryboard(name: "team", bundle: nil)
-let GTDStoryboard = UIStoryboard(name: "GTD", bundle: nil)
-
 
 var myDatabaseConnection: coreDatabase!
 var myCloudDB: CloudKitInteraction!
@@ -192,88 +181,6 @@ struct PeopleData
         self.myDisplayFormat = ""
         self.personRecord = inRecord
     }
-}
-
-struct EvernoteData
-{
-    fileprivate var myTitle: String
-    fileprivate var myUpdateDate: Date!
-    fileprivate var myCreateDate: Date!
-    fileprivate var myIdentifier: String
-    #if os(iOS)
-        fileprivate var myNoteRef: ENNoteRef!
-    #elseif os(OSX)
-        // NSLog("Evernote to be determined")
-    #else
-        //NSLog("Unexpected OS")
-    #endif
-
-
-    var title: String
-        {
-        get {
-            return myTitle
-        }
-        set {
-            myTitle = newValue
-        }
-    }
-    
-    var updateDate: Date
-        {
-        get {
-            return myUpdateDate
-        }
-        set {
-            myUpdateDate = newValue
-        }
-    }
-    
-    var createDate: Date
-        {
-        get {
-            return myCreateDate
-        }
-        set {
-            myCreateDate = newValue
-        }
-    }
-    
-    var identifier: String
-        {
-        get {
-            return myIdentifier
-        }
-        set {
-            myIdentifier = newValue
-        }
-    }
-
-    #if os(iOS)
-        var NoteRef: ENNoteRef
-        {
-            get
-            {
-                return myNoteRef
-            }
-            set
-            {
-                myNoteRef = newValue
-            }
-        }
-
-    #elseif os(OSX)
-        // Evernote to do
-    #else
-        //    NSLog("Unexpected OS")
-    #endif
-    
-    init()
-    {
-        self.myTitle = ""
-        self.myIdentifier = ""
-    }
-    
 }
 
 // Overloading writeRowToArray a number of times to allow for collection of structs where I am going to allow user to interact and change data inside the app,rather than them having to go to source app.  The number of these will be kept to a minimum.
@@ -548,20 +455,6 @@ class StreamReader  {
     func close() -> Void {
         fileHandle?.closeFile()
         fileHandle = nil
-    }
-}
-
-
-func populateStages(_ inTeamID: Int32)
-{
-    let loadSet = ["Definition", "Initiation", "Planning", "Execution", "Monitoring & Control", "Closure", "Completed", "Archived", "On Hold"]
-    
-    for myItem in loadSet
-    {
-        if !myDatabaseConnection.stageExists(myItem, inTeamID: inTeamID)
-        {
-            myDatabaseConnection.saveStage(myItem, teamID: inTeamID)
-        }
     }
 }
 
@@ -1594,5 +1487,18 @@ func checkCalendarConnected(_ myEventStore: EKEventStore)
         
         default:
             print("Reminder Case Default")
+    }
+}
+
+func populateStages(_ inTeamID: Int32)
+{
+    let loadSet = ["Definition", "Initiation", "Planning", "Execution", "Monitoring & Control", "Closure", "Completed", "Archived", "On Hold"]
+    
+    for myItem in loadSet
+    {
+        if !myDatabaseConnection.stageExists(myItem, inTeamID: inTeamID)
+        {
+            myDatabaseConnection.saveStage(myItem, teamID: inTeamID)
+        }
     }
 }

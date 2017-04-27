@@ -585,11 +585,11 @@ extension coreDatabase
         saveContext()
     }
 
-    func getMeetingAgendaItemsForSync(_ inLastSyncDate: NSDate) -> [MeetingAgendaItem]
+    func getMeetingAgendaItemsForSync(_ syncDate: Date) -> [MeetingAgendaItem]
     {
         let fetchRequest = NSFetchRequest<MeetingAgendaItem>(entityName: "MeetingAgendaItem")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
@@ -913,11 +913,11 @@ extension coreDatabase
         saveContext()
     }
     
-    func getMeetingTasksForSync(_ inLastSyncDate: NSDate) -> [MeetingTasks]
+    func getMeetingTasksForSync(_ syncDate: Date) -> [MeetingTasks]
     {
         let fetchRequest = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
@@ -959,20 +959,20 @@ extension coreDatabase
 
 extension CloudKitInteraction
 {
-    func saveMeetingAgendaItemToCloudKit(_ inLastSyncDate: NSDate)
+    func saveMeetingAgendaItemToCloudKit()
     {
         //        NSLog("Syncing meetingAgendaItems")
-        for myItem in myDatabaseConnection.getMeetingAgendaItemsForSync(inLastSyncDate)
+        for myItem in myDatabaseConnection.getMeetingAgendaItemsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "MeetingAgendaItem"))
         {
             saveMeetingAgendaItemRecordToCloudKit(myItem)
         }
     }
 
-    func updateMeetingAgendaItemInCoreData(_ inLastSyncDate: NSDate)
+    func updateMeetingAgendaItemInCoreData()
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingAgendaItem") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1007,18 +1007,18 @@ extension CloudKitInteraction
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = DateFormatter()
-        myDateFormatter.dateStyle = DateFormatter.Style.short
-        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
-        
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let meetingID = record.object(forKey: "meetingID") as! String
                 let agendaID = record.object(forKey: "agendaID") as! Int32
-                let updateTime = record.object(forKey: "updateTime") as! Date
+                var updateTime = Date()
+                if record.object(forKey: "updateTime") != nil
+                {
+                    updateTime = record.object(forKey: "updateTime") as! Date
+                }
                 let updateType = record.object(forKey: "updateType") as! String
                 let actualEndTime = record.object(forKey: "actualEndTime") as! Date
                 let actualStartTime = record.object(forKey: "actualStartTime") as! Date
@@ -1162,20 +1162,20 @@ extension CloudKitInteraction
         myDatabaseConnection.saveAgendaItem(meetingID, actualEndTime: actualEndTime, actualStartTime: actualStartTime, status: status, decisionMade: decisionMade, discussionNotes: discussionNotes, timeAllocation: timeAllocation, owner: owner, title: title, agendaID: agendaID, meetingOrder: meetingOrder, inUpdateTime: updateTime, inUpdateType: updateType)
     }
     
-    func saveMeetingTasksToCloudKit(_ inLastSyncDate: NSDate)
+    func saveMeetingTasksToCloudKit()
     {
         //        NSLog("Syncing MeetingTasks")
-        for myItem in myDatabaseConnection.getMeetingTasksForSync(inLastSyncDate)
+        for myItem in myDatabaseConnection.getMeetingTasksForSync(myDatabaseConnection.getSyncDateForTable(tableName: "MeetingTasks"))
         {
             saveMeetingTasksRecordToCloudKit(myItem)
         }
     }
 
-    func updateMeetingTasksInCoreData(_ inLastSyncDate: NSDate)
+    func updateMeetingTasksInCoreData()
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingTasks") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingTasks", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1210,18 +1210,18 @@ extension CloudKitInteraction
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = DateFormatter()
-        myDateFormatter.dateStyle = DateFormatter.Style.short
-        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
-        
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "MeetingTasks", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let meetingID = record.object(forKey: "meetingID") as! String
                 let agendaID = record.object(forKey: "agendaID") as! Int32
-                let updateTime = record.object(forKey: "updateTime") as! Date
+                var updateTime = Date()
+                if record.object(forKey: "updateTime") != nil
+                {
+                    updateTime = record.object(forKey: "updateTime") as! Date
+                }
                 let updateType = record.object(forKey: "updateType") as! String
                 let taskID = record.object(forKey: "taskID") as! Int32
                 

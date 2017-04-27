@@ -59,11 +59,11 @@ extension coreDatabase
         
         saveContext()
     }
-    func getTaskAttachmentsForSync(_ inLastSyncDate: NSDate) -> [TaskAttachment]
+    func getTaskAttachmentsForSync(_ syncDate: Date) -> [TaskAttachment]
     {
         let fetchRequest = NSFetchRequest<TaskAttachment>(entityName: "TaskAttachment")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
@@ -105,20 +105,20 @@ extension coreDatabase
 
 extension CloudKitInteraction
 {
-    func saveTaskAttachmentToCloudKit(_ inLastSyncDate: NSDate)
+    func saveTaskAttachmentToCloudKit()
     {
         //       NSLog("Syncing taskAttachments")
-        for myItem in myDatabaseConnection.getTaskAttachmentsForSync(inLastSyncDate)
+        for myItem in myDatabaseConnection.getTaskAttachmentsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "TaskAttachment"))
         {
             saveTaskAttachmentRecordToCloudKit(myItem)
         }
     }
 
-    func updateTaskAttachmentInCoreData(_ inLastSyncDate: NSDate)
+    func updateTaskAttachmentInCoreData()
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "TaskAttachment") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskAttachment", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             //   for record in results!
@@ -154,11 +154,7 @@ extension CloudKitInteraction
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = DateFormatter()
-        myDateFormatter.dateStyle = DateFormatter.Style.short
-        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
-        
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "TaskAttachment", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             //   for record in results!

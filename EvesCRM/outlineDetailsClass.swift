@@ -57,11 +57,11 @@ extension coreDatabase
         saveContext()
     }
     
-    func getOutlineDetailsForSync(_ inLastSyncDate: NSDate) -> [OutlineDetails]
+    func getOutlineDetailsForSync(_ syncDate: Date) -> [OutlineDetails]
     {
         let fetchRequest = NSFetchRequest<OutlineDetails>(entityName: "OutlineDetails")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
@@ -223,20 +223,20 @@ extension coreDatabase
 
 extension CloudKitInteraction
 {
-    func saveOutlineDetailsToCloudKit(_ inLastSyncDate: NSDate)
+    func saveOutlineDetailsToCloudKit()
     {
         //        NSLog("Syncing ProcessedEmails")
-        for myItem in myDatabaseConnection.getOutlineDetailsForSync(inLastSyncDate)
+        for myItem in myDatabaseConnection.getOutlineDetailsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "OutlineDetails"))
         {
             saveOutlineDetailsRecordToCloudKit(myItem)
         }
     }
 
-    func updateOutlineDetailsInCoreData(_ inLastSyncDate: NSDate)
+    func updateOutlineDetailsInCoreData()
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "OutlineDetails") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "OutlineDetails", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -271,11 +271,7 @@ extension CloudKitInteraction
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = DateFormatter()
-        myDateFormatter.dateStyle = DateFormatter.Style.short
-        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
-        
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "OutlineDetails", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -295,7 +291,11 @@ extension CloudKitInteraction
                 {
                     checkBoxValue = true
                 }
-                let updateTime = record.object(forKey: "updateTime") as! Date
+                var updateTime = Date()
+                if record.object(forKey: "updateTime") != nil
+                {
+                    updateTime = record.object(forKey: "updateTime") as! Date
+                }
                 let updateType = record.object(forKey: "updateType") as! String
                 
                 myDatabaseConnection.replaceOutlineDetails(outlineID, lineID: lineID, lineOrder: lineOrder, parentLine: parentLine, lineText: lineText, lineType: lineType, checkBoxValue: checkBoxValue, updateTime: updateTime, updateType: updateType)

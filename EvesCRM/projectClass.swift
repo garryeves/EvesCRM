@@ -447,7 +447,7 @@ class project: NSObject // 10k level
         if !saveCalled
         {
             saveCalled = true
-            let _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(workingGTDLevel.performSave), userInfo: nil, repeats: false)
+            let _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.performSave), userInfo: nil, repeats: false)
         }
     }
     
@@ -1109,11 +1109,11 @@ extension coreDatabase
         saveContext()
     }
 
-    func getProjectsForSync(_ inLastSyncDate: NSDate) -> [Projects]
+    func getProjectsForSync(_ syncDate: Date) -> [Projects]
     {
         let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
@@ -1131,11 +1131,11 @@ extension coreDatabase
         }
     }
     
-    func getProjectNotesForSync(_ inLastSyncDate: NSDate) -> [ProjectNote]
+    func getProjectNotesForSync(_ syncDate: Date) -> [ProjectNote]
     {
         let fetchRequest = NSFetchRequest<ProjectNote>(entityName: "ProjectNote")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
@@ -1194,25 +1194,25 @@ extension coreDatabase
 
 extension CloudKitInteraction
 {
-    func saveProjectsToCloudKit(_ inLastSyncDate: NSDate)
+    func saveProjectsToCloudKit()
     {
         //        NSLog("Syncing Projects")
-        for myItem in myDatabaseConnection.getProjectsForSync(inLastSyncDate)
+        for myItem in myDatabaseConnection.getProjectsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Projects"))
         {
             saveProjectsRecordToCloudKit(myItem)
         }
         
-        for myItem in myDatabaseConnection.getProjectNotesForSync(inLastSyncDate)
+        for myItem in myDatabaseConnection.getProjectNotesForSync(myDatabaseConnection.getSyncDateForTable(tableName: "ProjectNote"))
         {
             saveProjectNoteRecordToCloudKit(myItem)
         }
     }
 
-    func updateProjectsInCoreData(_ inLastSyncDate: NSDate)
+    func updateProjectsInCoreData()
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "Projects") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1260,17 +1260,17 @@ extension CloudKitInteraction
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = DateFormatter()
-        myDateFormatter.dateStyle = DateFormatter.Style.short
-        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
-        
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 let projectID = record.object(forKey: "projectID") as! Int32
-                let updateTime = record.object(forKey: "updateTime") as! Date
+                var updateTime = Date()
+                if record.object(forKey: "updateTime") != nil
+                {
+                    updateTime = record.object(forKey: "updateTime") as! Date
+                }
                 let updateType = record.object(forKey: "updateType") as! String
                 let areaID = record.object(forKey: "areaID") as! Int32
                 let lastReviewDate = record.object(forKey: "lastReviewDate") as! Date

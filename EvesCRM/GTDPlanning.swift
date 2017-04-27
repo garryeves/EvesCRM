@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 
 enum AdaptiveMode
@@ -41,11 +42,11 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
     {
         super.viewDidLoad()
         
-        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(MaintainGTDPlanningViewController.handleSwipe(_:)))
+        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleSwipe(_:)))
         showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.right
         self.view.addGestureRecognizer(showGestureRecognizer)
         
-        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(MaintainGTDPlanningViewController.handleSwipe(_:)))
+        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleSwipe(_:)))
         hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.left
         self.view.addGestureRecognizer(hideGestureRecognizer)
         
@@ -62,7 +63,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         mySelectedTeam = myCurrentTeam
         buildHead(myCurrentTeam.teamID)
         
-        notificationCenter.addObserver(self, selector: #selector(MaintainGTDPlanningViewController.displaySubmenu(_:)), name:NotificationDisplayGTDSubmenu, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.displaySubmenu(_:)), name:NotificationDisplayGTDSubmenu, object: nil)
     }
     
     override func didReceiveMemoryWarning()

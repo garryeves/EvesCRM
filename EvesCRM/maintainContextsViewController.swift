@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 import Contacts
 import ContactsUI
 
@@ -43,15 +44,15 @@ class MaintainContextsViewController: UIViewController, CNContactPickerDelegate/
     {
         super.viewDidLoad()
         
-        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(MaintainContextsViewController.handleSwipe(_:)))
+        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleSwipe(_:)))
         showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.right
         self.view.addGestureRecognizer(showGestureRecognizer)
         
-        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(MaintainContextsViewController.handleSwipe(_:)))
+        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleSwipe(_:)))
         hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.left
         self.view.addGestureRecognizer(hideGestureRecognizer)
         
-        notificationCenter.addObserver(self, selector: #selector(MaintainContextsViewController.deleteContext(_:)), name:NotificationMaintainContextsDeleteContext, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.deleteContext(_:)), name:NotificationMaintainContextsDeleteContext, object: nil)
         
         let contextList = contexts()
         
@@ -70,8 +71,8 @@ class MaintainContextsViewController: UIViewController, CNContactPickerDelegate/
     {
         super.viewWillAppear(animated)
         
-        notificationCenter.addObserver(self, selector: #selector(MaintainContextsViewController.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(MaintainContextsViewController.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool)

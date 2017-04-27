@@ -701,34 +701,34 @@
 			children = (
 				346D5E011AE5F9C700F858E7 /* CalendarDetails.swift */,
 				348E6D4A1ADF74C800697268 /* ContactDetails.swift */,
+				34BA26281EAC57D000A41EE9 /* contextClass.swift */,
+				34BA26461EAD8A9300A41EE9 /* decodesClass.swift */,
 				34BDECA91B008846008C9F3F /* displayPanes.swift */,
 				344C4CEF1E2F00D7005AE173 /* DropboxCoreService.swift */,
 				344F22711AF1DFF3002C373E /* evernoteDetails.swift */,
 				347518D81AE35FFC00FF1C46 /* EvesCRMSharedFiles.swift */,
 				34B9C0101B26BA70005E52F9 /* gMail.swift */,
-				34B525381B130F1C00093250 /* oneNote.swift */,
-				349331CE1B70576C004AA569 /* SideBar.swift */,
-				34627D221B60B1C80096DAC4 /* taskManagementClasses.swift */,
-				342852301B8EA38C003D188F /* teamClass.swift */,
-				34841A1C1E272D5800B96BB2 /* notificationDefinitions.swift */,
+				34BA26311EAC607B00A41EE9 /* GTDItemClass.swift */,
+				34BA262E1EAC5F0C00A41EE9 /* GTDLevelClass.swift */,
 				34BA26221EAC474000A41EE9 /* meetingAttendeeClass.swift */,
 				34BA261F1EAC470600A41EE9 /* meetingAgendaItemClass.swift */,
 				34BA26251EAC555500A41EE9 /* meetingSupportingDocsClass.swift */,
-				34BA26281EAC57D000A41EE9 /* contextClass.swift */,
+				34841A1C1E272D5800B96BB2 /* notificationDefinitions.swift */,
+				34B525381B130F1C00093250 /* oneNote.swift */,
+				34BA264C1EAD8D3900A41EE9 /* outlineClass.swift */,
+				34BA26491EAD8C2400A41EE9 /* outlineDetailsClass.swift */,
 				34BA262B1EAC5C3A00A41EE9 /* projectClass.swift */,
-				34BA262E1EAC5F0C00A41EE9 /* GTDLevelClass.swift */,
-				34BA26311EAC607B00A41EE9 /* GTDItemClass.swift */,
 				34BA26341EAC61F700A41EE9 /* projectteamMemberClass.swift */,
+				34BA264F1EAD901300A41EE9 /* rolesClass.swift */,
+				349331CE1B70576C004AA569 /* SideBar.swift */,
+				34BA26521EAD912100A41EE9 /* stageClass.swift */,
+				34BA26431EAC684B00A41EE9 /* taskClass.swift */,
+				34BA26401EAC677C00A41EE9 /* TaskAttachmentClass.swift */,
+				34BA263D1EAC662A00A41EE9 /* taskContextsClass.swift */,
+				34627D221B60B1C80096DAC4 /* taskManagementClasses.swift */,
 				34BA26371EAC634200A41EE9 /* taskPredecessorClass.swift */,
 				34BA263A1EAC64DE00A41EE9 /* taskUpdatesClass.swift */,
-				34BA263D1EAC662A00A41EE9 /* taskContextsClass.swift */,
-				34BA26401EAC677C00A41EE9 /* TaskAttachmentClass.swift */,
-				34BA26431EAC684B00A41EE9 /* taskClass.swift */,
-				34BA26461EAD8A9300A41EE9 /* decodesClass.swift */,
-				34BA26491EAD8C2400A41EE9 /* outlineDetailsClass.swift */,
-				34BA264C1EAD8D3900A41EE9 /* outlineClass.swift */,
-				34BA264F1EAD901300A41EE9 /* rolesClass.swift */,
-				34BA26521EAD912100A41EE9 /* stageClass.swift */,
+				342852301B8EA38C003D188F /* teamClass.swift */,
 			);
 			name = "My Classes";
 			sourceTree = "<group>";
@@ -849,6 +849,9 @@
 						DevelopmentTeam = 76YDDNPU7W;
 						LastSwiftMigration = 0820;
 						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
 							com.apple.Keychain = {
 								enabled = 1;
 							};

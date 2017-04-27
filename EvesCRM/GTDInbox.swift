@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 protocol MyGTDInboxDelegate
 {
@@ -38,19 +39,19 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
     {
         super.viewDidLoad()
         
-        notificationCenter.addObserver(self, selector: #selector(GTDInboxViewController.gmailSignedIn(_:)), name: NotificationGmailInboxConnected, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(GTDInboxViewController.myGmailDidFinish), name: NotificationGmailInboxLoadDidFinish, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(GTDInboxViewController.displayTask(_:)), name: NotificationGTDInboxDisplayTask, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.gmailSignedIn(_:)), name: NotificationGmailInboxConnected, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.myGmailDidFinish), name: NotificationGmailInboxLoadDidFinish, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.displayTask(_:)), name: NotificationGTDInboxDisplayTask, object: nil)
         
         loadDataArray()
         
         myPicker.isHidden = true
         
-        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(GTDInboxViewController.handleSwipe(_:)))
+        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleSwipe(_:)))
         showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.right
         self.view.addGestureRecognizer(showGestureRecognizer)
         
-        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(GTDInboxViewController.handleSwipe(_:)))
+        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleSwipe(_:)))
         hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.left
         self.view.addGestureRecognizer(hideGestureRecognizer)
     }

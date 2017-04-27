@@ -7,20 +7,15 @@
 //
 
 import Foundation
-
-//
-//  EvesCRMDatabase.swift
-//  Contacts Dashboard
-//
-//  Created by Garry Eves on 24/4/17.
-//  Copyright © 2017 Garry Eves. All rights reserved.
-//
-
-import Foundation
 import CoreData
 import CloudKit
+import UIKit
 
-let coreDatabaseName = "EvesMeeting"
+let coreDatabaseName = "EvesCRM"
+let appName = "EvesMeeting"
+
+let meetingStoryboard = UIStoryboard(name: "meetings", bundle: nil)
+let tasksStoryboard = UIStoryboard(name: "tasks", bundle: nil)
 
 extension coreDatabase
 {
@@ -57,9 +52,15 @@ extension coreDatabase
         
         clearDeletedTaskUpdates(predicate: predicate)
         
-        clearDeletedTaskPredecessor(predicate: predicate)
-        
         clearDeletedTeam(predicate: predicate)
+        
+        clearDeletedTaskPredecessor(predicate: predicate)
+
+        clearDeletedGTDItems(predicate: predicate)
+        
+        clearDeletedGTDLevels(predicate: predicate)
+
+        clearDeletedStages(predicate: predicate)
     }
     
     func clearSyncedItems()
@@ -90,9 +91,15 @@ extension coreDatabase
         
         clearSyncedTaskUpdates(predicate: predicate)
         
-        clearSyncedTaskPredecessor(predicate: predicate)
-        
         clearSyncedTeam(predicate: predicate)
+        
+        clearSyncedStages(predicate: predicate)
+
+        clearSyncedTaskPredecessor(predicate: predicate)
+
+        clearSyncedGTDItems(predicate: predicate)
+        
+        clearSyncedGTDLevels(predicate: predicate)
     }
     
     func deleteAllCoreData()
@@ -119,9 +126,15 @@ extension coreDatabase
         
         deleteAllTaskUpdateRecords()
         
-        deleteAllTaskPredecessorRecords()
-        
         deleteAllTeamRecords()
+        
+        deleteAllStageRecords()
+
+        deleteAllTaskPredecessorRecords()
+
+        deleteAllGTDItemRecords()
+        
+        deleteAllGTDLevelRecords()
     }
 }
 
@@ -183,11 +196,17 @@ extension CloudKitInteraction
         
         createSubscription("TaskContext", sourceQuery: "taskID > -1")
         
-        createSubscription("TaskPredecessor", sourceQuery: "taskID > -1")
-        
         createSubscription("TaskUpdates", sourceQuery: "taskID > -1")
         
         createSubscription("Team", sourceQuery: "teamID > -1")
+        
+        createSubscription("Stages", sourceQuery: "stageDescription != ''")
+
+        createSubscription("TaskPredecessor", sourceQuery: "taskID > -1")
+
+        createSubscription("GTDItem", sourceQuery: "gTDItemID > -1")
+        
+        createSubscription("GTDLevel", sourceQuery: "gTDLevel > -1")
     }
     
     func getRecords(_ sourceID: CKRecordID)
@@ -237,14 +256,23 @@ extension CloudKitInteraction
                 case "TaskContext" :
                     self.updateTaskContextRecord(record!)
                     
-                case "TaskPredecessor" :
-                    self.updateTaskPredecessorRecord(record!)
-                    
                 case "TaskUpdates" :
                     self.updateTaskUpdatesRecord(record!)
                     
                 case "Team" :
                     self.updateTeamRecord(record!)
+                    
+                case "Stages" :
+                    self.updateStagesRecord(record!)
+
+                case "TaskPredecessor" :
+                    self.updateTaskPredecessorRecord(record!)
+
+                case "GTDItem" :
+                    self.updateGTDItemRecord(record!)
+                    
+                case "GTDLevel" :
+                    self.updateGTDLevelRecord(record!)
                     
                 default:
                     NSLog("getRecords error in switch")
@@ -284,12 +312,18 @@ extension DBSync
         myCloudDB.saveTaskToCloudKit(inDate)
         progressMessage("syncToCloudKit TaskContext")
         myCloudDB.saveTaskContextToCloudKit(inDate)
-        progressMessage("syncToCloudKit TaskPredecessor")
-        myCloudDB.saveTaskPredecessorToCloudKit(inDate)
         progressMessage("syncToCloudKit TaskUpdates")
         myCloudDB.saveTaskUpdatesToCloudKit(inDate)
         progressMessage("syncToCloudKit Team")
-        myCloudDB.saveTeamToCloudKit(inDate)
+        myCloudDB.saveTeamToCloudKit()
+        progressMessage("syncToCloudKit Stages")
+        myCloudDB.saveStagesToCloudKit(inDate)
+        progressMessage("syncToCloudKit TaskPredecessor")
+        myCloudDB.saveTaskPredecessorToCloudKit(inDate)
+        progressMessage("syncToCloudKit GTD Item")
+        myCloudDB.saveGTDItemToCloudKit(inDate)
+        progressMessage("syncToCloudKit GTD Level")
+        myCloudDB.saveGTDLevelToCloudKit(inDate)
         
         notificationCenter.post(name: NotificationCloudSyncFinished, object: nil)
     }
@@ -318,12 +352,18 @@ extension DBSync
         myCloudDB.updateTaskInCoreData(inDate)
         progressMessage("syncFromCloudKit TaskContext")
         myCloudDB.updateTaskContextInCoreData(inDate)
-        progressMessage("syncFromCloudKit TaskPredecessor")
-        myCloudDB.updateTaskPredecessorInCoreData(inDate)
         progressMessage("syncFromCloudKit TaskUpdates")
         myCloudDB.updateTaskUpdatesInCoreData(inDate)
         progressMessage("syncFromCloudKit Team")
-        myCloudDB.updateTeamInCoreData(inDate)
+        myCloudDB.updateTeamInCoreData()
+        progressMessage("syncFromCloudKit Stages")
+        myCloudDB.updateStagesInCoreData(inDate)
+        progressMessage("syncFromCloudKit TaskPredecessor")
+        myCloudDB.updateTaskPredecessorInCoreData(inDate)
+        progressMessage("syncFromCloudKit GTD Item")
+        myCloudDB.updateGTDItemInCoreData(inDate)
+        progressMessage("syncFromCloudKit GTD Level")
+        myCloudDB.updateGTDLevelInCoreData(inDate)
         
         notificationCenter.post(name: NotificationCloudSyncFinished, object: nil)
     }
@@ -354,10 +394,16 @@ extension DBSync
         myCloudDB.replaceTaskInCoreData()
         progressMessage("replaceWithCloudKit TaskContext")
         myCloudDB.replaceTaskContextInCoreData()
-        progressMessage("replaceWithCloudKit TaskPredecessor")
-        myCloudDB.replaceTaskPredecessorInCoreData()
         progressMessage("replaceWithCloudKit TaskUpdates")
         myCloudDB.replaceTaskUpdatesInCoreData()
+        progressMessage("replaceWithCloudKit Stages")
+        myCloudDB.replaceStagesInCoreData()
+        progressMessage("replaceWithCloudKit TaskPredecessor")
+        myCloudDB.replaceTaskPredecessorInCoreData()
+        progressMessage("replaceWithCloudKit GTD Item")
+        myCloudDB.replaceGTDItemInCoreData()
+        progressMessage("replaceWithCloudKit GTD Level")
+        myCloudDB.replaceGTDLevelInCoreData()
         
         notificationCenter.post(name: NotificationCloudSyncFinished, object: nil)
     }
@@ -375,9 +421,18 @@ extension DBSync
         myCloudDB.deleteRoles()
         myCloudDB.deleteTask()
         myCloudDB.deleteTaskContext()
-        myCloudDB.deleteTaskPredecessor()
         myCloudDB.deleteTaskUpdates()
         myCloudDB.deleteTeam()
+        myCloudDB.deleteStages()
+        myCloudDB.deleteTaskPredecessor()
+        myCloudDB.deleteGTDItem()
+        myCloudDB.deleteGTDLevel()
+    }
+    
+    func setLastSyncDates(syncDate: Date)
+    {
+        progressMessage("setLastSyncDates Team")
+        myDatabaseConnection.setSyncDateforTable(tableName: "Team", syncDate: syncDate)
     }
 }
 

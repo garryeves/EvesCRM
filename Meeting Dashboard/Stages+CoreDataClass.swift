@@ -1,5 +1,5 @@
 //
-//  ProjectNote+CoreDataClass.swift
+//  Stages+CoreDataClass.swift
 //  Meeting Dashboard
 //
 //  Created by Garry Eves on 27/4/17.
@@ -10,6 +10,6 @@ import Foundation
 import CoreData
 
 
-public class ProjectNote: NSManagedObject {
+public class Stages: NSManagedObject {
 
 }

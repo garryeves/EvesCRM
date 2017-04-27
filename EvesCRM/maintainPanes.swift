@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 import CoreData
 
 protocol MyMaintainPanesDelegate
@@ -50,13 +51,13 @@ class MaintainPanesViewController: UIViewController
         
         // Go and get the initial state for the pickers (i.e what is in the table.  If no initial statedefined, then default
         
-        notificationCenter.addObserver(self, selector: #selector(MaintainPanesViewController.removePane), name: NotificationRemovePane, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.removePane), name: NotificationRemovePane, object: nil)
         
-        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(MaintainPanesViewController.handleSwipe(_:)))
+        let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleSwipe(_:)))
         showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.right
         self.view.addGestureRecognizer(showGestureRecognizer)
         
-        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(MaintainPanesViewController.handleSwipe(_:)))
+        let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleSwipe(_:)))
         hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.left
         self.view.addGestureRecognizer(hideGestureRecognizer)
     }

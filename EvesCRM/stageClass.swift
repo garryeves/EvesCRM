@@ -307,11 +307,11 @@ extension coreDatabase
         saveContext()
     }
     
-    func getStagesForSync(_ inLastSyncDate: NSDate) -> [Stages]
+    func getStagesForSync(_ syncDate: Date) -> [Stages]
     {
         let fetchRequest = NSFetchRequest<Stages>(entityName: "Stages")
         
-        let predicate = NSPredicate(format: "(updateTime >= %@)", inLastSyncDate as CVarArg)
+        let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
         
         // Set the predicate on the fetch request
         
@@ -353,20 +353,20 @@ extension coreDatabase
 
 extension CloudKitInteraction
 {
-    func saveStagesToCloudKit(_ inLastSyncDate: NSDate)
+    func saveStagesToCloudKit()
     {
         //        NSLog("Syncing Stages")
-        for myItem in myDatabaseConnection.getStagesForSync(inLastSyncDate)
+        for myItem in myDatabaseConnection.getStagesForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Stages"))
         {
             saveStagesRecordToCloudKit(myItem)
         }
     }
 
-    func updateStagesInCoreData(_ inLastSyncDate: NSDate)
+    func updateStagesInCoreData()
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "Stages") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Stages", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -401,17 +401,17 @@ extension CloudKitInteraction
     {
         let sem = DispatchSemaphore(value: 0);
         
-        let myDateFormatter = DateFormatter()
-        myDateFormatter.dateStyle = DateFormatter.Style.short
-        let inLastSyncDate = myDateFormatter.date(from: "01/01/15")
-        
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", inLastSyncDate! as CVarArg)
+        let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Stages", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
+                var updateTime = Date()
                 let stageDescription = record.object(forKey: "stageDescription") as! String
-                let updateTime = record.object(forKey: "updateTime") as! Date
+                if record.object(forKey: "updateTime") != nil
+                {
+                    updateTime = record.object(forKey: "updateTime") as! Date
+                }
                 let updateType = record.object(forKey: "updateType") as! String
                 let teamID = record.object(forKey: "teamID") as! Int32
                 
@@ -425,7 +425,7 @@ extension CloudKitInteraction
 
     func saveStagesRecordToCloudKit(_ sourceRecord: Stages)
     {
-        let predicate = NSPredicate(format: "(stageDescription == \"\(sourceRecord.stageDescription!)\") && (teamID == \(sourceRecord.teamID)") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(stageDescription == \"\(sourceRecord.stageDescription!)\") && (teamID == \(sourceRecord.teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Stages", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
