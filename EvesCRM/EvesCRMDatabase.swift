@@ -186,7 +186,7 @@ extension CloudKitInteraction
 {
     func setupSubscriptions()
     {
-        // Setup notification
+/*        // Setup notification
         
         let sem = DispatchSemaphore(value: 0);
         
@@ -263,6 +263,7 @@ extension CloudKitInteraction
         createSubscription("TaskUpdates", sourceQuery: "taskID > -1")
         
         createSubscription("Team", sourceQuery: "teamID > -1")
+ */
     }
     
     func getRecords(_ sourceID: CKRecordID)
@@ -429,7 +430,7 @@ extension DBSync
         myCloudDB.updateMeetingAgendaInCoreData()
         progressMessage("syncFromCloudKit MeetingAgendaItem")
         myCloudDB.updateMeetingAgendaItemInCoreData()
-        progressMessage("syncFromCloudKit MeetingAttendess")
+        progressMessage("syncFromCloudKit MeetingAttendees")
         myCloudDB.updateMeetingAttendeesInCoreData()
         progressMessage("syncFromCloudKit MeetingSupportingDocs")
         myCloudDB.updateMeetingSupportingDocsInCoreData()
@@ -483,7 +484,7 @@ extension DBSync
         myCloudDB.replaceMeetingAgendaInCoreData()
         progressMessage("replaceWithCloudKit MeetingAgendaItem")
         myCloudDB.replaceMeetingAgendaItemInCoreData()
-        progressMessage("replaceWithCloudKit MeetingAttendess")
+        progressMessage("replaceWithCloudKit MeetingAttendees")
         myCloudDB.replaceMeetingAttendeesInCoreData()
         progressMessage("replaceWithCloudKit MeetingSupportingDocs")
         myCloudDB.replaceMeetingSupportingDocsInCoreData()
@@ -563,8 +564,8 @@ extension DBSync
         myDatabaseConnection.setSyncDateforTable(tableName: "MeetingAgenda", syncDate: syncDate)
         progressMessage("setLastSyncDates MeetingAgendaItem")
         myDatabaseConnection.setSyncDateforTable(tableName: "MeetingAgendaItem", syncDate: syncDate)
-        progressMessage("setLastSyncDates MeetingAttendess")
-        myDatabaseConnection.setSyncDateforTable(tableName: "MeetingAttendess", syncDate: syncDate)
+        progressMessage("setLastSyncDates MeetingAttendees")
+        myDatabaseConnection.setSyncDateforTable(tableName: "MeetingAttendees", syncDate: syncDate)
         progressMessage("setLastSyncDates MeetingSupportingDocs")
         myDatabaseConnection.setSyncDateforTable(tableName: "MeetingSupportingDocs", syncDate: syncDate)
         progressMessage("setLastSyncDates MeetingTasks")

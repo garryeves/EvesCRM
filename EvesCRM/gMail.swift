@@ -1173,7 +1173,6 @@ extension CloudKitInteraction
 {
     func saveProcessedEmailsToCloudKit()
     {
-        //        NSLog("Syncing ProcessedEmails")
         for myItem in myDatabaseConnection.getProcessedEmailsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "ProcessedEmails"))
         {
             saveProcessedEmailsRecordToCloudKit(myItem)
@@ -1190,6 +1189,7 @@ extension CloudKitInteraction
             for record in results!
             {
                 self.updateProcessedEmailsRecord(record)
+                usleep(100)
             }
             sem.signal()
         })
@@ -1235,6 +1235,7 @@ extension CloudKitInteraction
                 let processedDate = record.object(forKey: "processedDate") as! Date
                 
                 myDatabaseConnection.replaceProcessedEmail(emailID, emailType: emailType, processedDate: processedDate, updateTime: updateTime, updateType: updateType)
+                usleep(100)
             }
             sem.signal()
         })
@@ -1244,6 +1245,7 @@ extension CloudKitInteraction
 
     func saveProcessedEmailsRecordToCloudKit(_ sourceRecord: ProcessedEmails)
     {
+        let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "(emailID == \"\(sourceRecord.emailID!)\")") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "ProcessedEmails", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
@@ -1258,7 +1260,10 @@ extension CloudKitInteraction
                     let record = records!.first// as! CKRecord
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
-                    record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record!.setValue(sourceRecord.updateType, forKey: "updateType")
                     record!.setValue(sourceRecord.emailType, forKey: "emailType")
                     record!.setValue(sourceRecord.processedDate, forKey: "processedDate")
@@ -1282,7 +1287,10 @@ extension CloudKitInteraction
                 {  // Insert
                     let record = CKRecord(recordType: "ProcessedEmails")
                     record.setValue(sourceRecord.emailID, forKey: "emailID")
-                    record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
                     record.setValue(sourceRecord.emailType, forKey: "emailType")
                     record.setValue(sourceRecord.processedDate, forKey: "processedDate")
@@ -1302,7 +1310,9 @@ extension CloudKitInteraction
                     })
                 }
             }
+            sem.signal()
         })
+        sem.wait()
     }
 
     func updateProcessedEmailsRecord(_ sourceRecord: CKRecord)

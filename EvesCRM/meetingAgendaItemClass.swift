@@ -961,7 +961,6 @@ extension CloudKitInteraction
 {
     func saveMeetingAgendaItemToCloudKit()
     {
-        //        NSLog("Syncing meetingAgendaItems")
         for myItem in myDatabaseConnection.getMeetingAgendaItemsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "MeetingAgendaItem"))
         {
             saveMeetingAgendaItemRecordToCloudKit(myItem)
@@ -978,6 +977,7 @@ extension CloudKitInteraction
             for record in results!
             {
                 self.updateMeetingAgendaItemRecord(record)
+                usleep(100)
             }
             sem.signal()
         })
@@ -1031,6 +1031,7 @@ extension CloudKitInteraction
                 let meetingOrder = record.object(forKey: "meetingOrder") as! Int32
                 
                 myDatabaseConnection.replaceAgendaItem(meetingID, actualEndTime: actualEndTime, actualStartTime: actualStartTime, status: status, decisionMade: decisionMade, discussionNotes: discussionNotes, timeAllocation: timeAllocation, owner: owner, title: title, agendaID: agendaID, meetingOrder: meetingOrder, inUpdateTime: updateTime, inUpdateType: updateType)
+                usleep(100)
             }
             sem.signal()
         })
@@ -1040,6 +1041,7 @@ extension CloudKitInteraction
 
     func saveMeetingAgendaItemRecordToCloudKit(_ sourceRecord: MeetingAgendaItem)
     {
+        let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
@@ -1054,7 +1056,10 @@ extension CloudKitInteraction
                     let record = records!.first// as! CKRecord
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
-                    record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record!.setValue(sourceRecord.updateType, forKey: "updateType")
                     record!.setValue(sourceRecord.actualEndTime, forKey: "actualEndTime")
                     record!.setValue(sourceRecord.actualStartTime, forKey: "actualStartTime")
@@ -1086,7 +1091,10 @@ extension CloudKitInteraction
                     let record = CKRecord(recordType: "MeetingAgendaItem")
                     record.setValue(sourceRecord.meetingID, forKey: "meetingID")
                     record.setValue(sourceRecord.agendaID, forKey: "agendaID")
-                    record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
                     record.setValue(sourceRecord.actualEndTime, forKey: "actualEndTime")
                     record.setValue(sourceRecord.actualStartTime, forKey: "actualStartTime")
@@ -1114,7 +1122,9 @@ extension CloudKitInteraction
                     })
                 }
             }
+            sem.signal()
         })
+        sem.wait()
     }
 
     func updateMeetingAgendaItemRecord(_ sourceRecord: CKRecord)
@@ -1181,6 +1191,7 @@ extension CloudKitInteraction
             for record in results!
             {
                 self.updateMeetingTasksRecord(record)
+                usleep(100)
             }
             sem.signal()
         })
@@ -1226,6 +1237,7 @@ extension CloudKitInteraction
                 let taskID = record.object(forKey: "taskID") as! Int32
                 
                 myDatabaseConnection.replaceMeetingTask(agendaID, meetingID: meetingID, taskID: taskID, inUpdateTime: updateTime, inUpdateType: updateType)
+                usleep(100)
             }
             sem.signal()
         })
@@ -1235,6 +1247,7 @@ extension CloudKitInteraction
 
     func saveMeetingTasksRecordToCloudKit(_ sourceRecord: MeetingTasks)
     {
+        let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID)) && (taskID == \(sourceRecord.taskID))") // better be accurate to get only the
         let query = CKQuery(recordType: "MeetingTasks", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
@@ -1249,7 +1262,10 @@ extension CloudKitInteraction
                     let record = records!.first// as! CKRecord
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
-                    record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record!.setValue(sourceRecord.updateType, forKey: "updateType")
                     record!.setValue(sourceRecord.taskID, forKey: "taskID")
                     
@@ -1273,7 +1289,10 @@ extension CloudKitInteraction
                     let record = CKRecord(recordType: "MeetingTasks")
                     record.setValue(sourceRecord.meetingID, forKey: "meetingID")
                     record.setValue(sourceRecord.agendaID, forKey: "agendaID")
-                    record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
                     record.setValue(sourceRecord.taskID, forKey: "taskID")
                     
@@ -1293,7 +1312,9 @@ extension CloudKitInteraction
                     })
                 }
             }
+            sem.signal()
         })
+        sem.wait()
     }
 
     func updateMeetingTasksRecord(_ sourceRecord: CKRecord)

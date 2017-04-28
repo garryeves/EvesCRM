@@ -107,7 +107,6 @@ extension CloudKitInteraction
 {
     func saveTaskAttachmentToCloudKit()
     {
-        //       NSLog("Syncing taskAttachments")
         for myItem in myDatabaseConnection.getTaskAttachmentsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "TaskAttachment"))
         {
             saveTaskAttachmentRecordToCloudKit(myItem)
@@ -125,6 +124,7 @@ extension CloudKitInteraction
             for record in results!
             {
                 self.updateTaskAttachmentRecord(record)
+                usleep(100)
             }
             sem.signal()
         })
@@ -167,6 +167,7 @@ extension CloudKitInteraction
                 //    let attachment = record.objectForKey("attachment") as! NSData
                 NSLog("replaceTaskAttachmentInCoreData - Still to be coded")
                 //   myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+                usleep(100)
             }
             sem.signal()
         })
@@ -176,6 +177,7 @@ extension CloudKitInteraction
 
     func saveTaskAttachmentRecordToCloudKit(_ sourceRecord: TaskAttachment)
     {
+        let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID)) && (title == \"\(sourceRecord.title!)\")") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "TaskAttachment", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
@@ -190,7 +192,10 @@ extension CloudKitInteraction
                     let record = records!.first// as! CKRecord
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
-                    record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record!.setValue(sourceRecord.updateType, forKey: "updateType")
                     record!.setValue(sourceRecord.attachment, forKey: "attachment")
                     
@@ -214,7 +219,10 @@ extension CloudKitInteraction
                     let record = CKRecord(recordType: "TaskAttachment")
                     record.setValue(sourceRecord.taskID, forKey: "taskID")
                     record.setValue(sourceRecord.title, forKey: "title")
-                    record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
                     record.setValue(sourceRecord.attachment, forKey: "attachment")
                     
@@ -234,7 +242,9 @@ extension CloudKitInteraction
                     })
                 }
             }
+            sem.signal()
         })
+        sem.wait()
     }
 
     func updateTaskAttachmentRecord(_ sourceRecord: CKRecord)

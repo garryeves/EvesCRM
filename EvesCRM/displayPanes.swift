@@ -568,7 +568,6 @@ extension CloudKitInteraction
 {
     func savePanesToCloudKit()
     {
-        //        NSLog("Syncing Panes")
         for myItem in myDatabaseConnection.getPanesForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Panes"))
         {
             savePanesRecordToCloudKit(myItem)
@@ -585,6 +584,7 @@ extension CloudKitInteraction
             for record in results!
             {
                 self.updatePanesRecord(record)
+                usleep(100)
             }
             sem.signal()
         })
@@ -631,6 +631,7 @@ extension CloudKitInteraction
                 let pane_visible = record.object(forKey: "pane_visible") as! Bool
                 
                 myDatabaseConnection.replacePane(pane_name, inPaneAvailable: pane_available, inPaneVisible: pane_visible, inPaneOrder: pane_order, inUpdateTime: updateTime, inUpdateType: updateType)
+                usleep(100)
             }
             sem.signal()
         })
@@ -640,6 +641,7 @@ extension CloudKitInteraction
 
     func savePanesRecordToCloudKit(_ sourceRecord: Panes)
     {
+        let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "(pane_name == \"\(sourceRecord.pane_name!)\")") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Panes", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
@@ -654,7 +656,10 @@ extension CloudKitInteraction
                     let record = records!.first// as! CKRecord
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
-                    record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record!.setValue(sourceRecord.updateType, forKey: "updateType")
                     record!.setValue(sourceRecord.pane_available, forKey: "pane_available")
                     record!.setValue(sourceRecord.pane_order, forKey: "pane_order")
@@ -679,7 +684,10 @@ extension CloudKitInteraction
                 {  // Insert
                     let record = CKRecord(recordType: "Panes")
                     record.setValue(sourceRecord.pane_name, forKey: "pane_name")
-                    record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
                     record.setValue(sourceRecord.pane_available, forKey: "pane_available")
                     record.setValue(sourceRecord.pane_order, forKey: "pane_order")
@@ -700,7 +708,9 @@ extension CloudKitInteraction
                     })
                 }
             }
+            sem.signal()
         })
+        sem.wait()
     }
 
     func updatePanesRecord(_ sourceRecord: CKRecord)

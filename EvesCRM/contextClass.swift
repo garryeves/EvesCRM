@@ -924,6 +924,7 @@ extension coreDatabase
         do
         {
             let fetchResults = try objectContext.fetch(fetchRequest)
+
             return fetchResults
         }
         catch
@@ -1005,13 +1006,12 @@ extension CloudKitInteraction
 {
     func saveContextToCloudKit()
     {
-        //        NSLog("Syncing Contexts")
         for myItem in myDatabaseConnection.getContextsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Context"))
         {
             saveContextRecordToCloudKit(myItem)
         }
         
-        for myItem in myDatabaseConnection.getContexts1_1ForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Context1_1"))
+        for myItem in myDatabaseConnection.getContexts1_1ForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Context"))
         {
             saveContext1_1RecordToCloudKit(myItem)
         }
@@ -1028,10 +1028,11 @@ extension CloudKitInteraction
             for record in results!
             {
                 self.updateContextRecord(record)
+                usleep(100)
             }
             sem.signal()
         })
-        
+        sem.wait()
     }
 
     func deleteContext()
@@ -1102,14 +1103,17 @@ extension CloudKitInteraction
                 
                 
                 myDatabaseConnection.replaceContext1_1(contextID, predecessor: predecessor, contextType: contextType, updateTime: updateTime, updateType: updateType)
-                
+                usleep(100)
             }
             sem.signal()
         })
+        sem.wait()
     }
     
     func saveContextRecordToCloudKit(_ sourceRecord: Context)
     {
+        let sem = DispatchSemaphore(value: 0)
+
         let predicate = NSPredicate(format: "(contextID == \(sourceRecord.contextID)) && (teamID == \(sourceRecord.teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Context", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
@@ -1150,7 +1154,10 @@ extension CloudKitInteraction
                     record!.setValue(sourceRecord.parentContext, forKey: "parentContext")
                     record!.setValue(sourceRecord.personID, forKey: "personID")
                     record!.setValue(sourceRecord.status, forKey: "status")
-                    record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record!.setValue(sourceRecord.updateType, forKey: "updateType")
                     record!.setValue(myPredecessor, forKey: "predecessor")
                     record!.setValue(myContextType, forKey: "contextType")
@@ -1181,7 +1188,10 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.personID, forKey: "personID")
                     record.setValue(sourceRecord.status, forKey: "status")
                     record.setValue(sourceRecord.teamID, forKey: "teamID")
-                    record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
                     record.setValue(myPredecessor, forKey: "predecessor")
                     record.setValue(myContextType, forKey: "contextType")
@@ -1201,11 +1211,14 @@ extension CloudKitInteraction
                     })
                 }
             }
+            sem.signal()
         })
+        sem.wait()
     }
     
     func saveContext1_1RecordToCloudKit(_ sourceRecord: Context1_1)
     {
+        let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "(contextID == \(sourceRecord.contextID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Context", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
@@ -1222,7 +1235,10 @@ extension CloudKitInteraction
                     // Apply whatever changes you want
                     record!.setValue(sourceRecord.predecessor, forKey: "predecessor")
                     record!.setValue(sourceRecord.contextType, forKey: "contextType")
-                    record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record!.setValue(sourceRecord.updateType, forKey: "updateType")
                     
                     // Save this record again
@@ -1246,7 +1262,10 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.contextID, forKey: "contextID")
                     record.setValue(sourceRecord.predecessor, forKey: "predecessor")
                     record.setValue(sourceRecord.contextType, forKey: "contextType")
-                    record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
                     
                     self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
@@ -1264,7 +1283,9 @@ extension CloudKitInteraction
                     })
                 }
             }
+            sem.signal()
         })
+        sem.wait()
     }
     
     func updateContextRecord(_ sourceRecord: CKRecord)

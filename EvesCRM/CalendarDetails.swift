@@ -3158,7 +3158,6 @@ extension CloudKitInteraction
 {
     func saveMeetingAgendaToCloudKit()
     {
-        //        NSLog("Syncing Meeting Agenda")
         for myItem in myDatabaseConnection.getMeetingAgendasForSync(myDatabaseConnection.getSyncDateForTable(tableName: "MeetingAgenda"))
         {
             saveMeetingAgendaRecordToCloudKit(myItem)
@@ -3175,6 +3174,7 @@ extension CloudKitInteraction
             for record in results!
             {
                 self.updateMeetingAgendaRecord(record)
+                usleep(100)
             }
             sem.signal()
         })
@@ -3227,6 +3227,7 @@ extension CloudKitInteraction
                 let teamID = record.object(forKey: "actualTeamID") as! Int32
                 
                 myDatabaseConnection.replaceAgenda(meetingID, inPreviousMeetingID : previousMeetingID, inName: name, inChair: chair, inMinutes: minutes, inLocation: location, inStartTime: startTime, inEndTime: endTime, inMinutesType: minutesType, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+                usleep(100)
             }
             sem.signal()
         })
@@ -3236,6 +3237,7 @@ extension CloudKitInteraction
 
     func saveMeetingAgendaRecordToCloudKit(_ sourceRecord: MeetingAgenda)
     {
+        let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (actualTeamID == \(sourceRecord.teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
@@ -3250,7 +3252,11 @@ extension CloudKitInteraction
                     let record = records!.first// as! CKRecord
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
-                    record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    
+                    if sourceRecord.updateTime != nil
+                    {
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record!.setValue(sourceRecord.updateType, forKey: "updateType")
                     record!.setValue(sourceRecord.chair, forKey: "chair")
                     record!.setValue(sourceRecord.endTime, forKey: "endTime")
@@ -3280,7 +3286,10 @@ extension CloudKitInteraction
                 {  // Insert
                     let record = CKRecord(recordType: "MeetingAgenda")
                     record.setValue(sourceRecord.meetingID, forKey: "meetingID")
-                    record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
                     record.setValue(sourceRecord.chair, forKey: "chair")
                     record.setValue(sourceRecord.endTime, forKey: "endTime")
@@ -3307,7 +3316,9 @@ extension CloudKitInteraction
                     })
                 }
             }
+            sem.signal()
         })
+        sem.wait()
     }
 
     func updateMeetingAgendaRecord(_ sourceRecord: CKRecord)

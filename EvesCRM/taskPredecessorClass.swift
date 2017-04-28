@@ -293,7 +293,6 @@ extension CloudKitInteraction
 {
     func saveTaskPredecessorToCloudKit()
     {
-        //        NSLog("Syncing TaskPredecessor")
         for myItem in myDatabaseConnection.getTaskPredecessorsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "TaskPredecessor"))
         {
             saveTaskPredecessorRecordToCloudKit(myItem)
@@ -310,6 +309,7 @@ extension CloudKitInteraction
             for record in results!
             {
                 self.updateTaskPredecessorRecord(record)
+                usleep(100)
             }
             sem.signal()
         })
@@ -355,6 +355,7 @@ extension CloudKitInteraction
                 let predecessorType = record.object(forKey: "predecessorType") as! String
                 
                 myDatabaseConnection.replacePredecessorTask(taskID, inPredecessorID: predecessorID, inPredecessorType: predecessorType, inUpdateTime: updateTime, inUpdateType: updateType)
+                usleep(100)
             }
             sem.signal()
         })
@@ -364,6 +365,7 @@ extension CloudKitInteraction
 
     func saveTaskPredecessorRecordToCloudKit(_ sourceRecord: TaskPredecessor)
     {
+        let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID)) && (predecessorID == \(sourceRecord.predecessorID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "TaskPredecessor", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
@@ -378,7 +380,10 @@ extension CloudKitInteraction
                     let record = records!.first// as! CKRecord
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
-                    record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record!.setValue(sourceRecord.updateType, forKey: "updateType")
                     record!.setValue(sourceRecord.predecessorType, forKey: "predecessorType")
                     
@@ -402,7 +407,10 @@ extension CloudKitInteraction
                     let record = CKRecord(recordType: "TaskPredecessor")
                     record.setValue(sourceRecord.taskID, forKey: "taskID")
                     record.setValue(sourceRecord.predecessorID, forKey: "predecessorID")
-                    record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
                     record.setValue(sourceRecord.predecessorType, forKey: "predecessorType")
                     
@@ -421,7 +429,9 @@ extension CloudKitInteraction
                     })
                 }
             }
+            sem.signal()
         })
+        sem.wait()
     }
 
     func updateTaskPredecessorRecord(_ sourceRecord: CKRecord)

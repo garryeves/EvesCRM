@@ -1196,13 +1196,12 @@ extension CloudKitInteraction
 {
     func saveProjectsToCloudKit()
     {
-        //        NSLog("Syncing Projects")
         for myItem in myDatabaseConnection.getProjectsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Projects"))
         {
             saveProjectsRecordToCloudKit(myItem)
         }
         
-        for myItem in myDatabaseConnection.getProjectNotesForSync(myDatabaseConnection.getSyncDateForTable(tableName: "ProjectNote"))
+        for myItem in myDatabaseConnection.getProjectNotesForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Projects"))
         {
             saveProjectNoteRecordToCloudKit(myItem)
         }
@@ -1218,6 +1217,7 @@ extension CloudKitInteraction
             for record in results!
             {
                 self.updateProjectsRecord(record)
+                usleep(100)
             }
             sem.signal()
         })
@@ -1290,6 +1290,7 @@ extension CloudKitInteraction
                 myDatabaseConnection.replaceProject(projectID, inProjectEndDate: projectEndDate, inProjectName: projectName, inProjectStartDate: projectStartDate, inProjectStatus: projectStatus, inReviewFrequency: reviewFrequency, inLastReviewDate: lastReviewDate, inGTDItemID: areaID, inRepeatInterval: repeatInterval, inRepeatType: repeatType, inRepeatBase: repeatBase, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
                 
                 myDatabaseConnection.replaceProjectNote(projectID, inNote: note, inReviewPeriod: reviewPeriod, inPredecessor: predecessor, inUpdateTime: updateTime, inUpdateType: updateType)
+                usleep(100)
             }
             sem.signal()
         })
@@ -1299,6 +1300,7 @@ extension CloudKitInteraction
 
     func saveProjectsRecordToCloudKit(_ sourceRecord: Projects)
     {
+        let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Projects", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
@@ -1329,7 +1331,10 @@ extension CloudKitInteraction
                     let record = records!.first// as! CKRecord
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
-                    record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record!.setValue(sourceRecord.updateType, forKey: "updateType")
                     record!.setValue(sourceRecord.areaID, forKey: "areaID")
                     record!.setValue(sourceRecord.lastReviewDate, forKey: "lastReviewDate")
@@ -1365,7 +1370,10 @@ extension CloudKitInteraction
                 {  // Insert
                     let record = CKRecord(recordType: "Projects")
                     record.setValue(sourceRecord.projectID, forKey: "projectID")
-                    record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
                     record.setValue(sourceRecord.areaID, forKey: "areaID")
                     record.setValue(sourceRecord.lastReviewDate, forKey: "lastReviewDate")
@@ -1397,11 +1405,14 @@ extension CloudKitInteraction
                     })
                 }
             }
+            sem.signal()
         })
+        sem.wait()
     }
 
     func saveProjectNoteRecordToCloudKit(_ sourceRecord: ProjectNote)
     {
+        let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Projects", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
@@ -1416,7 +1427,10 @@ extension CloudKitInteraction
                     let record = records!.first// as! CKRecord
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
-                    record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record!.setValue(sourceRecord.updateType, forKey: "updateType")
                     record!.setValue(sourceRecord.note, forKey: "note")
                     record!.setValue(sourceRecord.reviewPeriod, forKey: "reviewPeriod")
@@ -1441,9 +1455,15 @@ extension CloudKitInteraction
                 {  // Insert
                     let record = CKRecord(recordType: "Projects")
                     record.setValue(sourceRecord.projectID, forKey: "projectID")
-                    record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
-                    record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
                     record.setValue(sourceRecord.note, forKey: "note")
                     record.setValue(sourceRecord.reviewPeriod, forKey: "reviewPeriod")
@@ -1465,7 +1485,9 @@ extension CloudKitInteraction
                 }
                 
             }
+            sem.signal()
         })
+        sem.wait()
     }
 
     func updateProjectsRecord(_ sourceRecord: CKRecord)

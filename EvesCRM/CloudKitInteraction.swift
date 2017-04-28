@@ -48,7 +48,7 @@ class CloudKitInteraction
     init()
     {
         #if os(iOS)
-            container = CKContainer.default()
+            container = CKContainer.init(identifier: "iCloud.com.garryeves.EvesCRM")
         #elseif os(OSX)
             container = CKContainer.init(identifier: "iCloud.com.garryeves.EvesCRM")
         #else

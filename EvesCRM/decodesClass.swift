@@ -62,11 +62,11 @@ extension coreDatabase
         }
     }
     
-    func updateDecodeValue(_ inCodeKey: String, inCodeValue: String, inCodeType: String, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func updateDecodeValue(_ inCodeKey: String, inCodeValue: String, inCodeType: String, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE", updateCloud: Bool = true)
     {
         // first check to see if decode exists, if not we create
         var myDecode: Decodes!
- print("Decode = \(inCodeKey)")
+
         if getDecodeValue(inCodeKey) == ""
         { // Add
             myDecode = Decodes(context: objectContext)
@@ -122,8 +122,10 @@ extension coreDatabase
         
         saveContext()
         
-        myCloudDB.saveDecodesRecordToCloudKit(myDecode)
-print("Done")
+        if updateCloud
+        {
+            myCloudDB.saveDecodesRecordToCloudKit(myDecode)
+        }
     }
     
     func replaceDecodeValue(_ inCodeKey: String, inCodeValue: String, inCodeType: String, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
@@ -197,8 +199,6 @@ print("Done")
     
     func setNextDeviceID()
     {
-        let defaults = UserDefaults.standard
-        
         let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
         let predicate = NSPredicate(format: "(decode_name == \"Device\") && (updateType != \"Delete\")")
         
@@ -225,8 +225,9 @@ print("Done")
         
         if storeInt > 0
         {
-            let myValue = "\(appName) Sync \(storeInt)"
-            defaults.set(myValue, forKey: appName)
+            let myValue = "\(coreDatabaseName) Sync \(storeInt)"
+            
+            myDBSync.writeDefaultString(coreDatabaseName, value: myValue)
             
             updateDecodeValue("Device", inCodeValue:  "\(storeInt)", inCodeType: "hidden")
         }
@@ -388,12 +389,12 @@ print("Done")
         myDateFormatter.timeStyle = .full
         
         let dateString = myDateFormatter.string(from: syncDate)
-        myDatabaseConnection.updateDecodeValue("\(tableName) Sync", inCodeValue: dateString, inCodeType: "hidden")
+        myDatabaseConnection.updateDecodeValue(myDBSync.getSyncString(tableName), inCodeValue: dateString, inCodeType: "hidden")
     }
     
     func getSyncDateForTable(tableName: String) -> Date
     {
-        let syncDateText = getDecodeValue("\(tableName) Sync")
+        let syncDateText = getDecodeValue(myDBSync.getSyncString(tableName))
         var syncDate: Date!
         let myDateFormatter = DateFormatter()
         
@@ -428,17 +429,17 @@ extension CloudKitInteraction
     func updateDecodesInCoreData()
     {
         let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(value: true)
+
         let query: CKQuery = CKQuery(recordType: "Decodes", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 self.updateDecodeRecord(record)
+                usleep(100)
             }
             sem.signal()
         })
-        
         sem.wait()
     }
 
@@ -464,13 +465,13 @@ extension CloudKitInteraction
     func replaceDecodesInCoreData()
     {
         let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Decodes", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 self.updateDecodeRecord(record)
+                usleep(100)
             }
             sem.signal()
         })
@@ -480,11 +481,9 @@ extension CloudKitInteraction
 
     func saveDecodesRecordToCloudKit(_ sourceRecord: Decodes)
     {
-print("gre1")
+        let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "(decode_name == \"\(sourceRecord.decode_name!)\")") // better be accurate to get only the record you need
-print("gre2")
         let query = CKQuery(recordType: "Decodes", predicate: predicate)
-print("gre3")
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
             {
@@ -492,22 +491,16 @@ print("gre3")
             }
             else
             {
-print("gre4")
                 if records!.count > 0
                 {
                     // We need to do a check of the number for the tables, as otherwise we risk overwriting the changes
-print("gre5")
-                    
                     var updateRecord: Bool = true
                     
                     let record = records!.first// as! CKRecord
-print("gre6")
                     
                     switch sourceRecord.decode_name!
                     {
                     case "Context" :
-print("gre7")
-
                         let localValue = Int(sourceRecord.decode_value!)
                         let tempValue = record!.object(forKey: "decode_value")! as CKRecordValue
                         let remoteValue = Int(tempValue as! String)
@@ -522,8 +515,6 @@ print("gre7")
                         }
                         
                     case "Projects" :
-print("gre8")
-
                         let localValue = Int(sourceRecord.decode_value!)
                         let tempValue = record!.object(forKey: "decode_value")! as CKRecordValue
                         let remoteValue = Int(tempValue as! String)
@@ -538,8 +529,6 @@ print("gre8")
                         }
                         
                     case "GTDItem" :
-print("gre9")
-
                         let localValue = Int(sourceRecord.decode_value!)
                         let tempValue = record!.object(forKey: "decode_value")! as CKRecordValue
                         let remoteValue = Int(tempValue as! String)
@@ -554,8 +543,6 @@ print("gre9")
                         }
                         
                     case "Team" :
-print("gre10")
-
                         let localValue = Int(sourceRecord.decode_value!)
                         let tempValue = record!.object(forKey: "decode_value")! as CKRecordValue
                         let remoteValue = Int(tempValue as! String)
@@ -570,8 +557,6 @@ print("gre10")
                         }
                         
                     case "Roles" :
-print("gre11")
-
                         let localValue = Int(sourceRecord.decode_value!)
                         let tempValue = record!.object(forKey: "decode_value")! as CKRecordValue
                         let remoteValue = Int(tempValue as! String)
@@ -586,8 +571,6 @@ print("gre11")
                         }
                         
                     case "Task" :
-print("gre12")
-
                         let localValue = Int(sourceRecord.decode_value!)
                         let tempValue = record!.object(forKey: "decode_value")! as CKRecordValue
                         let remoteValue = Int(tempValue as! String)
@@ -602,28 +585,20 @@ print("gre12")
                         }
                         
                     case "Device" :
-print("gre13")
-
                         let localValue = Int(sourceRecord.decode_value!)
-print("gre14")
                         let tempValue = record!.object(forKey: "decode_value")! as CKRecordValue
-print("gre15")
                         let remoteValue = Int(tempValue as! String)
-print("gre16")
                         
                         if localValue! > remoteValue!
                         {
-print("gre17")
                             updateRecord = true
                         }
                         else
                         {
-print("gre18")
                             updateRecord = false
                         }
                         
                     case "Decodes":
-print("gre19")
                         let localValue = Int(sourceRecord.decode_value!)
                         let tempValue = record!.object(forKey: "decode_value")! as CKRecordValue
                         let remoteValue = Int(tempValue as! String)
@@ -638,7 +613,6 @@ print("gre19")
                         }
 
                     default:
-print("gre20")
                         updateRecord = true
                         
                         if sourceRecord.decode_name!.hasPrefix("\(appName) Sync")
@@ -649,15 +623,15 @@ print("gre20")
                     
                     if updateRecord
                     {
-print("gre21")
-
                         // Now you have grabbed your existing record from iCloud
                         // Apply whatever changes you want
                         record!.setValue(sourceRecord.decode_value, forKey: "decode_value")
                         record!.setValue(sourceRecord.decodeType, forKey: "decodeType")
-                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        if sourceRecord.updateTime != nil
+                        {
+                            record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        }
                         record!.setValue(sourceRecord.updateType, forKey: "updateType")
-print("gre22")
                        
                         // Save this record again
                         self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
@@ -681,7 +655,10 @@ print("gre22")
                     todoRecord.setValue(sourceRecord.decode_name, forKey: "decode_name")
                     todoRecord.setValue(sourceRecord.decodeType, forKey: "decodeType")
                     todoRecord.setValue(sourceRecord.decode_value, forKey: "decode_value")
-                    todoRecord.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        todoRecord.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     todoRecord.setValue(sourceRecord.updateType, forKey: "updateType")
                     
                     self.privateDB.save(todoRecord, completionHandler: { (savedRecord, saveError) in
@@ -699,8 +676,9 @@ print("gre22")
                     })
                 }
             }
+            sem.signal()
         })
-        
+        sem.wait()
     }
 
     func updateDecodeRecord(_ sourceRecord: CKRecord)
@@ -722,7 +700,7 @@ print("gre22")
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
         
-        myDatabaseConnection.updateDecodeValue(decodeName, inCodeValue: decodeValue, inCodeType: decodeType, inUpdateTime: updateTime, inUpdateType: updateType)
+        myDatabaseConnection.updateDecodeValue(decodeName, inCodeValue: decodeValue, inCodeType: decodeType, inUpdateTime: updateTime, inUpdateType: updateType, updateCloud: false)
     }
 
 }

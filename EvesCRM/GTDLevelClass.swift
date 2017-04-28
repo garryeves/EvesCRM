@@ -446,7 +446,6 @@ extension CloudKitInteraction
 {
     func saveGTDLevelToCloudKit()
     {
-        //        NSLog("Syncing GTDLevel")
         for myItem in myDatabaseConnection.getGTDLevelsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "GTDLevel"))
         {
             saveGTDLevelRecordToCloudKit(myItem)
@@ -463,6 +462,7 @@ extension CloudKitInteraction
             for record in results!
             {
                 self.updateGTDLevelRecord(record)
+                usleep(100)
             }
             sem.signal()
         })
@@ -508,6 +508,7 @@ extension CloudKitInteraction
                 let levelName = record.object(forKey: "levelName") as! String
                 
                 myDatabaseConnection.replaceGTDLevel(gTDLevel, inLevelName: levelName, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+                usleep(100)
             }
             sem.signal()
         })
@@ -517,7 +518,8 @@ extension CloudKitInteraction
 
     func saveGTDLevelRecordToCloudKit(_ sourceRecord: GTDLevel)
     {
-    let predicate = NSPredicate(format: "(gTDLevel == \(sourceRecord.gTDLevel)) && (teamID == \(sourceRecord.teamID))") // better be accurate to get only the record you need
+        let sem = DispatchSemaphore(value: 0)
+        let predicate = NSPredicate(format: "(gTDLevel == \(sourceRecord.gTDLevel)) && (teamID == \(sourceRecord.teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "GTDLevel", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -531,7 +533,10 @@ extension CloudKitInteraction
                     let record = records!.first// as! CKRecord
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
-                    record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record!.setValue(sourceRecord.updateType, forKey: "updateType")
                     record!.setValue(sourceRecord.levelName, forKey: "levelName")
                     
@@ -554,7 +559,10 @@ extension CloudKitInteraction
                 {  // Insert
                     let record = CKRecord(recordType: "GTDLevel")
                     record.setValue(sourceRecord.gTDLevel, forKey: "gTDLevel")
-                    record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
                     record.setValue(sourceRecord.teamID, forKey: "teamID")
                     record.setValue(sourceRecord.levelName, forKey: "levelName")
@@ -574,7 +582,9 @@ extension CloudKitInteraction
                     })
                 }
             }
+            sem.signal()
         })
+        sem.wait()
     }
 
     func updateGTDLevelRecord(_ sourceRecord: CKRecord)

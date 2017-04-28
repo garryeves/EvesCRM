@@ -420,7 +420,6 @@ extension CloudKitInteraction
 {
     func saveRolesToCloudKit()
     {
-        //        NSLog("Syncing Roles")
         for myItem in myDatabaseConnection.getRolesForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Roles"))
         {
             saveRolesRecordToCloudKit(myItem)
@@ -437,6 +436,7 @@ extension CloudKitInteraction
             for record in results!
             {
                 self.updateRolesRecord(record)
+                usleep(100)
             }
             sem.signal()
         })
@@ -482,6 +482,7 @@ extension CloudKitInteraction
                 let roleDescription = record.object(forKey: "roleDescription") as! String
                 
                 myDatabaseConnection.replaceRole(roleDescription, teamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType, roleID: roleID)
+                usleep(100)
             }
             sem.signal()
         })
@@ -491,6 +492,7 @@ extension CloudKitInteraction
 
     func saveRolesRecordToCloudKit(_ sourceRecord: Roles)
     {
+        let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "(roleID == \(sourceRecord.roleID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Roles", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
@@ -505,7 +507,10 @@ extension CloudKitInteraction
                     let record = records!.first// as! CKRecord
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
-                    record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record!.setValue(sourceRecord.updateType, forKey: "updateType")
                     record!.setValue(sourceRecord.roleDescription, forKey: "roleDescription")
                     
@@ -528,7 +533,10 @@ extension CloudKitInteraction
                 {  // Insert
                     let record = CKRecord(recordType: "Roles")
                     record.setValue(sourceRecord.roleID, forKey: "roleID")
-                    record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
                     record.setValue(sourceRecord.teamID, forKey: "teamID")
                     record.setValue(sourceRecord.roleDescription, forKey: "roleDescription")
@@ -548,7 +556,9 @@ extension CloudKitInteraction
                     })
                 }
             }
+            sem.signal()
         })
+        sem.wait()
     }
 
     func updateRolesRecord(_ sourceRecord: CKRecord)

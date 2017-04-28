@@ -409,7 +409,6 @@ extension CloudKitInteraction
 {
     func saveProjectTeamMembersToCloudKit()
     {
-        //        NSLog("Syncing ProjectTeamMembers")
         for myItem in myDatabaseConnection.getProjectTeamMembersForSync(myDatabaseConnection.getSyncDateForTable(tableName: "ProjectTeamMembers"))
         {
             saveProjectTeamMembersRecordToCloudKit(myItem)
@@ -426,6 +425,7 @@ extension CloudKitInteraction
             for record in results!
             {
                 self.updateProjectTeamMembersRecord(record)
+                usleep(100)
             }
             sem.signal()
         })
@@ -472,6 +472,7 @@ extension CloudKitInteraction
                 let projectMemberNotes = record.object(forKey: "projectMemberNotes") as! String
                 
                 myDatabaseConnection.replaceTeamMember(projectID, inRoleID: roleID, inPersonName: teamMember, inNotes: projectMemberNotes, inUpdateTime: updateTime, inUpdateType: updateType)
+                usleep(100)
             }
             sem.signal()
         })
@@ -481,6 +482,7 @@ extension CloudKitInteraction
 
     func saveProjectTeamMembersRecordToCloudKit(_ sourceRecord: ProjectTeamMembers)
     {
+        let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID)) && (teamMember == \"\(sourceRecord.teamMember!)\")") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "ProjectTeamMembers", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
@@ -495,7 +497,10 @@ extension CloudKitInteraction
                     let record = records!.first// as! CKRecord
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
-                    record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record!.setValue(sourceRecord.updateType, forKey: "updateType")
                     record!.setValue(sourceRecord.roleID, forKey: "roleID")
                     record!.setValue(sourceRecord.projectMemberNotes, forKey: "projectMemberNotes")
@@ -520,7 +525,10 @@ extension CloudKitInteraction
                     let record = CKRecord(recordType: "ProjectTeamMembers")
                     record.setValue(sourceRecord.projectID, forKey: "projectID")
                     record.setValue(sourceRecord.teamMember, forKey: "teamMember")
-                    record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
                     record.setValue(sourceRecord.roleID, forKey: "roleID")
                     record.setValue(sourceRecord.projectMemberNotes, forKey: "projectMemberNotes")
@@ -540,7 +548,9 @@ extension CloudKitInteraction
                     })
                 }
             }
+            sem.signal()
         })
+        sem.wait()
     }
 
     func updateProjectTeamMembersRecord(_ sourceRecord: CKRecord)

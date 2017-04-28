@@ -355,7 +355,6 @@ extension CloudKitInteraction
 {
     func saveStagesToCloudKit()
     {
-        //        NSLog("Syncing Stages")
         for myItem in myDatabaseConnection.getStagesForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Stages"))
         {
             saveStagesRecordToCloudKit(myItem)
@@ -372,6 +371,7 @@ extension CloudKitInteraction
             for record in results!
             {
                 self.updateStagesRecord(record)
+                usleep(100)
             }
             sem.signal()
         })
@@ -416,6 +416,7 @@ extension CloudKitInteraction
                 let teamID = record.object(forKey: "teamID") as! Int32
                 
                 myDatabaseConnection.replaceStage(stageDescription, teamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+                usleep(100)
             }
             sem.signal()
         })
@@ -425,6 +426,7 @@ extension CloudKitInteraction
 
     func saveStagesRecordToCloudKit(_ sourceRecord: Stages)
     {
+        let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "(stageDescription == \"\(sourceRecord.stageDescription!)\") && (teamID == \(sourceRecord.teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Stages", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
@@ -439,7 +441,10 @@ extension CloudKitInteraction
                     let record = records!.first// as! CKRecord
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
-                    record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record!.setValue(sourceRecord.updateType, forKey: "updateType")
                     
                     // Save this record again
@@ -461,7 +466,10 @@ extension CloudKitInteraction
                 {  // Insert
                     let record = CKRecord(recordType: "Stages")
                     record.setValue(sourceRecord.stageDescription, forKey: "stageDescription")
-                    record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
                     record.setValue(sourceRecord.teamID, forKey: "teamID")
                     
@@ -480,7 +488,9 @@ extension CloudKitInteraction
                     })
                 }
             }
+            sem.signal()
         })
+        sem.wait()
     }
 
     func updateStagesRecord(_ sourceRecord: CKRecord)

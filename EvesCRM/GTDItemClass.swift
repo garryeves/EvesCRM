@@ -720,7 +720,6 @@ extension CloudKitInteraction
 {
     func saveGTDItemToCloudKit()
     {
-        //        NSLog("Syncing GTDItem")
         for myItem in myDatabaseConnection.getGTDItemsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "GTDItem"))
         {
             saveGTDItemRecordToCloudKit(myItem)
@@ -737,6 +736,7 @@ extension CloudKitInteraction
             for record in results!
             {
                 self.updateGTDItemRecord(record)
+                usleep(100)
             }
             sem.signal()
         })
@@ -790,6 +790,7 @@ extension CloudKitInteraction
                 let gTDLevel = record.object(forKey: "gTDLevel") as! Int32
                 
                 myDatabaseConnection.replaceGTDItem(gTDItemID, inParentID: gTDParentID, inTitle: title, inStatus: status, inTeamID: teamID, inNote: note, inLastReviewDate: lastReviewDate, inReviewFrequency: reviewFrequency, inReviewPeriod: reviewPeriod, inPredecessor: predecessor, inGTDLevel: gTDLevel, inUpdateTime: updateTime, inUpdateType: updateType)
+                usleep(100)
             }
             sem.signal()
         })
@@ -799,6 +800,7 @@ extension CloudKitInteraction
 
     func saveGTDItemRecordToCloudKit(_ sourceRecord: GTDItem)
     {
+        let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "(gTDItemID == \(sourceRecord.gTDItemID)) && (teamID == \(sourceRecord.teamID))")
         let query = CKQuery(recordType: "GTDItem", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
@@ -813,7 +815,10 @@ extension CloudKitInteraction
                     let record = records!.first// as! CKRecord
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
-                    record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record!.setValue(sourceRecord.updateType, forKey: "updateType")
                     record!.setValue(sourceRecord.gTDParentID, forKey: "gTDParentID")
                     record!.setValue(sourceRecord.lastReviewDate, forKey: "lastReviewDate")
@@ -845,7 +850,10 @@ extension CloudKitInteraction
                 {  // Insert
                     let record = CKRecord(recordType: "GTDItem")
                     record.setValue(sourceRecord.gTDItemID, forKey: "gTDItemID")
-                    record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
                     record.setValue(sourceRecord.gTDParentID, forKey: "gTDParentID")
                     record.setValue(sourceRecord.lastReviewDate, forKey: "lastReviewDate")
@@ -873,7 +881,9 @@ extension CloudKitInteraction
                     })
                 }
             }
+            sem.signal()
         })
+        sem.wait()
     }
 
     func updateGTDItemRecord(_ sourceRecord: CKRecord)

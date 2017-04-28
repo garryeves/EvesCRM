@@ -1539,7 +1539,6 @@ extension CloudKitInteraction
 {
     func saveTaskToCloudKit()
     {
-        //        NSLog("Syncing Task")
         for myItem in myDatabaseConnection.getTaskForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Task"))
         {
             saveTaskRecordToCloudKit(myItem)
@@ -1556,6 +1555,7 @@ extension CloudKitInteraction
             for record in results!
             {
                 self.updateTaskRecord(record)
+                usleep(100)
             }
             sem.signal()
         })
@@ -1616,6 +1616,7 @@ extension CloudKitInteraction
                 let projectID = record.object(forKey: "projectID") as! Int32
                 
                 myDatabaseConnection.replaceTask(taskID, inTitle: title, inDetails: details, inDueDate: dueDate, inStartDate: startDate, inStatus: status, inPriority: priority, inEnergyLevel: energyLevel, inEstimatedTime: estimatedTime, inEstimatedTimeType: estimatedTimeType, inProjectID: projectID, inCompletionDate: completionDate, inRepeatInterval: repeatInterval, inRepeatType: repeatType, inRepeatBase: repeatBase, inFlagged: flagged, inUrgency: urgency, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+                usleep(100)
             }
             sem.signal()
         })
@@ -1625,6 +1626,7 @@ extension CloudKitInteraction
 
     func saveTaskRecordToCloudKit(_ sourceRecord: Task)
     {
+        let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Task", predicate: predicate)
         
@@ -1640,7 +1642,10 @@ extension CloudKitInteraction
                     let record = records!.first// as! CKRecord
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
-                    record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record!.setValue(sourceRecord.updateType, forKey: "updateType")
                     record!.setValue(sourceRecord.completionDate, forKey: "completionDate")
                     record!.setValue(sourceRecord.details, forKey: "details")
@@ -1679,7 +1684,10 @@ extension CloudKitInteraction
                 {  // Insert
                     let record = CKRecord(recordType: "Task")
                     record.setValue(sourceRecord.taskID, forKey: "taskID")
-                    record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
                     record.setValue(sourceRecord.completionDate, forKey: "completionDate")
                     record.setValue(sourceRecord.details, forKey: "details")
@@ -1714,7 +1722,9 @@ extension CloudKitInteraction
                     })
                 }
             }
+            sem.signal()
         })
+        sem.wait()
     }
 
     func updateTaskRecord(_ sourceRecord: CKRecord)

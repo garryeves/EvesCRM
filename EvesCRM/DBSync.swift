@@ -10,6 +10,9 @@ import Foundation
 
 class DBSync: NSObject
 {
+//    let defaultsName = "76YDDNPU7W.group.com.garryeves.EvesCRM"
+    let defaultsName = "group.com.garryeves.EvesCRM"
+
     var refreshRunning: Bool = false
     var firstRun: Bool = true
     
@@ -40,13 +43,12 @@ class DBSync: NSObject
                     notificationCenter.addObserver(self, selector: #selector(self.DBReplaceDone), name: NotificationDBReplaceDone, object: nil)
                     replaceWithCloudKit()
                     
+                    setLastSyncDates(syncDate: Date())
+                    
                     notificationCenter.post(name: NotificationDBReplaceDone, object: nil)
-
                 }
                 else
-                {                
-                    let newSyncDate = Date()
-                    
+                {
                     syncToCloudKit()
         
                     syncFromCloudKit()
@@ -54,7 +56,6 @@ class DBSync: NSObject
                     myDatabaseConnection.clearDeletedItems()
                     myDatabaseConnection.clearSyncedItems()
 
-                    setLastSyncDates(syncDate: newSyncDate)
                     
                     if firstRun
                     {
@@ -64,7 +65,6 @@ class DBSync: NSObject
                     
                     notificationCenter.post(name: NotificationDBSyncCompleted, object: nil)
                 }
-
             }
             else if iCloudConnected == .couldNotDetermine
             {
@@ -113,22 +113,50 @@ class DBSync: NSObject
 //        sleep(1)
     }
     
+    func writeDefaultString(_  keyName: String, value: String)
+    {
+        let defaults = UserDefaults(suiteName: defaultsName)!
+        
+        defaults.set(value, forKey: keyName)
+        
+        defaults.synchronize()
+    }
+    
+    func readDefaultString(_  keyName: String) -> String
+    {
+        let defaults = UserDefaults(suiteName: defaultsName)!
+        
+        if defaults.string(forKey: keyName) != nil
+        {
+            return (defaults.string(forKey: keyName))!
+        }
+        else
+        {
+            return ""
+        }
+    }
+    
     func getSyncID() -> String
     {
-        let defaults = UserDefaults.standard
+        let checkName = readDefaultString(coreDatabaseName)
         
-        if let name = defaults.string(forKey: appName)
+        if checkName != ""
         {
-            return name
+            return checkName
         }
         else
         {
             // get the next device ID
             myDatabaseConnection.setNextDeviceID()
             
-            let name = defaults.string(forKey: appName)
+            let name = readDefaultString(coreDatabaseName)
             
-            return name!
+            return name
         }
+    }
+    
+    func getSyncString(_  sourceString: String) -> String
+    {
+        return("\(getSyncID()) \(sourceString) Sync")
     }
 }

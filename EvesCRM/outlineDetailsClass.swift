@@ -225,7 +225,6 @@ extension CloudKitInteraction
 {
     func saveOutlineDetailsToCloudKit()
     {
-        //        NSLog("Syncing ProcessedEmails")
         for myItem in myDatabaseConnection.getOutlineDetailsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "OutlineDetails"))
         {
             saveOutlineDetailsRecordToCloudKit(myItem)
@@ -242,6 +241,7 @@ extension CloudKitInteraction
             for record in results!
             {
                 self.updateOutlineDetailsRecord(record)
+                usleep(100)
             }
             sem.signal()
         })
@@ -299,6 +299,7 @@ extension CloudKitInteraction
                 let updateType = record.object(forKey: "updateType") as! String
                 
                 myDatabaseConnection.replaceOutlineDetails(outlineID, lineID: lineID, lineOrder: lineOrder, parentLine: parentLine, lineText: lineText, lineType: lineType, checkBoxValue: checkBoxValue, updateTime: updateTime, updateType: updateType)
+                usleep(100)
             }
             sem.signal()
         })
@@ -308,6 +309,7 @@ extension CloudKitInteraction
 
     func saveOutlineDetailsRecordToCloudKit(_ sourceRecord: OutlineDetails)
     {
+        let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "(outlineID == \(sourceRecord.outlineID)) && (lineID == \(sourceRecord.lineID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "OutlineDetails", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
@@ -322,7 +324,10 @@ extension CloudKitInteraction
                     let record = records!.first// as! CKRecord
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
-                    record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record!.setValue(sourceRecord.updateType, forKey: "updateType")
                     record!.setValue(sourceRecord.lineOrder, forKey: "lineOrder")
                     record!.setValue(sourceRecord.parentLine, forKey: "parentLine")
@@ -358,7 +363,10 @@ extension CloudKitInteraction
                     let record = CKRecord(recordType: "OutlineDetails")
                     record.setValue(sourceRecord.outlineID, forKey: "outlineID")
                     record.setValue(sourceRecord.lineID, forKey: "lineID")
-                    record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    if sourceRecord.updateTime != nil
+                    {
+                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
                     record.setValue(sourceRecord.lineOrder, forKey: "lineOrder")
                     record.setValue(sourceRecord.parentLine, forKey: "parentLine")
@@ -389,7 +397,9 @@ extension CloudKitInteraction
                     })
                 }
             }
+            sem.signal()
         })
+        sem.wait()
     }
 
     func updateOutlineDetailsRecord(_ sourceRecord: CKRecord)
