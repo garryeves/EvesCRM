@@ -37,7 +37,7 @@ class tasks: NSObject
         
         // check to see if the project is on hold
         
-        let myProject = project(inProjectID: projectID)
+        let myProject = project(projectID: projectID)
         
         if myProject.projectStatus != "On Hold"
         {
@@ -67,7 +67,7 @@ class tasks: NSObject
             {  //append project details to work array
                 // check the project to see if it is on hold
                 
-                let myProject = project(inProjectID: myTask.projectID)
+                let myProject = project(projectID: myTask.projectID)
                 
                 if myProject.projectStatus != "On Hold"
                 {
@@ -482,7 +482,7 @@ class task: NSObject
         }
     }
     
-    init(inTeamID: Int32)
+    init(teamID: Int32)
     {
         super.init()
         
@@ -494,7 +494,7 @@ class task: NSObject
         myStatus = "Open"
         
         myTitle = "New Task"
-        myTeamID = inTeamID
+        myTeamID = teamID
         
         save()
     }
@@ -591,7 +591,7 @@ class task: NSObject
     
     func save()
     {
-        myDatabaseConnection.saveTask(myTaskID, inTitle: myTitle, inDetails: myDetails, inDueDate: myDueDate, inStartDate: myStartDate, inStatus: myStatus, inPriority: myPriority, inEnergyLevel: myEnergyLevel, inEstimatedTime: myEstimatedTime, inEstimatedTimeType: myEstimatedTimeType, inProjectID: myProjectID, inCompletionDate: myCompletionDate!, inRepeatInterval: myRepeatInterval, inRepeatType: myRepeatType, inRepeatBase: myRepeatBase, inFlagged: myFlagged, inUrgency: myUrgency, inTeamID: myTeamID)
+        myDatabaseConnection.saveTask(myTaskID, inTitle: myTitle, inDetails: myDetails, inDueDate: myDueDate, startDate: myStartDate, inStatus: myStatus, inPriority: myPriority, inEnergyLevel: myEnergyLevel, inEstimatedTime: myEstimatedTime, inEstimatedTimeType: myEstimatedTimeType, projectID: myProjectID, inCompletionDate: myCompletionDate!, inRepeatInterval: myRepeatInterval, inRepeatType: myRepeatType, inRepeatBase: myRepeatBase, inFlagged: myFlagged, inUrgency: myUrgency, teamID: myTeamID)
         
         if !saveCalled
         {
@@ -968,7 +968,7 @@ class task: NSObject
             
             if myStartDate == getDefaultDate() as Date && myDueDate == getDefaultDate() as Date
             {  // No dates have set, so we set the start date
-                tempStartDate = calculateNewDate(Date(), inDateBase:myRepeatBase, inInterval: myRepeatInterval, inPeriod: myRepeatType)
+                tempStartDate = calculateNewDate(Date(), dateBase:myRepeatBase, interval: myRepeatInterval, period: myRepeatType)
             }
             else
             { // A date has been set in at least one of the fields, so we use that as the date to set
@@ -995,11 +995,11 @@ class task: NSObject
                 {
                     if myRepeatBase == "Start Date"
                     {
-                        tempStartDate = calculateNewDate(myStartDate, inDateBase:myRepeatBase, inInterval: myRepeatInterval, inPeriod: myRepeatType)
+                        tempStartDate = calculateNewDate(myStartDate, dateBase:myRepeatBase, interval: myRepeatInterval, period: myRepeatType)
                     }
                     else
                     {
-                        tempStartDate = calculateNewDate(todayDate, inDateBase:myRepeatBase, inInterval: myRepeatInterval, inPeriod: myRepeatType)
+                        tempStartDate = calculateNewDate(todayDate, dateBase:myRepeatBase, interval: myRepeatInterval, period: myRepeatType)
                     }
                 }
                 
@@ -1012,7 +1012,7 @@ class task: NSObject
                         value: daysToAdd,
                         to: todayDate)!
                     
-                    tempDueDate = calculateNewDate(tempDate, inDateBase:myRepeatBase, inInterval: myRepeatInterval, inPeriod: myRepeatType)
+                    tempDueDate = calculateNewDate(tempDate, dateBase:myRepeatBase, interval: myRepeatInterval, period: myRepeatType)
                 }
             }
             
@@ -1024,7 +1024,7 @@ class task: NSObject
 
 extension coreDatabase
 {
-    func saveTask(_ inTaskID: Int32, inTitle: String, inDetails: String, inDueDate: Date, inStartDate: Date, inStatus: String, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int16, inEstimatedTimeType: String, inProjectID: Int32, inCompletionDate: Date, inRepeatInterval: Int16, inRepeatType: String, inRepeatBase: String, inFlagged: Bool, inUrgency: String, inTeamID: Int32, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func saveTask(_ inTaskID: Int32, inTitle: String, inDetails: String, inDueDate: Date, startDate: Date, inStatus: String, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int16, inEstimatedTimeType: String, projectID: Int32, inCompletionDate: Date, inRepeatInterval: Int16, inRepeatType: String, inRepeatBase: String, inFlagged: Bool, inUrgency: String, teamID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myTask: Task!
         
@@ -1037,30 +1037,30 @@ extension coreDatabase
             myTask.title = inTitle
             myTask.details = inDetails
             myTask.dueDate = inDueDate as NSDate
-            myTask.startDate = inStartDate as NSDate
+            myTask.startDate = startDate as NSDate
             myTask.status = inStatus
             myTask.priority = inPriority
             myTask.energyLevel = inEnergyLevel
             myTask.estimatedTime = inEstimatedTime
             myTask.estimatedTimeType = inEstimatedTimeType
-            myTask.projectID = inProjectID
+            myTask.projectID = projectID
             myTask.completionDate = inCompletionDate as NSDate
             myTask.repeatInterval = inRepeatInterval
             myTask.repeatType = inRepeatType
             myTask.repeatBase = inRepeatBase
             myTask.flagged = inFlagged as NSNumber
             myTask.urgency = inUrgency
-            myTask.teamID = inTeamID
+            myTask.teamID = teamID
             
-            if inUpdateType == "CODE"
+            if updateType == "CODE"
             {
                 myTask.updateTime =  NSDate()
                 myTask.updateType = "Add"
             }
             else
             {
-                myTask.updateTime = inUpdateTime as NSDate
-                myTask.updateType = inUpdateType
+                myTask.updateTime = updateTime as NSDate
+                myTask.updateType = updateType
             }
         }
         else
@@ -1069,22 +1069,22 @@ extension coreDatabase
             myTask.title = inTitle
             myTask.details = inDetails
             myTask.dueDate = inDueDate as NSDate
-            myTask.startDate = inStartDate as NSDate
+            myTask.startDate = startDate as NSDate
             myTask.status = inStatus
             myTask.priority = inPriority
             myTask.energyLevel = inEnergyLevel
             myTask.estimatedTime = inEstimatedTime
             myTask.estimatedTimeType = inEstimatedTimeType
-            myTask.projectID = inProjectID
+            myTask.projectID = projectID
             myTask.completionDate = inCompletionDate as NSDate
             myTask.repeatInterval = inRepeatInterval
             myTask.repeatType = inRepeatType
             myTask.repeatBase = inRepeatBase
             myTask.flagged = inFlagged as NSNumber
             myTask.urgency = inUrgency
-            myTask.teamID = inTeamID
+            myTask.teamID = teamID
             
-            if inUpdateType == "CODE"
+            if updateType == "CODE"
             {
                 myTask.updateTime =  NSDate()
                 if myTask.updateType != "Add"
@@ -1094,8 +1094,8 @@ extension coreDatabase
             }
             else
             {
-                myTask.updateTime = inUpdateTime as NSDate
-                myTask.updateType = inUpdateType
+                myTask.updateTime = updateTime as NSDate
+                myTask.updateType = updateType
             }
             
         }
@@ -1103,37 +1103,37 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceTask(_ inTaskID: Int32, inTitle: String, inDetails: String, inDueDate: Date, inStartDate: Date, inStatus: String, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int16, inEstimatedTimeType: String, inProjectID: Int32, inCompletionDate: Date, inRepeatInterval: Int16, inRepeatType: String, inRepeatBase: String, inFlagged: Bool, inUrgency: String, inTeamID: Int32, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func replaceTask(_ inTaskID: Int32, inTitle: String, inDetails: String, inDueDate: Date, startDate: Date, inStatus: String, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int16, inEstimatedTimeType: String, projectID: Int32, inCompletionDate: Date, inRepeatInterval: Int16, inRepeatType: String, inRepeatBase: String, inFlagged: Bool, inUrgency: String, teamID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myTask = Task(context: objectContext)
         myTask.taskID = inTaskID
         myTask.title = inTitle
         myTask.details = inDetails
         myTask.dueDate = inDueDate as NSDate
-        myTask.startDate = inStartDate as NSDate
+        myTask.startDate = startDate as NSDate
         myTask.status = inStatus
         myTask.priority = inPriority
         myTask.energyLevel = inEnergyLevel
         myTask.estimatedTime = inEstimatedTime
         myTask.estimatedTimeType = inEstimatedTimeType
-        myTask.projectID = inProjectID
+        myTask.projectID = projectID
         myTask.completionDate = inCompletionDate as NSDate
         myTask.repeatInterval = inRepeatInterval
         myTask.repeatType = inRepeatType
         myTask.repeatBase = inRepeatBase
         myTask.flagged = inFlagged as NSNumber
         myTask.urgency = inUrgency
-        myTask.teamID = inTeamID
+        myTask.teamID = teamID
         
-        if inUpdateType == "CODE"
+        if updateType == "CODE"
         {
             myTask.updateTime =  NSDate()
             myTask.updateType = "Add"
         }
         else
         {
-            myTask.updateTime = inUpdateTime as NSDate
-            myTask.updateType = inUpdateType
+            myTask.updateTime = updateTime as NSDate
+            myTask.updateType = updateType
         }
         
         saveContext()
@@ -1166,13 +1166,13 @@ extension coreDatabase
         saveContext()
     }
     
-    func getTasksNotDeleted(_ inTeamID: Int32)->[Task]
+    func getTasksNotDeleted(_ teamID: Int32)->[Task]
     {
         let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Deleted\")")
+        let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(teamID)) && (status != \"Deleted\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1194,13 +1194,13 @@ extension coreDatabase
         }
     }
     
-    func getAllTasksForProject(_ inProjectID: Int32, inTeamID: Int32)->[Task]
+    func getAllTasksForProject(_ projectID: Int32, teamID: Int32)->[Task]
     {
         let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectID = \(inProjectID)) && (updateType != \"Delete\") && (teamID == \(inTeamID)) && (status != \"Deleted\")")
+        let predicate = NSPredicate(format: "(projectID = \(projectID)) && (updateType != \"Delete\") && (teamID == \(teamID)) && (status != \"Deleted\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1455,7 +1455,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func initialiseTeamForTask(_ inTeamID: Int32)
+    func initialiseTeamForTask(_ teamID: Int32)
     {
         var maxID: Int32 = 1
         
@@ -1473,7 +1473,7 @@ extension coreDatabase
             {
                 for myItem in fetchResults
                 {
-                    myItem.teamID = inTeamID
+                    myItem.teamID = teamID
                     maxID = myItem.taskID
                 }
             }
@@ -1615,7 +1615,7 @@ extension CloudKitInteraction
                 let urgency = record.object(forKey: "urgency") as! String
                 let projectID = record.object(forKey: "projectID") as! Int32
                 
-                myDatabaseConnection.replaceTask(taskID, inTitle: title, inDetails: details, inDueDate: dueDate, inStartDate: startDate, inStatus: status, inPriority: priority, inEnergyLevel: energyLevel, inEstimatedTime: estimatedTime, inEstimatedTimeType: estimatedTimeType, inProjectID: projectID, inCompletionDate: completionDate, inRepeatInterval: repeatInterval, inRepeatType: repeatType, inRepeatBase: repeatBase, inFlagged: flagged, inUrgency: urgency, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+                myDatabaseConnection.replaceTask(taskID, inTitle: title, inDetails: details, inDueDate: dueDate, startDate: startDate, inStatus: status, inPriority: priority, inEnergyLevel: energyLevel, inEstimatedTime: estimatedTime, inEstimatedTimeType: estimatedTimeType, projectID: projectID, inCompletionDate: completionDate, inRepeatInterval: repeatInterval, inRepeatType: repeatType, inRepeatBase: repeatBase, inFlagged: flagged, inUrgency: urgency, teamID: teamID, updateTime: updateTime, updateType: updateType)
                 usleep(100)
             }
             sem.signal()
@@ -1760,7 +1760,7 @@ extension CloudKitInteraction
         let urgency = sourceRecord.object(forKey: "urgency") as! String
         let projectID = sourceRecord.object(forKey: "projectID") as! Int32
         
-        myDatabaseConnection.saveTask(taskID, inTitle: title, inDetails: details, inDueDate: dueDate, inStartDate: startDate, inStatus: status, inPriority: priority, inEnergyLevel: energyLevel, inEstimatedTime: estimatedTime, inEstimatedTimeType: estimatedTimeType, inProjectID: projectID, inCompletionDate: completionDate, inRepeatInterval: repeatInterval, inRepeatType: repeatType, inRepeatBase: repeatBase, inFlagged: flagged, inUrgency: urgency, inTeamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+        myDatabaseConnection.saveTask(taskID, inTitle: title, inDetails: details, inDueDate: dueDate, startDate: startDate, inStatus: status, inPriority: priority, inEnergyLevel: energyLevel, inEstimatedTime: estimatedTime, inEstimatedTimeType: estimatedTimeType, projectID: projectID, inCompletionDate: completionDate, inRepeatInterval: repeatInterval, inRepeatType: repeatType, inRepeatBase: repeatBase, inFlagged: flagged, inUrgency: urgency, teamID: teamID, updateTime: updateTime, updateType: updateType)
     }
 }
 

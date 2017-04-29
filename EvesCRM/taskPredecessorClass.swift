@@ -72,7 +72,7 @@ extension coreDatabase
         }
     }
     
-    func savePredecessorTask(_ inTaskID: Int32, inPredecessorID: Int32, inPredecessorType: String, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func savePredecessorTask(_ inTaskID: Int32, inPredecessorID: Int32, inPredecessorType: String, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myTask: TaskPredecessor!
         
@@ -84,22 +84,22 @@ extension coreDatabase
             myTask.taskID = inTaskID
             myTask.predecessorID = inPredecessorID
             myTask.predecessorType = inPredecessorType
-            if inUpdateType == "CODE"
+            if updateType == "CODE"
             {
                 myTask.updateTime =  NSDate()
                 myTask.updateType = "Add"
             }
             else
             {
-                myTask.updateTime = inUpdateTime as NSDate
-                myTask.updateType = inUpdateType
+                myTask.updateTime = updateTime as NSDate
+                myTask.updateType = updateType
             }
         }
         else
         { // Update
             myTask.predecessorID = inPredecessorID
             myTask.predecessorType = inPredecessorType
-            if inUpdateType == "CODE"
+            if updateType == "CODE"
             {
                 myTask.updateTime =  NSDate()
                 if myTask.updateType != "Add"
@@ -109,8 +109,8 @@ extension coreDatabase
             }
             else
             {
-                myTask.updateTime = inUpdateTime as NSDate
-                myTask.updateType = inUpdateType
+                myTask.updateTime = updateTime as NSDate
+                myTask.updateType = updateType
             }
         }
         
@@ -119,21 +119,21 @@ extension coreDatabase
         myCloudDB.saveTaskPredecessorRecordToCloudKit(myTask)
     }
     
-    func replacePredecessorTask(_ inTaskID: Int32, inPredecessorID: Int32, inPredecessorType: String, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func replacePredecessorTask(_ inTaskID: Int32, inPredecessorID: Int32, inPredecessorType: String, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myTask = TaskPredecessor(context: objectContext)
         myTask.taskID = inTaskID
         myTask.predecessorID = inPredecessorID
         myTask.predecessorType = inPredecessorType
-        if inUpdateType == "CODE"
+        if updateType == "CODE"
         {
             myTask.updateTime =  NSDate()
             myTask.updateType = "Add"
         }
         else
         {
-            myTask.updateTime = inUpdateTime as NSDate
-            myTask.updateType = inUpdateType
+            myTask.updateTime = updateTime as NSDate
+            myTask.updateType = updateType
         }
         
         saveContext()
@@ -354,7 +354,7 @@ extension CloudKitInteraction
                 let updateType = record.object(forKey: "updateType") as! String
                 let predecessorType = record.object(forKey: "predecessorType") as! String
                 
-                myDatabaseConnection.replacePredecessorTask(taskID, inPredecessorID: predecessorID, inPredecessorType: predecessorType, inUpdateTime: updateTime, inUpdateType: updateType)
+                myDatabaseConnection.replacePredecessorTask(taskID, inPredecessorID: predecessorID, inPredecessorType: predecessorType, updateTime: updateTime, updateType: updateType)
                 usleep(100)
             }
             sem.signal()
@@ -452,6 +452,6 @@ extension CloudKitInteraction
         }
         let predecessorType = sourceRecord.object(forKey: "predecessorType") as! String
         
-        myDatabaseConnection.savePredecessorTask(taskID, inPredecessorID: predecessorID, inPredecessorType: predecessorType, inUpdateTime: updateTime, inUpdateType: updateType)
+        myDatabaseConnection.savePredecessorTask(taskID, inPredecessorID: predecessorID, inPredecessorType: predecessorType, updateTime: updateTime, updateType: updateType)
     }
 }

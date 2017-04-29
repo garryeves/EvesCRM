@@ -38,7 +38,7 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, UIPopoverP
     
     fileprivate let cellTaskName = "cellTaskName"
     
-    var event: myCalendarItem!
+    var event: calendarItem!
     var agendaItem: meetingAgendaItem!
     var actionType: String = ""
     
@@ -258,7 +258,7 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, UIPopoverP
         popover!.sourceView = sender
         popover!.sourceRect = CGRect(x: 700,y: 700,width: 0,height: 0)
         
-        let newTask = task(inTeamID: myCurrentTeam.teamID)
+        let newTask = task(teamID: myCurrentTeam.teamID)
         popoverContent.passedTask = newTask
         
         popoverContent.preferredContentSize = CGSize(width: 700,height: 700)

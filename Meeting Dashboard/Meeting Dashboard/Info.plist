@@ -35,5 +35,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Calendar access required to allow app to extract meeting details from calendar, and also to create new calendar entries for meetings created in the app.</string>
 </dict>
 </plist>

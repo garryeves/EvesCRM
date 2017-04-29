@@ -398,7 +398,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func savePane(_ inPaneName:String, inPaneAvailable: Bool, inPaneVisible: Bool, inPaneOrder: Int16, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func savePane(_ inPaneName:String, inPaneAvailable: Bool, inPaneVisible: Bool, inPaneOrder: Int16, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myPane: Panes!
         
@@ -413,15 +413,15 @@ extension coreDatabase
             myPane.pane_available = inPaneAvailable as NSNumber
             myPane.pane_visible = inPaneVisible as NSNumber
             myPane.pane_order = inPaneOrder
-            if inUpdateType == "CODE"
+            if updateType == "CODE"
             {
                 myPane.updateTime =  NSDate()
                 myPane.updateType = "Add"
             }
             else
             {
-                myPane.updateTime = inUpdateTime as NSDate
-                myPane.updateType = inUpdateType
+                myPane.updateTime = updateTime as NSDate
+                myPane.updateType = updateType
             }
         }
         else
@@ -430,7 +430,7 @@ extension coreDatabase
             myPane.pane_available = inPaneAvailable as NSNumber
             myPane.pane_visible = inPaneVisible as NSNumber
             myPane.pane_order = inPaneOrder
-            if inUpdateType == "CODE"
+            if updateType == "CODE"
             {
                 myPane.updateTime =  NSDate()
                 if myPane.updateType != "Add"
@@ -440,8 +440,8 @@ extension coreDatabase
             }
             else
             {
-                myPane.updateTime = inUpdateTime as NSDate
-                myPane.updateType = inUpdateType
+                myPane.updateTime = updateTime as NSDate
+                myPane.updateType = updateType
             }
         }
         
@@ -450,7 +450,7 @@ extension coreDatabase
         myCloudDB.savePanesRecordToCloudKit(myPane)
     }
     
-    func replacePane(_ inPaneName:String, inPaneAvailable: Bool, inPaneVisible: Bool, inPaneOrder: Int16, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func replacePane(_ inPaneName:String, inPaneAvailable: Bool, inPaneVisible: Bool, inPaneOrder: Int16, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myPane = Panes(context: objectContext)
         
@@ -458,15 +458,15 @@ extension coreDatabase
         myPane.pane_available = inPaneAvailable as NSNumber
         myPane.pane_visible = inPaneVisible as NSNumber
         myPane.pane_order = inPaneOrder
-        if inUpdateType == "CODE"
+        if updateType == "CODE"
         {
             myPane.updateTime =  NSDate()
             myPane.updateType = "Add"
         }
         else
         {
-            myPane.updateTime = inUpdateTime as NSDate
-            myPane.updateType = inUpdateType
+            myPane.updateTime = updateTime as NSDate
+            myPane.updateType = updateType
         }
         
         saveContext()
@@ -630,7 +630,7 @@ extension CloudKitInteraction
                 let pane_order = record.object(forKey: "pane_order") as! Int16
                 let pane_visible = record.object(forKey: "pane_visible") as! Bool
                 
-                myDatabaseConnection.replacePane(pane_name, inPaneAvailable: pane_available, inPaneVisible: pane_visible, inPaneOrder: pane_order, inUpdateTime: updateTime, inUpdateType: updateType)
+                myDatabaseConnection.replacePane(pane_name, inPaneAvailable: pane_available, inPaneVisible: pane_visible, inPaneOrder: pane_order, updateTime: updateTime, updateType: updateType)
                 usleep(100)
             }
             sem.signal()
@@ -732,6 +732,6 @@ extension CloudKitInteraction
         let pane_order = sourceRecord.object(forKey: "pane_order") as! Int16
         let pane_visible = sourceRecord.object(forKey: "pane_visible") as! Bool
         
-        myDatabaseConnection.savePane(pane_name, inPaneAvailable: pane_available, inPaneVisible: pane_visible, inPaneOrder: pane_order, inUpdateTime: updateTime, inUpdateType: updateType)
+        myDatabaseConnection.savePane(pane_name, inPaneAvailable: pane_available, inPaneVisible: pane_visible, inPaneOrder: pane_order, updateTime: updateTime, updateType: updateType)
     }
 }

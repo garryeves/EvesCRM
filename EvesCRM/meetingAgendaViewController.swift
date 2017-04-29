@@ -323,7 +323,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
         }
         else
         {
-            let agendaItem = meetingAgendaItem(inMeetingID: passedMeeting.event.eventID)
+            let agendaItem = meetingAgendaItem(meetingID: passedMeeting.event.eventID)
             agendaItem.status = "Open"
             agendaItem.decisionMade = ""
             agendaItem.discussionNotes = ""

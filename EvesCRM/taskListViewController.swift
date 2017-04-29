@@ -45,7 +45,7 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
             
             // Parse through All of the previous meetings that led to this meeting looking for tasks that are not yet closed, as need to display them for completeness
             
-            let myMeetingRecords = myDatabaseConnection.loadAgenda(myMeetingID, inTeamID: myCurrentTeam.teamID)
+            let myMeetingRecords = myDatabaseConnection.loadAgenda(myMeetingID, teamID: myCurrentTeam.teamID)
             
             if myMeetingRecords.count == 0
             {
@@ -247,7 +247,7 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
             if self.myTaskListType == "Meeting"
             {
                 popoverContent.passedTaskType = "minutes"
-                let myWorkingItem = myCalendarItem(inEventStore: globalEventStore, inMeetingID: self.myMeetingID, teamID: myCurrentTeam.teamID)
+                let myWorkingItem = calendarItem(meetingID: self.myMeetingID, teamID: myCurrentTeam.teamID)
                 
                 popoverContent.passedEvent = myWorkingItem
             }

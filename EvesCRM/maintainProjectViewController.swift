@@ -393,7 +393,7 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
      
         let myFullName = CNContactFormatter.string(from: contact, style: CNContactFormatterStyle.fullName)
         
-        _ = projectTeamMember(inProjectID: inProjectObject.projectID, inTeamMember: myFullName!, inRoleID: 0, inTeamID: mySelectedTeam.teamID)
+        _ = projectTeamMember(projectID: inProjectObject.projectID, teamMember: myFullName!, inRoleID: 0, teamID: mySelectedTeam.teamID)
         
         inProjectObject.loadTeamMembers()
         mySelectedRoles = inProjectObject.teamMembers

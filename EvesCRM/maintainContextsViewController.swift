@@ -223,7 +223,7 @@ class MaintainContextsViewController: UIViewController, CNContactPickerDelegate/
         
         let fullname = CNContactFormatter.string(from: contact, style: CNContactFormatterStyle.fullName)
         
-        let newContext = context(inTeamID: myCurrentTeam.teamID)
+        let newContext = context(teamID: myCurrentTeam.teamID)
         
         newContext.name = fullname!
         newContext.contextType = "Person"
@@ -253,7 +253,7 @@ class MaintainContextsViewController: UIViewController, CNContactPickerDelegate/
     {
         if txtName.text != ""
         {
-            let newContext = context(inTeamID: myCurrentTeam.teamID)
+            let newContext = context(teamID: myCurrentTeam.teamID)
             newContext.name = txtName.text!
             newContext.contextType = "Person"
             newContext.status = "Open"
@@ -272,7 +272,7 @@ class MaintainContextsViewController: UIViewController, CNContactPickerDelegate/
     {
         if txtName.text != ""
         {
-            let newContext = context(inTeamID: myCurrentTeam.teamID)
+            let newContext = context(teamID: myCurrentTeam.teamID)
             newContext.name = txtName.text!
             newContext.contextType = "Place"
             newContext.status = "Open"
@@ -291,7 +291,7 @@ class MaintainContextsViewController: UIViewController, CNContactPickerDelegate/
     {
         if txtName.text != ""
         {
-            let newContext = context(inTeamID: myCurrentTeam.teamID)
+            let newContext = context(teamID: myCurrentTeam.teamID)
             newContext.name = txtName.text!
             newContext.contextType = "Tool"
             newContext.status = "Open"

@@ -20,7 +20,7 @@ protocol MyTaskDelegate
 class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDelegate
 {
     var passedTask: task!
-    var passedEvent: myCalendarItem!
+    var passedEvent: calendarItem!
     var passedTaskType: String = "Task"
     
     @IBOutlet weak var lblTaskTitle: UILabel!

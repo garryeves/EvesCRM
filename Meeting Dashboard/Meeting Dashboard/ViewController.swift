@@ -74,11 +74,11 @@ class ViewController: UIViewController {
             
             if tempID == nil
             {
-                myCurrentTeam = team(inTeamID: 1)
+                myCurrentTeam = team(teamID: 1)
             }
             else
             {
-                myCurrentTeam = team(inTeamID: tempID!)
+                myCurrentTeam = team(teamID: tempID!)
             }
         }
         

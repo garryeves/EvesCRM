@@ -34,6 +34,7 @@ var globalEventStore: EKEventStore!
 var debugMessages: Bool = false
 
 var myCurrentTeam: team!
+var myTeams: teams!
 
 var myID: String = ""
 
@@ -55,10 +56,11 @@ struct TableData
     fileprivate var myObjectType: String
     fileprivate var myReminderPriority: Int
     fileprivate var myNotes: String
-    fileprivate var mycalendarItemIdentifier: String
-    fileprivate var myTask: task!
-    fileprivate var myEvent: myCalendarItem!
-    fileprivate var myObject: AnyObject!
+    fileprivate var myCalendarItemIdentifier: String
+    fileprivate var myTask: task?
+    fileprivate var myEvent: calendarItem?
+    fileprivate var myObject: AnyObject?
+    fileprivate var myCalendarEvent: EKEvent?
     
     var displaySpecialFormat: String
         {
@@ -93,10 +95,10 @@ struct TableData
     var calendarItemIdentifier: String
         {
         get {
-            return mycalendarItemIdentifier
+            return myCalendarItemIdentifier
         }
         set {
-            mycalendarItemIdentifier = newValue
+            myCalendarItemIdentifier = newValue
         }
     }
     
@@ -110,7 +112,7 @@ struct TableData
         }
     }
     
-    var targetTask: task
+    var task: task?
     {
         get
         {
@@ -122,7 +124,7 @@ struct TableData
         }
     }
     
-    var targetEvent: myCalendarItem
+    var calendarItem: calendarItem?
     {
         get
         {
@@ -134,7 +136,19 @@ struct TableData
         }
     }
     
-    var targetObject: AnyObject
+    var event: EKEvent?
+    {
+        get
+        {
+            return myCalendarEvent
+        }
+        set
+        {
+            myCalendarEvent = newValue
+        }
+    }
+    
+    var object: AnyObject?
     {
         get
         {
@@ -152,7 +166,7 @@ struct TableData
         self.myDisplayFormat = ""
         self.myObjectType = ""
         self.myReminderPriority = 0
-        self.mycalendarItemIdentifier = ""
+        self.myCalendarItemIdentifier = ""
         self.myNotes = ""
     }
 }
@@ -175,28 +189,28 @@ struct PeopleData
         }
     }
     
-    init(fullName: String, inRecord: CNContact)
+    init(fullName: String, record: CNContact)
     {
         self.fullName = fullName
         self.myDisplayFormat = ""
-        self.personRecord = inRecord
+        self.personRecord = record
     }
 }
 
 // Overloading writeRowToArray a number of times to allow for collection of structs where I am going to allow user to interact and change data inside the app,rather than them having to go to source app.  The number of these will be kept to a minimum.
 
-func writeRowToArray(_ inDisplayText: String, inTable: inout [TableData], inDisplayFormat: String="")
+func writeRowToArray(_ displayText: String, table: inout [TableData], displayFormat: String="")
 {
     // Create the struct for this record
     
-    var myDisplay: TableData = TableData(displayText: inDisplayText)
+    var myDisplay: TableData = TableData(displayText: displayText)
 
-    if inDisplayFormat != ""
+    if displayFormat != ""
     {
-        myDisplay.displaySpecialFormat = inDisplayFormat
+        myDisplay.displaySpecialFormat = displayFormat
     }
         
-    inTable.append(myDisplay)
+    table.append(myDisplay)
 }
 
 func writeRowToArray(_ displayText: String, table: inout [TableData], targetTask: task, displayFormat: String="")
@@ -210,12 +224,12 @@ func writeRowToArray(_ displayText: String, table: inout [TableData], targetTask
         myDisplay.displaySpecialFormat = displayFormat
     }
     
-    myDisplay.targetTask = targetTask
+    myDisplay.task = targetTask
     
     table.append(myDisplay)
 }
 
-func writeRowToArray(_ displayText: String, table: inout [TableData], targetEvent: myCalendarItem, displayFormat: String="")
+func writeRowToArray(_ displayText: String, table: inout [TableData], targetEvent: calendarItem, displayFormat: String="")
 {
     // Create the struct for this record
     
@@ -226,7 +240,7 @@ func writeRowToArray(_ displayText: String, table: inout [TableData], targetEven
         myDisplay.displaySpecialFormat = displayFormat
     }
     
-    myDisplay.targetEvent = targetEvent
+    myDisplay.calendarItem = targetEvent
     
     table.append(myDisplay)
 }
@@ -242,39 +256,39 @@ func writeRowToArray(_ displayText: String, table: inout [TableData], targetObje
         myDisplay.displaySpecialFormat = displayFormat
     }
     
-    myDisplay.targetObject = targetObject
+    myDisplay.object = targetObject
     
     table.append(myDisplay)
 }
 
-func getFirstPartofString(_ inText: String) -> String
+func getFirstPartofString(_ original: String) -> String
 {
-    let start = inText.startIndex
-    let end = inText.characters.index(of: ":")
+    let start = original.startIndex
+    let end = original.characters.index(of: ":")
     
     var selectedType: String = ""
     
     if end != nil
     {
-        let myEnd = inText.index(before: (end)!)
-        selectedType = inText[start...myEnd]
+        let myEnd = original.index(before: (end)!)
+        selectedType = original[start...myEnd]
     }
     else
     { // no space found
-        selectedType = inText
+        selectedType = original
     }
     return selectedType
 }
 
-func stringByChangingChars(_ inString: String, inOldChar: String, inNewChar: String) -> String
+func stringByChangingChars(_ string: String, oldChar: String, newChar: String) -> String
 {
-    let regex = try! NSRegularExpression(pattern:inOldChar, options:.caseInsensitive)
-    let myString = regex.stringByReplacingMatches(in: inString, options:  NSRegularExpression.MatchingOptions(), range: NSMakeRange(0, inString.characters.count), withTemplate:inNewChar)
+    let regex = try! NSRegularExpression(pattern:oldChar, options:.caseInsensitive)
+    let myString = regex.stringByReplacingMatches(in: string, options:  NSRegularExpression.MatchingOptions(), range: NSMakeRange(0, string.characters.count), withTemplate:newChar)
     
     return myString
 }
 
-func populateRoles(_ inTeamID: Int32)
+func populateRoles(_ teamID: Int32)
 {
     let initialRoles = ["Project Manager",
                         "Project Executive",
@@ -287,24 +301,24 @@ func populateRoles(_ inTeamID: Int32)
     
     for initialRole in initialRoles
     {
-        myDatabaseConnection.saveRole(initialRole, teamID: inTeamID)
+        myDatabaseConnection.saveRole(initialRole, teamID: teamID)
     }
 }
 
-func displayTeamMembers(_ inProject: project, lookupArray: inout [String])->[TableData]
+func displayTeamMembers(_ sourceProject: project, lookupArray: inout [String])->[TableData]
 {
     var tableContents:[TableData] = [TableData]()
     
     lookupArray.removeAll(keepingCapacity: false)
     
-    let myTeamMembers = inProject.teamMembers
+    let myTeamMembers = sourceProject.teamMembers
     var titleText: String = ""
     
     for myTeamMember in myTeamMembers
     {
         titleText = myTeamMember.teamMember
         titleText += " : "
-        titleText += myDatabaseConnection.getRoleDescription(myTeamMember.roleID, inTeamID: inProject.teamID)
+        titleText += myDatabaseConnection.getRoleDescription(myTeamMember.roleID, teamID: sourceProject.teamID)
         
         lookupArray.append(myTeamMember.teamMember)
         
@@ -316,18 +330,18 @@ func displayTeamMembers(_ inProject: project, lookupArray: inout [String])->[Tab
     return tableContents
 }
 
-func displayProjectsForPerson(_ inPerson: String, lookupArray: inout [String]) -> [TableData]
+func displayProjectsForPerson(_ person: String, lookupArray: inout [String]) -> [TableData]
 {
     var tableContents:[TableData] = [TableData]()
     var titleText: String = ""
     
     lookupArray.removeAll(keepingCapacity: false)
     
-    let myProjects = myDatabaseConnection.getProjectsForPerson(inPerson)
+    let myProjects = myDatabaseConnection.getProjectsForPerson(person)
     
     if myProjects.count == 0
     {
-        writeRowToArray("Not a member of any Project", inTable: &tableContents)
+        writeRowToArray("Not a member of any Project", table: &tableContents)
     }
     else
     {
@@ -339,11 +353,11 @@ func displayProjectsForPerson(_ inPerson: String, lookupArray: inout [String]) -
             {
                 titleText = myDetails[0].projectName!
                 titleText += " : "
-                titleText += myDatabaseConnection.getRoleDescription(myProject.roleID, inTeamID: myDetails[0].teamID)
+                titleText += myDatabaseConnection.getRoleDescription(myProject.roleID, teamID: myDetails[0].teamID)
                 
                 lookupArray.append("\(myProject.projectID)")
                 
-                let projectObject = project(inProjectID: myDetails[0].projectID)
+                let projectObject = project(projectID: myDetails[0].projectID)
 
                 writeRowToArray(titleText, table: &tableContents, targetObject: projectObject)
             }
@@ -459,100 +473,100 @@ class StreamReader  {
 }
 
 #if os(iOS)
-    func setCellFormatting (_ inCell: UITableViewCell, inDisplayFormat: String) -> UITableViewCell
+    func setCellFormatting (_ cell: UITableViewCell, displayFormat: String) -> UITableViewCell
     {
-        inCell.textLabel!.numberOfLines = 0;
-        inCell.textLabel!.lineBreakMode = NSLineBreakMode.byWordWrapping;
+        cell.textLabel!.numberOfLines = 0;
+        cell.textLabel!.lineBreakMode = NSLineBreakMode.byWordWrapping;
         
-        if inDisplayFormat != ""
+        if displayFormat != ""
         {
-            switch inDisplayFormat
+            switch displayFormat
             {
             case "Gray" :
-                inCell.textLabel!.textColor = UIColor.gray
+                cell.textLabel!.textColor = .gray
                 
             case "Red" :
-                inCell.textLabel!.textColor = UIColor.red
+                cell.textLabel!.textColor = .red
                 
             case "Yellow" :
-                inCell.textLabel!.textColor = UIColor.yellow
+                cell.textLabel!.textColor = .yellow
                 
             case "Orange" :
-                inCell.textLabel!.textColor = UIColor.orange
+                cell.textLabel!.textColor = .orange
                 
             case "Purple" :
-                inCell.textLabel!.textColor = UIColor.purple
+                cell.textLabel!.textColor = .purple
                 
             case "Header":
-                inCell.textLabel!.font = UIFont.boldSystemFont(ofSize: 24.0)
-                inCell.accessoryType = UITableViewCellAccessoryType.disclosureIndicator
+                cell.textLabel!.font = UIFont.boldSystemFont(ofSize: 24.0)
+                cell.accessoryType = .disclosureIndicator
                 
             default:
-                inCell.textLabel!.font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.body)
-                inCell.textLabel!.textColor = UIColor.black
+                cell.textLabel!.font = UIFont.preferredFont(forTextStyle: .body)
+                cell.textLabel!.textColor = .black
             }
         }
         else
         {
-            inCell.textLabel!.font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.body)
-            inCell.textLabel!.textColor = UIColor.black
+            cell.textLabel!.font = UIFont.preferredFont(forTextStyle: .body)
+            cell.textLabel!.textColor = .black
         }
         
-        return inCell
+        return cell
     }
 
 #elseif os(OSX)
-    func setCellFormatting (inCell: NSTableCellView, inDisplayFormat: String) -> NSTableCellView
+    func setCellFormatting (cell: NSTableCellView, displayFormat: String) -> NSTableCellView
     {
  //       inCell.textField!.numberOfLines = 0;
-        inCell.textField!.lineBreakMode = NSLineBreakMode.ByWordWrapping;
+        cell.textField!.lineBreakMode = NSLineBreakMode.ByWordWrapping;
         
-        if inDisplayFormat != ""
+        if displayFormat != ""
         {
-            switch inDisplayFormat
+            switch displayFormat
             {
             case "Gray" :
-                inCell.textField!.textColor = NSColor.grayColor()
+                cell.textField!.textColor = NSColor.grayColor()
                 
             case "Red" :
-                inCell.textField!.textColor = NSColor.redColor()
+                cell.textField!.textColor = NSColor.redColor()
                 
             case "Yellow" :
-                inCell.textField!.textColor = NSColor.yellowColor()
+                cell.textField!.textColor = NSColor.yellowColor()
                 
             case "Orange" :
-                inCell.textField!.textColor = NSColor.orangeColor()
+                cell.textField!.textColor = NSColor.orangeColor()
                 
             case "Purple" :
-                inCell.textField!.textColor = NSColor.purpleColor()
+                cell.textField!.textColor = NSColor.purpleColor()
                 
             case "Header":
-                inCell.textField!.font = NSFont.boldSystemFontOfSize(24.0)
-  //              inCell.accessoryType = setIndicatorImage(NSDisclosureImage)
+                cell.textField!.font = NSFont.boldSystemFontOfSize(24.0)
+  //              cell.accessoryType = setIndicatorImage(NSDisclosureImage)
                 
             default:
-//                inCell.textField!.font = NSFont.preferredFontForTextStyle(NSFontTextStyleBody)
-                inCell.textField!.textColor = NSColor.blackColor()
+//                cell.textField!.font = NSFont.preferredFontForTextStyle(NSFontTextStyleBody)
+                cell.textField!.textColor = NSColor.blackColor()
             }
         }
         else
         {
-//            inCell.textField!.font = NSFont.preferredFontForTextStyle(NSFontTextStyleBody)
-            inCell.textField!.textColor = NSColor.blackColor()
+//            cell.textField!.font = NSFont.preferredFontForTextStyle(NSFontTextStyleBody)
+            cell.textField!.textColor = NSColor.blackColor()
         }
         
-        return inCell
+        return cell
     }
     
 #else
 //NSLog("Unexpected OS")
 #endif
 
-func fixStringForSearch(_ inString: String) -> String
+func fixStringForSearch(_ original: String) -> String
 {
     let myTextReplacement = ";!@"  // using this as unlikely to occur naturally together
     
-    let tempStr1 = inString.replacingOccurrences(of: "https:", with:"https\(myTextReplacement)")
+    let tempStr1 = original.replacingOccurrences(of: "https:", with:"https\(myTextReplacement)")
     let tempStr2 = tempStr1.replacingOccurrences(of: "http:", with:"http\(myTextReplacement)")
     let tempStr3 = tempStr2.replacingOccurrences(of: "onenote:", with:"onenote\(myTextReplacement)")
     let tempStr4 = tempStr3.replacingOccurrences(of: "0:", with:"0\(myTextReplacement)")
@@ -576,11 +590,11 @@ func fixStringForSearch(_ inString: String) -> String
     return tempStr20
 }
 
-func returnSearchStringToNormal(_ inString: String) -> String
+func returnSearchStringToNormal(_ original: String) -> String
 {
     let myTextReplacement = ";!@"  // using this as unlikely to occur naturally together
     
-    let tempStr1 = inString.replacingOccurrences(of: "https\(myTextReplacement)", with:"https:")
+    let tempStr1 = original.replacingOccurrences(of: "https\(myTextReplacement)", with:"https:")
     let tempStr2 = tempStr1.replacingOccurrences(of: "http\(myTextReplacement)", with:"http:")
     let tempStr3 = tempStr2.replacingOccurrences(of: "onenote\(myTextReplacement)", with:"onenote:")
     let tempStr4 = tempStr3.replacingOccurrences(of: "0\(myTextReplacement)", with:"0:")
@@ -597,10 +611,10 @@ func returnSearchStringToNormal(_ inString: String) -> String
     return tempStr13
 }
 
-func characterAtIndex(_ inString: String, index: Int) -> Character {
+func characterAtIndex(_ original: String, index: Int) -> Character {
     var cur = 0
     var retVal: Character!
-    for char in inString.characters {
+    for char in original.characters {
         if cur == index {
             retVal = char
         }
@@ -1245,29 +1259,29 @@ let myAttendenceStatus = [ "Attended",
                             "Apology",
                             "Delegated"]
 
-func calculateNewDate(_ inOriginalDate: Date, inDateBase: String, inInterval: Int16, inPeriod: String) -> Date
+func calculateNewDate(_ originalDate: Date, dateBase: String, interval: Int16, period: String) -> Date
 {
     var addCalendarUnit: Calendar.Component!
-    var tempInterval = inInterval
+    var tempInterval = interval
     var returnDate = Date()
     
     var calendar = Calendar.current
     
-    switch inPeriod
+    switch period
     {
         case "Day":
             addCalendarUnit = .day
         
         case "Week":
             addCalendarUnit = .day
-            tempInterval = inInterval * 7   // fudge a there is no easy week setting
+            tempInterval = interval * 7   // fudge a there is no easy week setting
         
         case "Month":
             addCalendarUnit = .month
         
         case "Quarter":
             addCalendarUnit = .month
-            tempInterval = inInterval * 3   // fudge a there is no easy quarter setting
+            tempInterval = interval * 3   // fudge a there is no easy quarter setting
         
         case "Year":
             addCalendarUnit = .year
@@ -1279,19 +1293,19 @@ func calculateNewDate(_ inOriginalDate: Date, inDateBase: String, inInterval: In
     
     calendar.timeZone = TimeZone.current
     
-    switch inDateBase
+    switch dateBase
     {
         case "Completion Date":
             returnDate = calendar.date(
                 byAdding: addCalendarUnit,
                 value: Int(tempInterval),
-                to: inOriginalDate)!
+                to: originalDate)!
         
         case "Start Date":
             returnDate = calendar.date(
                 byAdding: addCalendarUnit,
                 value: Int(tempInterval),
-                to: inOriginalDate)!
+                to: originalDate)!
 
         case "1st of month":
             // date math to get appropriate month
@@ -1299,7 +1313,7 @@ func calculateNewDate(_ inOriginalDate: Date, inDateBase: String, inInterval: In
             let tempDate = calendar.date(
                 byAdding: addCalendarUnit,
                 value: Int(tempInterval),
-                to: inOriginalDate)!
+                to: originalDate)!
             
             var currentDateComponents = calendar.dateComponents([.year, .month], from: tempDate)
             currentDateComponents.day = 1
@@ -1312,7 +1326,7 @@ func calculateNewDate(_ inOriginalDate: Date, inDateBase: String, inInterval: In
             let tempDate = calendar.date(
                 byAdding: addCalendarUnit,
                 value: Int(tempInterval),
-                to: inOriginalDate)!
+                to: originalDate)!
             
             returnDate = calculateDateForWeekDay(tempDate, dayToFind: 2)
         
@@ -1320,7 +1334,7 @@ func calculateNewDate(_ inOriginalDate: Date, inDateBase: String, inInterval: In
             let tempDate = calendar.date(
                 byAdding: addCalendarUnit,
                 value: Int(tempInterval),
-                to: inOriginalDate)!
+                to: originalDate)!
             
             returnDate = calculateDateForWeekDay(tempDate, dayToFind: 3)
         
@@ -1328,7 +1342,7 @@ func calculateNewDate(_ inOriginalDate: Date, inDateBase: String, inInterval: In
             let tempDate = calendar.date(
                 byAdding: addCalendarUnit,
                 value: Int(tempInterval),
-                to: inOriginalDate)!
+                to: originalDate)!
             
             returnDate = calculateDateForWeekDay(tempDate, dayToFind: 4)
         
@@ -1336,7 +1350,7 @@ func calculateNewDate(_ inOriginalDate: Date, inDateBase: String, inInterval: In
             let tempDate = calendar.date(
                 byAdding: addCalendarUnit,
                 value: Int(tempInterval),
-                to: inOriginalDate)!
+                to: originalDate)!
             
             returnDate = calculateDateForWeekDay(tempDate, dayToFind: 5)
         
@@ -1344,7 +1358,7 @@ func calculateNewDate(_ inOriginalDate: Date, inDateBase: String, inInterval: In
             let tempDate = calendar.date(
                 byAdding: addCalendarUnit,
                 value: Int(tempInterval),
-                to: inOriginalDate)!
+                to: originalDate)!
             
             returnDate = calculateDateForWeekDay(tempDate, dayToFind: 6)
         
@@ -1352,7 +1366,7 @@ func calculateNewDate(_ inOriginalDate: Date, inDateBase: String, inInterval: In
             let tempDate = calendar.date(
                 byAdding: addCalendarUnit,
                 value: Int(tempInterval),
-                to: inOriginalDate)!
+                to: originalDate)!
             
             returnDate = calculateDateForWeekDay(tempDate, dayToFind: 7)
 
@@ -1360,7 +1374,7 @@ func calculateNewDate(_ inOriginalDate: Date, inDateBase: String, inInterval: In
             let tempDate = calendar.date(
                 byAdding: addCalendarUnit,
                 value: Int(tempInterval),
-                to: inOriginalDate)!
+                to: originalDate)!
             
             returnDate = calculateDateForWeekDay(tempDate, dayToFind: 1)
 
@@ -1371,21 +1385,21 @@ func calculateNewDate(_ inOriginalDate: Date, inDateBase: String, inInterval: In
     return returnDate
 }
 
-func calculateDateForWeekDay(_ inStartDate: Date, dayToFind: Int) -> Date
+func calculateDateForWeekDay(_ startDate: Date, dayToFind: Int) -> Date
 {
     var returnDate: Date!
     var daysToAdd: Int = 0
     
     let calendar = Calendar.current
     
-    var currentDateComponents = calendar.dateComponents([.year, .month, .day, .weekday], from: inStartDate)
+    var currentDateComponents = calendar.dateComponents([.year, .month, .day, .weekday], from: startDate)
     currentDateComponents.timeZone = TimeZone(identifier: "UTC")
     
     // Need to work out the days to add
     
     if dayToFind == currentDateComponents.weekday
     {  // The date has hit the correct day of the week
-        returnDate = inStartDate
+        returnDate = startDate
         daysToAdd = 0
     }
     else if dayToFind > currentDateComponents.weekday!
@@ -1402,7 +1416,7 @@ func calculateDateForWeekDay(_ inStartDate: Date, dayToFind: Int) -> Date
         returnDate = calendar.date(
             byAdding: .day,
             value: daysToAdd,
-            to: inStartDate)!
+            to: startDate)!
         
   //      returnDate = calendar.dateFromComponents(currentDateComponents)!
     }
@@ -1431,10 +1445,10 @@ extension String
     }
 }
 
-func connectCalendar()
+func connectEventStore()
 {    
     globalEventStore = EKEventStore()
-    checkCalendarConnected(globalEventStore)
+    
 }
 
 func checkCalendarConnected(_ myEventStore: EKEventStore)
@@ -1463,42 +1477,45 @@ func checkCalendarConnected(_ myEventStore: EKEventStore)
         default:
             print("Event Case Default")
     }
-    
+}
+
+func checkRemindersConnected(_ myEventStore: EKEventStore)
+{
     switch EKEventStore.authorizationStatus(for: EKEntityType.reminder)
     {
-        case .authorized:
-            print("Reminder Access granted")
+    case .authorized:
+        print("Reminder Access granted")
         
-        case .denied:
-            print("Reminder Access denied")
+    case .denied:
+        print("Reminder Access denied")
         
-        case .notDetermined:
-            myEventStore.requestAccess(to: EKEntityType.reminder, completion:
-                {(granted: Bool, error: Error?) -> Void in
-                    if granted
-                    {
-                        print("Reminder Access granted")
-                    }
-                    else
-                    {
-                        print("Reminder Access denied")
-                    }
-            })
+    case .notDetermined:
+        myEventStore.requestAccess(to: EKEntityType.reminder, completion:
+            {(granted: Bool, error: Error?) -> Void in
+                if granted
+                {
+                    print("Reminder Access granted")
+                }
+                else
+                {
+                    print("Reminder Access denied")
+                }
+        })
         
-        default:
-            print("Reminder Case Default")
+    default:
+        print("Reminder Case Default")
     }
 }
 
-func populateStages(_ inTeamID: Int32)
+func populateStages(_ teamID: Int32)
 {
     let loadSet = ["Definition", "Initiation", "Planning", "Execution", "Monitoring & Control", "Closure", "Completed", "Archived", "On Hold"]
     
     for myItem in loadSet
     {
-        if !myDatabaseConnection.stageExists(myItem, inTeamID: inTeamID)
+        if !myDatabaseConnection.stageExists(myItem, teamID: teamID)
         {
-            myDatabaseConnection.saveStage(myItem, teamID: inTeamID)
+            myDatabaseConnection.saveStage(myItem, teamID: teamID)
         }
     }
 }

@@ -296,7 +296,7 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
         }
         else
         {
-            _ = workingGTDLevel(inLevelName: txtHierarchy.text!, inTeamID: myWorkingTeam.teamID)
+            _ = workingGTDLevel(inLevelName: txtHierarchy.text!, teamID: myWorkingTeam.teamID)
             myWorkingTeam.loadGTDLevels()
             loadHierarchy()
             colHierarchy.reloadData()

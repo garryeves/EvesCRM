@@ -128,7 +128,7 @@ class iOSContact
         }
 */
         myString = "Name : \(myFullName)"
-        writeRowToArray(myString, inTable: &tableContents)
+        writeRowToArray(myString, table: &tableContents)
 
         for myAddress in myContactRecord.postalAddresses
         {
@@ -172,26 +172,26 @@ class iOSContact
                     myString += "\n\(myAddressValue.postalCode)"
                 }
                 
-                writeRowToArray(myString, inTable: &tableContents)
+                writeRowToArray(myString, table: &tableContents)
             }
         }
         
         if myContactRecord.organizationName != ""
         {
             myString = "Organization : \(myContactRecord.organizationName)"
-            writeRowToArray(myString, inTable: &tableContents)
+            writeRowToArray(myString, table: &tableContents)
         }
         
         if myContactRecord.departmentName != ""
         {
             myString = "Dept : \(myContactRecord.departmentName)"
-            writeRowToArray(myString, inTable: &tableContents)
+            writeRowToArray(myString, table: &tableContents)
         }
         
         if myContactRecord.jobTitle != ""
         {
             myString = "Job Title : \(myContactRecord.jobTitle)"
-            writeRowToArray(myString, inTable: &tableContents)
+            writeRowToArray(myString, table: &tableContents)
         }
         
         for myPhone in myContactRecord.phoneNumbers
@@ -236,7 +236,7 @@ class iOSContact
                 let myPhoneValue = myPhone.value 
                 myString += "\(myPhoneValue.stringValue)"
                 
-                writeRowToArray(myString, inTable: &tableContents)
+                writeRowToArray(myString, table: &tableContents)
             }
         }
 
@@ -264,7 +264,7 @@ class iOSContact
                 let myEmailValue = myEmail.value as String
                 myString += "\(myEmailValue)"
                 
-                writeRowToArray(myString, inTable: &tableContents)
+                writeRowToArray(myString, table: &tableContents)
                 
                 myEmailAddresses.append(myEmailValue)
             }
@@ -273,7 +273,7 @@ class iOSContact
         if myContactRecord.note != ""
         {
             myString = "Note : \(myContactRecord.note)"
-            writeRowToArray(myString, inTable: &tableContents)
+            writeRowToArray(myString, table: &tableContents)
         }
         
         if myContactRecord.birthday?.date != nil
@@ -282,7 +282,7 @@ class iOSContact
             myDateFormatter.dateStyle = .long
 
             myString = "Birthday : \(myDateFormatter.string(from: (myContactRecord.birthday?.date)!))"
-            writeRowToArray(myString, inTable: &tableContents)
+            writeRowToArray(myString, table: &tableContents)
         }
         
         for myIM in myContactRecord.instantMessageAddresses
@@ -325,7 +325,7 @@ class iOSContact
             let myIMValue = myIM.value 
             myString += "\(myIMValue.username)"
             
-            writeRowToArray(myString, inTable: &tableContents)
+            writeRowToArray(myString, table: &tableContents)
         }
 
         for mySocial in myContactRecord.socialProfiles
@@ -365,7 +365,7 @@ class iOSContact
             let mySocialValue = mySocial.value 
             myString += "\(mySocialValue.username)"
             
-            writeRowToArray(myString, inTable: &tableContents)
+            writeRowToArray(myString, table: &tableContents)
         }
 
         for myURL in myContactRecord.urlAddresses
@@ -383,14 +383,14 @@ class iOSContact
                 let myURLValue = myURL.value as String
                 myString += "\(myURLValue)"
                 
-                writeRowToArray(myString, inTable: &tableContents)
+                writeRowToArray(myString, table: &tableContents)
             }
         }
 
         if myContactRecord.nickname != ""
         {
             myString = "Nickname : \(myContactRecord.nickname)"
-            writeRowToArray(myString, inTable: &tableContents)
+            writeRowToArray(myString, table: &tableContents)
         }
     }
 }

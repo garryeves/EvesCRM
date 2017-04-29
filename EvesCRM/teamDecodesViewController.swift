@@ -537,7 +537,7 @@ class mySettingRoles: UICollectionViewCell
     
     @IBAction func btnRemove(_ sender: UIButton)
     {
-        myDatabaseConnection.deleteRoleEntry(lblRole.text!, inTeamID: teamID)
+        myDatabaseConnection.deleteRoleEntry(lblRole.text!, teamID: teamID)
         notificationCenter.post(name: NotificationTeamDecodeChangeSettings, object: nil, userInfo:["setting":"Role"])
     }
 }
@@ -556,7 +556,7 @@ class mySettingStages: UICollectionViewCell
     
     @IBAction func btnRemove(_ sender: UIButton)
     {
-        myDatabaseConnection.deleteStageEntry(lblRole.text!, inTeamID: teamID)
+        myDatabaseConnection.deleteStageEntry(lblRole.text!, teamID: teamID)
         notificationCenter.post(name: NotificationTeamDecodeChangeSettings, object: nil, userInfo:["setting":"Stage"])
     }
 }

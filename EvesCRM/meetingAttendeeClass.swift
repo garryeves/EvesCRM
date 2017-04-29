@@ -124,7 +124,7 @@ class meetingAttendee
 
 extension coreDatabase
 {
-    func loadAttendees(_ inMeetingID: String)->[MeetingAttendees]
+    func loadAttendees(_ meetingID: String)->[MeetingAttendees]
     {
         let fetchRequest = NSFetchRequest<MeetingAttendees>(entityName: "MeetingAttendees")
         
@@ -133,7 +133,7 @@ extension coreDatabase
         
         var predicate: NSPredicate
         
-        predicate = NSPredicate(format: "(meetingID == \"\(inMeetingID)\") && (updateType != \"Delete\")")
+        predicate = NSPredicate(format: "(meetingID == \"\(meetingID)\") && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -205,7 +205,7 @@ extension coreDatabase
         }
     }
     
-    func saveAttendee(_ meetingID: String, name: String, email: String,  type: String, status: String, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func saveAttendee(_ meetingID: String, name: String, email: String,  type: String, status: String, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myPerson: MeetingAttendees!
         
@@ -219,15 +219,15 @@ extension coreDatabase
             myPerson.attendenceStatus = status
             myPerson.email = email
             myPerson.type = type
-            if inUpdateType == "CODE"
+            if updateType == "CODE"
             {
                 myPerson.updateTime =  NSDate()
                 myPerson.updateType = "Add"
             }
             else
             {
-                myPerson.updateTime = inUpdateTime as NSDate
-                myPerson.updateType = inUpdateType
+                myPerson.updateTime = updateTime as NSDate
+                myPerson.updateType = updateType
             }
         }
         else
@@ -236,7 +236,7 @@ extension coreDatabase
             myPerson.attendenceStatus = status
             myPerson.email = email
             myPerson.type = type
-            if inUpdateType == "CODE"
+            if updateType == "CODE"
             {
                 myPerson.updateTime =  NSDate()
                 if myPerson.updateType != "Add"
@@ -246,15 +246,15 @@ extension coreDatabase
             }
             else
             {
-                myPerson.updateTime = inUpdateTime as NSDate
-                myPerson.updateType = inUpdateType
+                myPerson.updateTime = updateTime as NSDate
+                myPerson.updateType = updateType
             }
         }
         
         saveContext()
     }
     
-    func replaceAttendee(_ meetingID: String, name: String, email: String,  type: String, status: String, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func replaceAttendee(_ meetingID: String, name: String, email: String,  type: String, status: String, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myPerson = MeetingAttendees(context: objectContext)
         myPerson.meetingID = meetingID
@@ -262,15 +262,15 @@ extension coreDatabase
         myPerson.attendenceStatus = status
         myPerson.email = email
         myPerson.type = type
-        if inUpdateType == "CODE"
+        if updateType == "CODE"
         {
             myPerson.updateTime =  NSDate()
             myPerson.updateType = "Add"
         }
         else
         {
-            myPerson.updateTime = inUpdateTime as NSDate
-            myPerson.updateType = inUpdateType
+            myPerson.updateTime = updateTime as NSDate
+            myPerson.updateType = updateType
         }
         
         saveContext()
@@ -486,7 +486,7 @@ extension CloudKitInteraction
                 let email = record.object(forKey: "email") as! String
                 let type = record.object(forKey: "type") as! String
                 
-                myDatabaseConnection.replaceAttendee(meetingID, name: name, email: email,  type: type, status: attendenceStatus, inUpdateTime: updateTime, inUpdateType: updateType)
+                myDatabaseConnection.replaceAttendee(meetingID, name: name, email: email,  type: type, status: attendenceStatus, updateTime: updateTime, updateType: updateType)
                 usleep(100)
             }
             sem.signal()
@@ -590,6 +590,6 @@ extension CloudKitInteraction
         let email = sourceRecord.object(forKey: "email") as! String
         let type = sourceRecord.object(forKey: "type") as! String
         
-        myDatabaseConnection.saveAttendee(meetingID, name: name, email: email,  type: type, status: attendenceStatus, inUpdateTime: updateTime, inUpdateType: updateType)
+        myDatabaseConnection.saveAttendee(meetingID, name: name, email: email,  type: type, status: attendenceStatus, updateTime: updateTime, updateType: updateType)
     }
 }

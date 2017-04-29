@@ -241,6 +241,9 @@
 		34E990E01EADD1F2005B2718 /* notificationDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990DF1EADD1F2005B2718 /* notificationDefinitions.swift */; };
 		34E990E11EADD1F2005B2718 /* notificationDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990DF1EADD1F2005B2718 /* notificationDefinitions.swift */; };
 		34E990E21EADD1F2005B2718 /* notificationDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990DF1EADD1F2005B2718 /* notificationDefinitions.swift */; };
+		34EF0D071EB4352B003B1EB4 /* reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34EF0D061EB4352B003B1EB4 /* reachability.swift */; };
+		34EF0D081EB4352B003B1EB4 /* reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34EF0D061EB4352B003B1EB4 /* reachability.swift */; };
+		34EF0D091EB4352B003B1EB4 /* reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34EF0D061EB4352B003B1EB4 /* reachability.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -402,6 +405,7 @@
 		34E990DB1EADCF49005B2718 /* CalendarDetails.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CalendarDetails.swift; path = ../../EvesCRM/CalendarDetails.swift; sourceTree = "<group>"; };
 		34E990DD1EADD198005B2718 /* DBSync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DBSync.swift; path = ../../EvesCRM/DBSync.swift; sourceTree = "<group>"; };
 		34E990DF1EADD1F2005B2718 /* notificationDefinitions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = notificationDefinitions.swift; sourceTree = "<group>"; };
+		34EF0D061EB4352B003B1EB4 /* reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = reachability.swift; path = ../../EvesCRM/reachability.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -548,6 +552,7 @@
 				34BA26171EAB0DCD00A41EE9 /* CloudKitInteraction.swift */,
 				34E990DD1EADD198005B2718 /* DBSync.swift */,
 				340627781EAF0BAD002700BB /* UserInfo.swift */,
+				34EF0D061EB4352B003B1EB4 /* reachability.swift */,
 				34E990B91EADCD69005B2718 /* meetingsDatabase.swift */,
 				34AE76D61EB1A96B000232CB /* Context+CoreDataClass.swift */,
 				34AE76D71EB1A96B000232CB /* Context+CoreDataProperties.swift */,
@@ -873,6 +878,7 @@
 				34AE77251EB1A96C000232CB /* Decodes+CoreDataProperties.swift in Sources */,
 				34AE77101EB1A96C000232CB /* MeetingAttendees+CoreDataClass.swift in Sources */,
 				34AE76851EB19D4F000232CB /* taskListViewController.swift in Sources */,
+				34EF0D071EB4352B003B1EB4 /* reachability.swift in Sources */,
 				34AE769D1EB1A7C1000232CB /* taskPredecessorClass.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -911,6 +917,7 @@
 				34AE77591EB1A96C000232CB /* ProjectNote+CoreDataClass.swift in Sources */,
 				34AE76F61EB1A96C000232CB /* MeetingTasks+CoreDataProperties.swift in Sources */,
 				34BA261D1EAB0DDE00A41EE9 /* coreDatabase.swift in Sources */,
+				34EF0D081EB4352B003B1EB4 /* reachability.swift in Sources */,
 				340DB4721EADD5E40077EE23 /* taskClass.swift in Sources */,
 				340DB4681EADD5D30077EE23 /* meetingAgendaItemClass.swift in Sources */,
 				34AE77531EB1A96C000232CB /* TaskContext+CoreDataClass.swift in Sources */,
@@ -981,6 +988,7 @@
 				34AE775A1EB1A96C000232CB /* ProjectNote+CoreDataClass.swift in Sources */,
 				34AE76F71EB1A96C000232CB /* MeetingTasks+CoreDataProperties.swift in Sources */,
 				34BA261E1EAB0DDE00A41EE9 /* coreDatabase.swift in Sources */,
+				34EF0D091EB4352B003B1EB4 /* reachability.swift in Sources */,
 				340DB4731EADD5E50077EE23 /* taskClass.swift in Sources */,
 				340DB4691EADD5D30077EE23 /* meetingAgendaItemClass.swift in Sources */,
 				34AE77541EB1A96C000232CB /* TaskContext+CoreDataClass.swift in Sources */,

@@ -455,7 +455,7 @@ class myEmailInboxItem: UICollectionViewCell
     
     @IBAction func btnCreate(_ sender: UIButton)
     {
-        let newTask = task(inTeamID: myCurrentTeam.teamID)
+        let newTask = task(teamID: myCurrentTeam.teamID)
         newTask.title = emailMessage.subject
         
         var myBody: String = "From : \(emailMessage.from)"

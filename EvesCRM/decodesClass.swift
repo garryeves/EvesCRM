@@ -62,7 +62,7 @@ extension coreDatabase
         }
     }
     
-    func updateDecodeValue(_ inCodeKey: String, inCodeValue: String, inCodeType: String, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE", updateCloud: Bool = true)
+    func updateDecodeValue(_ inCodeKey: String, inCodeValue: String, inCodeType: String, updateTime: Date =  Date(), updateType: String = "CODE", updateCloud: Bool = true)
     {
         // first check to see if decode exists, if not we create
         var myDecode: Decodes!
@@ -74,15 +74,15 @@ extension coreDatabase
             myDecode.decode_name = inCodeKey
             myDecode.decode_value = inCodeValue
             myDecode.decodeType = inCodeType
-            if inUpdateType == "CODE"
+            if updateType == "CODE"
             {
                 myDecode.updateTime =  NSDate()
                 myDecode.updateType = "Add"
             }
             else
             {
-                myDecode.updateTime = inUpdateTime as NSDate
-                myDecode.updateType = inUpdateType
+                myDecode.updateTime = updateTime as NSDate
+                myDecode.updateType = updateType
             }
         }
         else
@@ -100,7 +100,7 @@ extension coreDatabase
                 myDecode = myDecodes[0]
                 myDecode.decode_value = inCodeValue
                 myDecode.decodeType = inCodeType
-                if inUpdateType == "CODE"
+                if updateType == "CODE"
                 {
                     myDecode.updateTime =  NSDate()
                     if myDecode.updateType != "Add"
@@ -110,8 +110,8 @@ extension coreDatabase
                 }
                 else
                 {
-                    myDecode.updateTime = inUpdateTime as NSDate
-                    myDecode.updateType = inUpdateType
+                    myDecode.updateTime = updateTime as NSDate
+                    myDecode.updateType = updateType
                 }
             }
             catch
@@ -128,22 +128,22 @@ extension coreDatabase
         }
     }
     
-    func replaceDecodeValue(_ inCodeKey: String, inCodeValue: String, inCodeType: String, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func replaceDecodeValue(_ inCodeKey: String, inCodeValue: String, inCodeType: String, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myDecode = Decodes(context: objectContext)
         
         myDecode.decode_name = inCodeKey
         myDecode.decode_value = inCodeValue
         myDecode.decodeType = inCodeType
-        if inUpdateType == "CODE"
+        if updateType == "CODE"
         {
             myDecode.updateTime =  NSDate()
             myDecode.updateType = "Add"
         }
         else
         {
-            myDecode.updateTime = inUpdateTime as NSDate
-            myDecode.updateType = inUpdateType
+            myDecode.updateTime = updateTime as NSDate
+            myDecode.updateType = updateType
         }
         
         saveContext()
@@ -700,7 +700,7 @@ extension CloudKitInteraction
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
         
-        myDatabaseConnection.updateDecodeValue(decodeName, inCodeValue: decodeValue, inCodeType: decodeType, inUpdateTime: updateTime, inUpdateType: updateType, updateCloud: false)
+        myDatabaseConnection.updateDecodeValue(decodeName, inCodeValue: decodeValue, inCodeType: decodeType, updateTime: updateTime, updateType: updateType, updateCloud: false)
     }
 
 }

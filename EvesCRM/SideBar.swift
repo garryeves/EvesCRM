@@ -107,7 +107,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
         
         for myTeamItem in myDatabaseConnection.getMyTeams(myID)
         {
-            let myTeam = team(inTeamID: myTeamItem.teamID)
+            let myTeam = team(teamID: myTeamItem.teamID)
             let teamObject = createMenuItem(myTeam.name, inType: "Disclosure", inObject: myTeam)
             teamObject.type = "disclosure"
             teamObject.section = doingObject.childSection

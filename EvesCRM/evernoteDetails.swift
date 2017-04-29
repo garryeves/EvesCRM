@@ -197,7 +197,7 @@ class EvernoteDetails
         
         let myTempPath = "evernote://x-callback-url/new-note?type=text&title=\(title) : \(myDate)"
         
-        let myEnUrlPath = stringByChangingChars(myTempPath, inOldChar: " ", inNewChar: "%20")
+        let myEnUrlPath = stringByChangingChars(myTempPath, oldChar: " ", newChar: "%20")
         
         let myEnUrl: URL = URL(string: myEnUrlPath)!
         

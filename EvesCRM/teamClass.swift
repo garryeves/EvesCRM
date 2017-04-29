@@ -10,6 +10,28 @@ import Foundation
 import CoreData
 import CloudKit
 
+class teams: NSObject
+{
+    private var myTeams: [team] = Array()
+    
+    var teams: [team]
+    {
+        get
+        {
+            return myTeams
+        }
+    }
+    
+    override init()
+    {
+        for myItem in myDatabaseConnection.getAllTeams()
+        {
+            let tempTeam = team(teamID: myItem.teamID)
+            myTeams.append(tempTeam)
+        }
+    }
+}
+
 class team: NSObject
 {
     fileprivate var myTeamID: Int32 = 0
@@ -25,6 +47,7 @@ class team: NSObject
     fileprivate var myGTDTopLevel: [workingGTDItem] = Array()
     fileprivate var myContexts: [context] = Array()
     fileprivate var saveCalled: Bool = false
+    fileprivate var myMeetings: [calendarItem] = Array()
     
     var teamID: Int32
     {
@@ -132,6 +155,14 @@ class team: NSObject
             return myStages
         }
     }
+    
+    var meetings: [calendarItem]
+    {
+        get
+        {
+            return myMeetings
+        }
+    }
 
     var GTDLevels: [workingGTDLevel]
     {
@@ -157,13 +188,13 @@ class team: NSObject
         }
     }
 
-    init(inTeamID: Int32)
+    init(teamID: Int32)
     {
         super.init()
         
         // Load the details
         
-        let myTeam = myDatabaseConnection.getTeam(inTeamID)
+        let myTeam = myDatabaseConnection.getTeam(teamID)
         
         for myItem in myTeam
         {
@@ -224,10 +255,10 @@ class team: NSObject
     {
         // Create Initial GTD Levels
         
-        myDatabaseConnection.saveGTDLevel(1, inLevelName: "Purpose and Core Values", inTeamID: myTeamID)
-        myDatabaseConnection.saveGTDLevel(2, inLevelName: "Vision", inTeamID: myTeamID)
-        myDatabaseConnection.saveGTDLevel(3, inLevelName: "Goals and Objectives", inTeamID: myTeamID)
-        myDatabaseConnection.saveGTDLevel(4, inLevelName: "Areas of Responsibility", inTeamID: myTeamID)
+        myDatabaseConnection.saveGTDLevel(1, inLevelName: "Purpose and Core Values", teamID: myTeamID)
+        myDatabaseConnection.saveGTDLevel(2, inLevelName: "Vision", teamID: myTeamID)
+        myDatabaseConnection.saveGTDLevel(3, inLevelName: "Goals and Objectives", teamID: myTeamID)
+        myDatabaseConnection.saveGTDLevel(4, inLevelName: "Areas of Responsibility", teamID: myTeamID)
     }
     
     fileprivate func createRoles()
@@ -265,7 +296,7 @@ class team: NSObject
         myGTD.removeAll()
         for myItem in myDatabaseConnection.getGTDLevels(myTeamID)
         {
-            let myWorkingLevel = workingGTDLevel(inGTDLevel: myItem.gTDLevel, inTeamID: myTeamID)
+            let myWorkingLevel = workingGTDLevel(inGTDLevel: myItem.gTDLevel, teamID: myTeamID)
             myGTD.append(myWorkingLevel)
         }
 
@@ -275,9 +306,9 @@ class team: NSObject
     func loadGTDTopLevel()
     {
         myGTDTopLevel.removeAll()
-        for myItem in myDatabaseConnection.getGTDItemsForLevel(1, inTeamID: myTeamID)
+        for myItem in myDatabaseConnection.getGTDItemsForLevel(1, teamID: myTeamID)
         {
-            let myWorkingLevel = workingGTDItem(inGTDItemID: myItem.gTDItemID, inTeamID: myTeamID)
+            let myWorkingLevel = workingGTDItem(inGTDItemID: myItem.gTDItemID, teamID: myTeamID)
             myGTDTopLevel.append(myWorkingLevel)
         }
     }
@@ -310,6 +341,17 @@ class team: NSObject
         myCloudDB.saveTeamRecordToCloudKit(myTeam)
         
         saveCalled = false
+    }
+    
+    func loadMeetings()
+    {
+        myMeetings.removeAll()
+        
+        for meetingItem in myDatabaseConnection.getAgendaForTeam(myTeamID)
+        {
+            let tempItem = calendarItem(meetingAgenda: meetingItem)
+            myMeetings.append(tempItem)
+        }
     }
 }
 
@@ -360,31 +402,31 @@ extension coreDatabase
         saveContext()
     }
     
-    func saveTeam(_ inTeamID: Int32, inName: String, inStatus: String, inNote: String, inType: String, inPredecessor: Int32, inExternalID: Int32, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func saveTeam(_ teamID: Int32, inName: String, inStatus: String, inNote: String, inType: String, inPredecessor: Int32, inExternalID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myTeam: Team!
         
-        let myTeams = getTeam(inTeamID)
+        let myTeams = getTeam(teamID)
         
         if myTeams.count == 0
         { // Add
             myTeam = Team(context: objectContext)
-            myTeam.teamID = inTeamID
+            myTeam.teamID = teamID
             myTeam.name = inName
             myTeam.status = inStatus
             myTeam.note = inNote
             myTeam.type = inType
             myTeam.predecessor = inPredecessor
             myTeam.externalID = inExternalID
-            if inUpdateType == "CODE"
+            if updateType == "CODE"
             {
                 myTeam.updateTime =  NSDate()
                 myTeam.updateType = "Add"
             }
             else
             {
-                myTeam.updateTime = inUpdateTime as NSDate
-                myTeam.updateType = inUpdateType
+                myTeam.updateTime = updateTime as NSDate
+                myTeam.updateType = updateType
             }
         }
         else
@@ -396,7 +438,7 @@ extension coreDatabase
             myTeam.type = inType
             myTeam.predecessor = inPredecessor
             myTeam.externalID = inExternalID
-            if inUpdateType == "CODE"
+            if updateType == "CODE"
             {
                 if myTeam.updateType != "Add"
                 {
@@ -406,46 +448,46 @@ extension coreDatabase
             }
             else
             {
-                myTeam.updateTime = inUpdateTime as NSDate
-                myTeam.updateType = inUpdateType
+                myTeam.updateTime = updateTime as NSDate
+                myTeam.updateType = updateType
             }
         }
         
         saveContext()
     }
     
-    func replaceTeam(_ inTeamID: Int32, inName: String, inStatus: String, inNote: String, inType: String, inPredecessor: Int32, inExternalID: Int32, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func replaceTeam(_ teamID: Int32, inName: String, inStatus: String, inNote: String, inType: String, inPredecessor: Int32, inExternalID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myTeam = Team(context: persistentContainer.viewContext)
-        myTeam.teamID = inTeamID
+        myTeam.teamID = teamID
         myTeam.name = inName
         myTeam.status = inStatus
         myTeam.note = inNote
         myTeam.type = inType
         myTeam.predecessor = inPredecessor
         myTeam.externalID = inExternalID
-        if inUpdateType == "CODE"
+        if updateType == "CODE"
         {
             myTeam.updateTime =  NSDate()
             myTeam.updateType = "Add"
         }
         else
         {
-            myTeam.updateTime = inUpdateTime as NSDate
-            myTeam.updateType = inUpdateType
+            myTeam.updateTime = updateTime as NSDate
+            myTeam.updateType = updateType
         }
         
         saveContext()
         self.refreshObject(myTeam)
     }
     
-    func getTeam(_ inTeamID: Int32)->[Team]
+    func getTeam(_ teamID: Int32)->[Team]
     {
         let fetchRequest = NSFetchRequest<Team>(entityName: "Team")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(teamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -674,7 +716,7 @@ extension CloudKitInteraction
                 let predecessor = record.object(forKey: "predecessor") as! Int32
                 let externalID = record.object(forKey: "externalID") as! Int32
                 
-                myDatabaseConnection.replaceTeam(teamID, inName: name, inStatus: status, inNote: note, inType: type, inPredecessor: predecessor, inExternalID: externalID, inUpdateTime: updateTime, inUpdateType: updateType)
+                myDatabaseConnection.replaceTeam(teamID, inName: name, inStatus: status, inNote: note, inType: type, inPredecessor: predecessor, inExternalID: externalID, updateTime: updateTime, updateType: updateType)
                 usleep(100)
             }
             sem.signal()
@@ -786,6 +828,6 @@ extension CloudKitInteraction
         let predecessor = sourceRecord.object(forKey: "predecessor") as! Int32
         let externalID = sourceRecord.object(forKey: "externalID") as! Int32
         
-        myDatabaseConnection.saveTeam(teamID, inName: name, inStatus: status, inNote: note, inType: type, inPredecessor: predecessor, inExternalID: externalID, inUpdateTime: updateTime, inUpdateType: updateType)
+        myDatabaseConnection.saveTeam(teamID, inName: name, inStatus: status, inNote: note, inType: type, inPredecessor: predecessor, inExternalID: externalID, updateTime: updateTime, updateType: updateType)
     }
 }

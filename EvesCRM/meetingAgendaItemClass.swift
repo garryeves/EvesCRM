@@ -165,9 +165,9 @@ class meetingAgendaItem
         }
     }
     
-    init(inMeetingID: String)
+    init(meetingID: String)
     {
-        myMeetingID = inMeetingID
+        myMeetingID = meetingID
         myTitle = "New Item"
         myTimeAllocation = 10
         myActualEndTime = getDefaultDate() as Date!
@@ -180,9 +180,9 @@ class meetingAgendaItem
         save()
     }
     
-    init(inMeetingID: String, inAgendaID: Int32)
+    init(meetingID: String, inAgendaID: Int32)
     {
-        myMeetingID = inMeetingID
+        myMeetingID = meetingID
         
         let tempAgendaItems = myDatabaseConnection.loadSpecificAgendaItem(myMeetingID, inAgendaID: inAgendaID)
         
@@ -282,12 +282,12 @@ class meetingAgendaItem
     func addTask(_ inTask: task)
     {
         // Is there ale=ready a link between the agenda and the task, if there is then no need to save
-        let myCheck = myDatabaseConnection.getAgendaTask(myAgendaID, inMeetingID: myMeetingID, inTaskID: inTask.taskID)
+        let myCheck = myDatabaseConnection.getAgendaTask(myAgendaID, meetingID: myMeetingID, inTaskID: inTask.taskID)
         
         if myCheck.count == 0
         {
             // Associate Agenda to Task
-            myDatabaseConnection.saveAgendaTask(myAgendaID, inMeetingID: myMeetingID, inTaskID: inTask.taskID)
+            myDatabaseConnection.saveAgendaTask(myAgendaID, meetingID: myMeetingID, inTaskID: inTask.taskID)
         }
         
         // reload the tasks array
@@ -297,7 +297,7 @@ class meetingAgendaItem
     func removeTask(_ inTask: task)
     {
         // Associate Agenda to Task
-        myDatabaseConnection.deleteAgendaTask(myAgendaID, inMeetingID: myMeetingID, inTaskID: inTask.taskID)
+        myDatabaseConnection.deleteAgendaTask(myAgendaID, meetingID: myMeetingID, inTaskID: inTask.taskID)
         
         // reload the tasks array
         loadTasks()
@@ -306,7 +306,7 @@ class meetingAgendaItem
 
 extension coreDatabase
 {
-    func loadAgendaItem(_ inMeetingID: String)->[MeetingAgendaItem]
+    func loadAgendaItem(_ meetingID: String)->[MeetingAgendaItem]
     {
         let fetchRequest = NSFetchRequest<MeetingAgendaItem>(entityName: "MeetingAgendaItem")
         
@@ -315,7 +315,7 @@ extension coreDatabase
         
         var predicate: NSPredicate
         
-        predicate = NSPredicate(format: "(meetingID == \"\(inMeetingID)\") && (updateType != \"Delete\")")
+        predicate = NSPredicate(format: "(meetingID == \"\(meetingID)\") && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -337,7 +337,7 @@ extension coreDatabase
         }
     }
     
-    func saveAgendaItem(_ meetingID: String, actualEndTime: Date, actualStartTime: Date, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int16, owner: String, title: String, agendaID: Int32, meetingOrder: Int32,  inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func saveAgendaItem(_ meetingID: String, actualEndTime: Date, actualStartTime: Date, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int16, owner: String, title: String, agendaID: Int32, meetingOrder: Int32,  updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var mySavedItem: MeetingAgendaItem
         
@@ -358,15 +358,15 @@ extension coreDatabase
             mySavedItem.title = title
             mySavedItem.meetingOrder = meetingOrder
             
-            if inUpdateType == "CODE"
+            if updateType == "CODE"
             {
                 mySavedItem.updateTime =  NSDate()
                 mySavedItem.updateType = "Add"
             }
             else
             {
-                mySavedItem.updateTime = inUpdateTime as NSDate
-                mySavedItem.updateType = inUpdateType
+                mySavedItem.updateTime = updateTime as NSDate
+                mySavedItem.updateType = updateType
             }
         }
         else
@@ -382,7 +382,7 @@ extension coreDatabase
             mySavedItem.title = title
             mySavedItem.meetingOrder = meetingOrder
             
-            if inUpdateType == "CODE"
+            if updateType == "CODE"
             {
                 mySavedItem.updateTime =  NSDate()
                 if mySavedItem.updateType != "Add"
@@ -392,15 +392,15 @@ extension coreDatabase
             }
             else
             {
-                mySavedItem.updateTime = inUpdateTime as NSDate
-                mySavedItem.updateType = inUpdateType
+                mySavedItem.updateTime = updateTime as NSDate
+                mySavedItem.updateType = updateType
             }
         }
         
         saveContext()
     }
     
-    func replaceAgendaItem(_ meetingID: String, actualEndTime: Date, actualStartTime: Date, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int16, owner: String, title: String, agendaID: Int32, meetingOrder: Int32, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func replaceAgendaItem(_ meetingID: String, actualEndTime: Date, actualStartTime: Date, status: String, decisionMade: String, discussionNotes: String, timeAllocation: Int16, owner: String, title: String, agendaID: Int32, meetingOrder: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let mySavedItem = MeetingAgendaItem(context: objectContext)
         mySavedItem.meetingID = meetingID
@@ -415,21 +415,21 @@ extension coreDatabase
         mySavedItem.title = title
         mySavedItem.meetingOrder = meetingOrder
         
-        if inUpdateType == "CODE"
+        if updateType == "CODE"
         {
             mySavedItem.updateTime =  NSDate()
             mySavedItem.updateType = "Add"
         }
         else
         {
-            mySavedItem.updateTime = inUpdateTime as NSDate
-            mySavedItem.updateType = inUpdateType
+            mySavedItem.updateTime = updateTime as NSDate
+            mySavedItem.updateType = updateType
         }
         
         saveContext()
     }
     
-    func loadSpecificAgendaItem(_ inMeetingID: String, inAgendaID: Int32)->[MeetingAgendaItem]
+    func loadSpecificAgendaItem(_ meetingID: String, inAgendaID: Int32)->[MeetingAgendaItem]
     {
         let fetchRequest = NSFetchRequest<MeetingAgendaItem>(entityName: "MeetingAgendaItem")
         
@@ -438,7 +438,7 @@ extension coreDatabase
         
         var predicate: NSPredicate
         
-        predicate = NSPredicate(format: "(meetingID == \"\(inMeetingID)\") AND (agendaID == \(inAgendaID)) && (updateType != \"Delete\")")
+        predicate = NSPredicate(format: "(meetingID == \"\(meetingID)\") AND (agendaID == \(inAgendaID)) && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -488,12 +488,12 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteAllAgendaItems(_ inMeetingID: String)
+    func deleteAllAgendaItems(_ meetingID: String)
     {
         var predicate: NSPredicate
         
         let fetchRequest = NSFetchRequest<MeetingAgendaItem>(entityName: "MeetingAgendaItem")
-        predicate = NSPredicate(format: "meetingID == \"\(inMeetingID)\"")
+        predicate = NSPredicate(format: "meetingID == \"\(meetingID)\"")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -650,13 +650,13 @@ extension coreDatabase
         saveContext()
     }
     
-    func getAgendaTasks(_ inMeetingID: String, inAgendaID: Int32)->[MeetingTasks]
+    func getAgendaTasks(_ meetingID: String, inAgendaID: Int32)->[MeetingTasks]
     {
         let fetchRequest = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(agendaID == \(inAgendaID)) AND (meetingID == \"\(inMeetingID)\") && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(agendaID == \(inAgendaID)) AND (meetingID == \"\(meetingID)\") && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -674,13 +674,13 @@ extension coreDatabase
         }
     }
     
-    func getMeetingsTasks(_ inMeetingID: String)->[MeetingTasks]
+    func getMeetingsTasks(_ meetingID: String)->[MeetingTasks]
     {
         let fetchRequest = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(meetingID == \"\(inMeetingID)\") && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(meetingID == \"\(meetingID)\") && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -698,13 +698,13 @@ extension coreDatabase
         }
     }
     
-    func saveAgendaTask(_ inAgendaID: Int32, inMeetingID: String, inTaskID: Int32)
+    func saveAgendaTask(_ inAgendaID: Int32, meetingID: String, inTaskID: Int32)
     {
         var myTask: MeetingTasks
         
         myTask = MeetingTasks(context: objectContext)
         myTask.agendaID = inAgendaID
-        myTask.meetingID = inMeetingID
+        myTask.meetingID = meetingID
         myTask.taskID = inTaskID
         myTask.updateTime =  NSDate()
         myTask.updateType = "Add"
@@ -714,11 +714,11 @@ extension coreDatabase
         myCloudDB.saveMeetingTasksRecordToCloudKit(myTask)
     }
     
-    func replaceAgendaTask(_ inAgendaID: Int32, inMeetingID: String, inTaskID: Int32)
+    func replaceAgendaTask(_ inAgendaID: Int32, meetingID: String, inTaskID: Int32)
     {
         let myTask = MeetingTasks(context: objectContext)
         myTask.agendaID = inAgendaID
-        myTask.meetingID = inMeetingID
+        myTask.meetingID = meetingID
         myTask.taskID = inTaskID
         myTask.updateTime =  NSDate()
         myTask.updateType = "Add"
@@ -750,7 +750,7 @@ extension coreDatabase
         }
     }
     
-    func saveMeetingTask(_ agendaID: Int32, meetingID: String, taskID: Int32, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func saveMeetingTask(_ agendaID: Int32, meetingID: String, taskID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myTask: MeetingTasks
         
@@ -762,21 +762,21 @@ extension coreDatabase
             myTask.agendaID = agendaID
             myTask.meetingID = meetingID
             myTask.taskID = taskID
-            if inUpdateType == "CODE"
+            if updateType == "CODE"
             {
                 myTask.updateTime =  NSDate()
                 myTask.updateType = "Add"
             }
             else
             {
-                myTask.updateTime = inUpdateTime as NSDate
-                myTask.updateType = inUpdateType
+                myTask.updateTime = updateTime as NSDate
+                myTask.updateType = updateType
             }
         }
         else
         {
             myTask = myTaskList[0]
-            if inUpdateType == "CODE"
+            if updateType == "CODE"
             {
                 myTask.updateTime =  NSDate()
                 if myTask.updateType != "Add"
@@ -786,40 +786,40 @@ extension coreDatabase
             }
             else
             {
-                myTask.updateTime = inUpdateTime as NSDate
-                myTask.updateType = inUpdateType
+                myTask.updateTime = updateTime as NSDate
+                myTask.updateType = updateType
             }
         }
         
         saveContext()
     }
     
-    func replaceMeetingTask(_ agendaID: Int32, meetingID: String, taskID: Int32, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func replaceMeetingTask(_ agendaID: Int32, meetingID: String, taskID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myTask = MeetingTasks(context: objectContext)
         myTask.agendaID = agendaID
         myTask.meetingID = meetingID
         myTask.taskID = taskID
-        if inUpdateType == "CODE"
+        if updateType == "CODE"
         {
             myTask.updateTime =  NSDate()
             myTask.updateType = "Add"
         }
         else
         {
-            myTask.updateTime = inUpdateTime as NSDate
-            myTask.updateType = inUpdateType
+            myTask.updateTime = updateTime as NSDate
+            myTask.updateType = updateType
         }
         saveContext()
     }
     
-    func deleteAgendaTask(_ inAgendaID: Int32, inMeetingID: String, inTaskID: Int32)
+    func deleteAgendaTask(_ inAgendaID: Int32, meetingID: String, inTaskID: Int32)
     {
         let fetchRequest = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(agendaID == \(inAgendaID)) AND (meetingID == \"\(inMeetingID)\") AND (taskID == \(inTaskID))")
+        let predicate = NSPredicate(format: "(agendaID == \(inAgendaID)) AND (meetingID == \"\(meetingID)\") AND (taskID == \(inTaskID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -841,13 +841,13 @@ extension coreDatabase
         saveContext()
     }
     
-    func getAgendaTask(_ inAgendaID: Int32, inMeetingID: String, inTaskID: Int32)->[MeetingTasks]
+    func getAgendaTask(_ inAgendaID: Int32, meetingID: String, inTaskID: Int32)->[MeetingTasks]
     {
         let fetchRequest = NSFetchRequest<MeetingTasks>(entityName: "MeetingTasks")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(agendaID == \(inAgendaID)) && (meetingID == \"\(inMeetingID)\") && (taskID == \(inTaskID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(agendaID == \(inAgendaID)) && (meetingID == \"\(meetingID)\") && (taskID == \(inTaskID)) && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1030,7 +1030,7 @@ extension CloudKitInteraction
                 let title = record.object(forKey: "title") as! String
                 let meetingOrder = record.object(forKey: "meetingOrder") as! Int32
                 
-                myDatabaseConnection.replaceAgendaItem(meetingID, actualEndTime: actualEndTime, actualStartTime: actualStartTime, status: status, decisionMade: decisionMade, discussionNotes: discussionNotes, timeAllocation: timeAllocation, owner: owner, title: title, agendaID: agendaID, meetingOrder: meetingOrder, inUpdateTime: updateTime, inUpdateType: updateType)
+                myDatabaseConnection.replaceAgendaItem(meetingID, actualEndTime: actualEndTime, actualStartTime: actualStartTime, status: status, decisionMade: decisionMade, discussionNotes: discussionNotes, timeAllocation: timeAllocation, owner: owner, title: title, agendaID: agendaID, meetingOrder: meetingOrder, updateTime: updateTime, updateType: updateType)
                 usleep(100)
             }
             sem.signal()
@@ -1169,7 +1169,7 @@ extension CloudKitInteraction
         let title = sourceRecord.object(forKey: "title") as! String
         let meetingOrder = sourceRecord.object(forKey: "meetingOrder") as! Int32
         
-        myDatabaseConnection.saveAgendaItem(meetingID, actualEndTime: actualEndTime, actualStartTime: actualStartTime, status: status, decisionMade: decisionMade, discussionNotes: discussionNotes, timeAllocation: timeAllocation, owner: owner, title: title, agendaID: agendaID, meetingOrder: meetingOrder, inUpdateTime: updateTime, inUpdateType: updateType)
+        myDatabaseConnection.saveAgendaItem(meetingID, actualEndTime: actualEndTime, actualStartTime: actualStartTime, status: status, decisionMade: decisionMade, discussionNotes: discussionNotes, timeAllocation: timeAllocation, owner: owner, title: title, agendaID: agendaID, meetingOrder: meetingOrder, updateTime: updateTime, updateType: updateType)
     }
     
     func saveMeetingTasksToCloudKit()
@@ -1236,7 +1236,7 @@ extension CloudKitInteraction
                 let updateType = record.object(forKey: "updateType") as! String
                 let taskID = record.object(forKey: "taskID") as! Int32
                 
-                myDatabaseConnection.replaceMeetingTask(agendaID, meetingID: meetingID, taskID: taskID, inUpdateTime: updateTime, inUpdateType: updateType)
+                myDatabaseConnection.replaceMeetingTask(agendaID, meetingID: meetingID, taskID: taskID, updateTime: updateTime, updateType: updateType)
                 usleep(100)
             }
             sem.signal()
@@ -1335,6 +1335,6 @@ extension CloudKitInteraction
         }
         let taskID = sourceRecord.object(forKey: "taskID") as! Int32
         
-        myDatabaseConnection.saveMeetingTask(agendaID, meetingID: meetingID, taskID: taskID, inUpdateTime: updateTime, inUpdateType: updateType)
+        myDatabaseConnection.saveMeetingTask(agendaID, meetingID: meetingID, taskID: taskID, updateTime: updateTime, updateType: updateType)
     }
 }

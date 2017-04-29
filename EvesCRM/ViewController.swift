@@ -115,7 +115,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
 
     var myRowClicked: Int = 0
     var calendarTable: String = ""
-    var myCalendarItems: [myCalendarItem] = Array()
+    var myCalendarItems: [calendarItem] = Array()
     
     var myTaskItems: [task] = Array()
     var myWorkingTask: task!
@@ -138,26 +138,32 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
 
         myDBSync.startTimer()
         
-        globalEventStore = EKEventStore()
+        connectEventStore()
         
-        switch EKEventStore.authorizationStatus(for: EKEntityType.event) {
-        case .authorized:
-            print("Calendar Access granted")
-        case .denied:
-            print("Calendar Access denied")
-        case .notDetermined:
-            // 3
-            globalEventStore.requestAccess(to: EKEntityType.event, completion:
-                {(granted: Bool, error: Error?) -> Void in
-                    if granted {
-                        print("Calendar Access granted")
-                    } else {
-                        print("Calendar Access denied")
-                    }
-                })
-        default:
-            print("Calendar Case Default")
-        }
+        checkCalendarConnected(globalEventStore)
+        
+        checkRemindersConnected(globalEventStore)
+        
+//        globalEventStore = EKEventStore()
+//        
+//        switch EKEventStore.authorizationStatus(for: EKEntityType.event) {
+//        case .authorized:
+//            print("Calendar Access granted")
+//        case .denied:
+//            print("Calendar Access denied")
+//        case .notDetermined:
+//            // 3
+//            globalEventStore.requestAccess(to: EKEntityType.event, completion:
+//                {(granted: Bool, error: Error?) -> Void in
+//                    if granted {
+//                        print("Calendar Access granted")
+//                    } else {
+//                        print("Calendar Access denied")
+//                    }
+//                })
+//        default:
+//            print("Calendar Case Default")
+//        }
 
        // Initial population of contact list
         self.dataTable1.register(UITableViewCell.self, forCellReuseIdentifier: CONTACT_CELL_IDENTIFER)
@@ -387,27 +393,27 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
         {
             let cell = dataTable1.dequeueReusableCell(withIdentifier: CONTACT_CELL_IDENTIFER)! 
             cell.textLabel!.text = table1Contents[indexPath.row].displayText
-            return setCellFormatting(cell,inDisplayFormat: table1Contents[indexPath.row].displaySpecialFormat)
+            return setCellFormatting(cell,displayFormat: table1Contents[indexPath.row].displaySpecialFormat)
 
         }
         else if (tableView == dataTable2)
         {
             let cell = dataTable2.dequeueReusableCell(withIdentifier: CONTACT_CELL_IDENTIFER)!
             cell.textLabel!.text = table2Contents[indexPath.row].displayText
-            return setCellFormatting(cell, inDisplayFormat: table2Contents[indexPath.row].displaySpecialFormat)
+            return setCellFormatting(cell, displayFormat: table2Contents[indexPath.row].displaySpecialFormat)
         }
         else if (tableView == dataTable3)
         {
             let cell = dataTable3.dequeueReusableCell(withIdentifier: CONTACT_CELL_IDENTIFER)!
             cell.textLabel!.text = table3Contents[indexPath.row].displayText
-            return setCellFormatting(cell,inDisplayFormat: table3Contents[indexPath.row].displaySpecialFormat)
+            return setCellFormatting(cell,displayFormat: table3Contents[indexPath.row].displaySpecialFormat)
 
         }
         else if (tableView == dataTable4)
         {
             let cell = dataTable4.dequeueReusableCell(withIdentifier: CONTACT_CELL_IDENTIFER)!
             cell.textLabel!.text = table4Contents[indexPath.row].displayText
-            return setCellFormatting(cell,inDisplayFormat: table4Contents[indexPath.row].displaySpecialFormat)
+            return setCellFormatting(cell,displayFormat: table4Contents[indexPath.row].displaySpecialFormat)
 
         }
         else
@@ -544,7 +550,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
             }
             else if myDisplayType == "Context"
             {
-                writeRowToArray("Context = \(myContextName)", inTable: &workArray)
+                writeRowToArray("Context = \(myContextName)", table: &workArray)
                 displayResults(sourceService: "Details", resultsArray: workArray)
             }
             else
@@ -554,7 +560,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
             }
   //  GRE- todo
         case "Calendar":
-            eventDetails = iOSCalendar(inEventStore: globalEventStore)
+            eventDetails = iOSCalendar()
             
             if myDisplayType == "Project"
             {
@@ -562,7 +568,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
             }
             else if myDisplayType == "Context"
             {
-                writeRowToArray("No calendar entries found", inTable: &workArray)
+                writeRowToArray("No calendar entries found", table: &workArray)
                 displayResults(sourceService: "Calendar", resultsArray: workArray)
             }
             else
@@ -573,7 +579,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
             
             if workArray.count == 0
             {
-                writeRowToArray("No calendar entries found", inTable: &workArray)
+                writeRowToArray("No calendar entries found", table: &workArray)
                 displayResults(sourceService: "Calendar", resultsArray: workArray)
             }
             
@@ -599,7 +605,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
 //            workArray = reminderDetails.displayReminder()
 //            
         case "Evernote":
-            writeRowToArray("Loading Evernote data.  Pane will refresh when finished", inTable: &workArray)
+            writeRowToArray("Loading Evernote data.  Pane will refresh when finished", table: &workArray)
             
             // Work out the searchString
             
@@ -647,7 +653,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
 //            openOmnifocusDropbox()
 //            
         case "OneNote":
-            writeRowToArray("Loading OneNote data.  Pane will refresh when finished", inTable: &workArray)
+            writeRowToArray("Loading OneNote data.  Pane will refresh when finished", table: &workArray)
             
             if myOneNoteNotebooks == nil
             {
@@ -758,7 +764,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
 //            
 
         case "DropBox":
-            writeRowToArray("Loading DropBox data.  Pane will refresh when finished", inTable: &workArray)
+            writeRowToArray("Loading DropBox data.  Pane will refresh when finished", table: &workArray)
             
             dropBoxClass = dropboxService()
             dropBoxClass.delegate = self
@@ -857,7 +863,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
                 }
 
             case "Omnifocus":
-                writeRowToArray("Loading Omnifocus data.  Pane will refresh when finished", inTable: &workArray)
+                writeRowToArray("Loading Omnifocus data.  Pane will refresh when finished", table: &workArray)
             
                 omniTableToRefresh = inTable
                 
@@ -865,7 +871,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
 
             
             case "GMail":
-                writeRowToArray("Loading GMail messages.  Pane will refresh when finished", inTable: &workArray)
+                writeRowToArray("Loading GMail messages.  Pane will refresh when finished", table: &workArray)
                 
                 gmailTableToRefresh = inTable
                 
@@ -883,7 +889,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
                 }
             
         case "Hangouts":
-            writeRowToArray("Loading Hangout messages.  Pane will refresh when finished", inTable: &workArray)
+            writeRowToArray("Loading Hangout messages.  Pane will refresh when finished", table: &workArray)
             
             hangoutsTableToRefresh = inTable
             
@@ -958,7 +964,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
             
             if workArray.count == 0
             {
-                writeRowToArray("No tasks found", inTable: &workArray)
+                writeRowToArray("No tasks found", table: &workArray)
             }
             
             
@@ -1991,12 +1997,12 @@ print("Dropbox status = \(progress)")
                     
                     if myFormatString == ""
                     {
-                        writeRowToArray(myDisplayString, inTable: &workArray)
+                        writeRowToArray(myDisplayString, table: &workArray)
                     }
                     else
                     {
                         myDisplayString += "\nLast updated: \(splitText[6])"
-                        writeRowToArray(myDisplayString, inTable: &workArray, inDisplayFormat: myFormatString)
+                        writeRowToArray(myDisplayString, table: &workArray, displayFormat: myFormatString)
                         myFormatString = ""
                     }
                 }
@@ -2008,7 +2014,7 @@ print("Dropbox status = \(progress)")
         
         if !myEntryFound
         {
-            writeRowToArray("No Omnifocus tasks found", inTable: &workArray)
+            writeRowToArray("No Omnifocus tasks found", table: &workArray)
         }
         
         switch omniTableToRefresh
@@ -2055,7 +2061,7 @@ print("Dropbox status = \(progress)")
         }
     }
     
-    func openMeetings(_ inType: String, workingTask: myCalendarItem)
+    func openMeetings(_ inType: String, workingTask: calendarItem)
     {
         let meetingViewControl = meetingStoryboard.instantiateViewController(withIdentifier: "MeetingsTab") as! meetingTabViewController
         
@@ -2239,7 +2245,7 @@ print("Dropbox status = \(progress)")
         
         if myGmailMessages.messages.count == 0
         {
-            writeRowToArray("No matching GMail Messages found", inTable: &myDisplay)
+            writeRowToArray("No matching GMail Messages found", table: &myDisplay)
         }
         
         for myMessage in myGmailMessages.messages
@@ -2252,12 +2258,12 @@ print("Dropbox status = \(progress)")
             myString += myMessage.snippet
 //println("ID = \(myMessage.id)")
 //println(myString)
-            writeRowToArray(myString, inTable: &myDisplay)
+            writeRowToArray(myString, table: &myDisplay)
         }
         
         if myDisplay.count == 0
         {
-            writeRowToArray("No matching Gmail Messages found", inTable: &myDisplay)
+            writeRowToArray("No matching Gmail Messages found", table: &myDisplay)
         }
 
         switch gmailTableToRefresh
@@ -2304,7 +2310,7 @@ print("Dropbox status = \(progress)")
         
         if myHangoutsMessages.messages.count == 0
         {
-            writeRowToArray("No matching Hangout Messages found", inTable: &myDisplay)
+            writeRowToArray("No matching Hangout Messages found", table: &myDisplay)
         }
         
         for myMessage in myHangoutsMessages.messages
@@ -2313,12 +2319,12 @@ print("Dropbox status = \(progress)")
             
             myString += "From: \(myMessage.from)\n"
             myString += myMessage.snippet
-            writeRowToArray(myString, inTable: &myDisplay)
+            writeRowToArray(myString, table: &myDisplay)
         }
         
         if myDisplay.count == 0
         {
-            writeRowToArray("No matching Hangout Messages found", inTable: &myDisplay)
+            writeRowToArray("No matching Hangout Messages found", table: &myDisplay)
         }
         
         switch hangoutsTableToRefresh
@@ -2604,7 +2610,7 @@ print("Dropbox status = \(progress)")
         showFields()
         
         myDisplayType = "Project"
-        mySelectedProject = project(inProjectID: projectID)
+        mySelectedProject = project(projectID: projectID)
         
         displayScreen()
         
@@ -2736,11 +2742,11 @@ print("Dropbox status = \(progress)")
             if event.startDate.compare(Date()) == ComparisonResult.orderedAscending
             {
                 // Event is in the past
-                writeRowToArray(myString, inTable: &tableContents, inDisplayFormat: "Gray")
+                writeRowToArray(myString, table: &tableContents, displayFormat: "Gray")
             }
             else
             {
-                writeRowToArray(myString, inTable: &tableContents)
+                writeRowToArray(myString, table: &tableContents)
             }
         }
         return tableContents
@@ -2778,7 +2784,7 @@ print("Dropbox status = \(progress)")
             {
                 myString += myTask.displayDueDate
             }
-            writeRowToArray(myString, inTable: &tableContents)
+            writeRowToArray(myString, table: &tableContents)
         }
         return tableContents
     }
@@ -3135,7 +3141,7 @@ print("Dropbox status = \(progress)")
     
     @IBAction func btnSendToInbox(_ sender: UIButton)
     {
-        let newTask = task(inTeamID: myCurrentTeam.teamID)
+        let newTask = task(teamID: myCurrentTeam.teamID)
         newTask.title = myWorkingGmailMessage.subject
 
         var myBody: String = "From : \(myWorkingGmailMessage.from)"
@@ -3194,9 +3200,9 @@ print("Dropbox status = \(progress)")
     {
         var tableContents:[TableData] = [TableData]()
         
-        writeRowToArray("Start Date = \(myProject.displayProjectStartDate)", inTable: &tableContents)
-        writeRowToArray("End Date = \(myProject.displayProjectEndDate)", inTable: &tableContents)
-        writeRowToArray("Status = \(myProject.projectStatus)", inTable: &tableContents)
+        writeRowToArray("Start Date = \(myProject.displayProjectStartDate)", table: &tableContents)
+        writeRowToArray("End Date = \(myProject.displayProjectEndDate)", table: &tableContents)
+        writeRowToArray("Status = \(myProject.projectStatus)", table: &tableContents)
         
         displayResults(sourceService: "Details", resultsArray: tableContents)
     }

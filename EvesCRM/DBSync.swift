@@ -34,9 +34,8 @@ class DBSync: NSObject
     {
         if !refreshRunning
         {
-            let iCloudConnected = myCloudDB.userInfo.loggedInToICloud()
-        
-            if iCloudConnected == .available
+            let myReachability = Reachability()
+            if myReachability.isConnectedToNetwork()
             {
                 if myDatabaseConnection.getTeamsCount() == 0
                 {  // Nothing in teams table so lets do a full sync
@@ -56,23 +55,14 @@ class DBSync: NSObject
                     myDatabaseConnection.clearDeletedItems()
                     myDatabaseConnection.clearSyncedItems()
 
-                    
-                    if firstRun
-                    {
-                        myCloudDB.setupSubscriptions()
-                        firstRun = false
-                    }
+//                    if firstRun
+//                    {
+//                        myCloudDB.setupSubscriptions()
+//                        firstRun = false
+//                    }
                     
                     notificationCenter.post(name: NotificationDBSyncCompleted, object: nil)
                 }
-            }
-            else if iCloudConnected == .couldNotDetermine
-            {
-                NSLog("CouldNotDetermine")
-            }
-            else
-            {
-                NSLog("Other status")
             }
         }
     }

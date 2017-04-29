@@ -62,7 +62,7 @@ class projectTeamMember: NSObject
     {
         get
         {
-            return myDatabaseConnection.getRoleDescription(myRoleID, inTeamID: myTeamID)
+            return myDatabaseConnection.getRoleDescription(myRoleID, teamID: myTeamID)
         }
     }
     
@@ -79,13 +79,13 @@ class projectTeamMember: NSObject
         }
     }
     
-    init(inProjectID: Int32, inTeamMember: String, inRoleID: Int32, inTeamID: Int32)
+    init(projectID: Int32, teamMember: String, inRoleID: Int32, teamID: Int32)
     {
         super.init()
-        myProjectID = inProjectID
-        myTeamMember = inTeamMember
+        myProjectID = projectID
+        myTeamMember = teamMember
         myRoleID = inRoleID
-        myTeamID = inTeamID
+        myTeamID = teamID
         save()
     }
     
@@ -122,27 +122,27 @@ class projectTeamMember: NSObject
 
 extension coreDatabase
 {
-    func saveTeamMember(_ inProjectID: Int32, inRoleID: Int32, inPersonName: String, inNotes: String, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func saveTeamMember(_ projectID: Int32, inRoleID: Int32, inPersonName: String, inNotes: String, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myProjectTeam: ProjectTeamMembers!
         
-        let myProjectTeamRecords = getTeamMemberRecord(inProjectID, inPersonName: inPersonName)
+        let myProjectTeamRecords = getTeamMemberRecord(projectID, inPersonName: inPersonName)
         if myProjectTeamRecords.count == 0
         { // Add
             myProjectTeam = ProjectTeamMembers(context: objectContext)
-            myProjectTeam.projectID = inProjectID
+            myProjectTeam.projectID = projectID
             myProjectTeam.teamMember = inPersonName
             myProjectTeam.roleID = inRoleID
             myProjectTeam.projectMemberNotes = inNotes
-            if inUpdateType == "CODE"
+            if updateType == "CODE"
             {
                 myProjectTeam.updateTime =  NSDate()
                 myProjectTeam.updateType = "Add"
             }
             else
             {
-                myProjectTeam.updateTime = inUpdateTime as NSDate
-                myProjectTeam.updateType = inUpdateType
+                myProjectTeam.updateTime = updateTime as NSDate
+                myProjectTeam.updateType = updateType
             }
         }
         else
@@ -150,7 +150,7 @@ extension coreDatabase
             myProjectTeam = myProjectTeamRecords[0]
             myProjectTeam.roleID = inRoleID
             myProjectTeam.projectMemberNotes = inNotes
-            if inUpdateType == "CODE"
+            if updateType == "CODE"
             {
                 myProjectTeam.updateTime =  NSDate()
                 if myProjectTeam.updateType != "Add"
@@ -160,41 +160,41 @@ extension coreDatabase
             }
             else
             {
-                myProjectTeam.updateTime = inUpdateTime as NSDate
-                myProjectTeam.updateType = inUpdateType
+                myProjectTeam.updateTime = updateTime as NSDate
+                myProjectTeam.updateType = updateType
             }
         }
         
         saveContext()
     }
     
-    func replaceTeamMember(_ inProjectID: Int32, inRoleID: Int32, inPersonName: String, inNotes: String, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func replaceTeamMember(_ projectID: Int32, inRoleID: Int32, inPersonName: String, inNotes: String, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myProjectTeam = ProjectTeamMembers(context: objectContext)
-        myProjectTeam.projectID = inProjectID
+        myProjectTeam.projectID = projectID
         myProjectTeam.teamMember = inPersonName
         myProjectTeam.roleID = inRoleID
         myProjectTeam.projectMemberNotes = inNotes
-        if inUpdateType == "CODE"
+        if updateType == "CODE"
         {
             myProjectTeam.updateTime =  NSDate()
             myProjectTeam.updateType = "Add"
         }
         else
         {
-            myProjectTeam.updateTime = inUpdateTime as NSDate
-            myProjectTeam.updateType = inUpdateType
+            myProjectTeam.updateTime = updateTime as NSDate
+            myProjectTeam.updateType = updateType
         }
         
         saveContext()
         self.refreshObject(myProjectTeam)
     }
     
-    func deleteTeamMember(_ inProjectID: Int32, inPersonName: String)
+    func deleteTeamMember(_ projectID: Int32, inPersonName: String)
     {
         let fetchRequest = NSFetchRequest<ProjectTeamMembers>(entityName: "ProjectTeamMembers")
         
-        let predicate = NSPredicate(format: "(projectID == \(inProjectID)) AND (teamMember == \"\(inPersonName)\")")
+        let predicate = NSPredicate(format: "(projectID == \(projectID)) AND (teamMember == \"\(inPersonName)\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -216,13 +216,13 @@ extension coreDatabase
         saveContext()
     }
     
-    func getTeamMemberRecord(_ inProjectID: Int32, inPersonName: String)->[ProjectTeamMembers]
+    func getTeamMemberRecord(_ projectID: Int32, inPersonName: String)->[ProjectTeamMembers]
     {
         let fetchRequest = NSFetchRequest<ProjectTeamMembers>(entityName: "ProjectTeamMembers")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectID == \(inProjectID)) && (teamMember == \"\(inPersonName)\") && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(projectID == \(projectID)) && (teamMember == \"\(inPersonName)\") && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -240,13 +240,13 @@ extension coreDatabase
         }
     }
     
-    func getTeamMembers(_ inProjectID: Int32)->[ProjectTeamMembers]
+    func getTeamMembers(_ projectID: Int32)->[ProjectTeamMembers]
     {
         let fetchRequest = NSFetchRequest<ProjectTeamMembers>(entityName: "ProjectTeamMembers")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectID == \(inProjectID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(projectID == \(projectID)) && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -471,7 +471,7 @@ extension CloudKitInteraction
                 let roleID = record.object(forKey: "roleID") as! Int32
                 let projectMemberNotes = record.object(forKey: "projectMemberNotes") as! String
                 
-                myDatabaseConnection.replaceTeamMember(projectID, inRoleID: roleID, inPersonName: teamMember, inNotes: projectMemberNotes, inUpdateTime: updateTime, inUpdateType: updateType)
+                myDatabaseConnection.replaceTeamMember(projectID, inRoleID: roleID, inPersonName: teamMember, inNotes: projectMemberNotes, updateTime: updateTime, updateType: updateType)
                 usleep(100)
             }
             sem.signal()
@@ -572,6 +572,6 @@ extension CloudKitInteraction
         let roleID = sourceRecord.object(forKey: "roleID") as! Int32
         let projectMemberNotes = sourceRecord.object(forKey: "projectMemberNotes") as! String
         
-        myDatabaseConnection.saveTeamMember(projectID, inRoleID: roleID, inPersonName: teamMember, inNotes: projectMemberNotes, inUpdateTime: updateTime, inUpdateType: updateType)
+        myDatabaseConnection.saveTeamMember(projectID, inRoleID: roleID, inPersonName: teamMember, inNotes: projectMemberNotes, updateTime: updateTime, updateType: updateType)
     }
 }

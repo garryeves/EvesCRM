@@ -12,13 +12,13 @@ import CloudKit
 
 extension coreDatabase
 {
-    func getStages(_ inTeamID: Int32)->[Stages]
+    func getStages(_ teamID: Int32)->[Stages]
     {
         let fetchRequest = NSFetchRequest<Stages>(entityName: "Stages")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(teamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -36,11 +36,11 @@ extension coreDatabase
         }
     }
     
-    func getVisibleStages(_ inTeamID: Int32)->[Stages]
+    func getVisibleStages(_ teamID: Int32)->[Stages]
     {
         let fetchRequest = NSFetchRequest<Stages>(entityName: "Stages")
         
-        let predicate = NSPredicate(format: "(stageDescription != \"Archived\") && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(stageDescription != \"Archived\") && (updateType != \"Delete\") && (teamID == \(teamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -58,10 +58,10 @@ extension coreDatabase
         }
     }
     
-    func deleteAllStages(_ inTeamID: Int32)
+    func deleteAllStages(_ teamID: Int32)
     {
         let fetchRequest = NSFetchRequest<Stages>(entityName: "Stages")
-        let predicate = NSPredicate(format: "(teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(teamID == \(teamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -84,13 +84,13 @@ extension coreDatabase
         saveContext()
     }
     
-    func stageExists(_ inStageDesc:String, inTeamID: Int32)-> Bool
+    func stageExists(_ inStageDesc:String, teamID: Int32)-> Bool
     {
         let fetchRequest = NSFetchRequest<Stages>(entityName: "Stages")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(stageDescription == \"\(inStageDesc)\") && (teamID == \(inTeamID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(stageDescription == \"\(inStageDesc)\") && (teamID == \(teamID)) && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -141,7 +141,7 @@ extension coreDatabase
         }
     }
     
-    func saveStage(_ stageDesc: String, teamID: Int32, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func saveStage(_ stageDesc: String, teamID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myStage: Stages!
         
@@ -153,21 +153,21 @@ extension coreDatabase
             
             myStage.stageDescription = stageDesc
             myStage.teamID = teamID
-            if inUpdateType == "CODE"
+            if updateType == "CODE"
             {
                 myStage.updateTime =  NSDate()
                 myStage.updateType = "Add"
             }
             else
             {
-                myStage.updateTime = inUpdateTime as NSDate
-                myStage.updateType = inUpdateType
+                myStage.updateTime = updateTime as NSDate
+                myStage.updateType = updateType
             }
         }
         else
         {
             myStage = myStages[0]
-            if inUpdateType == "CODE"
+            if updateType == "CODE"
             {
                 myStage.updateTime =  NSDate()
                 if myStage.updateType != "Add"
@@ -177,8 +177,8 @@ extension coreDatabase
             }
             else
             {
-                myStage.updateTime = inUpdateTime as NSDate
-                myStage.updateType = inUpdateType
+                myStage.updateTime = updateTime as NSDate
+                myStage.updateType = updateType
             }
         }
         
@@ -187,31 +187,31 @@ extension coreDatabase
         myCloudDB.saveStagesRecordToCloudKit(myStage)
     }
     
-    func replaceStage(_ stageDesc: String, teamID: Int32, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE")
+    func replaceStage(_ stageDesc: String, teamID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myStage = Stages(context: objectContext)
         
         myStage.stageDescription = stageDesc
         myStage.teamID = teamID
-        if inUpdateType == "CODE"
+        if updateType == "CODE"
         {
             myStage.updateTime =  NSDate()
             myStage.updateType = "Add"
         }
         else
         {
-            myStage.updateTime = inUpdateTime as NSDate
-            myStage.updateType = inUpdateType
+            myStage.updateTime = updateTime as NSDate
+            myStage.updateType = updateType
         }
         
         saveContext()
     }
     
-    func deleteStageEntry(_ inStageDesc: String, inTeamID: Int32)
+    func deleteStageEntry(_ inStageDesc: String, teamID: Int32)
     {
         let fetchRequest = NSFetchRequest<Stages>(entityName: "Stages")
         
-        let predicate = NSPredicate(format: "(stageDescription == \"\(inStageDesc)\") && (teamID == \(inTeamID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(stageDescription == \"\(inStageDesc)\") && (teamID == \(teamID)) && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -283,7 +283,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func initialiseTeamForStages(_ inTeamID: Int32)
+    func initialiseTeamForStages(_ teamID: Int32)
     {
         let fetchRequest = NSFetchRequest<Stages>(entityName: "Stages")
         
@@ -295,7 +295,7 @@ extension coreDatabase
             {
                 for myItem in fetchResults
                 {
-                    myItem.teamID = inTeamID
+                    myItem.teamID = teamID
                 }
             }
         }
@@ -415,7 +415,7 @@ extension CloudKitInteraction
                 let updateType = record.object(forKey: "updateType") as! String
                 let teamID = record.object(forKey: "teamID") as! Int32
                 
-                myDatabaseConnection.replaceStage(stageDescription, teamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+                myDatabaseConnection.replaceStage(stageDescription, teamID: teamID, updateTime: updateTime, updateType: updateType)
                 usleep(100)
             }
             sem.signal()
@@ -510,6 +510,6 @@ extension CloudKitInteraction
         }
         let teamID = sourceRecord.object(forKey: "teamID") as! Int32
         
-        myDatabaseConnection.saveStage(stageDescription, teamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType)
+        myDatabaseConnection.saveStage(stageDescription, teamID: teamID, updateTime: updateTime, updateType: updateType)
     }
 }

@@ -12,12 +12,12 @@ import CloudKit
 
 extension coreDatabase
 {
-    func getRoles(_ inTeamID: Int32)->[Roles]
+    func getRoles(_ teamID: Int32)->[Roles]
     {
         let fetchRequest = NSFetchRequest<Roles>(entityName: "Roles")
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(teamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -34,11 +34,11 @@ extension coreDatabase
         }
     }
     
-    func deleteAllRoles(_ inTeamID: Int32)
+    func deleteAllRoles(_ teamID: Int32)
     {
         let fetchRequest = NSFetchRequest<Roles>(entityName: "Roles")
         
-        let predicate = NSPredicate(format: "(teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(teamID == \(teamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -90,7 +90,7 @@ extension coreDatabase
         return retVal + 1
     }
     
-    func saveRole(_ roleName: String, teamID: Int32, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE", roleID: Int32 = 0)
+    func saveRole(_ roleName: String, teamID: Int32, updateTime: Date =  Date(), updateType: String = "CODE", roleID: Int32 = 0)
     {
         let myRoles = getRole(roleID)
         
@@ -103,22 +103,22 @@ extension coreDatabase
             mySelectedRole.roleID = getNextID("Roles")
             mySelectedRole.roleDescription = roleName
             mySelectedRole.teamID = teamID
-            if inUpdateType == "CODE"
+            if updateType == "CODE"
             {
                 mySelectedRole.updateTime =  NSDate()
                 mySelectedRole.updateType = "Add"
             }
             else
             {
-                mySelectedRole.updateTime = inUpdateTime as NSDate
-                mySelectedRole.updateType = inUpdateType
+                mySelectedRole.updateTime = updateTime as NSDate
+                mySelectedRole.updateType = updateType
             }
         }
         else
         {
             mySelectedRole = myRoles[0]
             mySelectedRole.roleDescription = roleName
-            if inUpdateType == "CODE"
+            if updateType == "CODE"
             {
                 mySelectedRole.updateTime =  NSDate()
                 if mySelectedRole.updateType != "Add"
@@ -128,8 +128,8 @@ extension coreDatabase
             }
             else
             {
-                mySelectedRole.updateTime = inUpdateTime as NSDate
-                mySelectedRole.updateType = inUpdateType
+                mySelectedRole.updateTime = updateTime as NSDate
+                mySelectedRole.updateType = updateType
             }
         }
         
@@ -138,7 +138,7 @@ extension coreDatabase
         myCloudDB.saveRolesRecordToCloudKit(mySelectedRole)
     }
     
-    func saveCloudRole(_ roleName: String, teamID: Int32, inUpdateTime: Date, inUpdateType: String, roleID: Int32 = 0)
+    func saveCloudRole(_ roleName: String, teamID: Int32, updateTime: Date, updateType: String, roleID: Int32 = 0)
     {
         let myRoles = getRole(roleID)
         
@@ -151,21 +151,21 @@ extension coreDatabase
             mySelectedRole.roleID = roleID
             mySelectedRole.roleDescription = roleName
             mySelectedRole.teamID = teamID
-            mySelectedRole.updateTime = inUpdateTime as NSDate
-            mySelectedRole.updateType = inUpdateType
+            mySelectedRole.updateTime = updateTime as NSDate
+            mySelectedRole.updateType = updateType
         }
         else
         {
             mySelectedRole = myRoles[0]
             mySelectedRole.roleDescription = roleName
-            mySelectedRole.updateTime = inUpdateTime as NSDate
-            mySelectedRole.updateType = inUpdateType
+            mySelectedRole.updateTime = updateTime as NSDate
+            mySelectedRole.updateType = updateType
         }
         
         saveContext()
     }
     
-    func replaceRole(_ roleName: String, teamID: Int32, inUpdateTime: Date =  Date(), inUpdateType: String = "CODE", roleID: Int32 = 0)
+    func replaceRole(_ roleName: String, teamID: Int32, updateTime: Date =  Date(), updateType: String = "CODE", roleID: Int32 = 0)
     {
         let mySelectedRole = Roles(context: objectContext)
         
@@ -173,15 +173,15 @@ extension coreDatabase
         mySelectedRole.roleID = roleID
         mySelectedRole.roleDescription = roleName
         mySelectedRole.teamID = teamID
-        if inUpdateType == "CODE"
+        if updateType == "CODE"
         {
             mySelectedRole.updateTime =  NSDate()
             mySelectedRole.updateType = "Add"
         }
         else
         {
-            mySelectedRole.updateTime = inUpdateTime as NSDate
-            mySelectedRole.updateType = inUpdateType
+            mySelectedRole.updateTime = updateTime as NSDate
+            mySelectedRole.updateType = updateType
         }
         
         saveContext()
@@ -231,11 +231,11 @@ extension coreDatabase
         }
     }
     
-    func deleteRoleEntry(_ inRoleName: String, inTeamID: Int32)
+    func deleteRoleEntry(_ inRoleName: String, teamID: Int32)
     {
         let fetchRequest = NSFetchRequest<Roles>(entityName: "Roles")
         
-        let predicate = NSPredicate(format: "(roleDescription == \"\(inRoleName)\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(roleDescription == \"\(inRoleName)\") && (teamID == \(teamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -259,10 +259,10 @@ extension coreDatabase
         saveContext()
     }
     
-    func getRoleDescription(_ inRoleID: Int32, inTeamID: Int32)->String
+    func getRoleDescription(_ inRoleID: Int32, teamID: Int32)->String
     {
         let fetchRequest = NSFetchRequest<Roles>(entityName: "Roles")
-        let predicate = NSPredicate(format: "(roleID == \(inRoleID)) && (updateType != \"Delete\") && (teamID == \(inTeamID))")
+        let predicate = NSPredicate(format: "(roleID == \(inRoleID)) && (updateType != \"Delete\") && (teamID == \(teamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -335,7 +335,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func initialiseTeamForRoles(_ inTeamID: Int32)
+    func initialiseTeamForRoles(_ teamID: Int32)
     {
         var maxID: Int32 = 1
         
@@ -353,7 +353,7 @@ extension coreDatabase
             {
                 for myItem in fetchResults
                 {
-                    myItem.teamID = inTeamID
+                    myItem.teamID = teamID
                     maxID = myItem.roleID
                 }
             }
@@ -481,7 +481,7 @@ extension CloudKitInteraction
                 let teamID = record.object(forKey: "teamID") as! Int32
                 let roleDescription = record.object(forKey: "roleDescription") as! String
                 
-                myDatabaseConnection.replaceRole(roleDescription, teamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType, roleID: roleID)
+                myDatabaseConnection.replaceRole(roleDescription, teamID: teamID, updateTime: updateTime, updateType: updateType, roleID: roleID)
                 usleep(100)
             }
             sem.signal()
@@ -579,6 +579,6 @@ extension CloudKitInteraction
         let teamID = sourceRecord.object(forKey: "teamID") as! Int32
         let roleDescription = sourceRecord.object(forKey: "roleDescription") as! String
         
-        myDatabaseConnection.saveCloudRole(roleDescription, teamID: teamID, inUpdateTime: updateTime, inUpdateType: updateType, roleID: roleID)
+        myDatabaseConnection.saveCloudRole(roleDescription, teamID: teamID, updateTime: updateTime, updateType: updateType, roleID: roleID)
     }
 }

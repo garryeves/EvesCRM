@@ -262,6 +262,8 @@
 		34EA774E1EB07F1700D7DD1F /* projects.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34EA774C1EB07F1700D7DD1F /* projects.storyboard */; };
 		34EA77511EB07F3200D7DD1F /* contexts.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34EA774F1EB07F3200D7DD1F /* contexts.storyboard */; };
 		34EA77521EB07F3200D7DD1F /* contexts.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34EA774F1EB07F3200D7DD1F /* contexts.storyboard */; };
+		34EF0D041EB433AA003B1EB4 /* reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34EF0D031EB433AA003B1EB4 /* reachability.swift */; };
+		34EF0D051EB433AA003B1EB4 /* reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34EF0D031EB433AA003B1EB4 /* reachability.swift */; };
 		34F199BF1AF6060200963ABF /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34F199BE1AF6060200963ABF /* CoreData.framework */; };
 		34F199C11AF6ECE900963ABF /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34F199C01AF6ECE900963ABF /* CloudKit.framework */; };
 		34F35BD31B6B3F7000A19ACE /* taskUpdatesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34F35BD21B6B3F7000A19ACE /* taskUpdatesViewController.swift */; };
@@ -469,6 +471,7 @@
 		34EA77491EB07EF000D7DD1F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/meetings.storyboard; sourceTree = "<group>"; };
 		34EA774C1EB07F1700D7DD1F /* projects.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = projects.storyboard; sourceTree = "<group>"; };
 		34EA77501EB07F3200D7DD1F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/contexts.storyboard; sourceTree = "<group>"; };
+		34EF0D031EB433AA003B1EB4 /* reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = reachability.swift; sourceTree = "<group>"; };
 		34F199BB1AF6046A00963ABF /* EvesCRM.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = EvesCRM.entitlements; sourceTree = "<group>"; };
 		34F199BE1AF6060200963ABF /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		34F199C01AF6ECE900963ABF /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
@@ -641,6 +644,7 @@
 				344B6ACC1BA7B3B600A5377B /* CloudKitInteraction.swift */,
 				343B3F1D1B83045D0053777B /* DBSync.swift */,
 				34BA26551EAD933400A41EE9 /* EvesCRMDatabase.swift */,
+				34EF0D031EB433AA003B1EB4 /* reachability.swift */,
 				344B6ACF1BA7B47500A5377B /* UserInfo.swift */,
 				349A0D2B1EB0437B00F68594 /* Context+CoreDataClass.swift */,
 				349A0D2C1EB0437B00F68594 /* Context+CoreDataProperties.swift */,
@@ -1107,6 +1111,7 @@
 				349A0D451EB0437B00F68594 /* GTDLevel+CoreDataProperties.swift in Sources */,
 				34BA26261EAC555500A41EE9 /* meetingSupportingDocsClass.swift in Sources */,
 				348E6D4B1ADF74C800697268 /* ContactDetails.swift in Sources */,
+				34EF0D041EB433AA003B1EB4 /* reachability.swift in Sources */,
 				34BA26471EAD8A9300A41EE9 /* decodesClass.swift in Sources */,
 				344B6ACD1BA7B3B600A5377B /* CloudKitInteraction.swift in Sources */,
 				3406506B1ADDF8FF00C90CBB /* AppDelegate.swift in Sources */,
@@ -1227,6 +1232,7 @@
 				34BA26391EAC634200A41EE9 /* taskPredecessorClass.swift in Sources */,
 				349A0D401EB0437B00F68594 /* ProjectNote+CoreDataClass.swift in Sources */,
 				346B70F31AF75F47005E1BC2 /* EvesCRM.xcdatamodeld in Sources */,
+				34EF0D051EB433AA003B1EB4 /* reachability.swift in Sources */,
 				349A0D581EB0437B00F68594 /* Context1_1+CoreDataClass.swift in Sources */,
 				34BA26331EAC607B00A41EE9 /* GTDItemClass.swift in Sources */,
 				34DF7ACC1BBCB18F000E3B09 /* maintainContextsViewController.swift in Sources */,
