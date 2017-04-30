@@ -23,9 +23,9 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
     fileprivate var iniitialSwitchState: String = "Off"
 
     var delegate: MyReminderDelegate?
-    var inAction: String!
-    var inReminderID: String!
-    var inCalendarName: String!
+    var sourceAction: String!
+    var reminderID: String!
+    var calendarName: String!
     var myDisplayType: String!
     var myProjectName: String!
 
@@ -68,10 +68,10 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
                 }
         })
         
-        if inAction == "Edit"
+        if sourceAction == "Edit"
         {
 
-            myReminder = reminderStore.calendarItem(withIdentifier: inReminderID) as! EKReminder
+            myReminder = reminderStore.calendarItem(withIdentifier: reminderID) as! EKReminder
             
             if myReminder != nil
             {
@@ -205,19 +205,19 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
         }
     }
 
-    func numberOfComponentsInPickerView(_ priorityPicker: UIPickerView) -> Int {
+    func numberOfComponentsInPickerView(_ Picker: UIPickerView) -> Int {
         return 1
     }
 
-    func pickerView(_ inPicker: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+    func pickerView(_ Picker: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
          return priorityOptions.count
     }
     
-    func pickerView(_ inPicker: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String! {
+    func pickerView(_ Picker: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String! {
         return priorityOptions[row]
     }
     
-    func pickerView(_ inPicker: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+    func pickerView(_ Picker: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
        // actionSelection()
         itemSelected = priorityOptions[row]
         save()
@@ -301,7 +301,7 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
         var myError : NSError? = nil
         var myCalendar: EKCalendar!
         
-        if inAction == "Add"
+        if sourceAction == "Add"
         {
             // First need to check to see if the Reminder list exists.  if it does not then we need to create it
             
@@ -309,7 +309,7 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
             var calExists = false
             for calendar in myCalendars
             {
-                if calendar.title == inCalendarName
+                if calendar.title == calendarName
                 {
                     calExists = true
                     myCalendar = calendar
@@ -320,7 +320,7 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
             if !calExists
             {
                 myCalendar = EKCalendar(for:EKEntityType.reminder, eventStore:reminderStore)
-                myCalendar.title=inCalendarName
+                myCalendar.title=calendarName
                 
                 
                 // What are the source options
@@ -354,7 +354,7 @@ class reminderViewController: UIViewController, UITextViewDelegate, SMTEFillDele
             myReminder = EKReminder(eventStore: reminderStore)
             myReminder.calendar = myCalendar
             
-            inAction = "Edit"
+            sourceAction = "Edit"
         }
         
         myReminder.title = descriptionText.text!

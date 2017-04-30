@@ -13,6 +13,7 @@ class mainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     @IBOutlet weak var lblMeetings: UILabel!
     @IBOutlet weak var tblMeetings: UITableView!
     @IBOutlet weak var tblCalendar: UITableView!
+    @IBOutlet weak var displayView: UIView!
     
     private var meetingDisplay: [TableData] = Array()
     private var eventDisplayList: [TableData] = Array()
@@ -70,7 +71,7 @@ class mainViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 {
                     cell.lblTime.text = meetingDisplay[indexPath.row].calendarItem?.displayStartDate
                     cell.lblTitle.text = meetingDisplay[indexPath.row].displayText
-                    cell.lblTime.font = UIFont.systemFont(ofSize: lblMeetings.font.pointSize)
+                    cell.lblTime.font = UIFont.systemFont(ofSize: cell.lblTime.font.pointSize)
                     cell.accessoryType = .none
                 }
                 
@@ -89,59 +90,41 @@ class mainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }
     }
     
-//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat
-//    {
-//        switch myContentsArray[indexPath.section].items[indexPath.row].type
-//        {
-//        case "header":
-//            return 32.0
-//            
-//        case "class":
-//            return 64.0
-//            
-//        case "mix":
-//            return 64.0
-//            
-//        default:
-//            return 32.0
-//        }
-//    }
-    
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
-//    {
-//        switch tableView
-//        {
-//            case tblMeetings:
-//                let _ = 1
-//                
-//            case tblCalendar:
-//                let _ = 1
-//                
-//            default:
-//                let _ = 1
-//        }
-
-//        if myContentsArray[indexPath.section].items[indexPath.row].type == "class"
-//        {
-//            // Process for a class
-//            
-//            let myValues: segueParameters = segueParameters()
-//            
-//            myValues.parentObject = tableView
-//            myValues.parameterValue = myContentsArray[indexPath.section].items[indexPath.row].displayClass
-//            
-//            performSegue(withIdentifier: "classSegue", sender: myValues)
-//        }
-//        else if myContentsArray[indexPath.section].items[indexPath.row].type == "mix"
-//        {
-//            let myValues: segueParameters = segueParameters()
-//            
-//            myValues.parentObject = tableView
-//            myValues.parameterValue = myContentsArray[indexPath.section].items[indexPath.row].displayMix
-//            
-//            performSegue(withIdentifier: "mixSegue", sender: myValues)
-//        }
-//    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
+    {
+        switch tableView
+        {
+            case tblMeetings:
+                if meetingDisplay[indexPath.row].calendarItem != nil
+                {
+                    let meetingViewControl = meetingStoryboard.instantiateViewController(withIdentifier: "Meetings") as! meetingsViewController
+                    meetingViewControl.passedMeeting = meetingDisplay[indexPath.row].calendarItem
+                    
+//                    displayView.autoresizesSubviews = true
+//                    displayView.clipsToBounds = true
+//                    
+                    meetingViewControl.view.frame = CGRect(x: 0, y: 0, width: displayView.frame.size.width, height: displayView.frame.size.height)
+                    displayView.addSubview(meetingViewControl.view)
+//                    
+//                    meetingViewControl.didMove(toParentViewController: self)
+                    
+                    
+                    
+               //     self.currentViewController!.view.translatesAutoresizingMaskIntoConstraints = false
+//                    self.addChildViewController(meetingViewControl)
+//                    meetingViewControl.view.frame = displayView.frame
+//                    displayView.addSubview(meetingViewControl.view)
+//                    
+                    //self.present(meetingViewControl, animated: true, completion: nil)
+                }
+            
+            case tblCalendar:
+                let _ = 1
+                
+            default:
+                let _ = 1
+        }
+    }
 
     func loadMeetingDisplayArray()
     {

@@ -358,7 +358,7 @@ class task: NSObject
         
         for myHistoryRow in myHistoryRows
         {
-            let myItem = taskUpdates(inUpdate: myHistoryRow)
+            let myItem = taskUpdates(updateObject: myHistoryRow)
             myHistory.append(myItem)
         }
         
@@ -541,7 +541,7 @@ class task: NSObject
             
             for myPredecessorItem in myPredecessorList
             {
-                let myNewPredecessor = taskPredecessor(inPredecessorID: myPredecessorItem.predecessorID, inPredecessorType: myPredecessorItem.predecessorType!)
+                let myNewPredecessor = taskPredecessor(predecessorID: myPredecessorItem.predecessorID, predecessorType: myPredecessorItem.predecessorType!)
                 myPredecessors.append(myNewPredecessor)
             }
         }
@@ -578,20 +578,20 @@ class task: NSObject
         
         for myContextItem in oldTask.contexts
         {
-            myDatabaseConnection.saveTaskContext(myContextItem.contextID, inTaskID: myTaskID)
+            myDatabaseConnection.saveTaskContext(myContextItem.contextID, taskID: myTaskID)
         }
         
         myPredecessors.removeAll()
         
         for myPredecessorItem in oldTask.predecessors
         {
-            myDatabaseConnection.savePredecessorTask(myTaskID, inPredecessorID: myPredecessorItem.predecessorID, inPredecessorType: myPredecessorItem.predecessorType)
+            myDatabaseConnection.savePredecessorTask(myTaskID, predecessorID: myPredecessorItem.predecessorID, predecessorType: myPredecessorItem.predecessorType)
         }
     }
     
     func save()
     {
-        myDatabaseConnection.saveTask(myTaskID, inTitle: myTitle, inDetails: myDetails, inDueDate: myDueDate, startDate: myStartDate, inStatus: myStatus, inPriority: myPriority, inEnergyLevel: myEnergyLevel, inEstimatedTime: myEstimatedTime, inEstimatedTimeType: myEstimatedTimeType, projectID: myProjectID, inCompletionDate: myCompletionDate!, inRepeatInterval: myRepeatInterval, inRepeatType: myRepeatType, inRepeatBase: myRepeatBase, inFlagged: myFlagged, inUrgency: myUrgency, teamID: myTeamID)
+        myDatabaseConnection.saveTask(myTaskID, title: myTitle, details: myDetails, dueDate: myDueDate, startDate: myStartDate, status: myStatus, priority: myPriority, energyLevel: myEnergyLevel, estimatedTime: myEstimatedTime, estimatedTimeType: myEstimatedTimeType, projectID: myProjectID, completionDate: myCompletionDate!, repeatInterval: myRepeatInterval, repeatType: myRepeatType, repeatBase: myRepeatBase, flagged: myFlagged, urgency: myUrgency, teamID: myTeamID)
         
         if !saveCalled
         {
@@ -610,7 +610,7 @@ class task: NSObject
         
         for myContext in myContexts
         {
-            myDatabaseConnection.saveTaskContext(myContext.contextID, inTaskID: myTaskID)
+            myDatabaseConnection.saveTaskContext(myContext.contextID, taskID: myTaskID)
         }
         
         saveCalled = false
@@ -640,7 +640,7 @@ class task: NSObject
         
         if !itemFound
         { // Not match found
-            myDatabaseConnection.saveTaskContext(contextID, inTaskID: myTaskID)
+            myDatabaseConnection.saveTaskContext(contextID, taskID: myTaskID)
             
             let myContextList = myDatabaseConnection.getContextsForTask(myTaskID)
             myContexts.removeAll()
@@ -655,7 +655,7 @@ class task: NSObject
     
     func removeContext(_ contextID: Int32)
     {
-        myDatabaseConnection.deleteTaskContext(contextID, inTaskID: myTaskID)
+        myDatabaseConnection.deleteTaskContext(contextID, taskID: myTaskID)
         
         let myContextList = myDatabaseConnection.getContextsForTask(myTaskID)
         myContexts.removeAll()
@@ -674,30 +674,29 @@ class task: NSObject
         return true
     }
     
-    
-    func addHistoryRecord(_ inHistoryDetails: String, inHistorySource: String)
+    func addHistoryRecord(_ historyDetails: String, historySource: String)
     {
-        let myItem = taskUpdates(inTaskID: myTaskID)
-        myItem.details = inHistoryDetails
-        myItem.source = inHistorySource
+        let myItem = taskUpdates(taskID: myTaskID)
+        myItem.details = historyDetails
+        myItem.source = historySource
         
         myItem.save()
     }
     
     
-    func addPredecessor(_ inPredecessorID: Int32, inPredecessorType: String)
+    func addPredecessor(_ predecessorID: Int32, predecessorType: String)
     {
-        myDatabaseConnection.savePredecessorTask(myTaskID, inPredecessorID: inPredecessorID, inPredecessorType: inPredecessorType)
+        myDatabaseConnection.savePredecessorTask(myTaskID, predecessorID: predecessorID, predecessorType: predecessorType)
     }
     
-    func removePredecessor(_ inPredecessorID: Int32, inPredecessorType: String)
+    func removePredecessor(_ predecessorID: Int32, predecessorType: String)
     {
-        myDatabaseConnection.deleteTaskPredecessor(myTaskID, inPredecessorID: inPredecessorID)
+        myDatabaseConnection.deleteTaskPredecessor(myTaskID, predecessorID: predecessorID)
     }
     
-    func changePredecessor(_ inPredecessorID: Int32, inPredecessorType: String)
+    func changePredecessor(_ predecessorID: Int32, predecessorType: String)
     {
-        myDatabaseConnection.updatePredecessorTaskType(myTaskID, inPredecessorID: inPredecessorID, inPredecessorType: inPredecessorType)
+        myDatabaseConnection.updatePredecessorTaskType(myTaskID, predecessorID: predecessorID, predecessorType: predecessorType)
     }
     
     func markComplete()
@@ -714,16 +713,16 @@ class task: NSObject
         save()
     }
     
-    fileprivate func writeLine(_ inTargetString: String, inLineString: String) -> String
+    fileprivate func writeLine(_ targetString: String, lineString: String) -> String
     {
-        var myString = inTargetString
+        var myString = targetString
         
-        if inTargetString.characters.count > 0
+        if targetString.characters.count > 0
         {
             myString += "\n"
         }
         
-        myString += inLineString
+        myString += lineString
         
         return myString
     }
@@ -734,14 +733,14 @@ class task: NSObject
         var myLine: String = ""
         
         myLine = "                \(myTitle)"
-        myExportString = writeLine(myExportString, inLineString: myLine)
+        myExportString = writeLine(myExportString, lineString: myLine)
         
-        myExportString = writeLine(myExportString, inLineString: "")
+        myExportString = writeLine(myExportString, lineString: "")
         
         myLine = "\(myDetails)"
-        myExportString = writeLine(myExportString, inLineString: myLine)
+        myExportString = writeLine(myExportString, lineString: myLine)
         
-        myExportString = writeLine(myExportString, inLineString: "")
+        myExportString = writeLine(myExportString, lineString: "")
         
         if myProjectID > 0
         {
@@ -750,8 +749,8 @@ class task: NSObject
             if myData3.count != 0
             {
                 myLine = "Project: \(myData3[0].projectName!)"
-                myExportString = writeLine(myExportString, inLineString: myLine)
-                myExportString = writeLine(myExportString, inLineString: "")
+                myExportString = writeLine(myExportString, lineString: myLine)
+                myExportString = writeLine(myExportString, lineString: "")
             }
         }
         
@@ -772,23 +771,23 @@ class task: NSObject
             myLine += "Estimated Time \(myEstimatedTime) \(myEstimatedTimeType)"
         }
         
-        myExportString = writeLine(myExportString, inLineString: myLine)
+        myExportString = writeLine(myExportString, lineString: myLine)
         
-        myExportString = writeLine(myExportString, inLineString: "")
+        myExportString = writeLine(myExportString, lineString: "")
         
         if myContexts.count > 0
         {
             myLine = "Contexts"
-            myExportString = writeLine(myExportString, inLineString: myLine)
+            myExportString = writeLine(myExportString, lineString: myLine)
             
             for myContext in myContexts
             {
                 myLine = "\(myContext.name)"
-                myExportString = writeLine(myExportString, inLineString: myLine)
+                myExportString = writeLine(myExportString, lineString: myLine)
             }
             
-            myExportString = writeLine(myExportString, inLineString: "")
-            myExportString = writeLine(myExportString, inLineString: "")
+            myExportString = writeLine(myExportString, lineString: "")
+            myExportString = writeLine(myExportString, lineString: "")
         }
         
         myLine = ""
@@ -808,37 +807,37 @@ class task: NSObject
             myLine += "Energy: \(myEnergyLevel)"
         }
         
-        myExportString = writeLine(myExportString, inLineString: myLine)
+        myExportString = writeLine(myExportString, lineString: myLine)
         
         if history.count > 0
         { //  task updates displayed here
-            myExportString = writeLine(myExportString, inLineString: "")
-            myExportString = writeLine(myExportString, inLineString: "")
+            myExportString = writeLine(myExportString, lineString: "")
+            myExportString = writeLine(myExportString, lineString: "")
             myLine = "Update history"
-            myExportString = writeLine(myExportString, inLineString: myLine)
+            myExportString = writeLine(myExportString, lineString: myLine)
             
             for myItem in history
             {
                 myLine = "||\(myItem.displayUpdateDate)"
                 myLine += "||\(myItem.source)"
                 myLine += "||\(myItem.details)||"
-                myExportString = writeLine(myExportString, inLineString: myLine)
+                myExportString = writeLine(myExportString, lineString: myLine)
             }
         }
         
         return myExportString
     }
     
-    fileprivate func writeHTMLLine(_ inTargetString: String, inLineString: String) -> String
+    fileprivate func writeHTMLLine(_ targetString: String, lineString: String) -> String
     {
-        var myString = inTargetString
+        var myString = targetString
         
-        if inTargetString.characters.count > 0
+        if targetString.characters.count > 0
         {
             myString += "<p>"
         }
         
-        myString += inLineString
+        myString += lineString
         
         return myString
     }
@@ -850,14 +849,14 @@ class task: NSObject
         var myContextTable: String = ""
         
         myLine = "<html><body><h3><center>\(myTitle)</center></h3>"
-        myExportString = writeHTMLLine(myExportString, inLineString: myLine)
+        myExportString = writeHTMLLine(myExportString, lineString: myLine)
         
-        myExportString = writeHTMLLine(myExportString, inLineString: "")
+        myExportString = writeHTMLLine(myExportString, lineString: "")
         
         myLine = "\(myDetails)"
-        myExportString = writeHTMLLine(myExportString, inLineString: myLine)
+        myExportString = writeHTMLLine(myExportString, lineString: myLine)
         
-        myExportString = writeHTMLLine(myExportString, inLineString: "")
+        myExportString = writeHTMLLine(myExportString, lineString: "")
         
         if myProjectID > 0
         {
@@ -866,8 +865,8 @@ class task: NSObject
             if myData3.count != 0
             {
                 myLine = "Project: \(myData3[0].projectName!)"
-                myExportString = writeHTMLLine(myExportString, inLineString: myLine)
-                myExportString = writeHTMLLine(myExportString, inLineString: "")
+                myExportString = writeHTMLLine(myExportString, lineString: myLine)
+                myExportString = writeHTMLLine(myExportString, lineString: "")
             }
         }
         
@@ -888,14 +887,14 @@ class task: NSObject
             myLine += "Estimated Time \(myEstimatedTime) \(myEstimatedTimeType)"
         }
         
-        myExportString = writeHTMLLine(myExportString, inLineString: myLine)
+        myExportString = writeHTMLLine(myExportString, lineString: myLine)
         
-        myExportString = writeHTMLLine(myExportString, inLineString: "")
+        myExportString = writeHTMLLine(myExportString, lineString: "")
         
         if myContexts.count > 0
         {
             myLine = "<h4>Contexts</h4>"
-            myExportString = writeHTMLLine(myExportString, inLineString: myLine)
+            myExportString = writeHTMLLine(myExportString, lineString: myLine)
             
             myContextTable = "<table>"
             
@@ -905,9 +904,9 @@ class task: NSObject
             }
             
             myContextTable += "</table>"
-            myExportString = writeHTMLLine(myExportString, inLineString: myContextTable)
-            myExportString = writeHTMLLine(myExportString, inLineString: "")
-            myExportString = writeHTMLLine(myExportString, inLineString: "")
+            myExportString = writeHTMLLine(myExportString, lineString: myContextTable)
+            myExportString = writeHTMLLine(myExportString, lineString: "")
+            myExportString = writeHTMLLine(myExportString, lineString: "")
         }
         
         myLine = ""
@@ -927,14 +926,14 @@ class task: NSObject
             myLine += "Energy: \(myEnergyLevel)"
         }
         
-        myExportString = writeHTMLLine(myExportString, inLineString: myLine)
+        myExportString = writeHTMLLine(myExportString, lineString: myLine)
         
         if history.count > 0
         { //  task updates displayed here
-            myExportString = writeHTMLLine(myExportString, inLineString: "")
-            myExportString = writeHTMLLine(myExportString, inLineString: "")
+            myExportString = writeHTMLLine(myExportString, lineString: "")
+            myExportString = writeHTMLLine(myExportString, lineString: "")
             myLine = "<h4>Update history</h4>"
-            myExportString = writeHTMLLine(myExportString, inLineString: myLine)
+            myExportString = writeHTMLLine(myExportString, lineString: myLine)
             
             myContextTable = "<table border=\"1\">"
             
@@ -948,10 +947,10 @@ class task: NSObject
             }
             
             myContextTable += "</table>"
-            myExportString = writeHTMLLine(myExportString, inLineString: myContextTable)
+            myExportString = writeHTMLLine(myExportString, lineString: myContextTable)
         }
         
-        myExportString = writeHTMLLine(myExportString, inLineString: "</body></html>")
+        myExportString = writeHTMLLine(myExportString, lineString: "</body></html>")
         
         return myExportString
     }
@@ -1024,32 +1023,32 @@ class task: NSObject
 
 extension coreDatabase
 {
-    func saveTask(_ inTaskID: Int32, inTitle: String, inDetails: String, inDueDate: Date, startDate: Date, inStatus: String, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int16, inEstimatedTimeType: String, projectID: Int32, inCompletionDate: Date, inRepeatInterval: Int16, inRepeatType: String, inRepeatBase: String, inFlagged: Bool, inUrgency: String, teamID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveTask(_ taskID: Int32, title: String, details: String, dueDate: Date, startDate: Date, status: String, priority: String, energyLevel: String, estimatedTime: Int16, estimatedTimeType: String, projectID: Int32, completionDate: Date, repeatInterval: Int16, repeatType: String, repeatBase: String, flagged: Bool, urgency: String, teamID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myTask: Task!
         
-        let myTasks = getTask(inTaskID)
+        let myTasks = getTask(taskID)
         
         if myTasks.count == 0
         { // Add
             myTask = Task(context: objectContext)
-            myTask.taskID = inTaskID
-            myTask.title = inTitle
-            myTask.details = inDetails
-            myTask.dueDate = inDueDate as NSDate
+            myTask.taskID = taskID
+            myTask.title = title
+            myTask.details = details
+            myTask.dueDate = dueDate as NSDate
             myTask.startDate = startDate as NSDate
-            myTask.status = inStatus
-            myTask.priority = inPriority
-            myTask.energyLevel = inEnergyLevel
-            myTask.estimatedTime = inEstimatedTime
-            myTask.estimatedTimeType = inEstimatedTimeType
+            myTask.status = status
+            myTask.priority = priority
+            myTask.energyLevel = energyLevel
+            myTask.estimatedTime = estimatedTime
+            myTask.estimatedTimeType = estimatedTimeType
             myTask.projectID = projectID
-            myTask.completionDate = inCompletionDate as NSDate
-            myTask.repeatInterval = inRepeatInterval
-            myTask.repeatType = inRepeatType
-            myTask.repeatBase = inRepeatBase
-            myTask.flagged = inFlagged as NSNumber
-            myTask.urgency = inUrgency
+            myTask.completionDate = completionDate as NSDate
+            myTask.repeatInterval = repeatInterval
+            myTask.repeatType = repeatType
+            myTask.repeatBase = repeatBase
+            myTask.flagged = flagged as NSNumber
+            myTask.urgency = urgency
             myTask.teamID = teamID
             
             if updateType == "CODE"
@@ -1066,22 +1065,22 @@ extension coreDatabase
         else
         { // Update
             myTask = myTasks[0]
-            myTask.title = inTitle
-            myTask.details = inDetails
-            myTask.dueDate = inDueDate as NSDate
+            myTask.title = title
+            myTask.details = details
+            myTask.dueDate = dueDate as NSDate
             myTask.startDate = startDate as NSDate
-            myTask.status = inStatus
-            myTask.priority = inPriority
-            myTask.energyLevel = inEnergyLevel
-            myTask.estimatedTime = inEstimatedTime
-            myTask.estimatedTimeType = inEstimatedTimeType
+            myTask.status = status
+            myTask.priority = priority
+            myTask.energyLevel = energyLevel
+            myTask.estimatedTime = estimatedTime
+            myTask.estimatedTimeType = estimatedTimeType
             myTask.projectID = projectID
-            myTask.completionDate = inCompletionDate as NSDate
-            myTask.repeatInterval = inRepeatInterval
-            myTask.repeatType = inRepeatType
-            myTask.repeatBase = inRepeatBase
-            myTask.flagged = inFlagged as NSNumber
-            myTask.urgency = inUrgency
+            myTask.completionDate = completionDate as NSDate
+            myTask.repeatInterval = repeatInterval
+            myTask.repeatType = repeatType
+            myTask.repeatBase = repeatBase
+            myTask.flagged = flagged as NSNumber
+            myTask.urgency = urgency
             myTask.teamID = teamID
             
             if updateType == "CODE"
@@ -1103,26 +1102,26 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceTask(_ inTaskID: Int32, inTitle: String, inDetails: String, inDueDate: Date, startDate: Date, inStatus: String, inPriority: String, inEnergyLevel: String, inEstimatedTime: Int16, inEstimatedTimeType: String, projectID: Int32, inCompletionDate: Date, inRepeatInterval: Int16, inRepeatType: String, inRepeatBase: String, inFlagged: Bool, inUrgency: String, teamID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
+    func replaceTask(_ taskID: Int32, title: String, details: String, dueDate: Date, startDate: Date, status: String, priority: String, energyLevel: String, estimatedTime: Int16, estimatedTimeType: String, projectID: Int32, completionDate: Date, repeatInterval: Int16, repeatType: String, repeatBase: String, flagged: Bool, urgency: String, teamID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myTask = Task(context: objectContext)
-        myTask.taskID = inTaskID
-        myTask.title = inTitle
-        myTask.details = inDetails
-        myTask.dueDate = inDueDate as NSDate
+        myTask.taskID = taskID
+        myTask.title = title
+        myTask.details = details
+        myTask.dueDate = dueDate as NSDate
         myTask.startDate = startDate as NSDate
-        myTask.status = inStatus
-        myTask.priority = inPriority
-        myTask.energyLevel = inEnergyLevel
-        myTask.estimatedTime = inEstimatedTime
-        myTask.estimatedTimeType = inEstimatedTimeType
+        myTask.status = status
+        myTask.priority = priority
+        myTask.energyLevel = energyLevel
+        myTask.estimatedTime = estimatedTime
+        myTask.estimatedTimeType = estimatedTimeType
         myTask.projectID = projectID
-        myTask.completionDate = inCompletionDate as NSDate
-        myTask.repeatInterval = inRepeatInterval
-        myTask.repeatType = inRepeatType
-        myTask.repeatBase = inRepeatBase
-        myTask.flagged = inFlagged as NSNumber
-        myTask.urgency = inUrgency
+        myTask.completionDate = completionDate as NSDate
+        myTask.repeatInterval = repeatInterval
+        myTask.repeatType = repeatType
+        myTask.repeatBase = repeatBase
+        myTask.flagged = flagged as NSNumber
+        myTask.urgency = urgency
         myTask.teamID = teamID
         
         if updateType == "CODE"
@@ -1139,11 +1138,11 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteTask(_ inTaskID: Int32)
+    func deleteTask(_ taskID: Int32)
     {
         let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
-        let predicate = NSPredicate(format: "taskID == \(inTaskID)")
+        let predicate = NSPredicate(format: "taskID == \(taskID)")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1481,7 +1480,7 @@ extension coreDatabase
             // Now go and populate the Decode for this
             
             let tempInt = "\(maxID)"
-            updateDecodeValue("Task", inCodeValue: tempInt, inCodeType: "hidden")
+            updateDecodeValue("Task", codeValue: tempInt, codeType: "hidden")
         }
         catch
         {
@@ -1615,7 +1614,7 @@ extension CloudKitInteraction
                 let urgency = record.object(forKey: "urgency") as! String
                 let projectID = record.object(forKey: "projectID") as! Int32
                 
-                myDatabaseConnection.replaceTask(taskID, inTitle: title, inDetails: details, inDueDate: dueDate, startDate: startDate, inStatus: status, inPriority: priority, inEnergyLevel: energyLevel, inEstimatedTime: estimatedTime, inEstimatedTimeType: estimatedTimeType, projectID: projectID, inCompletionDate: completionDate, inRepeatInterval: repeatInterval, inRepeatType: repeatType, inRepeatBase: repeatBase, inFlagged: flagged, inUrgency: urgency, teamID: teamID, updateTime: updateTime, updateType: updateType)
+                myDatabaseConnection.replaceTask(taskID, title: title, details: details, dueDate: dueDate, startDate: startDate, status: status, priority: priority, energyLevel: energyLevel, estimatedTime: estimatedTime, estimatedTimeType: estimatedTimeType, projectID: projectID, completionDate: completionDate, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, flagged: flagged, urgency: urgency, teamID: teamID, updateTime: updateTime, updateType: updateType)
                 usleep(100)
             }
             sem.signal()
@@ -1760,7 +1759,7 @@ extension CloudKitInteraction
         let urgency = sourceRecord.object(forKey: "urgency") as! String
         let projectID = sourceRecord.object(forKey: "projectID") as! Int32
         
-        myDatabaseConnection.saveTask(taskID, inTitle: title, inDetails: details, inDueDate: dueDate, startDate: startDate, inStatus: status, inPriority: priority, inEnergyLevel: energyLevel, inEstimatedTime: estimatedTime, inEstimatedTimeType: estimatedTimeType, projectID: projectID, inCompletionDate: completionDate, inRepeatInterval: repeatInterval, inRepeatType: repeatType, inRepeatBase: repeatBase, inFlagged: flagged, inUrgency: urgency, teamID: teamID, updateTime: updateTime, updateType: updateType)
+        myDatabaseConnection.saveTask(taskID, title: title, details: details, dueDate: dueDate, startDate: startDate, status: status, priority: priority, energyLevel: energyLevel, estimatedTime: estimatedTime, estimatedTimeType: estimatedTimeType, projectID: projectID, completionDate: completionDate, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, flagged: flagged, urgency: urgency, teamID: teamID, updateTime: updateTime, updateType: updateType)
     }
 }
 

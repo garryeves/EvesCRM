@@ -103,22 +103,22 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
         colHierarchy.reloadData()
     }
     
-    func numberOfComponentsInPickerView(_ inPicker: UIPickerView) -> Int
+    func numberOfComponentsInPickerView(_ Picker: UIPickerView) -> Int
     {
         return 1
     }
     
-    func pickerView(_ inPicker: UIPickerView, numberOfRowsInComponent component: Int) -> Int
+    func pickerView(_ Picker: UIPickerView, numberOfRowsInComponent component: Int) -> Int
     {
         return pickerDisplayArray.count
     }
     
-    func pickerView(_ inPicker: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String!
+    func pickerView(_ Picker: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String!
     {
         return pickerDisplayArray[row]
     }
     
-    func pickerView(_ inPicker: UIPickerView, didSelectRow row: Int, inComponent component: Int)
+    func pickerView(_ Picker: UIPickerView, didSelectRow row: Int, inComponent component: Int)
     {
         mySelectedRow = row
     }
@@ -296,7 +296,7 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
         }
         else
         {
-            _ = workingGTDLevel(inLevelName: txtHierarchy.text!, teamID: myWorkingTeam.teamID)
+            _ = workingGTDLevel(levelName: txtHierarchy.text!, teamID: myWorkingTeam.teamID)
             myWorkingTeam.loadGTDLevels()
             loadHierarchy()
             colHierarchy.reloadData()
@@ -309,7 +309,7 @@ class teamMaintenanceViewController: UIViewController, SMTEFillDelegate, KDRearr
         myContext.removeAll()
         for myItem in myDatabaseConnection.getContexts(myWorkingTeam.teamID)
         {
-            let tempContext = context(inContext: myItem)
+            let tempContext = context(sourceContext: myItem)
             myContext.append(tempContext)
         }
     }

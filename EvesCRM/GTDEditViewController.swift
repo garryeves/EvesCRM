@@ -28,7 +28,7 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
     @IBOutlet weak var myDatePicker: UIDatePicker!
     @IBOutlet weak var btnTargetDate: UIButton!
     
-    var inGTDObject: workingGTDItem!
+    var GTDObject: workingGTDItem!
     
     private var pickerOptions: [String] = Array()
     fileprivate var pickerTarget: String = ""
@@ -54,35 +54,35 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
         myDatePicker.isHidden = true
         btnTargetDate.isHidden = true
         
-        txtTitle.text = inGTDObject.title
-        txtNotes.text = inGTDObject.note
-        txtFrequency.text = "\(inGTDObject.reviewFrequency)"
+        txtTitle.text = GTDObject.title
+        txtNotes.text = GTDObject.note
+        txtFrequency.text = "\(GTDObject.reviewFrequency)"
                 
-        if inGTDObject.displayLastReviewDate == ""
+        if GTDObject.displayLastReviewDate == ""
         {
             btnLastReview.setTitle("Set", for: .normal)
         }
         else
         {
-            btnLastReview.setTitle(inGTDObject.displayLastReviewDate, for: .normal)
+            btnLastReview.setTitle(GTDObject.displayLastReviewDate, for: .normal)
         }
                 
-        if inGTDObject.reviewPeriod == ""
+        if GTDObject.reviewPeriod == ""
         {
             btnPeriod.setTitle("Set", for: .normal)
         }
         else
         {
-            btnPeriod.setTitle(inGTDObject.reviewPeriod, for: .normal)
+            btnPeriod.setTitle(GTDObject.reviewPeriod, for: .normal)
         }
                 
-        if inGTDObject.status == ""
+        if GTDObject.status == ""
         {
             btnStatus.setTitle("Set", for: .normal)
         }
         else
         {
-            btnStatus.setTitle(inGTDObject.status, for: .normal)
+            btnStatus.setTitle(GTDObject.status, for: .normal)
         }
         
         // TextExpander
@@ -127,17 +127,17 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
     
     @IBAction func txtFrequency(_ sender: UITextField)
     {
-        inGTDObject.reviewFrequency = Int16(txtFrequency.text!)!
+        GTDObject.reviewFrequency = Int16(txtFrequency.text!)!
     }
     
     @IBAction func txtTitle(_ sender: UITextField)
     {
-        inGTDObject.title = txtTitle.text!
+        GTDObject.title = txtTitle.text!
     }
     
     func textViewDidEndEditing(_ textView: UITextView)
     { //Handle the text changes here
-        inGTDObject.note = textView.text
+        GTDObject.note = textView.text
     }
     
     @IBAction func btnLastReview(_ sender: UIButton)
@@ -159,21 +159,21 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
         {
             btnLastReview.setTitle(dateFormatter.string(from: myDatePicker.date), for: .normal)
             
-            inGTDObject.lastReviewDate = myDatePicker.date
+            GTDObject.lastReviewDate = myDatePicker.date
         }
         
         if pickerTarget == "Status"
         {
             btnStatus.setTitle(pickerOptions[selectedRow], for: .normal)
             
-            inGTDObject.status = pickerOptions[selectedRow]
+            GTDObject.status = pickerOptions[selectedRow]
         }
         
         if pickerTarget == "Period"
         {
             btnPeriod.setTitle(pickerOptions[selectedRow], for: .normal)
             
-            inGTDObject.reviewPeriod = pickerOptions[selectedRow]
+            GTDObject.reviewPeriod = pickerOptions[selectedRow]
         }
 
         myPicker.isHidden = true
@@ -193,25 +193,25 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
         pickerOptions.removeAll(keepingCapacity: false)
         pickerOptions.append("")
         
-        if inGTDObject.reviewPeriod == "Days"
+        if GTDObject.reviewPeriod == "Days"
         {
             selectedRow = 1
         }
         pickerOptions.append("Days")
         
-        if inGTDObject.reviewPeriod == "Weeks"
+        if GTDObject.reviewPeriod == "Weeks"
         {
             selectedRow = 2
         }
         pickerOptions.append("Weeks")
         
-        if inGTDObject.reviewPeriod == "Months"
+        if GTDObject.reviewPeriod == "Months"
         {
             selectedRow = 3
         }
         pickerOptions.append("Months")
         
-        if inGTDObject.reviewPeriod == "Years"
+        if GTDObject.reviewPeriod == "Years"
         {
             selectedRow = 4
         }
@@ -234,13 +234,13 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
         pickerOptions.removeAll(keepingCapacity: false)
         
         pickerOptions.append("")
-        if inGTDObject.status == "Open"
+        if GTDObject.status == "Open"
         {
             selectedRow = 1
         }
         pickerOptions.append("Open")
         
-        if inGTDObject.status == "Closed"
+        if GTDObject.status == "Closed"
         {
             selectedRow = 2
         }
@@ -350,9 +350,9 @@ class GTDEditViewController: UIViewController, UITextViewDelegate, SMTEFillDeleg
         // to activate.
         // It especially needs to save the contents of the textview/textfield!
         
-        inGTDObject.note = txtNotes.text
-        inGTDObject.title = txtTitle.text!
-        inGTDObject.reviewFrequency = Int16(txtFrequency.text!)!
+        GTDObject.note = txtNotes.text
+        GTDObject.title = txtTitle.text!
+        GTDObject.reviewFrequency = Int16(txtFrequency.text!)!
 
         return true
     }

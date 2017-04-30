@@ -12,11 +12,11 @@ import CloudKit
 
 extension coreDatabase
 {
-    func getDecodeValue(_ inCodeKey: String) -> String
+    func getDecodeValue(_ codeKey: String) -> String
     {
         let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
-        //     let predicate = NSPredicate(format: "(decode_name == \"\(inCodeKey)\") && (updateType != \"Delete\")")
-        let predicate = NSPredicate(format: "(decode_name == \"\(inCodeKey)\")")
+        //     let predicate = NSPredicate(format: "(decode_name == \"\(codeKey)\") && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(decode_name == \"\(codeKey)\")")
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         
@@ -61,19 +61,19 @@ extension coreDatabase
             return []
         }
     }
-    
-    func updateDecodeValue(_ inCodeKey: String, inCodeValue: String, inCodeType: String, updateTime: Date =  Date(), updateType: String = "CODE", updateCloud: Bool = true)
+ 
+    func updateDecodeValue(_ codeKey: String, codeValue: String, codeType: String, updateTime: Date =  Date(), updateType: String = "CODE", updateCloud: Bool = true)
     {
         // first check to see if decode exists, if not we create
         var myDecode: Decodes!
 
-        if getDecodeValue(inCodeKey) == ""
+        if getDecodeValue(codeKey) == ""
         { // Add
             myDecode = Decodes(context: objectContext)
             
-            myDecode.decode_name = inCodeKey
-            myDecode.decode_value = inCodeValue
-            myDecode.decodeType = inCodeType
+            myDecode.decode_name = codeKey
+            myDecode.decode_value = codeValue
+            myDecode.decodeType = codeType
             if updateType == "CODE"
             {
                 myDecode.updateTime =  NSDate()
@@ -88,7 +88,7 @@ extension coreDatabase
         else
         { // Update
             let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
-            let predicate = NSPredicate(format: "(decode_name == \"\(inCodeKey)\") && (updateType != \"Delete\")")
+            let predicate = NSPredicate(format: "(decode_name == \"\(codeKey)\") && (updateType != \"Delete\")")
             
             // Set the predicate on the fetch request
             fetchRequest.predicate = predicate
@@ -98,8 +98,8 @@ extension coreDatabase
             {
                 let myDecodes = try objectContext.fetch(fetchRequest)
                 myDecode = myDecodes[0]
-                myDecode.decode_value = inCodeValue
-                myDecode.decodeType = inCodeType
+                myDecode.decode_value = codeValue
+                myDecode.decodeType = codeType
                 if updateType == "CODE"
                 {
                     myDecode.updateTime =  NSDate()
@@ -127,14 +127,14 @@ extension coreDatabase
             myCloudDB.saveDecodesRecordToCloudKit(myDecode)
         }
     }
-    
-    func replaceDecodeValue(_ inCodeKey: String, inCodeValue: String, inCodeType: String, updateTime: Date =  Date(), updateType: String = "CODE")
+
+    func replaceDecodeValue(_ codeKey: String, codeValue: String, codeType: String, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myDecode = Decodes(context: objectContext)
         
-        myDecode.decode_name = inCodeKey
-        myDecode.decode_value = inCodeValue
-        myDecode.decodeType = inCodeType
+        myDecode.decode_name = codeKey
+        myDecode.decode_value = codeValue
+        myDecode.decodeType = codeType
         if updateType == "CODE"
         {
             myDecode.updateTime =  NSDate()
@@ -229,14 +229,14 @@ extension coreDatabase
             
             myDBSync.writeDefaultString(coreDatabaseName, value: myValue)
             
-            updateDecodeValue("Device", inCodeValue:  "\(storeInt)", inCodeType: "hidden")
+            updateDecodeValue("Device", codeValue:  "\(storeInt)", codeType: "hidden")
         }
     }
-    
-    func getNextID(_ inTableName: String, inInitialValue: Int32 = 1) -> Int32
+
+    func getNextID(_ tableName: String, initialValue: Int32 = 1) -> Int32
     {
         let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
-        let predicate = NSPredicate(format: "(decode_name == \"\(inTableName)\") && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(decode_name == \"\(tableName)\") && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -248,9 +248,9 @@ extension coreDatabase
             if fetchResults.count == 0
             {
                 // Create table entry
-                let storeKey = "\(inInitialValue)"
-                updateDecodeValue(inTableName, inCodeValue: storeKey, inCodeType: "hidden")
-                return inInitialValue
+                let storeKey = "\(initialValue)"
+                updateDecodeValue(tableName, codeValue: storeKey, codeType: "hidden")
+                return initialValue
             }
             else
             {
@@ -258,7 +258,7 @@ extension coreDatabase
                 let storeint = Int32(fetchResults[0].decode_value!)! + 1
                 
                 let storeKey = "\(storeint)"
-                updateDecodeValue(inTableName, inCodeValue: storeKey, inCodeType: "hidden")
+                updateDecodeValue(tableName, codeValue: storeKey, codeType: "hidden")
                 return storeint
             }
         }
@@ -297,14 +297,14 @@ extension coreDatabase
         
         saveContext()
     }
-    
-    func performTidyDecodes(_ inString: String)
+
+    func performTidyDecodes(_ originalString: String)
     {
         let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: inString)
+        let predicate = NSPredicate(format: originalString)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -389,7 +389,7 @@ extension coreDatabase
         myDateFormatter.timeStyle = .full
         
         let dateString = myDateFormatter.string(from: syncDate)
-        myDatabaseConnection.updateDecodeValue(myDBSync.getSyncString(tableName), inCodeValue: dateString, inCodeType: "hidden")
+        myDatabaseConnection.updateDecodeValue(myDBSync.getSyncString(tableName), codeValue: dateString, codeType: "hidden")
     }
     
     func getSyncDateForTable(tableName: String) -> Date
@@ -700,7 +700,7 @@ extension CloudKitInteraction
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
         
-        myDatabaseConnection.updateDecodeValue(decodeName, inCodeValue: decodeValue, inCodeType: decodeType, updateTime: updateTime, updateType: updateType, updateCloud: false)
+        myDatabaseConnection.updateDecodeValue(decodeName, codeValue: decodeValue, codeType: decodeType, updateTime: updateTime, updateType: updateType, updateCloud: false)
     }
 
 }

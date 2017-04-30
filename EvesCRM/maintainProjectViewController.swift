@@ -52,7 +52,7 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
  //   var delegate: MyMaintainProjectDelegate?
 
     var myActionType: String = "Add"
-    var inProjectObject: project!
+    var projectObject: project!
     var mySelectedTeam: team!
     
     fileprivate var statusSelected: String = ""
@@ -109,75 +109,75 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         btnSelectPicker.isHidden = true
         statusPicker.isHidden = true
         
-        if inProjectObject.displayProjectStartDate == ""
+        if projectObject.displayProjectStartDate == ""
         {
             btnStartDate.setTitle("Set Start Date", for: UIControlState())
         }
         else
         {
-            btnStartDate.setTitle(inProjectObject.displayProjectStartDate, for: UIControlState())
+            btnStartDate.setTitle(projectObject.displayProjectStartDate, for: UIControlState())
         }
         
-        if inProjectObject.displayProjectEndDate == ""
+        if projectObject.displayProjectEndDate == ""
         {
             btnEndDate.setTitle("Set End Date", for: UIControlState())
         }
         else
         {
-            btnEndDate.setTitle(inProjectObject.displayProjectEndDate, for: UIControlState())
+            btnEndDate.setTitle(projectObject.displayProjectEndDate, for: UIControlState())
         }
         
-        if inProjectObject.projectStatus == ""
+        if projectObject.projectStatus == ""
         {
             btnProjectStage.setTitle("Set Project Stage", for: UIControlState())
         }
         else
         {
-            btnProjectStage.setTitle(inProjectObject.projectStatus, for: UIControlState())
+            btnProjectStage.setTitle(projectObject.projectStatus, for: UIControlState())
         }
         
-        txtNotes.text = inProjectObject.note
-        txtTitle.text = inProjectObject.projectName
+        txtNotes.text = projectObject.note
+        txtTitle.text = projectObject.projectName
         
-        if inProjectObject.displayLastReviewDate == ""
+        if projectObject.displayLastReviewDate == ""
         {
             lblLastReviewedDate.text = "Never reviewed"
         }
         else
         {
-            lblLastReviewedDate.text = inProjectObject.displayLastReviewDate
+            lblLastReviewedDate.text = projectObject.displayLastReviewDate
         }
-        txtRepeatInterval.text = "\(inProjectObject.repeatInterval)"
-        txtReviewFrquency.text = "\(inProjectObject.reviewFrequency)"
+        txtRepeatInterval.text = "\(projectObject.repeatInterval)"
+        txtReviewFrquency.text = "\(projectObject.reviewFrequency)"
         
-        if inProjectObject.repeatType == ""
+        if projectObject.repeatType == ""
         {
             btnRepeatPeriod.setTitle("Set Period", for: UIControlState())
         }
         else
         {
-            btnRepeatPeriod.setTitle(inProjectObject.repeatType, for: UIControlState())
+            btnRepeatPeriod.setTitle(projectObject.repeatType, for: UIControlState())
         }
         
-        if inProjectObject.repeatBase == ""
+        if projectObject.repeatBase == ""
         {
             btnRepeastBase.setTitle("Set Base", for: UIControlState())
         }
         else
         {
-            btnRepeastBase.setTitle(inProjectObject.repeatBase, for: UIControlState())
+            btnRepeastBase.setTitle(projectObject.repeatBase, for: UIControlState())
         }
  
-        if inProjectObject.reviewPeriod == ""
+        if projectObject.reviewPeriod == ""
         {
             btnReviewPeriod.setTitle("Set Period", for: UIControlState())
         }
         else
         {
-            btnReviewPeriod.setTitle(inProjectObject.reviewPeriod, for: UIControlState())
+            btnReviewPeriod.setTitle(projectObject.reviewPeriod, for: UIControlState())
         }
 
-        mySelectedRoles = inProjectObject.teamMembers
+        mySelectedRoles = projectObject.teamMembers
         
         colTeamMembers.isHidden = false
         
@@ -239,22 +239,22 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         }
     }
 
-    func numberOfComponentsInPickerView(_ inPicker: UIPickerView) -> Int
+    func numberOfComponentsInPickerView(_ iicker: UIPickerView) -> Int
     {
         return 1
     }
     
-    func pickerView(_ inPicker: UIPickerView, numberOfRowsInComponent component: Int) -> Int
+    func pickerView(_ Picker: UIPickerView, numberOfRowsInComponent component: Int) -> Int
     {
         return pickerDisplayArray.count
     }
     
-    func pickerView(_ inPicker: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String!
+    func pickerView(_ Picker: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String!
     {
         return pickerDisplayArray[row]
     }
 
-    func pickerView(_ inPicker: UIPickerView, didSelectRow row: Int, inComponent component: Int)
+    func pickerView(_ Picker: UIPickerView, didSelectRow row: Int, inComponent component: Int)
     {
         mySelectedRow = row
     }
@@ -375,8 +375,8 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         NSLog("Deleting \(workingObject.teamMember)")
         mySelectedTeamMember.delete()
                 
-        inProjectObject.loadTeamMembers()
-        mySelectedRoles = inProjectObject.teamMembers
+        projectObject.loadTeamMembers()
+        mySelectedRoles = projectObject.teamMembers
         colTeamMembers.reloadData()
     }
 
@@ -393,10 +393,10 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
      
         let myFullName = CNContactFormatter.string(from: contact, style: CNContactFormatterStyle.fullName)
         
-        _ = projectTeamMember(projectID: inProjectObject.projectID, teamMember: myFullName!, inRoleID: 0, teamID: mySelectedTeam.teamID)
+        _ = projectTeamMember(projectID: projectObject.projectID, teamMember: myFullName!, roleID: 0, teamID: mySelectedTeam.teamID)
         
-        inProjectObject.loadTeamMembers()
-        mySelectedRoles = inProjectObject.teamMembers
+        projectObject.loadTeamMembers()
+        mySelectedRoles = projectObject.teamMembers
         colTeamMembers.reloadData()
     }
     
@@ -404,7 +404,7 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
     {
         if txtTitle.text != ""
         {
-            inProjectObject.projectName = txtTitle.text!
+            projectObject.projectName = txtTitle.text!
         }
     }
     
@@ -425,7 +425,7 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         }
         else
         {
-            inProjectObject.projectName = txtTitle.text!
+            projectObject.projectName = txtTitle.text!
             showFields()
         }
     }
@@ -443,7 +443,7 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         for myItem in myStages
         {
             pickerDisplayArray.append(myItem.stageDescription!)
-            if myItem.stageDescription == inProjectObject.projectStatus
+            if myItem.stageDescription == projectObject.projectStatus
             {
                 selectedRow = rowCount
             }
@@ -487,9 +487,9 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
             pickerTarget = "StartDate"
             btnSelectPicker.setTitle("Set Start Date", for: UIControlState())
             startDatePicker.datePickerMode = UIDatePickerMode.date
-            if inProjectObject.displayProjectStartDate != ""
+            if projectObject.displayProjectStartDate != ""
             {
-                startDatePicker.date = inProjectObject.projectStartDate as Date
+                startDatePicker.date = projectObject.projectStartDate as Date
             }
             else
             {
@@ -520,9 +520,9 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
             pickerTarget = "EndDate"
             btnSelectPicker.setTitle("Set End Date", for: UIControlState())
             startDatePicker.datePickerMode = UIDatePickerMode.date
-            if inProjectObject.displayProjectEndDate != ""
+            if projectObject.displayProjectEndDate != ""
             {
-                startDatePicker.date = inProjectObject.projectEndDate as Date
+                startDatePicker.date = projectObject.projectEndDate as Date
             }
             else
             {
@@ -544,7 +544,7 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         for myItem in myRepeatPeriods
         {
             pickerDisplayArray.append(myItem)
-            if myItem == inProjectObject.repeatType
+            if myItem == projectObject.repeatType
             {
                 selectedRow = rowCount
             }
@@ -570,7 +570,7 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         for myItem in myRepeatBases
         {
             pickerDisplayArray.append(myItem)
-            if myItem == inProjectObject.repeatBase
+            if myItem == projectObject.repeatBase
             {
                 selectedRow = rowCount
             }
@@ -596,7 +596,7 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         for myItem in myRepeatPeriods
         {
             pickerDisplayArray.append(myItem)
-            if myItem == inProjectObject.reviewPeriod
+            if myItem == projectObject.reviewPeriod
             {
                 selectedRow = rowCount
             }
@@ -614,18 +614,18 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
     
     @IBAction func btnMarkReviewed(_ sender: UIButton)
     {
-        inProjectObject.lastReviewDate = Date()
-        lblLastReviewedDate.text = inProjectObject.displayLastReviewDate
+        projectObject.lastReviewDate = Date()
+        lblLastReviewedDate.text = projectObject.displayLastReviewDate
     }
     
     @IBAction func txtRepeatInterval(_ sender: UITextField)
     {
-        inProjectObject.repeatInterval = Int16(txtRepeatInterval.text!)!
+        projectObject.repeatInterval = Int16(txtRepeatInterval.text!)!
     }
     
     @IBAction func txtReviewFrequency(_ sender: UITextField)
     {
-        inProjectObject.reviewFrequency = Int16(txtReviewFrquency.text!)!
+        projectObject.reviewFrequency = Int16(txtReviewFrquency.text!)!
     }
     
     @IBAction func btnSelectPicker(_ sender: UIButton)
@@ -638,32 +638,32 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
                 
                 mySelectedTeamMember.roleID = myRoles[newPersonRole].roleID
                 
-                inProjectObject.loadTeamMembers()
-                mySelectedRoles = inProjectObject.teamMembers
+                projectObject.loadTeamMembers()
+                mySelectedRoles = projectObject.teamMembers
                 colTeamMembers.reloadData()
             }
             
             if pickerTarget == "Stage"
             {
-                inProjectObject.projectStatus = myStages[mySelectedRow - 1].stageDescription!
-                btnProjectStage.setTitle(inProjectObject.projectStatus, for: UIControlState())
+                projectObject.projectStatus = myStages[mySelectedRow - 1].stageDescription!
+                btnProjectStage.setTitle(projectObject.projectStatus, for: UIControlState())
             }
             
             if pickerTarget == "RepeatPeriod"
             {
-                inProjectObject.repeatType = myRepeatPeriods[mySelectedRow]
-                btnRepeatPeriod.setTitle(inProjectObject.repeatType, for: UIControlState())
+                projectObject.repeatType = myRepeatPeriods[mySelectedRow]
+                btnRepeatPeriod.setTitle(projectObject.repeatType, for: UIControlState())
             }
             
             if pickerTarget == "RepeatBase"
             {
-                inProjectObject.repeatBase = myRepeatBases[mySelectedRow]
-                btnRepeastBase.setTitle(inProjectObject.repeatBase, for: UIControlState())
+                projectObject.repeatBase = myRepeatBases[mySelectedRow]
+                btnRepeastBase.setTitle(projectObject.repeatBase, for: UIControlState())
             }
             if pickerTarget == "ReviewPeriod"
             {
-                inProjectObject.reviewPeriod = myRepeatPeriods[mySelectedRow]
-                btnReviewPeriod.setTitle(inProjectObject.reviewPeriod, for: UIControlState())
+                projectObject.reviewPeriod = myRepeatPeriods[mySelectedRow]
+                btnReviewPeriod.setTitle(projectObject.reviewPeriod, for: UIControlState())
             }
             
             statusPicker.selectRow(0, inComponent: 0, animated: true)
@@ -671,14 +671,14 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
         
         if pickerTarget == "StartDate"
         {
-            inProjectObject.projectStartDate = startDatePicker.date
-            btnStartDate.setTitle(inProjectObject.displayProjectStartDate, for: UIControlState())
+            projectObject.projectStartDate = startDatePicker.date
+            btnStartDate.setTitle(projectObject.displayProjectStartDate, for: UIControlState())
         }
         
         if pickerTarget == "EndDate"
         {
-            inProjectObject.projectEndDate = startDatePicker.date
-            btnEndDate.setTitle(inProjectObject.displayProjectEndDate, for: UIControlState())
+            projectObject.projectEndDate = startDatePicker.date
+            btnEndDate.setTitle(projectObject.displayProjectEndDate, for: UIControlState())
         }
         
         startDatePicker.isHidden = true
@@ -745,7 +745,7 @@ class MaintainProjectViewController: UIViewController, CNContactPickerDelegate, 
     { //Handle the text changes here
         if textView == txtNotes
         {
-            inProjectObject.note = textView.text
+            projectObject.note = textView.text
         }
     }
     

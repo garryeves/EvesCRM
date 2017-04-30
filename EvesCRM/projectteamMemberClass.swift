@@ -79,12 +79,12 @@ class projectTeamMember: NSObject
         }
     }
     
-    init(projectID: Int32, teamMember: String, inRoleID: Int32, teamID: Int32)
+    init(projectID: Int32, teamMember: String, roleID: Int32, teamID: Int32)
     {
         super.init()
         myProjectID = projectID
         myTeamMember = teamMember
-        myRoleID = inRoleID
+        myRoleID = roleID
         myTeamID = teamID
         save()
     }
@@ -96,7 +96,7 @@ class projectTeamMember: NSObject
     
     func save()
     {
-        myDatabaseConnection.saveTeamMember(myProjectID, inRoleID: myRoleID, inPersonName: myTeamMember, inNotes: myProjectMemberNotes)
+        myDatabaseConnection.saveTeamMember(myProjectID, roleID: myRoleID, personName: myTeamMember, notes: myProjectMemberNotes)
         
         if !saveCalled
         {
@@ -107,7 +107,7 @@ class projectTeamMember: NSObject
     
     func performSave()
     {
-        let myProjectTeamRecord = myDatabaseConnection.getTeamMemberRecord(myProjectID, inPersonName: myTeamMember)[0]
+        let myProjectTeamRecord = myDatabaseConnection.getTeamMemberRecord(myProjectID, personName: myTeamMember)[0]
         
         myCloudDB.saveProjectTeamMembersRecordToCloudKit(myProjectTeamRecord)
         
@@ -116,24 +116,24 @@ class projectTeamMember: NSObject
     
     func delete()
     {
-        myDatabaseConnection.deleteTeamMember(myProjectID, inPersonName: myTeamMember)
+        myDatabaseConnection.deleteTeamMember(myProjectID, personName: myTeamMember)
     }
 }
 
 extension coreDatabase
 {
-    func saveTeamMember(_ projectID: Int32, inRoleID: Int32, inPersonName: String, inNotes: String, updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveTeamMember(_ projectID: Int32, roleID: Int32, personName: String, notes: String, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myProjectTeam: ProjectTeamMembers!
         
-        let myProjectTeamRecords = getTeamMemberRecord(projectID, inPersonName: inPersonName)
+        let myProjectTeamRecords = getTeamMemberRecord(projectID, personName: personName)
         if myProjectTeamRecords.count == 0
         { // Add
             myProjectTeam = ProjectTeamMembers(context: objectContext)
             myProjectTeam.projectID = projectID
-            myProjectTeam.teamMember = inPersonName
-            myProjectTeam.roleID = inRoleID
-            myProjectTeam.projectMemberNotes = inNotes
+            myProjectTeam.teamMember = personName
+            myProjectTeam.roleID = roleID
+            myProjectTeam.projectMemberNotes = notes
             if updateType == "CODE"
             {
                 myProjectTeam.updateTime =  NSDate()
@@ -148,8 +148,8 @@ extension coreDatabase
         else
         { // Update
             myProjectTeam = myProjectTeamRecords[0]
-            myProjectTeam.roleID = inRoleID
-            myProjectTeam.projectMemberNotes = inNotes
+            myProjectTeam.roleID = roleID
+            myProjectTeam.projectMemberNotes = notes
             if updateType == "CODE"
             {
                 myProjectTeam.updateTime =  NSDate()
@@ -168,13 +168,13 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceTeamMember(_ projectID: Int32, inRoleID: Int32, inPersonName: String, inNotes: String, updateTime: Date =  Date(), updateType: String = "CODE")
+    func replaceTeamMember(_ projectID: Int32, roleID: Int32, personName: String, notes: String, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myProjectTeam = ProjectTeamMembers(context: objectContext)
         myProjectTeam.projectID = projectID
-        myProjectTeam.teamMember = inPersonName
-        myProjectTeam.roleID = inRoleID
-        myProjectTeam.projectMemberNotes = inNotes
+        myProjectTeam.teamMember = personName
+        myProjectTeam.roleID = roleID
+        myProjectTeam.projectMemberNotes = notes
         if updateType == "CODE"
         {
             myProjectTeam.updateTime =  NSDate()
@@ -190,11 +190,11 @@ extension coreDatabase
         self.refreshObject(myProjectTeam)
     }
     
-    func deleteTeamMember(_ projectID: Int32, inPersonName: String)
+    func deleteTeamMember(_ projectID: Int32, personName: String)
     {
         let fetchRequest = NSFetchRequest<ProjectTeamMembers>(entityName: "ProjectTeamMembers")
         
-        let predicate = NSPredicate(format: "(projectID == \(projectID)) AND (teamMember == \"\(inPersonName)\")")
+        let predicate = NSPredicate(format: "(projectID == \(projectID)) AND (teamMember == \"\(personName)\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -216,13 +216,13 @@ extension coreDatabase
         saveContext()
     }
     
-    func getTeamMemberRecord(_ projectID: Int32, inPersonName: String)->[ProjectTeamMembers]
+    func getTeamMemberRecord(_ projectID: Int32, personName: String)->[ProjectTeamMembers]
     {
         let fetchRequest = NSFetchRequest<ProjectTeamMembers>(entityName: "ProjectTeamMembers")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectID == \(projectID)) && (teamMember == \"\(inPersonName)\") && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(projectID == \(projectID)) && (teamMember == \"\(personName)\") && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -264,7 +264,7 @@ extension coreDatabase
         }
     }
     
-    func getProjectsForPerson(_ inPersonName: String)->[ProjectTeamMembers]
+    func getProjectsForPerson(_ personName: String)->[ProjectTeamMembers]
     {
         let fetchRequest = NSFetchRequest<ProjectTeamMembers>(entityName: "ProjectTeamMembers")
         
@@ -273,7 +273,7 @@ extension coreDatabase
         
         var predicate: NSPredicate
         
-        predicate = NSPredicate(format: "(teamMember == \"\(inPersonName)\") && (updateType != \"Delete\")")
+        predicate = NSPredicate(format: "(teamMember == \"\(personName)\") && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -471,7 +471,7 @@ extension CloudKitInteraction
                 let roleID = record.object(forKey: "roleID") as! Int32
                 let projectMemberNotes = record.object(forKey: "projectMemberNotes") as! String
                 
-                myDatabaseConnection.replaceTeamMember(projectID, inRoleID: roleID, inPersonName: teamMember, inNotes: projectMemberNotes, updateTime: updateTime, updateType: updateType)
+                myDatabaseConnection.replaceTeamMember(projectID, roleID: roleID, personName: teamMember, notes: projectMemberNotes, updateTime: updateTime, updateType: updateType)
                 usleep(100)
             }
             sem.signal()
@@ -572,6 +572,6 @@ extension CloudKitInteraction
         let roleID = sourceRecord.object(forKey: "roleID") as! Int32
         let projectMemberNotes = sourceRecord.object(forKey: "projectMemberNotes") as! String
         
-        myDatabaseConnection.saveTeamMember(projectID, inRoleID: roleID, inPersonName: teamMember, inNotes: projectMemberNotes, updateTime: updateTime, updateType: updateType)
+        myDatabaseConnection.saveTeamMember(projectID, roleID: roleID, personName: teamMember, notes: projectMemberNotes, updateTime: updateTime, updateType: updateType)
     }
 }

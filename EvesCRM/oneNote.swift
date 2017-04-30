@@ -190,7 +190,7 @@ class oneNoteSection: NSObject
     
     // Need to do logic for sections and pages.  Only load sections if user requests Sections for notebook, and only do pages if user requests pages in section - this is to minimise network
     
-    func getPages(_ inSectionName: String)
+    func getPages(_ sectionName: String)
     {
         let myPagesEndPoint: String = "https://www.onenote.com/api/v1.0/sections/\(myId)/pages"
         gettingData = true
@@ -199,17 +199,17 @@ class oneNoteSection: NSObject
         
         let myReturnString = myOneNoteData.getData(myPagesEndPoint)
         
-        splitString(myReturnString, inSectionName: inSectionName)
+        splitString(myReturnString, sectionName: sectionName)
         gettingData = false
     }
     
-    fileprivate func splitString(_ inString: String, inSectionName: String)
+    fileprivate func splitString(_ originalString: String, sectionName: String)
     {
         var processedFileHeader: Bool = false
 
         // need to do a "dirty" change here, as we need to put insomething to split on, but ther eis no easy identifier.  title is the first field in the return string so am going to do something to that in order to provide an artificial test to split
         
-        let tempStr = inString.replacingOccurrences(of: "\"title\":", with:"isDefault\"title\":")
+        let tempStr = originalString.replacingOccurrences(of: "\"title\":", with:"isDefault\"title\":")
         
         // we need to do a bit of "dodgy" working, I want to be able to split strings based on :, but : is natural in dates and URTLs. so need to change it to seomthign esle,
         //string out the : data and then change back
@@ -230,7 +230,7 @@ class oneNoteSection: NSObject
                 // need to further split the items into its component parts
                 let split2 = myItem.components(separatedBy: ",")
                 let myPage = oneNotePage()
-                myPage.sectionName = inSectionName
+                myPage.sectionName = sectionName
                 for myItem2 in split2
                 {
                     if myItem2.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines) != ""
@@ -342,7 +342,7 @@ class oneNoteNotebook: NSObject
     fileprivate var processedFileHeader: Bool = false
     fileprivate var oneNoteDataType: String = ""
     fileprivate var firstItem2: Bool = true
-    fileprivate var inFooter:Bool = false
+    fileprivate var footer:Bool = false
     
     override init()
     {
@@ -480,16 +480,16 @@ class oneNoteNotebook: NSObject
         }
     }
     
-    fileprivate func splitString(_ inString: String)
+    fileprivate func splitString(_ originalString: String)
     {
         processedFileHeader = false
         oneNoteDataType = ""
         firstItem2 = true
-        inFooter = false
+        footer = false
         
         // we need to do a bit of "dodgy" working, I want to be able to split strings based on :, but : is natural in dates and URTLs. so need to change it to seomthign esle,
         //string out the : data and then change back
-        let fixedString = fixStringForSearch(inString)
+        let fixedString = fixStringForSearch(originalString)
 
         let split = fixedString.components(separatedBy: "isDefault")
 
@@ -504,13 +504,13 @@ class oneNoteNotebook: NSObject
         }
     }
     
-    fileprivate func performSplit(_ inString: String) -> oneNoteSection
+    fileprivate func performSplit(_ originalString: String) -> oneNoteSection
     {
         if !processedFileHeader
         {
-            if inString.lowercased().range(of: "http") != nil
+            if originalString.lowercased().range(of: "http") != nil
             {
-                if inString.lowercased().range(of: "sections") != nil
+                if originalString.lowercased().range(of: "sections") != nil
                 {
                     oneNoteDataType = "sections"
                 }
@@ -521,23 +521,23 @@ class oneNoteNotebook: NSObject
         else
         {
             // need to further split the items into its component parts
-            let split2 = inString.components(separatedBy: ",")
+            let split2 = originalString.components(separatedBy: ",")
             firstItem2 = true
-            inFooter = false
+            footer = false
             let mySection = oneNoteSection()
             for myItem2 in split2
             {
                 if myItem2.lowercased().range(of: "parentnotebook") != nil
                 {
-                    inFooter = true
+                    footer = true
                 }
                 
                 if myItem2.lowercased().range(of: "parentsectiongroup") != nil
                 {
-                    inFooter = true
+                    footer = true
                 }
                 
-                if !inFooter
+                if !footer
                 {
                     
                     var split3: [String]
@@ -635,7 +635,7 @@ class oneNoteNotebooks: NSObject
 //        }
 //    }
 //    
-    init(inViewController: UIViewController)
+    init(sourceViewController: UIViewController)
     {
         super.init()
 
@@ -644,17 +644,17 @@ class oneNoteNotebooks: NSObject
             if !myOneNoteData.oneNoteConnected
             {
                 myOneNoteData = oneNoteData()
-                myOneNoteData.sourceViewController = inViewController
+                myOneNoteData.sourceViewController = sourceViewController
             }
         }
         else
         {
             myOneNoteData = oneNoteData()
-            myOneNoteData.sourceViewController = inViewController
+            myOneNoteData.sourceViewController = sourceViewController
         }
     }
     
-    fileprivate func splitString(_ inString: String)
+    fileprivate func splitString(_ originalString: String)
     {
         var processedFileHeader: Bool = false
         var firstItem2: Bool = true
@@ -662,7 +662,7 @@ class oneNoteNotebooks: NSObject
         // we need to do a bit of "dodgy" working, I want to be able to split strings based on :, but : is natural in dates and URTLs. so need to change it to seomthign esle,
         //string out the : data and then change back
  
-        let fixedString = fixStringForSearch(inString)
+        let fixedString = fixStringForSearch(originalString)
         
         let split = fixedString.components(separatedBy: "isDefault")
         
@@ -754,12 +754,12 @@ class oneNoteNotebooks: NSObject
         }
     }
     
-    func getNotesForProject(_ inProject: String)
+    func getNotesForProject(_ sourceProject: String)
     {
         var myWorkingArray: [oneNotePage] = []
         for myNotebook in myNotebooks
         {
-            if myNotebook.name == inProject
+            if myNotebook.name == sourceProject
             {
                 // We have a matching project, so now work with this one
                 
@@ -787,7 +787,7 @@ class oneNoteNotebooks: NSObject
         }
     }
 
-    func getNotesForPerson(_ inPerson: String)
+    func getNotesForPerson(_ person: String)
     {
         var myWorkingArray: [oneNotePage] = []
         
@@ -806,7 +806,7 @@ class oneNoteNotebooks: NSObject
                 
                 for mySection in myNotebook.sections
                 {
-                    if mySection.name == inPerson
+                    if mySection.name == person
                     {
                         for myPage in mySection.pages
                         {
@@ -822,7 +822,7 @@ class oneNoteNotebooks: NSObject
         }
     }
     
-    func checkExistenceOfNotebook(_ inNotebookName: String) -> Bool
+    func checkExistenceOfNotebook(_ notebookName: String) -> Bool
     {
         var ret_val: Bool = false
         
@@ -834,7 +834,7 @@ class oneNoteNotebooks: NSObject
         
         for myNotebook in myNotebooks
         {
-            if myNotebook.name == inNotebookName
+            if myNotebook.name == notebookName
             {
                 ret_val = true
                 break
@@ -844,7 +844,7 @@ class oneNoteNotebooks: NSObject
         return ret_val
     }
     
-    func checkExistenceOfPerson(_ inPersonName: String) -> Bool
+    func checkExistenceOfPerson(_ personName: String) -> Bool
     {
         var ret_val: Bool = false
         
@@ -869,7 +869,7 @@ class oneNoteNotebooks: NSObject
                 
                 for mySection in myNotebook.sections
                 {
-                    if mySection.name == inPersonName
+                    if mySection.name == personName
                     {
                         ret_val = true
                     }
@@ -879,7 +879,7 @@ class oneNoteNotebooks: NSObject
         return ret_val
     }
 
-    func createNewNotebookForProject(_ inNotebookName: String) -> String
+    func createNewNotebookForProject(_ notebookName: String) -> String
     {
         var ret_val: String = ""
         var targetString: String = ""
@@ -888,28 +888,28 @@ class oneNoteNotebooks: NSObject
         
         // Build up the command to create a new Notebook and get the notebook ID
         
-        let myNotebookID = myOneNoteData.createOneNoteObject(inNotebookName, inType: "Notebook", inParent: "")
+        let myNotebookID = myOneNoteData.createOneNoteObject(notebookName, type: "Notebook", parent: "")
         
         // Issue the commands to create the Sections and get the ID for the "Background" section
         
-        _ = myOneNoteData.createOneNoteObject("Thoughts", inType: "Section", inParent: myNotebookID)
-        _ = myOneNoteData.createOneNoteObject("Reference", inType: "Section", inParent: myNotebookID)
-        _ = myOneNoteData.createOneNoteObject("Dependencies", inType: "Section", inParent: myNotebookID)
-        _ = myOneNoteData.createOneNoteObject("Issues", inType: "Section", inParent: myNotebookID)
-        _ = myOneNoteData.createOneNoteObject("Risks", inType: "Section", inParent: myNotebookID)
-        _ = myOneNoteData.createOneNoteObject("Status Updates", inType: "Section", inParent: myNotebookID)
-        _ = myOneNoteData.createOneNoteObject("Meetings", inType: "Section", inParent: myNotebookID)
-        targetString = myOneNoteData.createOneNoteObject("Background", inType: "Section", inParent: myNotebookID)
+        _ = myOneNoteData.createOneNoteObject("Thoughts", type: "Section", parent: myNotebookID)
+        _ = myOneNoteData.createOneNoteObject("Reference", type: "Section", parent: myNotebookID)
+        _ = myOneNoteData.createOneNoteObject("Dependencies", type: "Section", parent: myNotebookID)
+        _ = myOneNoteData.createOneNoteObject("Issues", type: "Section", parent: myNotebookID)
+        _ = myOneNoteData.createOneNoteObject("Risks", type: "Section", parent: myNotebookID)
+        _ = myOneNoteData.createOneNoteObject("Status Updates", type: "Section", parent: myNotebookID)
+        _ = myOneNoteData.createOneNoteObject("Meetings", type: "Section", parent: myNotebookID)
+        targetString = myOneNoteData.createOneNoteObject("Background", type: "Section", parent: myNotebookID)
         
         //  Create empty page in the first section
         // Get the id for the page and return to main thread to allow OneNote app to be opened
         
-        ret_val = myOneNoteData.createOneNotePage("Untitled Page", inType: "Page", inParent: targetString)
+        ret_val = myOneNoteData.createOneNotePage("Untitled Page", type: "Page", parent: targetString)
 
         return ret_val
     }
 
-    func createNewSectionForPerson(_ inPersonName: String) -> String
+    func createNewSectionForPerson(_ personName: String) -> String
     {
         var ret_val: String = ""
         var targetString: String = ""
@@ -929,12 +929,12 @@ class oneNoteNotebooks: NSObject
         
         // Issue the commands to create the Sections and get the ID for the "Background" section
         
-        targetString = myOneNoteData.createOneNoteObject(inPersonName, inType: "Section", inParent: myNotebookID)
+        targetString = myOneNoteData.createOneNoteObject(personName, type: "Section", parent: myNotebookID)
         
         //  Create empty page in the first section
         // Get the id for the page and return to main thread to allow OneNote app to be opened
         
-        ret_val = myOneNoteData.createOneNotePage("Untitled Page", inType: "Page", inParent: targetString)
+        ret_val = myOneNoteData.createOneNotePage("Untitled Page", type: "Page", parent: targetString)
         
         return ret_val
     }
@@ -950,7 +950,7 @@ class oneNoteNotebooks: NSObject
 //        notificationCenter.post(name: NotificationOneNotePagesReady, object: nil)
 //    }
     
-    fileprivate func splitSearchString(_ inString: String)
+    fileprivate func splitSearchString(_ originalString: String)
     {
         var processedFileHeader: Bool = false
         var firstItem2: Bool = true
@@ -958,7 +958,7 @@ class oneNoteNotebooks: NSObject
         // we need to do a bit of "dodgy" working, I want to be able to split strings based on :, but : is natural in dates and URLs. so need to change it to seomthign esle,
         //string out the : data and then change back
         
-        let split = inString.components(separatedBy: "\"title\"")
+        let split = originalString.components(separatedBy: "\"title\"")
         
         myPages = Array()
         
@@ -1193,7 +1193,7 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
     fileprivate var myOneNoteConnected: Bool = false
     fileprivate var myOneNoteFinished: Bool = false
     
-    fileprivate var myInString: String = ""
+    fileprivate var myoriginalString: String = ""
     fileprivate var myQueryType: String = ""
     
     var sourceViewController: UIViewController
@@ -1247,7 +1247,7 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
         }
     }
     
-    func createOneNoteObject(_ inName: String, inType: String, inParent: String) -> String
+    func createOneNoteObject(_ name: String, type: String, parent: String) -> String
     {
         var ret_val: String = ""
         
@@ -1264,15 +1264,15 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
         }
         else
         {
-            switch inType
+            switch type
             {
                 case "Notebook" :
                     myCommand = "https://www.onenote.com/api/v1.0/notebooks"
-                    myBody = "{ name: \"\(inName)\" }"
+                    myBody = "{ name: \"\(name)\" }"
                 
                 case "Section" :
-                    myCommand = "https://www.onenote.com/api/v1.0/notebooks/\(inParent)/sections"
-                    myBody = "{ name: \"\(inName)\" }"
+                    myCommand = "https://www.onenote.com/api/v1.0/notebooks/\(parent)/sections"
+                    myBody = "{ name: \"\(name)\" }"
                 
                 default: print("createOneNoteObject: invalid type passed in")
             }
@@ -1305,7 +1305,7 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
                     
                     if status == 201
                     {
-                        switch inType
+                        switch type
                         {
                         case "Notebook" :
                             ret_val = self.processNotebookCreateReturn(myReturnString)
@@ -1332,7 +1332,7 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
         return ret_val
     }
 
-    func createOneNotePage(_ inName: String, inType: String, inParent: String) -> String
+    func createOneNotePage(_ name: String, type: String, parent: String) -> String
     {
         var ret_val: String = ""
         
@@ -1349,11 +1349,11 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
         }
         else
         {
-            myCommand = "https://www.onenote.com/api/v1.0/sections/\(inParent)/pages"
+            myCommand = "https://www.onenote.com/api/v1.0/sections/\(parent)/pages"
             
             myBody = "<html>"
             myBody += "<head>"
-            myBody += "<title>\(inName)</title>"
+            myBody += "<title>\(name)</title>"
             myBody += "</head>"
             myBody += "<body>"
             myBody += "</body>"
@@ -1404,7 +1404,7 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
         return ret_val
     }
 
-    func processNotebookCreateReturn(_ inString: String) -> String
+    func processNotebookCreateReturn(_ originalString: String) -> String
     {
         var ret_val: String = ""
         
@@ -1414,7 +1414,7 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
         // we need to do a bit of "dodgy" working, I want to be able to split strings based on :, but : is natural in dates and URTLs. so need to change it to seomthign esle,
         //string out the : data and then change back
         
-        let fixedString = fixStringForSearch(inString)
+        let fixedString = fixStringForSearch(originalString)
         
         let split = fixedString.components(separatedBy: "isDefault")
         
@@ -1474,14 +1474,14 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
         return ret_val
     }
     
-    func processPageCreateReturn(_ inString: String) -> String
+    func processPageCreateReturn(_ originalString: String) -> String
     {
         var ret_val: String = ""
         
         // we need to do a bit of "dodgy" working, I want to be able to split strings based on :, but : is natural in dates and URTLs. so need to change it to seomthign esle,
         //string out the : data and then change back
         
-        let fixedString = fixStringForSearch(inString)
+        let fixedString = fixStringForSearch(originalString)
         
         let split2 = fixedString.components(separatedBy: ",")
         for myItem2 in split2
@@ -1505,7 +1505,7 @@ class oneNoteData: NSObject, LiveAuthDelegate, NSURLConnectionDelegate, NSURLCon
     {
         var myReturnString: String = ""
 
-        myInString = URLString
+        myoriginalString = URLString
         
         if !myOneNoteConnected
         {

@@ -298,7 +298,7 @@ class settingsViewController: UIViewController
         
         let dateString = "\(syncStart)"
         
-        myDatabaseConnection.updateDecodeValue("\(appName) Sync", inCodeValue: dateString, inCodeType: "hidden")
+        myDatabaseConnection.updateDecodeValue("\(appName) Sync", codeValue: dateString, codeType: "hidden")
         
         lblRefreshMessage.isHidden = true
         colDecodes.isHidden = false
@@ -323,7 +323,7 @@ class mySettingStepper: UICollectionViewCell
     
     @IBAction func myStepper(_ sender: UIStepper)
     {
-        myDatabaseConnection.updateDecodeValue(lblKey.text!, inCodeValue: "\(Int(myStepper.value))", inCodeType: lookupKey)
+        myDatabaseConnection.updateDecodeValue(lblKey.text!, codeValue: "\(Int(myStepper.value))", codeType: lookupKey)
         lblValue.text = "\(myStepper.value)"
         notificationCenter.post(name: NotificationChangeSettings, object: nil, userInfo:["setting":"Decode"])
     }
@@ -349,7 +349,7 @@ class mySettingString: UICollectionViewCell
         }
         else
         {
-            myDatabaseConnection.updateDecodeValue(lblKey.text!, inCodeValue: txtValue.text!, inCodeType: lookupKey)
+            myDatabaseConnection.updateDecodeValue(lblKey.text!, codeValue: txtValue.text!, codeType: lookupKey)
             notificationCenter.post(name: NotificationChangeSettings, object: nil, userInfo:["setting":"Decode"])
         }
     }
@@ -375,7 +375,7 @@ class mySettingNumber: UICollectionViewCell
         }
         else
         {
-            myDatabaseConnection.updateDecodeValue(lblKey.text!, inCodeValue: txtValue.text!, inCodeType: lookupKey)
+            myDatabaseConnection.updateDecodeValue(lblKey.text!, codeValue: txtValue.text!, codeType: lookupKey)
             notificationCenter.post(name: NotificationChangeSettings, object: nil, userInfo:["setting":"Decode"])
         }
 

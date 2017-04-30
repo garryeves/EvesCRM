@@ -87,18 +87,18 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
         headerArray.removeAll()
 
         fullArray.removeAll()
-        
-        let planningObject = createMenuItem("Planning", inType: "Header", inObject: "Projects" as NSObject)
+  
+        let planningObject = createMenuItem("Planning", type: "Header", workingObject: "Projects" as NSObject)
         planningObject.section = "Header"
         
         headerArray.append(planningObject)
 
-        let inboxObject = createMenuItem("Inbox", inType: "Header", inObject: "Inbox" as NSObject)
+        let inboxObject = createMenuItem("Inbox", type: "Header", workingObject: "Inbox" as NSObject)
         inboxObject.section = "Header"
         
         headerArray.append(inboxObject)
 
-        let doingObject = createMenuItem("Doing", inType: "Header", inObject: "Doing" as NSObject)
+        let doingObject = createMenuItem("Doing", type: "Header", workingObject: "Doing" as NSObject)
         doingObject.type = "disclosure"
         doingObject.section = "Header"
         doingObject.childSection = "Doing"
@@ -108,7 +108,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
         for myTeamItem in myDatabaseConnection.getMyTeams(myID)
         {
             let myTeam = team(teamID: myTeamItem.teamID)
-            let teamObject = createMenuItem(myTeam.name, inType: "Disclosure", inObject: myTeam)
+            let teamObject = createMenuItem(myTeam.name, type: "Disclosure", workingObject: myTeam)
             teamObject.type = "disclosure"
             teamObject.section = doingObject.childSection
             teamObject.childSection = "Team \(myTeam.teamID)"
@@ -120,7 +120,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
                 
                 let myReturnedData = myDatabaseConnection.getActiveTasksForProject(myProject.projectID)
                 
-                let displayObject = createMenuItem("\(myProject.projectName!) (\(myReturnedData.count))", inType: "Project", inObject: myProject)
+                let displayObject = createMenuItem("\(myProject.projectName!) (\(myReturnedData.count))", type: "Project", workingObject: myProject)
                 //displayObject.section = "\(myTeam.teamID)"
                 displayObject.section = teamObject.childSection
                 
@@ -137,7 +137,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
         let myContextList = contexts()
         // Get list of People Contexts
         
-        let peopleObject = createMenuItem("People", inType: "Header", inObject: "People" as NSObject)
+        let peopleObject = createMenuItem("People", type: "Header", workingObject: "People" as NSObject)
         peopleObject.type = "disclosure"
         peopleObject.section = "Header"
         peopleObject.childSection = "People"
@@ -148,18 +148,18 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
         {
             let myReturnedData = getContextCount(myContext.contextID)
             
-            let displayObject = createMenuItem("\(myContext.contextHierarchy) (\(myReturnedData))", inType: "People", inObject: myContext)
+            let displayObject = createMenuItem("\(myContext.contextHierarchy) (\(myReturnedData))", type: "People", workingObject: myContext)
             peopleObject.section = peopleObject.childSection
 
             peopleArray.append(displayObject)
         }
 
- //       let addressObject = createMenuItem("Address Book", inType: "People", inObject: "Address Book")
+ //       let addressObject = createMenuItem("Address Book", type: "People", workingObject: "Address Book")
  //       addressObject.section = peopleObject.childSection
 
  //       peopleArray.append(addressObject)
 
-        let contextMaintenceObject1 = createMenuItem("Maintain People", inType: "MaintainContexts", inObject: "Contexts" as NSObject)
+        let contextMaintenceObject1 = createMenuItem("Maintain People", type: "MaintainContexts", workingObject: "Contexts" as NSObject)
         contextMaintenceObject1.section = peopleObject.childSection
         
         peopleArray.append(contextMaintenceObject1)
@@ -168,7 +168,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
         fullArray.append(peopleEntry)
         // Get list of Non People Contexts
         
-        let placeObject = createMenuItem("Places", inType: "Header", inObject: "Places" as NSObject)
+        let placeObject = createMenuItem("Places", type: "Header", workingObject: "Places" as NSObject)
         placeObject.type = "disclosure"
         placeObject.section = "Header"
         placeObject.childSection = "Place"
@@ -179,13 +179,13 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
         {
             let myReturnedData = getContextCount(myContext.contextID)
 
-            let displayObject = createMenuItem("\(myContext.contextHierarchy) (\(myReturnedData))", inType: "Place", inObject: myContext)
+            let displayObject = createMenuItem("\(myContext.contextHierarchy) (\(myReturnedData))", type: "Place", workingObject: myContext)
             displayObject.section = placeObject.childSection
 
             placeArray.append(displayObject)
         }
         
-        let contextMaintenceObject2 = createMenuItem("Maintain Places", inType: "MaintainContexts", inObject: "Contexts" as NSObject)
+        let contextMaintenceObject2 = createMenuItem("Maintain Places", type: "MaintainContexts", workingObject: "Contexts" as NSObject)
         contextMaintenceObject2.section = placeObject.childSection
         
         placeArray.append(contextMaintenceObject2)
@@ -193,7 +193,7 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
         let placeEntry = menuEntry(menuType: placeObject.childSection, menuEntries: placeArray)
         fullArray.append(placeEntry)
         
-        let toolObject = createMenuItem("Tools", inType: "Header", inObject: "Tools" as NSObject)
+        let toolObject = createMenuItem("Tools", type: "Header", workingObject: "Tools" as NSObject)
         toolObject.type = "disclosure"
         toolObject.section = "Header"
         toolObject.childSection = "Tool"
@@ -202,13 +202,13 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
         {
             let myReturnedData = getContextCount(myContext.contextID)
 
-            let displayObject = createMenuItem("\(myContext.contextHierarchy) (\(myReturnedData))", inType: "Tool", inObject: myContext)
+            let displayObject = createMenuItem("\(myContext.contextHierarchy) (\(myReturnedData))", type: "Tool", workingObject: myContext)
             displayObject.section = toolObject.childSection
             
             toolArray.append(displayObject)
         }
         
-        let contextMaintenceObject3 = createMenuItem("Maintain Tools", inType: "MaintainContexts", inObject: "Contexts" as NSObject)
+        let contextMaintenceObject3 = createMenuItem("Maintain Tools", type: "MaintainContexts", workingObject: "Contexts" as NSObject)
         contextMaintenceObject3.section = toolObject.childSection
         
         toolArray.append(contextMaintenceObject3)
@@ -218,24 +218,24 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
         let toolEntry = menuEntry(menuType: toolObject.childSection, menuEntries: toolArray)
         fullArray.append(toolEntry)
         
-        let actionsObject = createMenuItem("Options", inType: "Header", inObject: "Options" as NSObject)
+        let actionsObject = createMenuItem("Options", type: "Header", workingObject: "Options" as NSObject)
         actionsObject.type = "disclosure"
         actionsObject.section = "Header"
         actionsObject.childSection = "Options"
 
         headerArray.append(actionsObject)
         
-        let displayPanesObject = createMenuItem("Maintain Display Panes", inType: "Action", inObject: "Maintain Display Panes" as NSObject)
+        let displayPanesObject = createMenuItem("Maintain Display Panes", type: "Action", workingObject: "Maintain Display Panes" as NSObject)
         displayPanesObject.section = actionsObject.childSection
 
         optionArray.append(displayPanesObject)
        
-        let textExpanderObject = createMenuItem("Load TextExpander Snippets", inType: "Action", inObject: "Load TextExpander Snippets" as NSObject)
+        let textExpanderObject = createMenuItem("Load TextExpander Snippets", type: "Action", workingObject: "Load TextExpander Snippets" as NSObject)
         textExpanderObject.section = actionsObject.childSection
 
         optionArray.append(textExpanderObject)
         
-        let settingObject = createMenuItem("Settings", inType: "Action", inObject: "Settings" as NSObject)
+        let settingObject = createMenuItem("Settings", type: "Action", workingObject: "Settings" as NSObject)
         settingObject.section = actionsObject.childSection
 
         optionArray.append(settingObject)
@@ -253,12 +253,12 @@ class SideBar: NSObject, SideBarTableViewControllerDelegate
         #endif
     }
     
-    func createMenuItem(_ inName: String, inType: String, inObject: NSObject) -> menuObject
+    func createMenuItem(_ name: String, type: String, workingObject: NSObject) -> menuObject
     {
         let myNewObject = menuObject()
-        myNewObject.displayString = inName
-        myNewObject.displayType = inType
-        myNewObject.displayObject = inObject
+        myNewObject.displayString = name
+        myNewObject.displayType = type
+        myNewObject.displayObject = workingObject
         
         return myNewObject
     }

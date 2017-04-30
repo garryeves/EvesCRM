@@ -166,7 +166,7 @@ extension CloudKitInteraction
                 //    let updateType = record.objectForKey("updateType") as! String
                 //    let attachment = record.objectForKey("attachment") as! NSData
                 NSLog("replaceTaskAttachmentInCoreData - Still to be coded")
-                //   myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+                //   myDatabaseConnection.updateDecodeValue(decodeName! as! String, codeValue: decodeValue! as! String, codeType: decodeType! as! String)
                 usleep(100)
             }
             sem.signal()
@@ -265,6 +265,6 @@ extension CloudKitInteraction
         //       }
         //    let attachment = sourceRecord.objectForKey("attachment") as! NSData
         NSLog("updateTaskAttachmentInCoreData - Still to be coded")
-        //   myDatabaseConnection.updateDecodeValue(decodeName! as! String, inCodeValue: decodeValue! as! String, inCodeType: decodeType! as! String)
+        //   myDatabaseConnection.updateDecodeValue(decodeName! as! String, codeValue: decodeValue! as! String, codeType: decodeType! as! String)
     }
 }

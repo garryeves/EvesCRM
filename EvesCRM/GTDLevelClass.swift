@@ -51,34 +51,34 @@ class workingGTDLevel: NSObject
         }
     }
     
-    init(inGTDLevel: Int32, teamID: Int32)
+    init(sourceGTDLevel: Int32, teamID: Int32)
     {
         super.init()
         
         // Load the details
         
-        let myGTDDetail = myDatabaseConnection.getGTDLevel(inGTDLevel, teamID: teamID)
+        let myGTDDetail = myDatabaseConnection.getGTDLevel(sourceGTDLevel, teamID: teamID)
         
         for myItem in myGTDDetail
         {
             myTitle = myItem.levelName!
             myTeamID = myItem.teamID
-            myGTDLevel = inGTDLevel
+            myGTDLevel = sourceGTDLevel
         }
     }
     
-    init(inGTDLevel: Int32, inLevelName: String, teamID: Int32)
+    init(sourceGTDLevel: Int32, levelName: String, teamID: Int32)
     {
         super.init()
         
-        myGTDLevel = inGTDLevel
-        myTitle = inLevelName
+        myGTDLevel = sourceGTDLevel
+        myTitle = levelName
         myTeamID = teamID
         
         save()
     }
     
-    init(inLevelName: String, teamID: Int32)
+    init(levelName: String, teamID: Int32)
     {
         super.init()
         
@@ -86,14 +86,14 @@ class workingGTDLevel: NSObject
         
         myGTDLevel = Int32(myGTDDetail.count + 1)
         myTeamID = teamID
-        myTitle = inLevelName
+        myTitle = levelName
         
         save()
     }
     
     func save()
     {
-        myDatabaseConnection.saveGTDLevel(myGTDLevel, inLevelName: myTitle, teamID: myTeamID)
+        myDatabaseConnection.saveGTDLevel(myGTDLevel, levelName: myTitle, teamID: myTeamID)
         
         if !saveCalled
         {
@@ -180,17 +180,17 @@ class workingGTDLevel: NSObject
 
 extension coreDatabase
 {
-    func saveGTDLevel(_ inGTDLevel: Int32, inLevelName: String, teamID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveGTDLevel(_ sourceGTDLevel: Int32, levelName: String, teamID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myGTD: GTDLevel!
         
-        let myGTDItems = getGTDLevel(inGTDLevel, teamID: teamID)
+        let myGTDItems = getGTDLevel(sourceGTDLevel, teamID: teamID)
         
         if myGTDItems.count == 0
         { // Add
             myGTD = GTDLevel(context: objectContext)
-            myGTD.gTDLevel = inGTDLevel
-            myGTD.levelName = inLevelName
+            myGTD.gTDLevel = sourceGTDLevel
+            myGTD.levelName = levelName
             myGTD.teamID = teamID
             
             if updateType == "CODE"
@@ -207,7 +207,7 @@ extension coreDatabase
         else
         { // Update
             myGTD = myGTDItems[0]
-            myGTD.levelName = inLevelName
+            myGTD.levelName = levelName
             if updateType == "CODE"
             {
                 myGTD.updateTime =  NSDate()
@@ -226,11 +226,11 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceGTDLevel(_ inGTDLevel: Int32, inLevelName: String, teamID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
+    func replaceGTDLevel(_ sourceGTDLevel: Int32, levelName: String, teamID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myGTD = GTDLevel(context: objectContext)
-        myGTD.gTDLevel = inGTDLevel
-        myGTD.levelName = inLevelName
+        myGTD.gTDLevel = sourceGTDLevel
+        myGTD.levelName = levelName
         myGTD.teamID = teamID
         
         if updateType == "CODE"
@@ -247,13 +247,13 @@ extension coreDatabase
         saveContext()
     }
     
-    func getGTDLevel(_ inGTDLevel: Int32, teamID: Int32)->[GTDLevel]
+    func getGTDLevel(_ sourceGTDLevel: Int32, teamID: Int32)->[GTDLevel]
     {
         let fetchRequest = NSFetchRequest<GTDLevel>(entityName: "GTDLevel")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(gTDLevel == \(inGTDLevel)) && (updateType != \"Delete\") && (teamID == \(teamID))")
+        let predicate = NSPredicate(format: "(gTDLevel == \(sourceGTDLevel)) && (updateType != \"Delete\") && (teamID == \(teamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -307,11 +307,11 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteGTDLevel(_ inGTDLevel: Int32, teamID: Int32)
+    func deleteGTDLevel(_ sourceGTDLevel: Int32, teamID: Int32)
     {
         var myGTD: GTDLevel!
         
-        let myGTDItems = getGTDLevel(inGTDLevel, teamID: teamID)
+        let myGTDItems = getGTDLevel(sourceGTDLevel, teamID: teamID)
         
         if myGTDItems.count > 0
         { // Update
@@ -507,7 +507,7 @@ extension CloudKitInteraction
                 let teamID = record.object(forKey: "teamID") as! Int32
                 let levelName = record.object(forKey: "levelName") as! String
                 
-                myDatabaseConnection.replaceGTDLevel(gTDLevel, inLevelName: levelName, teamID: teamID, updateTime: updateTime, updateType: updateType)
+                myDatabaseConnection.replaceGTDLevel(gTDLevel, levelName: levelName, teamID: teamID, updateTime: updateTime, updateType: updateType)
                 usleep(100)
             }
             sem.signal()
@@ -605,7 +605,7 @@ extension CloudKitInteraction
         let teamID = sourceRecord.object(forKey: "teamID") as! Int32
         let levelName = sourceRecord.object(forKey: "levelName") as! String
         
-        myDatabaseConnection.saveGTDLevel(gTDLevel, inLevelName: levelName, teamID: teamID, updateTime: updateTime, updateType: updateType)
+        myDatabaseConnection.saveGTDLevel(gTDLevel, levelName: levelName, teamID: teamID, updateTime: updateTime, updateType: updateType)
     }
 
 }

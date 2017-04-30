@@ -893,7 +893,7 @@ class calendarItem
             
             for savedAgenda in mySavedValues
             {
-                let myAgendaItem =  meetingAgendaItem(meetingID: savedAgenda.meetingID!, inAgendaID: savedAgenda.agendaID)
+                let myAgendaItem =  meetingAgendaItem(meetingID: savedAgenda.meetingID!, agendaID: savedAgenda.agendaID)
                 if myAgendaItem.meetingOrder == 0
                 {
                     myAgendaItem.meetingOrder += runningMeetingOrder

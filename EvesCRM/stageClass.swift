@@ -84,13 +84,13 @@ extension coreDatabase
         saveContext()
     }
     
-    func stageExists(_ inStageDesc:String, teamID: Int32)-> Bool
+    func stageExists(_ stageDesc:String, teamID: Int32)-> Bool
     {
         let fetchRequest = NSFetchRequest<Stages>(entityName: "Stages")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(stageDescription == \"\(inStageDesc)\") && (teamID == \(teamID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(stageDescription == \"\(stageDesc)\") && (teamID == \(teamID)) && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -207,11 +207,11 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteStageEntry(_ inStageDesc: String, teamID: Int32)
+    func deleteStageEntry(_ stageDesc: String, teamID: Int32)
     {
         let fetchRequest = NSFetchRequest<Stages>(entityName: "Stages")
         
-        let predicate = NSPredicate(format: "(stageDescription == \"\(inStageDesc)\") && (teamID == \(teamID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(stageDescription == \"\(stageDesc)\") && (teamID == \(teamID)) && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

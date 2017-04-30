@@ -56,7 +56,7 @@ class startViewController: UIViewController
             
             // Store the ID for the default team
 
-            myDatabaseConnection.updateDecodeValue("Default Team", inCodeValue: "\(myNewTeam.teamID)", inCodeType: "hidden")
+            myDatabaseConnection.updateDecodeValue("Default Team", codeValue: "\(myNewTeam.teamID)", codeType: "hidden")
 
             myCurrentTeam = myNewTeam
         }
@@ -86,14 +86,14 @@ class startViewController: UIViewController
         
         if decodeString == ""
         {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("Calendar - Weeks before current date", inCodeValue: "1", inCodeType: "stepper")
+            myDatabaseConnection.updateDecodeValue("Calendar - Weeks before current date", codeValue: "1", codeType: "stepper")
         }
         
         decodeString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date")
         
         if decodeString == ""
         {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("Calendar - Weeks after current date", inCodeValue: "4", inCodeType: "stepper")
+            myDatabaseConnection.updateDecodeValue("Calendar - Weeks after current date", codeValue: "4", codeType: "stepper")
         }
         
         let deviceIdiom = UIDevice.current.userInterfaceIdiom

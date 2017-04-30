@@ -132,7 +132,7 @@ class taskUpdatesViewController: UIViewController//, SMTEFillDelegate
     {
         if txtUpdateDetails.text.characters.count > 0 && txtUpdateSource.text!.characters.count > 0
         {
-            passedTask.addHistoryRecord(txtUpdateDetails.text, inHistorySource: txtUpdateSource.text!)
+            passedTask.addHistoryRecord(txtUpdateDetails.text, historySource: txtUpdateSource.text!)
             txtUpdateDetails.text = ""
             txtUpdateSource.text = ""
             colHistory.reloadData()

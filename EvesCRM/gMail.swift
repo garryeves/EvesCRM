@@ -111,29 +111,29 @@ class gmailMessage: NSObject
         }
     }
 
-    func populateMessage(_ inData: gmailData)
+    func populateMessage(_ gmailDataRecord: gmailData)
     {
         // Make call to get the full details of the message
         // format as full
         let workingString = "https://www.googleapis.com/gmail/v1/users/me/messages/\(myID)?format=full"
         
-        let myString = inData.getData(workingString)
+        let myString = gmailDataRecord.getData(workingString)
         
        splitString(myString)
     }
     
-    fileprivate func splitString(_ inString: String)
+    fileprivate func splitString(_ originalString: String)
     {
         // we need to do a bit of "dodgy" working, I want to be able to split strings based on :, but : is natural in dates and URTLs. so need to change it to seomthign esle,
         //string out the : data and then change back
         
-        let tempStr3 = inString.replacingOccurrences(of: "\\u003e,", with: "")
+        let tempStr3 = originalString.replacingOccurrences(of: "\\u003e,", with: "")
         let tempStr4 = tempStr3.replacingOccurrences(of: "\\u003c,", with: "")
         let tempStr5 = tempStr4.replacingOccurrences(of: "\\u003e", with: "")
         let tempStr6 = tempStr5.replacingOccurrences(of: "\\u003c", with: "")
 //if myID == "12613a7c784c8656"
 //{
-//println("inString = \(inString)")
+//println("originalString = \(originalString)")
 //}
         var split: [String]!
         var passNum: Int = 1
@@ -240,14 +240,14 @@ class gmailMessage: NSObject
         }
     }
     
-    fileprivate func processMessageBody(_ inString: String)
+    fileprivate func processMessageBody(_ originalString: String)
     {
         // Start to break the message body down
         
         // Does the incoming part contain the data clause
-        if inString.range(of: "\"data\"") != nil
+        if originalString.range(of: "\"data\"") != nil
         {
-            let split1 = inString.components(separatedBy: "\"data\":")
+            let split1 = originalString.components(separatedBy: "\"data\":")
             // This gives the Header part, and also the body + trailer
             
             let split2 = split1[1].components(separatedBy: "\"")
@@ -271,9 +271,9 @@ class gmailMessage: NSObject
         }
     }
 
-    fileprivate func processMessageDetails(_ inString: String)
+    fileprivate func processMessageDetails(_ originalString: String)
     {
-        let temp2Pass = inString.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+        let temp2Pass = originalString.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
         let temp2Pass0 = temp2Pass.replacingOccurrences(of: "},", with: "*^&,")
         let temp2Pass1 = temp2Pass0.replacingOccurrences(of: "\",", with: "\"*^&,")
         let temp2Pass2 = temp2Pass1.replacingOccurrences(of: "}", with: "")
@@ -491,19 +491,19 @@ class gmailMessages: NSObject
         }
     }
     
-    init(inGmailData: gmailData)
+    init(gmailDataRecord: gmailData)
     {
         super.init()
-        myGmailData = inGmailData
+        myGmailData = gmailDataRecord
     }
     
-    func getPersonMessages(_ inString: String, emailAddresses: [String], inMessageType: String)
+    func getPersonMessages(_ originalString: String, emailAddresses: [String], messageType: String)
     {
         // this is used to get the messages
         
         var workingString: String = "https://www.googleapis.com/gmail/v1/users/me/messages?maxResults=20"
 
-        if inMessageType == "Hangouts"
+        if messageType == "Hangouts"
         {
             workingString += "&q=is:chat"
         }
@@ -514,7 +514,7 @@ class gmailMessages: NSObject
         
         // Searching for a person
         // Add in a search by name
-        workingString += " \"\(inString)\""
+        workingString += " \"\(originalString)\""
             
         // Go and get email addresses for the person
             
@@ -530,7 +530,7 @@ class gmailMessages: NSObject
 
         splitString(myString)
         
-        if inMessageType == "Hangouts"
+        if messageType == "Hangouts"
         {
            // listMessages()
             notificationCenter.post(name: NotificationHangoutsDidFinish, object: nil)
@@ -541,13 +541,13 @@ class gmailMessages: NSObject
         }
     }
     
-    func getProjectMessages(_ inString: String, inMessageType: String)
+    func getProjectMessages(_ originalString: String, messageType: String)
     {
         // this is used to get the messages
         
         var workingString: String = "https://www.googleapis.com/gmail/v1/users/me/messages?maxResults=20"
         
-        if inMessageType == "Hangouts"
+        if messageType == "Hangouts"
         {
             workingString += "&q=is:chat"
         }
@@ -556,13 +556,13 @@ class gmailMessages: NSObject
             workingString += "&q=-is:chat"
         }
         
-        workingString += " \"\(inString)\""
+        workingString += " \"\(originalString)\""
         
         let myString = myGmailData.getData(workingString)
         
         splitString(myString)
         
-        if inMessageType == "Hangouts"
+        if messageType == "Hangouts"
         {
             // listMessages()
             notificationCenter.post(name: NotificationHangoutsDidFinish, object: nil)
@@ -590,7 +590,7 @@ class gmailMessages: NSObject
     }
 
     
-    fileprivate func splitString(_ inString: String)
+    fileprivate func splitString(_ originalString: String)
     {
         var processedFileHeader: Bool = false
         var firstItem2: Bool = true
@@ -598,7 +598,7 @@ class gmailMessages: NSObject
         // we need to do a bit of "dodgy" working, I want to be able to split strings based on :, but : is natural in dates and URTLs. so need to change it to seomthign esle,
         //string out the : data and then change back
         
-        let tempStr1 = inString.replacingOccurrences(of: "},", with: "")
+        let tempStr1 = originalString.replacingOccurrences(of: "},", with: "")
         let tempStr2 = tempStr1.replacingOccurrences(of: "}", with: "")
         let tempStr3 = tempStr2.replacingOccurrences(of: "],", with: "")
         let tempStr4 = tempStr3.replacingOccurrences(of: "\"", with: "")
@@ -717,7 +717,7 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
     fileprivate var auth: GIDAuthentication!
     fileprivate var currentUser: GIDGoogleUser!
     
-    fileprivate var myInString: String = ""
+    fileprivate var myoriginalString: String = ""
     fileprivate var myQueryType: String = ""
     
     var sourceViewController: UIViewController
@@ -759,13 +759,13 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
         }
     }
     
-    func getData(_ inURLString: String) -> String
+    func getData(_ URLString: String) -> String
     {
         var myReturnString: String = ""
         
         // Swap userId for the userd ID
         
-        let escapedURL: String = inURLString.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!
+        let escapedURL: String = URLString.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)!
 
         let url: URL = URL(string: escapedURL)!
         var request = URLRequest(url: url)
@@ -849,7 +849,7 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
         private var auth: GTMOAuth2Authentication!
         private var currentUser: String = ""
         
-        private var myInString: String = ""
+        private var myoriginalString: String = ""
         private var myQueryType: String = ""
         
         private let scopes = [kGTLAuthScopeGmailReadonly]
@@ -962,7 +962,7 @@ class gmailData: NSObject, NSURLConnectionDelegate, NSURLConnectionDataDelegate,
             let _ = alert.runModal()
         }
         
-        func getData(inURLString: String) -> String
+        func getData(URLString: String) -> String
         {
             return ""
         }

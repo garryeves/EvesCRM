@@ -379,7 +379,7 @@ class project: NSObject // 10k level
             }
         }
     }
-    
+
     func loadTeamMembers()
     {
         myTeamMembers.removeAll()
@@ -388,7 +388,7 @@ class project: NSObject // 10k level
         
         for myTeamMember in myProjectTeamMembers
         {
-            let myMember = projectTeamMember(projectID: myTeamMember.projectID, teamMember: myTeamMember.teamMember!, inRoleID: myTeamMember.roleID, teamID: myTeamID)
+            let myMember = projectTeamMember(projectID: myTeamMember.projectID, teamMember: myTeamMember.teamMember!, roleID: myTeamMember.roleID, teamID: myTeamID)
             
             myMember.projectMemberNotes = myTeamMember.projectMemberNotes!
             
@@ -396,16 +396,16 @@ class project: NSObject // 10k level
         }
     }
     
-    func addTask(_ inTask: task)
+    func addTask(_ taskItem: task)
     {
-        inTask.projectID = myProjectID
+        taskItem.projectID = myProjectID
         
         loadTasks()
     }
     
-    func removeTask(_ inTask: task)
+    func removeTask(_ taskItem: task)
     {
-        inTask.projectID = 0
+        taskItem.projectID = 0
         loadTasks()
     }
     
@@ -421,10 +421,10 @@ class project: NSObject // 10k level
             myTasks.append(myNewTask)
         }
     }
-    
+ 
     func save()
     {
-        myDatabaseConnection.saveProject(myProjectID, inProjectEndDate: myProjectEndDate, inProjectName: myProjectName, inProjectStartDate: myProjectStartDate, inProjectStatus: myProjectStatus, inReviewFrequency: myReviewFrequency, inLastReviewDate: myLastReviewDate, inGTDItemID: myGTDItemID, inRepeatInterval: myRepeatInterval, inRepeatType: myRepeatType, inRepeatBase: myRepeatBase, teamID: myTeamID)
+        myDatabaseConnection.saveProject(myProjectID, projectEndDate: myProjectEndDate, projectName: myProjectName, projectStartDate: myProjectStartDate, projectStatus: myProjectStatus, reviewFrequency: myReviewFrequency, lastReviewDate: myLastReviewDate, GTDItemID: myGTDItemID, repeatInterval: myRepeatInterval, repeatType: myRepeatType, repeatBase: myRepeatBase, teamID: myTeamID)
         
         // Save Team Members
         
@@ -442,7 +442,7 @@ class project: NSObject // 10k level
         
         // save note
         
-        myDatabaseConnection.saveProjectNote(myProjectID, inNote: myNote, inReviewPeriod: myReviewPeriod, inPredecessor: myPredecessor)
+        myDatabaseConnection.saveProjectNote(myProjectID, note: myNote, reviewPeriod: myReviewPeriod, predecessor: myPredecessor)
         
         if !saveCalled
         {
@@ -532,7 +532,7 @@ class project: NSObject // 10k level
             
             for myTeamMember in myProjectTeamMembers
             {
-                let myMember = projectTeamMember(projectID: newProject.projectID, teamMember: myTeamMember.teamMember!, inRoleID: myTeamMember.roleID, teamID: myTeamID)
+                let myMember = projectTeamMember(projectID: newProject.projectID, teamMember: myTeamMember.teamMember!, roleID: myTeamMember.roleID, teamID: myTeamID)
                 
                 myMember.projectMemberNotes = myTeamMember.projectMemberNotes!
             }
@@ -598,13 +598,13 @@ class project: NSObject // 10k level
 
 extension coreDatabase
 {
-    func getOpenProjectsForGTDItem(_ inGTDItemID: Int32, teamID: Int32)->[Projects]
+    func getOpenProjectsForGTDItem(_ GTDItemID: Int32, teamID: Int32)->[Projects]
     {
         let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (areaID == \(inGTDItemID)) && (updateType != \"Delete\") && (teamID == \(teamID))")
+        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (areaID == \(GTDItemID)) && (updateType != \"Delete\") && (teamID == \(teamID))")
         
         let sortDescriptor = NSSortDescriptor(key: "projectID", ascending: true)
         let sortDescriptors = [sortDescriptor]
@@ -721,14 +721,14 @@ extension coreDatabase
         }
     }
 
-    func getProjects(_ teamID: Int32, inArchiveFlag: Bool = false) -> [Projects]
+    func getProjects(_ teamID: Int32, archiveFlag: Bool = false) -> [Projects]
     {
         let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         
-        if !inArchiveFlag
+        if !archiveFlag
         {
             var predicate: NSPredicate
             
@@ -764,7 +764,7 @@ extension coreDatabase
         }
     }
 
-    func saveProject(_ projectID: Int32, inProjectEndDate: Date, inProjectName: String, inProjectStartDate: Date, inProjectStatus: String, inReviewFrequency: Int16, inLastReviewDate: Date, inGTDItemID: Int32, inRepeatInterval: Int16, inRepeatType: String, inRepeatBase: String, teamID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveProject(_ projectID: Int32, projectEndDate: Date, projectName: String, projectStartDate: Date, projectStatus: String, reviewFrequency: Int16, lastReviewDate: Date, GTDItemID: Int32, repeatInterval: Int16, repeatType: String, repeatBase: String, teamID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myProject: Projects!
         
@@ -774,16 +774,16 @@ extension coreDatabase
         { // Add
             myProject = Projects(context: objectContext)
             myProject.projectID = projectID
-            myProject.projectEndDate = inProjectEndDate as NSDate
-            myProject.projectName = inProjectName
-            myProject.projectStartDate = inProjectStartDate as NSDate
-            myProject.projectStatus = inProjectStatus
-            myProject.reviewFrequency = inReviewFrequency
-            myProject.lastReviewDate = inLastReviewDate as NSDate
-            myProject.areaID = inGTDItemID
-            myProject.repeatInterval = inRepeatInterval
-            myProject.repeatType = inRepeatType
-            myProject.repeatBase = inRepeatBase
+            myProject.projectEndDate = projectEndDate as NSDate
+            myProject.projectName = projectName
+            myProject.projectStartDate = projectStartDate as NSDate
+            myProject.projectStatus = projectStatus
+            myProject.reviewFrequency = reviewFrequency
+            myProject.lastReviewDate = lastReviewDate as NSDate
+            myProject.areaID = GTDItemID
+            myProject.repeatInterval = repeatInterval
+            myProject.repeatType = repeatType
+            myProject.repeatBase = repeatBase
             myProject.teamID = teamID
             
             if updateType == "CODE"
@@ -800,16 +800,16 @@ extension coreDatabase
         else
         { // Update
             myProject = myProjects[0]
-            myProject.projectEndDate = inProjectEndDate as NSDate
-            myProject.projectName = inProjectName
-            myProject.projectStartDate = inProjectStartDate as NSDate
-            myProject.projectStatus = inProjectStatus
-            myProject.reviewFrequency = inReviewFrequency
-            myProject.lastReviewDate = inLastReviewDate as NSDate
-            myProject.areaID = inGTDItemID
-            myProject.repeatInterval = inRepeatInterval
-            myProject.repeatType = inRepeatType
-            myProject.repeatBase = inRepeatBase
+            myProject.projectEndDate = projectEndDate as NSDate
+            myProject.projectName = projectName
+            myProject.projectStartDate = projectStartDate as NSDate
+            myProject.projectStatus = projectStatus
+            myProject.reviewFrequency = reviewFrequency
+            myProject.lastReviewDate = lastReviewDate as NSDate
+            myProject.areaID = GTDItemID
+            myProject.repeatInterval = repeatInterval
+            myProject.repeatType = repeatType
+            myProject.repeatBase = repeatBase
             myProject.teamID = teamID
             if updateType == "CODE"
             {
@@ -829,21 +829,21 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceProject(_ projectID: Int32, inProjectEndDate: Date, inProjectName: String, inProjectStartDate: Date, inProjectStatus: String, inReviewFrequency: Int16, inLastReviewDate: Date, inGTDItemID: Int32, inRepeatInterval: Int16, inRepeatType: String, inRepeatBase: String, teamID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
+    func replaceProject(_ projectID: Int32, projectEndDate: Date, projectName: String, projectStartDate: Date, projectStatus: String, reviewFrequency: Int16, lastReviewDate: Date, GTDItemID: Int32, repeatInterval: Int16, repeatType: String, repeatBase: String, teamID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         
         let myProject = Projects(context: objectContext)
         myProject.projectID = projectID
-        myProject.projectEndDate = inProjectEndDate as NSDate
-        myProject.projectName = inProjectName
-        myProject.projectStartDate = inProjectStartDate as NSDate
-        myProject.projectStatus = inProjectStatus
-        myProject.reviewFrequency = inReviewFrequency
-        myProject.lastReviewDate = inLastReviewDate as NSDate
-        myProject.areaID = inGTDItemID
-        myProject.repeatInterval = inRepeatInterval
-        myProject.repeatType = inRepeatType
-        myProject.repeatBase = inRepeatBase
+        myProject.projectEndDate = projectEndDate as NSDate
+        myProject.projectName = projectName
+        myProject.projectStartDate = projectStartDate as NSDate
+        myProject.projectStatus = projectStatus
+        myProject.reviewFrequency = reviewFrequency
+        myProject.lastReviewDate = lastReviewDate as NSDate
+        myProject.areaID = GTDItemID
+        myProject.repeatInterval = repeatInterval
+        myProject.repeatType = repeatType
+        myProject.repeatBase = repeatBase
         myProject.teamID = teamID
         
         if updateType == "CODE"
@@ -978,7 +978,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func saveProjectNote(_ projectID: Int32, inNote: String, inReviewPeriod: String, inPredecessor: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveProjectNote(_ projectID: Int32, note: String, reviewPeriod: String, predecessor: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myProjectNote: ProjectNote!
         
@@ -988,10 +988,10 @@ extension coreDatabase
         { // Add
             myProjectNote = ProjectNote(context: objectContext)
             myProjectNote.projectID = projectID
-            myProjectNote.note = inNote
+            myProjectNote.note = note
             
-            myProjectNote.reviewPeriod = inReviewPeriod
-            myProjectNote.predecessor = inPredecessor
+            myProjectNote.reviewPeriod = reviewPeriod
+            myProjectNote.predecessor = predecessor
             if updateType == "CODE"
             {
                 myProjectNote.updateTime =  NSDate()
@@ -1006,9 +1006,9 @@ extension coreDatabase
         else
         { // Update
             myProjectNote = myTeams[0]
-            myProjectNote.note = inNote
-            myProjectNote.reviewPeriod = inReviewPeriod
-            myProjectNote.predecessor = inPredecessor
+            myProjectNote.note = note
+            myProjectNote.reviewPeriod = reviewPeriod
+            myProjectNote.predecessor = predecessor
             if updateType == "CODE"
             {
                 if myProjectNote.updateType != "Add"
@@ -1027,14 +1027,14 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceProjectNote(_ projectID: Int32, inNote: String, inReviewPeriod: String, inPredecessor: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
+    func replaceProjectNote(_ projectID: Int32, note: String, reviewPeriod: String, predecessor: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myProjectNote = ProjectNote(context: objectContext)
         myProjectNote.projectID = projectID
-        myProjectNote.note = inNote
+        myProjectNote.note = note
         
-        myProjectNote.reviewPeriod = inReviewPeriod
-        myProjectNote.predecessor = inPredecessor
+        myProjectNote.reviewPeriod = reviewPeriod
+        myProjectNote.predecessor = predecessor
         if updateType == "CODE"
         {
             myProjectNote.updateTime =  NSDate()
@@ -1099,7 +1099,7 @@ extension coreDatabase
             // Now go and populate the Decode for this
             
             let tempInt = "\(maxID)"
-            updateDecodeValue("Projects", inCodeValue: tempInt, inCodeType: "hidden")
+            updateDecodeValue("Projects", codeValue: tempInt, codeType: "hidden")
         }
         catch
         {
@@ -1287,9 +1287,9 @@ extension CloudKitInteraction
                 let reviewPeriod = record.object(forKey: "reviewPeriod") as! String
                 let predecessor = record.object(forKey: "predecessor") as! Int32
                 
-                myDatabaseConnection.replaceProject(projectID, inProjectEndDate: projectEndDate, inProjectName: projectName, inProjectStartDate: projectStartDate, inProjectStatus: projectStatus, inReviewFrequency: reviewFrequency, inLastReviewDate: lastReviewDate, inGTDItemID: areaID, inRepeatInterval: repeatInterval, inRepeatType: repeatType, inRepeatBase: repeatBase, teamID: teamID, updateTime: updateTime, updateType: updateType)
+                myDatabaseConnection.replaceProject(projectID, projectEndDate: projectEndDate, projectName: projectName, projectStartDate: projectStartDate, projectStatus: projectStatus, reviewFrequency: reviewFrequency, lastReviewDate: lastReviewDate, GTDItemID: areaID, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, teamID: teamID, updateTime: updateTime, updateType: updateType)
                 
-                myDatabaseConnection.replaceProjectNote(projectID, inNote: note, inReviewPeriod: reviewPeriod, inPredecessor: predecessor, updateTime: updateTime, updateType: updateType)
+                myDatabaseConnection.replaceProjectNote(projectID, note: note, reviewPeriod: reviewPeriod, predecessor: predecessor, updateTime: updateTime, updateType: updateType)
                 usleep(100)
             }
             sem.signal()
@@ -1520,9 +1520,9 @@ extension CloudKitInteraction
         let reviewPeriod = sourceRecord.object(forKey: "reviewPeriod") as! String
         let predecessor = sourceRecord.object(forKey: "predecessor") as! Int32
         
-        myDatabaseConnection.saveProject(projectID, inProjectEndDate: projectEndDate, inProjectName: projectName, inProjectStartDate: projectStartDate, inProjectStatus: projectStatus, inReviewFrequency: reviewFrequency, inLastReviewDate: lastReviewDate, inGTDItemID: areaID, inRepeatInterval: repeatInterval, inRepeatType: repeatType, inRepeatBase: repeatBase, teamID: teamID, updateTime: updateTime, updateType: updateType)
+        myDatabaseConnection.saveProject(projectID, projectEndDate: projectEndDate, projectName: projectName, projectStartDate: projectStartDate, projectStatus: projectStatus, reviewFrequency: reviewFrequency, lastReviewDate: lastReviewDate, GTDItemID: areaID, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, teamID: teamID, updateTime: updateTime, updateType: updateType)
         
-        myDatabaseConnection.saveProjectNote(projectID, inNote: note, inReviewPeriod: reviewPeriod, inPredecessor: predecessor, updateTime: updateTime, updateType: updateType)
+        myDatabaseConnection.saveProjectNote(projectID, note: note, reviewPeriod: reviewPeriod, predecessor: predecessor, updateTime: updateTime, updateType: updateType)
     }
 
 }

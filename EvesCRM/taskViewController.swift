@@ -583,13 +583,13 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
 
             if !matchFound
             {
-                let myNewContext = context(inContextName: txtNewContext.text)
+                let myNewContext = context(contextName: txtNewContext.text)
             
                 setContext(myNewContext.contextID)
             }
 */
             
-            let myNewContext = context(inContextName: txtNewContext.text!)
+            let myNewContext = context(contextName: txtNewContext.text!)
             
             setContext(myNewContext.contextID)
             lblNewContext.isHidden = true
@@ -730,7 +730,7 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
             
             if pickerTarget == "Context"
             {
-                let myNewContext = context(inContextName: pickerOptions[mySelectedRow])
+                let myNewContext = context(contextName: pickerOptions[mySelectedRow])
                 
                 setContext(myNewContext.contextID)
                 
@@ -757,7 +757,7 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
             
                 if !matchFound
                 {
-                    let myNewContext = context(inContextName: pickerOptions[mySelectedRow])
+                    let myNewContext = context(contextName: pickerOptions[mySelectedRow])
                 
                     setContext(myNewContext.contextID)
                 }
@@ -973,9 +973,9 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
         }
     }
     
-    func setContext(_ inContextID: Int32)
+    func setContext(_ contextID: Int32)
     {
-        passedTask.addContext(inContextID)
+        passedTask.addContext(contextID)
         
         // Reload the collection data
         
@@ -997,8 +997,8 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
     {
         // Build up the details we want to share
         
-        let inString: String = ""
-        let sharingActivityProvider: SharingActivityProvider = SharingActivityProvider(placeholderItem: inString)
+        let sourceString: String = ""
+        let sharingActivityProvider: SharingActivityProvider = SharingActivityProvider(placeholderItem: sourceString)
         
         let myTmp1 = passedTask.buildShareHTMLString().replacingOccurrences(of: "\n", with: "<p>")
         sharingActivityProvider.HTMLString = myTmp1

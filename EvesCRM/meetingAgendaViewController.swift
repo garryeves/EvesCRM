@@ -444,8 +444,8 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
     func createActivityController() -> UIActivityViewController
     {
         // Build up the details we want to share
-        let inString: String = ""
-        let sharingActivityProvider: SharingActivityProvider = SharingActivityProvider(placeholderItem: inString)
+        let sourceString: String = ""
+        let sharingActivityProvider: SharingActivityProvider = SharingActivityProvider(placeholderItem: sourceString)
         
         let myTmp1 = passedMeeting.event.buildShareHTMLString().replacingOccurrences(of: "\n", with: "<p>")
         sharingActivityProvider.HTMLString = myTmp1

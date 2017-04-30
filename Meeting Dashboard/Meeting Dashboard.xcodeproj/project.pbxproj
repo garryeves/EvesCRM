@@ -224,6 +224,7 @@
 		34BA261C1EAB0DDE00A41EE9 /* coreDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA261B1EAB0DDE00A41EE9 /* coreDatabase.swift */; };
 		34BA261D1EAB0DDE00A41EE9 /* coreDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA261B1EAB0DDE00A41EE9 /* coreDatabase.swift */; };
 		34BA261E1EAB0DDE00A41EE9 /* coreDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA261B1EAB0DDE00A41EE9 /* coreDatabase.swift */; };
+		34DB89871EB5850A00D490BD /* meeting-32.png in Resources */ = {isa = PBXBuildFile; fileRef = 34DB89861EB5850A00D490BD /* meeting-32.png */; };
 		34E990BA1EADCD69005B2718 /* meetingsDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990B91EADCD69005B2718 /* meetingsDatabase.swift */; };
 		34E990BD1EADCEE0005B2718 /* teamClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990BB1EADCEE0005B2718 /* teamClass.swift */; };
 		34E990BE1EADCEE0005B2718 /* decodesClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E990BC1EADCEE0005B2718 /* decodesClass.swift */; };
@@ -390,6 +391,7 @@
 		34BA25AB1EAB05DA00A41EE9 /* EvesCRMSharedFiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EvesCRMSharedFiles.swift; path = ../../EvesCRM/EvesCRMSharedFiles.swift; sourceTree = "<group>"; };
 		34BA26171EAB0DCD00A41EE9 /* CloudKitInteraction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CloudKitInteraction.swift; path = ../../EvesCRM/CloudKitInteraction.swift; sourceTree = "<group>"; };
 		34BA261B1EAB0DDE00A41EE9 /* coreDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = coreDatabase.swift; path = ../../EvesCRM/coreDatabase.swift; sourceTree = "<group>"; };
+		34DB89861EB5850A00D490BD /* meeting-32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "meeting-32.png"; path = "../../../../../Google Drive/Action/meeting-32.png"; sourceTree = "<group>"; };
 		34E990B91EADCD69005B2718 /* meetingsDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = meetingsDatabase.swift; sourceTree = "<group>"; };
 		34E990BB1EADCEE0005B2718 /* teamClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = teamClass.swift; path = ../../EvesCRM/teamClass.swift; sourceTree = "<group>"; };
 		34E990BC1EADCEE0005B2718 /* decodesClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = decodesClass.swift; path = ../../EvesCRM/decodesClass.swift; sourceTree = "<group>"; };
@@ -521,6 +523,7 @@
 				34BA25A51EAB03BE00A41EE9 /* Classes */,
 				34BA25A61EAB03D500A41EE9 /* Views */,
 				34BA257D1EAAFD2D00A41EE9 /* Assets.xcassets */,
+				34DB89881EB5854100D490BD /* Images */,
 				34BA25821EAAFD2D00A41EE9 /* Info.plist */,
 			);
 			path = "Meeting Dashboard";
@@ -644,6 +647,14 @@
 				34BA25751EAAFD2D00A41EE9 /* ViewController.swift */,
 			);
 			name = Views;
+			sourceTree = "<group>";
+		};
+		34DB89881EB5854100D490BD /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				34DB89861EB5850A00D490BD /* meeting-32.png */,
+			);
+			name = Images;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -771,6 +782,7 @@
 				34BA257E1EAAFD2D00A41EE9 /* Assets.xcassets in Resources */,
 				3471A6F01EB190620053653A /* meetings.storyboard in Resources */,
 				34BA25791EAAFD2D00A41EE9 /* Main.storyboard in Resources */,
+				34DB89871EB5850A00D490BD /* meeting-32.png in Resources */,
 				3471A6F21EB1907D0053653A /* tasks.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

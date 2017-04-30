@@ -325,7 +325,7 @@ class GTDInboxViewController: UIViewController, UIPopoverPresentationControllerD
     {
         if myGmailMessages == nil
         {
-            myGmailMessages = gmailMessages(inGmailData: myGmailData)
+            myGmailMessages = gmailMessages(gmailDataRecord: myGmailData)
         }
         
         DispatchQueue.global(qos: .userInitiated).async

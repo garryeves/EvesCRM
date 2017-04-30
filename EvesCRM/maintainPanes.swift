@@ -145,19 +145,19 @@ class MaintainPanesViewController: UIViewController
         
         if pickerView == Table1Picker
         {
-            myUpdatePanes.setDisplayPane(myPicker1[row], inPaneOrder: 1)
+            myUpdatePanes.setDisplayPane(myPicker1[row], paneOrder: 1)
         }
         else if pickerView == Table2Picker
         {
-            myUpdatePanes.setDisplayPane(myPicker2[row], inPaneOrder: 2)
+            myUpdatePanes.setDisplayPane(myPicker2[row], paneOrder: 2)
         }
         else if pickerView == Table3Picker
         {
-            myUpdatePanes.setDisplayPane(myPicker3[row], inPaneOrder: 3)
+            myUpdatePanes.setDisplayPane(myPicker3[row], paneOrder: 3)
         }
         else if pickerView == Table4Picker
         {
-            myUpdatePanes.setDisplayPane(myPicker4[row], inPaneOrder: 4)
+            myUpdatePanes.setDisplayPane(myPicker4[row], paneOrder: 4)
         }
     }
 

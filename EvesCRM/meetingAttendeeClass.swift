@@ -151,7 +151,7 @@ extension coreDatabase
         }
     }
     
-    func loadMeetingsForAttendee(_ inAttendeeName: String)->[MeetingAttendees]
+    func loadMeetingsForAttendee(_ attendeeName: String)->[MeetingAttendees]
     {
         let fetchRequest = NSFetchRequest<MeetingAttendees>(entityName: "MeetingAttendees")
         
@@ -160,7 +160,7 @@ extension coreDatabase
         
         var predicate: NSPredicate
         
-        predicate = NSPredicate(format: "(name == \"\(inAttendeeName)\") && (updateType != \"Delete\")")
+        predicate = NSPredicate(format: "(name == \"\(attendeeName)\") && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

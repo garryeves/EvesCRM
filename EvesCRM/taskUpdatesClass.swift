@@ -81,23 +81,23 @@ class taskUpdates: NSObject
         }
     }
     
-    init(inTaskID: Int32)
+    init(taskID: Int32)
     {
-        myTaskID = inTaskID
+        myTaskID = taskID
         
     }
     
-    init(inUpdate: TaskUpdates)
+    init(updateObject: TaskUpdates)
     {
-        myTaskID = inUpdate.taskID
-        myUpdateDate = inUpdate.updateDate as Date!
-        myDetails = inUpdate.details!
-        mySource = inUpdate.source!
+        myTaskID = updateObject.taskID
+        myUpdateDate = updateObject.updateDate as Date!
+        myDetails = updateObject.details!
+        mySource = updateObject.source!
     }
     
     func save()
     {
-        myDatabaseConnection.saveTaskUpdate(myTaskID, inDetails: myDetails, inSource: mySource)
+        myDatabaseConnection.saveTaskUpdate(myTaskID, details: myDetails, source: mySource)
         
         if !saveCalled
         {
@@ -118,17 +118,17 @@ class taskUpdates: NSObject
 
 extension coreDatabase
 {
-    func saveTaskUpdate(_ inTaskID: Int32, inDetails: String, inSource: String, inUpdateDate: Date =  Date(), updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveTaskUpdate(_ taskID: Int32, details: String, source: String, updateDate: Date =  Date(), updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myTaskUpdate: TaskUpdates!
         
-        if getTaskUpdate(inTaskID, updateDate: inUpdateDate as NSDate).count == 0
+        if getTaskUpdate(taskID, updateDate: updateDate as NSDate).count == 0
         {
             myTaskUpdate = TaskUpdates(context: objectContext)
-            myTaskUpdate.taskID = inTaskID
-            myTaskUpdate.updateDate = inUpdateDate as NSDate
-            myTaskUpdate.details = inDetails
-            myTaskUpdate.source = inSource
+            myTaskUpdate.taskID = taskID
+            myTaskUpdate.updateDate = updateDate as NSDate
+            myTaskUpdate.details = details
+            myTaskUpdate.source = source
             if updateType == "CODE"
             {
                 myTaskUpdate.updateTime =  NSDate()
@@ -144,14 +144,14 @@ extension coreDatabase
         }
     }
     
-    func replaceTaskUpdate(_ inTaskID: Int32, inDetails: String, inSource: String, inUpdateDate: Date =  Date(), updateTime: Date =  Date(), updateType: String = "CODE")
+    func replaceTaskUpdate(_ taskID: Int32, details: String, source: String, updateDate: Date =  Date(), updateTime: Date =  Date(), updateType: String = "CODE")
     {
         
         let myTaskUpdate = TaskUpdates(context: objectContext)
-        myTaskUpdate.taskID = inTaskID
-        myTaskUpdate.updateDate = inUpdateDate as NSDate
-        myTaskUpdate.details = inDetails
-        myTaskUpdate.source = inSource
+        myTaskUpdate.taskID = taskID
+        myTaskUpdate.updateDate = updateDate as NSDate
+        myTaskUpdate.details = details
+        myTaskUpdate.source = source
         if updateType == "CODE"
         {
             myTaskUpdate.updateTime =  NSDate()
@@ -194,13 +194,13 @@ extension coreDatabase
         }
     }
     
-    func getTaskUpdates(_ inTaskID: Int32)->[TaskUpdates]
+    func getTaskUpdates(_ taskID: Int32)->[TaskUpdates]
     {
         let fetchRequest = NSFetchRequest<TaskUpdates>(entityName: "TaskUpdates")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(taskID == \(inTaskID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(taskID == \(taskID)) && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -401,7 +401,7 @@ extension CloudKitInteraction
                 let details = record.object(forKey: "details") as! String
                 let source = record.object(forKey: "source") as! String
                 
-                myDatabaseConnection.replaceTaskUpdate(taskID, inDetails: details, inSource: source, inUpdateDate: updateDate, updateTime: updateTime, updateType: updateType)
+                myDatabaseConnection.replaceTaskUpdate(taskID, details: details, source: source, updateDate: updateDate, updateTime: updateTime, updateType: updateType)
                 usleep(100)
             }
             sem.signal()
@@ -502,6 +502,6 @@ extension CloudKitInteraction
         let details = sourceRecord.object(forKey: "details") as! String
         let source = sourceRecord.object(forKey: "source") as! String
         
-        myDatabaseConnection.saveTaskUpdate(taskID, inDetails: details, inSource: source, inUpdateDate: updateDate, updateTime: updateTime, updateType: updateType)
+        myDatabaseConnection.saveTaskUpdate(taskID, details: details, source: source, updateDate: updateDate, updateTime: updateTime, updateType: updateType)
     }
 }

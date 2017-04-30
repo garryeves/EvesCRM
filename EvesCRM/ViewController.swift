@@ -326,25 +326,25 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
             {
                 case 1:
                     TableTypeButton1.setTitle(itemSelected, for: UIControlState())
-                    TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: myFullName), for: UIControlState())
+                    TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, title: myFullName), for: UIControlState())
                     setAddButtonState(1)
                     populateArraysForTables("Table1")
             
                 case 2:
                     TableTypeButton2.setTitle(itemSelected, for: UIControlState())
-                    TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myFullName), for: UIControlState())
+                    TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, title: myFullName), for: UIControlState())
                     setAddButtonState(2)
                     populateArraysForTables("Table2")
 
                 case 3:
                     TableTypeButton3.setTitle(itemSelected, for: UIControlState())
-                    TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myFullName), for: UIControlState())
+                    TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, title: myFullName), for: UIControlState())
                     setAddButtonState(3)
                     populateArraysForTables("Table3")
             
                 case 4:
                     TableTypeButton4.setTitle(itemSelected, for: UIControlState())
-                    TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myFullName), for: UIControlState())
+                    TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, title: myFullName), for: UIControlState())
                     setAddButtonState(4)
                     populateArraysForTables("Table4")
             
@@ -457,16 +457,16 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
         }
     }
     
-    func populateArraysForTables(_ inTable : String)
+    func populateArraysForTables(_ sourceTable : String)
     {
         
         // work out the table we are populating so we can then use this later
-        switch inTable
+        switch sourceTable
         {
         case "Table1":
-            table1Contents = populateArrayDetails(inTable)
+            table1Contents = populateArrayDetails(sourceTable)
             
-            populateArrayDetails(srcTable: inTable)
+            populateArrayDetails(srcTable: sourceTable)
             
             DispatchQueue.main.async
             {
@@ -474,9 +474,9 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
             }
             
         case "Table2":
-            table2Contents = populateArrayDetails(inTable)
+            table2Contents = populateArrayDetails(sourceTable)
             
-            populateArrayDetails(srcTable: inTable)
+            populateArrayDetails(srcTable: sourceTable)
             
             
             DispatchQueue.main.async
@@ -485,9 +485,9 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
             }
             
         case "Table3":
-            table3Contents = populateArrayDetails(inTable)
+            table3Contents = populateArrayDetails(sourceTable)
             
-            populateArrayDetails(srcTable: inTable)
+            populateArrayDetails(srcTable: sourceTable)
             
             DispatchQueue.main.async
             {
@@ -495,9 +495,9 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
             }
             
         case "Table4":
-            table4Contents = populateArrayDetails(inTable)
+            table4Contents = populateArrayDetails(sourceTable)
             
-            populateArrayDetails(srcTable: inTable)
+            populateArrayDetails(srcTable: sourceTable)
             
             DispatchQueue.main.async
             {
@@ -532,7 +532,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
                 dataType = TableTypeButton4.currentTitle!
                 
             default:
-                print("populateArrayDetails: inTable hit default for some reason")
+                print("populateArrayDetails: table hit default for some reason")
             
         }
         
@@ -646,9 +646,9 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
 //            }
 //            
 //        case "Omnifocus":
-//            writeRowToArray("Loading Omnifocus data.  Pane will refresh when finished", inTable: &workArray)
+//            writeRowToArray("Loading Omnifocus data.  Pane will refresh when finished", table: &workArray)
 //            
-//            omniTableToRefresh = inTable
+//            omniTableToRefresh = table
 //            
 //            openOmnifocusDropbox()
 //            
@@ -657,7 +657,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
             
             if myOneNoteNotebooks == nil
             {
-                myOneNoteNotebooks = oneNoteNotebooks(inViewController: self)
+                myOneNoteNotebooks = oneNoteNotebooks(sourceViewController: self)
                 myOneNoteNotebooks.delegate = self
             }
             else
@@ -666,9 +666,9 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
             }
             
 //        case "GMail":
-//            writeRowToArray("Loading GMail messages.  Pane will refresh when finished", inTable: &workArray)
+//            writeRowToArray("Loading GMail messages.  Pane will refresh when finished", table: &workArray)
 //            
-//            gmailTableToRefresh = inTable
+//            gmailTableToRefresh = table
 //            
 //            // Does connection to GmailData exist
 //            
@@ -684,9 +684,9 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
 //            }
 //            
 //        case "Hangouts":
-//            writeRowToArray("Loading Hangout messages.  Pane will refresh when finished", inTable: &workArray)
+//            writeRowToArray("Loading Hangout messages.  Pane will refresh when finished", table: &workArray)
 //            
-//            hangoutsTableToRefresh = inTable
+//            hangoutsTableToRefresh = table
 //            
 //            if myGmailData == nil
 //            {
@@ -759,7 +759,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
 //            
 //            if workArray.count == 0
 //            {
-//                writeRowToArray("No tasks found", inTable: &workArray)
+//                writeRowToArray("No tasks found", table: &workArray)
 //            }
 //            
 
@@ -783,18 +783,14 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
         }
     }
 
-    
-    
-    
-    
-    func populateArrayDetails(_ inTable: String) -> [TableData]
+    func populateArrayDetails(_ table: String) -> [TableData]
     {
         var workArray: [TableData] = [TableData]()
         var dataType: String = ""
         
         // First we need to work out the type of data in the table, we get this from the button
 
-        switch inTable
+        switch table
         {
             case "Table1":
                 dataType = TableTypeButton1.currentTitle!
@@ -809,7 +805,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
                 dataType = TableTypeButton4.currentTitle!
 
             default:
-                print("populateArrayDetails: inTable hit default for some reason")
+                print("populateArrayDetails: table hit default for some reason")
             
         }
         
@@ -865,7 +861,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
             case "Omnifocus":
                 writeRowToArray("Loading Omnifocus data.  Pane will refresh when finished", table: &workArray)
             
-                omniTableToRefresh = inTable
+                omniTableToRefresh = table
                 
                 openOmnifocusDropbox()
 
@@ -873,7 +869,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
             case "GMail":
                 writeRowToArray("Loading GMail messages.  Pane will refresh when finished", table: &workArray)
                 
-                gmailTableToRefresh = inTable
+                gmailTableToRefresh = table
                 
                 // Does connection to GmailData exist
                 
@@ -891,7 +887,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
         case "Hangouts":
             writeRowToArray("Loading Hangout messages.  Pane will refresh when finished", table: &workArray)
             
-            hangoutsTableToRefresh = inTable
+            hangoutsTableToRefresh = table
             
             if myGmailData == nil
             {
@@ -983,7 +979,7 @@ class ViewController: UIViewController, MyReminderDelegate, CNContactPickerDeleg
                     {
                         writeRowToArray("Loading Facebook posts.  Pane will refresh when finished", &workArray)
                         
-                        facebookTableToRefresh = inTable
+                        facebookTableToRefresh = table
 println("facebook ID = \(myFacebookID)")
                         
                         var accountStore = ACAccountStore()
@@ -1117,7 +1113,7 @@ println("facebook ID = \(myFacebookID)")
                 myRowContents = table4Contents[rowID].displayText
 
             default:
-                print("dataCellClicked: inTable hit default for some reason")
+                print("dataCellClicked: table hit default for some reason")
             
         }
   
@@ -1132,7 +1128,7 @@ println("facebook ID = \(myFacebookID)")
 
                     let myFullName = buildSearchString()
 
-                    openReminderEditView(reminderDetails.reminders[rowID].calendarItemIdentifier, inCalendarName: myFullName)
+                    openReminderEditView(reminderDetails.reminders[rowID].calendarItemIdentifier, calendarName: myFullName)
                 }
             
             case "Evernote":
@@ -1273,11 +1269,11 @@ println("facebook ID = \(myFacebookID)")
         }
     }
     
-    func setButtonTitle(_ inButton: UIButton, inTitle: String) -> String
+    func setButtonTitle(_ sourceButton: UIButton, title: String) -> String
     {
         var workString: String = ""
         
-        let dataType = inButton.currentTitle!
+        let dataType = sourceButton.currentTitle!
         
         let selectedType: String = getFirstPartofString(dataType)
         
@@ -1285,74 +1281,74 @@ println("facebook ID = \(myFacebookID)")
         switch selectedType
         {
             case "Reminders":
-                workString = "Reminders: use List '\(inTitle)'"
+                workString = "Reminders: use List '\(title)'"
 
             case "Evernote":
-                workString = "Evernote: use Tag '\(inTitle)'"
+                workString = "Evernote: use Tag '\(title)'"
 
             case "Omnifocus":
                 if myDisplayType == "Project"
                 {
-                    workString = "Omnifocus: use Project '\(inTitle)'"
+                    workString = "Omnifocus: use Project '\(title)'"
                 }
                 else
                 {
-                    workString = "Omnifocus: use Context '\(inTitle)'"
+                    workString = "Omnifocus: use Context '\(title)'"
                 }
             
         case "OneNote":
             
             if myDisplayType == "Project"
             {
-                workString = "OneNote: use Notebook '\(inTitle)'"
+                workString = "OneNote: use Notebook '\(title)'"
             }
             else
             {
-                workString = "OneNote: use Notebook 'People' and Section '\(inTitle)'"
+                workString = "OneNote: use Notebook 'People' and Section '\(title)'"
             }
             
             default:
-                workString = inButton.currentTitle!
+                workString = sourceButton.currentTitle!
         }
         
         if myDisplayType != ""
         {
-            setAddButtonState(inButton.tag)
+            setAddButtonState(sourceButton.tag)
         }
         
         return workString
     }
 
-    func returnFromSecondaryView(_ inTable: String, inRowID: Int)
+    func returnFromSecondaryView(_ sourceTable: String, sourceRowID: Int)
     {
         displayScreen()
-        populateArraysForTables(inTable)
-       // populateArrayDetails(inTable)
+        populateArraysForTables(sourceTable)
+       // populateArrayDetails(table)
     }
 
     
-    func openReminderEditView(_ inReminderID: String, inCalendarName: String)
+    func openReminderEditView(_ reminderID: String, calendarName: String)
     {
 
         let reminderViewControl = self.storyboard!.instantiateViewController(withIdentifier: "Reminders") as! reminderViewController
         
-        reminderViewControl.inAction = "Edit"
-        reminderViewControl.inReminderID = inReminderID
+        reminderViewControl.sourceAction = "Edit"
+        reminderViewControl.reminderID = reminderID
         reminderViewControl.delegate = self
-        reminderViewControl.inCalendarName = inCalendarName
+        reminderViewControl.calendarName = calendarName
  
         self.present(reminderViewControl, animated: true, completion: nil)
     }
     
     
-    func openReminderAddView(_ inCalendarName: String)
+    func openReminderAddView(_ calendarName: String)
     {
         
         let reminderViewControl = self.storyboard!.instantiateViewController(withIdentifier: "Reminders") as! reminderViewController
         
-        reminderViewControl.inAction = "Add"
+        reminderViewControl.sourceAction = "Add"
         reminderViewControl.delegate = self
-        reminderViewControl.inCalendarName = inCalendarName
+        reminderViewControl.calendarName = calendarName
         
         self.present(reminderViewControl, animated: true, completion: nil)
     }
@@ -1504,14 +1500,14 @@ println("facebook ID = \(myFacebookID)")
         controller.dismiss(animated: true, completion: nil)
     }
 
-    func setAddButtonState(_ inTable: Int)
+    func setAddButtonState(_ table: Int)
     {
         // Hide all of the buttons
         // Decide which buttons to show
         
         var selectedType: String = ""
         
-        switch inTable
+        switch table
         {
             case 1:
                 selectedType = getFirstPartofString(TableTypeButton1.currentTitle!)
@@ -1826,7 +1822,8 @@ print("Dropbox status = \(progress)")
 //    }
 //    
 //    
-    func readOmnifocusFileContents(_ inPath: String)
+    
+    func readOmnifocusFileContents(_ path: String)
     {
         var myFullName: String = ""
         var workArray: [TableData] = [TableData]()
@@ -1840,7 +1837,7 @@ print("Dropbox status = \(progress)")
         
         omniLinkArray.removeAll(keepingCapacity: false)
         
-        if let aStreamReader = StreamReader(path: inPath)
+        if let aStreamReader = StreamReader(path: path)
         {
             while let line = aStreamReader.nextLine()
             {
@@ -2036,7 +2033,7 @@ print("Dropbox status = \(progress)")
                 dataTable4.reloadData()
             
             default:
-                print("populateArrayDetails: inTable hit default for some reason")
+                print("populateArrayDetails: table hit default for some reason")
             
         }
     }
@@ -2061,12 +2058,12 @@ print("Dropbox status = \(progress)")
         }
     }
     
-    func openMeetings(_ inType: String, workingTask: calendarItem)
+    func openMeetings(_ type: String, workingTask: calendarItem)
     {
         let meetingViewControl = meetingStoryboard.instantiateViewController(withIdentifier: "MeetingsTab") as! meetingTabViewController
         
         let myPassedMeeting = MeetingModel()
-        myPassedMeeting.actionType = inType
+        myPassedMeeting.actionType = type
      //   let workingTask = eventDetails.calendarItems[myRowClicked]
         myPassedMeeting.event = workingTask
         myPassedMeeting.delegate = self
@@ -2143,26 +2140,26 @@ print("Dropbox status = \(progress)")
             if myPane.paneOrder == 1
             {
                 TableTypeButton1.setTitle(myPane.paneName, for: UIControlState())
-                TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: myButtonName), for: UIControlState())
+                TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, title: myButtonName), for: UIControlState())
                 itemSelected = myPane.paneName
             }
             
             if myPane.paneOrder == 2
             {
                 TableTypeButton2.setTitle(myPane.paneName, for: UIControlState())
-                TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myButtonName), for: UIControlState())
+                TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, title: myButtonName), for: UIControlState())
             }
             
             if myPane.paneOrder == 3
             {
                 TableTypeButton3.setTitle(myPane.paneName, for: UIControlState())
-                TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myButtonName), for: UIControlState())
+                TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, title: myButtonName), for: UIControlState())
             }
             
             if myPane.paneOrder == 4
             {
                 TableTypeButton4.setTitle(myPane.paneName, for: UIControlState())
-                TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myButtonName), for: UIControlState())
+                TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, title: myButtonName), for: UIControlState())
             }
         }
     }
@@ -2392,14 +2389,14 @@ print("Dropbox status = \(progress)")
     {
         if myGmailMessages == nil
         {
-            myGmailMessages = gmailMessages(inGmailData: myGmailData)
+            myGmailMessages = gmailMessages(gmailDataRecord: myGmailData)
         }
         
         if myDisplayType == "Project"
         {
             DispatchQueue.global(qos: .userInitiated).async
             {
-                self.myGmailMessages.getProjectMessages(self.mySelectedProject.projectName, inMessageType: "Mail")
+                self.myGmailMessages.getProjectMessages(self.mySelectedProject.projectName, messageType: "Mail")
             }
         }
         else
@@ -2415,7 +2412,7 @@ print("Dropbox status = \(progress)")
             }
             DispatchQueue.global(qos: .userInitiated).async
             {
-                self.myGmailMessages.getPersonMessages(searchString, emailAddresses: self.personContact.emailAddresses, inMessageType: "Mail")
+                self.myGmailMessages.getPersonMessages(searchString, emailAddresses: self.personContact.emailAddresses, messageType: "Mail")
             }
         }
      }
@@ -2424,14 +2421,14 @@ print("Dropbox status = \(progress)")
     {
         if myHangoutsMessages == nil
         {
-            myHangoutsMessages = gmailMessages(inGmailData: myGmailData)
+            myHangoutsMessages = gmailMessages(gmailDataRecord: myGmailData)
         }
         
         if myDisplayType == "Project"
         {
             DispatchQueue.global(qos: .userInitiated).async
             {
-                    self.myHangoutsMessages.getProjectMessages(self.mySelectedProject.projectName, inMessageType: "Hangouts")
+                    self.myHangoutsMessages.getProjectMessages(self.mySelectedProject.projectName, messageType: "Hangouts")
             }
         }
         else
@@ -2447,7 +2444,7 @@ print("Dropbox status = \(progress)")
             }
             DispatchQueue.global(qos: .userInitiated).async
             {
-                    self.myHangoutsMessages.getPersonMessages(searchString, emailAddresses: self.personContact.emailAddresses, inMessageType: "Hangouts")
+                    self.myHangoutsMessages.getPersonMessages(searchString, emailAddresses: self.personContact.emailAddresses, messageType: "Hangouts")
             }
         }
     }
@@ -2643,10 +2640,10 @@ print("Dropbox status = \(progress)")
         
         // Here is where we will set the titles for the buttons
         
-        TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: mySelectedProject.projectName), for: UIControlState())
-        TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: mySelectedProject.projectName), for: UIControlState())
-        TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: mySelectedProject.projectName), for: UIControlState())
-        TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: mySelectedProject.projectName), for: UIControlState())
+        TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, title: mySelectedProject.projectName), for: UIControlState())
+        TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, title: mySelectedProject.projectName), for: UIControlState())
+        TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, title: mySelectedProject.projectName), for: UIControlState())
+        TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, title: mySelectedProject.projectName), for: UIControlState())
     }
     
     func loadPerson(_ personRecord: CNContact)
@@ -2678,13 +2675,13 @@ print("Dropbox status = \(progress)")
     
         let myFullName = personContact.fullName
     
-        TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: myFullName), for: UIControlState())
-        TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myFullName), for: UIControlState())
-        TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myFullName), for: UIControlState())
-        TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myFullName), for: UIControlState())
+        TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, title: myFullName), for: UIControlState())
+        TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, title: myFullName), for: UIControlState())
+        TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, title: myFullName), for: UIControlState())
+        TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, title: myFullName), for: UIControlState())
     }
     
-    func loadContext(_ inContext: String)
+    func loadContext(_ contextString: String)
     {
         TableTypeSelection1.isHidden = true
         setSelectionButton.isHidden = true
@@ -2692,7 +2689,7 @@ print("Dropbox status = \(progress)")
         showFields()
         
         myDisplayType = "Context"
-        myContextName = inContext
+        myContextName = contextString
         
         // we need to go and find the record for the person we have selected
 
@@ -2710,12 +2707,12 @@ print("Dropbox status = \(progress)")
         
         // Here is where we will set the titles for the buttons
         
-        let myFullName = inContext
+        let myFullName = contextString
         
-        TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, inTitle: myFullName), for: UIControlState())
-        TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, inTitle: myFullName), for: UIControlState())
-        TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, inTitle: myFullName), for: UIControlState())
-        TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, inTitle: myFullName), for: UIControlState())
+        TableTypeButton1.setTitle(setButtonTitle(TableTypeButton1, title: myFullName), for: UIControlState())
+        TableTypeButton2.setTitle(setButtonTitle(TableTypeButton2, title: myFullName), for: UIControlState())
+        TableTypeButton3.setTitle(setButtonTitle(TableTypeButton3, title: myFullName), for: UIControlState())
+        TableTypeButton4.setTitle(setButtonTitle(TableTypeButton4, title: myFullName), for: UIControlState())
     }
 
     func MaintainPanesDidFinish(_ controller:MaintainPanesViewController)
@@ -2857,7 +2854,7 @@ print("Dropbox status = \(progress)")
                     self.populateArraysForTables("Table4")
                 
                 default:
-                    print("displayTaskOptions: inTable hit default for some reason")
+                    print("displayTaskOptions: table hit default for some reason")
             }
         })
         
@@ -2889,7 +2886,7 @@ print("Dropbox status = \(progress)")
                     self.table4Contents = Array()
                     self.populateArraysForTables("Table4")
                 
-                default:print("displayTaskOptions: inTable hit default for some reason")
+                default:print("displayTaskOptions: table hit default for some reason")
             }
         })
         
@@ -2921,7 +2918,7 @@ print("Dropbox status = \(progress)")
                     self.table4Contents = Array()
                     self.populateArraysForTables("Table4")
                 
-                default:print("displayTaskOptions: inTable hit default for some reason")
+                default:print("displayTaskOptions: table hit default for some reason")
             }
         })
         
@@ -2953,7 +2950,7 @@ print("Dropbox status = \(progress)")
                     self.table4Contents = Array()
                     self.populateArraysForTables("Table4")
                 
-                default:print("displayTaskOptions: inTable hit default for some reason")
+                default:print("displayTaskOptions: table hit default for some reason")
             }
         })
         
@@ -2985,7 +2982,7 @@ print("Dropbox status = \(progress)")
                     self.table4Contents = Array()
                     self.populateArraysForTables("Table4")
                 
-                default:print("displayTaskOptions: inTable hit default for some reason")
+                default:print("displayTaskOptions: table hit default for some reason")
             }
         })
         
@@ -3017,7 +3014,7 @@ print("Dropbox status = \(progress)")
                     self.table4Contents = Array()
                     self.populateArraysForTables("Table4")
                 
-                default:print("displayTaskOptions: inTable hit default for some reason")
+                default:print("displayTaskOptions: table hit default for some reason")
             }
         })
         
@@ -3060,7 +3057,7 @@ print("Dropbox status = \(progress)")
                     self.table4Contents = Array()
                     self.populateArraysForTables("Table4")
                 
-                default:print("displayTaskOptions - option 10: inTable hit default for some reason")
+                default:print("displayTaskOptions - option 10: table hit default for some reason")
             }
 
         })
@@ -3134,7 +3131,7 @@ print("Dropbox status = \(progress)")
                 table4Contents = Array()
                 populateArraysForTables("Table4")
             
-            default:print("displayTaskOptions: inTable hit default for some reason")
+            default:print("displayTaskOptions: table hit default for some reason")
         }
         showFields()
     }

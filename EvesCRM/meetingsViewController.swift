@@ -20,7 +20,8 @@ protocol MyMeetingsDelegate
 
 class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillDelegate
 {
-    fileprivate var passedMeeting: MeetingModel!
+    fileprivate var passedMeetingModel: MeetingModel!
+    var passedMeeting: calendarItem!
     
     @IBOutlet weak var lblMeetingHead: UILabel!
     @IBOutlet weak var lblLocationHead: UILabel!
@@ -60,15 +61,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
     fileprivate var pickerTarget: String = ""
     fileprivate var mySelectedRow: Int = 0
     fileprivate var rowToAction: Int = 0
-    
-//    lazy var activityPopover:UIViewController = {
-//        return self.activityViewController
-//        }()
-    
-//    lazy var activityViewController:UIActivityViewController = {
-//        return self.createActivityController()
-//         }()
-    
+
 //    // Textexpander
 //    
 //    fileprivate var snippetExpanded: Bool = false
@@ -79,9 +72,16 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
     {
         super.viewDidLoad()
         
-        passedMeeting = (tabBarController as! meetingTabViewController).myPassedMeeting
+        if passedMeeting == nil
+        {
+            passedMeetingModel = (tabBarController as! meetingTabViewController).myPassedMeeting
+            passedMeeting = (tabBarController as! meetingTabViewController).myPassedMeeting.event
+        }
         
-        lblMeetingHead.text = passedMeeting.actionType
+        if passedMeetingModel != nil
+        {
+            lblMeetingHead.text = passedMeetingModel.actionType
+        }
         
         toolbar.isTranslucent = false
         
@@ -90,36 +90,43 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
         
         let share = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(self.share(_:)))
         
-        let pageHead = UIBarButtonItem(title: passedMeeting.actionType, style: UIBarButtonItemStyle.plain, target: self, action: #selector(self.doNothing))
-        pageHead.tintColor = UIColor.black
-        
-        let spacer2 = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
-            target: self, action: nil)
-        self.toolbar.items=[spacer,pageHead, spacer2, share]
-        
-        lblLocation.text = passedMeeting.event.location
-        lblStartTime.text = passedMeeting.event.displayScheduledDate
-        lblMeetingName.text = passedMeeting.event.title
+        if passedMeetingModel != nil
+        {
+            let pageHead = UIBarButtonItem(title: passedMeetingModel.actionType, style: UIBarButtonItemStyle.plain, target: self, action: #selector(self.doNothing))
+            pageHead.tintColor = UIColor.black
+            let spacer2 = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
+                                          target: self, action: nil)
+            self.toolbar.items=[spacer,pageHead, spacer2, share]
+        }
+        else
+        {
+            let spacer2 = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
+                target: self, action: nil)
+            self.toolbar.items=[spacer, spacer2, share]
+        }
+        lblLocation.text = passedMeeting.location
+        lblStartTime.text = passedMeeting.displayScheduledDate
+        lblMeetingName.text = passedMeeting.title
         myPicker.isHidden = true
         btnSelect.isHidden = true
         
- //       passedMeeting.event.loadAgenda()
+ //       passedMeeting.loadAgenda()
         
-        if passedMeeting.event.chair != ""
+        if passedMeeting.chair != ""
         {
-            btnChair.setTitle(passedMeeting.event.chair, for: .normal)
+            btnChair.setTitle(passedMeeting.chair, for: .normal)
         }
         
-        if passedMeeting.event.minutes != ""
+        if passedMeeting.minutes != ""
         {
-            btnMinutes.setTitle(passedMeeting.event.minutes, for: .normal)
+            btnMinutes.setTitle(passedMeeting.minutes, for: .normal)
         }
 
-        if passedMeeting.event.previousMinutes != ""
+        if passedMeeting.previousMinutes != ""
         {
             // Get the previous meetings details
 
-            let myItems = myDatabaseConnection.loadAgenda(passedMeeting.event.previousMinutes, teamID: myCurrentTeam.teamID)
+            let myItems = myDatabaseConnection.loadAgenda(passedMeeting.previousMinutes, teamID: myCurrentTeam.teamID)
            
             for myItem in myItems
             {
@@ -133,11 +140,11 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
             }
         }
 
-        if passedMeeting.event.nextMeeting != ""
+        if passedMeeting.nextMeeting != ""
         {
             // Get the previous meetings details
             
-            let myItems = myDatabaseConnection.loadAgenda(passedMeeting.event.nextMeeting, teamID: myCurrentTeam.teamID)
+            let myItems = myDatabaseConnection.loadAgenda(passedMeeting.nextMeeting, teamID: myCurrentTeam.teamID)
             
             for myItem in myItems
             {
@@ -151,7 +158,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
             }
         }
         
-        if passedMeeting.event.previousMinutes != ""
+        if passedMeeting.previousMinutes != ""
         {
             btnDisplayPreviousMeeting.isHidden = false
         }
@@ -160,7 +167,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
             btnDisplayPreviousMeeting.isHidden = true
         }
         
-        if passedMeeting.event.nextMeeting != ""
+        if passedMeeting.nextMeeting != ""
         {
             btnDisplayNextMeeting.isHidden = false
         }
@@ -217,7 +224,10 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
         }
         else
         {
-            passedMeeting.delegate.myMeetingsDidFinish(self)
+            if passedMeetingModel != nil
+            {
+                passedMeetingModel.delegate.myMeetingsDidFinish(self)
+            }
         }
     }
     
@@ -246,7 +256,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int
     {
-        return passedMeeting.event.attendees.count
+        return passedMeeting.attendees.count
     }
     
     //    func collectionView(_ collectionView: UICollectionView, cellForItemAtIndexPath indexPath: IndexPath) -> UICollectionViewCell
@@ -255,16 +265,20 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
         var cell : myAttendeeDisplayItem!
             
         cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseAttendeeIdentifier, for: indexPath as IndexPath) as! myAttendeeDisplayItem
-        cell.lblName.text = passedMeeting.event.attendees[indexPath.row].name
-        cell.lblStatus.text = passedMeeting.event.attendees[indexPath.row].status
-        if passedMeeting.actionType == "Agenda"
+        cell.lblName.text = passedMeeting.attendees[indexPath.row].name
+        cell.lblStatus.text = passedMeeting.attendees[indexPath.row].status
+        if passedMeetingModel != nil
         {
-            cell.btnAction.setTitle("Remove", for: .normal)
+            if passedMeetingModel.actionType == "Agenda"
+            {
+                cell.btnAction.setTitle("Remove", for: .normal)
+            }
+            else
+            {
+                cell.btnAction.setTitle("Record Attendence", for: .normal)
+            }
         }
-        else
-        {
-            cell.btnAction.setTitle("Record Attendence", for: .normal)
-        }
+        
         cell.btnAction.tag = indexPath.row
             
         if (indexPath.row % 2 == 0)  // was .row
@@ -305,7 +319,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
     @IBAction func btnChairClick(_ sender: UIButton)
     {
         pickerOptions.removeAll(keepingCapacity: false)
-        for attendee in passedMeeting.event.attendees
+        for attendee in passedMeeting.attendees
         {
             pickerOptions.append(attendee.name)
         }
@@ -320,7 +334,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
     @IBAction func btnMinutes(_ sender: UIButton)
     {
         pickerOptions.removeAll(keepingCapacity: false)
-        for attendee in passedMeeting.event.attendees
+        for attendee in passedMeeting.attendees
         {
             pickerOptions.append(attendee.name)
         }
@@ -345,7 +359,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
         }
         else
         {
-            passedMeeting.event.addAttendee(txtAttendeeName.text!, emailAddress: txtAttendeeEmail.text!, type: "Participant" , status: "Added")
+            passedMeeting.addAttendee(txtAttendeeName.text!, emailAddress: txtAttendeeEmail.text!, type: "Participant" , status: "Added")
             colAttendees.reloadData()
         
             txtAttendeeName.text = ""
@@ -370,13 +384,13 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
             if pickerTarget == "chair"
             {
                 btnChair.setTitle(pickerOptions[mySelectedRow], for: .normal)
-                passedMeeting.event.chair = pickerOptions[mySelectedRow]
+                passedMeeting.chair = pickerOptions[mySelectedRow]
             }
         
             if pickerTarget == "minutes"
             {
                 btnMinutes.setTitle(pickerOptions[mySelectedRow], for: .normal)
-                passedMeeting.event.minutes = pickerOptions[mySelectedRow]
+                passedMeeting.minutes = pickerOptions[mySelectedRow]
             }
         
             if pickerTarget == "previousMeeting"
@@ -400,13 +414,13 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
                         
                             myDatabaseConnection.updatePreviousAgendaID("", meetingID: myItem.meetingID!, teamID: myCurrentTeam.teamID)
                         
-                            self.passedMeeting.event.previousMinutes = self.pickerEventArray[self.mySelectedRow]
+                            self.passedMeeting.previousMinutes = self.pickerEventArray[self.mySelectedRow]
                         
-                            if self.passedMeeting.event.previousMinutes != ""
+                            if self.passedMeeting.previousMinutes != ""
                             {
                                 // Get the previous meetings details
                             
-                                let myDisplayItems = myDatabaseConnection.loadAgenda(self.passedMeeting.event.previousMinutes, teamID: myCurrentTeam.teamID)
+                                let myDisplayItems = myDatabaseConnection.loadAgenda(self.passedMeeting.previousMinutes, teamID: myCurrentTeam.teamID)
                             
                                 for myDisplayItem in myDisplayItems
                                 {
@@ -437,13 +451,13 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
                 }
                 else
                 {
-                    passedMeeting.event.previousMinutes = pickerEventArray[mySelectedRow]
+                    passedMeeting.previousMinutes = pickerEventArray[mySelectedRow]
                 
-                    if passedMeeting.event.previousMinutes != ""
+                    if passedMeeting.previousMinutes != ""
                     {
                         // Get the previous meetings details
                     
-                        let myDisplayItems = myDatabaseConnection.loadAgenda(passedMeeting.event.previousMinutes, teamID: myCurrentTeam.teamID)
+                        let myDisplayItems = myDatabaseConnection.loadAgenda(passedMeeting.previousMinutes, teamID: myCurrentTeam.teamID)
                     
                         for myDisplayItem in myDisplayItems
                         {
@@ -483,7 +497,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
                             let myYes = UIAlertAction(title: "Yes, update the details", style: .default, handler: { (action: UIAlertAction) -> () in
                             // go and update the previous meeting
                             
-                                let myOriginalNextMeeting = self.passedMeeting.event.nextMeeting
+                                let myOriginalNextMeeting = self.passedMeeting.nextMeeting
                             
                                 myDatabaseConnection.updatePreviousAgendaID("", meetingID: myOriginalNextMeeting, teamID: myCurrentTeam.teamID)
                             
@@ -508,9 +522,9 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
                                     
                                     // Get the previous meetings details
                                     
-                                    self.passedMeeting.event.setNextMeeting(nextCalItem)
+                                    self.passedMeeting.setNextMeeting(nextCalItem)
 
-                                    let myItems = myDatabaseConnection.loadAgenda(self.passedMeeting.event.nextMeeting, teamID: myCurrentTeam.teamID)
+                                    let myItems = myDatabaseConnection.loadAgenda(self.passedMeeting.nextMeeting, teamID: myCurrentTeam.teamID)
                                     
                                     for myItem in myItems
                                     {
@@ -528,7 +542,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
                                 }
                                 else
                                 {
-                                    self.passedMeeting.event.nextMeeting = self.pickerEventArray[self.mySelectedRow]
+                                    self.passedMeeting.nextMeeting = self.pickerEventArray[self.mySelectedRow]
                                 }
                             })
                         
@@ -546,7 +560,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
                         }
                         else
                         {
-                            let myOriginalNextMeeting = passedMeeting.event.nextMeeting
+                            let myOriginalNextMeeting = passedMeeting.nextMeeting
                         
                             myDatabaseConnection.updatePreviousAgendaID("", meetingID: myOriginalNextMeeting, teamID: myCurrentTeam.teamID)
 
@@ -571,9 +585,9 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
                                 
                                 // Get the previous meetings details
                                 
-                                passedMeeting.event.setNextMeeting(nextCalItem)
+                                passedMeeting.setNextMeeting(nextCalItem)
                             
-                                let myItems = myDatabaseConnection.loadAgenda(passedMeeting.event.nextMeeting, teamID: myCurrentTeam.teamID)
+                                let myItems = myDatabaseConnection.loadAgenda(passedMeeting.nextMeeting, teamID: myCurrentTeam.teamID)
                             
                                 for myItem in myItems
                                 {
@@ -589,7 +603,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
                             }
                             else
                             {
-                                passedMeeting.event.nextMeeting = pickerEventArray[mySelectedRow]
+                                passedMeeting.nextMeeting = pickerEventArray[mySelectedRow]
                             }
                         }
                     }
@@ -598,7 +612,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
                 {
                     if pickerEventArray[mySelectedRow] != ""
                     {
-                        let myOriginalNextMeeting = self.passedMeeting.event.nextMeeting
+                        let myOriginalNextMeeting = self.passedMeeting.nextMeeting
                 
                         myDatabaseConnection.updatePreviousAgendaID("", meetingID: myOriginalNextMeeting, teamID: myCurrentTeam.teamID)
 
@@ -621,9 +635,9 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
 
                         // Get the previous meetings details
                         
-                        passedMeeting.event.setNextMeeting(nextCalItem)
+                        passedMeeting.setNextMeeting(nextCalItem)
                         
-                        let myItems = myDatabaseConnection.loadAgenda(passedMeeting.event.nextMeeting, teamID: myCurrentTeam.teamID)
+                        let myItems = myDatabaseConnection.loadAgenda(passedMeeting.nextMeeting, teamID: myCurrentTeam.teamID)
                     
                         for myItem in myItems
                         {
@@ -638,7 +652,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
                     }
                     else
                     {
-                        passedMeeting.event.nextMeeting = pickerEventArray[mySelectedRow]
+                        passedMeeting.nextMeeting = pickerEventArray[mySelectedRow]
                     }
                 }
             }
@@ -647,10 +661,10 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
         if pickerTarget == "attendence"
         {
             
-            passedMeeting.event.attendees[rowToAction].status = pickerOptions[mySelectedRow]
-            passedMeeting.event.attendees[rowToAction].save()
+            passedMeeting.attendees[rowToAction].status = pickerOptions[mySelectedRow]
+            passedMeeting.attendees[rowToAction].save()
             
-            passedMeeting.event.loadAttendees()
+            passedMeeting.loadAttendees()
             
             colAttendees.reloadData()
 
@@ -665,11 +679,14 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
     @IBAction func btnDisplayPreviousMeeting(_ sender: UIButton)
     {
         let meetingViewControl = meetingStoryboard.instantiateViewController(withIdentifier: "MeetingsTab") as! meetingTabViewController
-        
+print("gaza check this btnDisplayPreviousMeeting")
         let targetPassedMeeting = MeetingModel()
-        targetPassedMeeting.actionType = passedMeeting.actionType
+        if passedMeetingModel != nil
+        {
+            targetPassedMeeting.actionType = passedMeetingModel.actionType
+        }
         
-        let myItems = myDatabaseConnection.loadAgenda(passedMeeting.event.previousMinutes, teamID: myCurrentTeam.teamID)
+        let myItems = myDatabaseConnection.loadAgenda(passedMeeting.previousMinutes, teamID: myCurrentTeam.teamID)
         
         if myItems.count == 0
         {
@@ -684,7 +701,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
         {
             for _ in myItems
             {
-                let tempMeeting = calendarItem(meetingID: passedMeeting.event.previousMinutes, teamID: myCurrentTeam.teamID)
+                let tempMeeting = calendarItem(meetingID: passedMeeting.previousMinutes, teamID: myCurrentTeam.teamID)
                 tempMeeting.loadAgenda()
                 targetPassedMeeting.event = tempMeeting
             }
@@ -699,11 +716,13 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
     @IBAction func btnDisplayNextMeeting(_ sender: UIButton)
     {
         let meetingViewControl = meetingStoryboard.instantiateViewController(withIdentifier: "MeetingsTab") as! meetingTabViewController
-        
+print("gaza check this btnDisplayNextMeeting")
         let targetPassedMeeting = MeetingModel()
-        targetPassedMeeting.actionType = passedMeeting.actionType
- 
-        let myItems = myDatabaseConnection.loadAgenda(passedMeeting.event.nextMeeting, teamID: myCurrentTeam.teamID)
+        if passedMeetingModel != nil
+        {
+            targetPassedMeeting.actionType = passedMeetingModel.actionType
+        }
+        let myItems = myDatabaseConnection.loadAgenda(passedMeeting.nextMeeting, teamID: myCurrentTeam.teamID)
         
         if myItems.count == 0
         {
@@ -718,7 +737,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
         {
             for _ in myItems
             {
-                let tempMeeting = calendarItem(meetingID: passedMeeting.event.nextMeeting, teamID: myCurrentTeam.teamID)
+                let tempMeeting = calendarItem(meetingID: passedMeeting.nextMeeting, teamID: myCurrentTeam.teamID)
                 tempMeeting.loadAgenda()
                 targetPassedMeeting.event = tempMeeting
             }
@@ -780,7 +799,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
         lblPreviousMeeting.isHidden = false
         lblNextMeeting.isHidden = false
         btnNextMeeting.isHidden = false
-        if passedMeeting.event.previousMinutes != ""
+        if passedMeeting.previousMinutes != ""
         {
             btnDisplayPreviousMeeting.isHidden = false
         }
@@ -789,7 +808,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
             btnDisplayPreviousMeeting.isHidden = true
         }
         
-        if passedMeeting.event.nextMeeting != ""
+        if passedMeeting.nextMeeting != ""
         {
             btnDisplayNextMeeting.isHidden = false
         }
@@ -807,7 +826,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
         
         if action == "Remove"
         {
-            passedMeeting.event.removeAttendee(itemToRemove)
+            passedMeeting.removeAttendee(itemToRemove)
             colAttendees.reloadData()
         }
         else
@@ -839,19 +858,19 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
         pickerEventArray.removeAll(keepingCapacity: false)
         pickerStartDateArray.removeAll(keepingCapacity: false)
         
-        if passedMeeting.event.event!.recurrenceRules != nil
+        if passedMeeting.event!.recurrenceRules != nil
         {
             // Recurring event, so display rucurrences first
          
             // get the meeting id, and remove the trailing portion in order to use in a search
             
-            let myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(passedMeeting.event.eventID, meetingStartDate: passedMeeting.event.startDate as NSDate, teamID: myCurrentTeam.teamID)
+            let myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(passedMeeting.eventID, meetingStartDate: passedMeeting.startDate as NSDate, teamID: myCurrentTeam.teamID)
 
             if myItems.count > 0
             { // There is an previous meeting
                 for myItem in myItems
                 {
-                    if myItem.meetingID != passedMeeting.event.eventID
+                    if myItem.meetingID != passedMeeting.eventID
                     { // Not this meeting meeting
                         let startDateFormatter = DateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
@@ -866,13 +885,13 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
             
             // display remaining items, newest first
 
-            let myNonItems = myDatabaseConnection.searchPastAgendaWithoutPartialMeetingIDBeforeStart(passedMeeting.event.eventID, meetingStartDate: passedMeeting.event.startDate as NSDate, teamID: myCurrentTeam.teamID)
+            let myNonItems = myDatabaseConnection.searchPastAgendaWithoutPartialMeetingIDBeforeStart(passedMeeting.eventID, meetingStartDate: passedMeeting.startDate as NSDate, teamID: myCurrentTeam.teamID)
             
             if myNonItems.count > 0
             { // There is an previous meeting
                 for myItem in myNonItems
                 {
-                    if myItem.meetingID != passedMeeting.event.eventID
+                    if myItem.meetingID != passedMeeting.eventID
                     { // Not this meeting meeting
                         let startDateFormatter = DateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
@@ -893,13 +912,13 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
             
             // list items prior to meeting date
             
-            let myItems = myDatabaseConnection.listAgendaReverseDateAfterStart(passedMeeting.event.startDate as NSDate, teamID: myCurrentTeam.teamID)
+            let myItems = myDatabaseConnection.listAgendaReverseDateAfterStart(passedMeeting.startDate as NSDate, teamID: myCurrentTeam.teamID)
             
             if myItems.count > 0
             { // There is an previous meeting
                 for myItem in myItems
                 {
-                    if myItem.meetingID != passedMeeting.event.eventID
+                    if myItem.meetingID != passedMeeting.eventID
                     { // Not this meeting meeting
                         let startDateFormatter = DateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
@@ -934,7 +953,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
         
         let baseDate = Date()
         
-        let startDate = passedMeeting.event.startDate
+        let startDate = passedMeeting.startDate
         
         let myEndDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date")
         // This is string value so need to convert to integer
@@ -961,7 +980,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
             // Go through all the events and print them to the console
             for calItem in calItems
             {
-                if passedMeeting.event.eventID != "\(calItem.calendarItemExternalIdentifier) Date: \(calItem.startDate)"
+                if passedMeeting.eventID != "\(calItem.calendarItemExternalIdentifier) Date: \(calItem.startDate)"
                 {
                     let startDateFormatter = DateFormatter()
                     startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
@@ -974,7 +993,7 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
             }
         }
         
-        if passedMeeting.event.event?.recurrenceRules != nil
+        if passedMeeting.event?.recurrenceRules != nil
         {
             // Recurring event, so display rucurrences first
             
@@ -982,22 +1001,22 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
             
             var myItems: [MeetingAgenda]!
             
-            let tempEventID = passedMeeting.event.eventID
+            let tempEventID = passedMeeting.eventID
             if tempEventID.range(of: "/") != nil
             {
                 let myStringArr = tempEventID.components(separatedBy: "/")
-                myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(myStringArr[0], meetingStartDate: passedMeeting.event.startDate as NSDate, teamID: myCurrentTeam.teamID)
+                myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(myStringArr[0], meetingStartDate: passedMeeting.startDate as NSDate, teamID: myCurrentTeam.teamID)
             }
             else
             {
-                myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(passedMeeting.event.eventID, meetingStartDate: passedMeeting.event.startDate as NSDate, teamID: myCurrentTeam.teamID)
+                myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(passedMeeting.eventID, meetingStartDate: passedMeeting.startDate as NSDate, teamID: myCurrentTeam.teamID)
             }
             
             if myItems.count > 1
             { // There is an previous meeting
                 for myItem in myItems
                 {
-                    if myItem.meetingID != passedMeeting.event.eventID
+                    if myItem.meetingID != passedMeeting.eventID
                     { // Not this meeting meeting
                         let startDateFormatter = DateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
@@ -1021,24 +1040,24 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
             pickerTarget = "nextMeeting"
         }
     }
-    
+
     func createActivityController() -> UIActivityViewController
     {
         // Build up the details we want to share
-        let inString: String = ""
-        let sharingActivityProvider: SharingActivityProvider = SharingActivityProvider(placeholderItem: inString)
+        let sourceString: String = ""
+        let sharingActivityProvider: SharingActivityProvider = SharingActivityProvider(placeholderItem: sourceString)
         
-        let myTmp1 = passedMeeting.event.buildShareHTMLString().replacingOccurrences(of: "\n", with: "<p>")
+        let myTmp1 = passedMeeting.buildShareHTMLString().replacingOccurrences(of: "\n", with: "<p>")
         sharingActivityProvider.HTMLString = myTmp1
-        sharingActivityProvider.plainString = passedMeeting.event.buildShareString()
+        sharingActivityProvider.plainString = passedMeeting.buildShareString()
         
-        if passedMeeting.event.startDate.compare(Date()) == ComparisonResult.orderedAscending
+        if passedMeeting.startDate.compare(Date()) == ComparisonResult.orderedAscending
         {  // Historical so show Minutes
-            sharingActivityProvider.messageSubject = "Minutes for meeting: \(passedMeeting.event.title)"
+            sharingActivityProvider.messageSubject = "Minutes for meeting: \(passedMeeting.title)"
         }
         else
         {
-            sharingActivityProvider.messageSubject = "Agenda for meeting: \(passedMeeting.event.title)"
+            sharingActivityProvider.messageSubject = "Agenda for meeting: \(passedMeeting.title)"
         }
         
         let activityItems : Array = [sharingActivityProvider];

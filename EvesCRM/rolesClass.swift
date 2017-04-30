@@ -231,11 +231,11 @@ extension coreDatabase
         }
     }
     
-    func deleteRoleEntry(_ inRoleName: String, teamID: Int32)
+    func deleteRoleEntry(_ roleName: String, teamID: Int32)
     {
         let fetchRequest = NSFetchRequest<Roles>(entityName: "Roles")
         
-        let predicate = NSPredicate(format: "(roleDescription == \"\(inRoleName)\") && (teamID == \(teamID))")
+        let predicate = NSPredicate(format: "(roleDescription == \"\(roleName)\") && (teamID == \(teamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -259,10 +259,10 @@ extension coreDatabase
         saveContext()
     }
     
-    func getRoleDescription(_ inRoleID: Int32, teamID: Int32)->String
+    func getRoleDescription(_ roleID: Int32, teamID: Int32)->String
     {
         let fetchRequest = NSFetchRequest<Roles>(entityName: "Roles")
-        let predicate = NSPredicate(format: "(roleID == \(inRoleID)) && (updateType != \"Delete\") && (teamID == \(teamID))")
+        let predicate = NSPredicate(format: "(roleID == \(roleID)) && (updateType != \"Delete\") && (teamID == \(teamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -361,7 +361,7 @@ extension coreDatabase
             // Now go and populate the Decode for this
             
             let tempInt = "\(maxID)"
-            updateDecodeValue("Roles", inCodeValue: tempInt, inCodeType: "hidden")
+            updateDecodeValue("Roles", codeValue: tempInt, codeType: "hidden")
         }
         catch
         {

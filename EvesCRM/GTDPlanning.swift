@@ -552,7 +552,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             {
                 let tempObject = myDisplayHeadArray[indexPath.row] as! workingGTDItem
                         
-                let tempLevel = workingGTDLevel(inGTDLevel: tempObject.GTDLevel, teamID: tempObject.teamID)
+                let tempLevel = workingGTDLevel(sourceGTDLevel: tempObject.GTDLevel, teamID: tempObject.teamID)
                         
                 headerView.lblTitle.text = "My \(tempLevel.title)"
             }
@@ -581,7 +581,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                 {
                     let tempObject = myDisplayBodyArray[indexPath.row] as! workingGTDItem
                         
-                    let tempLevel = workingGTDLevel(inGTDLevel: tempObject.GTDLevel, teamID: tempObject.teamID)
+                    let tempLevel = workingGTDLevel(sourceGTDLevel: tempObject.GTDLevel, teamID: tempObject.teamID)
                         
                     headerView.lblTitle.text = "My \(tempLevel.title)"
                 }
@@ -650,7 +650,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                             
                             if fromCurrentPredecessor > 0
                             {
-                                let tempSuccessor = workingGTDItem(inGTDItemID: fromCurrentPredecessor, teamID: toItem.teamID)
+                                let tempSuccessor = workingGTDItem(GTDItemID: fromCurrentPredecessor, teamID: toItem.teamID)
                                 tempSuccessor.predecessor = toItem.GTDItemID
                             }
                         }
@@ -724,7 +724,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                             
                             if fromCurrentPredecessor > 0
                             {
-                                let tempSuccessor = workingGTDItem(inGTDItemID: fromCurrentPredecessor, teamID: toItem.teamID)
+                                let tempSuccessor = workingGTDItem(GTDItemID: fromCurrentPredecessor, teamID: toItem.teamID)
                                 tempSuccessor.predecessor = toItem.GTDItemID
                             }
                         }
@@ -834,7 +834,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     let myArray = myDatabaseConnection.getGTDItemsForLevel(tempObject.GTDLevel - 1, teamID: tempObject.teamID)
                     for myItem in myArray
                     {
-                        let myClass = workingGTDItem(inGTDItemID: myItem.gTDItemID, teamID: tempObject.teamID)
+                        let myClass = workingGTDItem(GTDItemID: myItem.gTDItemID, teamID: tempObject.teamID)
                         tempArray.append(myClass)
                     }
                     
@@ -848,7 +848,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
      
                 let myObject = mySavedParentObject as! project  // this is the current head record
 
-                let myObject2 = workingGTDItem(inGTDItemID: myObject.GTDItemID, teamID: myObject.teamID)  // This is the parent of that
+                let myObject2 = workingGTDItem(GTDItemID: myObject.GTDItemID, teamID: myObject.teamID)  // This is the parent of that
                 
                 if myObject2.GTDLevel == 1
                 {  // parent is a team
@@ -872,7 +872,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     let myArray = myDatabaseConnection.getGTDItemsForLevel(myObject2.GTDLevel, teamID: myObject2.teamID)
                     for myItem in myArray
                     {
-                        let myClass = workingGTDItem(inGTDItemID: myItem.gTDItemID, teamID: myObject2.teamID)
+                        let myClass = workingGTDItem(GTDItemID: myItem.gTDItemID, teamID: myObject2.teamID)
                         tempArray.append(myClass)
                     }
                     
@@ -955,7 +955,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     }
                     else
                     {
-                        let tempGTD = workingGTDLevel(inGTDLevel: myObject.GTDLevel - 1, teamID: mySelectedTeam.teamID)
+                        let tempGTD = workingGTDLevel(sourceGTDLevel: myObject.GTDLevel - 1, teamID: mySelectedTeam.teamID)
                             
                         if tempGTD.title == ""
                         {
@@ -1346,7 +1346,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                 let myArray = myDatabaseConnection.getGTDItemsForLevel(tempObject.GTDLevel, teamID: tempObject.teamID)
                 for myItem in myArray
                 {
-                    let myClass = workingGTDItem(inGTDItemID: myItem.gTDItemID, teamID: tempObject.teamID)
+                    let myClass = workingGTDItem(GTDItemID: myItem.gTDItemID, teamID: tempObject.teamID)
                     tempArray.append(myClass)
                 }
                 
@@ -1356,7 +1356,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             
             case "project":
                 let myObject = mySavedParentObject as! project  // this is the current head record
-                let myObject2 = workingGTDItem(inGTDItemID: myObject.GTDItemID, teamID: myObject.teamID)  // This is the parent of that
+                let myObject2 = workingGTDItem(GTDItemID: myObject.GTDItemID, teamID: myObject.teamID)  // This is the parent of that
             
                 myDisplayHeadArray = buildProjectArray(myObject2.children)
                 
@@ -1394,7 +1394,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
 
         // Need to get the name of the GTD Level
         
-        let tempGTD = workingGTDLevel(inGTDLevel: 1, teamID: displayTeam.teamID)
+        let tempGTD = workingGTDLevel(sourceGTDLevel: 1, teamID: displayTeam.teamID)
         
         if tempGTD.title == ""
         {
@@ -1411,9 +1411,9 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             let popover = popoverContent.popoverPresentationController
             popover!.delegate = self
             
-            let tempChild = workingGTDItem(teamID: displayTeam.teamID, inParentID: 0)
+            let tempChild = workingGTDItem(teamID: displayTeam.teamID, parentID: 0)
             tempChild.GTDLevel = 1
-            popoverContent.inGTDObject = tempChild
+            popoverContent.GTDObject = tempChild
             
             popover!.sourceView = self.view
             
@@ -1519,8 +1519,8 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         
         return myOptions
     }
-    
-    func displayGTDOptions(_ inGTDItem: workingGTDItem, inDisplayType: String, xPos: CGFloat, yPos: CGFloat) -> UIAlertController
+   
+    func displayGTDOptions(_ GTDItem: workingGTDItem, displayType: String, xPos: CGFloat, yPos: CGFloat) -> UIAlertController
     {
         // Need to get the name of the GTD Level
         
@@ -1528,14 +1528,14 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         var myLevelType: String = ""
         var actionType: String = ""
         
-        if inGTDItem.GTDLevel == Int32(mySelectedTeam.GTDLevels.count)
+        if GTDItem.GTDLevel == Int32(mySelectedTeam.GTDLevels.count)
         {
             myChildType = "Activity"
             actionType = "project"
         }
         else
         {
-            let tempGTD = workingGTDLevel(inGTDLevel: inGTDItem.GTDLevel + 1, teamID: mySelectedTeam.teamID)
+            let tempGTD = workingGTDLevel(sourceGTDLevel: GTDItem.GTDLevel + 1, teamID: mySelectedTeam.teamID)
         
             if tempGTD.title == ""
             {
@@ -1546,7 +1546,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                 myChildType = "\(tempGTD.title)"
             }
             
-            let tempGTD2 = workingGTDLevel(inGTDLevel: inGTDItem.GTDLevel, teamID: mySelectedTeam.teamID)
+            let tempGTD2 = workingGTDLevel(sourceGTDLevel: GTDItem.GTDLevel, teamID: mySelectedTeam.teamID)
             
             if tempGTD2.title == ""
             {
@@ -1569,7 +1569,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             popover!.delegate = self
             popover!.sourceView = self.view
             
-            popoverContent.inGTDObject = inGTDItem
+            popoverContent.GTDObject = GTDItem
                 
             popoverContent.preferredContentSize = CGSize(width: 500,height: 400)
             
@@ -1587,7 +1587,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             })
             
         let myOption2 = UIAlertAction(title: "Delete entry", style: .default, handler: { (action: UIAlertAction) -> () in
-            if !inGTDItem.delete()
+            if !GTDItem.delete()
             {
                 let alert = UIAlertController(title: "Delete item", message:
                     "Unable to delete item.  Check that there are no child records", preferredStyle: UIAlertControllerStyle.alert)
@@ -1604,7 +1604,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         
         var myOption0: UIAlertAction!
         
-        if inDisplayType == "Head"
+        if displayType == "Head"
         {
             myOption0 = UIAlertAction(title: "Add \(myChildType)", style: .default, handler: { (action: UIAlertAction) -> () in
                 if actionType == "GTDItem"
@@ -1615,9 +1615,9 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     popover!.delegate = self
                     popover!.sourceView = self.view
                 
-                    let tempChild = workingGTDItem(teamID: self.mySelectedTeam.teamID, inParentID: inGTDItem.GTDItemID)
-                    tempChild.GTDLevel = inGTDItem.GTDLevel + 1
-                    popoverContent.inGTDObject = tempChild
+                    let tempChild = workingGTDItem(teamID: self.mySelectedTeam.teamID, parentID: GTDItem.GTDItemID)
+                    tempChild.GTDLevel = GTDItem.GTDLevel + 1
+                    popoverContent.GTDObject = tempChild
                 
                     popoverContent.preferredContentSize = CGSize(width: 500,height: 400)
                     
@@ -1644,8 +1644,8 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                     
                     let tempProject = project(teamID: self.mySelectedTeam.teamID)
  //                   self.myParentObject = tempProject
-                    tempProject.GTDItemID = inGTDItem.GTDItemID
-                    popoverContent.inProjectObject = tempProject
+                    tempProject.GTDItemID = GTDItem.GTDItemID
+                    popoverContent.projectObject = tempProject
                     popoverContent.myActionType = "Add"
                     popoverContent.mySelectedTeam = self.mySelectedTeam
                         
@@ -1666,14 +1666,14 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             })
             myOptions.addAction(myOption0)
         }
-        else if inDisplayType == "Body"
+        else if displayType == "Body"
         {
             myOption0 = UIAlertAction(title: "Zoom", style: .default, handler: { (action: UIAlertAction) -> () in
                 self.myDisplayHeadArray = self.myDisplayBodyArray
-                self.highlightID = inGTDItem.GTDItemID
+                self.highlightID = GTDItem.GTDItemID
                 self.buildHead(self.highlightID)
                     
-                self.buildBody(inGTDItem)
+                self.buildBody(GTDItem)
             })
             myOptions.addAction(myOption0)
         }
@@ -1684,7 +1684,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
         return myOptions
     }
     
-    func displayProjectOptions(_ projectItem: project, inDisplayType: String, xPos: CGFloat, yPos: CGFloat) -> UIAlertController
+    func displayProjectOptions(_ projectItem: project, displayType: String, xPos: CGFloat, yPos: CGFloat) -> UIAlertController
     {
         let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .actionSheet)
         
@@ -1695,7 +1695,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             popover!.delegate = self
             popover!.sourceView = self.view
             
-            popoverContent.inProjectObject = projectItem
+            popoverContent.projectObject = projectItem
             popoverContent.myActionType = "Edit"
             popoverContent.mySelectedTeam = self.mySelectedTeam
             
@@ -1714,7 +1714,7 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             self.present(popoverContent, animated: true, completion: nil)
         })
         
-        if inDisplayType == "Body"
+        if displayType == "Body"
         {
             let myOption0 = UIAlertAction(title: "Zoom", style: .default, handler: { (action: UIAlertAction) -> () in
                 self.myDisplayHeadArray = self.myDisplayBodyArray
@@ -1857,14 +1857,14 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
             {
                 let tempObject = myDisplayHeadArray[rowNumber!] as! workingGTDItem
                 highlightID = tempObject.GTDItemID
-                myOptions = displayGTDOptions(myDisplayHeadArray[rowNumber!] as! workingGTDItem, inDisplayType: "Head", xPos: myHeadCells[rowNumber!].displayX, yPos: myHeadCells[rowNumber!].displayY)
+                myOptions = displayGTDOptions(myDisplayHeadArray[rowNumber!] as! workingGTDItem, displayType: "Head", xPos: myHeadCells[rowNumber!].displayX, yPos: myHeadCells[rowNumber!].displayY)
             }
             else if myDisplayHeadArray[rowNumber!] is project
             {
                 let tempObject = myDisplayHeadArray[rowNumber!] as! project
                 highlightID = tempObject.projectID
                         
-                myOptions = displayProjectOptions(myDisplayHeadArray[rowNumber!] as! project, inDisplayType: "Head", xPos: myHeadCells[rowNumber!].displayX, yPos: myHeadCells[rowNumber!].displayY)
+                myOptions = displayProjectOptions(myDisplayHeadArray[rowNumber!] as! project, displayType: "Head", xPos: myHeadCells[rowNumber!].displayX, yPos: myHeadCells[rowNumber!].displayY)
             }
             myOptions.popoverPresentationController!.sourceView = self.view
                     
@@ -1880,14 +1880,14 @@ class MaintainGTDPlanningViewController: UIViewController, UITextViewDelegate, U
                 let tempObject = myDisplayBodyArray[rowNumber!] as! workingGTDItem
                 highlightID = tempObject.GTDItemID
                         
-                myOptions = displayGTDOptions(myDisplayBodyArray[rowNumber!] as! workingGTDItem, inDisplayType: "Body", xPos: myBodyCells[rowNumber!].displayX, yPos: myBodyCells[rowNumber!].displayY)
+                myOptions = displayGTDOptions(myDisplayBodyArray[rowNumber!] as! workingGTDItem, displayType: "Body", xPos: myBodyCells[rowNumber!].displayX, yPos: myBodyCells[rowNumber!].displayY)
             }
             else if myDisplayBodyArray[rowNumber!] is project
             {
                 let tempObject = myDisplayBodyArray[rowNumber!] as! project
                 highlightID = tempObject.projectID
                         
-                myOptions = displayProjectOptions(myDisplayBodyArray[rowNumber!] as! project, inDisplayType: "Body", xPos: myBodyCells[rowNumber!].displayX, yPos: myBodyCells[rowNumber!].displayY)
+                myOptions = displayProjectOptions(myDisplayBodyArray[rowNumber!] as! project, displayType: "Body", xPos: myBodyCells[rowNumber!].displayX, yPos: myBodyCells[rowNumber!].displayY)
             }
             else if myDisplayBodyArray[rowNumber!] is task
             {
