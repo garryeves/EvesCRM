@@ -15,13 +15,20 @@ protocol MyMeetingsDelegate
 {
     func myMeetingsDidFinish(_ controller:meetingsViewController)
     func myMeetingsAgendaDidFinish(_ controller:meetingAgendaViewController)
-    
+}
+
+protocol meetingCommunicationDelegate
+{
+    func meetingUpdated()
+    func callMeetingAgenda(_ meetingRecord: calendarItem)
+    func displayTaskList(_ meetingRecord: calendarItem)
 }
 
 class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillDelegate
 {
     fileprivate var passedMeetingModel: MeetingModel!
     var passedMeeting: calendarItem!
+    var meetingCommunication: meetingCommunicationDelegate!
     
     @IBOutlet weak var lblMeetingHead: UILabel!
     @IBOutlet weak var lblLocationHead: UILabel!
@@ -50,6 +57,8 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
     @IBOutlet weak var toolbar: UIToolbar!
     @IBOutlet weak var btnDisplayPreviousMeeting: UIButton!
     @IBOutlet weak var btnDisplayNextMeeting: UIButton!
+    @IBOutlet weak var btnAgenda: UIButton!
+    @IBOutlet weak var btnCompleted: UIButton!
     
     fileprivate let reuseAttendeeIdentifier = "AttendeeCell"
     fileprivate let reuseAttendeeStatusIdentifier = "AttendeeStatusCell"
@@ -194,7 +203,6 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
 //        textExpander.fillCompletionScheme = "EvesCRM-fill-xc"
 //        textExpander.fillDelegate = self
 //        textExpander.nextDelegate = self
-        myCurrentViewController = meetingsViewController()
         myCurrentViewController = self
     }
     
@@ -231,19 +239,19 @@ class meetingsViewController: UIViewController, MyMeetingsDelegate //, SMTEFillD
         }
     }
     
-    func numberOfComponentsInPickerView(_ TableTypeSelection1: UIPickerView) -> Int {
+    func numberOfComponentsInPickerView(_ Picker: UIPickerView) -> Int {
         return 1
     }
     
-    func pickerView(_ TableTypeSelection1: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+    func pickerView(_ Picker: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         return pickerOptions.count
     }
     
-    func pickerView(_ TableTypeSelection1: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String! {
+    func pickerView(_ Picker: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String! {
         return pickerOptions[row]
     }
     
-    func pickerView(_ TableTypeSelection1: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+    func pickerView(_ Picker: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         // Write code for select
 
         mySelectedRow = row
@@ -774,6 +782,11 @@ print("gaza check this btnDisplayNextMeeting")
         btnNextMeeting.isHidden = true
         btnDisplayPreviousMeeting.isHidden = true
         btnDisplayNextMeeting.isHidden = true
+        if meetingCommunication == nil
+        {
+            btnAgenda.isHidden = true
+        }
+        btnCompleted.isHidden = true
     }
     
     func showFields()
@@ -816,6 +829,13 @@ print("gaza check this btnDisplayNextMeeting")
         {
             btnDisplayNextMeeting.isHidden = true
         }
+        if meetingCommunication == nil
+        {
+            btnAgenda.isHidden = false
+        }
+        
+print("gaza put an if here once we are storeing and retrieveing this")
+        btnCompleted.isHidden = false
     }
     
     func attendeeRemoved(_ notification: Notification)
@@ -864,13 +884,13 @@ print("gaza check this btnDisplayNextMeeting")
          
             // get the meeting id, and remove the trailing portion in order to use in a search
             
-            let myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(passedMeeting.eventID, meetingStartDate: passedMeeting.startDate as NSDate, teamID: myCurrentTeam.teamID)
+            let myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(passedMeeting.meetingID, meetingStartDate: passedMeeting.startDate as NSDate, teamID: myCurrentTeam.teamID)
 
             if myItems.count > 0
             { // There is an previous meeting
                 for myItem in myItems
                 {
-                    if myItem.meetingID != passedMeeting.eventID
+                    if myItem.meetingID != passedMeeting.meetingID
                     { // Not this meeting meeting
                         let startDateFormatter = DateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
@@ -885,13 +905,13 @@ print("gaza check this btnDisplayNextMeeting")
             
             // display remaining items, newest first
 
-            let myNonItems = myDatabaseConnection.searchPastAgendaWithoutPartialMeetingIDBeforeStart(passedMeeting.eventID, meetingStartDate: passedMeeting.startDate as NSDate, teamID: myCurrentTeam.teamID)
+            let myNonItems = myDatabaseConnection.searchPastAgendaWithoutPartialMeetingIDBeforeStart(passedMeeting.meetingID, meetingStartDate: passedMeeting.startDate as NSDate, teamID: myCurrentTeam.teamID)
             
             if myNonItems.count > 0
             { // There is an previous meeting
                 for myItem in myNonItems
                 {
-                    if myItem.meetingID != passedMeeting.eventID
+                    if myItem.meetingID != passedMeeting.meetingID
                     { // Not this meeting meeting
                         let startDateFormatter = DateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
@@ -918,7 +938,7 @@ print("gaza check this btnDisplayNextMeeting")
             { // There is an previous meeting
                 for myItem in myItems
                 {
-                    if myItem.meetingID != passedMeeting.eventID
+                    if myItem.meetingID != passedMeeting.meetingID
                     { // Not this meeting meeting
                         let startDateFormatter = DateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
@@ -980,7 +1000,7 @@ print("gaza check this btnDisplayNextMeeting")
             // Go through all the events and print them to the console
             for calItem in calItems
             {
-                if passedMeeting.eventID != "\(calItem.calendarItemExternalIdentifier) Date: \(calItem.startDate)"
+                if passedMeeting.meetingID != "\(calItem.calendarItemExternalIdentifier) Date: \(calItem.startDate)"
                 {
                     let startDateFormatter = DateFormatter()
                     startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
@@ -1001,22 +1021,22 @@ print("gaza check this btnDisplayNextMeeting")
             
             var myItems: [MeetingAgenda]!
             
-            let tempEventID = passedMeeting.eventID
-            if tempEventID.range(of: "/") != nil
+            let tempMeetingID = passedMeeting.meetingID
+            if tempMeetingID.range(of: "/") != nil
             {
-                let myStringArr = tempEventID.components(separatedBy: "/")
+                let myStringArr = tempMeetingID.components(separatedBy: "/")
                 myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(myStringArr[0], meetingStartDate: passedMeeting.startDate as NSDate, teamID: myCurrentTeam.teamID)
             }
             else
             {
-                myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(passedMeeting.eventID, meetingStartDate: passedMeeting.startDate as NSDate, teamID: myCurrentTeam.teamID)
+                myItems = myDatabaseConnection.searchPastAgendaByPartialMeetingIDBeforeStart(passedMeeting.meetingID, meetingStartDate: passedMeeting.startDate as NSDate, teamID: myCurrentTeam.teamID)
             }
             
             if myItems.count > 1
             { // There is an previous meeting
                 for myItem in myItems
                 {
-                    if myItem.meetingID != passedMeeting.eventID
+                    if myItem.meetingID != passedMeeting.meetingID
                     { // Not this meeting meeting
                         let startDateFormatter = DateFormatter()
                         startDateFormatter.dateFormat = "EEE d MMM h:mm aaa"
@@ -1153,6 +1173,18 @@ print("gaza check this btnDisplayNextMeeting")
     func myMeetingsDidFinish(_ controller:meetingsViewController)
     {
         controller.dismiss(animated: true, completion: nil)
+    }
+    
+    @IBAction func btnAgenda(_ sender: UIButton)
+    {
+        if meetingCommunication != nil
+        {
+            meetingCommunication.callMeetingAgenda(passedMeeting)
+        }
+    }
+    
+    @IBAction func btnCompleted(_ sender: UIButton)
+    {
     }
     
 //    //---------------------------------------------------------------

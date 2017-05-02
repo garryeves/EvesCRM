@@ -20,7 +20,7 @@ protocol MyTaskDelegate
 class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDelegate
 {
     var passedTask: task!
-    var passedEvent: calendarItem!
+    var passedMeeting: calendarItem!
     var passedTaskType: String = "Task"
     
     @IBOutlet weak var lblTaskTitle: UILabel!
@@ -60,6 +60,8 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
     @IBOutlet weak var txtRepeatInterval: UITextField!
     @IBOutlet weak var btnRepeatPeriod: UIButton!
     @IBOutlet weak var btnRepeatBase: UIButton!
+    @IBOutlet weak var btnSave: UIBarButtonItem!
+    @IBOutlet weak var btnShare: UIBarButtonItem!
 
     fileprivate var pickerOptions: [String] = Array()
     fileprivate var pickerTarget: String = ""
@@ -99,15 +101,6 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
         txtTaskDescription.layer.borderWidth = 0.5
         txtTaskDescription.layer.cornerRadius = 5.0
         txtTaskDescription.layer.masksToBounds = true
-        
-        toolbar.isTranslucent = false
-        
-        let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
-            target: self, action: nil)
-        
-        let share = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(self.share(_:)))
-        
-        self.toolbar.items=[spacer, share]
         
         if passedTask.taskID != 0
         {
@@ -783,7 +776,10 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
     
     @IBAction func txtRepeatInterval(_ sender: UITextField)
     {
-        passedTask.repeatInterval = Int16(txtRepeatInterval.text!)!
+        if txtRepeatInterval.text != nil
+        {
+            passedTask.repeatInterval = Int16(txtRepeatInterval.text!)!
+        }
     }
     
     @IBAction func btnrepeatPeriod(_ sender: UIButton)
@@ -1291,11 +1287,11 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
         targetButton.setTitle(myDateFormatter.string(from: targetDate), for: .normal)
     }
 
-    func share(_ sender: AnyObject)
+    @IBAction func btnShare(_ sender: UIBarButtonItem)
     {
         if UIDevice.current.userInterfaceIdiom == .phone {
             let activityViewController: UIActivityViewController = createActivityController()
-            activityViewController.popoverPresentationController!.sourceView = sender.view
+            activityViewController.popoverPresentationController!.sourceView = self.view
             present(activityViewController, animated:true, completion:nil)
         } else if UIDevice.current.userInterfaceIdiom == .pad {
             // actually, you don't have to do this. But if you do want a popover, this is how to do it.
@@ -1330,17 +1326,21 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
     
     func keyboardWillShow(_ notification: Notification)
     {
-        if let userInfo = notification.userInfo {
-            if let keyboardSize =  (userInfo[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
-                kbHeight = keyboardSize.height
-                self.animateTextField(true)
-            }
-        }
+print("Yes")
+        
+        self.updateViewConstraints()
+        
+//        if let userInfo = notification.userInfo {
+//            if let keyboardSize =  (userInfo[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+//                kbHeight = keyboardSize.height
+//                self.animateTextField(true)
+//            }
+//        }
     }
     
     func keyboardWillHide(_ notification: Notification)
     {
-        self.animateTextField(false)
+//        self.animateTextField(false)
     }
     
     func animateTextField(_ up: Bool)
@@ -1433,6 +1433,10 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
         }
     }
 
+    @IBAction func btnSave(_ sender: UIBarButtonItem)
+    {
+        passedTask.save()
+    }
 
 //    //---------------------------------------------------------------
 //    // These three methods implement the SMTEFillDelegate protocol to support fill-ins

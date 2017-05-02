@@ -12,8 +12,9 @@ import UIKit
 
 class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTaskListDelegate, KDRearrangeableCollectionViewDelegate, UIGestureRecognizerDelegate //,  SMTEFillDelegate
 {
-    
-    fileprivate var passedMeeting: MeetingModel!
+    fileprivate var passedMeetingModel: MeetingModel!
+    var passedMeeting: calendarItem!
+    var meetingCommunication: meetingCommunicationDelegate!
     
     @IBOutlet weak var lblAgendaItems: UILabel!
     @IBOutlet weak var colAgenda: UICollectionView!
@@ -58,7 +59,11 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
     {
         super.viewDidLoad()
         
-        passedMeeting = (tabBarController as! meetingTabViewController).myPassedMeeting
+        if passedMeeting == nil
+        {
+            passedMeetingModel = (tabBarController as! meetingTabViewController).myPassedMeeting
+            passedMeeting = (tabBarController as! meetingTabViewController).myPassedMeeting.event
+        }
         
         toolbar.isTranslucent = false
         
@@ -67,16 +72,26 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
         
         let share = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(self.share(_:)))
         
-        let pageHead = UIBarButtonItem(title: passedMeeting.actionType, style: UIBarButtonItemStyle.plain, target: self, action: #selector(self.doNothing))
-        pageHead.tintColor = UIColor.black
-        
-        let spacer2 = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
-            target: self, action: nil)
-        self.toolbar.items=[spacer,pageHead, spacer2, share]
-        
-        if passedMeeting.actionType != "Agenda"
+        if passedMeetingModel != nil
         {
-            btnAddAgendaItem.isHidden = true
+            let pageHead = UIBarButtonItem(title: passedMeetingModel.actionType, style: UIBarButtonItemStyle.plain, target: self, action: #selector(self.doNothing))
+            pageHead.tintColor = UIColor.black
+        
+            let spacer2 = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
+            self.toolbar.items=[spacer,pageHead, spacer2, share]
+        }
+        else
+        {
+            let spacer2 = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
+            self.toolbar.items=[spacer, spacer2, share]
+        }
+        
+        if passedMeetingModel != nil
+        {
+            if passedMeetingModel.actionType != "Agenda"
+            {
+                btnAddAgendaItem.isHidden = true
+            }
         }
         
         buildAgendaArray()
@@ -86,7 +101,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
         btnOwner.setTitle("Select Owner", for: .normal)
         
         myDateFormatter.timeStyle = DateFormatter.Style.short
-        myWorkingTime = passedMeeting.event.startDate as Date
+        myWorkingTime = passedMeeting.startDate as Date
         
         let showGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleSwipe(_:)))
         showGestureRecognizer.direction = UISwipeGestureRecognizerDirection.right
@@ -103,7 +118,6 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
 //        textExpander.fillCompletionScheme = "EvesCRM-fill-xc"
 //        textExpander.fillDelegate = self
 //        textExpander.nextDelegate = self
-        myCurrentViewController = meetingAgendaViewController()
         myCurrentViewController = self
     }
     
@@ -117,7 +131,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
     {
         super.viewWillLayoutSubviews()
         colAgenda.collectionViewLayout.invalidateLayout()
-        myWorkingTime = passedMeeting.event.startDate as Date
+        myWorkingTime = passedMeeting.startDate as Date
         colAgenda.reloadData()
     }
     
@@ -154,7 +168,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
      
         if indexPath.row == 0
         {
-            myWorkingTime = passedMeeting.event.startDate as Date
+            myWorkingTime = passedMeeting.startDate as Date
         }
         
         cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseAgendaTime, for: indexPath as IndexPath) as! myMovableAgendaItem
@@ -184,26 +198,34 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath)
     {
         let itemToUpdate = indexPath.row
-        
+  
         if myAgendaList[itemToUpdate].agendaID == 0
         {  // This is a previous meeting tasks row, so call the task list
-            let taskListViewControl = tasksStoryboard.instantiateViewController(withIdentifier: "taskList") as! taskListViewController
-            taskListViewControl.delegate = self
-            taskListViewControl.myTaskListType = "Meeting"
-            taskListViewControl.myMeetingID = passedMeeting.event.previousMinutes
             
-            self.present(taskListViewControl, animated: true, completion: nil)
+            if meetingCommunication != nil
+            {
+                meetingCommunication.displayTaskList(passedMeeting)
+            }
+            else
+            {
+                let taskListViewControl = tasksStoryboard.instantiateViewController(withIdentifier: "taskList") as! taskListViewController
+                taskListViewControl.delegate = self
+                taskListViewControl.myTaskListType = "Meeting"
+                taskListViewControl.passedMeeting = passedMeeting
+                
+                self.present(taskListViewControl, animated: true, completion: nil)
+            }
         }
         else
         {  // This is a normal Agenda item so call the Agenda item screen
             let agendaViewControl = meetingStoryboard.instantiateViewController(withIdentifier: "AgendaItems") as! agendaItemViewController
             agendaViewControl.delegate = self
-            agendaViewControl.event = passedMeeting.event
-            agendaViewControl.actionType = passedMeeting.actionType
-        
+            agendaViewControl.event = passedMeeting
+            agendaViewControl.actionType = passedMeetingModel.actionType
+            
             let agendaItem = myAgendaList[itemToUpdate]
             agendaViewControl.agendaItem = agendaItem
-        
+            
             self.present(agendaViewControl, animated: true, completion: nil)
         }
     }
@@ -228,7 +250,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
     
     func moveDataItem(_ toIndexPath : IndexPath, fromIndexPath: IndexPath) -> Void
     {
-        if passedMeeting.actionType != "Agenda"
+        if passedMeetingModel.actionType != "Agenda"
         {
             let alert = UIAlertController(title: "Move item", message:
                 "You can only move Agenda items when building the Agenda.", preferredStyle: UIAlertControllerStyle.alert)
@@ -323,7 +345,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
         }
         else
         {
-            let agendaItem = meetingAgendaItem(meetingID: passedMeeting.event.eventID)
+            let agendaItem = meetingAgendaItem(meetingID: passedMeeting.meetingID)
             agendaItem.status = "Open"
             agendaItem.decisionMade = ""
             agendaItem.discussionNotes = ""
@@ -347,7 +369,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
             // reload the Agenda Items collection view
             buildAgendaArray()
             
-            myWorkingTime = passedMeeting.event.startDate as Date
+            myWorkingTime = passedMeeting.startDate as Date
             colAgenda.reloadData()
         
             // set the fields to blank
@@ -363,7 +385,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
         pickerOptions.removeAll(keepingCapacity: false)
         
         pickerOptions.append("")
-        for attendee in passedMeeting.event.attendees
+        for attendee in passedMeeting.attendees
         {
             pickerOptions.append(attendee.name)
         }
@@ -402,10 +424,10 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
 
     func buildAgendaArray()
     {
-        passedMeeting.event.loadAgendaItems()
-        if passedMeeting.event.previousMinutes == ""
+        passedMeeting.loadAgendaItems()
+        if passedMeeting.previousMinutes == ""
         { // No previous meeting
-            myAgendaList = passedMeeting.event.agendaItems
+            myAgendaList = passedMeeting.agendaItems
         }
         else
         { // Previous meeting exists
@@ -413,7 +435,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
             
             myAgendaList.removeAll(keepingCapacity: false)
             myAgendaList.append(previousMinutes)
-            for myItem in passedMeeting.event.agendaItems
+            for myItem in passedMeeting.agendaItems
             {
                 myAgendaList.append(myItem)
             }
@@ -426,7 +448,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
     func myAgendaItemDidFinish(_ controller:agendaItemViewController, actionType: String)
     {
         buildAgendaArray()
-        myWorkingTime = passedMeeting.event.startDate as Date
+        myWorkingTime = passedMeeting.startDate as Date
         colAgenda.reloadData()
         
         controller.dismiss(animated: true, completion: nil)
@@ -435,7 +457,7 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
     func myTaskListDidFinish(_ controller:taskListViewController)
     {
         buildAgendaArray()
-        myWorkingTime = passedMeeting.event.startDate as Date
+        myWorkingTime = passedMeeting.startDate as Date
         colAgenda.reloadData()
         
         controller.dismiss(animated: true, completion: nil)
@@ -447,17 +469,17 @@ class meetingAgendaViewController: UIViewController, MyAgendaItemDelegate, MyTas
         let sourceString: String = ""
         let sharingActivityProvider: SharingActivityProvider = SharingActivityProvider(placeholderItem: sourceString)
         
-        let myTmp1 = passedMeeting.event.buildShareHTMLString().replacingOccurrences(of: "\n", with: "<p>")
+        let myTmp1 = passedMeeting.buildShareHTMLString().replacingOccurrences(of: "\n", with: "<p>")
         sharingActivityProvider.HTMLString = myTmp1
-        sharingActivityProvider.plainString = passedMeeting.event.buildShareString()
+        sharingActivityProvider.plainString = passedMeeting.buildShareString()
 
-        if passedMeeting.event.startDate.compare(Date()) == ComparisonResult.orderedAscending
+        if passedMeeting.startDate.compare(Date()) == ComparisonResult.orderedAscending
         {  // Historical so show Minutes
-            sharingActivityProvider.messageSubject = "Minutes for meeting: \(passedMeeting.event.title)"
+            sharingActivityProvider.messageSubject = "Minutes for meeting: \(passedMeeting.title)"
         }
         else
         {
-            sharingActivityProvider.messageSubject = "Agenda for meeting: \(passedMeeting.event.title)"
+            sharingActivityProvider.messageSubject = "Agenda for meeting: \(passedMeeting.title)"
         }
         
         let activityItems : Array = [sharingActivityProvider];

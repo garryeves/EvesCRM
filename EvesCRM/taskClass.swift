@@ -190,8 +190,6 @@ class task: NSObject
         {
             if myDueDate == nil
             {
-                myDueDate = getDefaultDate() as Date!
-                save()
                 return ""
             }
             else if myDueDate == getDefaultDate() as Date
@@ -226,8 +224,6 @@ class task: NSObject
         {
             if myStartDate == nil
             {
-                myStartDate = getDefaultDate() as Date!
-                save()
                 return ""
             }
             else if myStartDate == getDefaultDate() as Date
@@ -379,8 +375,6 @@ class task: NSObject
         {
             if myCompletionDate == nil
             {
-                myCompletionDate = getDefaultDate() as Date!
-                save()
                 return ""
             }
             else if myCompletionDate == getDefaultDate() as Date
@@ -591,6 +585,21 @@ class task: NSObject
     
     func save()
     {
+        if myDueDate == nil
+        {
+            myDueDate = getDefaultDate() as Date!
+        }
+        
+        if myStartDate == nil
+        {
+            myStartDate = getDefaultDate() as Date!
+        }
+        
+        if myCompletionDate == nil
+        {
+            myCompletionDate = getDefaultDate() as Date!
+        }
+        
         myDatabaseConnection.saveTask(myTaskID, title: myTitle, details: myDetails, dueDate: myDueDate, startDate: myStartDate, status: myStatus, priority: myPriority, energyLevel: myEnergyLevel, estimatedTime: myEstimatedTime, estimatedTimeType: myEstimatedTimeType, projectID: myProjectID, completionDate: myCompletionDate!, repeatInterval: myRepeatInterval, repeatType: myRepeatType, repeatBase: myRepeatBase, flagged: myFlagged, urgency: myUrgency, teamID: myTeamID)
         
         if !saveCalled

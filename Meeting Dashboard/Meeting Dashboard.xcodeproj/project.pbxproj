@@ -205,6 +205,7 @@
 		34AE775B1EB1A96C000232CB /* ProjectNote+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34AE76E51EB1A96C000232CB /* ProjectNote+CoreDataProperties.swift */; };
 		34AE775C1EB1A96C000232CB /* ProjectNote+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34AE76E51EB1A96C000232CB /* ProjectNote+CoreDataProperties.swift */; };
 		34AE775D1EB1A96C000232CB /* ProjectNote+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34AE76E51EB1A96C000232CB /* ProjectNote+CoreDataProperties.swift */; };
+		34B5E51F1EB6D65E00BEF4E0 /* presentation-32.png in Resources */ = {isa = PBXBuildFile; fileRef = 34B5E51E1EB6D65E00BEF4E0 /* presentation-32.png */; };
 		34BA25741EAAFD2D00A41EE9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25731EAAFD2D00A41EE9 /* AppDelegate.swift */; };
 		34BA25761EAAFD2D00A41EE9 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34BA25751EAAFD2D00A41EE9 /* ViewController.swift */; };
 		34BA25791EAAFD2D00A41EE9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34BA25771EAAFD2D00A41EE9 /* Main.storyboard */; };
@@ -374,6 +375,7 @@
 		34AE76E31EB1A96C000232CB /* TaskContext+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "TaskContext+CoreDataProperties.swift"; path = "../TaskContext+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		34AE76E41EB1A96C000232CB /* ProjectNote+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ProjectNote+CoreDataClass.swift"; path = "../ProjectNote+CoreDataClass.swift"; sourceTree = "<group>"; };
 		34AE76E51EB1A96C000232CB /* ProjectNote+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "ProjectNote+CoreDataProperties.swift"; path = "../ProjectNote+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		34B5E51E1EB6D65E00BEF4E0 /* presentation-32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "presentation-32.png"; path = "../../EvesCRM/Images.xcassets/presentation-32.imageset/presentation-32.png"; sourceTree = "<group>"; };
 		34BA25701EAAFD2D00A41EE9 /* Meeting Dashboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Meeting Dashboard.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		34BA25731EAAFD2D00A41EE9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		34BA25751EAAFD2D00A41EE9 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -652,6 +654,7 @@
 		34DB89881EB5854100D490BD /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				34B5E51E1EB6D65E00BEF4E0 /* presentation-32.png */,
 				34DB89861EB5850A00D490BD /* meeting-32.png */,
 			);
 			name = Images;
@@ -780,6 +783,7 @@
 			files = (
 				34BA25811EAAFD2D00A41EE9 /* LaunchScreen.storyboard in Resources */,
 				34BA257E1EAAFD2D00A41EE9 /* Assets.xcassets in Resources */,
+				34B5E51F1EB6D65E00BEF4E0 /* presentation-32.png in Resources */,
 				3471A6F01EB190620053653A /* meetings.storyboard in Resources */,
 				34BA25791EAAFD2D00A41EE9 /* Main.storyboard in Resources */,
 				34DB89871EB5850A00D490BD /* meeting-32.png in Resources */,

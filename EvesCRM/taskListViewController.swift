@@ -14,26 +14,27 @@ protocol MyTaskListDelegate
     func myTaskListDidFinish(_ controller:taskListViewController)
 }
 
-class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPresentationControllerDelegate
+class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPresentationControllerDelegate//, UICollectionViewDelegate
 {
+    @IBOutlet weak var displayView: UIView!
+    @IBOutlet weak var btnBack: UIBarButtonItem!
+    @IBOutlet weak var colTaskList: UICollectionView!
+    @IBOutlet weak var displayViewHeight: NSLayoutConstraint!
+
     var delegate: MyTaskListDelegate?
     var myTaskListType: String = ""
-    var myMeetingID: String = ""
-    
-    @IBOutlet weak var colTaskList: UICollectionView!
+    var passedMeeting: calendarItem!
     
     fileprivate var myTaskList: [task] = Array()
     
-    fileprivate let cellTaskName = "taskCell"
-    
-    fileprivate var myCells: [cellDetails] = Array()
     fileprivate var headerSize: CGFloat = 0.0
+    fileprivate var kbHeight: CGFloat!
     
     override func viewDidLoad()
     {
         super.viewDidLoad()
-        
-        if myMeetingID == ""
+ 
+        if passedMeeting == nil
         {
             // Load up full task list
         }
@@ -45,32 +46,23 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
             
             // Parse through All of the previous meetings that led to this meeting looking for tasks that are not yet closed, as need to display them for completeness
             
-            let myMeetingRecords = myDatabaseConnection.loadAgenda(myMeetingID, teamID: myCurrentTeam.teamID)
+ //           if myMeeting.previousMeetingID != ""
+            if passedMeeting.previousMinutes != ""
+            {
+//                let myOutstandingTasks = parsePastMeeting(myMeeting.previousMeetingID!)
+                let myOutstandingTasks = parsePastMeeting(passedMeeting.previousMinutes)
             
-            if myMeetingRecords.count == 0
-            {
-                // No meeting found, so no further action
-            }
-            else
-            {
-                for myMeetingRecord in myMeetingRecords
+                if myOutstandingTasks.count > 0
                 {
-                    if myMeetingRecord.previousMeetingID != ""
+                    for myTask in myOutstandingTasks
                     {
-                        let myOutstandingTasks = parsePastMeeting(myMeetingRecord.previousMeetingID!)
-                    
-                        if myOutstandingTasks.count > 0
-                        {
-                            for myTask in myOutstandingTasks
-                            {
-                                myTaskList.append(myTask)
-                            }
-                        }
+                        myTaskList.append(myTask)
                     }
                 }
             }
-            let myData = myDatabaseConnection.getMeetingsTasks(myMeetingID)
             
+            let myData = myDatabaseConnection.getMeetingsTasks(passedMeeting.meetingID)
+                
             for myItem in myData
             {
                 let newTask = task(taskID: myItem.taskID)
@@ -85,6 +77,9 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
         let hideGestureRecognizer:UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.handleSwipe(_:)))
         hideGestureRecognizer.direction = UISwipeGestureRecognizerDirection.left
         self.view.addGestureRecognizer(hideGestureRecognizer)
+        
+        notificationCenter.addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
     
     override func didReceiveMemoryWarning()
@@ -115,7 +110,6 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
 
     func numberOfSectionsInCollectionView(_ collectionView: UICollectionView) -> Int
     {
-        myCells.removeAll()
         return 1
     }
     
@@ -128,8 +122,8 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
     @objc(collectionView:cellForItemAtIndexPath:) func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {
         var cell : myTaskListItem!
-        
-        cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellTaskName, for: indexPath as IndexPath) as! myTaskListItem
+
+        cell = collectionView.dequeueReusableCell(withReuseIdentifier: "taskCell", for: indexPath as IndexPath) as! myTaskListItem
         
         if myTaskList.count == 0
         {
@@ -197,7 +191,6 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
         }
         
         cell.layoutSubviews()
-        
         return cell
     }
     
@@ -214,10 +207,25 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: IndexPath)
     {
-        let myOptions = displayTaskOptions(collectionView, workingTask: myTaskList[indexPath.row])
-        myOptions.popoverPresentationController!.sourceView = collectionView
+        let taskViewControl = tasksStoryboard.instantiateViewController(withIdentifier: "tasks") as! taskViewController
+        taskViewControl.passedTask = myTaskList[indexPath.row]
+        if self.myTaskListType == "Meeting"
+        {
+            taskViewControl.passedMeeting = passedMeeting
+            taskViewControl.passedTaskType = "minutes"
+        }
         
-        self.present(myOptions, animated: true, completion: nil)
+        removeExistingViews(displayView)
+        
+        taskViewControl.view.frame = CGRect(x: 0, y: 0, width: displayView.frame.size.width, height: displayView.frame.size.height)
+        addChildViewController(taskViewControl)
+        displayView.addSubview(taskViewControl.view)
+        taskViewControl.didMove(toParentViewController: self)
+        
+//        let myOptions = displayTaskOptions(collectionView, workingTask: myTaskList[indexPath.row])
+//        myOptions.popoverPresentationController!.sourceView = collectionView
+//        
+//        self.present(myOptions, animated: true, completion: nil)
     }
     
     
@@ -230,54 +238,98 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
         return retVal
     }
     
-    func displayTaskOptions(_ sourceView: UIView, workingTask: task) -> UIAlertController
+    @IBAction func btnBack(_ sender: UIBarButtonItem)
     {
-        let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .actionSheet)
-        
-        let myOption1 = UIAlertAction(title: "Edit Action", style: .default, handler: { (action: UIAlertAction) -> () in
-            let popoverContent = tasksStoryboard.instantiateViewController(withIdentifier: "tasks") as! taskViewController
-            popoverContent.modalPresentationStyle = .popover
-            let popover = popoverContent.popoverPresentationController
-            popover!.delegate = self
-            popover!.sourceView = sourceView
-            popover!.sourceRect = CGRect(x: 700,y: 700,width: 0,height: 0)
-            
-            popoverContent.passedTask = workingTask
-            
-            if self.myTaskListType == "Meeting"
-            {
-                popoverContent.passedTaskType = "minutes"
-                let myWorkingItem = calendarItem(meetingID: self.myMeetingID, teamID: myCurrentTeam.teamID)
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    func keyboardWillShow(_ notification: Notification)
+    {
+        if let userInfo = notification.userInfo {
+            if let keyboardSize =  (userInfo[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+                kbHeight = keyboardSize.height
                 
-                popoverContent.passedEvent = myWorkingItem
+                let tempSize = CGRect(x: colTaskList.frame.origin.x, y: colTaskList.frame.origin.y, width: colTaskList.frame.size.width, height: colTaskList.frame.size.height - kbHeight)
+                
+                colTaskList.frame = tempSize
+//                
+//                let tempSize2 = CGRect(x: displayView.frame.origin.x, y: displayView.frame.origin.y, width: displayView.frame.size.width, height: displayView.frame.size.height + kbHeight)
+//                
+//                displayView.frame = tempSize2
+//                
+//                displayView.updateConstraints()
+                
+                displayViewHeight.constant = 500 + kbHeight
+                updateViewConstraints()
             }
+        }
+    }
+    
+    func keyboardWillHide(_ notification: Notification)
+    {
+        if kbHeight > 0
+        {
+            let tempSize = CGRect(x: colTaskList.frame.origin.x, y: colTaskList.frame.origin.y, width: colTaskList.frame.size.width, height: colTaskList.frame.size.height + kbHeight)
             
-            popoverContent.preferredContentSize = CGSize(width: 700,height: 700)
-            
-            self.present(popoverContent, animated: true, completion: nil)
-        })
-        
-        let myOption2 = UIAlertAction(title: "Action Updates", style: .default, handler: { (action: UIAlertAction) -> () in
-            let popoverContent = tasksStoryboard.instantiateViewController(withIdentifier: "taskUpdate") as! taskUpdatesViewController
-            popoverContent.modalPresentationStyle = .popover
-            let popover = popoverContent.popoverPresentationController
-            popover!.delegate = self
-            popover!.sourceView = sourceView
-            popover!.sourceRect = CGRect(x: 700,y: 700,width: 0,height: 0)
-            
-            popoverContent.passedTask = workingTask
-            
-            popoverContent.preferredContentSize = CGSize(width: 700,height: 700)
-            
-            self.present(popoverContent, animated: true, completion: nil)
-        })
-        
-        myOptions.addAction(myOption1)
-        myOptions.addAction(myOption2)
-        
-        return myOptions
+            colTaskList.frame = tempSize
+//
+            displayViewHeight.constant = 500
+            updateViewConstraints()
+
+//            let tempSize2 = CGRect(x: displayView.frame.origin.x, y: displayView.frame.origin.y, width: displayView.frame.size.width, height: displayView.frame.size.height - kbHeight)
+//            
+//            displayView.frame = tempSize2
+        }
     }
 
+    
+//    func displayTaskOptions(_ sourceView: UIView, workingTask: task) -> UIAlertController
+//    {
+//        let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .actionSheet)
+//        
+//        let myOption1 = UIAlertAction(title: "Edit Action", style: .default, handler: { (action: UIAlertAction) -> () in
+//            let popoverContent = tasksStoryboard.instantiateViewController(withIdentifier: "tasks") as! taskViewController
+//            popoverContent.modalPresentationStyle = .popover
+//            let popover = popoverContent.popoverPresentationController
+//            popover!.delegate = self
+//            popover!.sourceView = sourceView
+//            popover!.sourceRect = CGRect(x: 700,y: 700,width: 0,height: 0)
+//            
+//            popoverContent.passedTask = workingTask
+//            
+//            if self.myTaskListType == "Meeting"
+//            {
+//                popoverContent.passedTaskType = "minutes"
+//                let myWorkingItem = calendarItem(meetingID: self.myMeetingID, teamID: myCurrentTeam.teamID)
+//                
+//                popoverContent.passedEvent = myWorkingItem
+//            }
+//            
+//            popoverContent.preferredContentSize = CGSize(width: 700,height: 700)
+//            
+//            self.present(popoverContent, animated: true, completion: nil)
+//        })
+//        
+//        let myOption2 = UIAlertAction(title: "Action Updates", style: .default, handler: { (action: UIAlertAction) -> () in
+//            let popoverContent = tasksStoryboard.instantiateViewController(withIdentifier: "taskUpdate") as! taskUpdatesViewController
+//            popoverContent.modalPresentationStyle = .popover
+//            let popover = popoverContent.popoverPresentationController
+//            popover!.delegate = self
+//            popover!.sourceView = sourceView
+//            popover!.sourceRect = CGRect(x: 700,y: 700,width: 0,height: 0)
+//            
+//            popoverContent.passedTask = workingTask
+//            
+//            popoverContent.preferredContentSize = CGSize(width: 700,height: 700)
+//            
+//            self.present(popoverContent, animated: true, completion: nil)
+//        })
+//        
+//        myOptions.addAction(myOption1)
+//        myOptions.addAction(myOption2)
+//        
+//        return myOptions
+//    }
 }
 
 class myTaskListItem: UICollectionViewCell

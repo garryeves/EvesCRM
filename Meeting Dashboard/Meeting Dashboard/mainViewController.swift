@@ -8,7 +8,7 @@
 
 import UIKit
 
-class mainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate
+class mainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, meetingCommunicationDelegate
 {
     @IBOutlet weak var lblMeetings: UILabel!
     @IBOutlet weak var tblMeetings: UITableView!
@@ -28,9 +28,7 @@ class mainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         myTeams = teams()
         
-        loadMeetingDisplayArray()
-        
-        loadCalendarDisplayArray()
+        meetingUpdated()
     }
     
     override func didReceiveMemoryWarning() {
@@ -71,7 +69,7 @@ class mainViewController: UIViewController, UITableViewDataSource, UITableViewDe
                 {
                     cell.lblTime.text = meetingDisplay[indexPath.row].calendarItem?.displayStartDate
                     cell.lblTitle.text = meetingDisplay[indexPath.row].displayText
-                    cell.lblTime.font = UIFont.systemFont(ofSize: cell.lblTime.font.pointSize)
+                    cell.lblTime.font = UIFont.systemFont(ofSize: cell.lblTitle.font.pointSize)
                     cell.accessoryType = .none
                 }
                 
@@ -97,25 +95,7 @@ class mainViewController: UIViewController, UITableViewDataSource, UITableViewDe
             case tblMeetings:
                 if meetingDisplay[indexPath.row].calendarItem != nil
                 {
-                    let meetingViewControl = meetingStoryboard.instantiateViewController(withIdentifier: "Meetings") as! meetingsViewController
-                    meetingViewControl.passedMeeting = meetingDisplay[indexPath.row].calendarItem
-                    
-//                    displayView.autoresizesSubviews = true
-//                    displayView.clipsToBounds = true
-//                    
-                    meetingViewControl.view.frame = CGRect(x: 0, y: 0, width: displayView.frame.size.width, height: displayView.frame.size.height)
-                    displayView.addSubview(meetingViewControl.view)
-//                    
-//                    meetingViewControl.didMove(toParentViewController: self)
-                    
-                    
-                    
-               //     self.currentViewController!.view.translatesAutoresizingMaskIntoConstraints = false
-//                    self.addChildViewController(meetingViewControl)
-//                    meetingViewControl.view.frame = displayView.frame
-//                    displayView.addSubview(meetingViewControl.view)
-//                    
-                    //self.present(meetingViewControl, animated: true, completion: nil)
+                    callMeeting(meetingDisplay[indexPath.row].calendarItem!)
                 }
             
             case tblCalendar:
@@ -156,6 +136,51 @@ class mainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         let tempCal = iOSCalendar()
         
         eventDisplayList = tempCal.getCalendarRecords()
+    }
+    
+    func meetingUpdated()
+    {
+        loadMeetingDisplayArray()
+        
+        loadCalendarDisplayArray()
+    }
+    
+    func callMeeting( _ meetingRecord: calendarItem)
+    {
+        let meetingViewControl = meetingStoryboard.instantiateViewController(withIdentifier: "Meetings") as! meetingsViewController
+        meetingViewControl.passedMeeting = meetingRecord
+        meetingViewControl.meetingCommunication = self
+        
+        removeExistingViews(displayView)
+        
+        addChildViewController(meetingViewControl)
+        meetingViewControl.view.frame = CGRect(x: 0, y: 0, width: displayView.frame.size.width, height: displayView.frame.size.height)
+        displayView.addSubview(meetingViewControl.view)
+        meetingViewControl.didMove(toParentViewController: self)
+    }
+    
+    func callMeetingAgenda(_ meetingRecord: calendarItem)
+    {
+        let agendaViewControl = meetingStoryboard.instantiateViewController(withIdentifier: "MeetingAgenda") as! meetingAgendaViewController
+        agendaViewControl.passedMeeting = meetingRecord
+        agendaViewControl.meetingCommunication = self
+
+        removeExistingViews(displayView)
+        
+        addChildViewController(agendaViewControl)
+        agendaViewControl.view.frame = CGRect(x: 0, y: 0, width: displayView.frame.size.width, height: displayView.frame.size.height)
+        displayView.addSubview(agendaViewControl.view)
+        agendaViewControl.didMove(toParentViewController: self)
+    }
+    
+    func displayTaskList(_ meetingRecord: calendarItem)
+    {
+        let taskListViewControl = tasksStoryboard.instantiateViewController(withIdentifier: "taskList") as! taskListViewController
+     //   taskListViewControl.delegate = self
+        taskListViewControl.myTaskListType = "Meeting"
+        taskListViewControl.passedMeeting = meetingRecord
+        
+        self.present(taskListViewControl, animated: true, completion: nil)
     }
 }
 

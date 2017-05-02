@@ -18,6 +18,7 @@ protocol MyAgendaItemDelegate
 class agendaItemViewController: UIViewController, UITextViewDelegate, UIPopoverPresentationControllerDelegate //, SMTEFillDelegate
 {
     var delegate: MyAgendaItemDelegate?
+    var meetingCommunication: meetingCommunicationDelegate!
 
     @IBOutlet weak var lblDescription: UILabel!
     @IBOutlet weak var txtTitle: UITextField!
@@ -368,7 +369,7 @@ class agendaItemViewController: UIViewController, UITextViewDelegate, UIPopoverP
             popover!.sourceRect = CGRect(x: 700,y: 700,width: 0,height: 0)
             
             popoverContent.passedTaskType = "minutes"
-            popoverContent.passedEvent = self.event
+            popoverContent.passedMeeting = self.event
             popoverContent.passedTask = workingTask
             
             popoverContent.preferredContentSize = CGSize(width: 700,height: 700)

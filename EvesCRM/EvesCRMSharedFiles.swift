@@ -1519,3 +1519,11 @@ func populateStages(_ teamID: Int32)
         }
     }
 }
+
+func removeExistingViews(_ sourceView: UIView)
+{
+    for view in sourceView.subviews
+    {
+        view.removeFromSuperview()
+    }
+}

@@ -23,7 +23,7 @@ class calendarItem
     fileprivate var myStatus: Int = -1
     fileprivate var myType: Int = -1
     fileprivate var myRole: Int = -1
-    fileprivate var myEventID: String = ""
+    fileprivate var myMeetingID: String = ""
     fileprivate var myEvent: EKEvent?
     fileprivate var myAttendees: [meetingAttendee] = Array()
     fileprivate var myChair: String = ""
@@ -68,7 +68,7 @@ class calendarItem
             myEndDate = mySavedValues[0].endTime! as Date
             myLocation = mySavedValues[0].location!
             myPreviousMinutes = mySavedValues[0].previousMeetingID!
-            myEventID = mySavedValues[0].meetingID!
+            myMeetingID = mySavedValues[0].meetingID!
             myChair = mySavedValues[0].chair!
             myMinutes = mySavedValues[0].minutes!
             myLocation = mySavedValues[0].location!
@@ -125,7 +125,7 @@ class calendarItem
         myEndDate = meetingAgenda.endTime as Date!
         myLocation = meetingAgenda.location!
         myPreviousMinutes = meetingAgenda.previousMeetingID!
-        myEventID = meetingAgenda.meetingID!
+        myMeetingID = meetingAgenda.meetingID!
         myChair = meetingAgenda.chair!
         myMinutes = meetingAgenda.minutes!
         myLocation = meetingAgenda.location!
@@ -148,7 +148,7 @@ class calendarItem
             myEndDate = mySavedValues[0].endTime! as Date
             myLocation = mySavedValues[0].location!
             myPreviousMinutes = mySavedValues[0].previousMeetingID!
-            myEventID = mySavedValues[0].meetingID!
+            myMeetingID = mySavedValues[0].meetingID!
             myChair = mySavedValues[0].chair!
             myMinutes = mySavedValues[0].minutes!
             myLocation = mySavedValues[0].location!
@@ -164,7 +164,7 @@ class calendarItem
         
         let nextEvent = iOSCalendar()
         
-        nextEvent.loadCalendarForEvent(myEventID, startDate: myStartDate, teamID: myTeamID)
+        nextEvent.loadCalendarForEvent(myMeetingID, startDate: myStartDate, teamID: myTeamID)
         
         if nextEvent.events.count == 0
         {
@@ -201,7 +201,7 @@ class calendarItem
         set
         {
             myEvent = newValue
-            myEventID = "\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)"
+            myMeetingID = "\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)"
             save()
         }
     }
@@ -445,9 +445,9 @@ class calendarItem
             // get the meeting record for the meeting that has this meetings ID as it previousMeetingID
             var retVal: String = ""
             
-            if myEventID != ""
+            if myMeetingID != ""
             {
-                let myItems = myDatabaseConnection.loadPreviousAgenda(myEventID, teamID: myTeamID)
+                let myItems = myDatabaseConnection.loadPreviousAgenda(myMeetingID, teamID: myTeamID)
             
                 for myItem in myItems
                 {
@@ -463,17 +463,17 @@ class calendarItem
         }
     }
     
-    var eventID: String
+    var meetingID: String
     {
         get
         {
-            if myEventID != ""
+            if myMeetingID != ""
             {
-                return myEventID
+                return myMeetingID
             }
             else
             {
-                myEventID = "\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)"
+                myMeetingID = "\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)"
                 return "\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)"
             }
         }
@@ -574,7 +574,7 @@ class calendarItem
         attendee.emailAddress = emailAddress
         attendee.type = type
         attendee.status = status
-        attendee.meetingID = eventID
+        attendee.meetingID = meetingID
         attendee.save()
         
         myAttendees.append(attendee)
@@ -587,7 +587,7 @@ class calendarItem
         attendee.emailAddress = emailAddress
         attendee.type = type
         attendee.status = status
-        attendee.meetingID = eventID
+        attendee.meetingID = meetingID
         
         myAttendees.append(attendee)
     }
@@ -625,7 +625,7 @@ class calendarItem
     {
         if myEvent != nil
         {
-            myEventID = "\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)"
+            myMeetingID = "\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)"
         }
         
         //  Here we save the Agenda details
@@ -633,7 +633,7 @@ class calendarItem
         // Save Agenda details
   //      if mySavedData
  //       {
-            myDatabaseConnection.saveAgenda(myEventID, previousMeetingID : myPreviousMinutes, name: myTitle, chair: myChair, minutes: myMinutes, location: myLocation, startTime: myStartDate, endTime: myEndDate, minutesType: myMinutesType, teamID: myTeamID)
+            myDatabaseConnection.saveAgenda(myMeetingID, previousMeetingID : myPreviousMinutes, name: myTitle, chair: myChair, minutes: myMinutes, location: myLocation, startTime: myStartDate, endTime: myEndDate, minutesType: myMinutesType, teamID: myTeamID)
 //        }
 //        else
 //        {
@@ -653,7 +653,7 @@ class calendarItem
     @objc func performSave()
     {
         // if this is for a repeating event then we need to add in the original startdate to the Notes
-        let myAgenda = myDatabaseConnection.loadAgenda(myEventID, teamID: myTeamID)[0]
+        let myAgenda = myDatabaseConnection.loadAgenda(myMeetingID, teamID: myTeamID)[0]
         
         myCloudDB.saveMeetingAgendaRecordToCloudKit(myAgenda)
         
@@ -665,13 +665,13 @@ class calendarItem
         // Used where the invite is no longer in the calendar, and also to load up historical items for the "minutes" views
         
         var mySavedValues: [MeetingAgenda]!
-        if myEventID == ""
+        if myMeetingID == ""
         {
             mySavedValues = myDatabaseConnection.loadAgenda("\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)", teamID: myTeamID)
         }
         else
         {
-            mySavedValues = myDatabaseConnection.loadAgenda(myEventID, teamID: myTeamID)
+            mySavedValues = myDatabaseConnection.loadAgenda(myMeetingID, teamID: myTeamID)
         }
         
         if mySavedValues.count > 0
@@ -703,13 +703,13 @@ class calendarItem
         
         // Get all of the attendees
         
-        if myEventID == ""
+        if myMeetingID == ""
         {
             mySavedValues = myDatabaseConnection.loadAttendees("\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)")
         }
         else
         {
-            mySavedValues = myDatabaseConnection.loadAttendees(myEventID)
+            mySavedValues = myDatabaseConnection.loadAttendees(myMeetingID)
         }
         
         myAttendees.removeAll(keepingCapacity: false)
@@ -799,13 +799,13 @@ class calendarItem
 
                     // Now we need to check for people added into the meeting but not in the saved list.
             
-                    if myEventID == ""
+                    if myMeetingID == ""
                     {
                         mySavedValues = myDatabaseConnection.loadAttendees("\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)")
                     }
                     else
                     {
-                        mySavedValues = myDatabaseConnection.loadAttendees(myEventID)
+                        mySavedValues = myDatabaseConnection.loadAttendees(myMeetingID)
                     }
             
                     if myEvent!.hasAttendees
@@ -876,13 +876,13 @@ class calendarItem
     {
         var mySavedValues: [MeetingAgendaItem]!
         
-        if myEventID == ""
+        if myMeetingID == ""
         {
             mySavedValues = myDatabaseConnection.loadAgendaItem("\(myEvent!.calendarItemExternalIdentifier) Date: \(myEvent!.startDate)")
         }
         else
         {
-            mySavedValues = myDatabaseConnection.loadAgendaItem(myEventID)
+            mySavedValues = myDatabaseConnection.loadAgendaItem(myMeetingID)
         }
         
         myAgendaItems.removeAll(keepingCapacity: false)
@@ -1816,18 +1816,18 @@ class calendarItem
             
         // check to see if there is already a meeting
         
-        let nextMeetingID = nextMeeting.eventID
+        let nextMeetingID = nextMeeting.meetingID
         let tempAgenda = myDatabaseConnection.loadAgenda(nextMeetingID, teamID: myTeamID)
         
         if tempAgenda.count > 0
         { // existing record found, so update
-            myDatabaseConnection.updatePreviousAgendaID(myEventID, meetingID: nextMeetingID, teamID: myTeamID)
+            myDatabaseConnection.updatePreviousAgendaID(myMeetingID, meetingID: nextMeetingID, teamID: myTeamID)
             myNextMeeting = nextMeetingID
         }
         else
         { // No record found so insert
-            nextMeeting.previousMinutes = myEventID
-            myNextMeeting = nextMeeting.eventID
+            nextMeeting.previousMinutes = myMeetingID
+            myNextMeeting = nextMeeting.meetingID
         }
     }
     
@@ -1837,7 +1837,7 @@ class calendarItem
         
         // Using the eventID get the calendar eventID and start date
         
- //       let myStringArr = myEventID.componentsSeparatedByString(" Date: ")
+ //       let myStringArr = myMeetingID.componentsSeparatedByString(" Date: ")
         
 //    NSLog("Meeting Parts = \(myStringArr[0]) - \(myStringArr[1])")
         
@@ -1908,7 +1908,7 @@ class iOSCalendar
          eventDetails.sort(by: {$0.startDate.timeIntervalSinceNow < $1.startDate.timeIntervalSinceNow})
     }
     
-    func loadCalendarForEvent(_ eventID: String, startDate: Date, teamID: Int32)
+    func loadCalendarForEvent(_ meetingID: String, startDate: Date, teamID: Int32)
     {
         /* The end date */
         //Calculate - Days * hours * mins * secs
@@ -1931,7 +1931,7 @@ class iOSCalendar
             
             for calItem in calItems
             {
-                if "\(calItem.calendarItemExternalIdentifier) Date: \(calItem.startDate)" == eventID
+                if "\(calItem.calendarItemExternalIdentifier) Date: \(calItem.startDate)" == meetingID
                 {
                     eventRecords.append(calItem)
                     let calendarEntry = calendarItem(event: calItem, attendee: nil, teamID: teamID)
@@ -1974,7 +1974,7 @@ class iOSCalendar
                     meetingFound = false
                     for myCheck in eventDetails
                     {
-                        if myCheck.eventID == myMeeting.meetingID
+                        if myCheck.meetingID == myMeeting.meetingID
                         {
                             meetingFound = true
                             break
@@ -2011,7 +2011,7 @@ class iOSCalendar
                 dateMatch = true
                 for myCheck in eventDetails
                 {
-                    if myCheck.eventID == myMeeting.meetingID
+                    if myCheck.meetingID == myMeeting.meetingID
                     {
                         meetingFound = true
                         break
