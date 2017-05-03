@@ -347,20 +347,24 @@ extension CloudKitInteraction
 
     func updateTaskUpdatesInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "TaskUpdates") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskUpdates", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                self.updateTaskUpdatesRecord(record)
-                usleep(100)
-            }
-            sem.signal()
-        })
+        let operation = CKQueryOperation(query: query)
         
-        sem.wait()
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+                self.updateTaskUpdatesRecord(record)
+                usleep(useconds_t(self.sleepTime))
+            }
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
 
     func deleteTaskUpdates()
@@ -383,31 +387,39 @@ extension CloudKitInteraction
 
     func replaceTaskUpdatesInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "TaskUpdates", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                let taskID = record.object(forKey: "taskID") as! Int32
-                let updateDate = record.object(forKey: "updateDate") as! Date
-                var updateTime = Date()
-                if record.object(forKey: "updateTime") != nil
-                {
-                    updateTime = record.object(forKey: "updateTime") as! Date
-                }
-                let updateType = record.object(forKey: "updateType") as! String
-                let details = record.object(forKey: "details") as! String
-                let source = record.object(forKey: "source") as! String
-                
-                myDatabaseConnection.replaceTaskUpdate(taskID, details: details, source: source, updateDate: updateDate, updateTime: updateTime, updateType: updateType)
-                usleep(100)
-            }
-            sem.signal()
-        })
+        let operation = CKQueryOperation(query: query)
         
-        sem.wait()
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            let taskID = record.object(forKey: "taskID") as! Int32
+            let updateDate = record.object(forKey: "updateDate") as! Date
+            var updateTime = Date()
+            if record.object(forKey: "updateTime") != nil
+            {
+                updateTime = record.object(forKey: "updateTime") as! Date
+            }
+            var updateType: String = ""
+            if record.object(forKey: "updateType") != nil
+            {
+                updateType = record.object(forKey: "updateType") as! String
+            }
+            let details = record.object(forKey: "details") as! String
+            let source = record.object(forKey: "source") as! String
+            
+            myDatabaseConnection.replaceTaskUpdate(taskID, details: details, source: source, updateDate: updateDate, updateTime: updateTime, updateType: updateType)
+            usleep(useconds_t(self.sleepTime))
+        }
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
 
     func saveTaskUpdatesRecordToCloudKit(_ sourceRecord: TaskUpdates)

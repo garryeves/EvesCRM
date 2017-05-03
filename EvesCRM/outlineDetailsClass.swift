@@ -233,20 +233,24 @@ extension CloudKitInteraction
 
     func updateOutlineDetailsInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "OutlineDetails") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "OutlineDetails", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                self.updateOutlineDetailsRecord(record)
-                usleep(100)
-            }
-            sem.signal()
-        })
+        let operation = CKQueryOperation(query: query)
         
-        sem.wait()
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            self.updateOutlineDetailsRecord(record)
+            usleep(useconds_t(self.sleepTime))
+        }
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
 
     func deleteOutlineDetails()
@@ -269,42 +273,49 @@ extension CloudKitInteraction
 
     func replaceOutlineDetailsInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "OutlineDetails", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                let outlineID = record.object(forKey: "outlineID") as! Int32
-                let lineID = record.object(forKey: "lineID") as! Int32
-                let lineOrder = record.object(forKey: "lineOrder") as! Int32
-                let parentLine = record.object(forKey: "parentLine") as! Int32
-                let lineText = record.object(forKey: "lineText") as! String
-                let lineType = record.object(forKey: "lineType") as! String
-                
-                let checkBox = record.object(forKey: "checkBoxValue") as! String
-                
-                var checkBoxValue: Bool = false
-                
-                if checkBox == "True"
-                {
-                    checkBoxValue = true
-                }
-                var updateTime = Date()
-                if record.object(forKey: "updateTime") != nil
-                {
-                    updateTime = record.object(forKey: "updateTime") as! Date
-                }
-                let updateType = record.object(forKey: "updateType") as! String
-                
-                myDatabaseConnection.replaceOutlineDetails(outlineID, lineID: lineID, lineOrder: lineOrder, parentLine: parentLine, lineText: lineText, lineType: lineType, checkBoxValue: checkBoxValue, updateTime: updateTime, updateType: updateType)
-                usleep(100)
-            }
-            sem.signal()
-        })
+        let operation = CKQueryOperation(query: query)
         
-        sem.wait()
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            let outlineID = record.object(forKey: "outlineID") as! Int32
+            let lineID = record.object(forKey: "lineID") as! Int32
+            let lineOrder = record.object(forKey: "lineOrder") as! Int32
+            let parentLine = record.object(forKey: "parentLine") as! Int32
+            let lineText = record.object(forKey: "lineText") as! String
+            let lineType = record.object(forKey: "lineType") as! String
+            
+            let checkBox = record.object(forKey: "checkBoxValue") as! String
+            
+            var checkBoxValue: Bool = false
+            
+            if checkBox == "True"
+            {
+                checkBoxValue = true
+            }
+            var updateTime = Date()
+            if record.object(forKey: "updateTime") != nil
+            {
+                updateTime = record.object(forKey: "updateTime") as! Date
+            }
+            var updateType: String = ""
+            if record.object(forKey: "updateType") != nil
+            {
+                updateType = record.object(forKey: "updateType") as! String
+            }
+            myDatabaseConnection.replaceOutlineDetails(outlineID, lineID: lineID, lineOrder: lineOrder, parentLine: parentLine, lineText: lineText, lineType: lineType, checkBoxValue: checkBoxValue, updateTime: updateTime, updateType: updateType)
+            usleep(useconds_t(self.sleepTime))
+        }
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
 
     func saveOutlineDetailsRecordToCloudKit(_ sourceRecord: OutlineDetails)

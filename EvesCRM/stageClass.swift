@@ -363,20 +363,24 @@ extension CloudKitInteraction
 
     func updateStagesInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "Stages") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Stages", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                self.updateStagesRecord(record)
-                usleep(100)
-            }
-            sem.signal()
-        })
+        let operation = CKQueryOperation(query: query)
         
-        sem.wait()
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            self.updateStagesRecord(record)
+            usleep(useconds_t(self.sleepTime))
+        }
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
 
     func deleteStages()
@@ -399,29 +403,37 @@ extension CloudKitInteraction
 
     func replaceStagesInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Stages", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                var updateTime = Date()
-                let stageDescription = record.object(forKey: "stageDescription") as! String
-                if record.object(forKey: "updateTime") != nil
-                {
-                    updateTime = record.object(forKey: "updateTime") as! Date
-                }
-                let updateType = record.object(forKey: "updateType") as! String
-                let teamID = record.object(forKey: "teamID") as! Int32
-                
-                myDatabaseConnection.replaceStage(stageDescription, teamID: teamID, updateTime: updateTime, updateType: updateType)
-                usleep(100)
-            }
-            sem.signal()
-        })
+        let operation = CKQueryOperation(query: query)
         
-        sem.wait()
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            var updateTime = Date()
+            let stageDescription = record.object(forKey: "stageDescription") as! String
+            if record.object(forKey: "updateTime") != nil
+            {
+                updateTime = record.object(forKey: "updateTime") as! Date
+            }
+            var updateType: String = ""
+            if record.object(forKey: "updateType") != nil
+            {
+                updateType = record.object(forKey: "updateType") as! String
+            }
+            let teamID = record.object(forKey: "teamID") as! Int32
+            
+            myDatabaseConnection.replaceStage(stageDescription, teamID: teamID, updateTime: updateTime, updateType: updateType)
+            usleep(useconds_t(self.sleepTime))
+        }
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
 
     func saveStagesRecordToCloudKit(_ sourceRecord: Stages)

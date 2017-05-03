@@ -14,7 +14,7 @@ protocol MyTaskListDelegate
     func myTaskListDidFinish(_ controller:taskListViewController)
 }
 
-class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPresentationControllerDelegate//, UICollectionViewDelegate
+class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPresentationControllerDelegate
 {
     @IBOutlet weak var displayView: UIView!
     @IBOutlet weak var btnBack: UIBarButtonItem!
@@ -28,17 +28,13 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
     fileprivate var myTaskList: [task] = Array()
     
     fileprivate var headerSize: CGFloat = 0.0
-    fileprivate var kbHeight: CGFloat!
+    fileprivate var kbHeight: CGFloat = 0.0
     
     override func viewDidLoad()
     {
         super.viewDidLoad()
  
-        if passedMeeting == nil
-        {
-            // Load up full task list
-        }
-        else
+        if passedMeeting != nil
         {
             // Only load Items associated with Meeting
             
@@ -46,10 +42,8 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
             
             // Parse through All of the previous meetings that led to this meeting looking for tasks that are not yet closed, as need to display them for completeness
             
- //           if myMeeting.previousMeetingID != ""
             if passedMeeting.previousMinutes != ""
             {
-//                let myOutstandingTasks = parsePastMeeting(myMeeting.previousMeetingID!)
                 let myOutstandingTasks = parsePastMeeting(passedMeeting.previousMinutes)
             
                 if myOutstandingTasks.count > 0
@@ -118,7 +112,6 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
         return myTaskList.count
     }
     
-    //    func collectionView(_ collectionView: UICollectionView, cellForItemAtIndexPath indexPath: IndexPath) -> UICollectionViewCell
     @objc(collectionView:cellForItemAtIndexPath:) func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell
     {
         var cell : myTaskListItem!
@@ -221,13 +214,7 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
         addChildViewController(taskViewControl)
         displayView.addSubview(taskViewControl.view)
         taskViewControl.didMove(toParentViewController: self)
-        
-//        let myOptions = displayTaskOptions(collectionView, workingTask: myTaskList[indexPath.row])
-//        myOptions.popoverPresentationController!.sourceView = collectionView
-//        
-//        self.present(myOptions, animated: true, completion: nil)
     }
-    
     
     func collectionView(_ collectionView : UICollectionView,layout collectionViewLayout:UICollectionViewLayout, sizeForItemAtIndexPath indexPath:NSIndexPath) -> CGSize
     {
@@ -245,91 +232,43 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
     
     func keyboardWillShow(_ notification: Notification)
     {
-        if let userInfo = notification.userInfo {
-            if let keyboardSize =  (userInfo[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
-                kbHeight = keyboardSize.height
+        if let userInfo = notification.userInfo
+        {
+            if let keyboardSize =  (userInfo[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue
+            {
+                if kbHeight != keyboardSize.height
+                {
+                    let currentKBSize = kbHeight
+                    kbHeight = keyboardSize.height
                 
-                let tempSize = CGRect(x: colTaskList.frame.origin.x, y: colTaskList.frame.origin.y, width: colTaskList.frame.size.width, height: colTaskList.frame.size.height - kbHeight)
+                    let newHeight = colTaskList.frame.size.height + currentKBSize - kbHeight
+                    
+                    let tempSize = CGRect(x: colTaskList.frame.origin.x, y: colTaskList.frame.origin.y, width: colTaskList.frame.size.width, height: newHeight)
                 
-                colTaskList.frame = tempSize
-//                
-//                let tempSize2 = CGRect(x: displayView.frame.origin.x, y: displayView.frame.origin.y, width: displayView.frame.size.width, height: displayView.frame.size.height + kbHeight)
-//                
-//                displayView.frame = tempSize2
-//                
-//                displayView.updateConstraints()
-                
-                displayViewHeight.constant = 500 + kbHeight
-                updateViewConstraints()
+                    colTaskList.frame = tempSize
+
+                    displayViewHeight.constant = 500 + kbHeight
+   //                 updateViewConstraints()
+                }
             }
         }
     }
     
     func keyboardWillHide(_ notification: Notification)
     {
-        if kbHeight > 0
+        if kbHeight > 0.0
         {
             let tempSize = CGRect(x: colTaskList.frame.origin.x, y: colTaskList.frame.origin.y, width: colTaskList.frame.size.width, height: colTaskList.frame.size.height + kbHeight)
             
             colTaskList.frame = tempSize
-//
-            displayViewHeight.constant = 500
-            updateViewConstraints()
 
-//            let tempSize2 = CGRect(x: displayView.frame.origin.x, y: displayView.frame.origin.y, width: displayView.frame.size.width, height: displayView.frame.size.height - kbHeight)
-//            
-//            displayView.frame = tempSize2
+            displayViewHeight.constant = 500
+            
+            kbHeight = 0.0
+            
+            updateViewConstraints()
         }
     }
-
-    
-//    func displayTaskOptions(_ sourceView: UIView, workingTask: task) -> UIAlertController
-//    {
-//        let myOptions: UIAlertController = UIAlertController(title: "Select Action", message: "Select action to take", preferredStyle: .actionSheet)
-//        
-//        let myOption1 = UIAlertAction(title: "Edit Action", style: .default, handler: { (action: UIAlertAction) -> () in
-//            let popoverContent = tasksStoryboard.instantiateViewController(withIdentifier: "tasks") as! taskViewController
-//            popoverContent.modalPresentationStyle = .popover
-//            let popover = popoverContent.popoverPresentationController
-//            popover!.delegate = self
-//            popover!.sourceView = sourceView
-//            popover!.sourceRect = CGRect(x: 700,y: 700,width: 0,height: 0)
-//            
-//            popoverContent.passedTask = workingTask
-//            
-//            if self.myTaskListType == "Meeting"
-//            {
-//                popoverContent.passedTaskType = "minutes"
-//                let myWorkingItem = calendarItem(meetingID: self.myMeetingID, teamID: myCurrentTeam.teamID)
-//                
-//                popoverContent.passedEvent = myWorkingItem
-//            }
-//            
-//            popoverContent.preferredContentSize = CGSize(width: 700,height: 700)
-//            
-//            self.present(popoverContent, animated: true, completion: nil)
-//        })
-//        
-//        let myOption2 = UIAlertAction(title: "Action Updates", style: .default, handler: { (action: UIAlertAction) -> () in
-//            let popoverContent = tasksStoryboard.instantiateViewController(withIdentifier: "taskUpdate") as! taskUpdatesViewController
-//            popoverContent.modalPresentationStyle = .popover
-//            let popover = popoverContent.popoverPresentationController
-//            popover!.delegate = self
-//            popover!.sourceView = sourceView
-//            popover!.sourceRect = CGRect(x: 700,y: 700,width: 0,height: 0)
-//            
-//            popoverContent.passedTask = workingTask
-//            
-//            popoverContent.preferredContentSize = CGSize(width: 700,height: 700)
-//            
-//            self.present(popoverContent, animated: true, completion: nil)
-//        })
-//        
-//        myOptions.addAction(myOption1)
-//        myOptions.addAction(myOption2)
-//        
-//        return myOptions
-//    }
 }
 
 class myTaskListItem: UICollectionViewCell

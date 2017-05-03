@@ -1209,20 +1209,24 @@ extension CloudKitInteraction
 
     func updateProjectsInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "Projects") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                self.updateProjectsRecord(record)
-                usleep(100)
-            }
-            sem.signal()
-        })
+        let operation = CKQueryOperation(query: query)
         
-        sem.wait()
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            self.updateProjectsRecord(record)
+            usleep(useconds_t(self.sleepTime))
+        }
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
 
     func deleteProjects()
@@ -1258,44 +1262,52 @@ extension CloudKitInteraction
 
     func replaceProjectsInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                let projectID = record.object(forKey: "projectID") as! Int32
-                var updateTime = Date()
-                if record.object(forKey: "updateTime") != nil
-                {
-                    updateTime = record.object(forKey: "updateTime") as! Date
-                }
-                let updateType = record.object(forKey: "updateType") as! String
-                let areaID = record.object(forKey: "areaID") as! Int32
-                let lastReviewDate = record.object(forKey: "lastReviewDate") as! Date
-                let projectEndDate = record.object(forKey: "projectEndDate") as! Date
-                let projectName = record.object(forKey: "projectName") as! String
-                let projectStartDate = record.object(forKey: "projectStartDate") as! Date
-                let projectStatus = record.object(forKey: "projectStatus") as! String
-                let repeatBase = record.object(forKey: "repeatBase") as! String
-                let repeatInterval = record.object(forKey: "repeatInterval") as! Int16
-                let repeatType = record.object(forKey: "repeatType") as! String
-                let reviewFrequency = record.object(forKey: "reviewFrequency") as! Int16
-                let teamID = record.object(forKey: "teamID") as! Int32
-                let note = record.object(forKey: "note") as! String
-                let reviewPeriod = record.object(forKey: "reviewPeriod") as! String
-                let predecessor = record.object(forKey: "predecessor") as! Int32
-                
-                myDatabaseConnection.replaceProject(projectID, projectEndDate: projectEndDate, projectName: projectName, projectStartDate: projectStartDate, projectStatus: projectStatus, reviewFrequency: reviewFrequency, lastReviewDate: lastReviewDate, GTDItemID: areaID, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, teamID: teamID, updateTime: updateTime, updateType: updateType)
-                
-                myDatabaseConnection.replaceProjectNote(projectID, note: note, reviewPeriod: reviewPeriod, predecessor: predecessor, updateTime: updateTime, updateType: updateType)
-                usleep(100)
-            }
-            sem.signal()
-        })
+        let operation = CKQueryOperation(query: query)
         
-        sem.wait()
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            let projectID = record.object(forKey: "projectID") as! Int32
+            var updateTime = Date()
+            if record.object(forKey: "updateTime") != nil
+            {
+                updateTime = record.object(forKey: "updateTime") as! Date
+            }
+            var updateType: String = ""
+            if record.object(forKey: "updateType") != nil
+            {
+                updateType = record.object(forKey: "updateType") as! String
+            }
+            let areaID = record.object(forKey: "areaID") as! Int32
+            let lastReviewDate = record.object(forKey: "lastReviewDate") as! Date
+            let projectEndDate = record.object(forKey: "projectEndDate") as! Date
+            let projectName = record.object(forKey: "projectName") as! String
+            let projectStartDate = record.object(forKey: "projectStartDate") as! Date
+            let projectStatus = record.object(forKey: "projectStatus") as! String
+            let repeatBase = record.object(forKey: "repeatBase") as! String
+            let repeatInterval = record.object(forKey: "repeatInterval") as! Int16
+            let repeatType = record.object(forKey: "repeatType") as! String
+            let reviewFrequency = record.object(forKey: "reviewFrequency") as! Int16
+            let teamID = record.object(forKey: "teamID") as! Int32
+            let note = record.object(forKey: "note") as! String
+            let reviewPeriod = record.object(forKey: "reviewPeriod") as! String
+            let predecessor = record.object(forKey: "predecessor") as! Int32
+            
+            myDatabaseConnection.replaceProject(projectID, projectEndDate: projectEndDate, projectName: projectName, projectStartDate: projectStartDate, projectStatus: projectStatus, reviewFrequency: reviewFrequency, lastReviewDate: lastReviewDate, GTDItemID: areaID, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, teamID: teamID, updateTime: updateTime, updateType: updateType)
+            
+            myDatabaseConnection.replaceProjectNote(projectID, note: note, reviewPeriod: reviewPeriod, predecessor: predecessor, updateTime: updateTime, updateType: updateType)
+            usleep(useconds_t(self.sleepTime))
+        }
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
 
     func saveProjectsRecordToCloudKit(_ sourceRecord: Projects)

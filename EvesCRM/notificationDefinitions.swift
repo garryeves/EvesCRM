@@ -42,6 +42,8 @@ let NotificationOneNoteConnected = Notification.Name("OneNoteConnected")
 
 let NotificationDropBoxConnected = Notification.Name("DropBoxConnected")
 let NotificationDropBoxReady = Notification.Name("DropBoxReady")
+let myNotificationCloudSyncDone = Notification.Name("myNotificationCloudSyncDone")
+
 
 
 

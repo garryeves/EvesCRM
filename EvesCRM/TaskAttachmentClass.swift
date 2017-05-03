@@ -115,21 +115,24 @@ extension CloudKitInteraction
 
     func updateTaskAttachmentInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "TaskAttachment") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskAttachment", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            //   for record in results!
-            for record in results!
-            {
-                self.updateTaskAttachmentRecord(record)
-                usleep(100)
-            }
-            sem.signal()
-        })
+        let operation = CKQueryOperation(query: query)
         
-        sem.wait()
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            self.updateTaskAttachmentRecord(record)
+            usleep(useconds_t(self.sleepTime))
+        }
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
 
     func deleteTaskAttachment()
@@ -152,14 +155,13 @@ extension CloudKitInteraction
 
     func replaceTaskAttachmentInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "TaskAttachment", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            //   for record in results!
-            for _ in results!
-            {
+        let operation = CKQueryOperation(query: query)
+        
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
                 //    let taskID = record.objectForKey("taskID") as! Int
                 //    let title = record.objectForKey("title") as! String
                 //    let updateTime = record.objectForKey("updateTime") as! NSDate
@@ -167,12 +169,16 @@ extension CloudKitInteraction
                 //    let attachment = record.objectForKey("attachment") as! NSData
                 NSLog("replaceTaskAttachmentInCoreData - Still to be coded")
                 //   myDatabaseConnection.updateDecodeValue(decodeName! as! String, codeValue: decodeValue! as! String, codeType: decodeType! as! String)
-                usleep(100)
+                usleep(useconds_t(self.sleepTime))
             }
-            sem.signal()
-        })
+        let operationQueue = OperationQueue()
         
-        sem.wait()
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
 
     func saveTaskAttachmentRecordToCloudKit(_ sourceRecord: TaskAttachment)

@@ -1226,6 +1226,23 @@ extension coreDatabase
         }
     }
     
+    func getAllTasks()->[Task]
+    {
+        let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
     func getTasksForProject(_ projectID: Int32)->[Task]
     {
         let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
@@ -1304,6 +1321,7 @@ extension coreDatabase
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
+
         let predicate = NSPredicate(format: "(taskID == \(taskID)) && (updateType != \"Delete\") && (status != \"Deleted\")")
         
         // Set the predicate on the fetch request
@@ -1546,7 +1564,7 @@ extension coreDatabase
 extension CloudKitInteraction
 {
     func saveTaskToCloudKit()
-    {
+    {     
         for myItem in myDatabaseConnection.getTaskForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Task"))
         {
             saveTaskRecordToCloudKit(myItem)
@@ -1555,20 +1573,24 @@ extension CloudKitInteraction
 
     func updateTaskInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "Task") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Task", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                self.updateTaskRecord(record)
-                usleep(100)
-            }
-            sem.signal()
-        })
+        let operation = CKQueryOperation(query: query)
         
-        sem.wait()
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            self.updateTaskRecord(record)
+            usleep(useconds_t(self.sleepTime))
+        }
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
 
     func deleteTask()
@@ -1591,45 +1613,56 @@ extension CloudKitInteraction
 
     func replaceTaskInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Task", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                let taskID = record.object(forKey: "taskID") as! Int32
-                var updateTime = Date()
-                if record.object(forKey: "updateTime") != nil
-                {
-                    updateTime = record.object(forKey: "updateTime") as! Date
-                }
-                let updateType = record.object(forKey: "updateType") as! String
-                let completionDate = record.object(forKey: "completionDate") as! Date
-                let details = record.object(forKey: "details") as! String
-                let dueDate = record.object(forKey: "dueDate") as! Date
-                let energyLevel = record.object(forKey: "energyLevel") as! String
-                let estimatedTime = record.object(forKey: "estimatedTime") as! Int16
-                let estimatedTimeType = record.object(forKey: "estimatedTimeType") as! String
-                let flagged = record.object(forKey: "flagged") as! Bool
-                let priority = record.object(forKey: "priority") as! String
-                let repeatBase = record.object(forKey: "repeatBase") as! String
-                let repeatInterval = record.object(forKey: "repeatInterval") as! Int16
-                let repeatType = record.object(forKey: "repeatType") as! String
-                let startDate = record.object(forKey: "startDate") as! Date
-                let status = record.object(forKey: "status") as! String
-                let teamID = record.object(forKey: "teamID") as! Int32
-                let title = record.object(forKey: "title") as! String
-                let urgency = record.object(forKey: "urgency") as! String
-                let projectID = record.object(forKey: "projectID") as! Int32
-                
-                myDatabaseConnection.replaceTask(taskID, title: title, details: details, dueDate: dueDate, startDate: startDate, status: status, priority: priority, energyLevel: energyLevel, estimatedTime: estimatedTime, estimatedTimeType: estimatedTimeType, projectID: projectID, completionDate: completionDate, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, flagged: flagged, urgency: urgency, teamID: teamID, updateTime: updateTime, updateType: updateType)
-                usleep(100)
-            }
-            sem.signal()
-        })
         
-        sem.wait()
+        let operation = CKQueryOperation(query: query)
+        
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            let taskID = record.object(forKey: "taskID") as! Int32
+
+            var updateTime = Date()
+            if record.object(forKey: "updateTime") != nil
+            {
+                updateTime = record.object(forKey: "updateTime") as! Date
+            }
+            var updateType: String = ""
+            if record.object(forKey: "updateType") != nil
+            {
+                updateType = record.object(forKey: "updateType") as! String
+            }
+            let completionDate = record.object(forKey: "completionDate") as! Date
+            let details = record.object(forKey: "details") as! String
+            let dueDate = record.object(forKey: "dueDate") as! Date
+            let energyLevel = record.object(forKey: "energyLevel") as! String
+            let estimatedTime = record.object(forKey: "estimatedTime") as! Int16
+            let estimatedTimeType = record.object(forKey: "estimatedTimeType") as! String
+            let flagged = record.object(forKey: "flagged") as! Bool
+            let priority = record.object(forKey: "priority") as! String
+            let repeatBase = record.object(forKey: "repeatBase") as! String
+            let repeatInterval = record.object(forKey: "repeatInterval") as! Int16
+            let repeatType = record.object(forKey: "repeatType") as! String
+            let startDate = record.object(forKey: "startDate") as! Date
+            let status = record.object(forKey: "status") as! String
+            let teamID = record.object(forKey: "teamID") as! Int32
+            let title = record.object(forKey: "title") as! String
+            let urgency = record.object(forKey: "urgency") as! String
+            let projectID = record.object(forKey: "projectID") as! Int32
+            
+            myDatabaseConnection.replaceTask(taskID, title: title, details: details, dueDate: dueDate, startDate: startDate, status: status, priority: priority, energyLevel: energyLevel, estimatedTime: estimatedTime, estimatedTimeType: estimatedTimeType, projectID: projectID, completionDate: completionDate, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, flagged: flagged, urgency: urgency, teamID: teamID, updateTime: updateTime, updateType: updateType)
+            usleep(useconds_t(self.sleepTime))
+        }
+        
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
 
     func saveTaskRecordToCloudKit(_ sourceRecord: Task)

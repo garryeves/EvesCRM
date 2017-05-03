@@ -395,23 +395,24 @@ extension coreDatabase
     func getSyncDateForTable(tableName: String) -> Date
     {
         let syncDateText = getDecodeValue(myDBSync.getSyncString(tableName))
-        var syncDate: Date!
+        var syncDate: Date = Date()
         let myDateFormatter = DateFormatter()
         
         if syncDateText == ""
         {
             myDateFormatter.dateStyle = DateFormatter.Style.short
+            myDateFormatter.timeStyle = .none
             
-            syncDate = myDateFormatter.date(from: "01/01/15")
+            syncDate = myDateFormatter.date(from: "01/01/15")!
         }
         else
         {
             myDateFormatter.dateStyle = .full
             myDateFormatter.timeStyle = .full
             
-            syncDate = myDateFormatter.date(from: syncDateText)
+            syncDate = myDateFormatter.date(from: syncDateText)!
         }
-        
+
         return syncDate
     }
 }
@@ -428,19 +429,25 @@ extension CloudKitInteraction
 
     func updateDecodesInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
         let predicate: NSPredicate = NSPredicate(value: true)
 
         let query: CKQuery = CKQuery(recordType: "Decodes", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                self.updateDecodeRecord(record)
-                usleep(100)
-            }
-            sem.signal()
-        })
-        sem.wait()
+        let operation = CKQueryOperation(query: query)
+        
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            self.updateDecodeRecord(record)
+            usleep(useconds_t(self.sleepTime))
+        }
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
 
     func deleteDecodes()
@@ -464,19 +471,24 @@ extension CloudKitInteraction
 
     func replaceDecodesInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Decodes", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                self.updateDecodeRecord(record)
-                usleep(100)
-            }
-            sem.signal()
-        })
+        let operation = CKQueryOperation(query: query)
         
-        sem.wait()
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            self.updateDecodeRecord(record)
+            usleep(useconds_t(self.sleepTime))
+        }
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
 
     func saveDecodesRecordToCloudKit(_ sourceRecord: Decodes)

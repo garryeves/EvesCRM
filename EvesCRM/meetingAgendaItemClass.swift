@@ -969,20 +969,24 @@ extension CloudKitInteraction
 
     func updateMeetingAgendaItemInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingAgendaItem") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                self.updateMeetingAgendaItemRecord(record)
-                usleep(100)
-            }
-            sem.signal()
-        })
+        let operation = CKQueryOperation(query: query)
         
-        sem.wait()
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            self.updateMeetingAgendaItemRecord(record)
+            usleep(useconds_t(self.sleepTime))
+        }
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
 
     func deleteMeetingAgendaItem()
@@ -1005,38 +1009,46 @@ extension CloudKitInteraction
 
     func replaceMeetingAgendaItemInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                let meetingID = record.object(forKey: "meetingID") as! String
-                let agendaID = record.object(forKey: "agendaID") as! Int32
-                var updateTime = Date()
-                if record.object(forKey: "updateTime") != nil
-                {
-                    updateTime = record.object(forKey: "updateTime") as! Date
-                }
-                let updateType = record.object(forKey: "updateType") as! String
-                let actualEndTime = record.object(forKey: "actualEndTime") as! Date
-                let actualStartTime = record.object(forKey: "actualStartTime") as! Date
-                let decisionMade = record.object(forKey: "decisionMade") as! String
-                let discussionNotes = record.object(forKey: "discussionNotes") as! String
-                let owner = record.object(forKey: "owner") as! String
-                let status = record.object(forKey: "status") as! String
-                let timeAllocation = record.object(forKey: "timeAllocation") as! Int16
-                let title = record.object(forKey: "title") as! String
-                let meetingOrder = record.object(forKey: "meetingOrder") as! Int32
-                
-                myDatabaseConnection.replaceAgendaItem(meetingID, actualEndTime: actualEndTime, actualStartTime: actualStartTime, status: status, decisionMade: decisionMade, discussionNotes: discussionNotes, timeAllocation: timeAllocation, owner: owner, title: title, agendaID: agendaID, meetingOrder: meetingOrder, updateTime: updateTime, updateType: updateType)
-                usleep(100)
-            }
-            sem.signal()
-        })
+        let operation = CKQueryOperation(query: query)
         
-        sem.wait()
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            let meetingID = record.object(forKey: "meetingID") as! String
+            let agendaID = record.object(forKey: "agendaID") as! Int32
+            var updateTime = Date()
+            if record.object(forKey: "updateTime") != nil
+            {
+                updateTime = record.object(forKey: "updateTime") as! Date
+            }
+            var updateType: String = ""
+            if record.object(forKey: "updateType") != nil
+            {
+                updateType = record.object(forKey: "updateType") as! String
+            }
+            let actualEndTime = record.object(forKey: "actualEndTime") as! Date
+            let actualStartTime = record.object(forKey: "actualStartTime") as! Date
+            let decisionMade = record.object(forKey: "decisionMade") as! String
+            let discussionNotes = record.object(forKey: "discussionNotes") as! String
+            let owner = record.object(forKey: "owner") as! String
+            let status = record.object(forKey: "status") as! String
+            let timeAllocation = record.object(forKey: "timeAllocation") as! Int16
+            let title = record.object(forKey: "title") as! String
+            let meetingOrder = record.object(forKey: "meetingOrder") as! Int32
+            
+            myDatabaseConnection.replaceAgendaItem(meetingID, actualEndTime: actualEndTime, actualStartTime: actualStartTime, status: status, decisionMade: decisionMade, discussionNotes: discussionNotes, timeAllocation: timeAllocation, owner: owner, title: title, agendaID: agendaID, meetingOrder: meetingOrder, updateTime: updateTime, updateType: updateType)
+            usleep(useconds_t(self.sleepTime))
+        }
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
 
     func saveMeetingAgendaItemRecordToCloudKit(_ sourceRecord: MeetingAgendaItem)
@@ -1183,20 +1195,24 @@ extension CloudKitInteraction
 
     func updateMeetingTasksInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingTasks") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingTasks", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                self.updateMeetingTasksRecord(record)
-                usleep(100)
-            }
-            sem.signal()
-        })
+        let operation = CKQueryOperation(query: query)
         
-        sem.wait()
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            self.updateMeetingTasksRecord(record)
+            usleep(useconds_t(self.sleepTime))
+        }
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
 
     func deleteMeetingTasks()
@@ -1219,30 +1235,38 @@ extension CloudKitInteraction
 
     func replaceMeetingTasksInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "MeetingTasks", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                let meetingID = record.object(forKey: "meetingID") as! String
-                let agendaID = record.object(forKey: "agendaID") as! Int32
-                var updateTime = Date()
-                if record.object(forKey: "updateTime") != nil
-                {
-                    updateTime = record.object(forKey: "updateTime") as! Date
-                }
-                let updateType = record.object(forKey: "updateType") as! String
-                let taskID = record.object(forKey: "taskID") as! Int32
-                
-                myDatabaseConnection.replaceMeetingTask(agendaID, meetingID: meetingID, taskID: taskID, updateTime: updateTime, updateType: updateType)
-                usleep(100)
-            }
-            sem.signal()
-        })
+        let operation = CKQueryOperation(query: query)
         
-        sem.wait()
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            let meetingID = record.object(forKey: "meetingID") as! String
+            let agendaID = record.object(forKey: "agendaID") as! Int32
+            var updateTime = Date()
+            if record.object(forKey: "updateTime") != nil
+            {
+                updateTime = record.object(forKey: "updateTime") as! Date
+            }
+            var updateType: String = ""
+            if record.object(forKey: "updateType") != nil
+            {
+                updateType = record.object(forKey: "updateType") as! String
+            }
+            let taskID = record.object(forKey: "taskID") as! Int32
+            
+            myDatabaseConnection.replaceMeetingTask(agendaID, meetingID: meetingID, taskID: taskID, updateTime: updateTime, updateType: updateType)
+            usleep(useconds_t(self.sleepTime))
+        }
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
 
     func saveMeetingTasksRecordToCloudKit(_ sourceRecord: MeetingTasks)

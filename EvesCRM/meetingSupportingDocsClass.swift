@@ -137,21 +137,24 @@ extension CloudKitInteraction
 
     func updateMeetingSupportingDocsInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingSupportingDocs") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            // for record in results!
-            for _ in results!
-            {
-                //              self.updateMeetingSupportingDocsRecord(record)
-                usleep(100)
-            }
-            sem.signal()
-        })
+        let operation = CKQueryOperation(query: query)
         
-        sem.wait()
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            //              self.updateMeetingSupportingDocsRecord(record)
+            usleep(useconds_t(self.sleepTime))
+        }
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
 
     func deleteMeetingSupportingDocs()
@@ -174,14 +177,14 @@ extension CloudKitInteraction
 
     func replaceMeetingSupportingDocsInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            // for record in results!
-            for _ in results!
-            {
+        let operation = CKQueryOperation(query: query)
+        
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+
                 //              let meetingID = record.objectForKey("meetingID") as! String
                 //              let agendaID = record.objectForKey("agendaID") as! Int
                 //              let updateTime = record.objectForKey("updateTime") as! NSDate
@@ -190,14 +193,18 @@ extension CloudKitInteraction
                 //              let title = record.objectForKey("title") as! String
                 
                 NSLog("replaceMeetingSupportingDocsInCoreData - Need to have the save for this")
-                
-                // myDatabaseConnection.replaceDecodeValue(decodeName! as! String, codeValue: decodeValue! as! String, codeType: decodeType! as! String)
-                usleep(100)
-            }
-            sem.signal()
-        })
         
-        sem.wait()
+                // myDatabaseConnection.replaceDecodeValue(decodeName! as! String, codeValue: decodeValue! as! String, codeType: decodeType! as! String)
+                usleep(useconds_t(self.sleepTime))
+            }
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
 
     func saveMeetingSupportingDocsRecordToCloudKit(_ sourceRecord: MeetingSupportingDocs)

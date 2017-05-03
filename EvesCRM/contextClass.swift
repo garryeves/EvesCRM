@@ -1019,20 +1019,25 @@ extension CloudKitInteraction
 
     func updateContextInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "Context") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Context", predicate: predicate)
         
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                self.updateContextRecord(record)
-                usleep(100)
-            }
-            sem.signal()
-        })
-        sem.wait()
+        let operation = CKQueryOperation(query: query)
+        
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            self.updateContextRecord(record)
+            usleep(useconds_t(self.sleepTime))
+        }
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
 
     func deleteContext()
@@ -1069,45 +1074,54 @@ extension CloudKitInteraction
 
     func replaceContextInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Context", predicate: predicate)
+        let operation = CKQueryOperation(query: query)
         var predecessor: Int32 = 0
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
+        
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            let contextID = record.object(forKey: "contextID") as! Int32
+            let autoEmail = record.object(forKey: "autoEmail") as! String
+            let email = record.object(forKey: "email") as! String
+            let name = record.object(forKey: "name") as! String
+            let parentContext = record.object(forKey: "parentContext") as! Int32
+            let personID = record.object(forKey: "personID") as! Int32
+            let status = record.object(forKey: "status") as! String
+            let teamID = record.object(forKey: "teamID") as! Int32
+            let contextType = record.object(forKey: "contextType") as! String
+            
+            
+            if record.object(forKey: "predecessor") != nil
             {
-                let contextID = record.object(forKey: "contextID") as! Int32
-                let autoEmail = record.object(forKey: "autoEmail") as! String
-                let email = record.object(forKey: "email") as! String
-                let name = record.object(forKey: "name") as! String
-                let parentContext = record.object(forKey: "parentContext") as! Int32
-                let personID = record.object(forKey: "personID") as! Int32
-                let status = record.object(forKey: "status") as! String
-                let teamID = record.object(forKey: "teamID") as! Int32
-                let contextType = record.object(forKey: "contextType") as! String
-                
-                
-                if record.object(forKey: "predecessor") != nil
-                {
-                    predecessor = record.object(forKey: "predecessor") as! Int32
-                }
-                var updateTime = Date()
-                if record.object(forKey: "updateTime") != nil
-                {
-                    updateTime = record.object(forKey: "updateTime") as! Date
-                }
-                let updateType = record.object(forKey: "updateType") as! String
-                
-                myDatabaseConnection.replaceContext(contextID, name: name, email: email, autoEmail: autoEmail, parentContext: parentContext, status: status, personID: personID, teamID: teamID, updateTime: updateTime, updateType: updateType)
-                
-                
-                myDatabaseConnection.replaceContext1_1(contextID, predecessor: predecessor, contextType: contextType, updateTime: updateTime, updateType: updateType)
-                usleep(100)
+                predecessor = record.object(forKey: "predecessor") as! Int32
             }
-            sem.signal()
-        })
-        sem.wait()
+            var updateTime = Date()
+            if record.object(forKey: "updateTime") != nil
+            {
+                updateTime = record.object(forKey: "updateTime") as! Date
+            }
+            var updateType: String = ""
+            if record.object(forKey: "updateType") != nil
+            {
+                updateType = record.object(forKey: "updateType") as! String
+            }
+            myDatabaseConnection.replaceContext(contextID, name: name, email: email, autoEmail: autoEmail, parentContext: parentContext, status: status, personID: personID, teamID: teamID, updateTime: updateTime, updateType: updateType)
+            
+            
+            myDatabaseConnection.replaceContext1_1(contextID, predecessor: predecessor, contextType: contextType, updateTime: updateTime, updateType: updateType)
+            usleep(useconds_t(self.sleepTime))
+        }
+            
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
     
     func saveContextRecordToCloudKit(_ sourceRecord: Context)

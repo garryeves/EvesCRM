@@ -454,20 +454,24 @@ extension CloudKitInteraction
 
     func updateGTDLevelInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "GTDLevel") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "GTDLevel", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                self.updateGTDLevelRecord(record)
-                usleep(100)
-            }
-            sem.signal()
-        })
+        let operation = CKQueryOperation(query: query)
         
-        sem.wait()
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            self.updateGTDLevelRecord(record)
+            usleep(useconds_t(self.sleepTime))
+        }
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
 
     func deleteGTDLevel()
@@ -490,30 +494,38 @@ extension CloudKitInteraction
 
     func replaceGTDLevelInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "GTDLevel", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                let gTDLevel = record.object(forKey: "gTDLevel") as! Int32
-                var updateTime = Date()
-                if record.object(forKey: "updateTime") != nil
-                {
-                    updateTime = record.object(forKey: "updateTime") as! Date
-                }
-                let updateType = record.object( forKey: "updateType") as! String
-                let teamID = record.object(forKey: "teamID") as! Int32
-                let levelName = record.object(forKey: "levelName") as! String
-                
-                myDatabaseConnection.replaceGTDLevel(gTDLevel, levelName: levelName, teamID: teamID, updateTime: updateTime, updateType: updateType)
-                usleep(100)
-            }
-            sem.signal()
-        })
+        let operation = CKQueryOperation(query: query)
         
-        sem.wait()
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            let gTDLevel = record.object(forKey: "gTDLevel") as! Int32
+            var updateTime = Date()
+            if record.object(forKey: "updateTime") != nil
+            {
+                updateTime = record.object(forKey: "updateTime") as! Date
+            }
+            var updateType: String = ""
+            if record.object(forKey: "updateType") != nil
+            {
+                updateType = record.object(forKey: "updateType") as! String
+            }
+            let teamID = record.object(forKey: "teamID") as! Int32
+            let levelName = record.object(forKey: "levelName") as! String
+            
+            myDatabaseConnection.replaceGTDLevel(gTDLevel, levelName: levelName, teamID: teamID, updateTime: updateTime, updateType: updateType)
+            usleep(useconds_t(self.sleepTime))
+        }
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
 
     func saveGTDLevelRecordToCloudKit(_ sourceRecord: GTDLevel)

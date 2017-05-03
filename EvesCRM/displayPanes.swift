@@ -576,20 +576,24 @@ extension CloudKitInteraction
 
     func updatePanesInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "Panes") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Panes", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                self.updatePanesRecord(record)
-                usleep(100)
-            }
-            sem.signal()
-        })
+        let operation = CKQueryOperation(query: query)
         
-        sem.wait()
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            self.updatePanesRecord(record)
+            usleep(useconds_t(self.sleepTime))
+        }
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
 
     func deletePanes()
@@ -612,31 +616,40 @@ extension CloudKitInteraction
 
     func replacePanesInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "Panes", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                let pane_name = record.object(forKey: "pane_name") as! String
-                var updateTime = Date()
-                if record.object(forKey: "updateTime") != nil
-                {
-                    updateTime = record.object(forKey: "updateTime") as! Date
-                }
-                let updateType = record.object(forKey: "updateType") as! String
-                let pane_available = record.object(forKey: "pane_available") as! Bool
-                let pane_order = record.object(forKey: "pane_order") as! Int16
-                let pane_visible = record.object(forKey: "pane_visible") as! Bool
-                
-                myDatabaseConnection.replacePane(pane_name, paneAvailable: pane_available, paneVisible: pane_visible, paneOrder: pane_order, updateTime: updateTime, updateType: updateType)
-                usleep(100)
-            }
-            sem.signal()
-        })
+        let operation = CKQueryOperation(query: query)
         
-        sem.wait()
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            let pane_name = record.object(forKey: "pane_name") as! String
+            var updateTime = Date()
+            if record.object(forKey: "updateTime") != nil
+            {
+                updateTime = record.object(forKey: "updateTime") as! Date
+            }
+            var updateType: String = ""
+            if record.object(forKey: "updateType") != nil
+            {
+                updateType = record.object(forKey: "updateType") as! String
+            }
+            let pane_available = record.object(forKey: "pane_available") as! Bool
+            let pane_order = record.object(forKey: "pane_order") as! Int16
+            let pane_visible = record.object(forKey: "pane_visible") as! Bool
+            
+            myDatabaseConnection.replacePane(pane_name, paneAvailable: pane_available, paneVisible: pane_visible, paneOrder: pane_order, updateTime: updateTime, updateType: updateType)
+            usleep(useconds_t(self.sleepTime))
+        }
+        
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
 
     func savePanesRecordToCloudKit(_ sourceRecord: Panes)

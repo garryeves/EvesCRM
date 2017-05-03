@@ -728,20 +728,24 @@ extension CloudKitInteraction
 
     func updateGTDItemInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "GTDItem") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "GTDItem", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                self.updateGTDItemRecord(record)
-                usleep(100)
-            }
-            sem.signal()
-        })
+        let operation = CKQueryOperation(query: query)
         
-        sem.wait()
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            self.updateGTDItemRecord(record)
+            usleep(useconds_t(self.sleepTime))
+        }
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
 
     func deleteGTDItem()
@@ -764,38 +768,46 @@ extension CloudKitInteraction
 
     func replaceGTDItemInCoreData()
     {
-        let sem = DispatchSemaphore(value: 0);
-        
         let predicate: NSPredicate = NSPredicate(value: true)
         let query: CKQuery = CKQuery(recordType: "GTDItem", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                let gTDItemID = record.object(forKey: "gTDItemID") as! Int32
-                var updateTime = Date()
-                if record.object(forKey: "updateTime") != nil
-                {
-                    updateTime = record.object(forKey: "updateTime") as! Date
-                }
-                let updateType = record.object(forKey: "updateType") as! String
-                let gTDParentID = record.object(forKey: "gTDParentID") as! Int32
-                let lastReviewDate = record.object(forKey: "lastReviewDate") as! Date
-                let note = record.object(forKey: "note") as! String
-                let predecessor = record.object(forKey: "predecessor") as! Int32
-                let reviewFrequency = record.object(forKey: "reviewFrequency") as! Int16
-                let reviewPeriod = record.object(forKey: "reviewPeriod") as! String
-                let status = record.object(forKey: "status") as! String
-                let teamID = record.object(forKey: "teamID") as! Int32
-                let title = record.object(forKey: "title") as! String
-                let gTDLevel = record.object(forKey: "gTDLevel") as! Int32
-                
-                myDatabaseConnection.replaceGTDItem(gTDItemID, parentID: gTDParentID, title: title, status: status, teamID: teamID, note: note, lastReviewDate: lastReviewDate, reviewFrequency: reviewFrequency, reviewPeriod: reviewPeriod, predecessor: predecessor, GTDLevel: gTDLevel, updateTime: updateTime, updateType: updateType)
-                usleep(100)
-            }
-            sem.signal()
-        })
+        let operation = CKQueryOperation(query: query)
         
-        sem.wait()
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            let gTDItemID = record.object(forKey: "gTDItemID") as! Int32
+            var updateTime = Date()
+            if record.object(forKey: "updateTime") != nil
+            {
+                updateTime = record.object(forKey: "updateTime") as! Date
+            }
+            var updateType: String = ""
+            if record.object(forKey: "updateType") != nil
+            {
+                updateType = record.object(forKey: "updateType") as! String
+            }
+            let gTDParentID = record.object(forKey: "gTDParentID") as! Int32
+            let lastReviewDate = record.object(forKey: "lastReviewDate") as! Date
+            let note = record.object(forKey: "note") as! String
+            let predecessor = record.object(forKey: "predecessor") as! Int32
+            let reviewFrequency = record.object(forKey: "reviewFrequency") as! Int16
+            let reviewPeriod = record.object(forKey: "reviewPeriod") as! String
+            let status = record.object(forKey: "status") as! String
+            let teamID = record.object(forKey: "teamID") as! Int32
+            let title = record.object(forKey: "title") as! String
+            let gTDLevel = record.object(forKey: "gTDLevel") as! Int32
+            
+            myDatabaseConnection.replaceGTDItem(gTDItemID, parentID: gTDParentID, title: title, status: status, teamID: teamID, note: note, lastReviewDate: lastReviewDate, reviewFrequency: reviewFrequency, reviewPeriod: reviewPeriod, predecessor: predecessor, GTDLevel: gTDLevel, updateTime: updateTime, updateType: updateType)
+            usleep(useconds_t(self.sleepTime))
+        }
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
     }
 
     func saveGTDItemRecordToCloudKit(_ sourceRecord: GTDItem)

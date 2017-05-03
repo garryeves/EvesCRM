@@ -45,6 +45,9 @@ class CloudKitInteraction
     let publicDB : CKDatabase
     let privateDB : CKDatabase
     
+    var waitFlag: Bool = true
+    let sleepTime = 500
+    
     init()
     {
         #if os(iOS)
@@ -58,7 +61,14 @@ class CloudKitInteraction
         publicDB = container.publicCloudDatabase // data saved here can be seen by all users
         privateDB = container.privateCloudDatabase // this is the one to use to save the data
         
-        userInfo = UserInfo(container: container)        
+        userInfo = UserInfo(container: container)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.toggleWaitFlag), name: myNotificationCloudSyncDone, object: nil)
+    }
+    
+    @objc func toggleWaitFlag()
+    {
+        waitFlag = false
     }
     
     func performDelete(_ inRecordSet: [CKRecordID])
@@ -107,4 +117,38 @@ class CloudKitInteraction
 
         sem.wait()
     }
+    
+    func executeQueryOperation(queryOperation: CKQueryOperation, onOperationQueue operationQueue: OperationQueue)
+    {
+        // Setup the query operation
+        queryOperation.database = privateDB
+        
+        // Assign a completion handler
+        queryOperation.queryCompletionBlock = { (cursor: CKQueryCursor?, error: Error?) -> Void in
+            guard error==nil else {
+                // Handle the error
+                print("Error detected ; \(String(describing: error))")
+                return
+            }
+            
+            if cursor != nil
+            {
+                if let queryCursor = cursor {
+                    let queryCursorOperation = CKQueryOperation(cursor: queryCursor)
+                    
+                    queryCursorOperation.recordFetchedBlock = queryOperation.recordFetchedBlock
+                    
+                    self.executeQueryOperation(queryOperation: queryCursorOperation, onOperationQueue: operationQueue)
+                }
+            }
+            else
+            {
+                NotificationCenter.default.post(name: myNotificationCloudSyncDone, object: nil)
+            }
+        }
+        
+        // Add the operation to the operation queue to execute it
+        privateDB.add(queryOperation)
+    }
+
 }

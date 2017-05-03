@@ -222,18 +222,17 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
 //            textExpander.fillCompletionScheme = "EvesCRM-fill-xc"
 //            textExpander.fillDelegate = self
 //            textExpander.nextDelegate = self
-            myCurrentViewController = taskViewController()
             myCurrentViewController = self
         }
     }
     
-    override func viewWillAppear(_ animated:Bool)
-    {
-        super.viewWillAppear(animated)
-        
-        notificationCenter.addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        notificationCenter.addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
-    }
+//    override func viewWillAppear(_ animated:Bool)
+//    {
+//        super.viewWillAppear(animated)
+//        
+//        notificationCenter.addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+//        notificationCenter.addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+//    }
     
     override func viewWillDisappear(_ animated: Bool)
     {
@@ -664,7 +663,13 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
     
     @IBAction func txtEstTime(_ sender: UITextField)
     {
-        passedTask.estimatedTime = Int16(txtEstTime.text!)!
+        if txtEstTime.text != nil
+        {
+            if txtEstTime.text != ""
+            {
+                passedTask.estimatedTime = Int16(txtEstTime.text!)!
+            }
+        }
     }
     
     @IBAction func btnSelect(_ sender: UIButton)
@@ -778,7 +783,10 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
     {
         if txtRepeatInterval.text != nil
         {
-            passedTask.repeatInterval = Int16(txtRepeatInterval.text!)!
+            if txtRepeatInterval.text != ""
+            {
+                passedTask.repeatInterval = Int16(txtRepeatInterval.text!)!
+            }
         }
     }
     
@@ -833,90 +841,90 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
         hideFields()
     }
     
-    func changeViewHeight(_ viewName: UIView, newHeight: CGFloat)
-    {
-//        viewName.frame = CGRectMake(
-////            viewName.frame.origin.x,
-//            viewName.frame.origin.y,
-//            viewName.frame.size.width,
-//            newHeight
-//        )
-    }
+//    func changeViewHeight(_ viewName: UIView, newHeight: CGFloat)
+//    {
+////        viewName.frame = CGRectMake(
+//////            viewName.frame.origin.x,
+////            viewName.frame.origin.y,
+////            viewName.frame.size.width,
+////            newHeight
+////        )
+//    }
     
     func showKeyboardFields()
     {
         lblTargetDate.isHidden = false
-        changeViewHeight(lblTargetDate, newHeight: 30)
+//        changeViewHeight(lblTargetDate, newHeight: 30)
         btnTargetDate.isHidden = false
-        changeViewHeight(btnTargetDate, newHeight: 30)
+//        changeViewHeight(btnTargetDate, newHeight: 30)
         lblStart.isHidden = false
-        changeViewHeight(lblStart, newHeight: 30)
+//        changeViewHeight(lblStart, newHeight: 30)
         btnStart.isHidden = false
-        changeViewHeight(btnStart, newHeight: 30)
+//        changeViewHeight(btnStart, newHeight: 30)
         lblContexts.isHidden = false
-        changeViewHeight(lblContexts, newHeight: 30)
+//        changeViewHeight(lblContexts, newHeight: 30)
         colContexts.isHidden = false
-        changeViewHeight(colContexts, newHeight: 190)
+//        changeViewHeight(colContexts, newHeight: 190)
         lblPriority.isHidden = false
-        changeViewHeight(lblPriority, newHeight: 30)
+//        changeViewHeight(lblPriority, newHeight: 30)
         btnPriority.isHidden = false
-        changeViewHeight(btnPriority, newHeight: 30)
+//        changeViewHeight(btnPriority, newHeight: 30)
         lblEnergy.isHidden = false
-        changeViewHeight(lblEnergy, newHeight: 30)
+//        changeViewHeight(lblEnergy, newHeight: 30)
         btnEnergy.isHidden = false
-        changeViewHeight(btnEnergy, newHeight: 30)
+//        changeViewHeight(btnEnergy, newHeight: 30)
         lblUrgency.isHidden = false
-        changeViewHeight(lblUrgency, newHeight: 30)
+//        changeViewHeight(lblUrgency, newHeight: 30)
         btnUrgency.isHidden = false
-        changeViewHeight(btnUrgency, newHeight: 30)
+//        changeViewHeight(btnUrgency, newHeight: 30)
         btnOwner.isHidden = false
-        changeViewHeight(btnOwner, newHeight: 30)
+ //       changeViewHeight(btnOwner, newHeight: 30)
         lblStatus.isHidden = false
-        changeViewHeight(lblStatus, newHeight: 30)
+//        changeViewHeight(lblStatus, newHeight: 30)
         btnStatus.isHidden = false
-        changeViewHeight(btnStatus, newHeight: 30)
+//        changeViewHeight(btnStatus, newHeight: 30)
         lblProject.isHidden = false
-        changeViewHeight(lblProject, newHeight: 30)
+//        changeViewHeight(lblProject, newHeight: 30)
         btnProject.isHidden = false
-        changeViewHeight(btnProject, newHeight: 30)
+//        changeViewHeight(btnProject, newHeight: 30)
     }
     
     func hideKeyboardFields()
     {
         lblTargetDate.isHidden = true
-        changeViewHeight(lblTargetDate, newHeight: 30)
+//        changeViewHeight(lblTargetDate, newHeight: 30)
         btnTargetDate.isHidden = true
-        changeViewHeight(btnTargetDate, newHeight: 30)
+//        changeViewHeight(btnTargetDate, newHeight: 30)
         lblStart.isHidden = true
-        changeViewHeight(lblStart, newHeight: 30)
+//        changeViewHeight(lblStart, newHeight: 30)
         btnStart.isHidden = true
-        changeViewHeight(btnStart, newHeight: 30)
+//        changeViewHeight(btnStart, newHeight: 30)
         lblContexts.isHidden = true
-        changeViewHeight(lblContexts, newHeight: 30)
+//        changeViewHeight(lblContexts, newHeight: 30)
         colContexts.isHidden = true
-        changeViewHeight(colContexts, newHeight: 190)
+//        changeViewHeight(colContexts, newHeight: 190)
         lblPriority.isHidden = true
-        changeViewHeight(lblPriority, newHeight: 30)
+//        changeViewHeight(lblPriority, newHeight: 30)
         btnPriority.isHidden = true
-        changeViewHeight(btnPriority, newHeight: 30)
+//        changeViewHeight(btnPriority, newHeight: 30)
         lblEnergy.isHidden = true
-        changeViewHeight(lblEnergy, newHeight: 30)
+//        changeViewHeight(lblEnergy, newHeight: 30)
         btnEnergy.isHidden = true
-        changeViewHeight(btnEnergy, newHeight: 30)
+//        changeViewHeight(btnEnergy, newHeight: 30)
         lblUrgency.isHidden = true
-        changeViewHeight(lblUrgency, newHeight: 30)
+ //       changeViewHeight(lblUrgency, newHeight: 30)
         btnUrgency.isHidden = true
-        changeViewHeight(btnUrgency, newHeight: 30)
+//        changeViewHeight(btnUrgency, newHeight: 30)
         btnOwner.isHidden = true
-        changeViewHeight(btnOwner, newHeight: 30)
+//        changeViewHeight(btnOwner, newHeight: 30)
         lblStatus.isHidden = true
-        changeViewHeight(lblStatus, newHeight: 30)
+//        changeViewHeight(lblStatus, newHeight: 30)
         btnStatus.isHidden = true
-        changeViewHeight(btnStatus, newHeight: 30)
+//        changeViewHeight(btnStatus, newHeight: 30)
         lblProject.isHidden = true
-        changeViewHeight(lblProject, newHeight: 30)
+//        changeViewHeight(lblProject, newHeight: 30)
         btnProject.isHidden = true
-        changeViewHeight(btnProject, newHeight: 30)
+//        changeViewHeight(btnProject, newHeight: 30)
     }
     
     func showFields()
@@ -1305,136 +1313,130 @@ class taskViewController: UIViewController,  UITextViewDelegate//, SMTEFillDeleg
         activityViewController.modalPresentationStyle = UIModalPresentationStyle.popover
         activityViewController.popoverPresentationController!.sourceView = sender.view
         present(activityViewController, animated:true, completion:nil)
-        /*
-        if !self.activityPopover.popoverVisible {
-            if sender is UIBarButtonItem {
-                self.activityPopover.presentPopoverFromBarButtonItem(sender as! UIBarButtonItem,
-                    permittedArrowDirections:.Any,
-                    animated:true)
-            } else {
-                let b = sender as! UIButton
-                self.activityPopover.presentPopoverFromRect(b.frame,
-                    inView: self.view,
-                    permittedArrowDirections:.Any,
-                    animated:true)
-            }
-        } else {
-            self.activityPopover.dismissPopoverAnimated(true)
-        }
-*/
     }
     
-    func keyboardWillShow(_ notification: Notification)
-    {
-print("Yes")
-        
-        self.updateViewConstraints()
-        
-//        if let userInfo = notification.userInfo {
-//            if let keyboardSize =  (userInfo[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
-//                kbHeight = keyboardSize.height
-//                self.animateTextField(true)
+//    func keyboardWillShow(_ notification: Notification)
+//    {
+//        self.updateViewConstraints()
+//    }
+//    
+//    func keyboardWillHide(_ notification: Notification)
+//    {
+//        self.updateViewConstraints()
+//    }
+//    
+//    func animateTextField(_ up: Bool)
+//    {
+//        var boolActionMove = false
+//        let movement = (up ? -kbHeight : kbHeight)
+//
+//        if txtTaskTitle.isFirstResponder
+//        {
+//            //  This is at the top, so we do not need to do anything
+//            boolActionMove = true
+//        }
+//        else if txtRepeatInterval.isFirstResponder
+//        {
+//            boolActionMove = true
+//        }
+//        else if txtTaskDescription.isFirstResponder
+//        {
+//            boolActionMove = true
+//        }
+//        else if txtEstTime.isFirstResponder
+//        {
+//            boolActionMove = true
+//        }
+//        else if txtNewContext.isFirstResponder
+//        {
+//            boolActionMove = true
+//        }
+//        
+//        if boolActionMove
+//        {
+//            UIView.animate(withDuration: 0.3, animations: {
+//                self.view.frame = self.view.frame.offsetBy(dx: 0, dy: movement!)
+//                
+//            })
+//            
+//            let myConstraints = [
+//                "constraintContexts",
+//                "constraintContexts1",
+//                "constraintContexts2",
+//                "constraintContexts3",
+//                "constraintStart",
+//                "constraintDue",
+//                "constraintPriority",
+//                "constraintUrgency",
+//                "constraintEnergy",
+//                "constraintContextTable",
+//                "constraintOwner",
+//                "constraintLabelStart",
+//                "constraintLabelDue",
+//                "constraintLabelPriority",
+//                "constraintLabelUrgency",
+//                "constraintLabelEnergy",
+//                "constraintProjectButton1",
+//                "constraintProjectButton2",
+//                "constraintProjectButton3",
+//                "constraintProjectButton4",
+//                "constraintProjectButton5",
+//                "constraintProjectButton6",
+//                "constraintProjectDesc1",
+//                "constraintProjectDesc2",
+//                "constraintProjectDesc3"
+//            ]
+//            
+//            if up
+//            {
+//                if constraintArray.count == 0
+//                {
+//                    // Populate the array
+//                    for myItem in self.view.constraints
+//                    {
+//                        if myItem.identifier != nil
+//                        {
+//                            if myConstraints.contains(myItem.identifier!)
+//                            {
+//                                constraintArray.append(myItem)
+//                            }
+//                        }
+//                    }
+//                }
+//                
+//                NSLayoutConstraint.deactivate(constraintArray)
+//                hideKeyboardFields()
+//            }
+//            else
+//            {
+//                showKeyboardFields()
+//                NSLayoutConstraint.activate(constraintArray)
 //            }
 //        }
-    }
-    
-    func keyboardWillHide(_ notification: Notification)
-    {
-//        self.animateTextField(false)
-    }
-    
-    func animateTextField(_ up: Bool)
-    {
-        var boolActionMove = false
-        let movement = (up ? -kbHeight : kbHeight)
-
-        if txtTaskTitle.isFirstResponder
-        {
-            //  This is at the top, so we do not need to do anything
-            boolActionMove = true
-        }
-        else if txtRepeatInterval.isFirstResponder
-        {
-            boolActionMove = true
-        }
-        else if txtTaskDescription.isFirstResponder
-        {
-            boolActionMove = true
-        }
-        else if txtEstTime.isFirstResponder
-        {
-            boolActionMove = true
-        }
-        else if txtNewContext.isFirstResponder
-        {
-            boolActionMove = true
-        }
-        
-        if boolActionMove
-        {
-            UIView.animate(withDuration: 0.3, animations: {
-                self.view.frame = self.view.frame.offsetBy(dx: 0, dy: movement!)
-                
-            })
-            
-            let myConstraints = [
-                "constraintContexts",
-                "constraintContexts1",
-                "constraintContexts2",
-                "constraintContexts3",
-                "constraintStart",
-                "constraintDue",
-                "constraintPriority",
-                "constraintUrgency",
-                "constraintEnergy",
-                "constraintContextTable",
-                "constraintOwner",
-                "constraintLabelStart",
-                "constraintLabelDue",
-                "constraintLabelPriority",
-                "constraintLabelUrgency",
-                "constraintLabelEnergy",
-                "constraintProjectButton1",
-                "constraintProjectButton2",
-                "constraintProjectButton3",
-                "constraintProjectButton4",
-                "constraintProjectButton5",
-                "constraintProjectButton6",
-                "constraintProjectDesc1",
-                "constraintProjectDesc2",
-                "constraintProjectDesc3"
-            ]
-            
-            if up
-            {
-                if constraintArray.count == 0
-                {
-                    // Populate the array
-                    for myItem in self.view.constraints
-                    {
-                        if myItem.identifier != nil
-                        {
-                            if myConstraints.contains(myItem.identifier!)
-                            {
-                                constraintArray.append(myItem)
-                            }
-                        }
-                    }
-                }
-                
-                NSLayoutConstraint.deactivate(constraintArray)
-                hideKeyboardFields()
-            }
-            else
-            {
-                showKeyboardFields()
-                NSLayoutConstraint.activate(constraintArray)
-            }
-        }
-    }
+//    }
 
     @IBAction func btnSave(_ sender: UIBarButtonItem)
     {
+        if txtTaskTitle.text != ""
+        {
+            passedTask.title = txtTaskTitle.text!
+        }
+
+        if txtTaskDescription.text != ""
+        {
+            passedTask.details = txtTaskDescription.text!
+        }
+
+        if txtEstTime.text != ""
+        {
+            passedTask.estimatedTime = Int16(txtEstTime.text!)!
+        }
+        
+        if txtRepeatInterval.text != ""
+        {
+            passedTask.repeatInterval = Int16(txtRepeatInterval.text!)!
+        }
+        
         passedTask.save()
     }
 
