@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../EvesCRM/taskListViewController.swift"
-            timestampString = "515473785.446428"
+            timestampString = "515562906.07418"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "235"
-            endingLineNumber = "235"
+            startingLineNumber = "253"
+            endingLineNumber = "253"
             landmarkName = "keyboardWillShow(_:)"
             landmarkType = "7">
             <Locations>
@@ -74,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../EvesCRM/taskListViewController.swift"
-            timestampString = "515473785.446428"
+            timestampString = "515562906.07418"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "259"
-            endingLineNumber = "259"
+            startingLineNumber = "277"
+            endingLineNumber = "277"
             landmarkName = "keyboardWillHide(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -90,11 +90,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "../EvesCRM/taskListViewController.swift"
-            timestampString = "515474023.066088"
+            timestampString = "515562906.07418"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "248"
-            endingLineNumber = "248"
+            startingLineNumber = "266"
+            endingLineNumber = "266"
             landmarkName = "keyboardWillShow(_:)"
             landmarkType = "7">
          </BreakpointContent>

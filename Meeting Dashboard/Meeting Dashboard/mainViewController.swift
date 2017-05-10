@@ -28,16 +28,7 @@ class mainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         myTeams = teams()
         
-        meetingUpdated()
-        
-        
-        
-        for myItem in myDatabaseConnection.getAllTasks()
-        {
-            print("ID = \(myItem.taskID) - name = \(myItem.title)")
-        }
-        
-        
+        meetingUpdated()        
     }
     
     override func didReceiveMemoryWarning() {

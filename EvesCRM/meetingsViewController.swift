@@ -11,6 +11,49 @@ import UIKit
 import EventKit
 //import TextExpander
 
+class MeetingModel: NSObject
+{
+    fileprivate var myDelegate: MyMeetingsDelegate!
+    fileprivate var myEvent: calendarItem!
+    fileprivate var myActionType: String = ""
+    
+    var delegate: MyMeetingsDelegate
+    {
+        get
+        {
+            return myDelegate
+        }
+        set
+        {
+            myDelegate = newValue
+        }
+    }
+    
+    var actionType: String
+    {
+        get
+        {
+            return myActionType
+        }
+        set
+        {
+            myActionType = newValue
+        }
+    }
+    
+    var event: calendarItem
+    {
+        get
+        {
+            return myEvent
+        }
+        set
+        {
+            myEvent = newValue
+        }
+    }
+}
+
 protocol MyMeetingsDelegate
 {
     func myMeetingsDidFinish(_ controller:meetingsViewController)
@@ -840,7 +883,6 @@ print("gaza put an if here once we are storeing and retrieveing this")
     
     func attendeeRemoved(_ notification: Notification)
     {
-        
         let action = notification.userInfo!["Action"] as! String
         let itemToRemove = notification.userInfo!["itemNo"] as! Int
         

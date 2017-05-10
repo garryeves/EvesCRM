@@ -969,19 +969,23 @@ extension CloudKitInteraction
 
     func updateMeetingAgendaItemInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingAgendaItem") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(myTeamID))", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingAgendaItem") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
         waitFlag = true
         
         operation.recordFetchedBlock = { (record) in
+            self.recordCount += 1
+
             self.updateMeetingAgendaItemRecord(record)
+            self.recordCount -= 1
+
             usleep(useconds_t(self.sleepTime))
         }
         let operationQueue = OperationQueue()
         
-        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
         
         while waitFlag
         {
@@ -994,14 +998,14 @@ extension CloudKitInteraction
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(value: true)
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
         let query: CKQuery = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
-            self.performDelete(myRecordList)
+            self.performPublicDelete(myRecordList)
             sem.signal()
         })
         sem.wait()
@@ -1009,7 +1013,7 @@ extension CloudKitInteraction
 
     func replaceMeetingAgendaItemInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(value: true)
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
         let query: CKQuery = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -1043,7 +1047,7 @@ extension CloudKitInteraction
         }
         let operationQueue = OperationQueue()
         
-        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
         
         while waitFlag
         {
@@ -1054,9 +1058,9 @@ extension CloudKitInteraction
     func saveMeetingAgendaItemRecordToCloudKit(_ sourceRecord: MeetingAgendaItem)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID)) AND (teamID == \(myTeamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
+        publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
             {
                 NSLog("Error querying records: \(error!.localizedDescription)")
@@ -1084,7 +1088,7 @@ extension CloudKitInteraction
                     record!.setValue(sourceRecord.meetingOrder, forKey: "meetingOrder")
                     
                     // Save this record again
-                    self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
+                    self.publicDB.save(record!, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
                         {
                             NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -1117,9 +1121,9 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.timeAllocation, forKey: "timeAllocation")
                     record.setValue(sourceRecord.title, forKey: "title")
                     record.setValue(sourceRecord.meetingOrder, forKey: "meetingOrder")
+                    record.setValue(myTeamID, forKey: "teamID")
                     
-                    
-                    self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
+                    self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
                         {
                             NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -1195,19 +1199,23 @@ extension CloudKitInteraction
 
     func updateMeetingTasksInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingTasks") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(myTeamID))", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingTasks") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingTasks", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
         waitFlag = true
         
         operation.recordFetchedBlock = { (record) in
+            self.recordCount += 1
+
             self.updateMeetingTasksRecord(record)
+            self.recordCount -= 1
+
             usleep(useconds_t(self.sleepTime))
         }
         let operationQueue = OperationQueue()
         
-        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
         
         while waitFlag
         {
@@ -1220,14 +1228,14 @@ extension CloudKitInteraction
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(value: true)
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
         let query: CKQuery = CKQuery(recordType: "MeetingTasks", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
-            self.performDelete(myRecordList)
+            self.performPublicDelete(myRecordList)
             sem.signal()
         })
         sem.wait()
@@ -1235,7 +1243,7 @@ extension CloudKitInteraction
 
     func replaceMeetingTasksInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(value: true)
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
         let query: CKQuery = CKQuery(recordType: "MeetingTasks", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -1261,7 +1269,7 @@ extension CloudKitInteraction
         }
         let operationQueue = OperationQueue()
         
-        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
         
         while waitFlag
         {
@@ -1272,9 +1280,9 @@ extension CloudKitInteraction
     func saveMeetingTasksRecordToCloudKit(_ sourceRecord: MeetingTasks)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID)) && (taskID == \(sourceRecord.taskID))") // better be accurate to get only the
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID)) && (taskID == \(sourceRecord.taskID)) AND (teamID == \(myTeamID))") // better be accurate to get only the
         let query = CKQuery(recordType: "MeetingTasks", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
+        publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
             {
                 NSLog("Error querying records: \(error!.localizedDescription)")
@@ -1294,7 +1302,7 @@ extension CloudKitInteraction
                     record!.setValue(sourceRecord.taskID, forKey: "taskID")
                     
                     // Save this record again
-                    self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
+                    self.publicDB.save(record!, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
                         {
                             NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -1319,9 +1327,9 @@ extension CloudKitInteraction
                     }
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
                     record.setValue(sourceRecord.taskID, forKey: "taskID")
+                    record.setValue(myTeamID, forKey: "teamID")
                     
-                    
-                    self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
+                    self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
                         {
                             NSLog("Error saving record: \(saveError!.localizedDescription)")

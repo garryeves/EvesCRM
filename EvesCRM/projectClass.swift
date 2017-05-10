@@ -1209,19 +1209,23 @@ extension CloudKitInteraction
 
     func updateProjectsInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "Projects") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(myTeamID))", myDatabaseConnection.getSyncDateForTable(tableName: "Projects") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
         waitFlag = true
         
         operation.recordFetchedBlock = { (record) in
+            self.recordCount += 1
+
             self.updateProjectsRecord(record)
+            self.recordCount -= 1
+
             usleep(useconds_t(self.sleepTime))
         }
         let operationQueue = OperationQueue()
         
-        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
         
         while waitFlag
         {
@@ -1234,27 +1238,27 @@ extension CloudKitInteraction
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(value: true)
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
         let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList.append(record.recordID)
             }
-            self.performDelete(myRecordList)
+            self.performPublicDelete(myRecordList)
             sem.signal()
         })
         sem.wait()
         
         var myRecordList2: [CKRecordID] = Array()
-        let predicate2: NSPredicate = NSPredicate(value: true)
+        let predicate2: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
         let query2: CKQuery = CKQuery(recordType: "ProjectNote", predicate: predicate2)
-        privateDB.perform(query2, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+        publicDB.perform(query2, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
                 myRecordList2.append(record.recordID)
             }
-            self.performDelete(myRecordList2)
+            self.performPublicDelete(myRecordList2)
             sem.signal()
         })
         sem.wait()
@@ -1262,7 +1266,7 @@ extension CloudKitInteraction
 
     func replaceProjectsInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(value: true)
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
         let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -1302,7 +1306,7 @@ extension CloudKitInteraction
         }
         let operationQueue = OperationQueue()
         
-        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
         
         while waitFlag
         {
@@ -1313,9 +1317,9 @@ extension CloudKitInteraction
     func saveProjectsRecordToCloudKit(_ sourceRecord: Projects)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID) AND (teamID == \(myTeamID)))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Projects", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
+        publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
             {
                 NSLog("Error querying records: \(error!.localizedDescription)")
@@ -1364,7 +1368,7 @@ extension CloudKitInteraction
                     record!.setValue(myPredecessor, forKey: "predecessor")
                     
                     // Save this record again
-                    self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
+                    self.publicDB.save(record!, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
                         {
                             NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -1401,8 +1405,9 @@ extension CloudKitInteraction
                     record.setValue(myNote, forKey: "note")
                     record.setValue(myReviewPeriod, forKey: "reviewPeriod")
                     record.setValue(myPredecessor, forKey: "predecessor")
+                    record.setValue(myTeamID, forKey: "teamID")
                     
-                    self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
+                    self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
                         {
                             NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -1425,9 +1430,9 @@ extension CloudKitInteraction
     func saveProjectNoteRecordToCloudKit(_ sourceRecord: ProjectNote)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID) AND (teamID == \(myTeamID)))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Projects", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
+        publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
             {
                 NSLog("Error querying records: \(error!.localizedDescription)")
@@ -1449,7 +1454,7 @@ extension CloudKitInteraction
                     record!.setValue(sourceRecord.predecessor, forKey: "predecessor")
                     
                     // Save this record again
-                    self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
+                    self.publicDB.save(record!, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
                         {
                             NSLog("Error saving record: \(saveError!.localizedDescription)")
@@ -1480,8 +1485,9 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.note, forKey: "note")
                     record.setValue(sourceRecord.reviewPeriod, forKey: "reviewPeriod")
                     record.setValue(sourceRecord.predecessor, forKey: "predecessor")
+                    record.setValue(myTeamID, forKey: "teamID")
                     
-                    self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
+                    self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
                         {
                             NSLog("Error saving record: \(saveError!.localizedDescription)")

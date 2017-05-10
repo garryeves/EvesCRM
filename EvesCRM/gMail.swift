@@ -1181,7 +1181,7 @@ extension CloudKitInteraction
 
     func updateProcessedEmailsInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "ProcessedEmails") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(myTeamID))", myDatabaseConnection.getSyncDateForTable(tableName: "ProcessedEmails") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "ProcessedEmails", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -1206,7 +1206,7 @@ extension CloudKitInteraction
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(value: true)
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
         let query: CKQuery = CKQuery(recordType: "ProcessedEmails", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1221,7 +1221,7 @@ extension CloudKitInteraction
 
     func replaceProcessedEmailsInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(value: true)
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
         let query: CKQuery = CKQuery(recordType: "ProcessedEmails", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -1268,7 +1268,7 @@ extension CloudKitInteraction
     func saveProcessedEmailsRecordToCloudKit(_ sourceRecord: ProcessedEmails)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(emailID == \"\(sourceRecord.emailID!)\")") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(emailID == \"\(sourceRecord.emailID!)\") AND (teamID == \(myTeamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "ProcessedEmails", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -1316,6 +1316,8 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
                     record.setValue(sourceRecord.emailType, forKey: "emailType")
                     record.setValue(sourceRecord.processedDate, forKey: "processedDate")
+                    
+                    record.setValue(myTeamID, forKey: "teamID")
                     
                     self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil

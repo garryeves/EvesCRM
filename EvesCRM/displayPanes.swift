@@ -576,7 +576,7 @@ extension CloudKitInteraction
 
     func updatePanesInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "updateTime >= %@", myDatabaseConnection.getSyncDateForTable(tableName: "Panes") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(myTeamID))", myDatabaseConnection.getSyncDateForTable(tableName: "Panes") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Panes", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -601,7 +601,7 @@ extension CloudKitInteraction
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(value: true)
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID)")
         let query: CKQuery = CKQuery(recordType: "Panes", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -616,7 +616,7 @@ extension CloudKitInteraction
 
     func replacePanesInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(value: true)
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
         let query: CKQuery = CKQuery(recordType: "Panes", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -655,7 +655,7 @@ extension CloudKitInteraction
     func savePanesRecordToCloudKit(_ sourceRecord: Panes)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(pane_name == \"\(sourceRecord.pane_name!)\")") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(pane_name == \"\(sourceRecord.pane_name!)\") AND (teamID == \(myTeamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Panes", predicate: predicate)
         privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -705,6 +705,7 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.pane_available, forKey: "pane_available")
                     record.setValue(sourceRecord.pane_order, forKey: "pane_order")
                     record.setValue(sourceRecord.pane_visible, forKey: "pane_visible")
+                    record.setValue(myTeamID, forKey: "teamID")
                     
                     self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil

@@ -36,6 +36,8 @@ var debugMessages: Bool = false
 var myCurrentTeam: team!
 var myTeams: teams!
 
+var myTeamID: Int32 = 0
+
 var myID: String = ""
 
 var myCurrentViewController: AnyObject!

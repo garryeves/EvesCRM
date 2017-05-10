@@ -74,6 +74,7 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
         
         notificationCenter.addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         notificationCenter.addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(self.showUpdates(_:)), name: NotificationShowTaskUpdate, object: nil)
     }
     
     override func didReceiveMemoryWarning()
@@ -170,6 +171,8 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
                 }
             }
             cell.txtContext.font = UIFont.preferredFont(forTextStyle: UIFontTextStyle.body)
+            
+            cell.passedTask = myTaskList[indexPath.row]
         }
         
         if (indexPath.row % 2 == 0)
@@ -230,6 +233,21 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
         self.dismiss(animated: true, completion: nil)
     }
     
+    func showUpdates(_ notification: Notification)
+    {
+        let passedTask = notification.userInfo!["Task"] as! task
+    
+        let taskUpdateControl = tasksStoryboard.instantiateViewController(withIdentifier: "taskUpdate") as! taskUpdatesViewController
+        taskUpdateControl.passedTask = passedTask
+        
+        removeExistingViews(displayView)
+        
+        taskUpdateControl.view.frame = CGRect(x: 0, y: 0, width: displayView.frame.size.width, height: displayView.frame.size.height)
+        addChildViewController(taskUpdateControl)
+        displayView.addSubview(taskUpdateControl.view)
+        taskUpdateControl.didMove(toParentViewController: self)
+    }
+    
     func keyboardWillShow(_ notification: Notification)
     {
         if let userInfo = notification.userInfo
@@ -273,16 +291,22 @@ class taskListViewController: UIViewController, UITextViewDelegate, UIPopoverPre
 
 class myTaskListItem: UICollectionViewCell
 {
-
     @IBOutlet weak var lblTargetDate: UILabel!
     @IBOutlet weak var lblStatus: UILabel!
     @IBOutlet weak var lblProject: UILabel!
     @IBOutlet weak var txtContext: UITextView!
     @IBOutlet weak var lblDescription: UILabel!
+    @IBOutlet weak var btnTaskUpdates: UIButton!
+    
+    var passedTask: task!
     
     override func layoutSubviews()
     {
         contentView.frame = bounds
         super.layoutSubviews()
+    }
+    @IBAction func btnTaskUpdates(_ sender: UIButton)
+    {
+        notificationCenter.post(name: NotificationShowTaskUpdate, object: nil, userInfo:["Task":passedTask])
     }
 }

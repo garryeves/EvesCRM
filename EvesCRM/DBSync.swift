@@ -8,6 +8,11 @@
 
 import Foundation
 
+let NotificationDBSyncCompleted = Notification.Name("MeetingDBSyncCompleted")
+let NotificationCloudSyncFinished = Notification.Name("MeetingCloudSyncFinished")
+let myNotificationCloudSyncDone = Notification.Name("myNotificationCloudSyncDone")
+
+
 class DBSync: NSObject
 {
 //    let defaultsName = "76YDDNPU7W.group.com.garryeves.EvesCRM"

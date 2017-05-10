@@ -331,7 +331,7 @@ extension DBSync
     func syncFromCloudKit()
     {
         progressMessage("syncFromCloudKit Context")
-        myCloudDB.updateContextInCoreData()
+//        myCloudDB.updateContextInCoreData()
         progressMessage("syncFromCloudKit Decodes")
         myCloudDB.updateDecodesInCoreData()
         progressMessage("syncFromCloudKit MeetingAgenda")

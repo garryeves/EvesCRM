@@ -190,14 +190,14 @@ extension CloudKitInteraction
         
         let sem = DispatchSemaphore(value: 0);
         
-        privateDB.fetchAllSubscriptions() { [unowned self] (subscriptions, error) -> Void in
+        publicDB.fetchAllSubscriptions() { [unowned self] (subscriptions, error) -> Void in
             if error == nil
             {
                 if let subscriptions = subscriptions
                 {
                     for subscription in subscriptions
                     {
-                        self.privateDB.delete(withSubscriptionID: subscription.subscriptionID, completionHandler: { (str, error) -> Void in
+                        self.publicDB.delete(withSubscriptionID: subscription.subscriptionID, completionHandler: { (str, error) -> Void in
                             if error != nil
                             {
                                 // do your error handling here!
@@ -270,7 +270,7 @@ extension CloudKitInteraction
     {
         //      NSLog("source record = \(sourceID)")
         
-        privateDB.fetch(withRecordID: sourceID)
+        publicDB.fetch(withRecordID: sourceID)
         { (record, error) -> Void in
             if error == nil
             {
