@@ -11,7 +11,7 @@ import Foundation
 import CoreData
 import CloudKit
 
-class contacts: NSObject
+class personContacts: NSObject
 {
     fileprivate var myContacts:[contact] = Array()
     
@@ -411,12 +411,12 @@ extension CloudKitInteraction
         }
     }
     
-    func deleteContact()
+    func deleteContact(personID: Int32)
     {
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID)) AND (personID == \(personID))")
         let query: CKQuery = CKQuery(recordType: "Contacts", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!

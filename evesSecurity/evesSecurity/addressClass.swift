@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 import CloudKit
 
-class addresses: NSObject
+class personAddresses: NSObject
 {
     fileprivate var myAddresses:[address] = Array()
     
@@ -27,7 +27,8 @@ class addresses: NSObject
                                     personID: myItem.personID,
                                     postcode: myItem.postcode!,
                                     projectID: myItem.projectID,
-                                    state: myItem.state!)
+                                    state: myItem.state!,
+                                    addressType: myItem.addressType!)
                 myAddresses.append(myContext)
         }
     }
@@ -45,7 +46,8 @@ class addresses: NSObject
                                     personID: myItem.personID,
                                     postcode: myItem.postcode!,
                                     projectID: myItem.projectID,
-                                    state: myItem.state!)
+                                    state: myItem.state!,
+                                    addressType: myItem.addressType!)
             myAddresses.append(myContext)
         }
     }
@@ -71,6 +73,7 @@ class address: NSObject
     fileprivate var myPostcode: String = ""
     fileprivate var myProjectID: Int32 = 0
     fileprivate var myState: String = ""
+    fileprivate var myAddressType: String = ""
 
     var addressID: Int32
     {
@@ -197,6 +200,19 @@ class address: NSObject
         }
     }
     
+    var addressType: String
+    {
+        get
+        {
+            return myAddressType
+        }
+        set
+        {
+            myAddressType = newValue
+            save()
+        }
+    }
+    
     override init()
     {
         super.init()
@@ -223,6 +239,7 @@ class address: NSObject
             myPostcode = myItem.postcode!
             myProjectID = myItem.projectID
             myState = myItem.state!
+            myAddressType = myItem.addressType!
         }
     }
     
@@ -235,7 +252,8 @@ class address: NSObject
         personID: Int32,
         postcode: String,
         projectID: Int32,
-        state: String)
+        state: String,
+        addressType: String)
     {
         super.init()
         
@@ -249,6 +267,7 @@ class address: NSObject
         myPostcode = postcode
         myProjectID = projectID
         myState = state
+        myAddressType = addressType
     }
 
     func save()
@@ -262,7 +281,8 @@ class address: NSObject
             personID: myPersonID,
             postcode: myPostcode,
             projectID: myProjectID,
-            state: myState)
+            state: myState,
+            addressType: myAddressType)
     }
     
     func delete()
@@ -283,6 +303,7 @@ extension coreDatabase
                      postcode: String,
                      projectID: Int32,
                      state: String,
+                     addressType: String,
                      updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myItem: Addresses!
@@ -302,6 +323,7 @@ extension coreDatabase
             myItem.postcode = postcode
             myItem.projectID = projectID
             myItem.state = state
+            myItem.addressType = addressType
 
             if updateType == "CODE"
             {
@@ -327,6 +349,7 @@ extension coreDatabase
             myItem.postcode = postcode
             myItem.projectID = projectID
             myItem.state = state
+            myItem.addressType = addressType
             
             if updateType == "CODE"
             {
@@ -356,6 +379,7 @@ extension coreDatabase
                         postcode: String,
                         projectID: Int32,
                         state: String,
+                        addressType: String,
                         updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myItem = Addresses(context: objectContext)
@@ -369,6 +393,7 @@ extension coreDatabase
         myItem.postcode = postcode
         myItem.projectID = projectID
         myItem.state = state
+        myItem.addressType = addressType
         
         if updateType == "CODE"
         {
@@ -621,12 +646,12 @@ extension CloudKitInteraction
         }
     }
     
-    func deleteAddress()
+    func deleteAddress(addressID: Int32)
     {
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID)) AND (addressID == \(addressID))")
         let query: CKQuery = CKQuery(recordType: "Addresses", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -655,6 +680,7 @@ extension CloudKitInteraction
             let country = record.object(forKey: "country") as! String
             let postcode = record.object(forKey: "postcode") as! String
             let state = record.object(forKey: "state") as! String
+            let addressType = record.object(forKey: "addressType") as! String
             
             var addressID: Int32 = 0
             if record.object(forKey: "addressID") != nil
@@ -701,7 +727,8 @@ extension CloudKitInteraction
                                                 personID: personID,
                                                 postcode: postcode,
                                                 projectID: projectID,
-                                                state: state
+                                                state: state,
+                                                addressType: addressType
                             , updateTime: updateTime, updateType: updateType)
             
             usleep(useconds_t(self.sleepTime))
@@ -748,6 +775,7 @@ extension CloudKitInteraction
                     record!.setValue(sourceRecord.postcode, forKey: "postcode")
                     record!.setValue(sourceRecord.projectID, forKey: "projectID")
                     record!.setValue(sourceRecord.state, forKey: "state")
+                    record!.setValue(sourceRecord.addressType, forKey: "addressType")
                     
                     if sourceRecord.updateTime != nil
                     {
@@ -784,7 +812,8 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.projectID, forKey: "projectID")
                     record.setValue(sourceRecord.state, forKey: "state")
                     record.setValue(myTeamID, forKey: "teamID")
-                    
+                    record.setValue(sourceRecord.addressType, forKey: "addressType")
+
                     if sourceRecord.updateTime != nil
                     {
                         record.setValue(sourceRecord.updateTime, forKey: "updateTime")
@@ -819,6 +848,7 @@ extension CloudKitInteraction
         let country = sourceRecord.object(forKey: "country") as! String
         let postcode = sourceRecord.object(forKey: "postcode") as! String
         let state = sourceRecord.object(forKey: "state") as! String
+        let addressType = sourceRecord.object(forKey: "addressType") as! String
         
         var addressID: Int32 = 0
         if sourceRecord.object(forKey: "addressID") != nil
@@ -865,7 +895,8 @@ extension CloudKitInteraction
                                          personID: personID,
                                          postcode: postcode,
                                          projectID: projectID,
-                                         state: state
+                                         state: state,
+                                         addressType: addressType
                 , updateTime: updateTime, updateType: updateType)
     }
     

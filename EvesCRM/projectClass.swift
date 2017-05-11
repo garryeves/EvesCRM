@@ -30,6 +30,7 @@ class project: NSObject // 10k level
     fileprivate var myReviewPeriod: String = ""
     fileprivate var myPredecessor: Int32 = 0
     fileprivate var saveCalled: Bool = false
+    fileprivate var myClientID: Int32 = 0
     
     var projectEndDate: Date
     {
@@ -312,6 +313,19 @@ class project: NSObject // 10k level
         }
     }
     
+    var clientID: Int32
+    {
+        get
+        {
+            return myClientID
+        }
+        set
+        {
+            myClientID = newValue
+            save()
+        }
+    }
+    
     init(teamID: Int32)
     {
         super.init()
@@ -349,6 +363,7 @@ class project: NSObject // 10k level
             myRepeatType = myProject.repeatType!
             myRepeatBase = myProject.repeatBase!
             myTeamID = myProject.teamID
+            myClientID = myProject.clientID
             
             // load team members
             
@@ -424,7 +439,7 @@ class project: NSObject // 10k level
  
     func save()
     {
-        myDatabaseConnection.saveProject(myProjectID, projectEndDate: myProjectEndDate, projectName: myProjectName, projectStartDate: myProjectStartDate, projectStatus: myProjectStatus, reviewFrequency: myReviewFrequency, lastReviewDate: myLastReviewDate, GTDItemID: myGTDItemID, repeatInterval: myRepeatInterval, repeatType: myRepeatType, repeatBase: myRepeatBase, teamID: myTeamID)
+        myDatabaseConnection.saveProject(myProjectID, projectEndDate: myProjectEndDate, projectName: myProjectName, projectStartDate: myProjectStartDate, projectStatus: myProjectStatus, reviewFrequency: myReviewFrequency, lastReviewDate: myLastReviewDate, GTDItemID: myGTDItemID, repeatInterval: myRepeatInterval, repeatType: myRepeatType, repeatBase: myRepeatBase, teamID: myTeamID, clientID: myClientID)
         
         // Save Team Members
         
@@ -525,6 +540,7 @@ class project: NSObject // 10k level
             newProject.repeatType = myRepeatType
             newProject.repeatBase = myRepeatBase
             newProject.note = myNote
+            newProject.clientID = myClientID
             
             // Populate team Members
             
@@ -558,7 +574,7 @@ class project: NSObject // 10k level
                 myNewTask.repeatBase = myProjectTask.repeatBase!
                 myNewTask.flagged = myProjectTask.flagged as! Bool
                 myNewTask.urgency = myProjectTask.urgency!
-                
+
                 let myContextList = myDatabaseConnection.getContextsForTask(myProjectTask.taskID)
                 
                 for myContextItem in myContextList
@@ -764,7 +780,7 @@ extension coreDatabase
         }
     }
 
-    func saveProject(_ projectID: Int32, projectEndDate: Date, projectName: String, projectStartDate: Date, projectStatus: String, reviewFrequency: Int16, lastReviewDate: Date, GTDItemID: Int32, repeatInterval: Int16, repeatType: String, repeatBase: String, teamID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveProject(_ projectID: Int32, projectEndDate: Date, projectName: String, projectStartDate: Date, projectStatus: String, reviewFrequency: Int16, lastReviewDate: Date, GTDItemID: Int32, repeatInterval: Int16, repeatType: String, repeatBase: String, teamID: Int32, clientID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myProject: Projects!
         
@@ -785,6 +801,7 @@ extension coreDatabase
             myProject.repeatType = repeatType
             myProject.repeatBase = repeatBase
             myProject.teamID = teamID
+            myProject.clientID = clientID
             
             if updateType == "CODE"
             {
@@ -811,6 +828,8 @@ extension coreDatabase
             myProject.repeatType = repeatType
             myProject.repeatBase = repeatBase
             myProject.teamID = teamID
+            myProject.clientID = clientID
+            
             if updateType == "CODE"
             {
                 myProject.updateTime =  NSDate()
@@ -829,7 +848,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceProject(_ projectID: Int32, projectEndDate: Date, projectName: String, projectStartDate: Date, projectStatus: String, reviewFrequency: Int16, lastReviewDate: Date, GTDItemID: Int32, repeatInterval: Int16, repeatType: String, repeatBase: String, teamID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
+    func replaceProject(_ projectID: Int32, projectEndDate: Date, projectName: String, projectStartDate: Date, projectStatus: String, reviewFrequency: Int16, lastReviewDate: Date, GTDItemID: Int32, repeatInterval: Int16, repeatType: String, repeatBase: String, teamID: Int32, clientID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         
         let myProject = Projects(context: objectContext)
@@ -845,6 +864,7 @@ extension coreDatabase
         myProject.repeatType = repeatType
         myProject.repeatBase = repeatBase
         myProject.teamID = teamID
+        myProject.clientID = clientID
         
         if updateType == "CODE"
         {
@@ -1299,7 +1319,14 @@ extension CloudKitInteraction
             let reviewPeriod = record.object(forKey: "reviewPeriod") as! String
             let predecessor = record.object(forKey: "predecessor") as! Int32
             
-            myDatabaseConnection.replaceProject(projectID, projectEndDate: projectEndDate, projectName: projectName, projectStartDate: projectStartDate, projectStatus: projectStatus, reviewFrequency: reviewFrequency, lastReviewDate: lastReviewDate, GTDItemID: areaID, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, teamID: teamID, updateTime: updateTime, updateType: updateType)
+            var clientID: Int32 = 0
+            
+            if record.object(forKey: "clientID") != nil
+            {
+                clientID = record.object(forKey: "clientID") as! Int32
+            }
+            
+            myDatabaseConnection.replaceProject(projectID, projectEndDate: projectEndDate, projectName: projectName, projectStartDate: projectStartDate, projectStatus: projectStatus, reviewFrequency: reviewFrequency, lastReviewDate: lastReviewDate, GTDItemID: areaID, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, teamID: teamID, clientID: clientID, updateTime: updateTime, updateType: updateType)
             
             myDatabaseConnection.replaceProjectNote(projectID, note: note, reviewPeriod: reviewPeriod, predecessor: predecessor, updateTime: updateTime, updateType: updateType)
             usleep(useconds_t(self.sleepTime))
@@ -1366,6 +1393,7 @@ extension CloudKitInteraction
                     record!.setValue(myNote, forKey: "note")
                     record!.setValue(myReviewPeriod, forKey: "reviewPeriod")
                     record!.setValue(myPredecessor, forKey: "predecessor")
+                    record!.setValue(sourceRecord.clientID, forKey: "clientID")
                     
                     // Save this record again
                     self.publicDB.save(record!, completionHandler: { (savedRecord, saveError) in
@@ -1405,6 +1433,8 @@ extension CloudKitInteraction
                     record.setValue(myNote, forKey: "note")
                     record.setValue(myReviewPeriod, forKey: "reviewPeriod")
                     record.setValue(myPredecessor, forKey: "predecessor")
+                    record.setValue(sourceRecord.clientID, forKey: "clientID")
+
                     record.setValue(myTeamID, forKey: "teamID")
                     
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
@@ -1486,7 +1516,7 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.reviewPeriod, forKey: "reviewPeriod")
                     record.setValue(sourceRecord.predecessor, forKey: "predecessor")
                     record.setValue(myTeamID, forKey: "teamID")
-                    
+
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
                         {
@@ -1538,7 +1568,14 @@ extension CloudKitInteraction
         let reviewPeriod = sourceRecord.object(forKey: "reviewPeriod") as! String
         let predecessor = sourceRecord.object(forKey: "predecessor") as! Int32
         
-        myDatabaseConnection.saveProject(projectID, projectEndDate: projectEndDate, projectName: projectName, projectStartDate: projectStartDate, projectStatus: projectStatus, reviewFrequency: reviewFrequency, lastReviewDate: lastReviewDate, GTDItemID: areaID, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, teamID: teamID, updateTime: updateTime, updateType: updateType)
+        var clientID: Int32 = 0
+        
+        if sourceRecord.object(forKey: "clientID") != nil
+        {
+            clientID = sourceRecord.object(forKey: "clientID") as! Int32
+        }
+        
+        myDatabaseConnection.saveProject(projectID, projectEndDate: projectEndDate, projectName: projectName, projectStartDate: projectStartDate, projectStatus: projectStatus, reviewFrequency: reviewFrequency, lastReviewDate: lastReviewDate, GTDItemID: areaID, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, teamID: teamID, clientID: clientID, updateTime: updateTime, updateType: updateType)
         
         myDatabaseConnection.saveProjectNote(projectID, note: note, reviewPeriod: reviewPeriod, predecessor: predecessor, updateTime: updateTime, updateType: updateType)
     }

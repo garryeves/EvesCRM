@@ -1,8 +1,8 @@
 //
-//  clientsClass.swift
+//  UserRoleTypesClass.swift
 //  evesSecurity
 //
-//  Created by Garry Eves on 10/5/17.
+//  Created by Garry Eves on 11/5/17.
 //  Copyright © 2017 Garry Eves. All rights reserved.
 //
 
@@ -10,135 +10,116 @@ import Foundation
 import CoreData
 import CloudKit
 
-class clients: NSObject
+class userRoleTypes: NSObject
 {
-    fileprivate var myClients:[client] = Array()
+    fileprivate var myUserRoleTypes:[userRoleType] = Array()
     
     override init()
     {
-        for myItem in myDatabaseConnection.getClients()
+        for myItem in myDatabaseConnection.getUserRoleTypes()
         {
-            let myObject = client(clientID: myItem.clientID,
-                                    clientName: myItem.clientName!,
-                                    clientContact: myItem.clientContact!)
-            myClients.append(myObject)
+            let myObject = userRoleType(roleTypeID: myItem.roleTypeID,
+                                         name: myItem.name!)
+            myUserRoleTypes.append(myObject)
         }
     }
     
-    var clients: [client]
+    var UserRoleTypes: [userRoleType]
     {
         get
         {
-            return myClients
+            return myUserRoleTypes
         }
     }
 }
 
-class client: NSObject
+class userRoleType: NSObject
 {
-    fileprivate var myClientID: Int32 = 0
-    fileprivate var myClientName: String = ""
-    fileprivate var myClientContact: String = ""
+    fileprivate var myRoleTypeID: Int32 = 0
+    fileprivate var myName: String = ""
     
-    var clientID: Int32
+    var roleTypeID: Int32
     {
         get
         {
-            return myClientID
+            return myRoleTypeID
         }
     }
     
-    var clientName: String
+    var name: String
     {
         get
         {
-            return myClientName
+            return myName
         }
         set
         {
-            myClientName = newValue
+            myName = newValue
             save()
         }
     }
     
-    var clientContact: String
-    {
-        get
-        {
-            return myClientContact
-        }
-        set
-        {
-            myClientContact = newValue
-            save()
-        }
-    }
-    
-    override init()
+    init(name: String)
     {
         super.init()
         
-        myClientID = myDatabaseConnection.getNextID("Client")
+        myRoleTypeID = myDatabaseConnection.getNextID("UserRoleTypes")
+        myName = name
         
         save()
     }
     
-    init(clientID: Int32)
+    init(roleTypeID: Int32)
     {
         super.init()
-        let myReturn = myDatabaseConnection.getClientDetails(clientID: clientID)
+        
+        let myReturn = myDatabaseConnection.getUserRoleTypesDetails(roleTypeID)
         
         for myItem in myReturn
         {
-            myClientID = myItem.clientID
-            myClientName = myItem.clientName!
-            myClientContact = myItem.clientContact!
+            myRoleTypeID = myItem.roleTypeID
+            myName = myItem.name!
         }
     }
     
-    init(clientID: Int32,
-         clientName: String,
-         clientContact: String)
+    init(roleTypeID: Int32,
+         name: String
+         )
     {
         super.init()
-        
-        myClientID = clientID
-        myClientName = clientName
-        myClientContact = clientContact
 
+        myRoleTypeID = roleTypeID
+        myName = name
     }
     
     func save()
     {
-        myDatabaseConnection.saveClient(myClientID,
-                                        clientName: myClientName,
-                                        clientContact: myClientContact)
+        myDatabaseConnection.saveUserRoleTypes(myRoleTypeID,
+                                         name: myName
+                                         )
     }
     
     func delete()
     {
-        myDatabaseConnection.deleteClient(myClientID)
+        myDatabaseConnection.deleteUserRoleTypes(myRoleTypeID)
     }
 }
 
 extension coreDatabase
 {
-    func saveClient(_ clientID: Int32,
-                    clientName: String,
-                    clientContact: String,
+    func saveUserRoleTypes(_ roleTypeID: Int32,
+                     name: String,
                      updateTime: Date =  Date(), updateType: String = "CODE")
     {
-        var myItem: Clients!
+        var myItem: UserRoleTypes!
         
-        let myReturn = getClientDetails(clientID: clientID)
+        let myReturn = getUserRoleTypesDetails(roleTypeID)
         
         if myReturn.count == 0
         { // Add
-            myItem = Clients(context: objectContext)
-            myItem.clientID = clientID
-            myItem.clientName = clientName
-            myItem.clientContact = clientContact
-
+            myItem = UserRoleTypes(context: objectContext)
+            myItem.roleTypeID = roleTypeID
+            myItem.name = name
             
             if updateType == "CODE"
             {
@@ -155,8 +136,7 @@ extension coreDatabase
         else
         {
             myItem = myReturn[0]
-            myItem.clientName = clientName
-            myItem.clientContact = clientContact
+            myItem.name = name
             
             if updateType == "CODE"
             {
@@ -176,15 +156,13 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceClient(_ clientID: Int32,
-                        clientName: String,
-                        clientContact: String,
+    func replaceUserRoleTypes(_ roleTypeID: Int32,
+                              name: String,
                         updateTime: Date =  Date(), updateType: String = "CODE")
     {
-        let myItem = Clients(context: objectContext)
-        myItem.clientID = clientID
-        myItem.clientName = clientName
-        myItem.clientContact = clientContact
+        let myItem = UserRoleTypes(context: objectContext)
+        myItem.roleTypeID = roleTypeID
+        myItem.name = name
         
         if updateType == "CODE"
         {
@@ -200,9 +178,9 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteClient(_ clientID: Int32)
+    func deleteUserRoleTypes(_ roleTypeID: Int32)
     {
-        let myReturn = getClientDetails(clientID: clientID)
+        let myReturn = getUserRoleTypesDetails(roleTypeID)
         
         if myReturn.count > 0
         {
@@ -214,34 +192,9 @@ extension coreDatabase
         saveContext()
     }
     
-    func getClientDetails(clientID: Int32)->[Clients]
+    func getUserRoleTypes()->[UserRoleTypes]
     {
-        let fetchRequest = NSFetchRequest<Clients>(entityName: "Clients")
-        
-        // Create a new predicate that filters out any object that
-        // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(client != \(clientID)) && (updateType != \"Delete\")")
-        
-        // Set the predicate on the fetch request
-        fetchRequest.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        do
-        {
-            let fetchResults = try objectContext.fetch(fetchRequest)
-            return fetchResults
-        }
-        catch
-        {
-            print("Error occurred during execution: \(error)")
-            return []
-        }
-    }
-
-    
-    func getClients() -> [Clients]
-    {
-        let fetchRequest = NSFetchRequest<Clients>(entityName: "Clients")
+        let fetchRequest = NSFetchRequest<UserRoleTypes>(entityName: "UserRoleTypes")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -263,9 +216,33 @@ extension coreDatabase
         }
     }
     
-    func resetAllClients()
+    func getUserRoleTypesDetails(_ roleTypeID: Int32)->[UserRoleTypes]
     {
-        let fetchRequest = NSFetchRequest<Clients>(entityName: "Clients")
+        let fetchRequest = NSFetchRequest<UserRoleTypes>(entityName: "UserRoleTypes")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(roleTypeID == \(roleTypeID)) && (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func resetAllUserRoleTypes()
+    {
+        let fetchRequest = NSFetchRequest<UserRoleTypes>(entityName: "UserRoleTypes")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
@@ -285,9 +262,9 @@ extension coreDatabase
         saveContext()
     }
     
-    func clearDeletedClients(predicate: NSPredicate)
+    func clearDeletedUserRoleTypes(predicate: NSPredicate)
     {
-        let fetchRequest2 = NSFetchRequest<Clients>(entityName: "Clients")
+        let fetchRequest2 = NSFetchRequest<UserRoleTypes>(entityName: "UserRoleTypes")
         
         // Set the predicate on the fetch request
         fetchRequest2.predicate = predicate
@@ -308,9 +285,9 @@ extension coreDatabase
         saveContext()
     }
     
-    func clearSyncedClients(predicate: NSPredicate)
+    func clearSyncedUserRoleTypes(predicate: NSPredicate)
     {
-        let fetchRequest2 = NSFetchRequest<Clients>(entityName: "Clients")
+        let fetchRequest2 = NSFetchRequest<UserRoleTypes>(entityName: "UserRoleTypes")
         
         // Set the predicate on the fetch request
         fetchRequest2.predicate = predicate
@@ -332,9 +309,9 @@ extension coreDatabase
         saveContext()
     }
     
-    func getClientsForSync(_ syncDate: Date) -> [Clients]
+    func getUserRoleTypesForSync(_ syncDate: Date) -> [UserRoleTypes]
     {
-        let fetchRequest = NSFetchRequest<Clients>(entityName: "Clients")
+        let fetchRequest = NSFetchRequest<UserRoleTypes>(entityName: "UserRoleTypes")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
         
@@ -355,9 +332,9 @@ extension coreDatabase
         }
     }
     
-    func deleteAllClients()
+    func deleteAllUserRoleTypes()
     {
-        let fetchRequest2 = NSFetchRequest<Clients>(entityName: "Clients")
+        let fetchRequest2 = NSFetchRequest<UserRoleTypes>(entityName: "UserRoleTypes")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
@@ -379,18 +356,18 @@ extension coreDatabase
 
 extension CloudKitInteraction
 {
-    func saveClientToCloudKit()
+    func saveUserRoleTypesToCloudKit()
     {
-        for myItem in myDatabaseConnection.getClientsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Clients"))
+        for myItem in myDatabaseConnection.getUserRoleTypesForSync(myDatabaseConnection.getSyncDateForTable(tableName: "UserRoleTypes"))
         {
-            saveClientRecordToCloudKit(myItem)
+            saveUserRoleTypesRecordToCloudKit(myItem)
         }
     }
     
-    func updateClientInCoreData()
+    func updateUserRoleTypesInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(myTeamID))", myDatabaseConnection.getSyncDateForTable(tableName: "Clients") as CVarArg)
-        let query: CKQuery = CKQuery(recordType: "Clients", predicate: predicate)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(myTeamID))", myDatabaseConnection.getSyncDateForTable(tableName: "UserRoleTypes") as CVarArg)
+        let query: CKQuery = CKQuery(recordType: "UserRoleTypes", predicate: predicate)
         
         let operation = CKQueryOperation(query: query)
         
@@ -399,7 +376,7 @@ extension CloudKitInteraction
         operation.recordFetchedBlock = { (record) in
             self.recordCount += 1
             
-            self.updateClientRecord(record)
+            self.updateUserRoleTypesRecord(record)
             self.recordCount -= 1
             
             usleep(useconds_t(self.sleepTime))
@@ -414,13 +391,13 @@ extension CloudKitInteraction
         }
     }
     
-    func deleteClient(clientID: Int32)
+    func deleteUserRoleTypes(roleTypeID: Int32)
     {
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID)) AND (client != \(clientID))")
-        let query: CKQuery = CKQuery(recordType: "Clients", predicate: predicate)
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID)) AND (roleTypeID == \(roleTypeID))")
+        let query: CKQuery = CKQuery(recordType: "UserRoleTypes", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
@@ -433,22 +410,21 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func replaceClientInCoreData()
+    func replaceUserRoleTypesInCoreData()
     {
         let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
-        let query: CKQuery = CKQuery(recordType: "Clients", predicate: predicate)
+        let query: CKQuery = CKQuery(recordType: "UserRoleTypes", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
         waitFlag = true
         
         operation.recordFetchedBlock = { (record) in
-            let clientName = record.object(forKey: "clientName") as! String
-            let clientContact = record.object(forKey: "clientContact") as! String
-        
-            var clientID: Int32 = 0
-            if record.object(forKey: "clientID") != nil
+            let name = record.object(forKey: "name") as! String
+            
+            var roleTypeID: Int32 = 0
+            if record.object(forKey: "roleTypeID") != nil
             {
-                clientID = record.object(forKey: "clientID") as! Int32
+                roleTypeID = record.object(forKey: "roleTypeID") as! Int32
             }
             
             var updateTime = Date()
@@ -463,10 +439,9 @@ extension CloudKitInteraction
                 updateType = record.object(forKey: "updateType") as! String
             }
             
-            myDatabaseConnection.replaceClient(clientID,
-                                               clientName: clientName,
-                                               clientContact: clientContact
-                    , updateTime: updateTime, updateType: updateType)
+            myDatabaseConnection.replaceUserRoleTypes(roleTypeID,
+                                                name: name
+                                                , updateTime: updateTime, updateType: updateType)
             
             usleep(useconds_t(self.sleepTime))
         }
@@ -481,12 +456,12 @@ extension CloudKitInteraction
         }
     }
     
-    func saveClientRecordToCloudKit(_ sourceRecord: Clients)
+    func saveUserRoleTypesRecordToCloudKit(_ sourceRecord: UserRoleTypes)
     {
         let sem = DispatchSemaphore(value: 0)
         
-        let predicate = NSPredicate(format: "(clientID == \(sourceRecord.clientID)) AND (teamID == \(myTeamID))") // better be accurate to get only the record you need
-        let query = CKQuery(recordType: "Clients", predicate: predicate)
+        let predicate = NSPredicate(format: "(roleTypeID == \(sourceRecord.roleTypeID)) AND (teamID == \(myTeamID))") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "UserRoleTypes", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
             {
@@ -501,10 +476,8 @@ extension CloudKitInteraction
                     let record = records!.first// as! CKRecord
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
-                    
-                    record!.setValue(sourceRecord.clientID, forKey: "clientID")
-                    record!.setValue(sourceRecord.clientName, forKey: "clientName,")
-                    record!.setValue(sourceRecord.clientContact, forKey: "clientContact")
+
+                    record!.setValue(sourceRecord.name, forKey: "name")
                     
                     if sourceRecord.updateTime != nil
                     {
@@ -529,12 +502,10 @@ extension CloudKitInteraction
                 }
                 else
                 {  // Insert
-                    let record = CKRecord(recordType: "Clients")
+                    let record = CKRecord(recordType: "UserRoleTypes")
+                    record.setValue(sourceRecord.roleTypeID, forKey: "roleTypeID")
+                    record.setValue(sourceRecord.name, forKey: "name")
                     
-                    record.setValue(sourceRecord.clientID, forKey: "clientID")
-                    record.setValue(sourceRecord.clientName, forKey: "clientName,")
-                    record.setValue(sourceRecord.clientContact, forKey: "clientContact")
-
                     record.setValue(myTeamID, forKey: "teamID")
                     
                     if sourceRecord.updateTime != nil
@@ -563,15 +534,14 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func updateClientRecord(_ sourceRecord: CKRecord)
+    func updateUserRoleTypesRecord(_ sourceRecord: CKRecord)
     {
-        let clientName = sourceRecord.object(forKey: "clientName") as! String
-        let clientContact = sourceRecord.object(forKey: "clientContact") as! String
+        let name = sourceRecord.object(forKey: "name") as! String
         
-        var clientID: Int32 = 0
-        if sourceRecord.object(forKey: "clientID") != nil
+        var roleTypeID: Int32 = 0
+        if sourceRecord.object(forKey: "roleTypeID") != nil
         {
-            clientID = sourceRecord.object(forKey: "clientID") as! Int32
+            roleTypeID = sourceRecord.object(forKey: "roleTypeID") as! Int32
         }
         
         var updateTime = Date()
@@ -586,11 +556,9 @@ extension CloudKitInteraction
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
         
-        myDatabaseConnection.saveClient(clientID,
-                                         clientName: clientName,
-                                         clientContact: clientContact
-            , updateTime: updateTime, updateType: updateType)
+        myDatabaseConnection.saveUserRoleTypes(roleTypeID,
+                                         name: name
+                                         , updateTime: updateTime, updateType: updateType)
     }
-    
 }
 

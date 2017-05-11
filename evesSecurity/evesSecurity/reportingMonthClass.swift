@@ -1,8 +1,8 @@
 //
-//  clientsClass.swift
+//  reportingMonthClass.swift
 //  evesSecurity
 //
-//  Created by Garry Eves on 10/5/17.
+//  Created by Garry Eves on 11/5/17.
 //  Copyright © 2017 Garry Eves. All rights reserved.
 //
 
@@ -10,135 +10,127 @@ import Foundation
 import CoreData
 import CloudKit
 
-class clients: NSObject
+class reportingMonths: NSObject
 {
-    fileprivate var myClients:[client] = Array()
+    fileprivate var myReportingMonth:[reportingMonthItem] = Array()
     
     override init()
     {
-        for myItem in myDatabaseConnection.getClients()
+        for myItem in myDatabaseConnection.getReportingMonth()
         {
-            let myObject = client(clientID: myItem.clientID,
-                                    clientName: myItem.clientName!,
-                                    clientContact: myItem.clientContact!)
-            myClients.append(myObject)
+            let myObject = reportingMonthItem(monthStartDate: myItem.monthStartDate! as Date,
+                                          monthName: myItem.monthName!,
+                                          yearName: myItem.yearName!
+                                   )
+            myReportingMonth.append(myObject)
         }
     }
     
-    var clients: [client]
+    var reportingMonth: [reportingMonthItem]
     {
         get
         {
-            return myClients
+            return myReportingMonth
         }
     }
 }
 
-class client: NSObject
+class reportingMonthItem: NSObject
 {
-    fileprivate var myClientID: Int32 = 0
-    fileprivate var myClientName: String = ""
-    fileprivate var myClientContact: String = ""
-    
-    var clientID: Int32
+    fileprivate var myMonthStartDate: Date!
+    fileprivate var myMonthName: String = ""
+    fileprivate var myYearName: String = ""
+
+    var monthStartDate: Date
     {
         get
         {
-            return myClientID
+            return myMonthStartDate
         }
     }
     
-    var clientName: String
+    var monthName: String
     {
         get
         {
-            return myClientName
+            return myMonthName
         }
         set
         {
-            myClientName = newValue
+            myMonthName = newValue
             save()
         }
     }
     
-    var clientContact: String
+    var yearName: String
     {
         get
         {
-            return myClientContact
+            return myYearName
         }
         set
         {
-            myClientContact = newValue
+            myYearName = newValue
             save()
         }
     }
     
-    override init()
+    init(monthStartDate: Date)
     {
         super.init()
-        
-        myClientID = myDatabaseConnection.getNextID("Client")
-        
-        save()
-    }
-    
-    init(clientID: Int32)
-    {
-        super.init()
-        let myReturn = myDatabaseConnection.getClientDetails(clientID: clientID)
+        let myReturn = myDatabaseConnection.getReportingMonthDetails(monthStartDate)
         
         for myItem in myReturn
         {
-            myClientID = myItem.clientID
-            myClientName = myItem.clientName!
-            myClientContact = myItem.clientContact!
+            myMonthStartDate = myItem.monthStartDate! as Date
+            myMonthName = myItem.monthName!
+            myYearName = myItem.yearName!
         }
     }
     
-    init(clientID: Int32,
-         clientName: String,
-         clientContact: String)
+    init(monthStartDate: Date,
+         monthName: String,
+         yearName: String
+         )
     {
         super.init()
         
-        myClientID = clientID
-        myClientName = clientName
-        myClientContact = clientContact
-
+        myMonthStartDate = monthStartDate
+        myMonthName = monthName
+        myYearName = yearName
     }
     
     func save()
     {
-        myDatabaseConnection.saveClient(myClientID,
-                                        clientName: myClientName,
-                                        clientContact: myClientContact)
+        myDatabaseConnection.saveReportingMonth(myMonthStartDate,
+                                         monthName: myMonthName,
+                                         yearName: myYearName
+                                         )
     }
     
     func delete()
     {
-        myDatabaseConnection.deleteClient(myClientID)
+        myDatabaseConnection.deleteReportingMonth(myMonthStartDate)
     }
 }
 
 extension coreDatabase
 {
-    func saveClient(_ clientID: Int32,
-                    clientName: String,
-                    clientContact: String,
+    func saveReportingMonth(_ monthStartDate: Date,
+                     monthName: String,
+                     yearName: String,
                      updateTime: Date =  Date(), updateType: String = "CODE")
     {
-        var myItem: Clients!
+        var myItem: ReportingMonth!
         
-        let myReturn = getClientDetails(clientID: clientID)
+        let myReturn = getReportingMonthDetails(monthStartDate)
         
         if myReturn.count == 0
         { // Add
-            myItem = Clients(context: objectContext)
-            myItem.clientID = clientID
-            myItem.clientName = clientName
-            myItem.clientContact = clientContact
-
+            myItem = ReportingMonth(context: objectContext)
+            myItem.monthStartDate = monthStartDate as NSDate
+            myItem.monthName = monthName
+            myItem.yearName = yearName
             
             if updateType == "CODE"
             {
@@ -155,8 +147,8 @@ extension coreDatabase
         else
         {
             myItem = myReturn[0]
-            myItem.clientName = clientName
-            myItem.clientContact = clientContact
+            myItem.monthName = monthName
+            myItem.yearName = yearName
             
             if updateType == "CODE"
             {
@@ -176,15 +168,15 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceClient(_ clientID: Int32,
-                        clientName: String,
-                        clientContact: String,
+    func replaceReportingMonth(_ monthStartDate: Date,
+                               monthName: String,
+                               yearName: String,
                         updateTime: Date =  Date(), updateType: String = "CODE")
     {
-        let myItem = Clients(context: objectContext)
-        myItem.clientID = clientID
-        myItem.clientName = clientName
-        myItem.clientContact = clientContact
+        let myItem = ReportingMonth(context: objectContext)
+        myItem.monthStartDate = monthStartDate as NSDate
+        myItem.monthName = monthName
+        myItem.yearName = yearName
         
         if updateType == "CODE"
         {
@@ -200,9 +192,9 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteClient(_ clientID: Int32)
+    func deleteReportingMonth(_ monthStartDate: Date)
     {
-        let myReturn = getClientDetails(clientID: clientID)
+        let myReturn = getReportingMonthDetails(monthStartDate)
         
         if myReturn.count > 0
         {
@@ -214,34 +206,9 @@ extension coreDatabase
         saveContext()
     }
     
-    func getClientDetails(clientID: Int32)->[Clients]
+    func getReportingMonth()->[ReportingMonth]
     {
-        let fetchRequest = NSFetchRequest<Clients>(entityName: "Clients")
-        
-        // Create a new predicate that filters out any object that
-        // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(client != \(clientID)) && (updateType != \"Delete\")")
-        
-        // Set the predicate on the fetch request
-        fetchRequest.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        do
-        {
-            let fetchResults = try objectContext.fetch(fetchRequest)
-            return fetchResults
-        }
-        catch
-        {
-            print("Error occurred during execution: \(error)")
-            return []
-        }
-    }
-
-    
-    func getClients() -> [Clients]
-    {
-        let fetchRequest = NSFetchRequest<Clients>(entityName: "Clients")
+        let fetchRequest = NSFetchRequest<ReportingMonth>(entityName: "ReportingMonth")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -250,6 +217,9 @@ extension coreDatabase
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         
+        let sortDescriptor = NSSortDescriptor(key: "monthStartDate", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
@@ -263,9 +233,33 @@ extension coreDatabase
         }
     }
     
-    func resetAllClients()
+    func getReportingMonthDetails(_ monthStartDate: Date)->[ReportingMonth]
     {
-        let fetchRequest = NSFetchRequest<Clients>(entityName: "Clients")
+        let fetchRequest = NSFetchRequest<ReportingMonth>(entityName: "ReportingMonth")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(monthStartDate == %@) && (updateType != \"Delete\")", monthStartDate as CVarArg)
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func resetAllReportingMonth()
+    {
+        let fetchRequest = NSFetchRequest<ReportingMonth>(entityName: "ReportingMonth")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
@@ -285,9 +279,9 @@ extension coreDatabase
         saveContext()
     }
     
-    func clearDeletedClients(predicate: NSPredicate)
+    func clearDeletedReportingMonth(predicate: NSPredicate)
     {
-        let fetchRequest2 = NSFetchRequest<Clients>(entityName: "Clients")
+        let fetchRequest2 = NSFetchRequest<ReportingMonth>(entityName: "ReportingMonth")
         
         // Set the predicate on the fetch request
         fetchRequest2.predicate = predicate
@@ -308,9 +302,9 @@ extension coreDatabase
         saveContext()
     }
     
-    func clearSyncedClients(predicate: NSPredicate)
+    func clearSyncedReportingMonth(predicate: NSPredicate)
     {
-        let fetchRequest2 = NSFetchRequest<Clients>(entityName: "Clients")
+        let fetchRequest2 = NSFetchRequest<ReportingMonth>(entityName: "ReportingMonth")
         
         // Set the predicate on the fetch request
         fetchRequest2.predicate = predicate
@@ -332,9 +326,9 @@ extension coreDatabase
         saveContext()
     }
     
-    func getClientsForSync(_ syncDate: Date) -> [Clients]
+    func getReportingMonthForSync(_ syncDate: Date) -> [ReportingMonth]
     {
-        let fetchRequest = NSFetchRequest<Clients>(entityName: "Clients")
+        let fetchRequest = NSFetchRequest<ReportingMonth>(entityName: "ReportingMonth")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
         
@@ -355,9 +349,9 @@ extension coreDatabase
         }
     }
     
-    func deleteAllClients()
+    func deleteAllReportingMonth()
     {
-        let fetchRequest2 = NSFetchRequest<Clients>(entityName: "Clients")
+        let fetchRequest2 = NSFetchRequest<ReportingMonth>(entityName: "ReportingMonth")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
@@ -379,18 +373,18 @@ extension coreDatabase
 
 extension CloudKitInteraction
 {
-    func saveClientToCloudKit()
+    func saveReportingMonthToCloudKit()
     {
-        for myItem in myDatabaseConnection.getClientsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Clients"))
+        for myItem in myDatabaseConnection.getReportingMonthForSync(myDatabaseConnection.getSyncDateForTable(tableName: "ReportingMonth"))
         {
-            saveClientRecordToCloudKit(myItem)
+            saveReportingMonthRecordToCloudKit(myItem)
         }
     }
     
-    func updateClientInCoreData()
+    func updateReportingMonthInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(myTeamID))", myDatabaseConnection.getSyncDateForTable(tableName: "Clients") as CVarArg)
-        let query: CKQuery = CKQuery(recordType: "Clients", predicate: predicate)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(myTeamID))", myDatabaseConnection.getSyncDateForTable(tableName: "ReportingMonth") as CVarArg)
+        let query: CKQuery = CKQuery(recordType: "ReportingMonth", predicate: predicate)
         
         let operation = CKQueryOperation(query: query)
         
@@ -399,7 +393,7 @@ extension CloudKitInteraction
         operation.recordFetchedBlock = { (record) in
             self.recordCount += 1
             
-            self.updateClientRecord(record)
+            self.updateReportingMonthRecord(record)
             self.recordCount -= 1
             
             usleep(useconds_t(self.sleepTime))
@@ -414,13 +408,13 @@ extension CloudKitInteraction
         }
     }
     
-    func deleteClient(clientID: Int32)
+    func deleteReportingMonth(ReportingMonthID: Int32)
     {
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID)) AND (client != \(clientID))")
-        let query: CKQuery = CKQuery(recordType: "Clients", predicate: predicate)
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID)) AND (monthStartDate == \(ReportingMonthID))")
+        let query: CKQuery = CKQuery(recordType: "ReportingMonth", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
@@ -433,22 +427,22 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func replaceClientInCoreData()
+    func replaceReportingMonthInCoreData()
     {
         let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
-        let query: CKQuery = CKQuery(recordType: "Clients", predicate: predicate)
+        let query: CKQuery = CKQuery(recordType: "ReportingMonth", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
         waitFlag = true
         
         operation.recordFetchedBlock = { (record) in
-            let clientName = record.object(forKey: "clientName") as! String
-            let clientContact = record.object(forKey: "clientContact") as! String
-        
-            var clientID: Int32 = 0
-            if record.object(forKey: "clientID") != nil
+            let monthName = record.object(forKey: "monthName") as! String
+            let yearName = record.object(forKey: "yearName") as! String
+            
+            var monthStartDate = Date()
+            if record.object(forKey: "monthStartDate") != nil
             {
-                clientID = record.object(forKey: "clientID") as! Int32
+                monthStartDate = record.object(forKey: "monthStartDate") as! Date
             }
             
             var updateTime = Date()
@@ -463,10 +457,10 @@ extension CloudKitInteraction
                 updateType = record.object(forKey: "updateType") as! String
             }
             
-            myDatabaseConnection.replaceClient(clientID,
-                                               clientName: clientName,
-                                               clientContact: clientContact
-                    , updateTime: updateTime, updateType: updateType)
+            myDatabaseConnection.replaceReportingMonth(monthStartDate,
+                                                monthName: monthName,
+                                                yearName: yearName
+                                                , updateTime: updateTime, updateType: updateType)
             
             usleep(useconds_t(self.sleepTime))
         }
@@ -481,12 +475,12 @@ extension CloudKitInteraction
         }
     }
     
-    func saveClientRecordToCloudKit(_ sourceRecord: Clients)
+    func saveReportingMonthRecordToCloudKit(_ sourceRecord: ReportingMonth)
     {
         let sem = DispatchSemaphore(value: 0)
         
-        let predicate = NSPredicate(format: "(clientID == \(sourceRecord.clientID)) AND (teamID == \(myTeamID))") // better be accurate to get only the record you need
-        let query = CKQuery(recordType: "Clients", predicate: predicate)
+        let predicate = NSPredicate(format: "(monthStartDate == \(sourceRecord.monthStartDate!)) AND (teamID == \(myTeamID))") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "ReportingMonth", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
             {
@@ -502,9 +496,8 @@ extension CloudKitInteraction
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
                     
-                    record!.setValue(sourceRecord.clientID, forKey: "clientID")
-                    record!.setValue(sourceRecord.clientName, forKey: "clientName,")
-                    record!.setValue(sourceRecord.clientContact, forKey: "clientContact")
+                    record!.setValue(sourceRecord.monthName, forKey: "monthName")
+                    record!.setValue(sourceRecord.yearName, forKey: "yearName")
                     
                     if sourceRecord.updateTime != nil
                     {
@@ -529,12 +522,11 @@ extension CloudKitInteraction
                 }
                 else
                 {  // Insert
-                    let record = CKRecord(recordType: "Clients")
+                    let record = CKRecord(recordType: "ReportingMonth")
+                    record.setValue(sourceRecord.monthStartDate, forKey: "monthStartDate")
+                    record.setValue(sourceRecord.monthName, forKey: "monthName")
+                    record.setValue(sourceRecord.yearName, forKey: "yearName")
                     
-                    record.setValue(sourceRecord.clientID, forKey: "clientID")
-                    record.setValue(sourceRecord.clientName, forKey: "clientName,")
-                    record.setValue(sourceRecord.clientContact, forKey: "clientContact")
-
                     record.setValue(myTeamID, forKey: "teamID")
                     
                     if sourceRecord.updateTime != nil
@@ -563,15 +555,15 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func updateClientRecord(_ sourceRecord: CKRecord)
+    func updateReportingMonthRecord(_ sourceRecord: CKRecord)
     {
-        let clientName = sourceRecord.object(forKey: "clientName") as! String
-        let clientContact = sourceRecord.object(forKey: "clientContact") as! String
+        let monthName = sourceRecord.object(forKey: "monthName") as! String
+        let yearName = sourceRecord.object(forKey: "yearName") as! String
         
-        var clientID: Int32 = 0
-        if sourceRecord.object(forKey: "clientID") != nil
+        var monthStartDate = Date()
+        if sourceRecord.object(forKey: "monthStartDate") != nil
         {
-            clientID = sourceRecord.object(forKey: "clientID") as! Int32
+            monthStartDate = sourceRecord.object(forKey: "monthStartDate") as! Date
         }
         
         var updateTime = Date()
@@ -586,11 +578,10 @@ extension CloudKitInteraction
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
         
-        myDatabaseConnection.saveClient(clientID,
-                                         clientName: clientName,
-                                         clientContact: clientContact
-            , updateTime: updateTime, updateType: updateType)
+        myDatabaseConnection.saveReportingMonth(monthStartDate,
+                                         monthName: monthName,
+                                         yearName: yearName
+                                         , updateTime: updateTime, updateType: updateType)
     }
-    
 }
 

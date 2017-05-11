@@ -9,4 +9,5 @@ target ‘evesSecurity' do
 pod 'FacebookCore'
 pod 'FacebookLogin'
 pod 'FacebookShare'
+pod 'RNCryptor'
 end

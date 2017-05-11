@@ -1,8 +1,8 @@
 //
-//  clientsClass.swift
+//  contractShiftComponent.swift
 //  evesSecurity
 //
-//  Created by Garry Eves on 10/5/17.
+//  Created by Garry Eves on 11/5/17.
 //  Copyright © 2017 Garry Eves. All rights reserved.
 //
 
@@ -10,135 +10,147 @@ import Foundation
 import CoreData
 import CloudKit
 
-class clients: NSObject
+class contractShiftComponents: NSObject
 {
-    fileprivate var myClients:[client] = Array()
+    fileprivate var myComponents:[contractShiftComponent] = Array()
     
-    override init()
+    init(contractShiftID: Int32)
     {
-        for myItem in myDatabaseConnection.getClients()
+        for myItem in myDatabaseConnection.getContractShiftComponents(contractShiftID: contractShiftID)
         {
-            let myObject = client(clientID: myItem.clientID,
-                                    clientName: myItem.clientName!,
-                                    clientContact: myItem.clientContact!)
-            myClients.append(myObject)
+            let myObject = contractShiftComponent(contractShiftID: myItem.contractShiftID,
+                                                  dayOfWeek: myItem.dayOfWeek!,
+                                                  endTime: myItem.endTime! as Date,
+                                                  startTime: myItem.startTime! as Date)
+            myComponents.append(myObject)
         }
     }
     
-    var clients: [client]
+    var components: [contractShiftComponent]
     {
         get
         {
-            return myClients
+            return myComponents
         }
     }
 }
 
-class client: NSObject
+class contractShiftComponent: NSObject
 {
-    fileprivate var myClientID: Int32 = 0
-    fileprivate var myClientName: String = ""
-    fileprivate var myClientContact: String = ""
+    fileprivate var myContractShiftID: Int32 = 0
+    fileprivate var myDayOfWeek: String = ""
+    fileprivate var myEndTime: Date = getDefaultDate()
+    fileprivate var myStartTime: Date = getDefaultDate()
     
-    var clientID: Int32
+    var contractShiftID: Int32
     {
         get
         {
-            return myClientID
+            return myContractShiftID
         }
     }
     
-    var clientName: String
+    var dayOfWeek: String
     {
         get
         {
-            return myClientName
+            return myDayOfWeek
         }
         set
         {
-            myClientName = newValue
+            myDayOfWeek = newValue
             save()
         }
     }
     
-    var clientContact: String
+    var endTime: Date
     {
         get
         {
-            return myClientContact
+            return myEndTime
         }
         set
         {
-            myClientContact = newValue
+            myEndTime = newValue
             save()
         }
     }
     
-    override init()
+    var startTime: Date
     {
-        super.init()
-        
-        myClientID = myDatabaseConnection.getNextID("Client")
-        
-        save()
+        get
+        {
+            return myStartTime
+        }
+        set
+        {
+            myStartTime = newValue
+            save()
+        }
     }
     
-    init(clientID: Int32)
+    init(contractShiftID: Int32, dayOfWeek: String)
     {
         super.init()
-        let myReturn = myDatabaseConnection.getClientDetails(clientID: clientID)
+        let myReturn = myDatabaseConnection.getContractShiftComponentDetails(contractShiftID, dayOfWeek: dayOfWeek)
         
         for myItem in myReturn
         {
-            myClientID = myItem.clientID
-            myClientName = myItem.clientName!
-            myClientContact = myItem.clientContact!
+            myContractShiftID = myItem.contractShiftID
+            myDayOfWeek = myItem.dayOfWeek!
+            myEndTime = myItem.endTime! as Date
+            myStartTime = myItem.startTime! as Date
         }
     }
     
-    init(clientID: Int32,
-         clientName: String,
-         clientContact: String)
+    init(contractShiftID: Int32,
+         dayOfWeek: String,
+         endTime: Date,
+         startTime: Date
+         )
     {
         super.init()
         
-        myClientID = clientID
-        myClientName = clientName
-        myClientContact = clientContact
-
+        myContractShiftID = contractShiftID
+        myDayOfWeek = dayOfWeek
+        myEndTime = endTime
+        myStartTime = startTime
     }
     
     func save()
     {
-        myDatabaseConnection.saveClient(myClientID,
-                                        clientName: myClientName,
-                                        clientContact: myClientContact)
+        myDatabaseConnection.saveContractShiftComponent(myContractShiftID,
+                                         dayOfWeek: myDayOfWeek,
+                                         startTime: myStartTime,
+                                         endTime: myEndTime
+                                         )
     }
     
     func delete()
     {
-        myDatabaseConnection.deleteClient(myClientID)
+        myDatabaseConnection.deleteContractShiftComponent(myContractShiftID, dayOfWeek: dayOfWeek)
     }
 }
 
 extension coreDatabase
 {
-    func saveClient(_ clientID: Int32,
-                    clientName: String,
-                    clientContact: String,
+    func saveContractShiftComponent(_ contractShiftID: Int32,
+                     dayOfWeek: String,
+                     startTime: Date,
+                     endTime: Date,
                      updateTime: Date =  Date(), updateType: String = "CODE")
     {
-        var myItem: Clients!
+        var myItem: ContractShiftComponent!
         
-        let myReturn = getClientDetails(clientID: clientID)
+        let myReturn = getContractShiftComponentDetails(contractShiftID, dayOfWeek: dayOfWeek)
         
         if myReturn.count == 0
         { // Add
-            myItem = Clients(context: objectContext)
-            myItem.clientID = clientID
-            myItem.clientName = clientName
-            myItem.clientContact = clientContact
-
+            myItem = ContractShiftComponent(context: objectContext)
+            myItem.contractShiftID = contractShiftID
+            myItem.dayOfWeek = dayOfWeek
+            myItem.startTime = startTime as NSDate
+            myItem.endTime = endTime as NSDate
             
             if updateType == "CODE"
             {
@@ -155,8 +167,8 @@ extension coreDatabase
         else
         {
             myItem = myReturn[0]
-            myItem.clientName = clientName
-            myItem.clientContact = clientContact
+            myItem.startTime = startTime as NSDate
+            myItem.endTime = endTime as NSDate
             
             if updateType == "CODE"
             {
@@ -176,15 +188,17 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceClient(_ clientID: Int32,
-                        clientName: String,
-                        clientContact: String,
+    func replaceContractShiftComponent(_ contractShiftID: Int32,
+                                       dayOfWeek: String,
+                                       startTime: Date,
+                                       endTime: Date,
                         updateTime: Date =  Date(), updateType: String = "CODE")
     {
-        let myItem = Clients(context: objectContext)
-        myItem.clientID = clientID
-        myItem.clientName = clientName
-        myItem.clientContact = clientContact
+        let myItem = ContractShiftComponent(context: objectContext)
+        myItem.contractShiftID = contractShiftID
+        myItem.dayOfWeek = dayOfWeek
+        myItem.startTime = startTime as NSDate
+        myItem.endTime = endTime as NSDate
         
         if updateType == "CODE"
         {
@@ -200,9 +214,9 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteClient(_ clientID: Int32)
+    func deleteContractShiftComponent(_ contractShiftID: Int32, dayOfWeek: String)
     {
-        let myReturn = getClientDetails(clientID: clientID)
+        let myReturn = getContractShiftComponentDetails(contractShiftID, dayOfWeek: dayOfWeek)
         
         if myReturn.count > 0
         {
@@ -214,13 +228,38 @@ extension coreDatabase
         saveContext()
     }
     
-    func getClientDetails(clientID: Int32)->[Clients]
+    func getContractShiftComponents(contractShiftID: Int32)->[ContractShiftComponent]
     {
-        let fetchRequest = NSFetchRequest<Clients>(entityName: "Clients")
+        let fetchRequest = NSFetchRequest<ContractShiftComponent>(entityName: "ContractShiftComponent")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(client != \(clientID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(contractShiftID == \(contractShiftID)) && (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+   
+    }
+    
+    func getContractShiftComponentDetails(_ contractShiftID: Int32, dayOfWeek: String)->[ContractShiftComponent]
+    {
+        let fetchRequest = NSFetchRequest<ContractShiftComponent>(entityName: "ContractShiftComponent")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(contractShiftID == \(contractShiftID)) AND (dayOfWeek == \"\(dayOfWeek)\") && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -237,35 +276,10 @@ extension coreDatabase
             return []
         }
     }
-
     
-    func getClients() -> [Clients]
+    func resetAllContractShiftComponent()
     {
-        let fetchRequest = NSFetchRequest<Clients>(entityName: "Clients")
-        
-        // Create a new predicate that filters out any object that
-        // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(updateType != \"Delete\")")
-        
-        // Set the predicate on the fetch request
-        fetchRequest.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        do
-        {
-            let fetchResults = try objectContext.fetch(fetchRequest)
-            return fetchResults
-        }
-        catch
-        {
-            print("Error occurred during execution: \(error)")
-            return []
-        }
-    }
-    
-    func resetAllClients()
-    {
-        let fetchRequest = NSFetchRequest<Clients>(entityName: "Clients")
+        let fetchRequest = NSFetchRequest<ContractShiftComponent>(entityName: "ContractShiftComponent")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
@@ -285,9 +299,9 @@ extension coreDatabase
         saveContext()
     }
     
-    func clearDeletedClients(predicate: NSPredicate)
+    func clearDeletedContractShiftComponent(predicate: NSPredicate)
     {
-        let fetchRequest2 = NSFetchRequest<Clients>(entityName: "Clients")
+        let fetchRequest2 = NSFetchRequest<ContractShiftComponent>(entityName: "ContractShiftComponent")
         
         // Set the predicate on the fetch request
         fetchRequest2.predicate = predicate
@@ -308,9 +322,9 @@ extension coreDatabase
         saveContext()
     }
     
-    func clearSyncedClients(predicate: NSPredicate)
+    func clearSyncedContractShiftComponent(predicate: NSPredicate)
     {
-        let fetchRequest2 = NSFetchRequest<Clients>(entityName: "Clients")
+        let fetchRequest2 = NSFetchRequest<ContractShiftComponent>(entityName: "ContractShiftComponent")
         
         // Set the predicate on the fetch request
         fetchRequest2.predicate = predicate
@@ -332,9 +346,9 @@ extension coreDatabase
         saveContext()
     }
     
-    func getClientsForSync(_ syncDate: Date) -> [Clients]
+    func getContractShiftComponentForSync(_ syncDate: Date) -> [ContractShiftComponent]
     {
-        let fetchRequest = NSFetchRequest<Clients>(entityName: "Clients")
+        let fetchRequest = NSFetchRequest<ContractShiftComponent>(entityName: "ContractShiftComponent")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
         
@@ -355,9 +369,9 @@ extension coreDatabase
         }
     }
     
-    func deleteAllClients()
+    func deleteAllContractShiftComponent()
     {
-        let fetchRequest2 = NSFetchRequest<Clients>(entityName: "Clients")
+        let fetchRequest2 = NSFetchRequest<ContractShiftComponent>(entityName: "ContractShiftComponent")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
@@ -379,18 +393,18 @@ extension coreDatabase
 
 extension CloudKitInteraction
 {
-    func saveClientToCloudKit()
+    func saveContractShiftComponentToCloudKit()
     {
-        for myItem in myDatabaseConnection.getClientsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Clients"))
+        for myItem in myDatabaseConnection.getContractShiftComponentForSync(myDatabaseConnection.getSyncDateForTable(tableName: "ContractShiftComponent"))
         {
-            saveClientRecordToCloudKit(myItem)
+            saveContractShiftComponentRecordToCloudKit(myItem)
         }
     }
     
-    func updateClientInCoreData()
+    func updateContractShiftComponentInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(myTeamID))", myDatabaseConnection.getSyncDateForTable(tableName: "Clients") as CVarArg)
-        let query: CKQuery = CKQuery(recordType: "Clients", predicate: predicate)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(myTeamID))", myDatabaseConnection.getSyncDateForTable(tableName: "ContractShiftComponent") as CVarArg)
+        let query: CKQuery = CKQuery(recordType: "ContractShiftComponent", predicate: predicate)
         
         let operation = CKQueryOperation(query: query)
         
@@ -399,7 +413,7 @@ extension CloudKitInteraction
         operation.recordFetchedBlock = { (record) in
             self.recordCount += 1
             
-            self.updateClientRecord(record)
+            self.updateContractShiftComponentRecord(record)
             self.recordCount -= 1
             
             usleep(useconds_t(self.sleepTime))
@@ -414,13 +428,13 @@ extension CloudKitInteraction
         }
     }
     
-    func deleteClient(clientID: Int32)
+    func deleteContractShiftComponent(contractShiftID:Int32, dayOfWeek: String)
     {
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID)) AND (client != \(clientID))")
-        let query: CKQuery = CKQuery(recordType: "Clients", predicate: predicate)
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID)) AND (contractShiftID == \(contractShiftID)) AND (dayOfWeek == \"\(dayOfWeek)\")")
+        let query: CKQuery = CKQuery(recordType: "ContractShiftComponent", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
@@ -433,22 +447,33 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func replaceClientInCoreData()
+    func replaceContractShiftComponentInCoreData()
     {
         let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
-        let query: CKQuery = CKQuery(recordType: "Clients", predicate: predicate)
+        let query: CKQuery = CKQuery(recordType: "ContractShiftComponent", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
         waitFlag = true
         
         operation.recordFetchedBlock = { (record) in
-            let clientName = record.object(forKey: "clientName") as! String
-            let clientContact = record.object(forKey: "clientContact") as! String
-        
-            var clientID: Int32 = 0
-            if record.object(forKey: "clientID") != nil
+            let dayOfWeek = record.object(forKey: "dayOfWeek") as! String
+
+            var contractShiftID: Int32 = 0
+            if record.object(forKey: "contractShiftID") != nil
             {
-                clientID = record.object(forKey: "clientID") as! Int32
+                contractShiftID = record.object(forKey: "contractShiftID") as! Int32
+            }
+            
+            var startTime = Date()
+            if record.object(forKey: "startTime") != nil
+            {
+                startTime = record.object(forKey: "startTime") as! Date
+            }
+            
+            var endTime = Date()
+            if record.object(forKey: "endTime") != nil
+            {
+                endTime = record.object(forKey: "endTime") as! Date
             }
             
             var updateTime = Date()
@@ -463,10 +488,11 @@ extension CloudKitInteraction
                 updateType = record.object(forKey: "updateType") as! String
             }
             
-            myDatabaseConnection.replaceClient(clientID,
-                                               clientName: clientName,
-                                               clientContact: clientContact
-                    , updateTime: updateTime, updateType: updateType)
+            myDatabaseConnection.replaceContractShiftComponent(contractShiftID,
+                                                dayOfWeek: dayOfWeek,
+                                                startTime: startTime,
+                                                endTime: endTime
+                                                , updateTime: updateTime, updateType: updateType)
             
             usleep(useconds_t(self.sleepTime))
         }
@@ -481,12 +507,12 @@ extension CloudKitInteraction
         }
     }
     
-    func saveClientRecordToCloudKit(_ sourceRecord: Clients)
+    func saveContractShiftComponentRecordToCloudKit(_ sourceRecord: ContractShiftComponent)
     {
         let sem = DispatchSemaphore(value: 0)
         
-        let predicate = NSPredicate(format: "(clientID == \(sourceRecord.clientID)) AND (teamID == \(myTeamID))") // better be accurate to get only the record you need
-        let query = CKQuery(recordType: "Clients", predicate: predicate)
+        let predicate = NSPredicate(format: "(contractShiftID == \(sourceRecord.contractShiftID)) AND (dayOfWeek == \"\(sourceRecord.dayOfWeek!)\") AND (teamID == \(myTeamID))") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "ContractShiftComponent", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
             {
@@ -501,10 +527,9 @@ extension CloudKitInteraction
                     let record = records!.first// as! CKRecord
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
-                    
-                    record!.setValue(sourceRecord.clientID, forKey: "clientID")
-                    record!.setValue(sourceRecord.clientName, forKey: "clientName,")
-                    record!.setValue(sourceRecord.clientContact, forKey: "clientContact")
+
+                    record!.setValue(sourceRecord.startTime, forKey: "startTime")
+                    record!.setValue(sourceRecord.endTime, forKey: "endTime")
                     
                     if sourceRecord.updateTime != nil
                     {
@@ -529,12 +554,13 @@ extension CloudKitInteraction
                 }
                 else
                 {  // Insert
-                    let record = CKRecord(recordType: "Clients")
+                    let record = CKRecord(recordType: "ContractShiftComponent")
                     
-                    record.setValue(sourceRecord.clientID, forKey: "clientID")
-                    record.setValue(sourceRecord.clientName, forKey: "clientName,")
-                    record.setValue(sourceRecord.clientContact, forKey: "clientContact")
-
+                    record.setValue(sourceRecord.contractShiftID, forKey: "contractShiftID")
+                    record.setValue(sourceRecord.dayOfWeek, forKey: "dayOfWeek")
+                    record.setValue(sourceRecord.startTime, forKey: "startTime")
+                    record.setValue(sourceRecord.endTime, forKey: "endTime")
+                    
                     record.setValue(myTeamID, forKey: "teamID")
                     
                     if sourceRecord.updateTime != nil
@@ -563,15 +589,26 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func updateClientRecord(_ sourceRecord: CKRecord)
+    func updateContractShiftComponentRecord(_ sourceRecord: CKRecord)
     {
-        let clientName = sourceRecord.object(forKey: "clientName") as! String
-        let clientContact = sourceRecord.object(forKey: "clientContact") as! String
+        let dayOfWeek = sourceRecord.object(forKey: "dayOfWeek") as! String
         
-        var clientID: Int32 = 0
-        if sourceRecord.object(forKey: "clientID") != nil
+        var contractShiftID: Int32 = 0
+        if sourceRecord.object(forKey: "contractShiftID") != nil
         {
-            clientID = sourceRecord.object(forKey: "clientID") as! Int32
+            contractShiftID = sourceRecord.object(forKey: "contractShiftID") as! Int32
+        }
+        
+        var startTime = Date()
+        if sourceRecord.object(forKey: "startTime") != nil
+        {
+            startTime = sourceRecord.object(forKey: "startTime") as! Date
+        }
+        
+        var endTime = Date()
+        if sourceRecord.object(forKey: "endTime") != nil
+        {
+            endTime = sourceRecord.object(forKey: "endTime") as! Date
         }
         
         var updateTime = Date()
@@ -586,11 +623,11 @@ extension CloudKitInteraction
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
         
-        myDatabaseConnection.saveClient(clientID,
-                                         clientName: clientName,
-                                         clientContact: clientContact
-            , updateTime: updateTime, updateType: updateType)
+        myDatabaseConnection.saveContractShiftComponent(contractShiftID,
+                                         dayOfWeek: dayOfWeek,
+                                         startTime: startTime,
+                                         endTime: endTime
+                                         , updateTime: updateTime, updateType: updateType)
     }
-    
 }
 

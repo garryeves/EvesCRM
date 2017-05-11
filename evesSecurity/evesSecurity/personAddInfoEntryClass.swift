@@ -426,12 +426,12 @@ extension CloudKitInteraction
         }
     }
     
-    func deletePersonAddInfoEntry()
+    func deletePersonAddInfoEntry(personID: Int32, addInfoName: Int32)
     {
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID)) AND (personID == \(personID)) AND (addInfoName == \"\(addInfoName)\") ")
         let query: CKQuery = CKQuery(recordType: "PersonAddInfoEntry", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!

@@ -14,23 +14,29 @@ import FBSDKCoreKit
 class ViewController: UIViewController {
 
     override func viewDidLoad() {
-        if let accessToken = AccessToken.current
-        {
-            print("Already logged in")
-            getEmailAddress()
-        }
-        else
-        {
-            let myLoginButton = UIButton(type: .custom)
-            myLoginButton.backgroundColor = UIColor.darkGray
-            myLoginButton.frame = CGRect(x:0, y:0, width:180, height:40);
-            myLoginButton.center = view.center;
-            myLoginButton.setTitle("Login Using Facebook", for: .normal)
-            // Handle clicks on the button
-            myLoginButton.addTarget(self, action: #selector(self.loginButtonClicked), for: .touchUpInside)
-            
-            view.addSubview(myLoginButton)
-        }
+//        if let accessToken = AccessToken.current
+//        {
+//            print("Already logged in")
+//            getEmailAddress()
+//        }
+//        else
+//        {
+//            let myLoginButton = UIButton(type: .custom)
+//            myLoginButton.backgroundColor = UIColor.darkGray
+//            myLoginButton.frame = CGRect(x:0, y:0, width:180, height:40);
+//            myLoginButton.center = view.center;
+//            myLoginButton.setTitle("Login Using Facebook", for: .normal)
+//            // Handle clicks on the button
+//            myLoginButton.addTarget(self, action: #selector(self.loginButtonClicked), for: .touchUpInside)
+//            
+//            view.addSubview(myLoginButton)
+//        }
+//        
+        let alf = UserItem(userID: 1)
+  sleep(5)
+        let encryptedText = alf.encryptText("Garry Was Here")
+        
+        alf.decryptText(encryptedText)
     }
     
     override func didReceiveMemoryWarning() {

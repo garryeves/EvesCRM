@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "33D33D087D378D1F68080DEC56DDE60D"
-               BuildableName = "Pods_evesSecurity.framework"
-               BlueprintName = "Pods-evesSecurity"
+               BlueprintIdentifier = "6832549FECABB61B6CC6705ACE4027C4"
+               BuildableName = "RNCryptor.framework"
+               BlueprintName = "RNCryptor"
                ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,9 +45,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "33D33D087D378D1F68080DEC56DDE60D"
-            BuildableName = "Pods_evesSecurity.framework"
-            BlueprintName = "Pods-evesSecurity"
+            BlueprintIdentifier = "6832549FECABB61B6CC6705ACE4027C4"
+            BuildableName = "RNCryptor.framework"
+            BlueprintName = "RNCryptor"
             ReferencedContainer = "container:Pods.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
