@@ -249,7 +249,7 @@ class workingGTDItem: NSObject
         
         if myStoreGTDLevel == 0
         { // We only wantto do this once per instantiation of the object
-            let tempTeam = myDatabaseConnection.getGTDLevels(myTeamID)
+            let tempTeam = myDatabaseConnection.getGTDLevels(teamID)
             
             myStoreGTDLevel = Int32(tempTeam.count)
         }
@@ -269,7 +269,7 @@ class workingGTDItem: NSObject
         
         if myStoreGTDLevel == 0
         { // We only wantto do this once per instantiation of the object
-            let tempTeam = myDatabaseConnection.getGTDLevels(myTeamID)
+            let tempTeam = myDatabaseConnection.getGTDLevels(teamID)
             
             myStoreGTDLevel = Int32(tempTeam.count)
         }
@@ -292,7 +292,7 @@ class workingGTDItem: NSObject
     {
         let myGTDItem = myDatabaseConnection.checkGTDItem(myGTDItemID, teamID: myTeamID)[0]
         
-        myCloudDB.saveGTDItemRecordToCloudKit(myGTDItem)
+        myCloudDB.saveGTDItemRecordToCloudKit(myGTDItem, teamID: currentUser.currentTeam!.teamID)
         
         saveCalled = false
     }
@@ -722,13 +722,13 @@ extension CloudKitInteraction
     {
         for myItem in myDatabaseConnection.getGTDItemsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "GTDItem"))
         {
-            saveGTDItemRecordToCloudKit(myItem)
+            saveGTDItemRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
         }
     }
 
-    func updateGTDItemInCoreData()
+    func updateGTDItemInCoreData(teamID: Int32)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(myTeamID))", myDatabaseConnection.getSyncDateForTable(tableName: "GTDItem") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "GTDItem") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "GTDItem", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -752,12 +752,12 @@ extension CloudKitInteraction
         }
     }
 
-    func deleteGTDItem()
+    func deleteGTDItem(teamID: Int32)
     {
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "GTDItem", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -770,9 +770,9 @@ extension CloudKitInteraction
         sem.wait()
     }
 
-    func replaceGTDItemInCoreData()
+    func replaceGTDItemInCoreData(teamID: Int32)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID)")
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID)")
         let query: CKQuery = CKQuery(recordType: "GTDItem", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -814,10 +814,10 @@ extension CloudKitInteraction
         }
     }
 
-    func saveGTDItemRecordToCloudKit(_ sourceRecord: GTDItem)
+    func saveGTDItemRecordToCloudKit(_ sourceRecord: GTDItem, teamID: Int32)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(gTDItemID == \(sourceRecord.gTDItemID)) && (teamID == \(sourceRecord.teamID)) AND (teamID == \(myTeamID))")
+        let predicate = NSPredicate(format: "(gTDItemID == \(sourceRecord.gTDItemID)) && (teamID == \(sourceRecord.teamID)) AND (teamID == \(teamID))")
         let query = CKQuery(recordType: "GTDItem", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -881,7 +881,7 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.teamID, forKey: "teamID")
                     record.setValue(sourceRecord.title, forKey: "title")
                     record.setValue(sourceRecord.gTDLevel, forKey: "gTDLevel")
-                    record.setValue(myTeamID, forKey: "teamID")
+                    record.setValue(teamID, forKey: "teamID")
                     
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil

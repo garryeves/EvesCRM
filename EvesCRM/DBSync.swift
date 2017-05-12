@@ -11,13 +11,11 @@ import Foundation
 let NotificationDBSyncCompleted = Notification.Name("MeetingDBSyncCompleted")
 let NotificationCloudSyncFinished = Notification.Name("MeetingCloudSyncFinished")
 let myNotificationCloudSyncDone = Notification.Name("myNotificationCloudSyncDone")
-
+let myNotificationCloudQueryDone = Notification.Name("myNotificationCloudQueryDone")
 
 class DBSync: NSObject
 {
 //    let defaultsName = "76YDDNPU7W.group.com.garryeves.EvesCRM"
-    let defaultsName = "group.com.garryeves.EvesCRM"
-
     var refreshRunning: Bool = false
     var firstRun: Bool = true
     
@@ -84,7 +82,7 @@ class DBSync: NSObject
         let syncDate: Date = myDateFormatter.date(from: "01/01/15")!
         let dateString = "\(syncDate)"
 
-        myDatabaseConnection.updateDecodeValue("\(appName) Sync", codeValue: dateString, codeType: "hidden")
+        myDatabaseConnection.updateDecodeValue("\(appName) Sync", codeValue: dateString, codeType: "hidden", decode_privacy: "Private")
         
         myDatabaseConnection.clearDeletedItems()
         myDatabaseConnection.clearSyncedItems()
@@ -107,30 +105,7 @@ class DBSync: NSObject
         
 //        sleep(1)
     }
-    
-    func writeDefaultString(_  keyName: String, value: String)
-    {
-        let defaults = UserDefaults(suiteName: defaultsName)!
         
-        defaults.set(value, forKey: keyName)
-        
-        defaults.synchronize()
-    }
-    
-    func readDefaultString(_  keyName: String) -> String
-    {
-        let defaults = UserDefaults(suiteName: defaultsName)!
-        
-        if defaults.string(forKey: keyName) != nil
-        {
-            return (defaults.string(forKey: keyName))!
-        }
-        else
-        {
-            return ""
-        }
-    }
-    
     func getSyncID() -> String
     {
         let checkName = readDefaultString(coreDatabaseName)

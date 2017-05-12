@@ -1,8 +1,8 @@
 //
-//  clientsClass.swift
+//  userTeamsClass.swift
 //  evesSecurity
 //
-//  Created by Garry Eves on 10/5/17.
+//  Created by Garry Eves on 12/5/17.
 //  Copyright © 2017 Garry Eves. All rights reserved.
 //
 
@@ -10,135 +10,89 @@ import Foundation
 import CoreData
 import CloudKit
 
-class clients: NSObject
+class userTeams: NSObject
 {
-    fileprivate var myClients:[client] = Array()
+    fileprivate var myUserTeams:[userTeamItem] = Array()
     
-    override init()
+    init(userID: Int32)
     {
-        for myItem in myDatabaseConnection.getClients()
+        for myItem in myDatabaseConnection.getTeamsForUser(userID: userID)
         {
-            let myObject = client(clientID: myItem.clientID,
-                                    clientName: myItem.clientName!,
-                                    clientContact: myItem.clientContact!)
-            myClients.append(myObject)
+            let myObject = userTeamItem(userID: myItem.userID, teamID: myItem.teamID)
+            myUserTeams.append(myObject)
         }
     }
     
-    var clients: [client]
+    init(teamID: Int32)
+    {
+        for myItem in myDatabaseConnection.getUsersForTeam(teamID: teamID)
+        {
+            let myObject = userTeamItem(userID: myItem.userID, teamID: myItem.teamID)
+            myUserTeams.append(myObject)
+        }
+    }
+    
+    var UserTeams: [userTeamItem]
     {
         get
         {
-            return myClients
+            return myUserTeams
         }
     }
 }
 
-class client: NSObject
+class userTeamItem: NSObject
 {
-    fileprivate var myClientID: Int32 = 0
-    fileprivate var myClientName: String = ""
-    fileprivate var myClientContact: String = ""
+    fileprivate var myTeamID: Int32 = 0
+    fileprivate var myUserID: Int32 = 0
     
-    var clientID: Int32
+    var teamID: Int32
     {
         get
         {
-            return myClientID
+            return myTeamID
         }
     }
     
-    var clientName: String
+    var userID: Int32
     {
         get
         {
-            return myClientName
-        }
-        set
-        {
-            myClientName = newValue
-            save()
+            return myUserID
         }
     }
     
-    var clientContact: String
-    {
-        get
-        {
-            return myClientContact
-        }
-        set
-        {
-            myClientContact = newValue
-            save()
-        }
-    }
-    
-    override init()
+    init(userID: Int32,
+         teamID: Int32
+         )
     {
         super.init()
         
-        myClientID = myDatabaseConnection.getNextID("Client")
-        
-        save()
-    }
-    
-    init(clientID: Int32)
-    {
-        super.init()
-        let myReturn = myDatabaseConnection.getClientDetails(clientID: clientID)
-        
-        for myItem in myReturn
-        {
-            myClientID = myItem.clientID
-            myClientName = myItem.clientName!
-            myClientContact = myItem.clientContact!
-        }
-    }
-    
-    init(clientID: Int32,
-         clientName: String,
-         clientContact: String)
-    {
-        super.init()
-        
-        myClientID = clientID
-        myClientName = clientName
-        myClientContact = clientContact
-
-    }
-    
-    func save()
-    {
-        myDatabaseConnection.saveClient(myClientID,
-                                        clientName: myClientName,
-                                        clientContact: myClientContact)
+        myTeamID = userID
+        myUserID = teamID
     }
     
     func delete()
     {
-        myDatabaseConnection.deleteClient(myClientID)
+        myDatabaseConnection.deleteUserTeam(myUserID, teamID: myTeamID)
     }
 }
 
 extension coreDatabase
 {
-    func saveClient(_ clientID: Int32,
-                    clientName: String,
-                    clientContact: String,
+    func saveUserTeam(_ userID: Int32,
+                       teamID: Int32,
                      updateTime: Date =  Date(), updateType: String = "CODE")
     {
-        var myItem: Clients!
+        var myItem: UserTeams!
         
-        let myReturn = getClientDetails(clientID: clientID)
+        let myReturn = getUserTeamsDetails(userID, teamID: teamID)
         
         if myReturn.count == 0
         { // Add
-            myItem = Clients(context: objectContext)
-            myItem.clientID = clientID
-            myItem.clientName = clientName
-            myItem.clientContact = clientContact
-
+            myItem = UserTeams(context: objectContext)
+            myItem.teamID = teamID
+            myItem.userID = userID
             
             if updateType == "CODE"
             {
@@ -152,39 +106,17 @@ extension coreDatabase
                 myItem.updateType = updateType
             }
         }
-        else
-        {
-            myItem = myReturn[0]
-            myItem.clientName = clientName
-            myItem.clientContact = clientContact
-            
-            if updateType == "CODE"
-            {
-                myItem.updateTime =  NSDate()
-                if myItem.updateType != "Add"
-                {
-                    myItem.updateType = "Update"
-                }
-            }
-            else
-            {
-                myItem.updateTime = updateTime as NSDate
-                myItem.updateType = updateType
-            }
-        }
         
         saveContext()
     }
     
-    func replaceClient(_ clientID: Int32,
-                        clientName: String,
-                        clientContact: String,
+    func replaceUserTeam(_ userID: Int32,
+                          teamID: Int32,
                         updateTime: Date =  Date(), updateType: String = "CODE")
     {
-        let myItem = Clients(context: objectContext)
-        myItem.clientID = clientID
-        myItem.clientName = clientName
-        myItem.clientContact = clientContact
+        let myItem = UserTeams(context: objectContext)
+        myItem.teamID = teamID
+        myItem.userID = userID
         
         if updateType == "CODE"
         {
@@ -200,9 +132,10 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteClient(_ clientID: Int32)
+    func deleteUserTeam(_ userID: Int32,
+                         teamID: Int32)
     {
-        let myReturn = getClientDetails(clientID: clientID)
+        let myReturn = getUserTeamsDetails(userID, teamID: teamID)
         
         if myReturn.count > 0
         {
@@ -214,38 +147,13 @@ extension coreDatabase
         saveContext()
     }
     
-    func getClientDetails(clientID: Int32)->[Clients]
+    func getTeamsForUser(userID: Int32)->[UserTeams]
     {
-        let fetchRequest = NSFetchRequest<Clients>(entityName: "Clients")
+        let fetchRequest = NSFetchRequest<UserTeams>(entityName: "UserTeams")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(client != \(clientID)) && (updateType != \"Delete\")")
-        
-        // Set the predicate on the fetch request
-        fetchRequest.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        do
-        {
-            let fetchResults = try objectContext.fetch(fetchRequest)
-            return fetchResults
-        }
-        catch
-        {
-            print("Error occurred during execution: \(error)")
-            return []
-        }
-    }
-
-    
-    func getClients() -> [Clients]
-    {
-        let fetchRequest = NSFetchRequest<Clients>(entityName: "Clients")
-        
-        // Create a new predicate that filters out any object that
-        // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(userID == \(userID)) && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -263,9 +171,57 @@ extension coreDatabase
         }
     }
     
-    func resetAllClients()
+    func getUsersForTeam(teamID: Int32)->[UserTeams]
     {
-        let fetchRequest = NSFetchRequest<Clients>(entityName: "Clients")
+        let fetchRequest = NSFetchRequest<UserTeams>(entityName: "UserTeams")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(teamID == \(teamID)) && (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func getUserTeamsDetails(_ userID: Int32, teamID: Int32)->[UserTeams]
+    {
+        let fetchRequest = NSFetchRequest<UserTeams>(entityName: "UserTeams")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(userID == \(userID)) AND (teamID == \(teamID)) && (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func resetAllUserTeams()
+    {
+        let fetchRequest = NSFetchRequest<UserTeams>(entityName: "UserTeams")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
@@ -285,9 +241,9 @@ extension coreDatabase
         saveContext()
     }
     
-    func clearDeletedClients(predicate: NSPredicate)
+    func clearDeletedUserTeams(predicate: NSPredicate)
     {
-        let fetchRequest2 = NSFetchRequest<Clients>(entityName: "Clients")
+        let fetchRequest2 = NSFetchRequest<UserTeams>(entityName: "UserTeams")
         
         // Set the predicate on the fetch request
         fetchRequest2.predicate = predicate
@@ -308,9 +264,9 @@ extension coreDatabase
         saveContext()
     }
     
-    func clearSyncedClients(predicate: NSPredicate)
+    func clearSyncedUserTeams(predicate: NSPredicate)
     {
-        let fetchRequest2 = NSFetchRequest<Clients>(entityName: "Clients")
+        let fetchRequest2 = NSFetchRequest<UserTeams>(entityName: "UserTeams")
         
         // Set the predicate on the fetch request
         fetchRequest2.predicate = predicate
@@ -332,9 +288,9 @@ extension coreDatabase
         saveContext()
     }
     
-    func getClientsForSync(_ syncDate: Date) -> [Clients]
+    func getUserTeamsForSync(_ syncDate: Date) -> [UserTeams]
     {
-        let fetchRequest = NSFetchRequest<Clients>(entityName: "Clients")
+        let fetchRequest = NSFetchRequest<UserTeams>(entityName: "UserTeams")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
         
@@ -355,9 +311,9 @@ extension coreDatabase
         }
     }
     
-    func deleteAllClients()
+    func deleteAllUserTeams()
     {
-        let fetchRequest2 = NSFetchRequest<Clients>(entityName: "Clients")
+        let fetchRequest2 = NSFetchRequest<UserTeams>(entityName: "UserTeams")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
@@ -379,18 +335,18 @@ extension coreDatabase
 
 extension CloudKitInteraction
 {
-    func saveClientToCloudKit()
+    func saveUserTeamsToCloudKit()
     {
-        for myItem in myDatabaseConnection.getClientsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Clients"))
+        for myItem in myDatabaseConnection.getUserTeamsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "UserTeams"))
         {
-            saveClientRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
+            saveUserTeamsRecordToCloudKit(myItem)
         }
     }
     
-    func updateClientInCoreData(teamID: Int32)
+    func updateUserTeamsInCoreData(teamID: Int32)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "Clients") as CVarArg)
-        let query: CKQuery = CKQuery(recordType: "Clients", predicate: predicate)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "UserTeams") as CVarArg)
+        let query: CKQuery = CKQuery(recordType: "UserTeams", predicate: predicate)
         
         let operation = CKQueryOperation(query: query)
         
@@ -399,7 +355,7 @@ extension CloudKitInteraction
         operation.recordFetchedBlock = { (record) in
             self.recordCount += 1
             
-            self.updateClientRecord(record)
+            self.updateUserTeamsRecord(record)
             self.recordCount -= 1
             
             usleep(useconds_t(self.sleepTime))
@@ -414,13 +370,13 @@ extension CloudKitInteraction
         }
     }
     
-    func deleteClient(clientID: Int32, teamID: Int32)
+    func deleteUserTeams(userID: Int32, teamID: Int32)
     {
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID)) AND (client != \(clientID))")
-        let query: CKQuery = CKQuery(recordType: "Clients", predicate: predicate)
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID)) AND (userID == \(userID))")
+        let query: CKQuery = CKQuery(recordType: "UserTeams", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
@@ -433,22 +389,25 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func replaceClientInCoreData(teamID: Int32)
+    func replaceUserTeamsInCoreData(teamID: Int32)
     {
         let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
-        let query: CKQuery = CKQuery(recordType: "Clients", predicate: predicate)
+        let query: CKQuery = CKQuery(recordType: "UserTeams", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
         waitFlag = true
         
         operation.recordFetchedBlock = { (record) in
-            let clientName = record.object(forKey: "clientName") as! String
-            let clientContact = record.object(forKey: "clientContact") as! String
-        
-            var clientID: Int32 = 0
-            if record.object(forKey: "clientID") != nil
+            var userID: Int32 = 0
+            if record.object(forKey: "userID") != nil
             {
-                clientID = record.object(forKey: "clientID") as! Int32
+                userID = record.object(forKey: "userID") as! Int32
+            }
+            
+            var teamID: Int32 = 0
+            if record.object(forKey: "teamID") != nil
+            {
+                teamID = record.object(forKey: "teamID") as! Int32
             }
             
             var updateTime = Date()
@@ -463,10 +422,9 @@ extension CloudKitInteraction
                 updateType = record.object(forKey: "updateType") as! String
             }
             
-            myDatabaseConnection.replaceClient(clientID,
-                                               clientName: clientName,
-                                               clientContact: clientContact
-                    , updateTime: updateTime, updateType: updateType)
+            myDatabaseConnection.replaceUserTeam(userID,
+                                                teamID: teamID
+                                                , updateTime: updateTime, updateType: updateType)
             
             usleep(useconds_t(self.sleepTime))
         }
@@ -481,12 +439,12 @@ extension CloudKitInteraction
         }
     }
     
-    func saveClientRecordToCloudKit(_ sourceRecord: Clients, teamID: Int32)
+    func saveUserTeamsRecordToCloudKit(_ sourceRecord: UserTeams)
     {
         let sem = DispatchSemaphore(value: 0)
         
-        let predicate = NSPredicate(format: "(clientID == \(sourceRecord.clientID)) AND (teamID == \(teamID))") // better be accurate to get only the record you need
-        let query = CKQuery(recordType: "Clients", predicate: predicate)
+        let predicate = NSPredicate(format: "(userID == \(sourceRecord.userID)) AND (teamID == \(sourceRecord.teamID))") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "UserTeams", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
             {
@@ -498,44 +456,13 @@ extension CloudKitInteraction
                 
                 if records!.count > 0
                 {
-                    let record = records!.first// as! CKRecord
-                    // Now you have grabbed your existing record from iCloud
-                    // Apply whatever changes you want
-                    
-                    record!.setValue(sourceRecord.clientID, forKey: "clientID")
-                    record!.setValue(sourceRecord.clientName, forKey: "clientName,")
-                    record!.setValue(sourceRecord.clientContact, forKey: "clientContact")
-                    
-                    if sourceRecord.updateTime != nil
-                    {
-                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
-                    }
-                    record!.setValue(sourceRecord.updateType, forKey: "updateType")
-                    
-                    // Save this record again
-                    self.publicDB.save(record!, completionHandler: { (savedRecord, saveError) in
-                        if saveError != nil
-                        {
-                            NSLog("Error saving record: \(saveError!.localizedDescription)")
-                        }
-                        else
-                        {
-                            if debugMessages
-                            {
-                                NSLog("Successfully updated record!")
-                            }
-                        }
-                    })
+                    // Do nothing
                 }
                 else
                 {  // Insert
-                    let record = CKRecord(recordType: "Clients")
-                    
-                    record.setValue(sourceRecord.clientID, forKey: "clientID")
-                    record.setValue(sourceRecord.clientName, forKey: "clientName,")
-                    record.setValue(sourceRecord.clientContact, forKey: "clientContact")
-
-                    record.setValue(teamID, forKey: "teamID")
+                    let record = CKRecord(recordType: "UserTeams")
+                    record.setValue(sourceRecord.userID, forKey: "userID")
+                    record.setValue(sourceRecord.teamID, forKey: "teamID")
                     
                     if sourceRecord.updateTime != nil
                     {
@@ -563,15 +490,18 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func updateClientRecord(_ sourceRecord: CKRecord)
+    func updateUserTeamsRecord(_ sourceRecord: CKRecord)
     {
-        let clientName = sourceRecord.object(forKey: "clientName") as! String
-        let clientContact = sourceRecord.object(forKey: "clientContact") as! String
-        
-        var clientID: Int32 = 0
-        if sourceRecord.object(forKey: "clientID") != nil
+        var userID: Int32 = 0
+        if sourceRecord.object(forKey: "userID") != nil
         {
-            clientID = sourceRecord.object(forKey: "clientID") as! Int32
+            userID = sourceRecord.object(forKey: "userID") as! Int32
+        }
+        
+        var teamID: Int32 = 0
+        if sourceRecord.object(forKey: "teamID") != nil
+        {
+            teamID = sourceRecord.object(forKey: "teamID") as! Int32
         }
         
         var updateTime = Date()
@@ -586,11 +516,9 @@ extension CloudKitInteraction
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
         
-        myDatabaseConnection.saveClient(clientID,
-                                         clientName: clientName,
-                                         clientContact: clientContact
-            , updateTime: updateTime, updateType: updateType)
+        myDatabaseConnection.saveUserTeam(userID,
+                                         teamID: teamID
+                                         , updateTime: updateTime, updateType: updateType)
     }
-    
 }
 

@@ -62,7 +62,7 @@ extension coreDatabase
         }
     }
  
-    func updateDecodeValue(_ codeKey: String, codeValue: String, codeType: String, updateTime: Date =  Date(), updateType: String = "CODE", updateCloud: Bool = true)
+    func updateDecodeValue(_ codeKey: String, codeValue: String, codeType: String, decode_privacy: String, updateTime: Date =  Date(), updateType: String = "CODE", updateCloud: Bool = true)
     {
         // first check to see if decode exists, if not we create
         var myDecode: Decodes!
@@ -74,6 +74,7 @@ extension coreDatabase
             myDecode.decode_name = codeKey
             myDecode.decode_value = codeValue
             myDecode.decodeType = codeType
+            myDecode.decode_privacy = decode_privacy
             if updateType == "CODE"
             {
                 myDecode.updateTime =  NSDate()
@@ -100,6 +101,8 @@ extension coreDatabase
                 myDecode = myDecodes[0]
                 myDecode.decode_value = codeValue
                 myDecode.decodeType = codeType
+                myDecode.decode_privacy = decode_privacy
+
                 if updateType == "CODE"
                 {
                     myDecode.updateTime =  NSDate()
@@ -124,17 +127,26 @@ extension coreDatabase
         
         if updateCloud
         {
-            myCloudDB.saveDecodesRecordToCloudKit(myDecode)
+            if decode_privacy == "Public"
+            {
+                myCloudDB.savePublicDecodesRecordToCloudKit(myDecode, teamID: currentUser.currentTeam!.teamID)
+            }
+            else
+            {
+                myCloudDB.savePrivateDecodesRecordToCloudKit(myDecode)
+            }
         }
     }
 
-    func replaceDecodeValue(_ codeKey: String, codeValue: String, codeType: String, updateTime: Date =  Date(), updateType: String = "CODE")
+    func replaceDecodeValue(_ codeKey: String, codeValue: String, codeType: String, decode_privacy: String, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myDecode = Decodes(context: objectContext)
         
         myDecode.decode_name = codeKey
         myDecode.decode_value = codeValue
         myDecode.decodeType = codeType
+        myDecode.decode_privacy = decode_privacy
+        
         if updateType == "CODE"
         {
             myDecode.updateTime =  NSDate()
@@ -227,9 +239,9 @@ extension coreDatabase
         {
             let myValue = "\(coreDatabaseName) Sync \(storeInt)"
             
-            myDBSync.writeDefaultString(coreDatabaseName, value: myValue)
+            writeDefaultString(coreDatabaseName, value: myValue)
             
-            updateDecodeValue("Device", codeValue:  "\(storeInt)", codeType: "hidden")
+            updateDecodeValue("Device", codeValue:  "\(storeInt)", codeType: "hidden", decode_privacy: "Private")
         }
     }
 
@@ -249,7 +261,7 @@ extension coreDatabase
             {
                 // Create table entry
                 let storeKey = "\(initialValue)"
-                updateDecodeValue(tableName, codeValue: storeKey, codeType: "hidden")
+                updateDecodeValue(tableName, codeValue: storeKey, codeType: "hidden", decode_privacy: "Public")
                 return initialValue
             }
             else
@@ -258,7 +270,7 @@ extension coreDatabase
                 let storeint = Int32(fetchResults[0].decode_value!)! + 1
                 
                 let storeKey = "\(storeint)"
-                updateDecodeValue(tableName, codeValue: storeKey, codeType: "hidden")
+                updateDecodeValue(tableName, codeValue: storeKey, codeType: "hidden", decode_privacy: "Public")
                 return storeint
             }
         }
@@ -389,7 +401,7 @@ extension coreDatabase
         myDateFormatter.timeStyle = .full
         
         let dateString = myDateFormatter.string(from: syncDate)
-        myDatabaseConnection.updateDecodeValue(myDBSync.getSyncString(tableName), codeValue: dateString, codeType: "hidden")
+        myDatabaseConnection.updateDecodeValue(myDBSync.getSyncString(tableName), codeValue: dateString, codeType: "hidden", decode_privacy: "Private")
     }
     
     func getSyncDateForTable(tableName: String) -> Date
@@ -423,13 +435,20 @@ extension CloudKitInteraction
     {
         for myItem in myDatabaseConnection.getDecodesForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Decodes"))
         {
-            saveDecodesRecordToCloudKit(myItem)
+            if myItem.decode_privacy == "Public"
+            {
+                savePublicDecodesRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
+            }
+            else
+            {
+                savePrivateDecodesRecordToCloudKit(myItem)
+            }
         }
     }
 
-    func updateDecodesInCoreData()
+    func updatePublicDecodesInCoreData(teamID: Int32)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
 
         let query: CKQuery = CKQuery(recordType: "Decodes", predicate: predicate)
         let operation = CKQueryOperation(query: query)
@@ -452,13 +471,39 @@ extension CloudKitInteraction
             sleep(UInt32(0.5))
         }
     }
+    
+    func updateDecodesInCoreData()
+    {
+        let predicate: NSPredicate = NSPredicate(value: true)
+        
+        let query: CKQuery = CKQuery(recordType: "Decodes", predicate: predicate)
+        let operation = CKQueryOperation(query: query)
+        
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            self.recordCount += 1
+            self.updateDecodeRecord(record)
+            self.recordCount -= 1
+            usleep(useconds_t(self.sleepTime))
+        }
+        
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
+    }
 
-    func deleteDecodes()
+    func deletePublicDecodes(teamID: Int32)
     {
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "Decodes", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -472,9 +517,28 @@ extension CloudKitInteraction
         sem.wait()
     }
 
-    func replaceDecodesInCoreData()
+    func deletePrivateDecodes()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID)")
+        let sem = DispatchSemaphore(value: 0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "Decodes", predicate: predicate)
+        privateDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performPrivateDelete(myRecordList)
+            sem.signal()
+        })
+        
+        sem.wait()
+    }
+    
+    func replacePublicDecodesInCoreData(teamID: Int32)
+    {
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID)")
         let query: CKQuery = CKQuery(recordType: "Decodes", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -493,11 +557,33 @@ extension CloudKitInteraction
             sleep(UInt32(0.5))
         }
     }
-
-    func saveDecodesRecordToCloudKit(_ sourceRecord: Decodes)
+    
+    func replaceDecodesInCoreData()
+    {
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "Decodes", predicate: predicate)
+        let operation = CKQueryOperation(query: query)
+        
+        waitFlag = true
+        
+        operation.recordFetchedBlock = { (record) in
+            self.updateDecodeRecord(record)
+            usleep(useconds_t(self.sleepTime))
+        }
+        let operationQueue = OperationQueue()
+        
+        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        
+        while waitFlag
+        {
+            sleep(UInt32(0.5))
+        }
+    }
+    
+    func savePublicDecodesRecordToCloudKit(_ sourceRecord: Decodes, teamID: Int32)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(decode_name == \"\(sourceRecord.decode_name!)\") AND (teamID == \(myTeamID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(decode_name == \"\(sourceRecord.decode_name!)\") AND (teamID == \(teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Decodes", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -626,7 +712,7 @@ extension CloudKitInteraction
                         {
                             updateRecord = false
                         }
-
+                        
                     default:
                         updateRecord = true
                         
@@ -642,12 +728,14 @@ extension CloudKitInteraction
                         // Apply whatever changes you want
                         record!.setValue(sourceRecord.decode_value, forKey: "decode_value")
                         record!.setValue(sourceRecord.decodeType, forKey: "decodeType")
+                        record!.setValue(sourceRecord.decode_privacy, forKey: "decode_privacy")
+
                         if sourceRecord.updateTime != nil
                         {
                             record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
                         }
                         record!.setValue(sourceRecord.updateType, forKey: "updateType")
-                       
+                        
                         // Save this record again
                         self.publicDB.save(record!, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
@@ -670,7 +758,8 @@ extension CloudKitInteraction
                     todoRecord.setValue(sourceRecord.decode_name, forKey: "decode_name")
                     todoRecord.setValue(sourceRecord.decodeType, forKey: "decodeType")
                     todoRecord.setValue(sourceRecord.decode_value, forKey: "decode_value")
-                    todoRecord.setValue(myTeamID, forKey: "teamID")
+                    todoRecord.setValue(sourceRecord.decode_privacy, forKey: "decode_privacy")
+                    todoRecord.setValue(teamID, forKey: "teamID")
                     
                     if sourceRecord.updateTime != nil
                     {
@@ -698,11 +787,133 @@ extension CloudKitInteraction
         sem.wait()
     }
 
+    func savePrivateDecodesRecordToCloudKit(_ sourceRecord: Decodes)
+    {
+        let sem = DispatchSemaphore(value: 0)
+        let predicate = NSPredicate(format: "(decode_name == \"\(sourceRecord.decode_name!)\")") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "Decodes", predicate: predicate)
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
+            if error != nil
+            {
+                NSLog("Error querying records: \(error!.localizedDescription)")
+            }
+            else
+            {
+                if records!.count > 0
+                {
+                    // We need to do a check of the number for the tables, as otherwise we risk overwriting the changes
+                    var updateRecord: Bool = true
+                    
+                    let record = records!.first// as! CKRecord
+                    
+                    switch sourceRecord.decode_name!
+                    {
+                    case "Device" :
+                        let localValue = Int(sourceRecord.decode_value!)
+                        let tempValue = record!.object(forKey: "decode_value")! as CKRecordValue
+                        let remoteValue = Int(tempValue as! String)
+                        
+                        if localValue! > remoteValue!
+                        {
+                            updateRecord = true
+                        }
+                        else
+                        {
+                            updateRecord = false
+                        }
+                        
+                    case "Decodes":
+                        let localValue = Int(sourceRecord.decode_value!)
+                        let tempValue = record!.object(forKey: "decode_value")! as CKRecordValue
+                        let remoteValue = Int(tempValue as! String)
+                        
+                        if localValue! > remoteValue!
+                        {
+                            updateRecord = true
+                        }
+                        else
+                        {
+                            updateRecord = false
+                        }
+
+                    default:
+                        updateRecord = true
+                        
+                        if sourceRecord.decode_name!.hasPrefix("\(appName) Sync")
+                        {
+                            updateRecord = true
+                        }
+                    }
+                    
+                    if updateRecord
+                    {
+                        // Now you have grabbed your existing record from iCloud
+                        // Apply whatever changes you want
+                        record!.setValue(sourceRecord.decode_value, forKey: "decode_value")
+                        record!.setValue(sourceRecord.decodeType, forKey: "decodeType")
+                        record!.setValue(sourceRecord.decode_privacy, forKey: "decode_privacy")
+                        if sourceRecord.updateTime != nil
+                        {
+                            record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                        }
+                        record!.setValue(sourceRecord.updateType, forKey: "updateType")
+                       
+                        // Save this record again
+                        self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil
+                            {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            }
+                            else
+                            {
+                                if debugMessages
+                                {
+                                    NSLog("Successfully updated record!")
+                                }
+                            }
+                        })
+                    }
+                }
+                else
+                {  // Insert
+                    let todoRecord = CKRecord(recordType: "Decodes")
+                    todoRecord.setValue(sourceRecord.decode_name, forKey: "decode_name")
+                    todoRecord.setValue(sourceRecord.decodeType, forKey: "decodeType")
+                    todoRecord.setValue(sourceRecord.decode_value, forKey: "decode_value")
+                    todoRecord.setValue(sourceRecord.decode_privacy, forKey: "decode_privacy")
+                    
+                    if sourceRecord.updateTime != nil
+                    {
+                        todoRecord.setValue(sourceRecord.updateTime, forKey: "updateTime")
+                    }
+                    todoRecord.setValue(sourceRecord.updateType, forKey: "updateType")
+                    
+                    self.privateDB.save(todoRecord, completionHandler: { (savedRecord, saveError) in
+                        if saveError != nil
+                        {
+                            NSLog("Error saving record: \(saveError!.localizedDescription)")
+                        }
+                        else
+                        {
+                            if debugMessages
+                            {
+                                NSLog("Successfully saved record! \(sourceRecord.decode_name!)")
+                            }
+                        }
+                    })
+                }
+            }
+            sem.signal()
+        })
+        sem.wait()
+    }
+
     func updateDecodeRecord(_ sourceRecord: CKRecord)
     {
         let decodeName = sourceRecord.object(forKey: "decode_name") as! String
         let decodeValue = sourceRecord.object(forKey: "decode_value") as! String
         let decodeType = sourceRecord.object(forKey: "decodeType") as! String
+        let decode_privacy = sourceRecord.object(forKey: "decode_privacy") as! String
         
         var updateTime = Date()
         if sourceRecord.object(forKey: "updateTime") != nil
@@ -717,7 +928,7 @@ extension CloudKitInteraction
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
         
-        myDatabaseConnection.updateDecodeValue(decodeName, codeValue: decodeValue, codeType: decodeType, updateTime: updateTime, updateType: updateType, updateCloud: false)
+        myDatabaseConnection.updateDecodeValue(decodeName, codeValue: decodeValue, codeType: decodeType, decode_privacy: decode_privacy, updateTime: updateTime, updateType: updateType, updateCloud: false)
     }
 
 }

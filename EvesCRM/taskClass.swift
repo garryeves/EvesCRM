@@ -613,7 +613,7 @@ class task: NSObject
     {
         let myTask = myDatabaseConnection.getTaskRegardlessOfStatus(myTaskID)[0]
         
-        myCloudDB.saveTaskRecordToCloudKit(myTask)
+        myCloudDB.saveTaskRecordToCloudKit(myTask, teamID: currentUser.currentTeam!.teamID)
         
         // Save context link
         
@@ -1507,7 +1507,7 @@ extension coreDatabase
             // Now go and populate the Decode for this
             
             let tempInt = "\(maxID)"
-            updateDecodeValue("Task", codeValue: tempInt, codeType: "hidden")
+            updateDecodeValue("Task", codeValue: tempInt, codeType: "hidden", decode_privacy: "Public")
         }
         catch
         {
@@ -1567,13 +1567,13 @@ extension CloudKitInteraction
     {     
         for myItem in myDatabaseConnection.getTaskForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Task"))
         {
-            saveTaskRecordToCloudKit(myItem)
+            saveTaskRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
         }
     }
 
-    func updateTaskInCoreData()
+    func updateTaskInCoreData(teamID: Int32)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(myTeamID))", myDatabaseConnection.getSyncDateForTable(tableName: "Task") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "Task") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Task", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -1597,12 +1597,12 @@ extension CloudKitInteraction
         }
     }
 
-    func deleteTask()
+    func deleteTask(teamID: Int32)
     {
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "Task", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1615,9 +1615,9 @@ extension CloudKitInteraction
         sem.wait()
     }
 
-    func replaceTaskInCoreData()
+    func replaceTaskInCoreData(teamID: Int32)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "Task", predicate: predicate)
         
         let operation = CKQueryOperation(query: query)
@@ -1669,10 +1669,10 @@ extension CloudKitInteraction
         }
     }
 
-    func saveTaskRecordToCloudKit(_ sourceRecord: Task)
+    func saveTaskRecordToCloudKit(_ sourceRecord: Task, teamID: Int32)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID)) AND (teamID == \(myTeamID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID)) AND (teamID == \(teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Task", predicate: predicate)
         
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
@@ -1751,7 +1751,7 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.title, forKey: "title")
                     record.setValue(sourceRecord.urgency, forKey: "urgency")
                     record.setValue(sourceRecord.projectID, forKey: "projectID")
-                    record.setValue(myTeamID, forKey: "teamID")
+                    record.setValue(teamID, forKey: "teamID")
                     
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil

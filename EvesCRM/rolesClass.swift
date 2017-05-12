@@ -51,7 +51,7 @@ extension coreDatabase
             {
                 myStage.updateTime = NSDate()
                 myStage.updateType = "Delete"
-                myCloudDB.saveRolesRecordToCloudKit(myStage)
+                myCloudDB.saveRolesRecordToCloudKit(myStage, teamID: currentUser.currentTeam!.teamID)
             }
         }
         catch
@@ -135,7 +135,7 @@ extension coreDatabase
         
         saveContext()
         
-        myCloudDB.saveRolesRecordToCloudKit(mySelectedRole)
+        myCloudDB.saveRolesRecordToCloudKit(mySelectedRole, teamID: currentUser.currentTeam!.teamID)
     }
     
     func saveCloudRole(_ roleName: String, teamID: Int32, updateTime: Date, updateType: String, roleID: Int32 = 0)
@@ -248,7 +248,7 @@ extension coreDatabase
             {
                 myStage.updateTime =  NSDate()
                 myStage.updateType = "Delete"
-                myCloudDB.saveRolesRecordToCloudKit(myStage)
+                myCloudDB.saveRolesRecordToCloudKit(myStage, teamID: currentUser.currentTeam!.teamID)
             }
         }
         catch
@@ -361,7 +361,7 @@ extension coreDatabase
             // Now go and populate the Decode for this
             
             let tempInt = "\(maxID)"
-            updateDecodeValue("Roles", codeValue: tempInt, codeType: "hidden")
+            updateDecodeValue("Roles", codeValue: tempInt, codeType: "hidden", decode_privacy: "Public")
         }
         catch
         {
@@ -422,13 +422,13 @@ extension CloudKitInteraction
     {
         for myItem in myDatabaseConnection.getRolesForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Roles"))
         {
-            saveRolesRecordToCloudKit(myItem)
+            saveRolesRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
         }
     }
 
-    func updateRolesInCoreData()
+    func updateRolesInCoreData(teamID: Int32)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(myTeamID))", myDatabaseConnection.getSyncDateForTable(tableName: "Roles") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "Roles") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Roles", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -452,12 +452,12 @@ extension CloudKitInteraction
         }
     }
 
-    func deleteRoles()
+    func deleteRoles(teamID: Int32)
     {
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "Roles", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -470,9 +470,9 @@ extension CloudKitInteraction
         sem.wait()
     }
 
-    func replaceRolesInCoreData()
+    func replaceRolesInCoreData(teamID: Int32)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "Roles", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -506,10 +506,10 @@ extension CloudKitInteraction
         }
     }
 
-    func saveRolesRecordToCloudKit(_ sourceRecord: Roles)
+    func saveRolesRecordToCloudKit(_ sourceRecord: Roles, teamID: Int32)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(roleID == \(sourceRecord.roleID)) AND (teamID == \(myTeamID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(roleID == \(sourceRecord.roleID)) AND (teamID == \(teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Roles", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -556,7 +556,7 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
                     record.setValue(sourceRecord.teamID, forKey: "teamID")
                     record.setValue(sourceRecord.roleDescription, forKey: "roleDescription")
-                    record.setValue(myTeamID, forKey: "teamID")
+                    record.setValue(teamID, forKey: "teamID")
                     
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil

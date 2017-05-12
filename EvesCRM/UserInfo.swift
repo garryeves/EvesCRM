@@ -82,7 +82,6 @@ class UserInfo {
   }
   
   func userInfo(_ completion: @escaping (_ userInfo: CKUserIdentity?, _ error: Error?)->()) {
-NSLog("gre userinfo")
     requestDiscoverability() { discoverable in
       self.userID() { recordID, error in
         if error != nil {

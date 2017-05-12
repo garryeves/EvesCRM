@@ -6,8 +6,5 @@ use_frameworks!
 project '/Users/garryeves/Documents/xcode/EvesCRM/evesSecurity/evesSecurity.xcodeproj'
 
 target ‘evesSecurity' do
-pod 'FacebookCore'
-pod 'FacebookLogin'
-pod 'FacebookShare'
 pod 'RNCryptor'
 end

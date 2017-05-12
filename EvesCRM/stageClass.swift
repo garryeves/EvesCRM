@@ -74,7 +74,7 @@ extension coreDatabase
                 myStage.updateTime =  NSDate()
                 myStage.updateType = "Delete"
                 
-                myCloudDB.saveStagesRecordToCloudKit(myStage)
+                myCloudDB.saveStagesRecordToCloudKit(myStage, teamID: currentUser.currentTeam!.teamID)
             }
         }
         catch
@@ -184,7 +184,7 @@ extension coreDatabase
         
         saveContext()
         
-        myCloudDB.saveStagesRecordToCloudKit(myStage)
+        myCloudDB.saveStagesRecordToCloudKit(myStage, teamID: currentUser.currentTeam!.teamID)
     }
     
     func replaceStage(_ stageDesc: String, teamID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
@@ -225,7 +225,7 @@ extension coreDatabase
                 myStage.updateTime =  NSDate()
                 myStage.updateType = "Delete"
                 
-                myCloudDB.saveStagesRecordToCloudKit(myStage)
+                myCloudDB.saveStagesRecordToCloudKit(myStage, teamID: currentUser.currentTeam!.teamID)
             }
         }
         catch
@@ -357,13 +357,13 @@ extension CloudKitInteraction
     {
         for myItem in myDatabaseConnection.getStagesForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Stages"))
         {
-            saveStagesRecordToCloudKit(myItem)
+            saveStagesRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
         }
     }
 
-    func updateStagesInCoreData()
+    func updateStagesInCoreData(teamID: Int32)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(myTeamID))", myDatabaseConnection.getSyncDateForTable(tableName: "Stages") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "Stages") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Stages", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -387,12 +387,12 @@ extension CloudKitInteraction
         }
     }
 
-    func deleteStages()
+    func deleteStages(teamID: Int32)
     {
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "Stages", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -405,9 +405,9 @@ extension CloudKitInteraction
         sem.wait()
     }
 
-    func replaceStagesInCoreData()
+    func replaceStagesInCoreData(teamID: Int32)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "Stages", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -440,10 +440,10 @@ extension CloudKitInteraction
         }
     }
 
-    func saveStagesRecordToCloudKit(_ sourceRecord: Stages)
+    func saveStagesRecordToCloudKit(_ sourceRecord: Stages, teamID: Int32)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(stageDescription == \"\(sourceRecord.stageDescription!)\") && (teamID == \(sourceRecord.teamID)) AND (teamID == \(myTeamID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(stageDescription == \"\(sourceRecord.stageDescription!)\") && (teamID == \(sourceRecord.teamID)) AND (teamID == \(teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Stages", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -488,7 +488,7 @@ extension CloudKitInteraction
                     }
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
                     record.setValue(sourceRecord.teamID, forKey: "teamID")
-                    record.setValue(myTeamID, forKey: "teamID")
+                    record.setValue(teamID, forKey: "teamID")
                     
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil

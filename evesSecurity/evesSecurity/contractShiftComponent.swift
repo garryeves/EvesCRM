@@ -397,13 +397,13 @@ extension CloudKitInteraction
     {
         for myItem in myDatabaseConnection.getContractShiftComponentForSync(myDatabaseConnection.getSyncDateForTable(tableName: "ContractShiftComponent"))
         {
-            saveContractShiftComponentRecordToCloudKit(myItem)
+            saveContractShiftComponentRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
         }
     }
     
-    func updateContractShiftComponentInCoreData()
+    func updateContractShiftComponentInCoreData(teamID: Int32)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(myTeamID))", myDatabaseConnection.getSyncDateForTable(tableName: "ContractShiftComponent") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "ContractShiftComponent") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "ContractShiftComponent", predicate: predicate)
         
         let operation = CKQueryOperation(query: query)
@@ -428,12 +428,12 @@ extension CloudKitInteraction
         }
     }
     
-    func deleteContractShiftComponent(contractShiftID:Int32, dayOfWeek: String)
+    func deleteContractShiftComponent(contractShiftID:Int32, dayOfWeek: String, teamID: Int32)
     {
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID)) AND (contractShiftID == \(contractShiftID)) AND (dayOfWeek == \"\(dayOfWeek)\")")
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID)) AND (contractShiftID == \(contractShiftID)) AND (dayOfWeek == \"\(dayOfWeek)\")")
         let query: CKQuery = CKQuery(recordType: "ContractShiftComponent", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -447,9 +447,9 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func replaceContractShiftComponentInCoreData()
+    func replaceContractShiftComponentInCoreData(teamID: Int32)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "ContractShiftComponent", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -507,11 +507,11 @@ extension CloudKitInteraction
         }
     }
     
-    func saveContractShiftComponentRecordToCloudKit(_ sourceRecord: ContractShiftComponent)
+    func saveContractShiftComponentRecordToCloudKit(_ sourceRecord: ContractShiftComponent, teamID: Int32)
     {
         let sem = DispatchSemaphore(value: 0)
         
-        let predicate = NSPredicate(format: "(contractShiftID == \(sourceRecord.contractShiftID)) AND (dayOfWeek == \"\(sourceRecord.dayOfWeek!)\") AND (teamID == \(myTeamID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(contractShiftID == \(sourceRecord.contractShiftID)) AND (dayOfWeek == \"\(sourceRecord.dayOfWeek!)\") AND (teamID == \(teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "ContractShiftComponent", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -561,7 +561,7 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.startTime, forKey: "startTime")
                     record.setValue(sourceRecord.endTime, forKey: "endTime")
                     
-                    record.setValue(myTeamID, forKey: "teamID")
+                    record.setValue(teamID, forKey: "teamID")
                     
                     if sourceRecord.updateTime != nil
                     {

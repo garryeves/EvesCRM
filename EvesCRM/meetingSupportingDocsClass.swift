@@ -131,13 +131,13 @@ extension CloudKitInteraction
     {
         for myItem in myDatabaseConnection.getMeetingSupportingDocsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "MeetingSupportingDocs"))
         {
-            saveMeetingSupportingDocsRecordToCloudKit(myItem)
+            saveMeetingSupportingDocsRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
         }
     }
 
-    func updateMeetingSupportingDocsInCoreData()
+    func updateMeetingSupportingDocsInCoreData(teamID: Int32)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(myTeamID))", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingSupportingDocs") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingSupportingDocs") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -161,12 +161,12 @@ extension CloudKitInteraction
         }
     }
 
-    func deleteMeetingSupportingDocs()
+    func deleteMeetingSupportingDocs(teamID: Int32)
     {
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -179,9 +179,9 @@ extension CloudKitInteraction
         sem.wait()
     }
 
-    func replaceMeetingSupportingDocsInCoreData()
+    func replaceMeetingSupportingDocsInCoreData(teamID: Int32)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -211,10 +211,10 @@ extension CloudKitInteraction
         }
     }
 
-    func saveMeetingSupportingDocsRecordToCloudKit(_ sourceRecord: MeetingSupportingDocs)
+    func saveMeetingSupportingDocsRecordToCloudKit(_ sourceRecord: MeetingSupportingDocs, teamID: Int32)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID)) AND (teamID == \(myTeamID))") // better be accurate to get only the
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID)) AND (teamID == \(teamID))") // better be accurate to get only the
         let query = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -263,7 +263,7 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
                     record.setValue(sourceRecord.attachmentPath, forKey: "attachmentPath")
                     record.setValue(sourceRecord.title, forKey: "title")
-                    record.setValue(myTeamID, forKey: "teamID")
+                    record.setValue(teamID, forKey: "teamID")
                     
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil

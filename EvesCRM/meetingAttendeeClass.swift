@@ -116,7 +116,7 @@ class meetingAttendee
     {
         let myMeeting = myDatabaseConnection.checkMeetingsForAttendee(myName, meetingID: myMeetingID)[0]
         
-        myCloudDB.saveMeetingAttendeesRecordToCloudKit(myMeeting)
+        myCloudDB.saveMeetingAttendeesRecordToCloudKit(myMeeting, teamID: currentUser.currentTeam!.teamID)
         
         saveCalled = false
     }
@@ -425,13 +425,13 @@ extension CloudKitInteraction
     {
         for myItem in myDatabaseConnection.getMeetingAttendeesForSync(myDatabaseConnection.getSyncDateForTable(tableName: "MeetingAttendees"))
         {
-            saveMeetingAttendeesRecordToCloudKit(myItem)
+            saveMeetingAttendeesRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
         }
     }
 
-    func updateMeetingAttendeesInCoreData()
+    func updateMeetingAttendeesInCoreData(teamID: Int32)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(myTeamID))", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingAttendees") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingAttendees") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingAttendees", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -455,12 +455,12 @@ extension CloudKitInteraction
         }
     }
 
-    func deleteMeetingAttendees()
+    func deleteMeetingAttendees(teamID: Int32)
     {
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "MeetingAttendees", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -473,9 +473,9 @@ extension CloudKitInteraction
         sem.wait()
     }
 
-    func replaceMeetingAttendeesInCoreData()
+    func replaceMeetingAttendeesInCoreData(teamID: Int32)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "MeetingAttendees", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -511,10 +511,10 @@ extension CloudKitInteraction
         }
     }
 
-    func saveMeetingAttendeesRecordToCloudKit(_ sourceRecord: MeetingAttendees)
+    func saveMeetingAttendeesRecordToCloudKit(_ sourceRecord: MeetingAttendees, teamID: Int32)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (name = \"\(sourceRecord.name!)\") AND (teamID == \(myTeamID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (name = \"\(sourceRecord.name!)\") AND (teamID == \(teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "MeetingAttendees", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -565,7 +565,7 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.attendenceStatus, forKey: "attendenceStatus")
                     record.setValue(sourceRecord.email, forKey: "email")
                     record.setValue(sourceRecord.type, forKey: "type")
-                    record.setValue(myTeamID, forKey: "teamID")
+                    record.setValue(teamID, forKey: "teamID")
                     
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil

@@ -9,15 +9,26 @@
 import Foundation
 import CoreData
 import CloudKit
-import RNCryptor
 
-class UserItem: NSObject
+let NotificationUserSaved = Notification.Name("NotificationUserSaved")
+let NotificationUserRetrieved = Notification.Name("NotificationUserRetrieved")
+let NotificationUserCountQueryDone = Notification.Name("NotificationUserCountQueryDone")
+let NotificationUserCountQueryString = "NotificationUserCountQueryDone"
+let NotificationUserCreated = Notification.Name("NotificationUserCreated")
+
+
+class userItem: NSObject
 {
     fileprivate var myUserID: Int32 = 0
     fileprivate var myRoles: userRoles!
-    fileprivate var myTeam: team!
-    fileprivate let secretKey = "djskfPnmjYUPFEUingljmyzdls"
-    private let defaultsName = "group.com.garryeves.EvesCRM"
+    fileprivate var myTeams: [team] = Array()
+    fileprivate var myAuthorised: Bool = false
+    fileprivate var myName: String = ""
+    fileprivate var myPhraseDate: Date = getDefaultDate()
+    fileprivate var myPassPhrase: String = ""
+    fileprivate var myCurrentTeam: team!
+    
+    fileprivate let defaultsName = "group.com.garryeves.EvesCRM"
     
     var userID: Int32
     {
@@ -35,538 +46,367 @@ class UserItem: NSObject
         }
     }
     
-//    var isAuthorised: Bool
-//    {
-//        get
-//        {
-//            return ??
-//        }
-//    }
+    var isAuthorised: Bool
+    {
+        get
+        {
+            return myAuthorised
+        }
+    }
+    
+    var name: String
+    {
+        get
+        {
+            return myName
+        }
+        set
+        {
+            myName = newValue
+        }
+    }
+    
+    var phraseDate: Date
+    {
+        get
+        {
+            return myPhraseDate
+        }
+        set
+        {
+            myPhraseDate = newValue
+        }
+    }
+    
+    var passPhrase: String
+    {
+        get
+        {
+            return myPassPhrase
+        }
+        set
+        {
+            myPassPhrase = newValue
+        }
+    }
+    
+    var currentTeam: team?
+    {
+        get
+        {
+            return myCurrentTeam
+        }
+    }
     
     init(userID: Int32)
     {
         super.init()
 
-        myUserID = userID
+        notificationCenter.addObserver(self, selector: #selector(self.queryFinished), name: NotificationUserRetrieved, object: nil)
     }
     
-
+    func userRetieved()
+    {
+        notificationCenter.removeObserver(NotificationUserRetrieved)
+        
+        let record = myCloudDB.getUserRecord()
+        
+        if record != nil
+        {
+            myUserID = record!.userID
+            myName = record!.name
+            myPhraseDate = record!.phraseDate
+            myPassPhrase = record!.passPhrase
+            
+            loadTeams()
+        }
+    }
     
+    override init()
+    {
+        super.init()
+        
+        // Create a new user
+        
+        notificationCenter.addObserver(self, selector: #selector(self.queryFinished), name: NotificationUserCountQueryDone, object: nil)
+        
+        myCloudDB.getUserCount()
+    }
+    
+    func queryFinished()
+    {
+        notificationCenter.removeObserver(NotificationUserCountQueryDone)
+        
+        myUserID = myCloudDB.userCount() + 1
+
+        // Now lets call to create the team in cloudkit
+        
+        notificationCenter.addObserver(self, selector: #selector(self.userCreated), name: NotificationUserSaved, object: nil)
+        
+        myCloudDB.createNewUser(myUserID)
+    }
+    
+    func userCreated()
+    {
+        // once created populate private items
+        populatePrivateDecodes()
+        
+        myAuthorised = true
+        notificationCenter.post(name: NotificationUserCreated, object: nil)
+    }
+
+    func addTeamToUser(_ teamObject: team)
+    {
+        myTeams.append(teamObject)
+        
+        myDatabaseConnection.saveUserTeam(myUserID, teamID: teamObject.teamID)
+        
+        if myTeams.count == 1
+        {
+            myCurrentTeam = teamObject
+        }
+    }
+    
+    func setCurrentTeam(_ teamObject: team)
+    {
+        var foundBool = false
+        
+        for myItem in myTeams
+        {
+            if myItem.teamID == teamObject.teamID
+            {
+                foundBool = true
+                break
+            }
+        }
+        
+        if foundBool
+        {
+            myCurrentTeam = teamObject
+        }
+    }
+    
+    func removeTeamForUser(_ teamObject: team)
+    {
+        myDatabaseConnection.deleteUserTeam(myUserID, teamID: teamObject.teamID)
+        
+        loadTeams()
+    }
+    
+    func loadTeams()
+    {
+        myTeams.removeAll()
+        
+        for myItem in myDatabaseConnection.getTeamsForUser(userID: myUserID)
+        {
+            let teamObject = team(teamID: myItem.teamID)
+            myTeams.append(teamObject)
+        }
+        
+        if myTeams.count == 1
+        {
+            myCurrentTeam = myTeams[0]
+        }
+    }
+
     func save()
     {
-//        myDatabaseConnection.saveUsers(myUsersID,
-//                                         UsersLine1: myUsersLine1,
-//                                         UsersLine2: myUsersLine2,
-//                                         )
+        myCloudDB.saveUser(myUserID, name: myName, phraseDate: myPhraseDate, passPhrase: myPassPhrase)
     }
     
-    func delete()
+    func delete() -> Bool
     {
-//        myDatabaseConnection.deleteUsers(myUserID)
-    }
-    
-    func writeDefaultString(_  keyName: String, value: String)
-    {
-        let defaults = UserDefaults(suiteName: defaultsName)!
-        
-        defaults.set(value, forKey: keyName)
-        
-        defaults.synchronize()
-    }
-    
-    func readDefaultString(_  keyName: String) -> String
-    {
-        let defaults = UserDefaults(suiteName: defaultsName)!
-        
-        if defaults.string(forKey: keyName) != nil
+        if myTeams.count == 0
         {
-            return (defaults.string(forKey: keyName))!
+            return false
         }
         else
         {
-            return ""
+            myCloudDB.deleteUser(myUserID)
+            return true
         }
-    }
-
-    func encryptText(_ textString: String)->Data
-    {
-        let data: Data = textString.data(using: .utf8)!
-        let ciphertext = RNCryptor.encrypt(data: data, withPassword: secretKey)
-
-        print("ciphertext \(ciphertext)")
-        
-        return ciphertext
     }
     
-    func decryptText(_  textData: Data)
+    private func populatePrivateDecodes()
     {
-        //
-        // Decryption
-        //
+        var decodeString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date")
         
-
-        do {
-            let originalData = try RNCryptor.decrypt(data: textData, withPassword: secretKey)
-            // ...
-            print("originalData \(originalData)")
-            let newString = String(data: originalData, encoding: .utf8)
-            print("newString \(newString)")
-        } catch {
-            print(error)
+        if decodeString == ""
+        {  // Nothing found so go and create
+            myDatabaseConnection.updateDecodeValue("Calendar - Weeks before current date", codeValue: "1", codeType: "stepper", decode_privacy: "Private")
         }
         
-
+        decodeString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date")
+        
+        if decodeString == ""
+        {  // Nothing found so go and create
+            myDatabaseConnection.updateDecodeValue("Calendar - Weeks after current date", codeValue: "4", codeType: "stepper", decode_privacy: "Private")
+        }
     }
 }
-//
-//extension coreDatabase
-//{
-//    func saveUsers(_ UsersID: Int32,
-//                     UsersLine1: String,
-//                     UsersLine2: String,
-//                     
-//                     updateTime: Date =  Date(), updateType: String = "CODE")
-//    {
-//        var myItem: Users!
-//        
-//        let myReturn = getUsersDetails(UsersID)
-//        
-//        if myReturn.count == 0
-//        { // Add
-//            myItem = Users(context: objectContext)
-//            myItem.UsersID = UsersID
-//            myItem.UsersLine1 = UsersLine1
-//            myItem.UsersLine2 = UsersLine2
-//            
-//            
-//            if updateType == "CODE"
-//            {
-//                myItem.updateTime =  NSDate()
-//                
-//                myItem.updateType = "Add"
-//            }
-//            else
-//            {
-//                myItem.updateTime = updateTime as NSDate
-//                myItem.updateType = updateType
-//            }
-//        }
-//        else
-//        {
-//            myItem = myReturn[0]
-//            myItem.UsersLine1 = UsersLine1
-//            myItem.UsersLine2 = UsersLine2
-//            
-//            
-//            if updateType == "CODE"
-//            {
-//                myItem.updateTime =  NSDate()
-//                if myItem.updateType != "Add"
-//                {
-//                    myItem.updateType = "Update"
-//                }
-//            }
-//            else
-//            {
-//                myItem.updateTime = updateTime as NSDate
-//                myItem.updateType = updateType
-//            }
-//        }
-//        
-//        saveContext()
-//    }
-//    
-//    func replaceUsers(_ UsersID: Int32,
-//                        UsersLine1: String,
-//                        UsersLine2: String,
-//                        
-//                        updateTime: Date =  Date(), updateType: String = "CODE")
-//    {
-//        let myItem = Users(context: objectContext)
-//        myItem.UsersID = UsersID
-//        myItem.UsersLine1 = UsersLine1
-//        myItem.UsersLine2 = UsersLine2
-//        
-//        
-//        if updateType == "CODE"
-//        {
-//            myItem.updateTime =  NSDate()
-//            myItem.updateType = "Add"
-//        }
-//        else
-//        {
-//            myItem.updateTime = updateTime as NSDate
-//            myItem.updateType = updateType
-//        }
-//        
-//        saveContext()
-//    }
-//    
-//    func deleteUsers(_ UsersID: Int32)
-//    {
-//        let myReturn = getUsersDetails(UsersID)
-//        
-//        if myReturn.count > 0
-//        {
-//            let myItem = myReturn[0]
-//            myItem.updateTime =  NSDate()
-//            myItem.updateType = "Delete"
-//        }
-//        
-//        saveContext()
-//    }
-//    
-//    func getUsersDetails(_ UsersID: Int32)->[Users]
-//    {
-//        let fetchRequest = NSFetchRequest<Users>(entityName: "Users")
-//        
-//        // Create a new predicate that filters out any object that
-//        // doesn't have a title of "Best Language" exactly.
-//        let predicate = NSPredicate(format: "(UsersID == \(UsersID)) && (updateType != \"Delete\")")
-//        
-//        // Set the predicate on the fetch request
-//        fetchRequest.predicate = predicate
-//        
-//        // Execute the fetch request, and cast the results to an array of LogItem objects
-//        do
-//        {
-//            let fetchResults = try objectContext.fetch(fetchRequest)
-//            return fetchResults
-//        }
-//        catch
-//        {
-//            print("Error occurred during execution: \(error)")
-//            return []
-//        }
-//    }
-//    
-//    func resetAllUsers()
-//    {
-//        let fetchRequest = NSFetchRequest<Users>(entityName: "Users")
-//        
-//        // Execute the fetch request, and cast the results to an array of LogItem objects
-//        do
-//        {
-//            let fetchResults = try objectContext.fetch(fetchRequest)
-//            for myItem in fetchResults
-//            {
-//                myItem.updateTime =  NSDate()
-//                myItem.updateType = "Delete"
-//            }
-//        }
-//        catch
-//        {
-//            print("Error occurred during execution: \(error)")
-//        }
-//        
-//        saveContext()
-//    }
-//    
-//    func clearDeletedUsers(predicate: NSPredicate)
-//    {
-//        let fetchRequest2 = NSFetchRequest<Users>(entityName: "Users")
-//        
-//        // Set the predicate on the fetch request
-//        fetchRequest2.predicate = predicate
-//        
-//        // Execute the fetch request, and cast the results to an array of LogItem objects
-//        do
-//        {
-//            let fetchResults2 = try objectContext.fetch(fetchRequest2)
-//            for myItem2 in fetchResults2
-//            {
-//                objectContext.delete(myItem2 as NSManagedObject)
-//            }
-//        }
-//        catch
-//        {
-//            print("Error occurred during execution: \(error)")
-//        }
-//        saveContext()
-//    }
-//    
-//    func clearSyncedUsers(predicate: NSPredicate)
-//    {
-//        let fetchRequest2 = NSFetchRequest<Users>(entityName: "Users")
-//        
-//        // Set the predicate on the fetch request
-//        fetchRequest2.predicate = predicate
-//        
-//        // Execute the fetch request, and cast the results to an array of LogItem objects
-//        do
-//        {
-//            let fetchResults2 = try objectContext.fetch(fetchRequest2)
-//            for myItem2 in fetchResults2
-//            {
-//                myItem2.updateType = ""
-//            }
-//        }
-//        catch
-//        {
-//            print("Error occurred during execution: \(error)")
-//        }
-//        
-//        saveContext()
-//    }
-//    
-//    func getUsersForSync(_ syncDate: Date) -> [Users]
-//    {
-//        let fetchRequest = NSFetchRequest<Users>(entityName: "Users")
-//        
-//        let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
-//        
-//        // Set the predicate on the fetch request
-//        
-//        fetchRequest.predicate = predicate
-//        // Execute the fetch request, and cast the results to an array of  objects
-//        do
-//        {
-//            let fetchResults = try objectContext.fetch(fetchRequest)
-//            
-//            return fetchResults
-//        }
-//        catch
-//        {
-//            print("Error occurred during execution: \(error)")
-//            return []
-//        }
-//    }
-//    
-//    func deleteAllUsers()
-//    {
-//        let fetchRequest2 = NSFetchRequest<Users>(entityName: "Users")
-//        
-//        // Execute the fetch request, and cast the results to an array of LogItem objects
-//        do
-//        {
-//            let fetchResults2 = try objectContext.fetch(fetchRequest2)
-//            for myItem2 in fetchResults2
-//            {
-//                self.objectContext.delete(myItem2 as NSManagedObject)
-//            }
-//        }
-//        catch
-//        {
-//            print("Error occurred during execution: \(error)")
-//        }
-//        
-//        saveContext()
-//    }
-//}
-//
-//extension CloudKitInteraction
-//{
-//    func saveUsersToCloudKit()
-//    {
-//        for myItem in myDatabaseConnection.getUsersForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Users"))
-//        {
-//            saveUsersRecordToCloudKit(myItem)
-//        }
-//    }
-//    
-//    func updateUsersInCoreData()
-//    {
-//        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(myTeamID))", myDatabaseConnection.getSyncDateForTable(tableName: "Users") as CVarArg)
-//        let query: CKQuery = CKQuery(recordType: "Users", predicate: predicate)
-//        
-//        let operation = CKQueryOperation(query: query)
-//        
-//        waitFlag = true
-//        
-//        operation.recordFetchedBlock = { (record) in
-//            self.recordCount += 1
-//            
-//            self.updateUsersRecord(record)
-//            self.recordCount -= 1
-//            
-//            usleep(useconds_t(self.sleepTime))
-//        }
-//        let operationQueue = OperationQueue()
-//        
-//        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
-//        
-//        while waitFlag
-//        {
-//            sleep(UInt32(0.5))
-//        }
-//    }
-//    
-//    func deleteUsers(UsersID: Int32)
-//    {
-//        let sem = DispatchSemaphore(value: 0);
-//        
-//        var myRecordList: [CKRecordID] = Array()
-//        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID)) AND (UsersID == \(UsersID))")
-//        let query: CKQuery = CKQuery(recordType: "Users", predicate: predicate)
-//        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-//            for record in results!
-//            {
-//                myRecordList.append(record.recordID)
-//            }
-//            self.performPublicDelete(myRecordList)
-//            sem.signal()
-//        })
-//        
-//        sem.wait()
-//    }
-//    
-//    func replaceUsersInCoreData()
-//    {
-//        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
-//        let query: CKQuery = CKQuery(recordType: "Users", predicate: predicate)
-//        let operation = CKQueryOperation(query: query)
-//        
-//        waitFlag = true
-//        
-//        operation.recordFetchedBlock = { (record) in
-//            let UsersLine1 = record.object(forKey: "UsersLine1") as! String
-//            let UsersLine2 = record.object(forKey: "UsersLine2") as! String
-//            
-//            var UsersID: Int32 = 0
-//            if record.object(forKey: "UsersID") != nil
-//            {
-//                UsersID = record.object(forKey: "UsersID") as! Int32
-//            }
-//            
-//            var updateTime = Date()
-//            if record.object(forKey: "updateTime") != nil
-//            {
-//                updateTime = record.object(forKey: "updateTime") as! Date
-//            }
-//            
-//            var updateType: String = ""
-//            if record.object(forKey: "updateType") != nil
-//            {
-//                updateType = record.object(forKey: "updateType") as! String
-//            }
-//            
-//            myDatabaseConnection.replaceUsers(UsersID,
-//                                                UsersLine1: UsersLine1,
-//                                                UsersLine2: UsersLine2,
-//                                                , updateTime: updateTime, updateType: updateType)
-//            
-//            usleep(useconds_t(self.sleepTime))
-//        }
-//        
-//        let operationQueue = OperationQueue()
-//        
-//        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
-//        
-//        while waitFlag
-//        {
-//            sleep(UInt32(0.5))
-//        }
-//    }
-//    
-//    func saveUsersRecordToCloudKit(_ sourceRecord: Users)
-//    {
-//        let sem = DispatchSemaphore(value: 0)
-//        
-//        let predicate = NSPredicate(format: "(UsersID == \(sourceRecord.UsersID)) AND (teamID == \(myTeamID))") // better be accurate to get only the record you need
-//        let query = CKQuery(recordType: "Users", predicate: predicate)
-//        publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
-//            if error != nil
-//            {
-//                NSLog("Error querying records: \(error!.localizedDescription)")
-//            }
-//            else
-//            {
-//                // Lets go and get the additional details from the context1_1 table
-//                
-//                if records!.count > 0
-//                {
-//                    let record = records!.first// as! CKRecord
-//                    // Now you have grabbed your existing record from iCloud
-//                    // Apply whatever changes you want
-//                    
-//                    record!.setValue(sourceRecord.UsersID, forKey: "UsersID")
-//                    record!.setValue(sourceRecord.UsersLine1, forKey: "ddressLine1")
-//                    record!.setValue(sourceRecord.UsersLine2, forKey: "UsersLine2")
-//                    
-//                    if sourceRecord.updateTime != nil
-//                    {
-//                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
-//                    }
-//                    record!.setValue(sourceRecord.updateType, forKey: "updateType")
-//                    
-//                    // Save this record again
-//                    self.publicDB.save(record!, completionHandler: { (savedRecord, saveError) in
-//                        if saveError != nil
-//                        {
-//                            NSLog("Error saving record: \(saveError!.localizedDescription)")
-//                        }
-//                        else
-//                        {
-//                            if debugMessages
-//                            {
-//                                NSLog("Successfully updated record!")
-//                            }
-//                        }
-//                    })
-//                }
-//                else
-//                {  // Insert
-//                    let record = CKRecord(recordType: "Users")
-//                    record.setValue(sourceRecord.UsersID, forKey: "UsersID")
-//                    record.setValue(sourceRecord.UsersLine1, forKey: "ddressLine1")
-//                    record.setValue(sourceRecord.UsersLine2, forKey: "UsersLine2")
-//                    
-//                    record.setValue(myTeamID, forKey: "teamID")
-//                    
-//                    if sourceRecord.updateTime != nil
-//                    {
-//                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
-//                    }
-//                    record.setValue(sourceRecord.updateType, forKey: "updateType")
-//                    
-//                    self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
-//                        if saveError != nil
-//                        {
-//                            NSLog("Error saving record: \(saveError!.localizedDescription)")
-//                        }
-//                        else
-//                        {
-//                            if debugMessages
-//                            {
-//                                NSLog("Successfully saved record!")
-//                            }
-//                        }
-//                    })
-//                }
-//            }
-//            sem.signal()
-//        })
-//        sem.wait()
-//    }
-//    
-//    func updateUsersRecord(_ sourceRecord: CKRecord)
-//    {
-//        let UsersLine1 = sourceRecord.object(forKey: "UsersLine1") as! String
-//        let UsersLine2 = sourceRecord.object(forKey: "UsersLine2") as! String
-//        
-//        var UsersID: Int32 = 0
-//        if sourceRecord.object(forKey: "UsersID") != nil
-//        {
-//            UsersID = sourceRecord.object(forKey: "UsersID") as! Int32
-//        }
-//        
-//        var updateTime = Date()
-//        if sourceRecord.object(forKey: "updateTime") != nil
-//        {
-//            updateTime = sourceRecord.object(forKey: "updateTime") as! Date
-//        }
-//        
-//        var updateType: String = ""
-//        if sourceRecord.object(forKey: "updateType") != nil
-//        {
-//            updateType = sourceRecord.object(forKey: "updateType") as! String
-//        }
-//        
-//        myDatabaseConnection.saveUsers(UsersID,
-//                                         UsersLine1: UsersLine1,
-//                                         UsersLine2: UsersLine2,
-//                                         
-//                                         , updateTime: updateTime, updateType: updateType)
-//    }
-//}
-//
+
+extension CloudKitInteraction
+{
+    func getUserCount()
+    {
+        recordsInTable = 0
+        
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "DBUsers", predicate: predicate)
+        
+        let operation = CKQueryOperation(query: query)
+        
+        operation.desiredKeys = ["userID"]
+        
+        operation.recordFetchedBlock = { (record) in
+            self.recordsInTable += 1
+        }
+        let operationQueue = OperationQueue()
+        
+        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue, notification: NotificationUserCountQueryString)
+    }
+    
+    func userCount() -> Int32
+    {
+        return recordsInTable
+    }
+    
+    func createNewUser(_ userID: Int32)
+    {
+        let record = CKRecord(recordType: "DBUsers")
+        record.setValue(userID, forKey: "userID")
+        
+        self.publicDB.save(record, completionHandler:
+            { (savedRecord, saveError) in
+                if saveError != nil
+                {
+                    NSLog("Error saving record: \(saveError!.localizedDescription)")
+                }
+                else
+                {
+                    if debugMessages
+                    {
+                        NSLog("Successfully saved record!")
+                    }
+                    NotificationCenter.default.post(name: NotificationUserSaved, object: nil)
+                }
+        })
+    }
+    
+    func getUser(_ userID: Int32)
+    {
+        let predicate = NSPredicate(format: "(userID == \(userID))") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "DBUsers", predicate: predicate)
+        publicDB.perform(query, inZoneWith: nil, completionHandler:
+        { (records, error) in
+            if error != nil
+            {
+                NSLog("Error querying records: \(error!.localizedDescription)")
+            }
+            else
+            {
+                let record = records!.first
+                self.returnUserEntry = returnUser(
+                    userID: record?.object(forKey: "userID") as! Int32,
+                    name: record?.object(forKey: "name") as! String,
+                    passPhrase: record?.object(forKey: "passPhrase") as! String,
+                    phraseDate: record?.object(forKey: "phraseDate") as! Date)
+                
+                NotificationCenter.default.post(name: NotificationUserRetrieved, object: nil)
+            }
+        })
+    }
+    
+    func getUserRecord() -> returnUser?
+    {
+        return returnUserEntry
+    }
+
+    func saveUser(_ userID: Int32, name: String, phraseDate: Date, passPhrase: String)
+    {
+        let sem = DispatchSemaphore(value: 0)
+
+        let predicate = NSPredicate(format: "(userID == \(userID))") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "DBUsers", predicate: predicate)
+        publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
+            if error != nil
+            {
+                NSLog("Error querying records: \(error!.localizedDescription)")
+            }
+            else
+            {
+                // Lets go and get the additional details from the context1_1 table
+
+                if records!.count > 0
+                {
+                    let record = records!.first// as! CKRecord
+                    // Now you have grabbed your existing record from iCloud
+                    // Apply whatever changes you want
+
+                    record!.setValue(userID, forKey: "userID")
+                    record!.setValue(name, forKey: "name")
+                    record!.setValue(phraseDate, forKey: "phraseDate")
+                    record!.setValue(passPhrase, forKey: "passPhrase")
+
+                    // Save this record again
+                    self.publicDB.save(record!, completionHandler: { (savedRecord, saveError) in
+                        if saveError != nil
+                        {
+                            NSLog("Error saving record: \(saveError!.localizedDescription)")
+                        }
+                        else
+                        {
+                            if debugMessages
+                            {
+                                NSLog("Successfully updated record!")
+                            }
+                        }
+                    })
+                }
+                else
+                {  // Insert
+                    let record = CKRecord(recordType: "DBUsers")
+                    record.setValue(userID, forKey: "userID")
+                    record.setValue(name, forKey: "name")
+                    record.setValue(phraseDate, forKey: "phraseDate")
+                    record.setValue(passPhrase, forKey: "passPhrase")
+
+                    self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
+                        if saveError != nil
+                        {
+                            NSLog("Error saving record: \(saveError!.localizedDescription)")
+                        }
+                        else
+                        {
+                            if debugMessages
+                            {
+                                NSLog("Successfully saved record!")
+                            }
+                        }
+                    })
+                }
+            }
+            sem.signal()
+        })
+        sem.wait()
+    }
+    
+    func deleteUser(_ userID: Int32)
+    {
+        let sem = DispatchSemaphore(value: 0);
+        
+        var myRecordList: [CKRecordID] = Array()
+        let predicate: NSPredicate = NSPredicate(format: "(userID == \(userID))")
+        let query: CKQuery = CKQuery(recordType: "DBUsers", predicate: predicate)
+        publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
+            for record in results!
+            {
+                myRecordList.append(record.recordID)
+            }
+            self.performPublicDelete(myRecordList)
+            sem.signal()
+        })
+        
+        sem.wait()    }
+}
+

@@ -13,6 +13,12 @@ import Contacts
 
 var adbk: CNContactStore!
 
+let defaultsName = "group.com.garryeves.EvesCRM"
+
+
+
+let loginStoryboard = UIStoryboard(name: "LoginRoles", bundle: nil)
+
 #if os(OSX)
     import AppKit
 #endif
@@ -33,12 +39,7 @@ let myDBSync = DBSync()
 var globalEventStore: EKEventStore!
 var debugMessages: Bool = false
 
-var myCurrentTeam: team!
-var myTeams: teams!
-
-var myTeamID: Int32 = 0
-
-var myID: String = ""
+var currentUser: userItem!
 
 var myCurrentViewController: AnyObject!
 
@@ -49,6 +50,29 @@ var myCurrentViewController: AnyObject!
     let myRowColour = CGColorCreateGenericRGB(0.75, 1.0, 0.92, 0.25)
 #endif
 
+
+func writeDefaultString(_ keyName: String, value: String)
+{
+    let defaults = UserDefaults(suiteName: defaultsName)!
+    
+    defaults.set(value, forKey: keyName)
+    
+    defaults.synchronize()
+}
+
+func readDefaultString(_ keyName: String) -> String
+{
+    let defaults = UserDefaults(suiteName: defaultsName)!
+    
+    if defaults.string(forKey: keyName) != nil
+    {
+        return (defaults.string(forKey: keyName))!
+    }
+    else
+    {
+        return ""
+    }
+}
 
 struct TableData
 {
@@ -288,23 +312,6 @@ func stringByChangingChars(_ string: String, oldChar: String, newChar: String) -
     let myString = regex.stringByReplacingMatches(in: string, options:  NSRegularExpression.MatchingOptions(), range: NSMakeRange(0, string.characters.count), withTemplate:newChar)
     
     return myString
-}
-
-func populateRoles(_ teamID: Int32)
-{
-    let initialRoles = ["Project Manager",
-                        "Project Executive",
-                        "Project Sponsor",
-                        "Technical Stakeholder",
-                        "Business Stakeholder",
-                        "Developer",
-                        "Tester"
-                        ]
-    
-    for initialRole in initialRoles
-    {
-        myDatabaseConnection.saveRole(initialRole, teamID: teamID)
-    }
 }
 
 func displayTeamMembers(_ sourceProject: project, lookupArray: inout [String])->[TableData]
@@ -1506,19 +1513,6 @@ func checkRemindersConnected(_ myEventStore: EKEventStore)
         
     default:
         print("Reminder Case Default")
-    }
-}
-
-func populateStages(_ teamID: Int32)
-{
-    let loadSet = ["Definition", "Initiation", "Planning", "Execution", "Monitoring & Control", "Closure", "Completed", "Archived", "On Hold"]
-    
-    for myItem in loadSet
-    {
-        if !myDatabaseConnection.stageExists(myItem, teamID: teamID)
-        {
-            myDatabaseConnection.saveStage(myItem, teamID: teamID)
-        }
     }
 }
 

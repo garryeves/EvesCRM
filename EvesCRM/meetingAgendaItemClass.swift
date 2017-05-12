@@ -252,7 +252,7 @@ class meetingAgendaItem
     {
         let myAgendaItem = myDatabaseConnection.loadSpecificAgendaItem(myMeetingID, agendaID: myAgendaID)[0]
         
-        myCloudDB.saveMeetingAgendaItemRecordToCloudKit(myAgendaItem)
+        myCloudDB.saveMeetingAgendaItemRecordToCloudKit(myAgendaItem, teamID: currentUser.currentTeam!.teamID)
         
         saveCalled = false
     }
@@ -711,7 +711,7 @@ extension coreDatabase
         
         saveContext()
         
-        myCloudDB.saveMeetingTasksRecordToCloudKit(myTask)
+        myCloudDB.saveMeetingTasksRecordToCloudKit(myTask, teamID: currentUser.currentTeam!.teamID)
     }
     
     func replaceAgendaTask(_ agendaID: Int32, meetingID: String, taskID: Int32)
@@ -963,13 +963,13 @@ extension CloudKitInteraction
     {
         for myItem in myDatabaseConnection.getMeetingAgendaItemsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "MeetingAgendaItem"))
         {
-            saveMeetingAgendaItemRecordToCloudKit(myItem)
+            saveMeetingAgendaItemRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
         }
     }
 
-    func updateMeetingAgendaItemInCoreData()
+    func updateMeetingAgendaItemInCoreData(teamID: Int32)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(myTeamID))", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingAgendaItem") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingAgendaItem") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -993,12 +993,12 @@ extension CloudKitInteraction
         }
     }
 
-    func deleteMeetingAgendaItem()
+    func deleteMeetingAgendaItem(teamID: Int32)
     {
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1011,9 +1011,9 @@ extension CloudKitInteraction
         sem.wait()
     }
 
-    func replaceMeetingAgendaItemInCoreData()
+    func replaceMeetingAgendaItemInCoreData(teamID: Int32)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -1055,10 +1055,10 @@ extension CloudKitInteraction
         }
     }
 
-    func saveMeetingAgendaItemRecordToCloudKit(_ sourceRecord: MeetingAgendaItem)
+    func saveMeetingAgendaItemRecordToCloudKit(_ sourceRecord: MeetingAgendaItem, teamID: Int32)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID)) AND (teamID == \(myTeamID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID)) AND (teamID == \(teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "MeetingAgendaItem", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -1121,7 +1121,7 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.timeAllocation, forKey: "timeAllocation")
                     record.setValue(sourceRecord.title, forKey: "title")
                     record.setValue(sourceRecord.meetingOrder, forKey: "meetingOrder")
-                    record.setValue(myTeamID, forKey: "teamID")
+                    record.setValue(teamID, forKey: "teamID")
                     
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
@@ -1193,13 +1193,13 @@ extension CloudKitInteraction
         //        NSLog("Syncing MeetingTasks")
         for myItem in myDatabaseConnection.getMeetingTasksForSync(myDatabaseConnection.getSyncDateForTable(tableName: "MeetingTasks"))
         {
-            saveMeetingTasksRecordToCloudKit(myItem)
+            saveMeetingTasksRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
         }
     }
 
-    func updateMeetingTasksInCoreData()
+    func updateMeetingTasksInCoreData(teamID: Int32)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(myTeamID))", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingTasks") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingTasks") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingTasks", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -1223,12 +1223,12 @@ extension CloudKitInteraction
         }
     }
 
-    func deleteMeetingTasks()
+    func deleteMeetingTasks(teamID: Int32)
     {
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "MeetingTasks", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1241,9 +1241,9 @@ extension CloudKitInteraction
         sem.wait()
     }
 
-    func replaceMeetingTasksInCoreData()
+    func replaceMeetingTasksInCoreData(teamID: Int32)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "MeetingTasks", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -1277,10 +1277,10 @@ extension CloudKitInteraction
         }
     }
 
-    func saveMeetingTasksRecordToCloudKit(_ sourceRecord: MeetingTasks)
+    func saveMeetingTasksRecordToCloudKit(_ sourceRecord: MeetingTasks, teamID: Int32)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID)) && (taskID == \(sourceRecord.taskID)) AND (teamID == \(myTeamID))") // better be accurate to get only the
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID)) && (taskID == \(sourceRecord.taskID)) AND (teamID == \(teamID))") // better be accurate to get only the
         let query = CKQuery(recordType: "MeetingTasks", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -1327,7 +1327,7 @@ extension CloudKitInteraction
                     }
                     record.setValue(sourceRecord.updateType, forKey: "updateType")
                     record.setValue(sourceRecord.taskID, forKey: "taskID")
-                    record.setValue(myTeamID, forKey: "teamID")
+                    record.setValue(teamID, forKey: "teamID")
                     
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil

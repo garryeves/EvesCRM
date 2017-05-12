@@ -655,7 +655,7 @@ class calendarItem
         // if this is for a repeating event then we need to add in the original startdate to the Notes
         let myAgenda = myDatabaseConnection.loadAgenda(myMeetingID, teamID: myTeamID)[0]
         
-        myCloudDB.saveMeetingAgendaRecordToCloudKit(myAgenda)
+        myCloudDB.saveMeetingAgendaRecordToCloudKit(myAgenda, teamID: currentUser.currentTeam!.teamID)
         
         saveCalled = false
     }
@@ -2172,7 +2172,7 @@ class iOSCalendar
         
         /* Fetch all the meetings that fall between the starting and the ending dates */
         
-        return myDatabaseConnection.getAgendaForDateRange(startDate as NSDate, endDate: endDate as NSDate, teamID: myCurrentTeam.teamID)
+        return myDatabaseConnection.getAgendaForDateRange(startDate as NSDate, endDate: endDate as NSDate, teamID: currentUser.currentTeam!.teamID)
     }
     
     fileprivate func storeEvent(_ event: EKEvent, attendee: EKParticipant?, teamID: Int32)
@@ -2440,7 +2440,7 @@ func parsePastMeeting(_ meetingID: String) -> [task]
     // Get the the details for the meeting, in order to determine the previous task ID
     var myReturnArray: [task] = Array()
     
-    let myData = myDatabaseConnection.loadAgenda(meetingID, teamID: myCurrentTeam.teamID)
+    let myData = myDatabaseConnection.loadAgenda(meetingID, teamID: currentUser.currentTeam!.teamID)
     
     if myData.count == 0
     {
@@ -3078,13 +3078,13 @@ extension CloudKitInteraction
     {
         for myItem in myDatabaseConnection.getMeetingAgendasForSync(myDatabaseConnection.getSyncDateForTable(tableName: "MeetingAgenda"))
         {
-            saveMeetingAgendaRecordToCloudKit(myItem)
+            saveMeetingAgendaRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
         }
     }
 
-    func updateMeetingAgendaInCoreData()
+    func updateMeetingAgendaInCoreData(teamID: Int32)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(myTeamID))", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingAgenda") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingAgenda") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -3093,7 +3093,7 @@ extension CloudKitInteraction
         operation.recordFetchedBlock = { (record) in
             self.recordCount += 1
 
-            self.updateMeetingAgendaRecord(record)
+            self.updateMeetingAgendaRecord(record, teamID: currentUser.currentTeam!.teamID)
             self.recordCount -= 1
 
             usleep(useconds_t(self.sleepTime))
@@ -3108,12 +3108,12 @@ extension CloudKitInteraction
         }
     }
 
-    func deleteMeetingAgenda()
+    func deleteMeetingAgenda(teamID: Int32)
     {
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -3126,9 +3126,9 @@ extension CloudKitInteraction
         sem.wait()
     }
 
-    func replaceMeetingAgendaInCoreData()
+    func replaceMeetingAgendaInCoreData(teamID: Int32)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
 
         let operation = CKQueryOperation(query: query)
@@ -3171,10 +3171,10 @@ extension CloudKitInteraction
         }
     }
 
-    func saveMeetingAgendaRecordToCloudKit(_ sourceRecord: MeetingAgenda)
+    func saveMeetingAgendaRecordToCloudKit(_ sourceRecord: MeetingAgenda, teamID: Int32)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (actualTeamID == \(sourceRecord.teamID)) AND (teamID == \(myTeamID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (actualTeamID == \(sourceRecord.teamID)) AND (teamID == \(teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -3236,7 +3236,7 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.previousMeetingID, forKey: "previousMeetingID")
                     record.setValue(sourceRecord.startTime, forKey: "meetingStartTime")
                     record.setValue(sourceRecord.teamID, forKey: "actualTeamID")
-                    record.setValue(myTeamID, forKey: "teamID")
+                    record.setValue(teamID, forKey: "teamID")
                     
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
@@ -3258,7 +3258,7 @@ extension CloudKitInteraction
         sem.wait()
     }
 
-    func updateMeetingAgendaRecord(_ sourceRecord: CKRecord)
+    func updateMeetingAgendaRecord(_ sourceRecord: CKRecord, teamID: Int32)
     {
         let meetingID = sourceRecord.object(forKey: "meetingID") as! String
         var updateTime = Date()

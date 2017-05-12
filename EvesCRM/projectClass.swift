@@ -472,11 +472,11 @@ class project: NSObject // 10k level
         
         let myProject = myDatabaseConnection.getProjectDetails(myProjectID)[0]
         
-        myCloudDB.saveProjectsRecordToCloudKit(myProject)
+        myCloudDB.saveProjectsRecordToCloudKit(myProject, teamID: currentUser.currentTeam!.teamID)
         
         let myProjectNote = myDatabaseConnection.getProjectNote(myProjectID)[0]
         
-        myCloudDB.saveProjectNoteRecordToCloudKit(myProjectNote)
+        myCloudDB.saveProjectNoteRecordToCloudKit(myProjectNote, teamID: currentUser.currentTeam!.teamID)
         
         saveCalled = false
     }
@@ -1119,7 +1119,7 @@ extension coreDatabase
             // Now go and populate the Decode for this
             
             let tempInt = "\(maxID)"
-            updateDecodeValue("Projects", codeValue: tempInt, codeType: "hidden")
+            updateDecodeValue("Projects", codeValue: tempInt, codeType: "hidden", decode_privacy: "Public")
         }
         catch
         {
@@ -1218,18 +1218,18 @@ extension CloudKitInteraction
     {
         for myItem in myDatabaseConnection.getProjectsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Projects"))
         {
-            saveProjectsRecordToCloudKit(myItem)
+            saveProjectsRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
         }
         
         for myItem in myDatabaseConnection.getProjectNotesForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Projects"))
         {
-            saveProjectNoteRecordToCloudKit(myItem)
+            saveProjectNoteRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
         }
     }
 
-    func updateProjectsInCoreData()
+    func updateProjectsInCoreData(teamID: Int32)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(myTeamID))", myDatabaseConnection.getSyncDateForTable(tableName: "Projects") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "Projects") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -1253,12 +1253,12 @@ extension CloudKitInteraction
         }
     }
 
-    func deleteProjects()
+    func deleteProjects(teamID: Int32)
     {
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1271,7 +1271,7 @@ extension CloudKitInteraction
         sem.wait()
         
         var myRecordList2: [CKRecordID] = Array()
-        let predicate2: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
+        let predicate2: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query2: CKQuery = CKQuery(recordType: "ProjectNote", predicate: predicate2)
         publicDB.perform(query2, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1284,9 +1284,9 @@ extension CloudKitInteraction
         sem.wait()
     }
 
-    func replaceProjectsInCoreData()
+    func replaceProjectsInCoreData(teamID: Int32)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(myTeamID))")
+        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -1341,10 +1341,10 @@ extension CloudKitInteraction
         }
     }
 
-    func saveProjectsRecordToCloudKit(_ sourceRecord: Projects)
+    func saveProjectsRecordToCloudKit(_ sourceRecord: Projects, teamID: Int32)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID) AND (teamID == \(myTeamID)))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID) AND (teamID == \(teamID)))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Projects", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -1435,7 +1435,7 @@ extension CloudKitInteraction
                     record.setValue(myPredecessor, forKey: "predecessor")
                     record.setValue(sourceRecord.clientID, forKey: "clientID")
 
-                    record.setValue(myTeamID, forKey: "teamID")
+                    record.setValue(teamID, forKey: "teamID")
                     
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
@@ -1457,10 +1457,10 @@ extension CloudKitInteraction
         sem.wait()
     }
 
-    func saveProjectNoteRecordToCloudKit(_ sourceRecord: ProjectNote)
+    func saveProjectNoteRecordToCloudKit(_ sourceRecord: ProjectNote, teamID: Int32)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID) AND (teamID == \(myTeamID)))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID) AND (teamID == \(teamID)))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Projects", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -1515,7 +1515,7 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.note, forKey: "note")
                     record.setValue(sourceRecord.reviewPeriod, forKey: "reviewPeriod")
                     record.setValue(sourceRecord.predecessor, forKey: "predecessor")
-                    record.setValue(myTeamID, forKey: "teamID")
+                    record.setValue(teamID, forKey: "teamID")
 
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil

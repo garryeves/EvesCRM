@@ -18,8 +18,6 @@ let appName = "EvesMeeting"
 var userName: String = ""
 var userEmail: String = ""
 
-
-
 extension coreDatabase
 {
     func clearDeletedItems()
@@ -79,34 +77,6 @@ extension CloudKitInteraction
         sem.wait()
         
         createSubscription("Team", sourceQuery: "teamID > -1")
-    }
-    
-    func getRecords(_ sourceID: CKRecordID)
-    {
-        //      NSLog("source record = \(sourceID)")
-        
-        privateDB.fetch(withRecordID: sourceID)
-        { (record, error) -> Void in
-            if error == nil
-            {
-                //                NSLog("record = \(record)")
-                
-                //                NSLog("recordtype = \(record!.recordType)")
-                
-                switch record!.recordType
-                {
-                case "Team" :
-                    self.updateTeamRecord(record!)
-                    
-                default:
-                    NSLog("getRecords error in switch")
-                }
-            }
-            else
-            {
-                NSLog("Error = \(String(describing: error))")
-            }
-        }
     }
 }
 

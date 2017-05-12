@@ -10,6 +10,11 @@ import Foundation
 import CoreData
 import CloudKit
 
+let NotificationTeamCreated = Notification.Name("NotificationTeamCreated")
+let NotificationTeamSaved = Notification.Name("NotificationTeamSaved")
+let NotificationTeamCountQueryDone = Notification.Name("NotificationTeamCountQueryDone")
+let NotificationTeamCountQueryString = "NotificationTeamCountQueryDone"
+
 class teams: NSObject
 {
     private var myTeams: [team] = Array()
@@ -71,7 +76,6 @@ class team: NSObject
         set
         {
             myName = newValue
-            save()
         }
     }
     
@@ -84,7 +88,6 @@ class team: NSObject
         set
         {
             myStatus = newValue
-            save()
         }
     }
     
@@ -97,7 +100,6 @@ class team: NSObject
         set
         {
             myNote = newValue
-            save()
         }
     }
     
@@ -110,7 +112,6 @@ class team: NSObject
         set
         {
             myPredecessor = newValue
-            save()
         }
     }
     
@@ -123,7 +124,6 @@ class team: NSObject
         set
         {
             myExternalID = newValue
-            save()
         }
     }
     
@@ -136,7 +136,6 @@ class team: NSObject
         set
         {
             myType = newValue
-            save()
         }
     }
 
@@ -191,7 +190,6 @@ class team: NSObject
     init(teamID: Int32)
     {
         super.init()
-        
         // Load the details
         
         let myTeam = myDatabaseConnection.getTeam(teamID)
@@ -206,49 +204,127 @@ class team: NSObject
             myPredecessor = myItem.predecessor
             myExternalID = myItem.externalID
         }
- 
-        loadRoles()
-        
-        loadStages()
-        
-        loadGTDLevels()
-        
-        loadContexts()
     }
 
     override init()
     {
+        // Create a new team
         super.init()
         
-        let currentNumberofEntries = myDatabaseConnection.getTeamsCount()
+        notificationCenter.addObserver(self, selector: #selector(self.queryFinished), name: NotificationTeamCountQueryDone, object: nil)
+                
+        myCloudDB.getTeamCount()
+    }
+    
+    func queryFinished()
+    {
+        notificationCenter.removeObserver(NotificationTeamCountQueryDone)
         
-        myTeamID = myDatabaseConnection.getNextID("Team")
+        myTeamID = myCloudDB.teamCount() + 1
+        myStatus = "Open"
+        myType = "Organisation"
         
-        save()
-        
-        if currentNumberofEntries == 0
-        {
-            // Initial load.  As belt and braces, in case updating from previous version of the database, Initialise any existing tables with this team ID
-            
-            myDatabaseConnection.initialiseTeamForContext(myTeamID)
-            myDatabaseConnection.initialiseTeamForMeetingAgenda(myTeamID)
-            myDatabaseConnection.initialiseTeamForProject(myTeamID)
-            myDatabaseConnection.initialiseTeamForRoles(myTeamID)
-            myDatabaseConnection.initialiseTeamForStages(myTeamID)
-            myDatabaseConnection.initialiseTeamForTask(myTeamID)
-        }
-        
-        createGTDLevels()
-        
-        createRoles()
-        
-        createStages()
+        // Now lets call to create the team in cloudkit
 
-        loadRoles()
+        notificationCenter.addObserver(self, selector: #selector(self.teamCreated), name: NotificationTeamSaved, object: nil)
+
+        myCloudDB.createNewTeam(teamID: myTeamID, type: myType, status: myStatus)
+    }
+    
+    func teamCreated()
+    {
+        populateRolesDropDown()
         
-        loadStages()
+        populateStagesDropDown()
         
-        loadGTDLevels()
+        populatePublicDecodes()
+        
+        populatePrivacyDropDown()
+        
+        populateRoleTypesDropDown()
+        
+        populateRoleAccessDropDown()
+        
+        notificationCenter.post(name: NotificationTeamCreated, object: nil)
+    }
+    
+    private func populateRolesDropDown()
+    {
+        myDatabaseConnection.saveDropdowns("Roles", dropdownValue: "Project Manager")
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Roles", dropdownValue: "Project Executive")
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Roles", dropdownValue: "Project Sponsor")
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Roles", dropdownValue: "Technical Stakeholder")
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Roles", dropdownValue: "Business Stakeholder")
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Roles", dropdownValue: "Developer")
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Roles", dropdownValue: "Tester")
+        usleep(500)
+    }
+    
+    private func populateStagesDropDown()
+    {
+        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Definition")
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Initiation")
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Planning")
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Execution")
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Monitoring & Control")
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Closure")
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Completed")
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Archived")
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "On Hold")
+        usleep(500)
+    }
+    
+    private func populatePrivacyDropDown()
+    {
+        myDatabaseConnection.saveDropdowns("Privacy", dropdownValue: "Private")
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Privacy", dropdownValue: "Public")
+        usleep(500)
+    }
+    
+    private func populateRoleTypesDropDown()
+    {
+        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Admin")
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Rostering")
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Invoicing")
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Financials")
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "HR")
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Sales")
+        usleep(500)
+    }
+    
+    private func populateRoleAccessDropDown()
+    {
+        myDatabaseConnection.saveDropdowns("RoleAccess", dropdownValue: "None")
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("RoleAccess", dropdownValue: "Read")
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("RoleAccess", dropdownValue: "Write")
+        usleep(500)
+    }
+    
+    private func populatePublicDecodes()
+    {
+        // none at the moment but here for when it is needed
     }
     
     fileprivate func createGTDLevels()
@@ -259,36 +335,6 @@ class team: NSObject
         myDatabaseConnection.saveGTDLevel(2, levelName: "Vision", teamID: myTeamID)
         myDatabaseConnection.saveGTDLevel(3, levelName: "Goals and Objectives", teamID: myTeamID)
         myDatabaseConnection.saveGTDLevel(4, levelName: "Areas of Responsibility", teamID: myTeamID)
-    }
-    
-    fileprivate func createRoles()
-    {
-        if myDatabaseConnection.getRoles(myTeamID).count == 0
-        {
-            // There are no roles defined so we need to go in and create them
-            
-            populateRoles(myTeamID)
-        }
-    }
-    
-    fileprivate func createStages()
-    {
-        if myDatabaseConnection.getStages(myTeamID).count == 0
-        {
-            // There are no roles defined so we need to go in and create them
-            
-            populateStages(myTeamID)
-        }
-    }
-    
-    func loadRoles()
-    {
-        myRoles = myDatabaseConnection.getRoles(myTeamID)
-    }
-    
-    func loadStages()
-    {
-        myStages = myDatabaseConnection.getVisibleStages(myTeamID)
     }
     
     func loadGTDLevels()
@@ -645,15 +691,64 @@ extension coreDatabase
     }
 }
 
-
 extension CloudKitInteraction
-{
+{    
+    func getTeamCount()
+    {
+        recordsInTable = 0
+        
+        let predicate: NSPredicate = NSPredicate(value: true)
+        let query: CKQuery = CKQuery(recordType: "Team", predicate: predicate)
+        
+        let operation = CKQueryOperation(query: query)
+        
+        operation.desiredKeys = ["teamID"]
+
+        operation.recordFetchedBlock = { (record) in
+            self.recordsInTable += 1
+        }
+        let operationQueue = OperationQueue()
+        
+        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue, notification: NotificationTeamCountQueryString)
+    }
+    
+    func teamCount() -> Int32
+    {
+        return recordsInTable
+    }
+    
+    func createNewTeam(teamID: Int32, type: String, status:String)
+    {
+        let record = CKRecord(recordType: "Team")
+        record.setValue(teamID, forKey: "teamID")
+        record.setValue(status, forKey: "status")
+        record.setValue(type, forKey: "type")
+        
+        self.publicDB.save(record, completionHandler:
+        { (savedRecord, saveError) in
+            if saveError != nil
+            {
+                NSLog("Error saving record: \(saveError!.localizedDescription)")
+            }
+            else
+            {
+                if debugMessages
+                {
+                    NSLog("Successfully saved record!")
+                }
+                NotificationCenter.default.post(name: NotificationTeamSaved, object: nil)
+            }
+        })
+    }
+    
     func saveTeamToCloudKit()
     {
+print("GRE1")
         for myItem in myDatabaseConnection.getTeamsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Team"))
         {
             saveTeamRecordToCloudKit(myItem)
         }
+print("GRE2")
     }
     
     func updateTeamInCoreData()
@@ -743,9 +838,11 @@ extension CloudKitInteraction
     
     func saveTeamRecordToCloudKit(_ sourceRecord: Team)
     {
+print("GRE3")
         let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "(teamID == \(sourceRecord.teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Team", predicate: predicate)
+print("GRE4")
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
             {
@@ -753,8 +850,10 @@ extension CloudKitInteraction
             }
             else
             {
+print("GRE5")
                 if records!.count > 0
                 {
+print("GRE6")
                     let record = records!.first// as! CKRecord
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
@@ -769,7 +868,7 @@ extension CloudKitInteraction
                     record!.setValue(sourceRecord.type, forKey: "type")
                     record!.setValue(sourceRecord.predecessor, forKey: "predecessor")
                     record!.setValue(sourceRecord.externalID, forKey: "externalID")
-                    
+print("GRE7")
                     
                     // Save this record again
                     self.publicDB.save(record!, completionHandler: { (savedRecord, saveError) in
@@ -779,6 +878,7 @@ extension CloudKitInteraction
                         }
                         else
                         {
+print("GRE8")
                             if debugMessages
                             {
                                 NSLog("Successfully updated record!")
@@ -788,6 +888,7 @@ extension CloudKitInteraction
                 }
                 else
                 {  // Insert
+print("GRE9")
                     let record = CKRecord(recordType: "Team")
                     record.setValue(sourceRecord.teamID, forKey: "teamID")
                     if sourceRecord.updateTime != nil
@@ -801,8 +902,8 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.type, forKey: "type")
                     record.setValue(sourceRecord.predecessor, forKey: "predecessor")
                     record.setValue(sourceRecord.externalID, forKey: "externalID")
-                    record.setValue(myTeamID, forKey: "teamID")
-                    
+                    record.setValue(sourceRecord.teamID, forKey: "teamID")
+print("GRE10")
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
                         {
@@ -810,6 +911,7 @@ extension CloudKitInteraction
                         }
                         else
                         {
+print("GRE11")
                             if debugMessages
                             {
                                 NSLog("Successfully saved record!")
@@ -818,9 +920,11 @@ extension CloudKitInteraction
                     })
                 }
             }
+print("GRE12")
             sem.signal()
         })
         sem.wait()
+print("GRE13")
     }
     
     func updateTeamRecord(_ sourceRecord: CKRecord)

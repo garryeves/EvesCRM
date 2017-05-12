@@ -8,6 +8,8 @@
 
 import Foundation
 import CloudKit
+import RNCryptor
+
 // FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
 // Consider refactoring the code to use the non-optional operators.
 fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
@@ -32,6 +34,13 @@ fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
   }
 }
 
+struct returnUser
+{
+    var userID: Int32
+    var name: String
+    var passPhrase: String
+    var phraseDate: Date
+}
 
 protocol ModelDelegate {
     func errorUpdating(_ error: Error)
@@ -48,7 +57,11 @@ class CloudKitInteraction
     var waitFlag: Bool = true
     let sleepTime = 500
     var recordCount: Int = 0
+    var recordsInTable: Int32 = 0
+    var returnUserEntry: returnUser!
     
+    fileprivate let secretKey = "djskfPnmjYUPFEUingljmyzdls"
+
     init()
     {
         #if os(iOS)
@@ -74,9 +87,9 @@ class CloudKitInteraction
         NotificationCenter.default.addObserver(self, selector: #selector(self.toggleWaitFlag), name: myNotificationCloudSyncDone, object: nil)
     }
     
-    func performDelete(_ inRecordSet: [CKRecordID])
+    func performPrivateDelete(_ workingRecords: [CKRecordID])
     {
-        let operation = CKModifyRecordsOperation(recordsToSave: nil, recordIDsToDelete: inRecordSet)
+        let operation = CKModifyRecordsOperation(recordsToSave: nil, recordIDsToDelete: workingRecords)
         operation.savePolicy = .allKeys
         operation.database = privateDB
         operation.modifyRecordsCompletionBlock = { (added, deleted, error) in
@@ -143,7 +156,7 @@ class CloudKitInteraction
         sem.wait()
     }
     
-    func executePublicQueryOperation(queryOperation: CKQueryOperation, onOperationQueue operationQueue: OperationQueue, childQuery: Bool = false)
+    func executePublicQueryOperation(queryOperation: CKQueryOperation, onOperationQueue operationQueue: OperationQueue, notification: String = "", childQuery: Bool = false)
     {
         // Setup the query operation
         queryOperation.database = publicDB
@@ -163,14 +176,7 @@ class CloudKitInteraction
                     
                     queryCursorOperation.recordFetchedBlock = queryOperation.recordFetchedBlock
                     
-                    self.executePublicQueryOperation(queryOperation: queryCursorOperation, onOperationQueue: operationQueue, childQuery: true)
-                }
-            }
-            else
-            {
-                if !childQuery
-                {
-                    //                    NotificationCenter.default.post(name: myNotificationCloudSyncDone, object: nil)
+                    self.executePublicQueryOperation(queryOperation: queryCursorOperation, onOperationQueue: operationQueue, notification: "", childQuery: true)
                 }
             }
         }
@@ -181,6 +187,11 @@ class CloudKitInteraction
                 sleep(UInt32(0.5))
             }
             self.waitFlag = false
+
+            if notification != ""
+            {
+                notificationCenter.post(name: Notification.Name(notification), object: nil)
+            }
         }
         
         
@@ -196,7 +207,7 @@ class CloudKitInteraction
         //print("Completed")
     }
     
-    func executeQueryOperation(queryOperation: CKQueryOperation, onOperationQueue operationQueue: OperationQueue, childQuery: Bool = false)
+    func executeQueryOperation(queryOperation: CKQueryOperation, onOperationQueue operationQueue: OperationQueue, notifyOnCompletion: Bool = false, childQuery: Bool = false)
     {
         // Setup the query operation
         queryOperation.database = privateDB
@@ -216,15 +227,8 @@ class CloudKitInteraction
                     
                     queryCursorOperation.recordFetchedBlock = queryOperation.recordFetchedBlock
                     
-                    self.executeQueryOperation(queryOperation: queryCursorOperation, onOperationQueue: operationQueue, childQuery: true)
+                    self.executeQueryOperation(queryOperation: queryCursorOperation, onOperationQueue: operationQueue, notifyOnCompletion: false, childQuery: true)
                 }
-            }
-            else
-            {
-                if !childQuery
-                {
-//                    NotificationCenter.default.post(name: myNotificationCloudSyncDone, object: nil)
-                }                
             }
         }
         
@@ -234,6 +238,11 @@ class CloudKitInteraction
                 sleep(UInt32(0.5))
             }
             self.waitFlag = false
+            
+            if notifyOnCompletion
+            {
+                NotificationCenter.default.post(name: myNotificationCloudQueryDone, object: nil)
+            }
         }
 
         
@@ -247,5 +256,162 @@ class CloudKitInteraction
 //            sleep(UInt32(0.5))
 //        }
 //print("Completed")
+    }
+    
+    func getPrivateRecords(_ sourceID: CKRecordID)
+    {
+        //      NSLog("source record = \(sourceID)")
+        
+        privateDB.fetch(withRecordID: sourceID)
+        { (record, error) -> Void in
+            if error == nil
+            {
+                //                NSLog("record = \(record)")
+                
+                //                NSLog("recordtype = \(record!.recordType)")
+                
+                switch record!.recordType
+                {
+                case "Team" :
+                    self.updateTeamRecord(record!)
+                    
+                default:
+                    NSLog("getRecords error in switch")
+                }
+            }
+            else
+            {
+                NSLog("Error = \(String(describing: error))")
+            }
+        }
+    }
+    
+    func getPublicRecords(_ sourceID: CKRecordID)
+    {
+        //      NSLog("source record = \(sourceID)")
+        
+        publicDB.fetch(withRecordID: sourceID)
+        { (record, error) -> Void in
+            if error == nil
+            {
+                //                NSLog("record = \(record)")
+                
+                //                NSLog("recordtype = \(record!.recordType)")
+                
+                switch record!.recordType
+                {
+                case "Team" :
+                    self.updateTeamRecord(record!)
+                    
+                default:
+                    NSLog("getRecords error in switch")
+                }
+            }
+            else
+            {
+                NSLog("Error = \(String(describing: error))")
+            }
+        }
+    }
+    
+    func encryptText(_ sourceString: String)->Data
+    {
+        let data: Data = sourceString.data(using: .utf8)!
+        return RNCryptor.encrypt(data: data, withPassword: secretKey)
+    }
+    
+    func encryptText(_ sourceInt32: Int32)->Data
+    {
+        let workingString = "\(sourceInt32)"
+        let data: Data = workingString.data(using: .utf8)!
+        return RNCryptor.encrypt(data: data, withPassword: secretKey)
+    }
+    
+    func encryptText(_ sourceDouble: Double)->Data
+    {
+        let workingString = "\(sourceDouble)"
+        let data: Data = workingString.data(using: .utf8)!
+        return RNCryptor.encrypt(data: data, withPassword: secretKey)
+    }
+    
+    func encryptText(_ sourceDate: Date)->Data
+    {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .full
+        dateFormatter.timeStyle = .full
+        
+        let workingString = dateFormatter.string(from: sourceDate)
+        let data: Data = workingString.data(using: .utf8)!
+        return RNCryptor.encrypt(data: data, withPassword: secretKey)
+    }
+    
+    func decryptText(_ textData: Data)->String
+    {
+        do
+        {
+            let originalData = try RNCryptor.decrypt(data: textData, withPassword: secretKey)
+
+            return String(data: originalData, encoding: .utf8)!
+        }
+        catch
+        {
+            print(error)
+            return ""
+        }
+    }
+    
+    func decryptText(_ textData: Data)->Double
+    {
+        do
+        {
+            let originalData = try RNCryptor.decrypt(data: textData, withPassword: secretKey)
+            
+            let newString = String(data: originalData, encoding: .utf8)
+            
+            return Double(newString!)!
+        }
+        catch
+        {
+            print(error)
+            return 0.0
+        }
+    }
+    
+    func decryptText(_ textData: Data)->Int32
+    {
+        do
+        {
+            let originalData = try RNCryptor.decrypt(data: textData, withPassword: secretKey)
+            
+            let newString = String(data: originalData, encoding: .utf8)
+            
+            return Int32(newString!)!
+        }
+        catch
+        {
+            print(error)
+            return 0
+        }
+    }
+    
+    func decryptText(_ textData: Data)->Date?
+    {
+        do
+        {
+            let originalData = try RNCryptor.decrypt(data: textData, withPassword: secretKey)
+            
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateStyle = .full
+            dateFormatter.timeStyle = .full
+            
+            let newString = String(data: originalData, encoding: .utf8)
+            
+            return dateFormatter.date(from: newString!)
+        }
+        catch
+        {
+            print(error)
+            return getDefaultDate()
+        }
     }
 }
