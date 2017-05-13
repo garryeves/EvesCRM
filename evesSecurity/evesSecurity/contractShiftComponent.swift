@@ -14,14 +14,15 @@ class contractShiftComponents: NSObject
 {
     fileprivate var myComponents:[contractShiftComponent] = Array()
     
-    init(contractShiftID: Int32)
+    init(contractShiftID: Int)
     {
         for myItem in myDatabaseConnection.getContractShiftComponents(contractShiftID: contractShiftID)
         {
-            let myObject = contractShiftComponent(contractShiftID: myItem.contractShiftID,
+            let myObject = contractShiftComponent(contractShiftID: Int(myItem.contractShiftID),
                                                   dayOfWeek: myItem.dayOfWeek!,
                                                   endTime: myItem.endTime! as Date,
-                                                  startTime: myItem.startTime! as Date)
+                                                  startTime: myItem.startTime! as Date,
+                                                  teamID: Int(myItem.teamID))
             myComponents.append(myObject)
         }
     }
@@ -37,12 +38,13 @@ class contractShiftComponents: NSObject
 
 class contractShiftComponent: NSObject
 {
-    fileprivate var myContractShiftID: Int32 = 0
+    fileprivate var myContractShiftID: Int = 0
     fileprivate var myDayOfWeek: String = ""
     fileprivate var myEndTime: Date = getDefaultDate()
     fileprivate var myStartTime: Date = getDefaultDate()
+    fileprivate var myTeamID: Int = 0
     
-    var contractShiftID: Int32
+    var contractShiftID: Int
     {
         get
         {
@@ -89,24 +91,26 @@ class contractShiftComponent: NSObject
         }
     }
     
-    init(contractShiftID: Int32, dayOfWeek: String)
+    init(contractShiftID: Int, dayOfWeek: String)
     {
         super.init()
         let myReturn = myDatabaseConnection.getContractShiftComponentDetails(contractShiftID, dayOfWeek: dayOfWeek)
         
         for myItem in myReturn
         {
-            myContractShiftID = myItem.contractShiftID
+            myContractShiftID = Int(myItem.contractShiftID)
             myDayOfWeek = myItem.dayOfWeek!
             myEndTime = myItem.endTime! as Date
             myStartTime = myItem.startTime! as Date
+            myTeamID = Int(myItem.teamID)
         }
     }
     
-    init(contractShiftID: Int32,
+    init(contractShiftID: Int,
          dayOfWeek: String,
          endTime: Date,
-         startTime: Date
+         startTime: Date,
+         teamID: Int
          )
     {
         super.init()
@@ -115,6 +119,7 @@ class contractShiftComponent: NSObject
         myDayOfWeek = dayOfWeek
         myEndTime = endTime
         myStartTime = startTime
+        myTeamID = teamID
     }
     
     func save()
@@ -122,7 +127,8 @@ class contractShiftComponent: NSObject
         myDatabaseConnection.saveContractShiftComponent(myContractShiftID,
                                          dayOfWeek: myDayOfWeek,
                                          startTime: myStartTime,
-                                         endTime: myEndTime
+                                         endTime: myEndTime,
+                                         teamID: myTeamID
                                          )
     }
     
@@ -134,10 +140,11 @@ class contractShiftComponent: NSObject
 
 extension coreDatabase
 {
-    func saveContractShiftComponent(_ contractShiftID: Int32,
+    func saveContractShiftComponent(_ contractShiftID: Int,
                      dayOfWeek: String,
                      startTime: Date,
                      endTime: Date,
+                     teamID: Int,
                      updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myItem: ContractShiftComponent!
@@ -147,10 +154,11 @@ extension coreDatabase
         if myReturn.count == 0
         { // Add
             myItem = ContractShiftComponent(context: objectContext)
-            myItem.contractShiftID = contractShiftID
+            myItem.contractShiftID = Int64(contractShiftID)
             myItem.dayOfWeek = dayOfWeek
             myItem.startTime = startTime as NSDate
             myItem.endTime = endTime as NSDate
+            myItem.teamID = Int64(teamID)
             
             if updateType == "CODE"
             {
@@ -188,18 +196,20 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceContractShiftComponent(_ contractShiftID: Int32,
+    func replaceContractShiftComponent(_ contractShiftID: Int,
                                        dayOfWeek: String,
                                        startTime: Date,
                                        endTime: Date,
+                                       teamID: Int,
                         updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myItem = ContractShiftComponent(context: objectContext)
-        myItem.contractShiftID = contractShiftID
+        myItem.contractShiftID = Int64(contractShiftID)
         myItem.dayOfWeek = dayOfWeek
         myItem.startTime = startTime as NSDate
         myItem.endTime = endTime as NSDate
-        
+        myItem.teamID = Int64(teamID)
+
         if updateType == "CODE"
         {
             myItem.updateTime =  NSDate()
@@ -214,7 +224,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteContractShiftComponent(_ contractShiftID: Int32, dayOfWeek: String)
+    func deleteContractShiftComponent(_ contractShiftID: Int, dayOfWeek: String)
     {
         let myReturn = getContractShiftComponentDetails(contractShiftID, dayOfWeek: dayOfWeek)
         
@@ -228,7 +238,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func getContractShiftComponents(contractShiftID: Int32)->[ContractShiftComponent]
+    func getContractShiftComponents(contractShiftID: Int)->[ContractShiftComponent]
     {
         let fetchRequest = NSFetchRequest<ContractShiftComponent>(entityName: "ContractShiftComponent")
         
@@ -253,7 +263,7 @@ extension coreDatabase
    
     }
     
-    func getContractShiftComponentDetails(_ contractShiftID: Int32, dayOfWeek: String)->[ContractShiftComponent]
+    func getContractShiftComponentDetails(_ contractShiftID: Int, dayOfWeek: String)->[ContractShiftComponent]
     {
         let fetchRequest = NSFetchRequest<ContractShiftComponent>(entityName: "ContractShiftComponent")
         
@@ -401,7 +411,7 @@ extension CloudKitInteraction
         }
     }
     
-    func updateContractShiftComponentInCoreData(teamID: Int32)
+    func updateContractShiftComponentInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "ContractShiftComponent") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "ContractShiftComponent", predicate: predicate)
@@ -428,7 +438,7 @@ extension CloudKitInteraction
         }
     }
     
-    func deleteContractShiftComponent(contractShiftID:Int32, dayOfWeek: String, teamID: Int32)
+    func deleteContractShiftComponent(contractShiftID:Int, dayOfWeek: String, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -447,7 +457,7 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func replaceContractShiftComponentInCoreData(teamID: Int32)
+    func replaceContractShiftComponentInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "ContractShiftComponent", predicate: predicate)
@@ -458,10 +468,10 @@ extension CloudKitInteraction
         operation.recordFetchedBlock = { (record) in
             let dayOfWeek = record.object(forKey: "dayOfWeek") as! String
 
-            var contractShiftID: Int32 = 0
+            var contractShiftID: Int = 0
             if record.object(forKey: "contractShiftID") != nil
             {
-                contractShiftID = record.object(forKey: "contractShiftID") as! Int32
+                contractShiftID = record.object(forKey: "contractShiftID") as! Int
             }
             
             var startTime = Date()
@@ -491,7 +501,8 @@ extension CloudKitInteraction
             myDatabaseConnection.replaceContractShiftComponent(contractShiftID,
                                                 dayOfWeek: dayOfWeek,
                                                 startTime: startTime,
-                                                endTime: endTime
+                                                endTime: endTime,
+                                                teamID: teamID
                                                 , updateTime: updateTime, updateType: updateType)
             
             usleep(useconds_t(self.sleepTime))
@@ -507,7 +518,7 @@ extension CloudKitInteraction
         }
     }
     
-    func saveContractShiftComponentRecordToCloudKit(_ sourceRecord: ContractShiftComponent, teamID: Int32)
+    func saveContractShiftComponentRecordToCloudKit(_ sourceRecord: ContractShiftComponent, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0)
         
@@ -593,10 +604,10 @@ extension CloudKitInteraction
     {
         let dayOfWeek = sourceRecord.object(forKey: "dayOfWeek") as! String
         
-        var contractShiftID: Int32 = 0
+        var contractShiftID: Int = 0
         if sourceRecord.object(forKey: "contractShiftID") != nil
         {
-            contractShiftID = sourceRecord.object(forKey: "contractShiftID") as! Int32
+            contractShiftID = sourceRecord.object(forKey: "contractShiftID") as! Int
         }
         
         var startTime = Date()
@@ -623,10 +634,17 @@ extension CloudKitInteraction
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
         
+        var teamID: Int = 0
+        if sourceRecord.object(forKey: "teamID") != nil
+        {
+            teamID = sourceRecord.object(forKey: "teamID") as! Int
+        }
+        
         myDatabaseConnection.saveContractShiftComponent(contractShiftID,
                                          dayOfWeek: dayOfWeek,
                                          startTime: startTime,
-                                         endTime: endTime
+                                         endTime: endTime,
+                                         teamID: teamID
                                          , updateTime: updateTime, updateType: updateType)
     }
 }

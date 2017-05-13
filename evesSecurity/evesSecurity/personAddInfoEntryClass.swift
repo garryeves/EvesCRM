@@ -14,14 +14,15 @@ class personAddInfoEntries: NSObject
 {
     fileprivate var myPersonAddEntries:[personAddInfoEntry] = Array()
     
-    init(personID: Int32)
+    init(personID: Int)
     {
         for myItem in myDatabaseConnection.getPersonAddInfoEntryForPerson(personID)
         {
             let myObject = personAddInfoEntry(addInfoName: myItem.addInfoName!,
                                               dateValue: myItem.dateValue! as Date,
-                                              personID: myItem.personID,
-                                              stringValue: myItem.stringValue!
+                                              personID: Int(myItem.personID),
+                                              stringValue: myItem.stringValue!,
+                                              teamID: Int(myItem.teamID)
                                    )
             myPersonAddEntries.append(myObject)
         }
@@ -40,8 +41,9 @@ class personAddInfoEntry: NSObject
 {
     fileprivate var myAddInfoName: String = ""
     fileprivate var myDateValue: Date = getDefaultDate()
-    fileprivate var myPersonID: Int32 = 0
+    fileprivate var myPersonID: Int = 0
     fileprivate var myStringValue: String = ""
+    fileprivate var myTeamID: Int = 0
     
     var addInfoName: String
     {
@@ -51,7 +53,7 @@ class personAddInfoEntry: NSObject
         }
     }
     
-    var personID: Int32
+    var personID: Int
     {
         get
         {
@@ -85,7 +87,7 @@ class personAddInfoEntry: NSObject
         }
     }
     
-    init(addInfoName: String, personID: Int32)
+    init(addInfoName: String, personID: Int)
     {
         super.init()
         let myReturn = myDatabaseConnection.getPersonAddInfoEntryDetails(addInfoName, personID: personID)
@@ -94,15 +96,17 @@ class personAddInfoEntry: NSObject
         {
             myAddInfoName = myItem.addInfoName!
             myDateValue = myItem.dateValue! as Date
-            myPersonID = myItem.personID
+            myPersonID = Int(myItem.personID)
             myStringValue = myItem.stringValue!
+            myTeamID = Int(myItem.teamID)
         }
     }
     
     init(addInfoName: String,
          dateValue: Date,
-         personID: Int32,
-         stringValue: String
+         personID: Int,
+         stringValue: String,
+         teamID: Int
          )
     {
         super.init()
@@ -111,6 +115,7 @@ class personAddInfoEntry: NSObject
         myDateValue = dateValue
         myPersonID = personID
         myStringValue = stringValue
+        myTeamID = teamID
     }
     
     func save()
@@ -118,7 +123,8 @@ class personAddInfoEntry: NSObject
         myDatabaseConnection.savePersonAddInfoEntry(myAddInfoName,
                                                     dateValue: myDateValue,
                                                     personID: myPersonID,
-                                                    stringValue: myStringValue
+                                                    stringValue: myStringValue,
+            teamID: myTeamID
                                          )
     }
     
@@ -133,8 +139,9 @@ extension coreDatabase
 {
     func savePersonAddInfoEntry(_ addInfoName: String,
                                 dateValue: Date,
-                                personID: Int32,
+                                personID: Int,
                                 stringValue: String,
+                                teamID: Int,
                      updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myItem: PersonAddInfoEntry!
@@ -146,8 +153,9 @@ extension coreDatabase
             myItem = PersonAddInfoEntry(context: objectContext)
             myItem.addInfoName = addInfoName
             myItem.dateValue = dateValue as NSDate
-            myItem.personID = personID
+            myItem.personID = Int64(personID)
             myItem.stringValue = stringValue
+            myItem.teamID = Int64(teamID)
             
             if updateType == "CODE"
             {
@@ -187,15 +195,17 @@ extension coreDatabase
     
     func replacePersonAddInfoEntry(_ addInfoName: String,
                                    dateValue: Date,
-                                   personID: Int32,
+                                   personID: Int,
                                    stringValue: String,
+                                   teamID: Int,
                         updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myItem = PersonAddInfoEntry(context: objectContext)
         myItem.addInfoName = addInfoName
         myItem.dateValue = dateValue as NSDate
-        myItem.personID = personID
+        myItem.personID = Int64(personID)
         myItem.stringValue = stringValue
+        myItem.teamID = Int64(teamID)
         
         if updateType == "CODE"
         {
@@ -212,7 +222,7 @@ extension coreDatabase
     }
     
     func deletePersonAddInfoEntry(_ addInfoName: String,
-                                  personID: Int32)
+                                  personID: Int)
     {
         let myReturn = getPersonAddInfoEntryDetails(addInfoName, personID: personID)
         
@@ -226,7 +236,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func getPersonAddInfoEntryForPerson(_ personID: Int32)->[PersonAddInfoEntry]
+    func getPersonAddInfoEntryForPerson(_ personID: Int)->[PersonAddInfoEntry]
     {
         let fetchRequest = NSFetchRequest<PersonAddInfoEntry>(entityName: "PersonAddInfoEntry")
         
@@ -251,7 +261,7 @@ extension coreDatabase
     }
 
     
-    func getPersonAddInfoEntryDetails(_ addInfoName: String, personID: Int32)->[PersonAddInfoEntry]
+    func getPersonAddInfoEntryDetails(_ addInfoName: String, personID: Int)->[PersonAddInfoEntry]
     {
         let fetchRequest = NSFetchRequest<PersonAddInfoEntry>(entityName: "PersonAddInfoEntry")
         
@@ -399,7 +409,7 @@ extension CloudKitInteraction
         }
     }
     
-    func updatePersonAddInfoEntryInCoreData(teamID: Int32)
+    func updatePersonAddInfoEntryInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "PersonAddInfoEntry") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "PersonAddInfoEntry", predicate: predicate)
@@ -426,7 +436,7 @@ extension CloudKitInteraction
         }
     }
     
-    func deletePersonAddInfoEntry(personID: Int32, addInfoName: Int32, teamID: Int32)
+    func deletePersonAddInfoEntry(personID: Int, addInfoName: Int, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -445,7 +455,7 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func replacePersonAddInfoEntryInCoreData(teamID: Int32)
+    func replacePersonAddInfoEntryInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "PersonAddInfoEntry", predicate: predicate)
@@ -458,10 +468,10 @@ extension CloudKitInteraction
             let addInfoName = record.object(forKey: "addInfoName") as! String
             let stringValue = record.object(forKey: "stringValue") as! String
             
-            var personID: Int32 = 0
+            var personID: Int = 0
             if record.object(forKey: "personID") != nil
             {
-                personID = record.object(forKey: "personID") as! Int32
+                personID = record.object(forKey: "personID") as! Int
             }
             
             var dateValue = Date()
@@ -482,10 +492,17 @@ extension CloudKitInteraction
                 updateType = record.object(forKey: "updateType") as! String
             }
             
+            var teamID: Int = 0
+            if record.object(forKey: "teamID") != nil
+            {
+                teamID = record.object(forKey: "teamID") as! Int
+            }
+            
             myDatabaseConnection.replacePersonAddInfoEntry(addInfoName,
                                                            dateValue: dateValue,
                                                            personID: personID,
-                                                           stringValue: stringValue
+                                                           stringValue: stringValue,
+                                                           teamID: teamID
                                                 , updateTime: updateTime, updateType: updateType)
             
             usleep(useconds_t(self.sleepTime))
@@ -501,7 +518,7 @@ extension CloudKitInteraction
         }
     }
     
-    func savePersonAddInfoEntryRecordToCloudKit(_ sourceRecord: PersonAddInfoEntry, teamID: Int32)
+    func savePersonAddInfoEntryRecordToCloudKit(_ sourceRecord: PersonAddInfoEntry, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0)
         
@@ -589,10 +606,10 @@ extension CloudKitInteraction
         let addInfoName = sourceRecord.object(forKey: "addInfoName") as! String
         let stringValue = sourceRecord.object(forKey: "stringValue") as! String
         
-        var personID: Int32 = 0
+        var personID: Int = 0
         if sourceRecord.object(forKey: "personID") != nil
         {
-            personID = sourceRecord.object(forKey: "personID") as! Int32
+            personID = sourceRecord.object(forKey: "personID") as! Int
         }
         
         var dateValue = Date()
@@ -612,10 +629,17 @@ extension CloudKitInteraction
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
         
+        var teamID: Int = 0
+        if sourceRecord.object(forKey: "teamID") != nil
+        {
+            teamID = sourceRecord.object(forKey: "teamID") as! Int
+        }
+        
         myDatabaseConnection.savePersonAddInfoEntry(addInfoName,
                                          dateValue: dateValue,
                                          personID: personID,
-                                         stringValue: stringValue
+                                         stringValue: stringValue,
+                                         teamID: teamID
                                          , updateTime: updateTime, updateType: updateType)
     }
     

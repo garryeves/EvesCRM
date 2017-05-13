@@ -16,11 +16,12 @@ class reportingMonths: NSObject
     
     override init()
     {
-        for myItem in myDatabaseConnection.getReportingMonth()
+        for myItem in myDatabaseConnection.getReportingMonth(teamID: currentUser.currentTeam!.teamID)
         {
             let myObject = reportingMonthItem(monthStartDate: myItem.monthStartDate! as Date,
                                           monthName: myItem.monthName!,
-                                          yearName: myItem.yearName!
+                                          yearName: myItem.yearName!,
+                                          teamID: Int(myItem.teamID)
                                    )
             myReportingMonth.append(myObject)
         }
@@ -40,6 +41,7 @@ class reportingMonthItem: NSObject
     fileprivate var myMonthStartDate: Date!
     fileprivate var myMonthName: String = ""
     fileprivate var myYearName: String = ""
+    fileprivate var myTeamID: Int = 0
 
     var monthStartDate: Date
     {
@@ -75,22 +77,24 @@ class reportingMonthItem: NSObject
         }
     }
     
-    init(monthStartDate: Date)
+    init(monthStartDate: Date, teamID: Int)
     {
         super.init()
-        let myReturn = myDatabaseConnection.getReportingMonthDetails(monthStartDate)
+        let myReturn = myDatabaseConnection.getReportingMonthDetails(monthStartDate, teamID: teamID)
         
         for myItem in myReturn
         {
             myMonthStartDate = myItem.monthStartDate! as Date
             myMonthName = myItem.monthName!
             myYearName = myItem.yearName!
+            myTeamID = Int(myItem.teamID)
         }
     }
     
     init(monthStartDate: Date,
          monthName: String,
-         yearName: String
+         yearName: String,
+         teamID: Int
          )
     {
         super.init()
@@ -98,19 +102,21 @@ class reportingMonthItem: NSObject
         myMonthStartDate = monthStartDate
         myMonthName = monthName
         myYearName = yearName
+        myTeamID = teamID
     }
     
     func save()
     {
         myDatabaseConnection.saveReportingMonth(myMonthStartDate,
                                          monthName: myMonthName,
-                                         yearName: myYearName
+                                         yearName: myYearName,
+                                         teamID: myTeamID
                                          )
     }
     
     func delete()
     {
-        myDatabaseConnection.deleteReportingMonth(myMonthStartDate)
+        myDatabaseConnection.deleteReportingMonth(myMonthStartDate, teamID: myTeamID)
     }
 }
 
@@ -119,11 +125,12 @@ extension coreDatabase
     func saveReportingMonth(_ monthStartDate: Date,
                      monthName: String,
                      yearName: String,
+                     teamID: Int,
                      updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myItem: ReportingMonth!
         
-        let myReturn = getReportingMonthDetails(monthStartDate)
+        let myReturn = getReportingMonthDetails(monthStartDate, teamID: teamID)
         
         if myReturn.count == 0
         { // Add
@@ -131,6 +138,7 @@ extension coreDatabase
             myItem.monthStartDate = monthStartDate as NSDate
             myItem.monthName = monthName
             myItem.yearName = yearName
+            myItem.teamID = Int64(teamID)
             
             if updateType == "CODE"
             {
@@ -171,13 +179,15 @@ extension coreDatabase
     func replaceReportingMonth(_ monthStartDate: Date,
                                monthName: String,
                                yearName: String,
+                               teamID: Int,
                         updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myItem = ReportingMonth(context: objectContext)
         myItem.monthStartDate = monthStartDate as NSDate
         myItem.monthName = monthName
         myItem.yearName = yearName
-        
+        myItem.teamID = Int64(teamID)
+
         if updateType == "CODE"
         {
             myItem.updateTime =  NSDate()
@@ -192,9 +202,9 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteReportingMonth(_ monthStartDate: Date)
+    func deleteReportingMonth(_ monthStartDate: Date, teamID: Int)
     {
-        let myReturn = getReportingMonthDetails(monthStartDate)
+        let myReturn = getReportingMonthDetails(monthStartDate, teamID: teamID)
         
         if myReturn.count > 0
         {
@@ -206,13 +216,13 @@ extension coreDatabase
         saveContext()
     }
     
-    func getReportingMonth()->[ReportingMonth]
+    func getReportingMonth(teamID: Int)->[ReportingMonth]
     {
         let fetchRequest = NSFetchRequest<ReportingMonth>(entityName: "ReportingMonth")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(updateType != \"Delete\") AND (teamID == \(teamID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -233,13 +243,13 @@ extension coreDatabase
         }
     }
     
-    func getReportingMonthDetails(_ monthStartDate: Date)->[ReportingMonth]
+    func getReportingMonthDetails(_ monthStartDate: Date, teamID: Int)->[ReportingMonth]
     {
         let fetchRequest = NSFetchRequest<ReportingMonth>(entityName: "ReportingMonth")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(monthStartDate == %@) && (updateType != \"Delete\")", monthStartDate as CVarArg)
+        let predicate = NSPredicate(format: "(monthStartDate == %@) AND (teamID == \(teamID)) && (updateType != \"Delete\")", monthStartDate as CVarArg)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -381,7 +391,7 @@ extension CloudKitInteraction
         }
     }
     
-    func updateReportingMonthInCoreData(teamID: Int32)
+    func updateReportingMonthInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "ReportingMonth") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "ReportingMonth", predicate: predicate)
@@ -408,7 +418,7 @@ extension CloudKitInteraction
         }
     }
     
-    func deleteReportingMonth(ReportingMonthID: Int32, teamID: Int32)
+    func deleteReportingMonth(ReportingMonthID: Int, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -427,7 +437,7 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func replaceReportingMonthInCoreData(teamID: Int32)
+    func replaceReportingMonthInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "ReportingMonth", predicate: predicate)
@@ -459,7 +469,8 @@ extension CloudKitInteraction
             
             myDatabaseConnection.replaceReportingMonth(monthStartDate,
                                                 monthName: monthName,
-                                                yearName: yearName
+                                                yearName: yearName,
+                                                teamID: teamID
                                                 , updateTime: updateTime, updateType: updateType)
             
             usleep(useconds_t(self.sleepTime))
@@ -475,7 +486,7 @@ extension CloudKitInteraction
         }
     }
     
-    func saveReportingMonthRecordToCloudKit(_ sourceRecord: ReportingMonth, teamID: Int32)
+    func saveReportingMonthRecordToCloudKit(_ sourceRecord: ReportingMonth, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0)
         
@@ -578,9 +589,16 @@ extension CloudKitInteraction
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
         
+        var teamID: Int = 0
+        if sourceRecord.object(forKey: "teamID") != nil
+        {
+            teamID = sourceRecord.object(forKey: "teamID") as! Int
+        }
+        
         myDatabaseConnection.saveReportingMonth(monthStartDate,
                                          monthName: monthName,
-                                         yearName: yearName
+                                         yearName: yearName,
+            teamID: teamID
                                          , updateTime: updateTime, updateType: updateType)
     }
 }

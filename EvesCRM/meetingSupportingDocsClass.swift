@@ -135,7 +135,7 @@ extension CloudKitInteraction
         }
     }
 
-    func updateMeetingSupportingDocsInCoreData(teamID: Int32)
+    func updateMeetingSupportingDocsInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingSupportingDocs") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
@@ -161,7 +161,7 @@ extension CloudKitInteraction
         }
     }
 
-    func deleteMeetingSupportingDocs(teamID: Int32)
+    func deleteMeetingSupportingDocs(teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -179,7 +179,7 @@ extension CloudKitInteraction
         sem.wait()
     }
 
-    func replaceMeetingSupportingDocsInCoreData(teamID: Int32)
+    func replaceMeetingSupportingDocsInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
@@ -211,7 +211,7 @@ extension CloudKitInteraction
         }
     }
 
-    func saveMeetingSupportingDocsRecordToCloudKit(_ sourceRecord: MeetingSupportingDocs, teamID: Int32)
+    func saveMeetingSupportingDocsRecordToCloudKit(_ sourceRecord: MeetingSupportingDocs, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID)) AND (teamID == \(teamID))") // better be accurate to get only the

@@ -14,15 +14,15 @@ class userRoles: NSObject
 {
     fileprivate var myUserRoles:[userRoleItem] = Array()
     
-    init(userID: Int32)
+    init(userID: Int, teamID: Int)
     {
-        for myItem in myDatabaseConnection.getUserRoles(userID: userID)
+        for myItem in myDatabaseConnection.getUserRoles(userID: userID, teamID: teamID)
         {
-            let myObject = userRoleItem(roleID: myItem.roleID,
-                                    userID: myItem.userID,
-                                    roleTypeID: myItem.roleTypeID,
-                                    readAccess: myItem.readAccess,
-                                    writeAccess: myItem.writeAccess
+            let myObject = userRoleItem(roleID: Int(myItem.roleID),
+                                    userID: Int(myItem.userID),
+                                    teamID: Int(myItem.teamID),
+                                    roleType: myItem.roleType!,
+                                    accessLevel: myItem.accessLevel!
                                    )
             myUserRoles.append(myObject)
         }
@@ -39,13 +39,13 @@ class userRoles: NSObject
 
 class userRoleItem: NSObject
 {
-    fileprivate var myRoleID: Int32 = 0
-    fileprivate var myUserID: Int32 = 0
-    fileprivate var myRoleTypeID: Int32 = 0
-    fileprivate var myReadAccess: Bool = false
-    fileprivate var myWriteAccess: Bool = false
+    fileprivate var myRoleID: Int = 0
+    fileprivate var myUserID: Int = 0
+    fileprivate var myTeamID: Int = 0
+    fileprivate var myRoleType: String = ""
+    fileprivate var myAccessLevel: String = "None"
     
-    var roleID: Int32
+    var roleID: Int
     {
         get
         {
@@ -53,7 +53,15 @@ class userRoleItem: NSObject
         }
     }
     
-    var userID: Int32
+    var teamID: Int
+    {
+        get
+        {
+            return myTeamID
+        }
+    }
+    
+    var userID: Int
     {
         get
         {
@@ -61,90 +69,76 @@ class userRoleItem: NSObject
         }
     }
     
-    var roleTypeID: Int32
+    var roleType: String
     {
         get
         {
-            return myRoleTypeID
+            return myRoleType
         }
     }
     
-    var readAccess: Bool
+    var accessLevel: String
     {
         get
         {
-            return myReadAccess
+            return myAccessLevel
         }
         set
         {
-            myReadAccess = newValue
+            myAccessLevel = newValue
             save()
         }
     }
-    
-    var writeAccess: Bool
-    {
-        get
-        {
-            return myWriteAccess
-        }
-        set
-        {
-            myWriteAccess = newValue
-            save()
-        }
-    }
-    
-    init(userID: Int32, roleTypeID: Int32)
+
+    init(userID: Int, roleType: String, teamID: Int)
     {
         super.init()
         
-        myRoleID = myDatabaseConnection.getNextID("UserRoles")
+        myRoleID = myDatabaseConnection.getNextID("UserRoles", teamID: teamID)
         myUserID = userID
-        myRoleTypeID = roleTypeID
-        myReadAccess = false
-        myWriteAccess = false
+        myRoleType = roleType
+        myTeamID = teamID
         
         save()
     }
     
-    init(roleID: Int32)
+    init(roleID: Int)
     {
         let myReturn = myDatabaseConnection.getUserRolesDetails(roleID)
         
         for myItem in myReturn
         {
-            myRoleID = myItem.roleID
-            myUserID = myItem.userID
-            myRoleTypeID = myItem.roleTypeID
-            myReadAccess = myItem.readAccess
-            myWriteAccess = myItem.writeAccess
+            myRoleID = Int(myItem.roleID)
+            myUserID = Int(myItem.userID)
+            myRoleType = myItem.roleType!
+            myAccessLevel = myItem.accessLevel!
+            myTeamID = Int(myItem.teamID)
         }
     }
     
-    init(roleID: Int32,
-         userID: Int32,
-         roleTypeID: Int32,
-         readAccess: Bool,
-         writeAccess: Bool
+    init(roleID: Int,
+         userID: Int,
+         teamID: Int,
+         roleType: String,
+         accessLevel: String
          )
     {
         super.init()
         
         myRoleID = roleID
         myUserID = userID
-        myRoleTypeID = roleTypeID
-        myReadAccess = readAccess
-        myWriteAccess = writeAccess
+        myRoleType = roleType
+        myAccessLevel = accessLevel
+        myTeamID = teamID
     }
     
     func save()
     {
         myDatabaseConnection.saveUserRoles(myRoleID,
                                            userID: myUserID,
-                                           roleTypeID: myRoleTypeID,
-                                           readAccess: myReadAccess,
-                                           writeAccess: myWriteAccess
+                                           teamID: myTeamID,
+                                           roleType: myRoleType,
+                                           accessLevel: myAccessLevel
                                          )
     }
     
@@ -156,11 +150,11 @@ class userRoleItem: NSObject
 
 extension coreDatabase
 {
-    func saveUserRoles(_ roleID: Int32,
-                       userID: Int32,
-                       roleTypeID: Int32,
-                       readAccess: Bool,
-                       writeAccess: Bool,
+    func saveUserRoles(_ roleID: Int,
+                       userID: Int,
+                       teamID: Int,
+                       roleType: String,
+                       accessLevel: String,
                      updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myItem: UserRoles!
@@ -170,11 +164,11 @@ extension coreDatabase
         if myReturn.count == 0
         { // Add
             myItem = UserRoles(context: objectContext)
-            myItem.roleID = roleID
-            myItem.userID = userID
-            myItem.roleTypeID = roleTypeID
-            myItem.readAccess = readAccess
-            myItem.writeAccess = writeAccess
+            myItem.roleID = Int64(roleID)
+            myItem.userID = Int64(userID)
+            myItem.roleType = roleType
+            myItem.accessLevel = accessLevel
+            myItem.teamID = Int64(teamID)
 
             if updateType == "CODE"
             {
@@ -191,8 +185,7 @@ extension coreDatabase
         else
         {
             myItem = myReturn[0]
-            myItem.readAccess = readAccess
-            myItem.writeAccess = writeAccess
+            myItem.accessLevel = accessLevel
             
             if updateType == "CODE"
             {
@@ -212,19 +205,19 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceUserRoles(_ roleID: Int32,
-                          userID: Int32,
-                          roleTypeID: Int32,
-                          readAccess: Bool,
-                          writeAccess: Bool,
+    func replaceUserRoles(_ roleID: Int,
+                          userID: Int,
+                          teamID: Int,
+                          roleType: String,
+                          accessLevel: String,
                         updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myItem = UserRoles(context: objectContext)
-        myItem.roleID = roleID
-        myItem.userID = userID
-        myItem.roleTypeID = roleTypeID
-        myItem.readAccess = readAccess
-        myItem.writeAccess = writeAccess
+        myItem.roleID = Int64(roleID)
+        myItem.userID = Int64(userID)
+        myItem.roleType = roleType
+        myItem.accessLevel = accessLevel
+        myItem.teamID = Int64(teamID)
         
         if updateType == "CODE"
         {
@@ -240,7 +233,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteUserRoles(_ roleID: Int32)
+    func deleteUserRoles(_ roleID: Int)
     {
         let myReturn = getUserRolesDetails(roleID)
         
@@ -254,13 +247,13 @@ extension coreDatabase
         saveContext()
     }
     
-    func getUserRoles(userID: Int32)->[UserRoles]
+    func getUserRoles(userID: Int, teamID: Int)->[UserRoles]
     {
         let fetchRequest = NSFetchRequest<UserRoles>(entityName: "UserRoles")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(userID == \(userID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(userID == \(userID)) AND (teamID == \(teamID)) && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -278,7 +271,7 @@ extension coreDatabase
         }
     }
     
-    func getUserRolesDetails(_ roleID: Int32)->[UserRoles]
+    func getUserRolesDetails(_ roleID: Int)->[UserRoles]
     {
         let fetchRequest = NSFetchRequest<UserRoles>(entityName: "UserRoles")
         
@@ -426,7 +419,7 @@ extension CloudKitInteraction
         }
     }
     
-    func updateUserRolesInCoreData(teamID: Int32)
+    func updateUserRolesInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "UserRoles") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "UserRoles", predicate: predicate)
@@ -453,7 +446,7 @@ extension CloudKitInteraction
         }
     }
     
-    func deleteUserRoles(roleID: Int32, teamID: Int32)
+    func deleteUserRoles(roleID: Int, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -472,7 +465,7 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func replaceUserRolesInCoreData(teamID: Int32)
+    func replaceUserRolesInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "UserRoles", predicate: predicate)
@@ -481,35 +474,21 @@ extension CloudKitInteraction
         waitFlag = true
         
         operation.recordFetchedBlock = { (record) in
-            var roleID: Int32 = 0
+            var roleID: Int = 0
             if record.object(forKey: "roleID") != nil
             {
-                roleID = record.object(forKey: "roleID") as! Int32
+                roleID = record.object(forKey: "roleID") as! Int
             }
             
-            var userID: Int32 = 0
+            var userID: Int = 0
             if record.object(forKey: "userID") != nil
             {
-                userID = record.object(forKey: "userID") as! Int32
+                userID = record.object(forKey: "userID") as! Int
             }
             
-            var roleTypeID: Int32 = 0
-            if record.object(forKey: "roleTypeID") != nil
-            {
-                roleTypeID = record.object(forKey: "roleTypeID") as! Int32
-            }
+            let roleType = record.object(forKey: "roleType") as! String
             
-            var readAccess: Bool = false
-            if record.object(forKey: "readAccess") != nil
-            {
-                readAccess = record.object(forKey: "readAccess") as! Bool
-            }
-            
-            var writeAccess: Bool = false
-            if record.object(forKey: "writeAccess") != nil
-            {
-                writeAccess = record.object(forKey: "writeAccess") as! Bool
-            }
+            let accessLevel = record.object(forKey: "accessLevel") as! String
             
             var updateTime = Date()
             if record.object(forKey: "updateTime") != nil
@@ -525,9 +504,9 @@ extension CloudKitInteraction
             
             myDatabaseConnection.replaceUserRoles(roleID,
                                                   userID: userID,
-                                                  roleTypeID: roleTypeID,
-                                                  readAccess: readAccess,
-                                                  writeAccess: writeAccess
+                                                  teamID: teamID,
+                                                  roleType: roleType,
+                                                  accessLevel: accessLevel
                                                 , updateTime: updateTime, updateType: updateType)
             
             usleep(useconds_t(self.sleepTime))
@@ -543,7 +522,7 @@ extension CloudKitInteraction
         }
     }
     
-    func saveUserRolesRecordToCloudKit(_ sourceRecord: UserRoles, teamID: Int32)
+    func saveUserRolesRecordToCloudKit(_ sourceRecord: UserRoles, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0)
         
@@ -564,8 +543,7 @@ extension CloudKitInteraction
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
                     
-                    record!.setValue(sourceRecord.readAccess, forKey: "readAccess")
-                    record!.setValue(sourceRecord.writeAccess, forKey: "writeAccess")
+                    record!.setValue(sourceRecord.roleType, forKey: "roleType")
                     
                     if sourceRecord.updateTime != nil
                     {
@@ -593,9 +571,8 @@ extension CloudKitInteraction
                     let record = CKRecord(recordType: "UserRoles")
                     record.setValue(sourceRecord.roleID, forKey: "roleID")
                     record.setValue(sourceRecord.userID, forKey: "userID")
-                    record.setValue(sourceRecord.roleTypeID, forKey: "roleTypeID")
-                    record.setValue(sourceRecord.readAccess, forKey: "readAccess")
-                    record.setValue(sourceRecord.writeAccess, forKey: "writeAccess")
+                    record.setValue(sourceRecord.roleType, forKey: "roleType")
+                    record.setValue(sourceRecord.accessLevel, forKey: "accessLevel")
                     
                     record.setValue(teamID, forKey: "teamID")
                     
@@ -627,35 +604,27 @@ extension CloudKitInteraction
 
     func updateUserRolesRecord(_ sourceRecord: CKRecord)
     {
-        var roleID: Int32 = 0
+        var roleID: Int = 0
         if sourceRecord.object(forKey: "roleID") != nil
         {
-            roleID = sourceRecord.object(forKey: "roleID") as! Int32
+            roleID = sourceRecord.object(forKey: "roleID") as! Int
         }
         
-        var userID: Int32 = 0
+        var userID: Int = 0
         if sourceRecord.object(forKey: "userID") != nil
         {
-            userID = sourceRecord.object(forKey: "userID") as! Int32
+            userID = sourceRecord.object(forKey: "userID") as! Int
         }
         
-        var roleTypeID: Int32 = 0
-        if sourceRecord.object(forKey: "roleTypeID") != nil
+        var teamID: Int = 0
+        if sourceRecord.object(forKey: "teamID") != nil
         {
-            roleTypeID = sourceRecord.object(forKey: "roleTypeID") as! Int32
+            teamID = sourceRecord.object(forKey: "teamID") as! Int
         }
         
-        var readAccess: Bool = false
-        if sourceRecord.object(forKey: "readAccess") != nil
-        {
-            readAccess = sourceRecord.object(forKey: "readAccess") as! Bool
-        }
+        let roleType = sourceRecord.object(forKey: "roleType") as! String
         
-        var writeAccess: Bool = false
-        if sourceRecord.object(forKey: "writeAccess") != nil
-        {
-            writeAccess = sourceRecord.object(forKey: "writeAccess") as! Bool
-        }
+        let accessLevel = sourceRecord.object(forKey: "accessLevel") as! String
         
         var updateTime = Date()
         if sourceRecord.object(forKey: "updateTime") != nil
@@ -671,9 +640,9 @@ extension CloudKitInteraction
         
         myDatabaseConnection.saveUserRoles(roleID,
                                            userID: userID,
-                                           roleTypeID: roleTypeID,
-                                           readAccess: readAccess,
-                                           writeAccess: writeAccess
+                                           teamID: teamID,
+                                           roleType: roleType,
+                                           accessLevel: accessLevel
                                          , updateTime: updateTime, updateType: updateType)
     }
 }

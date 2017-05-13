@@ -12,10 +12,10 @@ import CloudKit
 
 class taskPredecessor: NSObject
 {
-    fileprivate var myPredecessorID: Int32 = 0
+    fileprivate var myPredecessorID: Int = 0
     fileprivate var myPredecessorType: String = ""
     
-    var predecessorID: Int32
+    var predecessorID: Int
     {
         get
         {
@@ -39,7 +39,7 @@ class taskPredecessor: NSObject
         }
     }
     
-    init(predecessorID: Int32, predecessorType: String)
+    init(predecessorID: Int, predecessorType: String)
     {
         myPredecessorID = predecessorID
         myPredecessorType = predecessorType
@@ -48,7 +48,7 @@ class taskPredecessor: NSObject
 
 extension coreDatabase
 {
-    func getTaskPredecessors(_ taskID: Int32)->[TaskPredecessor]
+    func getTaskPredecessors(_ taskID: Int)->[TaskPredecessor]
     {
         let fetchRequest = NSFetchRequest<TaskPredecessor>(entityName: "TaskPredecessor")
         
@@ -72,7 +72,7 @@ extension coreDatabase
         }
     }
     
-    func savePredecessorTask(_ taskID: Int32, predecessorID: Int32, predecessorType: String, updateTime: Date =  Date(), updateType: String = "CODE")
+    func savePredecessorTask(_ taskID: Int, predecessorID: Int, predecessorType: String, teamID: Int = currentUser.currentTeam!.teamID, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myTask: TaskPredecessor!
         
@@ -81,9 +81,11 @@ extension coreDatabase
         if myTasks.count == 0
         { // Add
             myTask = TaskPredecessor(context: objectContext)
-            myTask.taskID = taskID
-            myTask.predecessorID = predecessorID
+            myTask.taskID = Int64(taskID)
+            myTask.predecessorID = Int64(predecessorID)
             myTask.predecessorType = predecessorType
+            myTask.teamID = Int64(teamID)
+            
             if updateType == "CODE"
             {
                 myTask.updateTime =  NSDate()
@@ -97,7 +99,7 @@ extension coreDatabase
         }
         else
         { // Update
-            myTask.predecessorID = predecessorID
+            myTask.predecessorID = Int64(predecessorID)
             myTask.predecessorType = predecessorType
             if updateType == "CODE"
             {
@@ -119,12 +121,14 @@ extension coreDatabase
         myCloudDB.saveTaskPredecessorRecordToCloudKit(myTask, teamID: currentUser.currentTeam!.teamID)
     }
     
-    func replacePredecessorTask(_ taskID: Int32, predecessorID: Int32, predecessorType: String, updateTime: Date =  Date(), updateType: String = "CODE")
+    func replacePredecessorTask(_ taskID: Int, predecessorID: Int, predecessorType: String, teamID: Int = currentUser.currentTeam!.teamID, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myTask = TaskPredecessor(context: objectContext)
-        myTask.taskID = taskID
-        myTask.predecessorID = predecessorID
+        myTask.taskID = Int64(taskID)
+        myTask.predecessorID = Int64(predecessorID)
         myTask.predecessorType = predecessorType
+        myTask.teamID = Int64(teamID)
+
         if updateType == "CODE"
         {
             myTask.updateTime =  NSDate()
@@ -139,7 +143,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func updatePredecessorTaskType(_ taskID: Int32, predecessorID: Int32, predecessorType: String)
+    func updatePredecessorTaskType(_ taskID: Int, predecessorID: Int, predecessorType: String)
     {
         let fetchRequest = NSFetchRequest<TaskPredecessor>(entityName: "TaskPredecessor")
         
@@ -172,7 +176,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteTaskPredecessor(_ taskID: Int32, predecessorID: Int32)
+    func deleteTaskPredecessor(_ taskID: Int, predecessorID: Int)
     {
         let fetchRequest = NSFetchRequest<TaskPredecessor>(entityName: "TaskPredecessor")
         
@@ -246,6 +250,7 @@ extension coreDatabase
         
         saveContext()
     }
+    
     func getTaskPredecessorsForSync(_ syncDate: Date) -> [TaskPredecessor]
     {
         let fetchRequest = NSFetchRequest<TaskPredecessor>(entityName: "TaskPredecessor")
@@ -299,7 +304,7 @@ extension CloudKitInteraction
         }
     }
 
-    func updateTaskPredecessorInCoreData(teamID: Int32)
+    func updateTaskPredecessorInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "TaskPredecessor") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskPredecessor", predicate: predicate)
@@ -325,7 +330,7 @@ extension CloudKitInteraction
         }
     }
 
-    func deleteTaskPredecessor(teamID: Int32)
+    func deleteTaskPredecessor(teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -343,7 +348,7 @@ extension CloudKitInteraction
         sem.wait()
     }
 
-    func replaceTaskPredecessorInCoreData(teamID: Int32)
+    func replaceTaskPredecessorInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "TaskPredecessor", predicate: predicate)
@@ -352,8 +357,8 @@ extension CloudKitInteraction
         waitFlag = true
         
         operation.recordFetchedBlock = { (record) in
-            let taskID = record.object(forKey: "taskID") as! Int32
-            let predecessorID = record.object(forKey: "predecessorID") as! Int32
+            let taskID = record.object(forKey: "taskID") as! Int
+            let predecessorID = record.object(forKey: "predecessorID") as! Int
             var updateTime = Date()
             if record.object(forKey: "updateTime") != nil
             {
@@ -366,7 +371,13 @@ extension CloudKitInteraction
             }
             let predecessorType = record.object(forKey: "predecessorType") as! String
             
-            myDatabaseConnection.replacePredecessorTask(taskID, predecessorID: predecessorID, predecessorType: predecessorType, updateTime: updateTime, updateType: updateType)
+            var teamID: Int = 0
+            if record.object(forKey: "teamID") != nil
+            {
+                teamID = record.object(forKey: "teamID") as! Int
+            }
+            
+            myDatabaseConnection.replacePredecessorTask(taskID, predecessorID: predecessorID, predecessorType: predecessorType, teamID: teamID, updateTime: updateTime, updateType: updateType)
             usleep(useconds_t(self.sleepTime))
         }
         let operationQueue = OperationQueue()
@@ -379,7 +390,7 @@ extension CloudKitInteraction
         }
     }
 
-    func saveTaskPredecessorRecordToCloudKit(_ sourceRecord: TaskPredecessor, teamID: Int32)
+    func saveTaskPredecessorRecordToCloudKit(_ sourceRecord: TaskPredecessor, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID)) && (predecessorID == \(sourceRecord.predecessorID)) AND (teamID == \(teamID))") // better be accurate to get only the record you need
@@ -453,8 +464,8 @@ extension CloudKitInteraction
 
     func updateTaskPredecessorRecord(_ sourceRecord: CKRecord)
     {
-        let taskID = sourceRecord.object(forKey: "taskID") as! Int32
-        let predecessorID = sourceRecord.object(forKey: "predecessorID") as! Int32
+        let taskID = sourceRecord.object(forKey: "taskID") as! Int
+        let predecessorID = sourceRecord.object(forKey: "predecessorID") as! Int
         var updateTime = Date()
         if sourceRecord.object(forKey: "updateTime") != nil
         {
@@ -469,6 +480,12 @@ extension CloudKitInteraction
         }
         let predecessorType = sourceRecord.object(forKey: "predecessorType") as! String
         
-        myDatabaseConnection.savePredecessorTask(taskID, predecessorID: predecessorID, predecessorType: predecessorType, updateTime: updateTime, updateType: updateType)
+        var teamID: Int = 0
+        if sourceRecord.object(forKey: "teamID") != nil
+        {
+            teamID = sourceRecord.object(forKey: "teamID") as! Int
+        }
+        
+        myDatabaseConnection.savePredecessorTask(taskID, predecessorID: predecessorID, predecessorType: predecessorType, teamID: teamID, updateTime: updateTime, updateType: updateType)
     }
 }

@@ -31,7 +31,7 @@ class teams: NSObject
     {
         for myItem in myDatabaseConnection.getAllTeams()
         {
-            let tempTeam = team(teamID: myItem.teamID)
+            let tempTeam = team(teamID: Int(myItem.teamID))
             myTeams.append(tempTeam)
         }
     }
@@ -39,13 +39,13 @@ class teams: NSObject
 
 class team: NSObject
 {
-    fileprivate var myTeamID: Int32 = 0
+    fileprivate var myTeamID: Int = 0
     fileprivate var myName: String = "New"
     fileprivate var myNote: String = ""
     fileprivate var myStatus: String = ""
     fileprivate var myType: String = ""
-    fileprivate var myPredecessor: Int32 = 0
-    fileprivate var myExternalID: Int32 = 0
+    fileprivate var myPredecessor: Int = 0
+    fileprivate var myExternalID: String = ""
     fileprivate var myRoles: [Roles]!
     fileprivate var myStages:[Stages]!
     fileprivate var myGTD: [workingGTDLevel] = Array()
@@ -54,7 +54,7 @@ class team: NSObject
     fileprivate var saveCalled: Bool = false
     fileprivate var myMeetings: [calendarItem] = Array()
     
-    var teamID: Int32
+    var teamID: Int
     {
         get
         {
@@ -103,7 +103,7 @@ class team: NSObject
         }
     }
     
-    var predecessor: Int32
+    var predecessor: Int
     {
         get
         {
@@ -115,7 +115,7 @@ class team: NSObject
         }
     }
     
-    var externalID: Int32
+    var externalID: String
     {
         get
         {
@@ -187,7 +187,7 @@ class team: NSObject
         }
     }
 
-    init(teamID: Int32)
+    init(teamID: Int)
     {
         super.init()
         // Load the details
@@ -196,13 +196,13 @@ class team: NSObject
         
         for myItem in myTeam
         {
-            myTeamID = myItem.teamID
+            myTeamID = Int(myItem.teamID)
             myName = myItem.name!
             myStatus = myItem.status!
             myType = myItem.type!
             myNote = myItem.note!
-            myPredecessor = myItem.predecessor
-            myExternalID = myItem.externalID
+            myPredecessor = Int(myItem.predecessor)
+            myExternalID = myItem.externalID!
         }
     }
 
@@ -245,80 +245,108 @@ class team: NSObject
         
         populateRoleAccessDropDown()
         
+        populateAddressDropDown()
+        
+        populateContactsDropDown()
+        
         notificationCenter.post(name: NotificationTeamCreated, object: nil)
     }
     
     private func populateRolesDropDown()
     {
-        myDatabaseConnection.saveDropdowns("Roles", dropdownValue: "Project Manager")
+        myDatabaseConnection.saveDropdowns("Roles", dropdownValue: "Project Manager", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("Roles", dropdownValue: "Project Executive")
+        myDatabaseConnection.saveDropdowns("Roles", dropdownValue: "Project Executive", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("Roles", dropdownValue: "Project Sponsor")
+        myDatabaseConnection.saveDropdowns("Roles", dropdownValue: "Project Sponsor", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("Roles", dropdownValue: "Technical Stakeholder")
+        myDatabaseConnection.saveDropdowns("Roles", dropdownValue: "Technical Stakeholder", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("Roles", dropdownValue: "Business Stakeholder")
+        myDatabaseConnection.saveDropdowns("Roles", dropdownValue: "Business Stakeholder", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("Roles", dropdownValue: "Developer")
+        myDatabaseConnection.saveDropdowns("Roles", dropdownValue: "Developer", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("Roles", dropdownValue: "Tester")
+        myDatabaseConnection.saveDropdowns("Roles", dropdownValue: "Tester", teamID: myTeamID)
         usleep(500)
     }
     
     private func populateStagesDropDown()
     {
-        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Definition")
+        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Definition", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Initiation")
+        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Initiation", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Planning")
+        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Planning", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Execution")
+        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Execution", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Monitoring & Control")
+        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Monitoring & Control", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Closure")
+        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Closure", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Completed")
+        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Completed", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Archived")
+        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Archived", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "On Hold")
+        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "On Hold", teamID: myTeamID)
         usleep(500)
     }
     
     private func populatePrivacyDropDown()
     {
-        myDatabaseConnection.saveDropdowns("Privacy", dropdownValue: "Private")
+        myDatabaseConnection.saveDropdowns("Privacy", dropdownValue: "Private", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("Privacy", dropdownValue: "Public")
+        myDatabaseConnection.saveDropdowns("Privacy", dropdownValue: "Public", teamID: myTeamID)
         usleep(500)
     }
     
     private func populateRoleTypesDropDown()
     {
-        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Admin")
+        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Admin", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Rostering")
+        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Rostering", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Invoicing")
+        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Invoicing", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Financials")
+        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Financials", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "HR")
+        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "HR", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Sales")
+        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Sales", teamID: myTeamID)
         usleep(500)
     }
     
     private func populateRoleAccessDropDown()
     {
-        myDatabaseConnection.saveDropdowns("RoleAccess", dropdownValue: "None")
+        myDatabaseConnection.saveDropdowns("RoleAccess", dropdownValue: "None", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("RoleAccess", dropdownValue: "Read")
+        myDatabaseConnection.saveDropdowns("RoleAccess", dropdownValue: "Read", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("RoleAccess", dropdownValue: "Write")
+        myDatabaseConnection.saveDropdowns("RoleAccess", dropdownValue: "Write", teamID: myTeamID)
+        usleep(500)
+    }
+
+    private func populateAddressDropDown()
+    {
+        myDatabaseConnection.saveDropdowns("Address", dropdownValue: "Home", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Address", dropdownValue: "Postal", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Address", dropdownValue: "Office", teamID: myTeamID)
+        usleep(500)
+    }
+    
+    private func populateContactsDropDown()
+    {
+        myDatabaseConnection.saveDropdowns("Contacts", dropdownValue: "Home Phone", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Contacts", dropdownValue: "Mobile Phone", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Contacts", dropdownValue: "Office Phone", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Contacts", dropdownValue: "Home Email", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Contacts", dropdownValue: "Office Email", teamID: myTeamID)
         usleep(500)
     }
     
@@ -337,12 +365,23 @@ class team: NSObject
         myDatabaseConnection.saveGTDLevel(4, levelName: "Areas of Responsibility", teamID: myTeamID)
     }
     
+    func getRoleTypes() -> [String]
+    {
+        var retArray: [String] = Array()
+        
+        for myItem in dropdowns(dropdownType: "RoleType").dropdowns
+        {
+            retArray.append(myItem.dropdownValue)
+        }
+        return retArray
+    }
+    
     func loadGTDLevels()
     {
         myGTD.removeAll()
         for myItem in myDatabaseConnection.getGTDLevels(myTeamID)
         {
-            let myWorkingLevel = workingGTDLevel(sourceGTDLevel: myItem.gTDLevel, teamID: myTeamID)
+            let myWorkingLevel = workingGTDLevel(sourceGTDLevel: Int(myItem.gTDLevel), teamID: myTeamID)
             myGTD.append(myWorkingLevel)
         }
 
@@ -354,7 +393,7 @@ class team: NSObject
         myGTDTopLevel.removeAll()
         for myItem in myDatabaseConnection.getGTDItemsForLevel(1, teamID: myTeamID)
         {
-            let myWorkingLevel = workingGTDItem(GTDItemID: myItem.gTDItemID, teamID: myTeamID)
+            let myWorkingLevel = workingGTDItem(GTDItemID: Int(myItem.gTDItemID), teamID: myTeamID)
             myGTDTopLevel.append(myWorkingLevel)
         }
     }
@@ -448,7 +487,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func saveTeam(_ teamID: Int32, name: String, status: String, note: String, type: String, predecessor: Int32, externalID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveTeam(_ teamID: Int, name: String, status: String, note: String, type: String, predecessor: Int, externalID: String, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myTeam: Team!
         
@@ -457,12 +496,12 @@ extension coreDatabase
         if myTeams.count == 0
         { // Add
             myTeam = Team(context: objectContext)
-            myTeam.teamID = teamID
+            myTeam.teamID = Int64(teamID)
             myTeam.name = name
             myTeam.status = status
             myTeam.note = note
             myTeam.type = type
-            myTeam.predecessor = predecessor
+            myTeam.predecessor = Int64(predecessor)
             myTeam.externalID = externalID
             if updateType == "CODE"
             {
@@ -482,7 +521,7 @@ extension coreDatabase
             myTeam.status = status
             myTeam.note = note
             myTeam.type = type
-            myTeam.predecessor = predecessor
+            myTeam.predecessor = Int64(predecessor)
             myTeam.externalID = externalID
             if updateType == "CODE"
             {
@@ -502,15 +541,15 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceTeam(_ teamID: Int32, name: String, status: String, note: String, type: String, predecessor: Int32, externalID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
+    func replaceTeam(_ teamID: Int, name: String, status: String, note: String, type: String, predecessor: Int, externalID: String, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myTeam = Team(context: persistentContainer.viewContext)
-        myTeam.teamID = teamID
+        myTeam.teamID = Int64(teamID)
         myTeam.name = name
         myTeam.status = status
         myTeam.note = note
         myTeam.type = type
-        myTeam.predecessor = predecessor
+        myTeam.predecessor = Int64(predecessor)
         myTeam.externalID = externalID
         if updateType == "CODE"
         {
@@ -527,7 +566,7 @@ extension coreDatabase
         self.refreshObject(myTeam)
     }
     
-    func getTeam(_ teamID: Int32)->[Team]
+    func getTeam(_ teamID: Int)->[Team]
     {
         let fetchRequest = NSFetchRequest<Team>(entityName: "Team")
         
@@ -712,12 +751,12 @@ extension CloudKitInteraction
         executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue, notification: NotificationTeamCountQueryString)
     }
     
-    func teamCount() -> Int32
+    func teamCount() -> Int
     {
         return recordsInTable
     }
     
-    func createNewTeam(teamID: Int32, type: String, status:String)
+    func createNewTeam(teamID: Int, type: String, status:String)
     {
         let record = CKRecord(recordType: "Team")
         record.setValue(teamID, forKey: "teamID")
@@ -805,7 +844,7 @@ print("GRE2")
         waitFlag = true
         
         operation.recordFetchedBlock = { (record) in
-            let teamID = record.object(forKey: "teamID") as! Int32
+            let teamID = record.object(forKey: "teamID") as! Int
             var updateTime = Date()
             if record.object(forKey: "updateTime") != nil
             {
@@ -816,12 +855,13 @@ print("GRE2")
             {
                 updateType = record.object(forKey: "updateType") as! String
             }
-            let name = record.object(forKey: "name") as! String
+            
+            let name =  record.object(forKey: "name") as! String
             let note = record.object(forKey: "note") as! String
             let status = record.object(forKey: "status") as! String
             let type = record.object(forKey: "type") as! String
-            let predecessor = record.object(forKey: "predecessor") as! Int32
-            let externalID = record.object(forKey: "externalID") as! Int32
+            let predecessor = record.object(forKey: "predecessor") as! Int
+            let externalID = record.object(forKey: "externalIDString") as! String
             
             myDatabaseConnection.replaceTeam(teamID, name: name, status: status, note: note, type: type, predecessor: predecessor, externalID: externalID, updateTime: updateTime, updateType: updateType)
             usleep(useconds_t(self.sleepTime))
@@ -867,7 +907,7 @@ print("GRE6")
                     record!.setValue(sourceRecord.status, forKey: "status")
                     record!.setValue(sourceRecord.type, forKey: "type")
                     record!.setValue(sourceRecord.predecessor, forKey: "predecessor")
-                    record!.setValue(sourceRecord.externalID, forKey: "externalID")
+                    record!.setValue(sourceRecord.externalID, forKey: "externalIDString")
 print("GRE7")
                     
                     // Save this record again
@@ -901,7 +941,7 @@ print("GRE9")
                     record.setValue(sourceRecord.status, forKey: "status")
                     record.setValue(sourceRecord.type, forKey: "type")
                     record.setValue(sourceRecord.predecessor, forKey: "predecessor")
-                    record.setValue(sourceRecord.externalID, forKey: "externalID")
+                    record.setValue(sourceRecord.externalID, forKey: "externalIDString")
                     record.setValue(sourceRecord.teamID, forKey: "teamID")
 print("GRE10")
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
@@ -929,7 +969,7 @@ print("GRE13")
     
     func updateTeamRecord(_ sourceRecord: CKRecord)
     {
-        let teamID = sourceRecord.object(forKey: "teamID") as! Int32
+        let teamID = sourceRecord.object(forKey: "teamID") as! Int
         var updateTime = Date()
         if sourceRecord.object(forKey: "updateTime") != nil
         {
@@ -942,12 +982,12 @@ print("GRE13")
         {
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
-        let name = sourceRecord.object(forKey: "name") as! String
+        let name =  sourceRecord.object(forKey: "name") as! String
         let note = sourceRecord.object(forKey: "note") as! String
         let status = sourceRecord.object(forKey: "status") as! String
         let type = sourceRecord.object(forKey: "type") as! String
-        let predecessor = sourceRecord.object(forKey: "predecessor") as! Int32
-        let externalID = sourceRecord.object(forKey: "externalID") as! Int32
+        let predecessor = sourceRecord.object(forKey: "predecessor") as! Int
+        let externalID = sourceRecord.object(forKey: "externalIDString") as! String
         
         myDatabaseConnection.saveTeam(teamID, name: name, status: status, note: note, type: type, predecessor: predecessor, externalID: externalID, updateTime: updateTime, updateType: updateType)
     }

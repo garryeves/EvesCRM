@@ -108,6 +108,7 @@ extension DBSync
     
     func deleteAllFromCloudKit()
     {
+        progressMessage("deleteAllFromCloudKit Team")
         myCloudDB.deleteTeam()
     }
     

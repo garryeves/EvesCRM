@@ -12,7 +12,7 @@ import CloudKit
 
 class taskUpdates: NSObject
 {
-    fileprivate var myTaskID: Int32 = 0
+    fileprivate var myTaskID: Int = 0
     fileprivate var myUpdateDate: Date!
     fileprivate var myDetails: String = ""
     fileprivate var mySource: String = ""
@@ -81,7 +81,7 @@ class taskUpdates: NSObject
         }
     }
     
-    init(taskID: Int32)
+    init(taskID: Int)
     {
         myTaskID = taskID
         
@@ -89,7 +89,7 @@ class taskUpdates: NSObject
     
     init(updateObject: TaskUpdates)
     {
-        myTaskID = updateObject.taskID
+        myTaskID = Int(updateObject.taskID)
         myUpdateDate = updateObject.updateDate as Date!
         myDetails = updateObject.details!
         mySource = updateObject.source!
@@ -118,17 +118,19 @@ class taskUpdates: NSObject
 
 extension coreDatabase
 {
-    func saveTaskUpdate(_ taskID: Int32, details: String, source: String, updateDate: Date =  Date(), updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveTaskUpdate(_ taskID: Int, details: String, source: String, teamID: Int = currentUser.currentTeam!.teamID, updateDate: Date =  Date(), updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myTaskUpdate: TaskUpdates!
         
         if getTaskUpdate(taskID, updateDate: updateDate as NSDate).count == 0
         {
             myTaskUpdate = TaskUpdates(context: objectContext)
-            myTaskUpdate.taskID = taskID
+            myTaskUpdate.taskID = Int64(taskID)
             myTaskUpdate.updateDate = updateDate as NSDate
             myTaskUpdate.details = details
             myTaskUpdate.source = source
+            myTaskUpdate.teamID = Int64(teamID)
+            
             if updateType == "CODE"
             {
                 myTaskUpdate.updateTime =  NSDate()
@@ -144,14 +146,16 @@ extension coreDatabase
         }
     }
     
-    func replaceTaskUpdate(_ taskID: Int32, details: String, source: String, updateDate: Date =  Date(), updateTime: Date =  Date(), updateType: String = "CODE")
+    func replaceTaskUpdate(_ taskID: Int, details: String, source: String, teamID: Int = currentUser.currentTeam!.teamID, updateDate: Date =  Date(), updateTime: Date =  Date(), updateType: String = "CODE")
     {
         
         let myTaskUpdate = TaskUpdates(context: objectContext)
-        myTaskUpdate.taskID = taskID
+        myTaskUpdate.taskID = Int64(taskID)
         myTaskUpdate.updateDate = updateDate as NSDate
         myTaskUpdate.details = details
         myTaskUpdate.source = source
+        myTaskUpdate.teamID = Int64(teamID)
+
         if updateType == "CODE"
         {
             myTaskUpdate.updateTime =  NSDate()
@@ -166,7 +170,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func getTaskUpdate(_ taskID: Int32, updateDate: NSDate)->[TaskUpdates]
+    func getTaskUpdate(_ taskID: Int, updateDate: NSDate)->[TaskUpdates]
     {
         let fetchRequest = NSFetchRequest<TaskUpdates>(entityName: "TaskUpdates")
         
@@ -194,7 +198,7 @@ extension coreDatabase
         }
     }
     
-    func getTaskUpdates(_ taskID: Int32)->[TaskUpdates]
+    func getTaskUpdates(_ taskID: Int)->[TaskUpdates]
     {
         let fetchRequest = NSFetchRequest<TaskUpdates>(entityName: "TaskUpdates")
         
@@ -345,7 +349,7 @@ extension CloudKitInteraction
         }
     }
 
-    func updateTaskUpdatesInCoreData(teamID: Int32)
+    func updateTaskUpdatesInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "TaskUpdates") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskUpdates", predicate: predicate)
@@ -371,7 +375,7 @@ extension CloudKitInteraction
         }
     }
 
-    func deleteTaskUpdates(teamID: Int32)
+    func deleteTaskUpdates(teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -389,7 +393,7 @@ extension CloudKitInteraction
         sem.wait()
     }
 
-    func replaceTaskUpdatesInCoreData(teamID: Int32)
+    func replaceTaskUpdatesInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "TaskUpdates", predicate: predicate)
@@ -398,7 +402,7 @@ extension CloudKitInteraction
         waitFlag = true
         
         operation.recordFetchedBlock = { (record) in
-            let taskID = record.object(forKey: "taskID") as! Int32
+            let taskID = record.object(forKey: "taskID") as! Int
             let updateDate = record.object(forKey: "updateDate") as! Date
             var updateTime = Date()
             if record.object(forKey: "updateTime") != nil
@@ -413,7 +417,13 @@ extension CloudKitInteraction
             let details = record.object(forKey: "details") as! String
             let source = record.object(forKey: "source") as! String
             
-            myDatabaseConnection.replaceTaskUpdate(taskID, details: details, source: source, updateDate: updateDate, updateTime: updateTime, updateType: updateType)
+            var teamID: Int = 0
+            if record.object(forKey: "teamID") != nil
+            {
+                teamID = record.object(forKey: "teamID") as! Int
+            }
+            
+            myDatabaseConnection.replaceTaskUpdate(taskID, details: details, source: source, teamID: teamID, updateDate: updateDate, updateTime: updateTime, updateType: updateType)
             usleep(useconds_t(self.sleepTime))
         }
         let operationQueue = OperationQueue()
@@ -426,7 +436,7 @@ extension CloudKitInteraction
         }
     }
 
-    func saveTaskUpdatesRecordToCloudKit(_ sourceRecord: TaskUpdates, teamID: Int32)
+    func saveTaskUpdatesRecordToCloudKit(_ sourceRecord: TaskUpdates, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID)) && (updateDate == %@) AND (teamID == \(teamID))", sourceRecord.updateDate!) // better be accurate to get only the record you need
@@ -502,7 +512,7 @@ extension CloudKitInteraction
 
     func updateTaskUpdatesRecord(_ sourceRecord: CKRecord)
     {
-        let taskID = sourceRecord.object(forKey: "taskID") as! Int32
+        let taskID = sourceRecord.object(forKey: "taskID") as! Int
         let updateDate = sourceRecord.object(forKey: "updateDate") as! Date
         var updateTime = Date()
         if sourceRecord.object(forKey: "updateTime") != nil
@@ -519,6 +529,12 @@ extension CloudKitInteraction
         let details = sourceRecord.object(forKey: "details") as! String
         let source = sourceRecord.object(forKey: "source") as! String
         
-        myDatabaseConnection.saveTaskUpdate(taskID, details: details, source: source, updateDate: updateDate, updateTime: updateTime, updateType: updateType)
+        var teamID: Int = 0
+        if sourceRecord.object(forKey: "teamID") != nil
+        {
+            teamID = sourceRecord.object(forKey: "teamID") as! Int
+        }
+        
+        myDatabaseConnection.saveTaskUpdate(taskID, details: details, source: source, teamID: teamID, updateDate: updateDate, updateTime: updateTime, updateType: updateType)
     }
 }

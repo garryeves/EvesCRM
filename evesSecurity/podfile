@@ -6,5 +6,4 @@ use_frameworks!
 project '/Users/garryeves/Documents/xcode/EvesCRM/evesSecurity/evesSecurity.xcodeproj'
 
 target ‘evesSecurity' do
-pod 'RNCryptor'
 end

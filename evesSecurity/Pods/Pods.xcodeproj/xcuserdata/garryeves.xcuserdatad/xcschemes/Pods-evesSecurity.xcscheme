@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "FC9F4DE112A82390BB966EAEE3EF9E89"
+               BlueprintIdentifier = "21E9965BF74F73F5B6CB25B7342813EC"
                BuildableName = "Pods_evesSecurity.framework"
                BlueprintName = "Pods-evesSecurity"
                ReferencedContainer = "container:Pods.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "FC9F4DE112A82390BB966EAEE3EF9E89"
+            BlueprintIdentifier = "21E9965BF74F73F5B6CB25B7342813EC"
             BuildableName = "Pods_evesSecurity.framework"
             BlueprintName = "Pods-evesSecurity"
             ReferencedContainer = "container:Pods.xcodeproj">

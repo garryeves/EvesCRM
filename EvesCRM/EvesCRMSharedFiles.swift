@@ -50,6 +50,12 @@ var myCurrentViewController: AnyObject!
     let myRowColour = CGColorCreateGenericRGB(0.75, 1.0, 0.92, 0.25)
 #endif
 
+func getDeviceType() -> UIUserInterfaceIdiom
+{
+    let deviceIdiom = UIScreen.main.traitCollection.userInterfaceIdiom
+    
+    return deviceIdiom
+}
 
 func writeDefaultString(_ keyName: String, value: String)
 {
@@ -314,66 +320,66 @@ func stringByChangingChars(_ string: String, oldChar: String, newChar: String) -
     return myString
 }
 
-func displayTeamMembers(_ sourceProject: project, lookupArray: inout [String])->[TableData]
-{
-    var tableContents:[TableData] = [TableData]()
-    
-    lookupArray.removeAll(keepingCapacity: false)
-    
-    let myTeamMembers = sourceProject.teamMembers
-    var titleText: String = ""
-    
-    for myTeamMember in myTeamMembers
-    {
-        titleText = myTeamMember.teamMember
-        titleText += " : "
-        titleText += myDatabaseConnection.getRoleDescription(myTeamMember.roleID, teamID: sourceProject.teamID)
-        
-        lookupArray.append(myTeamMember.teamMember)
-        
-        let personObject = findPersonRecord(myTeamMember.teamMember)
-        
-        writeRowToArray(titleText, table: &tableContents, targetObject: personObject!)
-    }
-    
-    return tableContents
-}
-
-func displayProjectsForPerson(_ person: String, lookupArray: inout [String]) -> [TableData]
-{
-    var tableContents:[TableData] = [TableData]()
-    var titleText: String = ""
-    
-    lookupArray.removeAll(keepingCapacity: false)
-    
-    let myProjects = myDatabaseConnection.getProjectsForPerson(person)
-    
-    if myProjects.count == 0
-    {
-        writeRowToArray("Not a member of any Project", table: &tableContents)
-    }
-    else
-    {
-        for myProject in myProjects
-        {
-            let myDetails = myDatabaseConnection.getProjectDetails(myProject.projectID)
-        
-            if myDetails[0].projectStatus != "Archived"
-            {
-                titleText = myDetails[0].projectName!
-                titleText += " : "
-                titleText += myDatabaseConnection.getRoleDescription(myProject.roleID, teamID: myDetails[0].teamID)
-                
-                lookupArray.append("\(myProject.projectID)")
-                
-                let projectObject = project(projectID: myDetails[0].projectID)
-
-                writeRowToArray(titleText, table: &tableContents, targetObject: projectObject)
-            }
-        }
-    }
-    return tableContents
-}
+//func displayTeamMembers(_ sourceProject: project, lookupArray: inout [String])->[TableData]
+//{
+//    var tableContents:[TableData] = [TableData]()
+//    
+//    lookupArray.removeAll(keepingCapacity: false)
+//    
+//    let myTeamMembers = sourceProject.teamMembers
+//    var titleText: String = ""
+//    
+//    for myTeamMember in myTeamMembers
+//    {
+//        titleText = myTeamMember.teamMember
+//        titleText += " : "
+//        titleText += myDatabaseConnection.getRoleDescription(myTeamMember.roleID, teamID: sourceProject.teamID)
+//        
+//        lookupArray.append(myTeamMember.teamMember)
+//        
+//        let personObject = findPersonRecord(myTeamMember.teamMember)
+//        
+//        writeRowToArray(titleText, table: &tableContents, targetObject: personObject!)
+//    }
+//    
+//    return tableContents
+//}
+//
+//func displayProjectsForPerson(_ person: String, lookupArray: inout [String]) -> [TableData]
+//{
+//    var tableContents:[TableData] = [TableData]()
+//    var titleText: String = ""
+//    
+//    lookupArray.removeAll(keepingCapacity: false)
+//    
+//    let myProjects = myDatabaseConnection.getProjectsForPerson(person)
+//    
+//    if myProjects.count == 0
+//    {
+//        writeRowToArray("Not a member of any Project", table: &tableContents)
+//    }
+//    else
+//    {
+//        for myProject in myProjects
+//        {
+//            let myDetails = myDatabaseConnection.getProjectDetails(Int(myProject.projectID))
+//        
+//            if myDetails[0].projectStatus != "Archived"
+//            {
+//                titleText = myDetails[0].projectName!
+//                titleText += " : "
+//                titleText += myDatabaseConnection.getRoleDescription(Int(myProject.roleID), teamID: Int(myDetails[0].teamID))
+//                
+//                lookupArray.append("\(myProject.projectID)")
+//                
+//                let projectObject = project(projectID: Int(myDetails[0].projectID))
+//
+//                writeRowToArray(titleText, table: &tableContents, targetObject: projectObject)
+//            }
+//        }
+//    }
+//    return tableContents
+//}
 
 #if os(iOS)
     class MyDocument: UIDocument

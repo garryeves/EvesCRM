@@ -18,7 +18,7 @@ class userRoleTypes: NSObject
     {
         for myItem in myDatabaseConnection.getUserRoleTypes()
         {
-            let myObject = userRoleType(roleTypeID: myItem.roleTypeID,
+            let myObject = userRoleType(roleTypeID: Int(myItem.roleTypeID),
                                          name: myItem.name!)
             myUserRoleTypes.append(myObject)
         }
@@ -35,10 +35,10 @@ class userRoleTypes: NSObject
 
 class userRoleType: NSObject
 {
-    fileprivate var myRoleTypeID: Int32 = 0
+    fileprivate var myRoleTypeID: Int = 0
     fileprivate var myName: String = ""
     
-    var roleTypeID: Int32
+    var roleTypeID: Int
     {
         get
         {
@@ -69,7 +69,7 @@ class userRoleType: NSObject
         save()
     }
     
-    init(roleTypeID: Int32)
+    init(roleTypeID: Int)
     {
         super.init()
         
@@ -77,12 +77,12 @@ class userRoleType: NSObject
         
         for myItem in myReturn
         {
-            myRoleTypeID = myItem.roleTypeID
+            myRoleTypeID = Int(myItem.roleTypeID)
             myName = myItem.name!
         }
     }
     
-    init(roleTypeID: Int32,
+    init(roleTypeID: Int,
          name: String
          )
     {
@@ -107,7 +107,7 @@ class userRoleType: NSObject
 
 extension coreDatabase
 {
-    func saveUserRoleTypes(_ roleTypeID: Int32,
+    func saveUserRoleTypes(_ roleTypeID: Int,
                      name: String,
                      updateTime: Date =  Date(), updateType: String = "CODE")
     {
@@ -118,7 +118,7 @@ extension coreDatabase
         if myReturn.count == 0
         { // Add
             myItem = UserRoleTypes(context: objectContext)
-            myItem.roleTypeID = roleTypeID
+            myItem.roleTypeID = Int64(roleTypeID)
             myItem.name = name
             
             if updateType == "CODE"
@@ -156,12 +156,12 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceUserRoleTypes(_ roleTypeID: Int32,
+    func replaceUserRoleTypes(_ roleTypeID: Int,
                               name: String,
                         updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myItem = UserRoleTypes(context: objectContext)
-        myItem.roleTypeID = roleTypeID
+        myItem.roleTypeID = Int64(roleTypeID)
         myItem.name = name
         
         if updateType == "CODE"
@@ -178,7 +178,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteUserRoleTypes(_ roleTypeID: Int32)
+    func deleteUserRoleTypes(_ roleTypeID: Int)
     {
         let myReturn = getUserRoleTypesDetails(roleTypeID)
         
@@ -216,7 +216,7 @@ extension coreDatabase
         }
     }
     
-    func getUserRoleTypesDetails(_ roleTypeID: Int32)->[UserRoleTypes]
+    func getUserRoleTypesDetails(_ roleTypeID: Int)->[UserRoleTypes]
     {
         let fetchRequest = NSFetchRequest<UserRoleTypes>(entityName: "UserRoleTypes")
         
@@ -364,7 +364,7 @@ extension CloudKitInteraction
         }
     }
     
-    func updateUserRoleTypesInCoreData(teamID: Int32)
+    func updateUserRoleTypesInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "UserRoleTypes") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "UserRoleTypes", predicate: predicate)
@@ -391,7 +391,7 @@ extension CloudKitInteraction
         }
     }
     
-    func deleteUserRoleTypes(roleTypeID: Int32, teamID: Int32)
+    func deleteUserRoleTypes(roleTypeID: Int, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -410,7 +410,7 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func replaceUserRoleTypesInCoreData(teamID: Int32)
+    func replaceUserRoleTypesInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "UserRoleTypes", predicate: predicate)
@@ -421,10 +421,10 @@ extension CloudKitInteraction
         operation.recordFetchedBlock = { (record) in
             let name = record.object(forKey: "name") as! String
             
-            var roleTypeID: Int32 = 0
+            var roleTypeID: Int = 0
             if record.object(forKey: "roleTypeID") != nil
             {
-                roleTypeID = record.object(forKey: "roleTypeID") as! Int32
+                roleTypeID = record.object(forKey: "roleTypeID") as! Int
             }
             
             var updateTime = Date()
@@ -456,7 +456,7 @@ extension CloudKitInteraction
         }
     }
     
-    func saveUserRoleTypesRecordToCloudKit(_ sourceRecord: UserRoleTypes, teamID: Int32)
+    func saveUserRoleTypesRecordToCloudKit(_ sourceRecord: UserRoleTypes, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0)
         
@@ -538,10 +538,10 @@ extension CloudKitInteraction
     {
         let name = sourceRecord.object(forKey: "name") as! String
         
-        var roleTypeID: Int32 = 0
+        var roleTypeID: Int = 0
         if sourceRecord.object(forKey: "roleTypeID") != nil
         {
-            roleTypeID = sourceRecord.object(forKey: "roleTypeID") as! Int32
+            roleTypeID = sourceRecord.object(forKey: "roleTypeID") as! Int
         }
         
         var updateTime = Date()

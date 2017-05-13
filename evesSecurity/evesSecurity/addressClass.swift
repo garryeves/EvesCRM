@@ -14,40 +14,42 @@ class personAddresses: NSObject
 {
     fileprivate var myAddresses:[address] = Array()
     
-    init(personID: Int32)
+    init(personID: Int)
     {
         for myItem in myDatabaseConnection.getAddressForPerson(personID: personID)
         {
-            let myContext = address(addressID: myItem.addressID,
+            let myContext = address(addressID: Int(myItem.addressID),
                                     addressLine1: myItem.addressLine1!,
                                     addressLine2: myItem.addressLine2!,
                                     city: myItem.city!,
-                                    clientID: myItem.clientID,
+                                    clientID: Int(myItem.clientID),
                                     country: myItem.country!,
-                                    personID: myItem.personID,
+                                    personID: Int(myItem.personID),
                                     postcode: myItem.postcode!,
-                                    projectID: myItem.projectID,
+                                    projectID: Int(myItem.projectID),
                                     state: myItem.state!,
-                                    addressType: myItem.addressType!)
+                                    addressType: myItem.addressType!,
+                                    teamID: Int(myItem.teamID))
                 myAddresses.append(myContext)
         }
     }
     
-    init(clientID: Int32)
+    init(clientID: Int)
     {
         for myItem in myDatabaseConnection.getAddressForClient(clientID: clientID)
         {
-            let myContext = address(addressID: myItem.addressID,
+            let myContext = address(addressID: Int(myItem.addressID),
                                     addressLine1: myItem.addressLine1!,
                                     addressLine2: myItem.addressLine2!,
                                     city: myItem.city!,
-                                    clientID: myItem.clientID,
+                                    clientID: Int(myItem.clientID),
                                     country: myItem.country!,
-                                    personID: myItem.personID,
+                                    personID: Int(myItem.personID),
                                     postcode: myItem.postcode!,
-                                    projectID: myItem.projectID,
+                                    projectID: Int(myItem.projectID),
                                     state: myItem.state!,
-                                    addressType: myItem.addressType!)
+                                    addressType: myItem.addressType!,
+                teamID: Int(myItem.teamID))
             myAddresses.append(myContext)
         }
     }
@@ -63,19 +65,20 @@ class personAddresses: NSObject
 
 class address: NSObject
 {
-    fileprivate var myAddressID: Int32 = 0
+    fileprivate var myAddressID: Int = 0
     fileprivate var myAddressLine1: String = ""
     fileprivate var myAddressLine2: String = ""
     fileprivate var myCity: String = ""
-    fileprivate var myClientID: Int32 = 0
+    fileprivate var myClientID: Int = 0
     fileprivate var myCountry: String = ""
-    fileprivate var myPersonID: Int32 = 0
+    fileprivate var myPersonID: Int = 0
     fileprivate var myPostcode: String = ""
-    fileprivate var myProjectID: Int32 = 0
+    fileprivate var myProjectID: Int = 0
     fileprivate var myState: String = ""
     fileprivate var myAddressType: String = ""
+    fileprivate var myTeamID: Int = 0
 
-    var addressID: Int32
+    var addressID: Int
     {
         get
         {
@@ -122,7 +125,7 @@ class address: NSObject
         }
     }
     
-    var clientID: Int32
+    var clientID: Int
     {
         get
         {
@@ -148,7 +151,7 @@ class address: NSObject
         }
     }
     
-    var personID: Int32
+    var personID: Int
     {
         get
         {
@@ -174,7 +177,7 @@ class address: NSObject
         }
     }
     
-    var projectID: Int32
+    var projectID: Int
     {
         get
         {
@@ -217,43 +220,46 @@ class address: NSObject
     {
         super.init()
         
-        myAddressID = myDatabaseConnection.getNextID("Person")
+        myAddressID = myDatabaseConnection.getNextID("Person", teamID: currentUser.currentTeam!.teamID)
+        myTeamID = currentUser.currentTeam!.teamID
         
         save()
     }
     
-    init(addressID: Int32)
+    init(addressID: Int)
     {
         super.init()
         let myReturn = myDatabaseConnection.getAddressDetails(addressID)
         
         for myItem in myReturn
         {
-            myAddressID = myItem.addressID
+            myAddressID = Int(myItem.addressID)
             myAddressLine1 = myItem.addressLine1!
             myAddressLine2 = myItem.addressLine2!
             myCity = myItem.city!
-            myClientID = myItem.clientID
+            myClientID = Int(myItem.clientID)
             myCountry = myItem.country!
-            myPersonID = myItem.personID
+            myPersonID = Int(myItem.personID)
             myPostcode = myItem.postcode!
-            myProjectID = myItem.projectID
+            myProjectID = Int(myItem.projectID)
             myState = myItem.state!
             myAddressType = myItem.addressType!
+            myTeamID = Int(myItem.teamID)
         }
     }
     
-    init(addressID: Int32,
+    init(addressID: Int,
         addressLine1: String,
         addressLine2: String,
         city: String,
-        clientID: Int32,
+        clientID: Int,
         country: String,
-        personID: Int32,
+        personID: Int,
         postcode: String,
-        projectID: Int32,
+        projectID: Int,
         state: String,
-        addressType: String)
+        addressType: String,
+        teamID: Int)
     {
         super.init()
         
@@ -268,6 +274,7 @@ class address: NSObject
         myProjectID = projectID
         myState = state
         myAddressType = addressType
+        myTeamID = teamID
     }
 
     func save()
@@ -282,7 +289,8 @@ class address: NSObject
             postcode: myPostcode,
             projectID: myProjectID,
             state: myState,
-            addressType: myAddressType)
+            addressType: myAddressType,
+            teamID: myTeamID)
     }
     
     func delete()
@@ -293,17 +301,18 @@ class address: NSObject
 
 extension coreDatabase
 {
-    func saveAddress(_ addressID: Int32,
+    func saveAddress(_ addressID: Int,
                      addressLine1: String,
                      addressLine2: String,
                      city: String,
-                     clientID: Int32,
+                     clientID: Int,
                      country: String,
-                     personID: Int32,
+                     personID: Int,
                      postcode: String,
-                     projectID: Int32,
+                     projectID: Int,
                      state: String,
                      addressType: String,
+                     teamID: Int,
                      updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myItem: Addresses!
@@ -313,17 +322,18 @@ extension coreDatabase
         if myReturn.count == 0
         { // Add
             myItem = Addresses(context: objectContext)
-            myItem.addressID = addressID
+            myItem.addressID = Int64(addressID)
             myItem.addressLine1 = addressLine1
             myItem.addressLine2 = addressLine2
             myItem.city = city
-            myItem.clientID = clientID
+            myItem.clientID = Int64(clientID)
             myItem.country = country
-            myItem.personID = personID
+            myItem.personID = Int64(personID)
             myItem.postcode = postcode
-            myItem.projectID = projectID
+            myItem.projectID = Int64(projectID)
             myItem.state = state
             myItem.addressType = addressType
+            myItem.teamID = Int64(teamID)
 
             if updateType == "CODE"
             {
@@ -343,11 +353,11 @@ extension coreDatabase
             myItem.addressLine1 = addressLine1
             myItem.addressLine2 = addressLine2
             myItem.city = city
-            myItem.clientID = clientID
+            myItem.clientID = Int64(clientID)
             myItem.country = country
-            myItem.personID = personID
+            myItem.personID = Int64(personID)
             myItem.postcode = postcode
-            myItem.projectID = projectID
+            myItem.projectID = Int64(projectID)
             myItem.state = state
             myItem.addressType = addressType
             
@@ -369,31 +379,33 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceAddress(_ addressID: Int32,
+    func replaceAddress(_ addressID: Int,
                         addressLine1: String,
                         addressLine2: String,
                         city: String,
-                        clientID: Int32,
+                        clientID: Int,
                         country: String,
-                        personID: Int32,
+                        personID: Int,
                         postcode: String,
-                        projectID: Int32,
+                        projectID: Int,
                         state: String,
                         addressType: String,
+                        teamID: Int,
                         updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myItem = Addresses(context: objectContext)
-        myItem.addressID = addressID
+        myItem.addressID = Int64(addressID)
         myItem.addressLine1 = addressLine1
         myItem.addressLine2 = addressLine2
         myItem.city = city
-        myItem.clientID = clientID
+        myItem.clientID = Int64(clientID)
         myItem.country = country
-        myItem.personID = personID
+        myItem.personID = Int64(personID)
         myItem.postcode = postcode
-        myItem.projectID = projectID
+        myItem.projectID = Int64(projectID)
         myItem.state = state
         myItem.addressType = addressType
+        myItem.teamID = Int64(teamID)
         
         if updateType == "CODE"
         {
@@ -409,7 +421,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteAddress(_ addressID: Int32)
+    func deleteAddress(_ addressID: Int)
     {
         let myReturn = getAddressDetails(addressID)
         
@@ -423,7 +435,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func getAddressForPerson(personID: Int32)->[Addresses]
+    func getAddressForPerson(personID: Int)->[Addresses]
     {
         let fetchRequest = NSFetchRequest<Addresses>(entityName: "Addresses")
         
@@ -447,7 +459,7 @@ extension coreDatabase
         }
     }
     
-    func getAddressForClient(clientID: Int32)->[Addresses]
+    func getAddressForClient(clientID: Int)->[Addresses]
     {
         let fetchRequest = NSFetchRequest<Addresses>(entityName: "Addresses")
         
@@ -471,7 +483,7 @@ extension coreDatabase
         }
     }
 
-    func getAddressDetails(_ addressID: Int32)->[Addresses]
+    func getAddressDetails(_ addressID: Int)->[Addresses]
     {
         let fetchRequest = NSFetchRequest<Addresses>(entityName: "Addresses")
         
@@ -619,7 +631,7 @@ extension CloudKitInteraction
         }
     }
     
-    func updateAddressInCoreData(teamID: Int32)
+    func updateAddressInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "Addresses") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Addresses", predicate: predicate)
@@ -646,7 +658,7 @@ extension CloudKitInteraction
         }
     }
     
-    func deleteAddress(addressID: Int32, teamID: Int32)
+    func deleteAddress(addressID: Int, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -665,7 +677,7 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func replaceAddressInCoreData(teamID: Int32)
+    func replaceAddressInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "Addresses", predicate: predicate)
@@ -682,28 +694,34 @@ extension CloudKitInteraction
             let state = record.object(forKey: "state") as! String
             let addressType = record.object(forKey: "addressType") as! String
             
-            var addressID: Int32 = 0
+            var addressID: Int = 0
             if record.object(forKey: "addressID") != nil
             {
-                addressID = record.object(forKey: "addressID") as! Int32
+                addressID = record.object(forKey: "addressID") as! Int
             }
 
-            var clientID: Int32 = 0
+            var clientID: Int = 0
             if record.object(forKey: "clientID") != nil
             {
-                clientID = record.object(forKey: "clientID") as! Int32
+                clientID = record.object(forKey: "clientID") as! Int
             }
 
-            var personID: Int32 = 0
-            if record.object(forKey: "personID") != nil
+            var teamID: Int = 0
+            if record.object(forKey: "teamID") != nil
             {
-                personID = record.object(forKey: "personID") as! Int32
+                teamID = record.object(forKey: "teamID") as! Int
             }
             
-            var projectID: Int32 = 0
+            var personID: Int = 0
+            if record.object(forKey: "personID") != nil
+            {
+                personID = record.object(forKey: "personID") as! Int
+            }
+            
+            var projectID: Int = 0
             if record.object(forKey: "projectID") != nil
             {
-                projectID = record.object(forKey: "projectID") as! Int32
+                projectID = record.object(forKey: "projectID") as! Int
             }
 
             var updateTime = Date()
@@ -728,7 +746,8 @@ extension CloudKitInteraction
                                                 postcode: postcode,
                                                 projectID: projectID,
                                                 state: state,
-                                                addressType: addressType
+                                                addressType: addressType,
+                                                teamID: teamID
                             , updateTime: updateTime, updateType: updateType)
             
             usleep(useconds_t(self.sleepTime))
@@ -744,7 +763,7 @@ extension CloudKitInteraction
         }
     }
     
-    func saveAddressRecordToCloudKit(_ sourceRecord: Addresses, teamID: Int32)
+    func saveAddressRecordToCloudKit(_ sourceRecord: Addresses, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0)
         
@@ -850,28 +869,28 @@ extension CloudKitInteraction
         let state = sourceRecord.object(forKey: "state") as! String
         let addressType = sourceRecord.object(forKey: "addressType") as! String
         
-        var addressID: Int32 = 0
+        var addressID: Int = 0
         if sourceRecord.object(forKey: "addressID") != nil
         {
-            addressID = sourceRecord.object(forKey: "addressID") as! Int32
+            addressID = sourceRecord.object(forKey: "addressID") as! Int
         }
         
-        var clientID: Int32 = 0
+        var clientID: Int = 0
         if sourceRecord.object(forKey: "clientID") != nil
         {
-            clientID = sourceRecord.object(forKey: "clientID") as! Int32
+            clientID = sourceRecord.object(forKey: "clientID") as! Int
         }
         
-        var personID: Int32 = 0
+        var personID: Int = 0
         if sourceRecord.object(forKey: "personID") != nil
         {
-            personID = sourceRecord.object(forKey: "personID") as! Int32
+            personID = sourceRecord.object(forKey: "personID") as! Int
         }
         
-        var projectID: Int32 = 0
+        var projectID: Int = 0
         if sourceRecord.object(forKey: "projectID") != nil
         {
-            projectID = sourceRecord.object(forKey: "projectID") as! Int32
+            projectID = sourceRecord.object(forKey: "projectID") as! Int
         }
         
         var updateTime = Date()
@@ -886,6 +905,12 @@ extension CloudKitInteraction
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
         
+        var teamID: Int = 0
+        if sourceRecord.object(forKey: "teamID") != nil
+        {
+            teamID = sourceRecord.object(forKey: "teamID") as! Int
+        }
+        
         myDatabaseConnection.saveAddress(addressID,
                                          addressLine1: addressLine1,
                                          addressLine2: addressLine2,
@@ -896,7 +921,8 @@ extension CloudKitInteraction
                                          postcode: postcode,
                                          projectID: projectID,
                                          state: state,
-                                         addressType: addressType
+                                         addressType: addressType,
+                                         teamID: teamID
                 , updateTime: updateTime, updateType: updateType)
     }
 }

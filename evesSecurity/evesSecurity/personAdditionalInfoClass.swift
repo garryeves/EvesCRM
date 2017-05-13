@@ -18,9 +18,10 @@ class personAdditionalInfos: NSObject
     {
         for myItem in myDatabaseConnection.getPersonAdditionalInfo()
         {
-            let myObject = personAdditionalInfo(addInfoID: myItem.addInfoID,
+            let myObject = personAdditionalInfo(addInfoID: Int(myItem.addInfoID),
                                    addInfoName: myItem.addInfoName!,
-                addInfoType: myItem.addInfoType!
+                addInfoType: myItem.addInfoType!,
+                teamID: Int(myItem.teamID)
                                    )
             myAdditional.append(myObject)
         }
@@ -37,12 +38,12 @@ class personAdditionalInfos: NSObject
 
 class personAdditionalInfo: NSObject
 {
-    fileprivate var myAddInfoID: Int32 = 0
+    fileprivate var myAddInfoID: Int = 0
     fileprivate var myAddInfoName: String = ""
     fileprivate var myAddInfoType: String = ""
+    fileprivate var myTeamID: Int = 0
     
-    
-    var addInfoID: Int32
+    var addInfoID: Int
     {
         get
         {
@@ -80,27 +81,30 @@ class personAdditionalInfo: NSObject
     {
         super.init()
         
-        myAddInfoID = myDatabaseConnection.getNextID("personAdditionalInfo")
+        myAddInfoID = myDatabaseConnection.getNextID("personAdditionalInfo", teamID: currentUser.currentTeam!.teamID)
+        myTeamID = currentUser.currentTeam!.teamID
         
         save()
     }
     
-    init(addInfoID: Int32)
+    init(addInfoID: Int)
     {
         super.init()
         let myReturn = myDatabaseConnection.getPersonAdditionalInfoDetails(addInfoID)
         
         for myItem in myReturn
         {
-            myAddInfoID = myItem.addInfoID
+            myAddInfoID = Int(myItem.addInfoID)
             myAddInfoName = myItem.addInfoName!
             myAddInfoType = myItem.addInfoType!
+            myTeamID = Int(myItem.teamID)
         }
     }
     
-    init(addInfoID: Int32,
+    init(addInfoID: Int,
          addInfoName: String,
-         addInfoType: String
+         addInfoType: String,
+         teamID: Int
          )
     {
         super.init()
@@ -108,13 +112,15 @@ class personAdditionalInfo: NSObject
         myAddInfoID = addInfoID
         myAddInfoName = addInfoName
         myAddInfoType = addInfoType
+        myTeamID = teamID
     }
     
     func save()
     {
         myDatabaseConnection.savePersonAdditionalInfo(myAddInfoID,
                                          addInfoName: myAddInfoName,
-                                         addInfoType: myAddInfoType
+                                         addInfoType: myAddInfoType,
+                                         teamID: myTeamID
                                          )
     }
     
@@ -126,9 +132,10 @@ class personAdditionalInfo: NSObject
 
 extension coreDatabase
 {
-    func savePersonAdditionalInfo(_ addInfoID: Int32,
+    func savePersonAdditionalInfo(_ addInfoID: Int,
                      addInfoName: String,
                      addInfoType: String,
+                     teamID: Int,
                      updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myItem: PersonAdditionalInfo!
@@ -138,10 +145,10 @@ extension coreDatabase
         if myReturn.count == 0
         { // Add
             myItem = PersonAdditionalInfo(context: objectContext)
-            myItem.addInfoID = addInfoID
+            myItem.addInfoID = Int64(addInfoID)
             myItem.addInfoName = addInfoName
             myItem.addInfoType = addInfoType
-            
+            myItem.teamID = Int64(teamID)
             
             if updateType == "CODE"
             {
@@ -179,16 +186,17 @@ extension coreDatabase
         saveContext()
     }
     
-    func replacePersonAdditionalInfo(_ addInfoID: Int32,
+    func replacePersonAdditionalInfo(_ addInfoID: Int,
                         addInfoName: String,
                         addInfoType: String,
+                        teamID: Int,
                         updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myItem = PersonAdditionalInfo(context: objectContext)
-        myItem.addInfoID = addInfoID
+        myItem.addInfoID = Int64(addInfoID)
         myItem.addInfoName = addInfoName
         myItem.addInfoType = addInfoType
-        
+        myItem.teamID = Int64(teamID)
         
         if updateType == "CODE"
         {
@@ -204,7 +212,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func deletePersonAdditionalInfo(_ addInfoID: Int32)
+    func deletePersonAdditionalInfo(_ addInfoID: Int)
     {
         let myReturn = getPersonAdditionalInfoDetails(addInfoID)
         
@@ -242,7 +250,7 @@ extension coreDatabase
         }
     }
     
-    func getPersonAdditionalInfoDetails(_ addInfoID: Int32)->[PersonAdditionalInfo]
+    func getPersonAdditionalInfoDetails(_ addInfoID: Int)->[PersonAdditionalInfo]
     {
         let fetchRequest = NSFetchRequest<PersonAdditionalInfo>(entityName: "PersonAdditionalInfo")
         
@@ -390,7 +398,7 @@ extension CloudKitInteraction
         }
     }
     
-    func updatePersonAdditionalInfoInCoreData(teamID: Int32)
+    func updatePersonAdditionalInfoInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "PersonAdditionalInfo") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "PersonAdditionalInfo", predicate: predicate)
@@ -417,7 +425,7 @@ extension CloudKitInteraction
         }
     }
     
-    func deletePersonAdditionalInfo(addInfoID: Int32, teamID: Int32)
+    func deletePersonAdditionalInfo(addInfoID: Int, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -436,7 +444,7 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func replacePersonAdditionalInfoInCoreData(teamID: Int32)
+    func replacePersonAdditionalInfoInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "PersonAdditionalInfo", predicate: predicate)
@@ -448,10 +456,10 @@ extension CloudKitInteraction
             let addInfoName = record.object(forKey: "addInfoName") as! String
             let addInfoType = record.object(forKey: "addInfoType") as! String
             
-            var addInfoID: Int32 = 0
+            var addInfoID: Int = 0
             if record.object(forKey: "addInfoID") != nil
             {
-                addInfoID = record.object(forKey: "addInfoID") as! Int32
+                addInfoID = record.object(forKey: "addInfoID") as! Int
             }
             
             var updateTime = Date()
@@ -466,9 +474,16 @@ extension CloudKitInteraction
                 updateType = record.object(forKey: "updateType") as! String
             }
             
+            var teamID: Int = 0
+            if record.object(forKey: "teamID") != nil
+            {
+                teamID = record.object(forKey: "teamID") as! Int
+            }
+            
             myDatabaseConnection.replacePersonAdditionalInfo(addInfoID,
                                                 addInfoName: addInfoName,
-                                                addInfoType: addInfoType
+                                                addInfoType: addInfoType,
+                                                teamID: teamID
                                                 , updateTime: updateTime, updateType: updateType)
             
             usleep(useconds_t(self.sleepTime))
@@ -484,7 +499,7 @@ extension CloudKitInteraction
         }
     }
     
-    func savePersonAdditionalInfoRecordToCloudKit(_ sourceRecord: PersonAdditionalInfo, teamID: Int32)
+    func savePersonAdditionalInfoRecordToCloudKit(_ sourceRecord: PersonAdditionalInfo, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0)
         
@@ -569,10 +584,10 @@ extension CloudKitInteraction
         let addInfoName = sourceRecord.object(forKey: "addInfoName") as! String
         let addInfoType = sourceRecord.object(forKey: "addInfoType") as! String
         
-        var addInfoID: Int32 = 0
+        var addInfoID: Int = 0
         if sourceRecord.object(forKey: "addInfoID") != nil
         {
-            addInfoID = sourceRecord.object(forKey: "addInfoID") as! Int32
+            addInfoID = sourceRecord.object(forKey: "addInfoID") as! Int
         }
         
         var updateTime = Date()
@@ -587,9 +602,16 @@ extension CloudKitInteraction
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
         
+        var teamID: Int = 0
+        if sourceRecord.object(forKey: "teamID") != nil
+        {
+            teamID = sourceRecord.object(forKey: "teamID") as! Int
+        }
+        
         myDatabaseConnection.savePersonAdditionalInfo(addInfoID,
                                          addInfoName: addInfoName,
-                                         addInfoType: addInfoType
+                                         addInfoType: addInfoType,
+                                         teamID: teamID
                                          , updateTime: updateTime, updateType: updateType)
     }
     

@@ -14,16 +14,17 @@ class rates: NSObject
 {
     fileprivate var myRates:[rate] = Array()
     
-    init(projectID: Int32)
+    init(projectID: Int)
     {
         for myItem in myDatabaseConnection.getRates(projectID: projectID)
         {
-            let myObject = rate(rateID: myItem.rateID,
-                                projectID: myItem.projectID,
+            let myObject = rate(rateID: Int(myItem.rateID),
+                                projectID: Int(myItem.projectID),
                                 rateName: myItem.rateName!,
                                 rateAmount: myItem.rateAmount,
                                 chargeAmount: myItem.chargeAmount,
-                                startDate: myItem.startDate! as Date)
+                                startDate: myItem.startDate! as Date,
+            teamID: Int(myItem.teamID))
             myRates.append(myObject)
         }
     }
@@ -39,14 +40,15 @@ class rates: NSObject
 
 class rate: NSObject
 {
-    fileprivate var myRateID: Int32 = 0
-    fileprivate var myProjectID: Int32 = 0
+    fileprivate var myRateID: Int = 0
+    fileprivate var myProjectID: Int = 0
     fileprivate var myRateName: String = ""
     fileprivate var myRateAmount: Double = 0.0
     fileprivate var myChargeAmount: Double = 0.0
     fileprivate var myStartDate: Date = getDefaultDate()
+    fileprivate var myTeamID: Int = 0
     
-    var rateID: Int32
+    var rateID: Int
     {
         get
         {
@@ -54,7 +56,7 @@ class rate: NSObject
         }
     }
     
-    var projectID: Int32
+    var projectID: Int
     {
         get
         {
@@ -114,38 +116,41 @@ class rate: NSObject
         }
     }
 
-    init(projectID: Int32)
+    init(projectID: Int, teamID: Int)
     {
         super.init()
         
-        myRateID = myDatabaseConnection.getNextID("Rates")
+        myRateID = myDatabaseConnection.getNextID("Rates", teamID: teamID)
         myProjectID = projectID
+        myTeamID = teamID
         
         save()
     }
     
-    init(rateID: Int32)
+    init(rateID: Int)
     {
         super.init()
         let myReturn = myDatabaseConnection.getRatesDetails(rateID)
         
         for myItem in myReturn
         {
-            myRateID = myItem.rateID
-            myProjectID = myItem.projectID
+            myRateID = Int(myItem.rateID)
+            myProjectID = Int(myItem.projectID)
             myRateName = myItem.rateName!
             myRateAmount = myItem.rateAmount
             myChargeAmount = myItem.chargeAmount
             myStartDate = myItem.startDate! as Date
+            myTeamID = Int(myItem.teamID)
         }
     }
     
-    init(rateID: Int32,
-         projectID: Int32,
+    init(rateID: Int,
+         projectID: Int,
          rateName: String,
          rateAmount: Double,
          chargeAmount: Double,
-         startDate: Date
+         startDate: Date,
+         teamID: Int
          )
     {
         super.init()
@@ -156,6 +161,7 @@ class rate: NSObject
         myRateAmount = rateAmount
         myChargeAmount = chargeAmount
         myStartDate = startDate
+        myTeamID = teamID
     }
     
     func save()
@@ -165,7 +171,8 @@ class rate: NSObject
                                         rateName: myRateName,
                                         rateAmount: myRateAmount,
                                         chargeAmount: myChargeAmount,
-                                        startDate: myStartDate
+                                        startDate: myStartDate,
+                                        teamID: myTeamID
                                          )
     }
     
@@ -177,12 +184,13 @@ class rate: NSObject
 
 extension coreDatabase
 {
-    func saveRates(_ rateID: Int32,
-                   projectID: Int32,
+    func saveRates(_ rateID: Int,
+                   projectID: Int,
                    rateName: String,
                    rateAmount: Double,
                    chargeAmount: Double,
                    startDate: Date,
+                   teamID: Int,
                      updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myItem: Rates!
@@ -192,12 +200,13 @@ extension coreDatabase
         if myReturn.count == 0
         { // Add
             myItem = Rates(context: objectContext)
-            myItem.rateID = rateID
-            myItem.projectID = projectID
+            myItem.rateID = Int64(rateID)
+            myItem.projectID = Int64(projectID)
             myItem.rateName = rateName
             myItem.rateAmount = rateAmount
             myItem.chargeAmount = chargeAmount
             myItem.startDate = startDate as NSDate
+            myItem.teamID = Int64(teamID)
             
             if updateType == "CODE"
             {
@@ -214,7 +223,7 @@ extension coreDatabase
         else
         {
             myItem = myReturn[0]
-            myItem.projectID = projectID
+            myItem.projectID = Int64(projectID)
             myItem.rateName = rateName
             myItem.rateAmount = rateAmount
             myItem.chargeAmount = chargeAmount
@@ -238,21 +247,23 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceRates(_ rateID: Int32,
-                      projectID: Int32,
+    func replaceRates(_ rateID: Int,
+                      projectID: Int,
                       rateName: String,
                       rateAmount: Double,
                       chargeAmount: Double,
                       startDate: Date,
+                      teamID: Int,
                         updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myItem = Rates(context: objectContext)
-        myItem.rateID = rateID
-        myItem.projectID = projectID
+        myItem.rateID = Int64(rateID)
+        myItem.projectID = Int64(projectID)
         myItem.rateName = rateName
         myItem.rateAmount = rateAmount
         myItem.chargeAmount = chargeAmount
         myItem.startDate = startDate as NSDate
+        myItem.teamID = Int64(teamID)
         
         if updateType == "CODE"
         {
@@ -268,7 +279,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteRates(_ rateID: Int32)
+    func deleteRates(_ rateID: Int)
     {
         let myReturn = getRatesDetails(rateID)
         
@@ -282,7 +293,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func getRates(projectID: Int32)->[Rates]
+    func getRates(projectID: Int)->[Rates]
     {
         let fetchRequest = NSFetchRequest<Rates>(entityName: "Rates")
         
@@ -306,7 +317,7 @@ extension coreDatabase
         }
     }
     
-    func getRatesDetails(_ rateID: Int32)->[Rates]
+    func getRatesDetails(_ rateID: Int)->[Rates]
     {
         let fetchRequest = NSFetchRequest<Rates>(entityName: "Rates")
         
@@ -454,7 +465,7 @@ extension CloudKitInteraction
         }
     }
     
-    func updateRatesInCoreData(teamID: Int32)
+    func updateRatesInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "Rates") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Rates", predicate: predicate)
@@ -481,7 +492,7 @@ extension CloudKitInteraction
         }
     }
     
-    func deleteRates(rateID: Int32, teamID: Int32)
+    func deleteRates(rateID: Int, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -500,7 +511,7 @@ extension CloudKitInteraction
         sem.wait()
     }
 
-    func replaceratesInCoreData(teamID: Int32)
+    func replaceratesInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "Rates", predicate: predicate)
@@ -511,16 +522,16 @@ extension CloudKitInteraction
         operation.recordFetchedBlock = { (record) in
             let rateName = record.object(forKey: "rateName") as! String
             
-            var rateID: Int32 = 0
+            var rateID: Int = 0
             if record.object(forKey: "rateID") != nil
             {
-                rateID = record.object(forKey: "rateID") as! Int32
+                rateID = record.object(forKey: "rateID") as! Int
             }
             
-            var projectID: Int32 = 0
+            var projectID: Int = 0
             if record.object(forKey: "projectID") != nil
             {
-                projectID = record.object(forKey: "projectID") as! Int32
+                projectID = record.object(forKey: "projectID") as! Int
             }
             
             var rateAmount: Double = 0.0
@@ -558,7 +569,8 @@ extension CloudKitInteraction
                                                 rateName: rateName,
                                                 rateAmount: rateAmount,
                                                 chargeAmount: chargeAmount,
-                                                startDate: startDate
+                                                startDate: startDate,
+                                                teamID: teamID
                                                 , updateTime: updateTime, updateType: updateType)
             
             usleep(useconds_t(self.sleepTime))
@@ -574,7 +586,7 @@ extension CloudKitInteraction
         }
     }
 
-    func saveRatesRecordToCloudKit(_ sourceRecord: Rates, teamID: Int32)
+    func saveRatesRecordToCloudKit(_ sourceRecord: Rates, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0)
         
@@ -664,16 +676,16 @@ extension CloudKitInteraction
     {
         let rateName = sourceRecord.object(forKey: "rateName") as! String
         
-        var rateID: Int32 = 0
+        var rateID: Int = 0
         if sourceRecord.object(forKey: "rateID") != nil
         {
-            rateID = sourceRecord.object(forKey: "rateID") as! Int32
+            rateID = sourceRecord.object(forKey: "rateID") as! Int
         }
         
-        var projectID: Int32 = 0
+        var projectID: Int = 0
         if sourceRecord.object(forKey: "projectID") != nil
         {
-            projectID = sourceRecord.object(forKey: "projectID") as! Int32
+            projectID = sourceRecord.object(forKey: "projectID") as! Int
         }
         
         var rateAmount: Double = 0.0
@@ -706,12 +718,19 @@ extension CloudKitInteraction
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
         
+        var teamID: Int = 0
+        if sourceRecord.object(forKey: "teamID") != nil
+        {
+            teamID = sourceRecord.object(forKey: "teamID") as! Int
+        }
+        
         myDatabaseConnection.saveRates(rateID,
                                          projectID: projectID,
                                          rateName: rateName,
                                          rateAmount: rateAmount,
                                          chargeAmount: chargeAmount,
-                                         startDate: startDate
+                                         startDate: startDate,
+                                         teamID: teamID
                                          , updateTime: updateTime, updateType: updateType)
     }
 }

@@ -14,14 +14,15 @@ class contractShifts: NSObject
 {
     fileprivate var myContractShifts:[contractShift] = Array()
     
-    init(projectID: Int32)
+    init(projectID: Int)
     {
         for myItem in myDatabaseConnection.getContractShifts(projectID: projectID)
         {
-            let myObject = contractShift(contractShiftID: myItem.contractShiftID,
-                                          projectID: myItem.projectID,
+            let myObject = contractShift(contractShiftID: Int(myItem.contractShiftID),
+                                          projectID: Int(myItem.projectID),
                                           startDate: myItem.startDate! as Date,
-                                          endDate: myItem.endDate! as Date)
+                                          endDate: myItem.endDate! as Date,
+            teamID: Int(myItem.teamID))
             myContractShifts.append(myObject)
         }
     }
@@ -37,12 +38,13 @@ class contractShifts: NSObject
 
 class contractShift: NSObject
 {
-    fileprivate var myContractShiftID: Int32 = 0
-    fileprivate var myProjectID: Int32 = 0
+    fileprivate var myContractShiftID: Int = 0
+    fileprivate var myProjectID: Int = 0
     fileprivate var myStartDate: Date = getDefaultDate()
     fileprivate var myEndDate: Date = getDefaultDate()
+    fileprivate var myTeamID: Int = 0
     
-    var ontractShiftID: Int32
+    var ontractShiftID: Int
     {
         get
         {
@@ -50,7 +52,7 @@ class contractShift: NSObject
         }
     }
     
-    var projectID: Int32
+    var projectID: Int
     {
         get
         {
@@ -84,34 +86,37 @@ class contractShift: NSObject
         }
     }
     
-    init(projectID: Int32)
+    init(projectID: Int, teamID: Int)
     {
         super.init()
         
-        myContractShiftID = myDatabaseConnection.getNextID("ContractShift")
+        myContractShiftID = myDatabaseConnection.getNextID("ContractShift", teamID: teamID)
         myProjectID = projectID
+        myTeamID = teamID
         
         save()
     }
     
-    init(contractShiftID: Int32)
+    init(contractShiftID: Int)
     {
         super.init()
         let myReturn = myDatabaseConnection.getContractShiftsDetails(contractShiftID)
         
         for myItem in myReturn
         {
-            myContractShiftID = myItem.contractShiftID
-            myProjectID = myItem.projectID
+            myContractShiftID = Int(myItem.contractShiftID)
+            myProjectID = Int(myItem.projectID)
             myStartDate = myItem.startDate! as Date
             myEndDate = myItem.endDate! as Date
+            myTeamID = Int(myItem.teamID)
         }
     }
     
-    init(contractShiftID: Int32,
-         projectID: Int32,
+    init(contractShiftID: Int,
+         projectID: Int,
          startDate: Date,
-         endDate: Date
+         endDate: Date,
+         teamID: Int
          )
     {
         super.init()
@@ -120,6 +125,7 @@ class contractShift: NSObject
         myProjectID = projectID
         myStartDate = startDate
         myEndDate = endDate
+        myTeamID = teamID
     }
     
     func save()
@@ -127,7 +133,8 @@ class contractShift: NSObject
         myDatabaseConnection.saveContractShifts(myContractShiftID,
                                                 projectID: myProjectID,
                                                 startDate: myStartDate,
-                                                endDate: myEndDate
+                                                endDate: myEndDate,
+                                                teamID: myTeamID
                                          )
     }
     
@@ -139,10 +146,11 @@ class contractShift: NSObject
 
 extension coreDatabase
 {
-    func saveContractShifts(_ contractShiftID: Int32,
-                            projectID: Int32,
+    func saveContractShifts(_ contractShiftID: Int,
+                            projectID: Int,
                             startDate: Date,
                             endDate: Date,
+                            teamID: Int,
                      updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myItem: ContractShifts!
@@ -152,10 +160,11 @@ extension coreDatabase
         if myReturn.count == 0
         { // Add
             myItem = ContractShifts(context: objectContext)
-            myItem.contractShiftID = contractShiftID
-            myItem.projectID = projectID
+            myItem.contractShiftID = Int64(contractShiftID)
+            myItem.projectID = Int64(projectID)
             myItem.startDate = startDate as NSDate
             myItem.endDate = endDate as NSDate
+            myItem.teamID = Int64(teamID)
             
             if updateType == "CODE"
             {
@@ -194,18 +203,20 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceContractShifts(_ contractShiftID: Int32,
-                               projectID: Int32,
+    func replaceContractShifts(_ contractShiftID: Int,
+                               projectID: Int,
                                startDate: Date,
                                endDate: Date,
+                               teamID: Int,
                         updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myItem = ContractShifts(context: objectContext)
-        myItem.contractShiftID = contractShiftID
-        myItem.projectID = projectID
+        myItem.contractShiftID = Int64(contractShiftID)
+        myItem.projectID = Int64(projectID)
         myItem.startDate = startDate as NSDate
         myItem.endDate = endDate as NSDate
-        
+        myItem.teamID = Int64(teamID)
+
         if updateType == "CODE"
         {
             myItem.updateTime =  NSDate()
@@ -220,7 +231,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteContractShifts(_ contractShiftID: Int32)
+    func deleteContractShifts(_ contractShiftID: Int)
     {
         let myReturn = getContractShiftsDetails(contractShiftID)
         
@@ -234,7 +245,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func getContractShifts(projectID: Int32)->[ContractShifts]
+    func getContractShifts(projectID: Int)->[ContractShifts]
     {
         let fetchRequest = NSFetchRequest<ContractShifts>(entityName: "ContractShifts")
         
@@ -258,7 +269,7 @@ extension coreDatabase
         }
     }
     
-    func getContractShiftsDetails(_ contractShiftID: Int32)->[ContractShifts]
+    func getContractShiftsDetails(_ contractShiftID: Int)->[ContractShifts]
     {
         let fetchRequest = NSFetchRequest<ContractShifts>(entityName: "ContractShifts")
         
@@ -406,7 +417,7 @@ extension CloudKitInteraction
         }
     }
     
-    func updateContractShiftsInCoreData(teamID: Int32)
+    func updateContractShiftsInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "ContractShifts") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "ContractShifts", predicate: predicate)
@@ -433,7 +444,7 @@ extension CloudKitInteraction
         }
     }
     
-    func deleteContractShifts(contractShiftID: Int32, teamID: Int32)
+    func deleteContractShifts(contractShiftID: Int, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -452,7 +463,7 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func replaceContractShiftsInCoreData(teamID: Int32)
+    func replaceContractShiftsInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "ContractShifts", predicate: predicate)
@@ -461,16 +472,16 @@ extension CloudKitInteraction
         waitFlag = true
         
         operation.recordFetchedBlock = { (record) in
-            var contractShiftID: Int32 = 0
+            var contractShiftID: Int = 0
             if record.object(forKey: "contractShiftID") != nil
             {
-                contractShiftID = record.object(forKey: "contractShiftID") as! Int32
+                contractShiftID = record.object(forKey: "contractShiftID") as! Int
             }
 
-            var projectID: Int32 = 0
+            var projectID: Int = 0
             if record.object(forKey: "projectID") != nil
             {
-                projectID = record.object(forKey: "projectID") as! Int32
+                projectID = record.object(forKey: "projectID") as! Int
             }
             
             var startDate = Date()
@@ -500,7 +511,8 @@ extension CloudKitInteraction
             myDatabaseConnection.replaceContractShifts(contractShiftID,
                                                 projectID: projectID,
                                                 startDate: startDate,
-                                                endDate: endDate
+                                                endDate: endDate,
+                teamID: teamID
                                                 , updateTime: updateTime, updateType: updateType)
             
             usleep(useconds_t(self.sleepTime))
@@ -516,7 +528,7 @@ extension CloudKitInteraction
         }
     }
     
-    func saveContractShiftsRecordToCloudKit(_ sourceRecord: ContractShifts, teamID: Int32)
+    func saveContractShiftsRecordToCloudKit(_ sourceRecord: ContractShifts, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0)
         
@@ -599,16 +611,16 @@ extension CloudKitInteraction
     
     func updateContractShiftsRecord(_ sourceRecord: CKRecord)
     {
-        var contractShiftID: Int32 = 0
+        var contractShiftID: Int = 0
         if sourceRecord.object(forKey: "contractShiftID") != nil
         {
-            contractShiftID = sourceRecord.object(forKey: "contractShiftID") as! Int32
+            contractShiftID = sourceRecord.object(forKey: "contractShiftID") as! Int
         }
         
-        var projectID: Int32 = 0
+        var projectID: Int = 0
         if sourceRecord.object(forKey: "projectID") != nil
         {
-            projectID = sourceRecord.object(forKey: "projectID") as! Int32
+            projectID = sourceRecord.object(forKey: "projectID") as! Int
         }
         
         var startDate = Date()
@@ -635,10 +647,17 @@ extension CloudKitInteraction
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
         
+        var teamID: Int = 0
+        if sourceRecord.object(forKey: "teamID") != nil
+        {
+            teamID = sourceRecord.object(forKey: "teamID") as! Int
+        }
+        
         myDatabaseConnection.saveContractShifts(contractShiftID,
                                          projectID: projectID,
                                          startDate: startDate,
-                                         endDate: endDate
+                                         endDate: endDate,
+                                         teamID: teamID
                                          , updateTime: updateTime, updateType: updateType)
     }
 }

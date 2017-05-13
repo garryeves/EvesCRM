@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3407F7AC1EC6CA4F008C5751 /* userRolesClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3407F7AB1EC6CA4F008C5751 /* userRolesClass.swift */; };
 		341323831EC3EA9700BBDE1E /* personClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341323821EC3EA9700BBDE1E /* personClass.swift */; };
 		341323871EC3FA8900BBDE1E /* contractShiftComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341323861EC3FA8900BBDE1E /* contractShiftComponent.swift */; };
 		341323891EC403A700BBDE1E /* contractShift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341323881EC403A700BBDE1E /* contractShift.swift */; };
@@ -14,8 +15,6 @@
 		3413238F1EC42F1F00BBDE1E /* ratesClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3413238E1EC42F1F00BBDE1E /* ratesClass.swift */; };
 		341323911EC4369700BBDE1E /* reportingMonthClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341323901EC4369700BBDE1E /* reportingMonthClass.swift */; };
 		341323941EC43C3500BBDE1E /* shiftsClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341323931EC43C3500BBDE1E /* shiftsClass.swift */; };
-		341323961EC4469D00BBDE1E /* UserRoleTypesClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341323951EC4469D00BBDE1E /* UserRoleTypesClass.swift */; };
-		341323981EC44BFC00BBDE1E /* userRolesClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341323971EC44BFC00BBDE1E /* userRolesClass.swift */; };
 		3413239A1EC4530300BBDE1E /* UsersClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341323991EC4530300BBDE1E /* UsersClass.swift */; };
 		347BCEBE1EC559BD006B95BA /* LoginRoles.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 347BCEBD1EC559BD006B95BA /* LoginRoles.storyboard */; };
 		347BCEC01EC55D88006B95BA /* newUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347BCEBF1EC55D88006B95BA /* newUserViewController.swift */; };
@@ -39,8 +38,6 @@
 		34CEE9781EC2C1DF00F85A11 /* teamClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CEE9771EC2C1DF00F85A11 /* teamClass.swift */; };
 		34CEE97E1EC2C37E00F85A11 /* notificationDefinitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CEE97D1EC2C37E00F85A11 /* notificationDefinitions.swift */; };
 		34CEE9801EC2C41600F85A11 /* decodesClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CEE97F1EC2C41600F85A11 /* decodesClass.swift */; };
-		34CEE9861EC2C4C900F85A11 /* rolesClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CEE9851EC2C4C900F85A11 /* rolesClass.swift */; };
-		34CEE9881EC2C4E700F85A11 /* stageClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CEE9871EC2C4E700F85A11 /* stageClass.swift */; };
 		34CEE98A1EC2C50200F85A11 /* GTDItemClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CEE9891EC2C50200F85A11 /* GTDItemClass.swift */; };
 		34CEE98C1EC2C51300F85A11 /* GTDLevelClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CEE98B1EC2C51300F85A11 /* GTDLevelClass.swift */; };
 		34CEE98E1EC2C52500F85A11 /* contextClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CEE98D1EC2C52500F85A11 /* contextClass.swift */; };
@@ -83,6 +80,7 @@
 
 /* Begin PBXFileReference section */
 		32D10F38106CA072E7F5B8C3 /* Pods-evesSecurity.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-evesSecurity.release.xcconfig"; path = "Pods/Target Support Files/Pods-evesSecurity/Pods-evesSecurity.release.xcconfig"; sourceTree = "<group>"; };
+		3407F7AB1EC6CA4F008C5751 /* userRolesClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = userRolesClass.swift; sourceTree = "<group>"; };
 		341323821EC3EA9700BBDE1E /* personClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = personClass.swift; sourceTree = "<group>"; };
 		341323861EC3FA8900BBDE1E /* contractShiftComponent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = contractShiftComponent.swift; sourceTree = "<group>"; };
 		341323881EC403A700BBDE1E /* contractShift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = contractShift.swift; sourceTree = "<group>"; };
@@ -90,8 +88,6 @@
 		3413238E1EC42F1F00BBDE1E /* ratesClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ratesClass.swift; sourceTree = "<group>"; };
 		341323901EC4369700BBDE1E /* reportingMonthClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = reportingMonthClass.swift; sourceTree = "<group>"; };
 		341323931EC43C3500BBDE1E /* shiftsClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = shiftsClass.swift; sourceTree = "<group>"; };
-		341323951EC4469D00BBDE1E /* UserRoleTypesClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserRoleTypesClass.swift; sourceTree = "<group>"; };
-		341323971EC44BFC00BBDE1E /* userRolesClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = userRolesClass.swift; sourceTree = "<group>"; };
 		341323991EC4530300BBDE1E /* UsersClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsersClass.swift; sourceTree = "<group>"; };
 		347BCEBD1EC559BD006B95BA /* LoginRoles.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LoginRoles.storyboard; sourceTree = "<group>"; };
 		347BCEBF1EC55D88006B95BA /* newUserViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = newUserViewController.swift; sourceTree = "<group>"; };
@@ -149,8 +145,6 @@
 		34CEE9771EC2C1DF00F85A11 /* teamClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = teamClass.swift; path = ../../EvesCRM/teamClass.swift; sourceTree = "<group>"; };
 		34CEE97D1EC2C37E00F85A11 /* notificationDefinitions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = notificationDefinitions.swift; sourceTree = "<group>"; };
 		34CEE97F1EC2C41600F85A11 /* decodesClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = decodesClass.swift; path = ../../EvesCRM/decodesClass.swift; sourceTree = "<group>"; };
-		34CEE9851EC2C4C900F85A11 /* rolesClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = rolesClass.swift; path = ../../EvesCRM/rolesClass.swift; sourceTree = "<group>"; };
-		34CEE9871EC2C4E700F85A11 /* stageClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = stageClass.swift; path = ../../EvesCRM/stageClass.swift; sourceTree = "<group>"; };
 		34CEE9891EC2C50200F85A11 /* GTDItemClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GTDItemClass.swift; path = ../../EvesCRM/GTDItemClass.swift; sourceTree = "<group>"; };
 		34CEE98B1EC2C51300F85A11 /* GTDLevelClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GTDLevelClass.swift; path = ../../EvesCRM/GTDLevelClass.swift; sourceTree = "<group>"; };
 		34CEE98D1EC2C52500F85A11 /* contextClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = contextClass.swift; path = ../../EvesCRM/contextClass.swift; sourceTree = "<group>"; };
@@ -272,8 +266,6 @@
 				34CEE97D1EC2C37E00F85A11 /* notificationDefinitions.swift */,
 				34CEE9D31EC2C71C00F85A11 /* projectClass.swift */,
 				34CEE9D51EC2C74700F85A11 /* projectteamMemberClass.swift */,
-				34CEE9851EC2C4C900F85A11 /* rolesClass.swift */,
-				34CEE9871EC2C4E700F85A11 /* stageClass.swift */,
 				34CEE9A91EC2C61500F85A11 /* taskClass.swift */,
 				34CEE9D71EC2C76300F85A11 /* taskContextsClass.swift */,
 				34CEE9D91EC2C78300F85A11 /* taskPredecessorClass.swift */,
@@ -291,8 +283,7 @@
 				3413238E1EC42F1F00BBDE1E /* ratesClass.swift */,
 				341323901EC4369700BBDE1E /* reportingMonthClass.swift */,
 				341323931EC43C3500BBDE1E /* shiftsClass.swift */,
-				341323951EC4469D00BBDE1E /* UserRoleTypesClass.swift */,
-				341323971EC44BFC00BBDE1E /* userRolesClass.swift */,
+				3407F7AB1EC6CA4F008C5751 /* userRolesClass.swift */,
 				341323991EC4530300BBDE1E /* UsersClass.swift */,
 				347BCEC81EC59C43006B95BA /* userTeamsClass.swift */,
 			);
@@ -548,13 +539,11 @@
 				34CEEA391EC2EB5E00F85A11 /* addressClass.swift in Sources */,
 				349653011EC1E5B800210A46 /* ViewController.swift in Sources */,
 				347BCEC21EC563F0006B95BA /* orgEditViewController.swift in Sources */,
-				34CEE9881EC2C4E700F85A11 /* stageClass.swift in Sources */,
 				341323831EC3EA9700BBDE1E /* personClass.swift in Sources */,
 				341323941EC43C3500BBDE1E /* shiftsClass.swift in Sources */,
 				34CEE98C1EC2C51300F85A11 /* GTDLevelClass.swift in Sources */,
 				34CEE9D41EC2C71C00F85A11 /* projectClass.swift in Sources */,
 				34CEE98E1EC2C52500F85A11 /* contextClass.swift in Sources */,
-				341323981EC44BFC00BBDE1E /* userRolesClass.swift in Sources */,
 				347BCEC91EC59C43006B95BA /* userTeamsClass.swift in Sources */,
 				34CEE9AA1EC2C61500F85A11 /* taskClass.swift in Sources */,
 				34CEE9D81EC2C76300F85A11 /* taskContextsClass.swift in Sources */,
@@ -577,6 +566,7 @@
 				34CEEA471EC3145200F85A11 /* personAdditionalInfoClass.swift in Sources */,
 				34CEE9901EC2C53400F85A11 /* CalendarDetails.swift in Sources */,
 				34CEE9DC1EC2C79600F85A11 /* taskUpdatesClass.swift in Sources */,
+				3407F7AC1EC6CA4F008C5751 /* userRolesClass.swift in Sources */,
 				349653331EC1F0DC00210A46 /* evesSecurityShared.swift in Sources */,
 				34CEE9AC1EC2C63700F85A11 /* meetingAttendeeClass.swift in Sources */,
 				341323891EC403A700BBDE1E /* contractShift.swift in Sources */,
@@ -584,14 +574,12 @@
 				34CEE9781EC2C1DF00F85A11 /* teamClass.swift in Sources */,
 				341323871EC3FA8900BBDE1E /* contractShiftComponent.swift in Sources */,
 				34CEE98A1EC2C50200F85A11 /* GTDItemClass.swift in Sources */,
-				34CEE9861EC2C4C900F85A11 /* rolesClass.swift in Sources */,
 				3413239A1EC4530300BBDE1E /* UsersClass.swift in Sources */,
 				34CEE9AE1EC2C65100F85A11 /* meetingAgendaItemClass.swift in Sources */,
 				34CEE9741EC2BEC200F85A11 /* UserInfo.swift in Sources */,
 				349652FF1EC1E5B800210A46 /* AppDelegate.swift in Sources */,
 				34CEE9D61EC2C74700F85A11 /* projectteamMemberClass.swift in Sources */,
 				34CEEA431EC30B7700F85A11 /* Contacts.swift in Sources */,
-				341323961EC4469D00BBDE1E /* UserRoleTypesClass.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

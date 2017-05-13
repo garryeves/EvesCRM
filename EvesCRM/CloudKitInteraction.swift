@@ -8,7 +8,6 @@
 
 import Foundation
 import CloudKit
-import RNCryptor
 
 // FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
 // Consider refactoring the code to use the non-optional operators.
@@ -36,7 +35,7 @@ fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
 
 struct returnUser
 {
-    var userID: Int32
+    var userID: Int
     var name: String
     var passPhrase: String
     var phraseDate: Date
@@ -57,7 +56,7 @@ class CloudKitInteraction
     var waitFlag: Bool = true
     let sleepTime = 500
     var recordCount: Int = 0
-    var recordsInTable: Int32 = 0
+    var recordsInTable: Int = 0
     var returnUserEntry: returnUser!
     
     fileprivate let secretKey = "djskfPnmjYUPFEUingljmyzdls"
@@ -202,7 +201,7 @@ class CloudKitInteraction
         //        while waitFlag
         //        {
         //print("Waiting")
-        //            sleep(UInt32(0.5))
+        //            sleep(UInt(0.5))
         //        }
         //print("Completed")
     }
@@ -253,7 +252,7 @@ class CloudKitInteraction
 //        while waitFlag
 //        {
 //print("Waiting")
-//            sleep(UInt32(0.5))
+//            sleep(UInt(0.5))
 //        }
 //print("Completed")
     }
@@ -311,107 +310,6 @@ class CloudKitInteraction
             {
                 NSLog("Error = \(String(describing: error))")
             }
-        }
-    }
-    
-    func encryptText(_ sourceString: String)->Data
-    {
-        let data: Data = sourceString.data(using: .utf8)!
-        return RNCryptor.encrypt(data: data, withPassword: secretKey)
-    }
-    
-    func encryptText(_ sourceInt32: Int32)->Data
-    {
-        let workingString = "\(sourceInt32)"
-        let data: Data = workingString.data(using: .utf8)!
-        return RNCryptor.encrypt(data: data, withPassword: secretKey)
-    }
-    
-    func encryptText(_ sourceDouble: Double)->Data
-    {
-        let workingString = "\(sourceDouble)"
-        let data: Data = workingString.data(using: .utf8)!
-        return RNCryptor.encrypt(data: data, withPassword: secretKey)
-    }
-    
-    func encryptText(_ sourceDate: Date)->Data
-    {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .full
-        dateFormatter.timeStyle = .full
-        
-        let workingString = dateFormatter.string(from: sourceDate)
-        let data: Data = workingString.data(using: .utf8)!
-        return RNCryptor.encrypt(data: data, withPassword: secretKey)
-    }
-    
-    func decryptText(_ textData: Data)->String
-    {
-        do
-        {
-            let originalData = try RNCryptor.decrypt(data: textData, withPassword: secretKey)
-
-            return String(data: originalData, encoding: .utf8)!
-        }
-        catch
-        {
-            print(error)
-            return ""
-        }
-    }
-    
-    func decryptText(_ textData: Data)->Double
-    {
-        do
-        {
-            let originalData = try RNCryptor.decrypt(data: textData, withPassword: secretKey)
-            
-            let newString = String(data: originalData, encoding: .utf8)
-            
-            return Double(newString!)!
-        }
-        catch
-        {
-            print(error)
-            return 0.0
-        }
-    }
-    
-    func decryptText(_ textData: Data)->Int32
-    {
-        do
-        {
-            let originalData = try RNCryptor.decrypt(data: textData, withPassword: secretKey)
-            
-            let newString = String(data: originalData, encoding: .utf8)
-            
-            return Int32(newString!)!
-        }
-        catch
-        {
-            print(error)
-            return 0
-        }
-    }
-    
-    func decryptText(_ textData: Data)->Date?
-    {
-        do
-        {
-            let originalData = try RNCryptor.decrypt(data: textData, withPassword: secretKey)
-            
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateStyle = .full
-            dateFormatter.timeStyle = .full
-            
-            let newString = String(data: originalData, encoding: .utf8)
-            
-            return dateFormatter.date(from: newString!)
-        }
-        catch
-        {
-            print(error)
-            return getDefaultDate()
         }
     }
 }

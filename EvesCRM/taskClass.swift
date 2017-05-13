@@ -31,7 +31,7 @@ class tasks: NSObject
         }
     }
     
-    init(projectID: Int32)
+    init(projectID: Int)
     {
         super.init()
         
@@ -45,14 +45,14 @@ class tasks: NSObject
         }
     }
     
-    init(contextID: Int32)
+    init(contextID: Int)
     {
         super.init()
         
         loadActiveTasksForContext(contextID)
     }
     
-    func loadActiveTasksForContext(_ contextID: Int32)
+    func loadActiveTasksForContext(_ contextID: Int)
     {
         myActiveTasks.removeAll()
         
@@ -61,17 +61,17 @@ class tasks: NSObject
         for myTaskContext in myTaskContextList
         {
             // Get the context details
-            let myTaskList = myDatabaseConnection.getActiveTask(myTaskContext.taskID)
+            let myTaskList = myDatabaseConnection.getActiveTask(Int(myTaskContext.taskID))
             
             for myTask in myTaskList
             {  //append project details to work array
                 // check the project to see if it is on hold
                 
-                let myProject = project(projectID: myTask.projectID)
+                let myProject = project(projectID: Int(myTask.projectID))
                 
                 if myProject.projectStatus != "On Hold"
                 {
-                    let tempTask = task(taskID: myTask.taskID)
+                    let tempTask = task(taskID: Int(myTask.taskID))
                     myActiveTasks.append(tempTask)
                 }
             }
@@ -80,7 +80,7 @@ class tasks: NSObject
         myActiveTasks.sort(by: {$0.dueDate.timeIntervalSinceNow < $1.dueDate.timeIntervalSinceNow})
     }
     
-    func loadActiveTasksForProject(_ projectID: Int32)
+    func loadActiveTasksForProject(_ projectID: Int)
     {
         myActiveTasks.removeAll()
         
@@ -90,13 +90,13 @@ class tasks: NSObject
         
         for myItem in taskList
         {
-            let tempTask = task(taskID: myItem.taskID)
+            let tempTask = task(taskID: Int(myItem.taskID))
             
             myActiveTasks.append(tempTask)
         }
     }
     
-    func loadAllTasksForProject(_ projectID: Int32)
+    func loadAllTasksForProject(_ projectID: Int)
     {
         myTasks.removeAll()
         
@@ -106,7 +106,7 @@ class tasks: NSObject
         
         for myItem in taskList
         {
-            let tempTask = task(taskID: myItem.taskID)
+            let tempTask = task(taskID: Int(myItem.taskID))
             
             myTasks.append(tempTask)
         }
@@ -115,7 +115,7 @@ class tasks: NSObject
 
 class task: NSObject
 {
-    fileprivate var myTaskID: Int32 = 0
+    fileprivate var myTaskID: Int = 0
     fileprivate var myTitle: String = "New task"
     fileprivate var myDetails: String = ""
     fileprivate var myDueDate: Date!
@@ -124,20 +124,20 @@ class task: NSObject
     fileprivate var myContexts: [context] = Array()
     fileprivate var myPriority: String = ""
     fileprivate var myEnergyLevel: String = ""
-    fileprivate var myEstimatedTime: Int16 = 0
+    fileprivate var myEstimatedTime: Int = 0
     fileprivate var myEstimatedTimeType: String = ""
-    fileprivate var myProjectID: Int32 = 0
+    fileprivate var myProjectID: Int = 0
     fileprivate var myCompletionDate: Date!
-    fileprivate var myRepeatInterval: Int16 = 0
+    fileprivate var myRepeatInterval: Int = 0
     fileprivate var myRepeatType: String = ""
     fileprivate var myRepeatBase: String = ""
     fileprivate var myFlagged: Bool = false
     fileprivate var myUrgency: String = ""
-    fileprivate var myTeamID: Int32 = 0
+    fileprivate var myTeamID: Int = 0
     fileprivate var myPredecessors: [taskPredecessor] = Array()
     fileprivate var saveCalled: Bool = false
     
-    var taskID: Int32
+    var taskID: Int
     {
         get
         {
@@ -297,7 +297,7 @@ class task: NSObject
         }
     }
     
-    var estimatedTime: Int16
+    var estimatedTime: Int
     {
         get
         {
@@ -323,7 +323,7 @@ class task: NSObject
         }
     }
     
-    var projectID: Int32
+    var projectID: Int
     {
         get
         {
@@ -339,7 +339,7 @@ class task: NSObject
             
             if tempProject.count > 0
             {
-                myTeamID = tempProject[0].teamID
+                myTeamID = Int(tempProject[0].teamID)
             }
             
             save()
@@ -390,7 +390,7 @@ class task: NSObject
         }
     }
     
-    var repeatInterval: Int16
+    var repeatInterval: Int
     {
         get
         {
@@ -455,7 +455,7 @@ class task: NSObject
         }
     }
     
-    var teamID: Int32
+    var teamID: Int
     {
         get
         {
@@ -476,11 +476,11 @@ class task: NSObject
         }
     }
     
-    init(teamID: Int32)
+    init(teamID: Int)
     {
         super.init()
         
-        myTaskID = myDatabaseConnection.getNextID("Task")
+        myTaskID = myDatabaseConnection.getNextID("Task", teamID: teamID)
         
         myDueDate = getDefaultDate() as Date!
         myStartDate = getDefaultDate() as Date!
@@ -493,13 +493,13 @@ class task: NSObject
         save()
     }
     
-    init(taskID: Int32)
+    init(taskID: Int)
     {
         let myTaskData = myDatabaseConnection.getTask(taskID)
         
         for myTask in myTaskData
         {
-            myTaskID = myTask.taskID
+            myTaskID = Int(myTask.taskID)
             myTitle = myTask.title!
             myDetails = myTask.details!
             myDueDate = myTask.dueDate! as Date
@@ -507,16 +507,16 @@ class task: NSObject
             myStatus = myTask.status!
             myPriority = myTask.priority!
             myEnergyLevel = myTask.energyLevel!
-            myEstimatedTime = myTask.estimatedTime
+            myEstimatedTime = Int(myTask.estimatedTime)
             myEstimatedTimeType = myTask.estimatedTimeType!
-            myProjectID = myTask.projectID
+            myProjectID = Int(myTask.projectID)
             myCompletionDate = myTask.completionDate! as Date
-            myRepeatInterval = myTask.repeatInterval
+            myRepeatInterval = Int(myTask.repeatInterval)
             myRepeatType = myTask.repeatType!
             myRepeatBase = myTask.repeatBase!
             myFlagged = myTask.flagged as! Bool
             myUrgency = myTask.urgency!
-            myTeamID = myTask.teamID
+            myTeamID = Int(myTask.teamID)
             
             // get contexts
             
@@ -525,7 +525,7 @@ class task: NSObject
             
             for myContextItem in myContextList
             {
-                let myNewContext = context(contextID: myContextItem.contextID)
+                let myNewContext = context(contextID: Int(myContextItem.contextID))
                 myContexts.append(myNewContext)
             }
             
@@ -535,7 +535,7 @@ class task: NSObject
             
             for myPredecessorItem in myPredecessorList
             {
-                let myNewPredecessor = taskPredecessor(predecessorID: myPredecessorItem.predecessorID, predecessorType: myPredecessorItem.predecessorType!)
+                let myNewPredecessor = taskPredecessor(predecessorID: Int(myPredecessorItem.predecessorID), predecessorType: myPredecessorItem.predecessorType!)
                 myPredecessors.append(myNewPredecessor)
             }
         }
@@ -545,7 +545,7 @@ class task: NSObject
     {
         super.init()
         
-        myTaskID = myDatabaseConnection.getNextID("Task")
+        myTaskID = myDatabaseConnection.getNextID("Task", teamID: oldTask.teamID)
         myTitle = oldTask.title
         myDetails = oldTask.details
         myDueDate = dueDate
@@ -625,7 +625,7 @@ class task: NSObject
         saveCalled = false
     }
     
-    func addContext(_ contextID: Int32)
+    func addContext(_ contextID: Int)
     {
         var itemFound: Bool = false
         
@@ -639,7 +639,7 @@ class task: NSObject
         
         for myItem in myCheck
         {
-            let myRetrievedContext = context(contextID: myItem.contextID)
+            let myRetrievedContext = context(contextID: Int(myItem.contextID))
             if myRetrievedContext.name.lowercased() == myContext.name.lowercased()
             {
                 itemFound = true
@@ -656,13 +656,13 @@ class task: NSObject
             
             for myContextItem in myContextList
             {
-                let myNewContext = context(contextID: myContextItem.contextID)
+                let myNewContext = context(contextID: Int(myContextItem.contextID))
                 myContexts.append(myNewContext)
             }
         }
     }
     
-    func removeContext(_ contextID: Int32)
+    func removeContext(_ contextID: Int)
     {
         myDatabaseConnection.deleteTaskContext(contextID, taskID: myTaskID)
         
@@ -671,7 +671,7 @@ class task: NSObject
         
         for myContextItem in myContextList
         {
-            let myNewContext = context(contextID: myContextItem.contextID)
+            let myNewContext = context(contextID: Int(myContextItem.contextID))
             myContexts.append(myNewContext)
         }
     }
@@ -693,17 +693,17 @@ class task: NSObject
     }
     
     
-    func addPredecessor(_ predecessorID: Int32, predecessorType: String)
+    func addPredecessor(_ predecessorID: Int, predecessorType: String)
     {
         myDatabaseConnection.savePredecessorTask(myTaskID, predecessorID: predecessorID, predecessorType: predecessorType)
     }
     
-    func removePredecessor(_ predecessorID: Int32, predecessorType: String)
+    func removePredecessor(_ predecessorID: Int, predecessorType: String)
     {
         myDatabaseConnection.deleteTaskPredecessor(myTaskID, predecessorID: predecessorID)
     }
     
-    func changePredecessor(_ predecessorID: Int32, predecessorType: String)
+    func changePredecessor(_ predecessorID: Int, predecessorType: String)
     {
         myDatabaseConnection.updatePredecessorTaskType(myTaskID, predecessorID: predecessorID, predecessorType: predecessorType)
     }
@@ -976,7 +976,7 @@ class task: NSObject
             
             if myStartDate == getDefaultDate() as Date && myDueDate == getDefaultDate() as Date
             {  // No dates have set, so we set the start date
-                tempStartDate = calculateNewDate(Date(), dateBase:myRepeatBase, interval: myRepeatInterval, period: myRepeatType)
+                tempStartDate = calculateNewDate(Date(), dateBase:myRepeatBase, interval: Int16(myRepeatInterval), period: myRepeatType)
             }
             else
             { // A date has been set in at least one of the fields, so we use that as the date to set
@@ -1003,11 +1003,11 @@ class task: NSObject
                 {
                     if myRepeatBase == "Start Date"
                     {
-                        tempStartDate = calculateNewDate(myStartDate, dateBase:myRepeatBase, interval: myRepeatInterval, period: myRepeatType)
+                        tempStartDate = calculateNewDate(myStartDate, dateBase:myRepeatBase, interval: Int16(myRepeatInterval), period: myRepeatType)
                     }
                     else
                     {
-                        tempStartDate = calculateNewDate(todayDate, dateBase:myRepeatBase, interval: myRepeatInterval, period: myRepeatType)
+                        tempStartDate = calculateNewDate(todayDate, dateBase:myRepeatBase, interval: Int16(myRepeatInterval), period: myRepeatType)
                     }
                 }
                 
@@ -1020,7 +1020,7 @@ class task: NSObject
                         value: daysToAdd,
                         to: todayDate)!
                     
-                    tempDueDate = calculateNewDate(tempDate, dateBase:myRepeatBase, interval: myRepeatInterval, period: myRepeatType)
+                    tempDueDate = calculateNewDate(tempDate, dateBase:myRepeatBase, interval: Int16(myRepeatInterval), period: myRepeatType)
                 }
             }
             
@@ -1032,7 +1032,7 @@ class task: NSObject
 
 extension coreDatabase
 {
-    func saveTask(_ taskID: Int32, title: String, details: String, dueDate: Date, startDate: Date, status: String, priority: String, energyLevel: String, estimatedTime: Int16, estimatedTimeType: String, projectID: Int32, completionDate: Date, repeatInterval: Int16, repeatType: String, repeatBase: String, flagged: Bool, urgency: String, teamID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveTask(_ taskID: Int, title: String, details: String, dueDate: Date, startDate: Date, status: String, priority: String, energyLevel: String, estimatedTime: Int, estimatedTimeType: String, projectID: Int, completionDate: Date, repeatInterval: Int, repeatType: String, repeatBase: String, flagged: Bool, urgency: String, teamID: Int, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myTask: Task!
         
@@ -1041,7 +1041,7 @@ extension coreDatabase
         if myTasks.count == 0
         { // Add
             myTask = Task(context: objectContext)
-            myTask.taskID = taskID
+            myTask.taskID = Int64(taskID)
             myTask.title = title
             myTask.details = details
             myTask.dueDate = dueDate as NSDate
@@ -1049,16 +1049,16 @@ extension coreDatabase
             myTask.status = status
             myTask.priority = priority
             myTask.energyLevel = energyLevel
-            myTask.estimatedTime = estimatedTime
+            myTask.estimatedTime = Int64(estimatedTime)
             myTask.estimatedTimeType = estimatedTimeType
-            myTask.projectID = projectID
+            myTask.projectID = Int64(projectID)
             myTask.completionDate = completionDate as NSDate
-            myTask.repeatInterval = repeatInterval
+            myTask.repeatInterval = Int64(repeatInterval)
             myTask.repeatType = repeatType
             myTask.repeatBase = repeatBase
             myTask.flagged = flagged as NSNumber
             myTask.urgency = urgency
-            myTask.teamID = teamID
+            myTask.teamID = Int64(teamID)
             
             if updateType == "CODE"
             {
@@ -1081,16 +1081,16 @@ extension coreDatabase
             myTask.status = status
             myTask.priority = priority
             myTask.energyLevel = energyLevel
-            myTask.estimatedTime = estimatedTime
+            myTask.estimatedTime = Int64(estimatedTime)
             myTask.estimatedTimeType = estimatedTimeType
-            myTask.projectID = projectID
+            myTask.projectID = Int64(projectID)
             myTask.completionDate = completionDate as NSDate
-            myTask.repeatInterval = repeatInterval
+            myTask.repeatInterval = Int64(repeatInterval)
             myTask.repeatType = repeatType
             myTask.repeatBase = repeatBase
             myTask.flagged = flagged as NSNumber
             myTask.urgency = urgency
-            myTask.teamID = teamID
+            myTask.teamID = Int64(teamID)
             
             if updateType == "CODE"
             {
@@ -1111,10 +1111,10 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceTask(_ taskID: Int32, title: String, details: String, dueDate: Date, startDate: Date, status: String, priority: String, energyLevel: String, estimatedTime: Int16, estimatedTimeType: String, projectID: Int32, completionDate: Date, repeatInterval: Int16, repeatType: String, repeatBase: String, flagged: Bool, urgency: String, teamID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
+    func replaceTask(_ taskID: Int, title: String, details: String, dueDate: Date, startDate: Date, status: String, priority: String, energyLevel: String, estimatedTime: Int, estimatedTimeType: String, projectID: Int, completionDate: Date, repeatInterval: Int, repeatType: String, repeatBase: String, flagged: Bool, urgency: String, teamID: Int, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myTask = Task(context: objectContext)
-        myTask.taskID = taskID
+        myTask.taskID = Int64(taskID)
         myTask.title = title
         myTask.details = details
         myTask.dueDate = dueDate as NSDate
@@ -1122,16 +1122,16 @@ extension coreDatabase
         myTask.status = status
         myTask.priority = priority
         myTask.energyLevel = energyLevel
-        myTask.estimatedTime = estimatedTime
+        myTask.estimatedTime = Int64(estimatedTime)
         myTask.estimatedTimeType = estimatedTimeType
-        myTask.projectID = projectID
+        myTask.projectID = Int64(projectID)
         myTask.completionDate = completionDate as NSDate
-        myTask.repeatInterval = repeatInterval
+        myTask.repeatInterval = Int64(repeatInterval)
         myTask.repeatType = repeatType
         myTask.repeatBase = repeatBase
         myTask.flagged = flagged as NSNumber
         myTask.urgency = urgency
-        myTask.teamID = teamID
+        myTask.teamID = Int64(teamID)
         
         if updateType == "CODE"
         {
@@ -1147,7 +1147,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteTask(_ taskID: Int32)
+    func deleteTask(_ taskID: Int)
     {
         let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
@@ -1174,7 +1174,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func getTasksNotDeleted(_ teamID: Int32)->[Task]
+    func getTasksNotDeleted(_ teamID: Int)->[Task]
     {
         let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
@@ -1202,7 +1202,7 @@ extension coreDatabase
         }
     }
     
-    func getAllTasksForProject(_ projectID: Int32, teamID: Int32)->[Task]
+    func getAllTasksForProject(_ projectID: Int, teamID: Int)->[Task]
     {
         let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
@@ -1243,7 +1243,7 @@ extension coreDatabase
         }
     }
     
-    func getTasksForProject(_ projectID: Int32)->[Task]
+    func getTasksForProject(_ projectID: Int)->[Task]
     {
         let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
@@ -1267,7 +1267,7 @@ extension coreDatabase
         }
     }
     
-    func getActiveTasksForProject(_ projectID: Int32)->[Task]
+    func getActiveTasksForProject(_ projectID: Int)->[Task]
     {
         let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
@@ -1291,7 +1291,7 @@ extension coreDatabase
         }
     }
     
-    func getTasksWithoutProject(_ teamID: Int32)->[Task]
+    func getTasksWithoutProject(_ teamID: Int)->[Task]
     {
         let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
@@ -1315,7 +1315,7 @@ extension coreDatabase
         }
     }
     
-    func getTask(_ taskID: Int32)->[Task]
+    func getTask(_ taskID: Int)->[Task]
     {
         let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
@@ -1340,7 +1340,7 @@ extension coreDatabase
         }
     }
     
-    func getTaskRegardlessOfStatus(_ taskID: Int32)->[Task]
+    func getTaskRegardlessOfStatus(_ taskID: Int)->[Task]
     {
         let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
@@ -1364,7 +1364,7 @@ extension coreDatabase
         }
     }
     
-    func getActiveTask(_ taskID: Int32)->[Task]
+    func getActiveTask(_ taskID: Int)->[Task]
     {
         let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
@@ -1481,9 +1481,9 @@ extension coreDatabase
         saveContext()
     }
     
-    func initialiseTeamForTask(_ teamID: Int32)
+    func initialiseTeamForTask(_ teamID: Int)
     {
-        var maxID: Int32 = 1
+        var maxID: Int = 1
         
         let fetchRequest = NSFetchRequest<Task>(entityName: "Task")
         
@@ -1499,15 +1499,15 @@ extension coreDatabase
             {
                 for myItem in fetchResults
                 {
-                    myItem.teamID = teamID
-                    maxID = myItem.taskID
+                    myItem.teamID = Int64(teamID)
+                    maxID = Int(myItem.taskID)
                 }
             }
             
             // Now go and populate the Decode for this
             
             let tempInt = "\(maxID)"
-            updateDecodeValue("Task", codeValue: tempInt, codeType: "hidden", decode_privacy: "Public")
+            updateDecodeValue("Task", codeValue: tempInt, codeType: "hidden", decode_privacy: "Public", teamID: currentUser.currentTeam!.teamID)
         }
         catch
         {
@@ -1571,7 +1571,7 @@ extension CloudKitInteraction
         }
     }
 
-    func updateTaskInCoreData(teamID: Int32)
+    func updateTaskInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "Task") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Task", predicate: predicate)
@@ -1597,7 +1597,7 @@ extension CloudKitInteraction
         }
     }
 
-    func deleteTask(teamID: Int32)
+    func deleteTask(teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -1615,7 +1615,7 @@ extension CloudKitInteraction
         sem.wait()
     }
 
-    func replaceTaskInCoreData(teamID: Int32)
+    func replaceTaskInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "Task", predicate: predicate)
@@ -1625,7 +1625,7 @@ extension CloudKitInteraction
         waitFlag = true
         
         operation.recordFetchedBlock = { (record) in
-            let taskID = record.object(forKey: "taskID") as! Int32
+            let taskID = record.object(forKey: "taskID") as! Int
 
             var updateTime = Date()
             if record.object(forKey: "updateTime") != nil
@@ -1641,19 +1641,19 @@ extension CloudKitInteraction
             let details = record.object(forKey: "details") as! String
             let dueDate = record.object(forKey: "dueDate") as! Date
             let energyLevel = record.object(forKey: "energyLevel") as! String
-            let estimatedTime = record.object(forKey: "estimatedTime") as! Int16
+            let estimatedTime = record.object(forKey: "estimatedTime") as! Int
             let estimatedTimeType = record.object(forKey: "estimatedTimeType") as! String
             let flagged = record.object(forKey: "flagged") as! Bool
             let priority = record.object(forKey: "priority") as! String
             let repeatBase = record.object(forKey: "repeatBase") as! String
-            let repeatInterval = record.object(forKey: "repeatInterval") as! Int16
+            let repeatInterval = record.object(forKey: "repeatInterval") as! Int
             let repeatType = record.object(forKey: "repeatType") as! String
             let startDate = record.object(forKey: "startDate") as! Date
             let status = record.object(forKey: "status") as! String
-            let teamID = record.object(forKey: "teamID") as! Int32
+            let teamID = record.object(forKey: "teamID") as! Int
             let title = record.object(forKey: "title") as! String
             let urgency = record.object(forKey: "urgency") as! String
-            let projectID = record.object(forKey: "projectID") as! Int32
+            let projectID = record.object(forKey: "projectID") as! Int
             
             myDatabaseConnection.replaceTask(taskID, title: title, details: details, dueDate: dueDate, startDate: startDate, status: status, priority: priority, energyLevel: energyLevel, estimatedTime: estimatedTime, estimatedTimeType: estimatedTimeType, projectID: projectID, completionDate: completionDate, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, flagged: flagged, urgency: urgency, teamID: teamID, updateTime: updateTime, updateType: updateType)
             usleep(useconds_t(self.sleepTime))
@@ -1669,7 +1669,7 @@ extension CloudKitInteraction
         }
     }
 
-    func saveTaskRecordToCloudKit(_ sourceRecord: Task, teamID: Int32)
+    func saveTaskRecordToCloudKit(_ sourceRecord: Task, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID)) AND (teamID == \(teamID))") // better be accurate to get only the record you need
@@ -1775,7 +1775,7 @@ extension CloudKitInteraction
 
     func updateTaskRecord(_ sourceRecord: CKRecord)
     {
-        let taskID = sourceRecord.object(forKey: "taskID") as! Int32
+        let taskID = sourceRecord.object(forKey: "taskID") as! Int
         var updateTime = Date()
         if sourceRecord.object(forKey: "updateTime") != nil
         {
@@ -1792,19 +1792,19 @@ extension CloudKitInteraction
         let details = sourceRecord.object(forKey: "details") as! String
         let dueDate = sourceRecord.object(forKey: "dueDate") as! Date
         let energyLevel = sourceRecord.object(forKey: "energyLevel") as! String
-        let estimatedTime = sourceRecord.object(forKey: "estimatedTime") as! Int16
+        let estimatedTime = sourceRecord.object(forKey: "estimatedTime") as! Int
         let estimatedTimeType = sourceRecord.object(forKey: "estimatedTimeType") as! String
         let flagged = sourceRecord.object(forKey: "flagged") as! Bool
         let priority = sourceRecord.object(forKey: "priority") as! String
         let repeatBase = sourceRecord.object(forKey: "repeatBase") as! String
-        let repeatInterval = sourceRecord.object(forKey: "repeatInterval") as! Int16
+        let repeatInterval = sourceRecord.object(forKey: "repeatInterval") as! Int
         let repeatType = sourceRecord.object(forKey: "repeatType") as! String
         let startDate = sourceRecord.object(forKey: "startDate") as! Date
         let status = sourceRecord.object(forKey: "status") as! String
-        let teamID = sourceRecord.object(forKey: "teamID") as! Int32
+        let teamID = sourceRecord.object(forKey: "teamID") as! Int
         let title = sourceRecord.object(forKey: "title") as! String
         let urgency = sourceRecord.object(forKey: "urgency") as! String
-        let projectID = sourceRecord.object(forKey: "projectID") as! Int32
+        let projectID = sourceRecord.object(forKey: "projectID") as! Int
         
         myDatabaseConnection.saveTask(taskID, title: title, details: details, dueDate: dueDate, startDate: startDate, status: status, priority: priority, energyLevel: energyLevel, estimatedTime: estimatedTime, estimatedTimeType: estimatedTimeType, projectID: projectID, completionDate: completionDate, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, flagged: flagged, urgency: urgency, teamID: teamID, updateTime: updateTime, updateType: updateType)
     }

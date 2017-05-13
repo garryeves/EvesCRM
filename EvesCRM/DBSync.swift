@@ -82,7 +82,7 @@ class DBSync: NSObject
         let syncDate: Date = myDateFormatter.date(from: "01/01/15")!
         let dateString = "\(syncDate)"
 
-        myDatabaseConnection.updateDecodeValue("\(appName) Sync", codeValue: dateString, codeType: "hidden", decode_privacy: "Private")
+        myDatabaseConnection.updateDecodeValue("\(appName) Sync", codeValue: dateString, codeType: "hidden", decode_privacy: "Private", teamID: currentUser.currentTeam!.teamID)
         
         myDatabaseConnection.clearDeletedItems()
         myDatabaseConnection.clearSyncedItems()

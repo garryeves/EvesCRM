@@ -205,7 +205,7 @@ extension coreDatabase
         }
     }
     
-    func saveAttendee(_ meetingID: String, name: String, email: String,  type: String, status: String, updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveAttendee(_ meetingID: String, name: String, email: String,  type: String, status: String, teamID: Int = currentUser.currentTeam!.teamID, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myPerson: MeetingAttendees!
         
@@ -219,6 +219,8 @@ extension coreDatabase
             myPerson.attendenceStatus = status
             myPerson.email = email
             myPerson.type = type
+            myPerson.teamID = Int64(teamID)
+            
             if updateType == "CODE"
             {
                 myPerson.updateTime =  NSDate()
@@ -254,7 +256,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceAttendee(_ meetingID: String, name: String, email: String,  type: String, status: String, updateTime: Date =  Date(), updateType: String = "CODE")
+    func replaceAttendee(_ meetingID: String, name: String, email: String,  type: String, status: String, teamID: Int = currentUser.currentTeam!.teamID, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myPerson = MeetingAttendees(context: objectContext)
         myPerson.meetingID = meetingID
@@ -262,6 +264,8 @@ extension coreDatabase
         myPerson.attendenceStatus = status
         myPerson.email = email
         myPerson.type = type
+        myPerson.teamID = Int64(teamID)
+
         if updateType == "CODE"
         {
             myPerson.updateTime =  NSDate()
@@ -429,7 +433,7 @@ extension CloudKitInteraction
         }
     }
 
-    func updateMeetingAttendeesInCoreData(teamID: Int32)
+    func updateMeetingAttendeesInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingAttendees") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingAttendees", predicate: predicate)
@@ -455,7 +459,7 @@ extension CloudKitInteraction
         }
     }
 
-    func deleteMeetingAttendees(teamID: Int32)
+    func deleteMeetingAttendees(teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -473,7 +477,7 @@ extension CloudKitInteraction
         sem.wait()
     }
 
-    func replaceMeetingAttendeesInCoreData(teamID: Int32)
+    func replaceMeetingAttendeesInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "MeetingAttendees", predicate: predicate)
@@ -494,11 +498,18 @@ extension CloudKitInteraction
             {
                 updateType = record.object(forKey: "updateType") as! String
             }
+            
+            var teamID: Int = 0
+            if record.object(forKey: "teamID") != nil
+            {
+                teamID = record.object(forKey: "teamID") as! Int
+            }
+            
             let attendenceStatus = record.object(forKey: "attendenceStatus") as! String
             let email = record.object(forKey: "email") as! String
             let type = record.object(forKey: "type") as! String
             
-            myDatabaseConnection.replaceAttendee(meetingID, name: name, email: email,  type: type, status: attendenceStatus, updateTime: updateTime, updateType: updateType)
+            myDatabaseConnection.replaceAttendee(meetingID, name: name, email: email,  type: type, status: attendenceStatus, teamID: teamID, updateTime: updateTime, updateType: updateType)
             usleep(useconds_t(self.sleepTime))
         }
         let operationQueue = OperationQueue()
@@ -511,7 +522,7 @@ extension CloudKitInteraction
         }
     }
 
-    func saveMeetingAttendeesRecordToCloudKit(_ sourceRecord: MeetingAttendees, teamID: Int32)
+    func saveMeetingAttendeesRecordToCloudKit(_ sourceRecord: MeetingAttendees, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (name = \"\(sourceRecord.name!)\") AND (teamID == \(teamID))") // better be accurate to get only the record you need
@@ -603,10 +614,17 @@ extension CloudKitInteraction
         {
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
+        
+        var teamID: Int = 0
+        if sourceRecord.object(forKey: "teamID") != nil
+        {
+            teamID = sourceRecord.object(forKey: "teamID") as! Int
+        }
+        
         let attendenceStatus = sourceRecord.object(forKey: "attendenceStatus") as! String
         let email = sourceRecord.object(forKey: "email") as! String
         let type = sourceRecord.object(forKey: "type") as! String
         
-        myDatabaseConnection.saveAttendee(meetingID, name: name, email: email,  type: type, status: attendenceStatus, updateTime: updateTime, updateType: updateType)
+        myDatabaseConnection.saveAttendee(meetingID, name: name, email: email,  type: type, status: attendenceStatus, teamID: teamID, updateTime: updateTime, updateType: updateType)
     }
 }

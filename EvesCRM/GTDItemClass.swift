@@ -12,23 +12,23 @@ import CloudKit
 
 class workingGTDItem: NSObject
 {
-    fileprivate var myGTDItemID: Int32 = 0
-    fileprivate var myGTDParentID: Int32 = 0
+    fileprivate var myGTDItemID: Int = 0
+    fileprivate var myGTDParentID: Int = 0
     fileprivate var myTitle: String = "New"
     fileprivate var myStatus: String = ""
     fileprivate var myChildren: [AnyObject] = Array()
-    fileprivate var myTeamID: Int32 = 0
+    fileprivate var myTeamID: Int = 0
     fileprivate var myNote: String = ""
     fileprivate var myLastReviewDate: Date!
-    fileprivate var myReviewFrequency: Int16 = 0
+    fileprivate var myReviewFrequency: Int = 0
     fileprivate var myReviewPeriod: String = ""
-    fileprivate var myPredecessor: Int32 = 0
-    fileprivate var myGTDID: Int32 = 0
-    fileprivate var myGTDLevel: Int32 = 0
-    fileprivate var myStoreGTDLevel: Int32 = 0
+    fileprivate var myPredecessor: Int = 0
+    fileprivate var myGTDID: Int = 0
+    fileprivate var myGTDLevel: Int = 0
+    fileprivate var myStoreGTDLevel: Int = 0
     fileprivate var saveCalled: Bool = false
     
-    var GTDItemID: Int32
+    var GTDItemID: Int
     {
         get
         {
@@ -41,7 +41,7 @@ class workingGTDItem: NSObject
         }
     }
     
-    var GTDLevelID: Int32
+    var GTDLevelID: Int
     {
         get
         {
@@ -54,7 +54,7 @@ class workingGTDItem: NSObject
         }
     }
     
-    var GTDParentID: Int32
+    var GTDParentID: Int
     {
         get
         {
@@ -67,7 +67,7 @@ class workingGTDItem: NSObject
         }
     }
     
-    var GTDLevel: Int32
+    var GTDLevel: Int
     {
         get
         {
@@ -114,7 +114,7 @@ class workingGTDItem: NSObject
         }
     }
     
-    var teamID: Int32
+    var teamID: Int
     {
         get
         {
@@ -176,7 +176,7 @@ class workingGTDItem: NSObject
         }
     }
     
-    var reviewFrequency: Int16
+    var reviewFrequency: Int
     {
         get
         {
@@ -202,7 +202,7 @@ class workingGTDItem: NSObject
         }
     }
     
-    var predecessor: Int32
+    var predecessor: Int
     {
         get
         {
@@ -215,7 +215,7 @@ class workingGTDItem: NSObject
         }
     }
     
-    init(GTDItemID: Int32, teamID: Int32)
+    init(GTDItemID: Int, teamID: Int)
     {
         super.init()
         
@@ -233,17 +233,17 @@ class workingGTDItem: NSObject
             
             for myItem in myGTDDetail
             {
-                myGTDItemID = myItem.gTDItemID
+                myGTDItemID = Int(myItem.gTDItemID)
                 myTitle = myItem.title!
                 myStatus = myItem.status!
-                myTeamID = myItem.teamID
+                myTeamID = Int(myItem.teamID)
                 myNote = myItem.note!
                 myLastReviewDate = myItem.lastReviewDate! as Date
-                myReviewFrequency = myItem.reviewFrequency
+                myReviewFrequency = Int(myItem.reviewFrequency)
                 myReviewPeriod = myItem.reviewPeriod!
-                myPredecessor = myItem.predecessor
-                myGTDLevel = myItem.gTDLevel
-                myGTDParentID = myItem.gTDParentID
+                myPredecessor = Int(myItem.predecessor)
+                myGTDLevel = Int(myItem.gTDLevel)
+                myGTDParentID = Int(myItem.gTDParentID)
             }
         }
         
@@ -251,18 +251,18 @@ class workingGTDItem: NSObject
         { // We only wantto do this once per instantiation of the object
             let tempTeam = myDatabaseConnection.getGTDLevels(teamID)
             
-            myStoreGTDLevel = Int32(tempTeam.count)
+            myStoreGTDLevel = Int(tempTeam.count)
         }
         
         // Load the Members
         loadChildren()
     }
     
-    init(teamID: Int32, parentID: Int32)
+    init(teamID: Int, parentID: Int)
     {
         super.init()
         
-        myGTDItemID = myDatabaseConnection.getNextID("GTDItem")
+        myGTDItemID = myDatabaseConnection.getNextID("GTDItem", teamID: teamID)
         myGTDParentID = parentID
         myLastReviewDate = getDefaultDate() as Date!
         myTeamID = teamID
@@ -271,7 +271,7 @@ class workingGTDItem: NSObject
         { // We only wantto do this once per instantiation of the object
             let tempTeam = myDatabaseConnection.getGTDLevels(teamID)
             
-            myStoreGTDLevel = Int32(tempTeam.count)
+            myStoreGTDLevel = Int(tempTeam.count)
         }
         
         save()
@@ -320,7 +320,7 @@ class workingGTDItem: NSObject
             
             for myItem in myChildrenList
             {
-                let myNewChild = workingGTDItem(GTDItemID: myItem.gTDItemID, teamID: myTeamID)
+                let myNewChild = workingGTDItem(GTDItemID: Int(myItem.gTDItemID), teamID: myTeamID)
                 myChildren.append(myNewChild)
             }
         }
@@ -346,7 +346,7 @@ class workingGTDItem: NSObject
                 
                 if boolAddProject
                 {
-                    let myNewChild = project(projectID: myItem.projectID)
+                    let myNewChild = project(projectID: Int(myItem.projectID))
                     myChildren.append(myNewChild)
                 }
             }
@@ -383,7 +383,7 @@ class workingGTDItem: NSObject
 
 extension coreDatabase
 {
-    func getGTDItemSuccessor(_ projectID: Int32)->Int32
+    func getGTDItemSuccessor(_ projectID: Int)->Int
     {
         
         let fetchRequest = NSFetchRequest<GTDItem>(entityName: "GTDItem")
@@ -401,7 +401,7 @@ extension coreDatabase
         do
         {
             let fetchResults = try objectContext.fetch(fetchRequest)
-            return fetchResults[0].gTDItemID
+            return Int(fetchResults[0].gTDItemID)
         }
         catch
         {
@@ -410,7 +410,7 @@ extension coreDatabase
         }
     }
     
-    func saveGTDItem(_ GTDItemID: Int32, parentID: Int32, title: String, status: String, teamID: Int32, note: String, lastReviewDate: Date, reviewFrequency: Int16, reviewPeriod: String, predecessor: Int32, GTDLevel: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveGTDItem(_ GTDItemID: Int, parentID: Int, title: String, status: String, teamID: Int, note: String, lastReviewDate: Date, reviewFrequency: Int, reviewPeriod: String, predecessor: Int, GTDLevel: Int, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myGTD: GTDItem!
         
@@ -419,17 +419,17 @@ extension coreDatabase
         if myGTDItems.count == 0
         { // Add
             myGTD = GTDItem(context: objectContext)
-            myGTD.gTDItemID = GTDItemID
-            myGTD.gTDParentID = parentID
+            myGTD.gTDItemID = Int64(GTDItemID)
+            myGTD.gTDParentID = Int64(parentID)
             myGTD.title = title
             myGTD.status = status
-            myGTD.teamID = teamID
+            myGTD.teamID = Int64(teamID)
             myGTD.note = note
             myGTD.lastReviewDate = lastReviewDate as NSDate
-            myGTD.reviewFrequency = reviewFrequency
+            myGTD.reviewFrequency = Int64(reviewFrequency)
             myGTD.reviewPeriod = reviewPeriod
-            myGTD.predecessor = predecessor
-            myGTD.gTDLevel = GTDLevel
+            myGTD.predecessor = Int64(predecessor)
+            myGTD.gTDLevel = Int64(GTDLevel)
             if updateType == "CODE"
             {
                 myGTD.updateTime =  NSDate()
@@ -444,17 +444,17 @@ extension coreDatabase
         else
         { // Update
             myGTD = myGTDItems[0]
-            myGTD.gTDParentID = parentID
+            myGTD.gTDParentID = Int64(parentID)
             myGTD.title = title
             myGTD.status = status
             myGTD.updateTime =  NSDate()
-            myGTD.teamID = teamID
+            myGTD.teamID = Int64(teamID)
             myGTD.note = note
             myGTD.lastReviewDate = lastReviewDate as NSDate
-            myGTD.reviewFrequency = reviewFrequency
+            myGTD.reviewFrequency = Int64(reviewFrequency)
             myGTD.reviewPeriod = reviewPeriod
-            myGTD.predecessor = predecessor
-            myGTD.gTDLevel = GTDLevel
+            myGTD.predecessor = Int64(predecessor)
+            myGTD.gTDLevel = Int64(GTDLevel)
             if updateType == "CODE"
             {
                 if myGTD.updateType != "Add"
@@ -472,20 +472,20 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceGTDItem(_ GTDItemID: Int32, parentID: Int32, title: String, status: String, teamID: Int32, note: String, lastReviewDate: Date, reviewFrequency: Int16, reviewPeriod: String, predecessor: Int32, GTDLevel: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
+    func replaceGTDItem(_ GTDItemID: Int, parentID: Int, title: String, status: String, teamID: Int, note: String, lastReviewDate: Date, reviewFrequency: Int, reviewPeriod: String, predecessor: Int, GTDLevel: Int, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myGTD = GTDItem(context: objectContext)
-        myGTD.gTDItemID = GTDItemID
-        myGTD.gTDParentID = parentID
+        myGTD.gTDItemID = Int64(GTDItemID)
+        myGTD.gTDParentID = Int64(parentID)
         myGTD.title = title
         myGTD.status = status
-        myGTD.teamID = teamID
+        myGTD.teamID = Int64(teamID)
         myGTD.note = note
         myGTD.lastReviewDate = lastReviewDate as NSDate
-        myGTD.reviewFrequency = reviewFrequency
+        myGTD.reviewFrequency = Int64(reviewFrequency)
         myGTD.reviewPeriod = reviewPeriod
-        myGTD.predecessor = predecessor
-        myGTD.gTDLevel = GTDLevel
+        myGTD.predecessor = Int64(predecessor)
+        myGTD.gTDLevel = Int64(GTDLevel)
         if updateType == "CODE"
         {
             myGTD.updateTime =  NSDate()
@@ -500,7 +500,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteGTDItem(_ GTDItemID: Int32, teamID: Int32)
+    func deleteGTDItem(_ GTDItemID: Int, teamID: Int)
     {
         var myGTD: GTDItem!
         
@@ -515,7 +515,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func getGTDItem(_ GTDItemID: Int32, teamID: Int32)->[GTDItem]
+    func getGTDItem(_ GTDItemID: Int, teamID: Int)->[GTDItem]
     {
         let fetchRequest = NSFetchRequest<GTDItem>(entityName: "GTDItem")
         
@@ -539,7 +539,7 @@ extension coreDatabase
         }
     }
     
-    func getGTDItemsForLevel(_ GTDLevel: Int32, teamID: Int32)->[GTDItem]
+    func getGTDItemsForLevel(_ GTDLevel: Int, teamID: Int)->[GTDItem]
     {
         let fetchRequest = NSFetchRequest<GTDItem>(entityName: "GTDItem")
         
@@ -580,7 +580,7 @@ extension coreDatabase
         }
     }
     
-    func getOpenGTDChildItems(_ GTDItemID: Int32, teamID: Int32)->[GTDItem]
+    func getOpenGTDChildItems(_ GTDItemID: Int, teamID: Int)->[GTDItem]
     {
         let fetchRequest = NSFetchRequest<GTDItem>(entityName: "GTDItem")
         
@@ -604,7 +604,7 @@ extension coreDatabase
         }
     }
     
-    func checkGTDItem(_ GTDItemID: Int32, teamID: Int32)->[GTDItem]
+    func checkGTDItem(_ GTDItemID: Int, teamID: Int)->[GTDItem]
     {
         let fetchRequest = NSFetchRequest<GTDItem>(entityName: "GTDItem")
         
@@ -726,7 +726,7 @@ extension CloudKitInteraction
         }
     }
 
-    func updateGTDItemInCoreData(teamID: Int32)
+    func updateGTDItemInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "GTDItem") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "GTDItem", predicate: predicate)
@@ -752,7 +752,7 @@ extension CloudKitInteraction
         }
     }
 
-    func deleteGTDItem(teamID: Int32)
+    func deleteGTDItem(teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -770,7 +770,7 @@ extension CloudKitInteraction
         sem.wait()
     }
 
-    func replaceGTDItemInCoreData(teamID: Int32)
+    func replaceGTDItemInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID)")
         let query: CKQuery = CKQuery(recordType: "GTDItem", predicate: predicate)
@@ -779,7 +779,7 @@ extension CloudKitInteraction
         waitFlag = true
         
         operation.recordFetchedBlock = { (record) in
-            let gTDItemID = record.object(forKey: "gTDItemID") as! Int32
+            let gTDItemID = record.object(forKey: "gTDItemID") as! Int
             var updateTime = Date()
             if record.object(forKey: "updateTime") != nil
             {
@@ -790,16 +790,16 @@ extension CloudKitInteraction
             {
                 updateType = record.object(forKey: "updateType") as! String
             }
-            let gTDParentID = record.object(forKey: "gTDParentID") as! Int32
+            let gTDParentID = record.object(forKey: "gTDParentID") as! Int
             let lastReviewDate = record.object(forKey: "lastReviewDate") as! Date
             let note = record.object(forKey: "note") as! String
-            let predecessor = record.object(forKey: "predecessor") as! Int32
-            let reviewFrequency = record.object(forKey: "reviewFrequency") as! Int16
+            let predecessor = record.object(forKey: "predecessor") as! Int
+            let reviewFrequency = record.object(forKey: "reviewFrequency") as! Int
             let reviewPeriod = record.object(forKey: "reviewPeriod") as! String
             let status = record.object(forKey: "status") as! String
-            let teamID = record.object(forKey: "teamID") as! Int32
+            let teamID = record.object(forKey: "teamID") as! Int
             let title = record.object(forKey: "title") as! String
-            let gTDLevel = record.object(forKey: "gTDLevel") as! Int32
+            let gTDLevel = record.object(forKey: "gTDLevel") as! Int
             
             myDatabaseConnection.replaceGTDItem(gTDItemID, parentID: gTDParentID, title: title, status: status, teamID: teamID, note: note, lastReviewDate: lastReviewDate, reviewFrequency: reviewFrequency, reviewPeriod: reviewPeriod, predecessor: predecessor, GTDLevel: gTDLevel, updateTime: updateTime, updateType: updateType)
             usleep(useconds_t(self.sleepTime))
@@ -814,7 +814,7 @@ extension CloudKitInteraction
         }
     }
 
-    func saveGTDItemRecordToCloudKit(_ sourceRecord: GTDItem, teamID: Int32)
+    func saveGTDItemRecordToCloudKit(_ sourceRecord: GTDItem, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "(gTDItemID == \(sourceRecord.gTDItemID)) && (teamID == \(sourceRecord.teamID)) AND (teamID == \(teamID))")
@@ -905,7 +905,7 @@ extension CloudKitInteraction
 
     func updateGTDItemRecord(_ sourceRecord: CKRecord)
     {
-        let gTDItemID = sourceRecord.object(forKey: "gTDItemID") as! Int32
+        let gTDItemID = sourceRecord.object(forKey: "gTDItemID") as! Int
         var updateTime = Date()
         if sourceRecord.object(forKey: "updateTime") != nil
         {
@@ -918,16 +918,16 @@ extension CloudKitInteraction
         {
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
-        let gTDParentID = sourceRecord.object(forKey: "gTDParentID") as! Int32
+        let gTDParentID = sourceRecord.object(forKey: "gTDParentID") as! Int
         let lastReviewDate = sourceRecord.object(forKey: "lastReviewDate") as! Date
         let note = sourceRecord.object(forKey: "note") as! String
-        let predecessor = sourceRecord.object(forKey: "predecessor") as! Int32
-        let reviewFrequency = sourceRecord.object(forKey: "reviewFrequency") as! Int16
+        let predecessor = sourceRecord.object(forKey: "predecessor") as! Int
+        let reviewFrequency = sourceRecord.object(forKey: "reviewFrequency") as! Int
         let reviewPeriod = sourceRecord.object(forKey: "reviewPeriod") as! String
         let status = sourceRecord.object(forKey: "status") as! String
-        let teamID = sourceRecord.object(forKey: "teamID") as! Int32
+        let teamID = sourceRecord.object(forKey: "teamID") as! Int
         let title = sourceRecord.object(forKey: "title") as! String
-        let gTDLevel = sourceRecord.object(forKey: "gTDLevel") as! Int32
+        let gTDLevel = sourceRecord.object(forKey: "gTDLevel") as! Int
         
         myDatabaseConnection.saveGTDItem(gTDItemID, parentID: gTDParentID, title: title, status: status, teamID: teamID, note: note, lastReviewDate: lastReviewDate, reviewFrequency: reviewFrequency, reviewPeriod: reviewPeriod, predecessor: predecessor, GTDLevel: gTDLevel, updateTime: updateTime, updateType: updateType)
     }

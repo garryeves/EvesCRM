@@ -234,7 +234,6 @@ Note, you will only have 24 hours from the code being creted to enter it.  If yo
                             <constraint firstItem="TuB-wO-E6O" firstAttribute="leading" secondItem="nBh-lo-hSX" secondAttribute="leadingMargin" constant="50" id="JNR-Ws-m2K"/>
                             <constraint firstItem="MBC-PD-JlK" firstAttribute="centerX" secondItem="nBh-lo-hSX" secondAttribute="centerX" id="KV4-DQ-0pu"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Ewj-fb-Z9O" secondAttribute="trailing" constant="20" id="Kpa-1j-pkj"/>
-                            <constraint firstItem="Wiv-DK-KeD" firstAttribute="top" secondItem="MBC-PD-JlK" secondAttribute="bottom" constant="20" id="LEl-DO-S38"/>
                             <constraint firstItem="0SA-9q-wzJ" firstAttribute="top" secondItem="5dF-iM-ioz" secondAttribute="bottom" constant="25" id="LOw-P7-sSm"/>
                             <constraint firstItem="sY4-D3-tTY" firstAttribute="leading" secondItem="4uz-9j-Atp" secondAttribute="trailing" constant="5" id="OpH-5d-MbN"/>
                             <constraint firstItem="wf7-1A-aXq" firstAttribute="top" secondItem="8Bh-ZS-1t0" secondAttribute="bottom" constant="25" id="P3W-lb-iUM"/>
@@ -256,6 +255,7 @@ Note, you will only have 24 hours from the code being creted to enter it.  If yo
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="bottomContraint" destination="kRa-1P-O4u" id="ukC-Tp-dEE"/>
                         <outlet property="btnCancel" destination="WaY-Jw-T4s" id="nuT-gb-CVA"/>
                         <outlet property="btnSave" destination="TuB-wO-E6O" id="yME-tM-1Cl"/>
                         <outlet property="btnStatus" destination="Ewj-fb-Z9O" id="Fix-Ge-ZhB"/>

@@ -14,20 +14,20 @@ class userTeams: NSObject
 {
     fileprivate var myUserTeams:[userTeamItem] = Array()
     
-    init(userID: Int32)
+    init(userID: Int)
     {
         for myItem in myDatabaseConnection.getTeamsForUser(userID: userID)
         {
-            let myObject = userTeamItem(userID: myItem.userID, teamID: myItem.teamID)
+            let myObject = userTeamItem(userID: Int(myItem.userID), teamID: Int(myItem.teamID))
             myUserTeams.append(myObject)
         }
     }
     
-    init(teamID: Int32)
+    init(teamID: Int)
     {
         for myItem in myDatabaseConnection.getUsersForTeam(teamID: teamID)
         {
-            let myObject = userTeamItem(userID: myItem.userID, teamID: myItem.teamID)
+            let myObject = userTeamItem(userID: Int(myItem.userID), teamID: Int(myItem.teamID))
             myUserTeams.append(myObject)
         }
     }
@@ -43,10 +43,10 @@ class userTeams: NSObject
 
 class userTeamItem: NSObject
 {
-    fileprivate var myTeamID: Int32 = 0
-    fileprivate var myUserID: Int32 = 0
+    fileprivate var myTeamID: Int = 0
+    fileprivate var myUserID: Int = 0
     
-    var teamID: Int32
+    var teamID: Int
     {
         get
         {
@@ -54,7 +54,7 @@ class userTeamItem: NSObject
         }
     }
     
-    var userID: Int32
+    var userID: Int
     {
         get
         {
@@ -62,8 +62,8 @@ class userTeamItem: NSObject
         }
     }
     
-    init(userID: Int32,
-         teamID: Int32
+    init(userID: Int,
+         teamID: Int
          )
     {
         super.init()
@@ -80,8 +80,8 @@ class userTeamItem: NSObject
 
 extension coreDatabase
 {
-    func saveUserTeam(_ userID: Int32,
-                       teamID: Int32,
+    func saveUserTeam(_ userID: Int,
+                       teamID: Int,
                      updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myItem: UserTeams!
@@ -91,8 +91,8 @@ extension coreDatabase
         if myReturn.count == 0
         { // Add
             myItem = UserTeams(context: objectContext)
-            myItem.teamID = teamID
-            myItem.userID = userID
+            myItem.teamID = Int64(teamID)
+            myItem.userID = Int64(userID)
             
             if updateType == "CODE"
             {
@@ -110,13 +110,13 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceUserTeam(_ userID: Int32,
-                          teamID: Int32,
+    func replaceUserTeam(_ userID: Int,
+                          teamID: Int,
                         updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myItem = UserTeams(context: objectContext)
-        myItem.teamID = teamID
-        myItem.userID = userID
+        myItem.teamID = Int64(teamID)
+        myItem.userID = Int64(userID)
         
         if updateType == "CODE"
         {
@@ -132,8 +132,8 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteUserTeam(_ userID: Int32,
-                         teamID: Int32)
+    func deleteUserTeam(_ userID: Int,
+                         teamID: Int)
     {
         let myReturn = getUserTeamsDetails(userID, teamID: teamID)
         
@@ -147,7 +147,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func getTeamsForUser(userID: Int32)->[UserTeams]
+    func getTeamsForUser(userID: Int)->[UserTeams]
     {
         let fetchRequest = NSFetchRequest<UserTeams>(entityName: "UserTeams")
         
@@ -171,7 +171,7 @@ extension coreDatabase
         }
     }
     
-    func getUsersForTeam(teamID: Int32)->[UserTeams]
+    func getUsersForTeam(teamID: Int)->[UserTeams]
     {
         let fetchRequest = NSFetchRequest<UserTeams>(entityName: "UserTeams")
         
@@ -195,7 +195,7 @@ extension coreDatabase
         }
     }
     
-    func getUserTeamsDetails(_ userID: Int32, teamID: Int32)->[UserTeams]
+    func getUserTeamsDetails(_ userID: Int, teamID: Int)->[UserTeams]
     {
         let fetchRequest = NSFetchRequest<UserTeams>(entityName: "UserTeams")
         
@@ -343,7 +343,7 @@ extension CloudKitInteraction
         }
     }
     
-    func updateUserTeamsInCoreData(teamID: Int32)
+    func updateUserTeamsInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "UserTeams") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "UserTeams", predicate: predicate)
@@ -370,7 +370,7 @@ extension CloudKitInteraction
         }
     }
     
-    func deleteUserTeams(userID: Int32, teamID: Int32)
+    func deleteUserTeams(userID: Int, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -389,7 +389,7 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func replaceUserTeamsInCoreData(teamID: Int32)
+    func replaceUserTeamsInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "UserTeams", predicate: predicate)
@@ -398,16 +398,16 @@ extension CloudKitInteraction
         waitFlag = true
         
         operation.recordFetchedBlock = { (record) in
-            var userID: Int32 = 0
+            var userID: Int = 0
             if record.object(forKey: "userID") != nil
             {
-                userID = record.object(forKey: "userID") as! Int32
+                userID = record.object(forKey: "userID") as! Int
             }
             
-            var teamID: Int32 = 0
+            var teamID: Int = 0
             if record.object(forKey: "teamID") != nil
             {
-                teamID = record.object(forKey: "teamID") as! Int32
+                teamID = record.object(forKey: "teamID") as! Int
             }
             
             var updateTime = Date()
@@ -492,16 +492,16 @@ extension CloudKitInteraction
     
     func updateUserTeamsRecord(_ sourceRecord: CKRecord)
     {
-        var userID: Int32 = 0
+        var userID: Int = 0
         if sourceRecord.object(forKey: "userID") != nil
         {
-            userID = sourceRecord.object(forKey: "userID") as! Int32
+            userID = sourceRecord.object(forKey: "userID") as! Int
         }
         
-        var teamID: Int32 = 0
+        var teamID: Int = 0
         if sourceRecord.object(forKey: "teamID") != nil
         {
-            teamID = sourceRecord.object(forKey: "teamID") as! Int32
+            teamID = sourceRecord.object(forKey: "teamID") as! Int
         }
         
         var updateTime = Date()

@@ -21,11 +21,11 @@ class contexts: NSObject
     {
         for myItem in myDatabaseConnection.getContextsForType("Person")
         {
-            let myItemDetails = myDatabaseConnection.getContextDetails(myItem.contextID)
+            let myItemDetails = myDatabaseConnection.getContextDetails(Int(myItem.contextID))
             
             if myItemDetails.count > 0
             {
-                let myContext = context(contextID: myItem.contextID)
+                let myContext = context(contextID: Int(myItem.contextID))
                 myPeopleContexts.append(myContext)
                 myContexts.append(myContext)
             }
@@ -35,11 +35,11 @@ class contexts: NSObject
         
         for myItem in myDatabaseConnection.getContextsForType("Place")
         {
-            let myItemDetails = myDatabaseConnection.getContextDetails(myItem.contextID)
+            let myItemDetails = myDatabaseConnection.getContextDetails(Int(myItem.contextID))
             
             if myItemDetails.count > 0
             {
-                let myContext = context(contextID: myItem.contextID)
+                let myContext = context(contextID: Int(myItem.contextID))
                 myPlaceContexts.append(myContext)
                 myContexts.append(myContext)
             }
@@ -49,11 +49,11 @@ class contexts: NSObject
         
         for myItem in myDatabaseConnection.getContextsForType("Tool")
         {
-            let myItemDetails = myDatabaseConnection.getContextDetails(myItem.contextID)
+            let myItemDetails = myDatabaseConnection.getContextDetails(Int(myItem.contextID))
             
             if myItemDetails.count > 0
             {
-                let myContext = context(contextID: myItem.contextID)
+                let myContext = context(contextID: Int(myItem.contextID))
                 myToolContexts.append(myContext)
                 myContexts.append(myContext)
             }
@@ -102,19 +102,19 @@ class contexts: NSObject
 
 class context: NSObject
 {
-    fileprivate var myContextID: Int32 = 0
+    fileprivate var myContextID: Int = 0
     fileprivate var myName: String = "New context"
     fileprivate var myEmail: String = ""
     fileprivate var myAutoEmail: String = ""
-    fileprivate var myParentContext: Int32 = 0
+    fileprivate var myParentContext: Int = 0
     fileprivate var myStatus: String = ""
-    fileprivate var myPersonID: Int32 = 0
-    fileprivate var myTeamID: Int32 = 0
-    fileprivate var myPredecessor: Int32 = 0
+    fileprivate var myPersonID: Int = 0
+    fileprivate var myTeamID: Int = 0
+    fileprivate var myPredecessor: Int = 0
     fileprivate var myContextType: String = ""
     fileprivate var saveCalled: Bool = false
     
-    var contextID: Int32
+    var contextID: Int
     {
         get
         {
@@ -174,7 +174,7 @@ class context: NSObject
         }
     }
     
-    var parentContext: Int32
+    var parentContext: Int
     {
         get
         {
@@ -228,7 +228,7 @@ class context: NSObject
         }
     }
     
-    var personID: Int32
+    var personID: Int
     {
         get
         {
@@ -241,7 +241,7 @@ class context: NSObject
         }
     }
     
-    var teamID: Int32
+    var teamID: Int
     {
         get
         {
@@ -254,7 +254,7 @@ class context: NSObject
         }
     }
     
-    var predecessor: Int32
+    var predecessor: Int
     {
         get
         {
@@ -273,11 +273,11 @@ class context: NSObject
     }
     
     
-    init(teamID: Int32)
+    init(teamID: Int)
     {
         super.init()
         
-        myContextID = myDatabaseConnection.getNextID("Context")
+        myContextID = myDatabaseConnection.getNextID("Context", teamID: teamID)
         myTeamID = teamID
         
         save()
@@ -319,21 +319,21 @@ class context: NSObject
         }
     }
     
-    init(contextID: Int32)
+    init(contextID: Int)
     {
         super.init()
         let myContexts = myDatabaseConnection.getContextDetails(contextID)
         
         for myContext in myContexts
         {
-            myContextID = myContext.contextID
+            myContextID = Int(myContext.contextID)
             myName = myContext.name!
             myEmail = myContext.email!
             myAutoEmail = myContext.autoEmail!
-            myParentContext = myContext.parentContext
+            myParentContext = Int(myContext.parentContext)
             myStatus = myContext.status!
-            myPersonID = myContext.personID
-            myTeamID = myContext.teamID
+            myPersonID = Int(myContext.personID)
+            myTeamID = Int(myContext.teamID)
             
             getContext1_1()
         }
@@ -342,14 +342,14 @@ class context: NSObject
     init(sourceContext: Context)
     {
         super.init()
-        myContextID = sourceContext.contextID
+        myContextID = Int(sourceContext.contextID)
         myName = sourceContext.name!
         myEmail = sourceContext.email!
         myAutoEmail = sourceContext.autoEmail!
-        myParentContext = sourceContext.parentContext
+        myParentContext = Int(sourceContext.parentContext)
         myStatus = sourceContext.status!
-        myPersonID = sourceContext.personID
-        myTeamID = sourceContext.teamID
+        myPersonID = Int(sourceContext.personID)
+        myTeamID = Int(sourceContext.teamID)
         
         getContext1_1()
     }
@@ -370,7 +370,7 @@ class context: NSObject
         {
             for myItem in myNotes
             {
-                myPredecessor = myItem.predecessor
+                myPredecessor = Int(myItem.predecessor)
                 myContextType = myItem.contextType!
             }
         }
@@ -381,7 +381,7 @@ class context: NSObject
     {
         myDatabaseConnection.saveContext(myContextID, name: myName, email: myEmail, autoEmail: myAutoEmail, parentContext: myParentContext, status: myStatus, personID: myPersonID, teamID: myTeamID)
         
-        myDatabaseConnection.saveContext1_1(myContextID, predecessor: myPredecessor, contextType: myContextType)
+        myDatabaseConnection.saveContext1_1(myContextID, predecessor: myPredecessor, contextType: myContextType, teamID: myTeamID)
         
         if !saveCalled
         {
@@ -421,7 +421,7 @@ class context: NSObject
 
 extension coreDatabase
 {
-    func saveContext(_ contextID: Int32, name: String, email: String, autoEmail: String, parentContext: Int32, status: String, personID: Int32, teamID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveContext(_ contextID: Int, name: String, email: String, autoEmail: String, parentContext: Int, status: String, personID: Int, teamID: Int, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myContext: Context!
         
@@ -430,14 +430,14 @@ extension coreDatabase
         if myContexts.count == 0
         { // Add
             myContext = Context(context: objectContext)
-            myContext.contextID = contextID
+            myContext.contextID = Int64(contextID)
             myContext.name = name
             myContext.email = email
             myContext.autoEmail = autoEmail
-            myContext.parentContext = parentContext
+            myContext.parentContext = Int64(parentContext)
             myContext.status = status
-            myContext.personID = personID
-            myContext.teamID = teamID
+            myContext.personID = Int64(personID)
+            myContext.teamID = Int64(teamID)
             if updateType == "CODE"
             {
                 myContext.updateTime =  NSDate()
@@ -456,10 +456,10 @@ extension coreDatabase
             myContext.name = name
             myContext.email = email
             myContext.autoEmail = autoEmail
-            myContext.parentContext = parentContext
+            myContext.parentContext = Int64(parentContext)
             myContext.status = status
-            myContext.personID = personID
-            myContext.teamID = teamID
+            myContext.personID = Int64(personID)
+            myContext.teamID = Int64(teamID)
             if updateType == "CODE"
             {
                 myContext.updateTime =  NSDate()
@@ -478,17 +478,17 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceContext(_ contextID: Int32, name: String, email: String, autoEmail: String, parentContext: Int32, status: String, personID: Int32, teamID: Int32, updateTime: Date =  Date(), updateType: String = "CODE")
+    func replaceContext(_ contextID: Int, name: String, email: String, autoEmail: String, parentContext: Int, status: String, personID: Int, teamID: Int, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myContext = Context(context: objectContext)
-        myContext.contextID = contextID
+        myContext.contextID = Int64(contextID)
         myContext.name = name
         myContext.email = email
         myContext.autoEmail = autoEmail
-        myContext.parentContext = parentContext
+        myContext.parentContext = Int64(parentContext)
         myContext.status = status
-        myContext.personID = personID
-        myContext.teamID = teamID
+        myContext.personID = Int64(personID)
+        myContext.teamID = Int64(teamID)
         if updateType == "CODE"
         {
             myContext.updateTime =  NSDate()
@@ -503,7 +503,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteContext(_ contextID: Int32, teamID: Int32)
+    func deleteContext(_ contextID: Int, teamID: Int)
     {
         let myContexts = getContextDetails(contextID)
         
@@ -528,7 +528,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func getContexts(_ teamID: Int32)->[Context]
+    func getContexts(_ teamID: Int)->[Context]
     {
         let fetchRequest = NSFetchRequest<Context>(entityName: "Context")
         
@@ -580,13 +580,13 @@ extension coreDatabase
         }
     }
     
-    func getContextByName(_ contextName: String)->[Context]
+    func getContextByName(_ contextName: String, teamID: Int)->[Context]
     {
         let fetchRequest = NSFetchRequest<Context>(entityName: "Context")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(name = \"\(contextName)\") && (updateType != \"Delete\") && (status != \"Deleted\")")
+        let predicate = NSPredicate(format: "(name = \"\(contextName)\") AND (teamID = \(teamID)) && (updateType != \"Delete\") && (status != \"Deleted\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -604,7 +604,7 @@ extension coreDatabase
         }
     }
     
-    func getContextDetails(_ contextID: Int32)->[Context]
+    func getContextDetails(_ contextID: Int)->[Context]
     {
         let fetchRequest = NSFetchRequest<Context>(entityName: "Context")
         
@@ -628,7 +628,7 @@ extension coreDatabase
         }
     }
     
-    func getAllContexts(_ teamID: Int32)->[Context]
+    func getAllContexts(_ teamID: Int)->[Context]
     {
         let fetchRequest = NSFetchRequest<Context>(entityName: "Context")
         
@@ -780,9 +780,9 @@ extension coreDatabase
         saveContext()
     }
     
-    func initialiseTeamForContext(_ teamID: Int32)
+    func initialiseTeamForContext(_ teamID: Int)
     {
-        var maxID: Int32 = 1
+        var maxID: Int = 1
         
         let fetchRequest = NSFetchRequest<Context>(entityName: "Context")
         
@@ -798,15 +798,15 @@ extension coreDatabase
             {
                 for myItem in fetchResults
                 {
-                    myItem.teamID = teamID
-                    maxID = myItem.contextID
+                    myItem.teamID = Int64(teamID)
+                    maxID = Int(myItem.contextID)
                 }
             }
             
             // Now go and populate the Decode for this
             
             let tempInt = "\(maxID)"
-            updateDecodeValue("Context", codeValue: tempInt, codeType: "hidden", decode_privacy: "Public")
+            updateDecodeValue("Context", codeValue: tempInt, codeType: "hidden", decode_privacy: "Public", teamID: currentUser.currentTeam!.teamID)
         }
         catch
         {
@@ -816,7 +816,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func saveContext1_1(_ contextID: Int32, predecessor: Int32, contextType: String, updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveContext1_1(_ contextID: Int, predecessor: Int, contextType: String, teamID: Int, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myContext: Context1_1!
         
@@ -825,9 +825,11 @@ extension coreDatabase
         if myContexts.count == 0
         { // Add
             myContext = Context1_1(context: objectContext)
-            myContext.contextID = contextID
-            myContext.predecessor = predecessor
+            myContext.contextID = Int64(contextID)
+            myContext.predecessor = Int64(predecessor)
             myContext.contextType = contextType
+            myContext.teamID = Int64(teamID)
+            
             if updateType == "CODE"
             {
                 myContext.updateTime =  NSDate()
@@ -843,7 +845,7 @@ extension coreDatabase
         else
         {
             myContext = myContexts[0]
-            myContext.predecessor = predecessor
+            myContext.predecessor = Int64(predecessor)
             myContext.contextType = contextType
             if updateType == "CODE"
             {
@@ -863,12 +865,14 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceContext1_1(_ contextID: Int32, predecessor: Int32, contextType: String, updateTime: Date =  Date(), updateType: String = "CODE")
+    func replaceContext1_1(_ contextID: Int, predecessor: Int, contextType: String, teamID: Int, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myContext = Context1_1(context: objectContext)
-        myContext.contextID = contextID
-        myContext.predecessor = predecessor
+        myContext.contextID = Int64(contextID)
+        myContext.predecessor = Int64(predecessor)
         myContext.contextType = contextType
+        myContext.teamID = Int64(teamID)
+        
         if updateType == "CODE"
         {
             myContext.updateTime =  NSDate()
@@ -883,7 +887,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func getContext1_1(_ contextID: Int32)->[Context1_1]
+    func getContext1_1(_ contextID: Int)->[Context1_1]
     {
         let fetchRequest = NSFetchRequest<Context1_1>(entityName: "Context1_1")
         
@@ -1017,7 +1021,7 @@ extension CloudKitInteraction
         }
     }
 
-    func updateContextInCoreData(teamID: Int32)
+    func updateContextInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "Context") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Context", predicate: predicate)
@@ -1044,7 +1048,7 @@ extension CloudKitInteraction
         }
     }
 
-    func deleteContext(teamID: Int32)
+    func deleteContext(teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -1076,30 +1080,29 @@ extension CloudKitInteraction
         sem.wait()
     }
 
-    func replaceContextInCoreData(teamID: Int32)
+    func replaceContextInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "Context", predicate: predicate)
         let operation = CKQueryOperation(query: query)
-        var predecessor: Int32 = 0
+        var predecessor: Int = 0
         
         waitFlag = true
         
         operation.recordFetchedBlock = { (record) in
-            let contextID = record.object(forKey: "contextID") as! Int32
+            let contextID = record.object(forKey: "contextID") as! Int
             let autoEmail = record.object(forKey: "autoEmail") as! String
             let email = record.object(forKey: "email") as! String
             let name = record.object(forKey: "name") as! String
-            let parentContext = record.object(forKey: "parentContext") as! Int32
-            let personID = record.object(forKey: "personID") as! Int32
+            let parentContext = record.object(forKey: "parentContext") as! Int
+            let personID = record.object(forKey: "personID") as! Int
             let status = record.object(forKey: "status") as! String
-            let teamID = record.object(forKey: "teamID") as! Int32
+            let teamID = record.object(forKey: "teamID") as! Int
             let contextType = record.object(forKey: "contextType") as! String
-            
             
             if record.object(forKey: "predecessor") != nil
             {
-                predecessor = record.object(forKey: "predecessor") as! Int32
+                predecessor = record.object(forKey: "predecessor") as! Int
             }
             var updateTime = Date()
             if record.object(forKey: "updateTime") != nil
@@ -1114,7 +1117,7 @@ extension CloudKitInteraction
             myDatabaseConnection.replaceContext(contextID, name: name, email: email, autoEmail: autoEmail, parentContext: parentContext, status: status, personID: personID, teamID: teamID, updateTime: updateTime, updateType: updateType)
             
             
-            myDatabaseConnection.replaceContext1_1(contextID, predecessor: predecessor, contextType: contextType, updateTime: updateTime, updateType: updateType)
+            myDatabaseConnection.replaceContext1_1(contextID, predecessor: predecessor, contextType: contextType, teamID: teamID, updateTime: updateTime, updateType: updateType)
             usleep(useconds_t(self.sleepTime))
         }
             
@@ -1128,7 +1131,7 @@ extension CloudKitInteraction
         }
     }
     
-    func saveContextRecordToCloudKit(_ sourceRecord: Context, teamID: Int32)
+    func saveContextRecordToCloudKit(_ sourceRecord: Context, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0)
 
@@ -1143,14 +1146,14 @@ extension CloudKitInteraction
             {
                 // Lets go and get the additional details from the context1_1 table
                 
-                let tempContext1_1 = myDatabaseConnection.getContext1_1(sourceRecord.contextID)
+                let tempContext1_1 = myDatabaseConnection.getContext1_1(Int(sourceRecord.contextID))
                 
-                var myPredecessor: Int32 = 0
+                var myPredecessor: Int = 0
                 var myContextType: String = ""
                 
                 if tempContext1_1.count > 0
                 {
-                    myPredecessor = tempContext1_1[0].predecessor
+                    myPredecessor = Int(tempContext1_1[0].predecessor)
                     if tempContext1_1[0].contextType != nil
                     {
                         myContextType = tempContext1_1[0].contextType!
@@ -1235,7 +1238,7 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func saveContext1_1RecordToCloudKit(_ sourceRecord: Context1_1, teamID: Int32)
+    func saveContext1_1RecordToCloudKit(_ sourceRecord: Context1_1, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "(contextID == \(sourceRecord.contextID)) AND (teamID == \(teamID))") // better be accurate to get only the record you need
@@ -1311,21 +1314,21 @@ extension CloudKitInteraction
     
     func updateContextRecord(_ sourceRecord: CKRecord)
     {
-        var predecessor: Int32 = 0
+        var predecessor: Int = 0
         
-        let contextID = sourceRecord.object(forKey: "contextID") as! Int32
+        let contextID = sourceRecord.object(forKey: "contextID") as! Int
         let autoEmail = sourceRecord.object(forKey: "autoEmail") as! String
         let email = sourceRecord.object(forKey: "email") as! String
         let name = sourceRecord.object(forKey: "name") as! String
-        let parentContext = sourceRecord.object(forKey: "parentContext") as! Int32
-        let personID = sourceRecord.object(forKey: "personID") as! Int32
+        let parentContext = sourceRecord.object(forKey: "parentContext") as! Int
+        let personID = sourceRecord.object(forKey: "personID") as! Int
         let status = sourceRecord.object(forKey: "status") as! String
-        let teamID = sourceRecord.object(forKey: "teamID") as! Int32
+        let teamID = sourceRecord.object(forKey: "teamID") as! Int
         let contextType = sourceRecord.object(forKey: "contextType") as! String
         
         if sourceRecord.object(forKey: "predecessor") != nil
         {
-            predecessor = sourceRecord.object(forKey: "predecessor") as! Int32
+            predecessor = sourceRecord.object(forKey: "predecessor") as! Int
         }
         
         var updateTime = Date()
@@ -1343,7 +1346,7 @@ extension CloudKitInteraction
         
         myDatabaseConnection.saveContext(contextID, name: name, email: email, autoEmail: autoEmail, parentContext: parentContext, status: status, personID: personID, teamID: teamID, updateTime: updateTime, updateType: updateType)
         
-        myDatabaseConnection.saveContext1_1(contextID, predecessor: predecessor, contextType: contextType, updateTime: updateTime, updateType: updateType)
+        myDatabaseConnection.saveContext1_1(contextID, predecessor: predecessor, contextType: contextType, teamID: teamID, updateTime: updateTime, updateType: updateType)
     }
 
 }

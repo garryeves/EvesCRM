@@ -14,33 +14,35 @@ class shifts: NSObject
 {
     fileprivate var myShifts:[shift] = Array()
     
-    init(personID: Int32, searchFrom: Date, searchTo: Date)
+    init(personID: Int, searchFrom: Date, searchTo: Date)
     {
-        for myItem in myDatabaseConnection.getShifts(personID: personID, searchFrom: searchFrom, searchTo: searchTo)
+        for myItem in myDatabaseConnection.getShifts(personID: personID, searchFrom: searchFrom, searchTo: searchTo, teamID: currentUser.currentTeam!.teamID)
         {
-            let myObject = shift(shiftID: myItem.shiftID,
-                                 projectID: myItem.projectID,
-                                 personID: myItem.personID,
+            let myObject = shift(shiftID: Int(myItem.shiftID),
+                                 projectID: Int(myItem.projectID),
+                                 personID: Int(myItem.personID),
                                  workDate: myItem.workDate! as Date,
                                  dayOfWeek: myItem.dayOfWeek!,
                                  startTime: myItem.startTime! as Date,
-                                 endTime: myItem.endTime! as Date
+                                 endTime: myItem.endTime! as Date,
+                                 teamID: Int(myItem.teamID)
                                    )
             myShifts.append(myObject)
         }
     }
     
-    init(projectID: Int32, searchFrom: Date, searchTo: Date)
+    init(projectID: Int, searchFrom: Date, searchTo: Date)
     {
-        for myItem in myDatabaseConnection.getShifts(projectID: projectID, searchFrom: searchFrom, searchTo: searchTo)
+        for myItem in myDatabaseConnection.getShifts(projectID: projectID, searchFrom: searchFrom, searchTo: searchTo, teamID: currentUser.currentTeam!.teamID)
         {
-            let myObject = shift(shiftID: myItem.shiftID,
-                                 projectID: myItem.projectID,
-                                 personID: myItem.personID,
+            let myObject = shift(shiftID: Int(myItem.shiftID),
+                                 projectID: Int(myItem.projectID),
+                                 personID: Int(myItem.personID),
                                  workDate: myItem.workDate! as Date,
                                  dayOfWeek: myItem.dayOfWeek!,
                                  startTime: myItem.startTime! as Date,
-                                 endTime: myItem.endTime! as Date
+                                 endTime: myItem.endTime! as Date,
+                                 teamID: Int(myItem.teamID)
             )
             myShifts.append(myObject)
         }
@@ -57,15 +59,16 @@ class shifts: NSObject
 
 class shift: NSObject
 {
-    fileprivate var myShiftID: Int32 = 0
-    fileprivate var myProjectID: Int32 = 0
-    fileprivate var myPersonID: Int32 = 0
+    fileprivate var myShiftID: Int = 0
+    fileprivate var myProjectID: Int = 0
+    fileprivate var myPersonID: Int = 0
     fileprivate var myWorkDate: Date!
     fileprivate var myDayOfWeek: String = ""
     fileprivate var myStartTime: Date!
     fileprivate var myEndTime: Date!
-
-    var shiftID: Int32
+    fileprivate var myTeamID: Int = 0
+    
+    var shiftID: Int
     {
         get
         {
@@ -73,7 +76,7 @@ class shift: NSObject
         }
     }
     
-    var projectID: Int32
+    var projectID: Int
     {
         get
         {
@@ -81,7 +84,7 @@ class shift: NSObject
         }
     }
     
-    var personID: Int32
+    var personID: Int
     {
         get
         {
@@ -136,12 +139,14 @@ class shift: NSObject
         }
     }
     
-    init(projectID: Int32, workDate: Date)
+    init(projectID: Int, workDate: Date)
     {
         super.init()
         
-        myShiftID = myDatabaseConnection.getNextID("Shifts")
+        myShiftID = myDatabaseConnection.getNextID("Shifts", teamID: currentUser.currentTeam!.teamID)
         myProjectID = projectID
+        myTeamID = currentUser.currentTeam!.teamID
+        
         myWorkDate = workDate
         
         // Determine the day of the week
@@ -153,30 +158,32 @@ class shift: NSObject
         save()
     }
     
-    init(shiftID: Int32)
+    init(shiftID: Int)
     {
         super.init()
         let myReturn = myDatabaseConnection.getShiftDetails(shiftID)
         
         for myItem in myReturn
         {
-            myShiftID = myItem.shiftID
-            myProjectID = myItem.projectID
-            myPersonID = myItem.personID
+            myShiftID = Int(myItem.shiftID)
+            myProjectID = Int(myItem.projectID)
+            myPersonID = Int(myItem.personID)
             myWorkDate = myItem.workDate! as Date
             myDayOfWeek = myItem.dayOfWeek!
             myStartTime = myItem.startTime! as Date
             myEndTime = myItem.endTime! as Date
+            myTeamID = Int(myItem.teamID)
         }
     }
     
-    init(shiftID: Int32,
-         projectID: Int32,
-         personID: Int32,
+    init(shiftID: Int,
+         projectID: Int,
+         personID: Int,
          workDate: Date,
          dayOfWeek: String,
          startTime: Date,
-         endTime: Date
+         endTime: Date,
+         teamID: Int
          )
     {
         super.init()
@@ -188,6 +195,7 @@ class shift: NSObject
         myDayOfWeek = dayOfWeek
         myStartTime = startTime
         myEndTime = endTime
+        myTeamID = teamID
     }
     
     func save()
@@ -198,7 +206,8 @@ class shift: NSObject
                                         workDate: myWorkDate,
                                         dayOfWeek: myDayOfWeek,
                                         startTime: myStartTime,
-                                        endTime: myEndTime
+                                        endTime: myEndTime,
+                                        teamID: myTeamID
                                          )
     }
     
@@ -210,13 +219,14 @@ class shift: NSObject
 
 extension coreDatabase
 {
-    func saveShifts(_ shiftID: Int32,
-                    projectID: Int32,
-                    personID: Int32,
+    func saveShifts(_ shiftID: Int,
+                    projectID: Int,
+                    personID: Int,
                     workDate: Date,
                     dayOfWeek: String,
                     startTime: Date,
                     endTime: Date,
+                    teamID: Int,
                      updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myItem: Shifts!
@@ -226,13 +236,14 @@ extension coreDatabase
         if myReturn.count == 0
         { // Add
             myItem = Shifts(context: objectContext)
-            myItem.shiftID = shiftID
-            myItem.projectID = projectID
-            myItem.personID = personID
+            myItem.shiftID = Int64(shiftID)
+            myItem.projectID = Int64(projectID)
+            myItem.personID = Int64(personID)
             myItem.workDate = workDate as NSDate
             myItem.dayOfWeek = dayOfWeek
             myItem.startTime = startTime as NSDate
             myItem.endTime = endTime as NSDate
+            myItem.teamID = Int64(teamID)
             
             if updateType == "CODE"
             {
@@ -249,11 +260,10 @@ extension coreDatabase
         else
         {
             myItem = myReturn[0]
-            myItem.personID = personID
+            myItem.personID = Int64(personID)
             myItem.dayOfWeek = dayOfWeek
             myItem.startTime = startTime as NSDate
             myItem.endTime = endTime as NSDate
-            
             
             if updateType == "CODE"
             {
@@ -273,23 +283,25 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceShifts(_ shiftID: Int32,
-                       projectID: Int32,
-                       personID: Int32,
+    func replaceShifts(_ shiftID: Int,
+                       projectID: Int,
+                       personID: Int,
                        workDate: Date,
                        dayOfWeek: String,
                        startTime: Date,
                        endTime: Date,
+                       teamID: Int,
                         updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myItem = Shifts(context: objectContext)
-        myItem.shiftID = shiftID
-        myItem.projectID = projectID
-        myItem.personID = personID
+        myItem.shiftID = Int64(shiftID)
+        myItem.projectID = Int64(projectID)
+        myItem.personID = Int64(personID)
         myItem.workDate = workDate as NSDate
         myItem.dayOfWeek = dayOfWeek
         myItem.startTime = startTime as NSDate
         myItem.endTime = endTime as NSDate
+        myItem.teamID = Int64(teamID)
         
         if updateType == "CODE"
         {
@@ -305,7 +317,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteShifts(_ shiftID: Int32)
+    func deleteShifts(_ shiftID: Int)
     {
         let myReturn = getShiftDetails(shiftID)
         
@@ -319,13 +331,13 @@ extension coreDatabase
         saveContext()
     }
     
-    func getShifts(personID: Int32, searchFrom: Date, searchTo: Date)->[Shifts]
+    func getShifts(personID: Int, searchFrom: Date, searchTo: Date, teamID: Int)->[Shifts]
     {
         let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(personID == \(personID)) AND (workDate >= %@) AND (workDate <= %@) && (updateType != \"Delete\")", searchFrom as CVarArg, searchTo as CVarArg)
+        let predicate = NSPredicate(format: "(personID == \(personID)) AND (workDate >= %@) AND (workDate <= %@) AND (teamID == \(teamID)) && (updateType != \"Delete\")", searchFrom as CVarArg, searchTo as CVarArg)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -346,13 +358,13 @@ extension coreDatabase
     }
     }
     
-    func getShifts(projectID: Int32, searchFrom: Date, searchTo: Date)->[Shifts]
+    func getShifts(projectID: Int, searchFrom: Date, searchTo: Date, teamID: Int)->[Shifts]
     {
         let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectID == \(projectID)) AND (workDate >= %@) AND (workDate <= %@) && (updateType != \"Delete\")", searchFrom as CVarArg, searchTo as CVarArg)
+        let predicate = NSPredicate(format: "(projectID == \(projectID)) AND (workDate >= %@) AND (workDate <= %@) AND (teamID == \(teamID)) && (updateType != \"Delete\")", searchFrom as CVarArg, searchTo as CVarArg)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -373,7 +385,7 @@ extension coreDatabase
         }
     }
     
-    func getShiftDetails(_ shiftID: Int32)->[Shifts]
+    func getShiftDetails(_ shiftID: Int)->[Shifts]
     {
         let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
         
@@ -521,7 +533,7 @@ extension CloudKitInteraction
         }
     }
     
-    func updateShiftsInCoreData(teamID: Int32)
+    func updateShiftsInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "Shifts") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Shifts", predicate: predicate)
@@ -548,7 +560,7 @@ extension CloudKitInteraction
         }
     }
     
-    func deleteShifts(shiftID: Int32, teamID: Int32)
+    func deleteShifts(shiftID: Int, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0);
         
@@ -567,7 +579,7 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func replaceShiftsInCoreData(teamID: Int32)
+    func replaceShiftsInCoreData(teamID: Int)
     {
         let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
         let query: CKQuery = CKQuery(recordType: "Shifts", predicate: predicate)
@@ -578,22 +590,22 @@ extension CloudKitInteraction
         operation.recordFetchedBlock = { (record) in
             let dayOfWeek = record.object(forKey: "dayOfWeek") as! String
             
-            var shiftID: Int32 = 0
+            var shiftID: Int = 0
             if record.object(forKey: "shiftID") != nil
             {
-                shiftID = record.object(forKey: "shiftID") as! Int32
+                shiftID = record.object(forKey: "shiftID") as! Int
             }
 
-            var projectID: Int32 = 0
+            var projectID: Int = 0
             if record.object(forKey: "projectID") != nil
             {
-                projectID = record.object(forKey: "projectID") as! Int32
+                projectID = record.object(forKey: "projectID") as! Int
             }
 
-            var personID: Int32 = 0
+            var personID: Int = 0
             if record.object(forKey: "personID") != nil
             {
-                personID = record.object(forKey: "personID") as! Int32
+                personID = record.object(forKey: "personID") as! Int
             }
             
             var workDate = Date()
@@ -632,7 +644,8 @@ extension CloudKitInteraction
                                                workDate: workDate,
                                                dayOfWeek: dayOfWeek,
                                                startTime: startTime,
-                                               endTime: endTime
+                                               endTime: endTime,
+                                               teamID: teamID
                                                 , updateTime: updateTime, updateType: updateType)
             
             usleep(useconds_t(self.sleepTime))
@@ -648,7 +661,7 @@ extension CloudKitInteraction
         }
     }
     
-    func saveShiftsRecordToCloudKit(_ sourceRecord: Shifts, teamID: Int32)
+    func saveShiftsRecordToCloudKit(_ sourceRecord: Shifts, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0)
         
@@ -737,22 +750,22 @@ extension CloudKitInteraction
     {
         let dayOfWeek = sourceRecord.object(forKey: "dayOfWeek") as! String
         
-        var shiftID: Int32 = 0
+        var shiftID: Int = 0
         if sourceRecord.object(forKey: "shiftID") != nil
         {
-            shiftID = sourceRecord.object(forKey: "shiftID") as! Int32
+            shiftID = sourceRecord.object(forKey: "shiftID") as! Int
         }
         
-        var projectID: Int32 = 0
+        var projectID: Int = 0
         if sourceRecord.object(forKey: "projectID") != nil
         {
-            projectID = sourceRecord.object(forKey: "projectID") as! Int32
+            projectID = sourceRecord.object(forKey: "projectID") as! Int
         }
         
-        var personID: Int32 = 0
+        var personID: Int = 0
         if sourceRecord.object(forKey: "personID") != nil
         {
-            personID = sourceRecord.object(forKey: "personID") as! Int32
+            personID = sourceRecord.object(forKey: "personID") as! Int
         }
         
         var workDate = Date()
@@ -785,13 +798,20 @@ extension CloudKitInteraction
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
         
+        var teamID: Int = 0
+        if sourceRecord.object(forKey: "teamID") != nil
+        {
+            teamID = sourceRecord.object(forKey: "teamID") as! Int
+        }
+        
         myDatabaseConnection.saveShifts(shiftID,
                                         projectID: projectID,
                                         personID: personID,
                                         workDate: workDate,
                                         dayOfWeek: dayOfWeek,
                                         startTime: startTime,
-                                        endTime: endTime
+                                        endTime: endTime,
+                                        teamID: teamID
                                          , updateTime: updateTime, updateType: updateType)
     }
 }

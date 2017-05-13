@@ -16,10 +16,9 @@ let NotificationUserCountQueryDone = Notification.Name("NotificationUserCountQue
 let NotificationUserCountQueryString = "NotificationUserCountQueryDone"
 let NotificationUserCreated = Notification.Name("NotificationUserCreated")
 
-
 class userItem: NSObject
 {
-    fileprivate var myUserID: Int32 = 0
+    fileprivate var myUserID: Int = 0
     fileprivate var myRoles: userRoles!
     fileprivate var myTeams: [team] = Array()
     fileprivate var myAuthorised: Bool = false
@@ -27,10 +26,11 @@ class userItem: NSObject
     fileprivate var myPhraseDate: Date = getDefaultDate()
     fileprivate var myPassPhrase: String = ""
     fileprivate var myCurrentTeam: team!
+    fileprivate var tempTeamID: Int = 0
     
     fileprivate let defaultsName = "group.com.garryeves.EvesCRM"
     
-    var userID: Int32
+    var userID: Int
     {
         get
         {
@@ -98,7 +98,7 @@ class userItem: NSObject
         }
     }
     
-    init(userID: Int32)
+    init(userID: Int)
     {
         super.init()
 
@@ -122,12 +122,13 @@ class userItem: NSObject
         }
     }
     
-    override init()
+    init(teamID: Int)
     {
         super.init()
         
         // Create a new user
         
+        tempTeamID = teamID
         notificationCenter.addObserver(self, selector: #selector(self.queryFinished), name: NotificationUserCountQueryDone, object: nil)
         
         myCloudDB.getUserCount()
@@ -149,7 +150,7 @@ class userItem: NSObject
     func userCreated()
     {
         // once created populate private items
-        populatePrivateDecodes()
+        populatePrivateDecodes(teamID: tempTeamID)
         
         myAuthorised = true
         notificationCenter.post(name: NotificationUserCreated, object: nil)
@@ -165,6 +166,14 @@ class userItem: NSObject
         {
             myCurrentTeam = teamObject
         }
+    }
+    
+    func addRoleToUser(roleType: String, accessLevel: String)
+    {
+        let myItem = userRoleItem(userID: currentUser.userID, roleType: roleType, teamID: currentTeam!.teamID)
+        myItem.accessLevel = accessLevel
+        
+        myRoles = userRoles(userID: currentUser.userID, teamID: currentTeam!.teamID)
     }
     
     func setCurrentTeam(_ teamObject: team)
@@ -199,7 +208,7 @@ class userItem: NSObject
         
         for myItem in myDatabaseConnection.getTeamsForUser(userID: myUserID)
         {
-            let teamObject = team(teamID: myItem.teamID)
+            let teamObject = team(teamID: Int(myItem.teamID))
             myTeams.append(teamObject)
         }
         
@@ -227,20 +236,20 @@ class userItem: NSObject
         }
     }
     
-    private func populatePrivateDecodes()
+    private func populatePrivateDecodes(teamID: Int)
     {
-        var decodeString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date")
+        var decodeString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date", teamID: teamID)
         
         if decodeString == ""
         {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("Calendar - Weeks before current date", codeValue: "1", codeType: "stepper", decode_privacy: "Private")
+            myDatabaseConnection.updateDecodeValue("Calendar - Weeks before current date", codeValue: "1", codeType: "stepper", decode_privacy: "Private", teamID: teamID)
         }
         
-        decodeString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date")
+        decodeString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date", teamID: teamID)
         
         if decodeString == ""
         {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("Calendar - Weeks after current date", codeValue: "4", codeType: "stepper", decode_privacy: "Private")
+            myDatabaseConnection.updateDecodeValue("Calendar - Weeks after current date", codeValue: "4", codeType: "stepper", decode_privacy: "Private", teamID: teamID)
         }
     }
 }
@@ -266,12 +275,12 @@ extension CloudKitInteraction
         executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue, notification: NotificationUserCountQueryString)
     }
     
-    func userCount() -> Int32
+    func userCount() -> Int
     {
         return recordsInTable
     }
     
-    func createNewUser(_ userID: Int32)
+    func createNewUser(_ userID: Int)
     {
         let record = CKRecord(recordType: "DBUsers")
         record.setValue(userID, forKey: "userID")
@@ -293,7 +302,7 @@ extension CloudKitInteraction
         })
     }
     
-    func getUser(_ userID: Int32)
+    func getUser(_ userID: Int)
     {
         let predicate = NSPredicate(format: "(userID == \(userID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "DBUsers", predicate: predicate)
@@ -307,7 +316,7 @@ extension CloudKitInteraction
             {
                 let record = records!.first
                 self.returnUserEntry = returnUser(
-                    userID: record?.object(forKey: "userID") as! Int32,
+                    userID: record?.object(forKey: "userID") as! Int,
                     name: record?.object(forKey: "name") as! String,
                     passPhrase: record?.object(forKey: "passPhrase") as! String,
                     phraseDate: record?.object(forKey: "phraseDate") as! Date)
@@ -322,7 +331,7 @@ extension CloudKitInteraction
         return returnUserEntry
     }
 
-    func saveUser(_ userID: Int32, name: String, phraseDate: Date, passPhrase: String)
+    func saveUser(_ userID: Int, name: String, phraseDate: Date, passPhrase: String)
     {
         let sem = DispatchSemaphore(value: 0)
 
@@ -391,7 +400,7 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func deleteUser(_ userID: Int32)
+    func deleteUser(_ userID: Int)
     {
         let sem = DispatchSemaphore(value: 0);
         
