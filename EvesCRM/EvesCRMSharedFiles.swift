@@ -14,10 +14,11 @@ import Contacts
 var adbk: CNContactStore!
 
 let defaultsName = "group.com.garryeves.EvesCRM"
-
+let userDefaultName = "userID"
 
 
 let loginStoryboard = UIStoryboard(name: "LoginRoles", bundle: nil)
+let pickerStoryboard = UIStoryboard(name: "dropDownMenus", bundle: nil)
 
 #if os(OSX)
     import AppKit

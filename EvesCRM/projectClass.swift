@@ -330,7 +330,7 @@ class project: NSObject // 10k level
     {
         super.init()
         
-        myProjectID = myDatabaseConnection.getNextID("Projects", teamID: teamID)
+        myProjectID = myDatabaseConnection.getNextID("Projects")
         
         // Set dates to a really daft value so that it stores into the database
         
@@ -364,6 +364,9 @@ class project: NSObject // 10k level
             myRepeatBase = myProject.repeatBase!
             myTeamID = Int(myProject.teamID)
             myClientID = Int(myProject.clientID)
+            myNote = myProject.note!
+            myReviewPeriod = myProject.reviewPeriod!
+            myPredecessor = Int(myProject.predecessor)
             
             // load team members
             
@@ -372,26 +375,6 @@ class project: NSObject // 10k level
             // load tasks
             
             loadTasks()
-            
-            // Get project Note
-            
-            let myNotes = myDatabaseConnection.getProjectNote(myProjectID)
-            
-            if myNotes.count == 0
-            {
-                myNote = ""
-                myReviewPeriod = ""
-                myPredecessor = 0
-            }
-            else
-            {
-                for myItem in myNotes
-                {
-                    myNote = myItem.note!
-                    myReviewPeriod = myItem.reviewPeriod!
-                    myPredecessor = Int(myItem.predecessor)
-                }
-            }
         }
     }
 
@@ -439,7 +422,7 @@ class project: NSObject // 10k level
  
     func save()
     {
-        myDatabaseConnection.saveProject(myProjectID, projectEndDate: myProjectEndDate, projectName: myProjectName, projectStartDate: myProjectStartDate, projectStatus: myProjectStatus, reviewFrequency: myReviewFrequency, lastReviewDate: myLastReviewDate, GTDItemID: myGTDItemID, repeatInterval: myRepeatInterval, repeatType: myRepeatType, repeatBase: myRepeatBase, teamID: myTeamID, clientID: myClientID)
+        myDatabaseConnection.saveProject(myProjectID, projectEndDate: myProjectEndDate, projectName: myProjectName, projectStartDate: myProjectStartDate, projectStatus: myProjectStatus, reviewFrequency: myReviewFrequency, lastReviewDate: myLastReviewDate, GTDItemID: myGTDItemID, repeatInterval: myRepeatInterval, repeatType: myRepeatType, repeatBase: myRepeatBase, teamID: myTeamID, clientID: myClientID, note: myNote, reviewPeriod: myReviewPeriod, predecessor: myPredecessor)
         
         // Save Team Members
         
@@ -454,16 +437,6 @@ class project: NSObject // 10k level
         {
             myProjectTask.save()
         }
-        
-        // save note
-        
-        myDatabaseConnection.saveProjectNote(myProjectID, note: myNote, reviewPeriod: myReviewPeriod, predecessor: myPredecessor)
-        
-        if !saveCalled
-        {
-            saveCalled = true
-            let _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.performSave), userInfo: nil, repeats: false)
-        }
     }
     
     func performSave()
@@ -473,10 +446,6 @@ class project: NSObject // 10k level
         let myProject = myDatabaseConnection.getProjectDetails(myProjectID)[0]
         
         myCloudDB.saveProjectsRecordToCloudKit(myProject, teamID: currentUser.currentTeam!.teamID)
-        
-        let myProjectNote = myDatabaseConnection.getProjectNote(myProjectID)[0]
-        
-        myCloudDB.saveProjectNoteRecordToCloudKit(myProjectNote, teamID: currentUser.currentTeam!.teamID)
         
         saveCalled = false
     }
@@ -672,7 +641,7 @@ extension coreDatabase
     func getProjectSuccessor(_ projectID: Int)->Int
     {
         
-        let fetchRequest = NSFetchRequest<ProjectNote>(entityName: "ProjectNote")
+        let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -780,7 +749,7 @@ extension coreDatabase
         }
     }
 
-    func saveProject(_ projectID: Int, projectEndDate: Date, projectName: String, projectStartDate: Date, projectStatus: String, reviewFrequency: Int, lastReviewDate: Date, GTDItemID: Int, repeatInterval: Int, repeatType: String, repeatBase: String, teamID: Int, clientID: Int, updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveProject(_ projectID: Int, projectEndDate: Date, projectName: String, projectStartDate: Date, projectStatus: String, reviewFrequency: Int, lastReviewDate: Date, GTDItemID: Int, repeatInterval: Int, repeatType: String, repeatBase: String, teamID: Int, clientID: Int, note: String, reviewPeriod: String, predecessor: Int, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myProject: Projects!
         
@@ -802,6 +771,9 @@ extension coreDatabase
             myProject.repeatBase = repeatBase
             myProject.teamID = Int64(teamID)
             myProject.clientID = Int64(clientID)
+            myProject.note = note
+            myProject.reviewPeriod = reviewPeriod
+            myProject.predecessor = Int64(predecessor)
             
             if updateType == "CODE"
             {
@@ -829,6 +801,9 @@ extension coreDatabase
             myProject.repeatBase = repeatBase
             myProject.teamID = Int64(teamID)
             myProject.clientID = Int64(clientID)
+            myProject.note = note
+            myProject.reviewPeriod = reviewPeriod
+            myProject.predecessor = Int64(predecessor)
             
             if updateType == "CODE"
             {
@@ -848,7 +823,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceProject(_ projectID: Int, projectEndDate: Date, projectName: String, projectStartDate: Date, projectStatus: String, reviewFrequency: Int, lastReviewDate: Date, GTDItemID: Int, repeatInterval: Int, repeatType: String, repeatBase: String, teamID: Int, clientID: Int, updateTime: Date =  Date(), updateType: String = "CODE")
+    func replaceProject(_ projectID: Int, projectEndDate: Date, projectName: String, projectStartDate: Date, projectStatus: String, reviewFrequency: Int, lastReviewDate: Date, GTDItemID: Int, repeatInterval: Int, repeatType: String, repeatBase: String, teamID: Int, clientID: Int, note: String, reviewPeriod: String, predecessor: Int, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         
         let myProject = Projects(context: objectContext)
@@ -865,6 +840,9 @@ extension coreDatabase
         myProject.repeatBase = repeatBase
         myProject.teamID = Int64(teamID)
         myProject.clientID = Int64(clientID)
+        myProject.note = note
+        myProject.reviewPeriod = reviewPeriod
+        myProject.predecessor = Int64(predecessor)
         
         if updateType == "CODE"
         {
@@ -891,19 +869,6 @@ extension coreDatabase
             myProject = myProjects[0]
             myProject.updateTime =  NSDate()
             myProject.updateType = "Delete"
-        }
-        
-        saveContext()
-        
-        var myProjectNote: ProjectNote!
-        
-        let myTeams = getProjectNote(projectID)
-        
-        if myTeams.count > 0
-        { // Update
-            myProjectNote = myTeams[0]
-            myProjectNote.updateType = "Delete"
-            myProjectNote.updateTime =  NSDate()
         }
         
         saveContext()
@@ -953,25 +918,6 @@ extension coreDatabase
         }
         
         saveContext()
-        
-        let fetchRequest23 = NSFetchRequest<ProjectNote>(entityName: "ProjectNote")
-        
-        // Set the predicate on the fetch request
-        fetchRequest23.predicate = predicate
-        do
-        {
-            let fetchResults23 = try objectContext.fetch(fetchRequest23)
-            for myItem23 in fetchResults23
-            {
-                objectContext.delete(myItem23 as NSManagedObject)
-            }
-        }
-        catch
-        {
-            print("Error occurred during execution: \(error)")
-        }
-        
-        saveContext()
     }
     
     func clearSyncedProjects(predicate: NSPredicate)
@@ -998,105 +944,6 @@ extension coreDatabase
         saveContext()
     }
     
-    func saveProjectNote(_ projectID: Int, note: String, reviewPeriod: String, predecessor: Int, teamID: Int = currentUser.currentTeam!.teamID, updateTime: Date =  Date(), updateType: String = "CODE")
-    {
-        var myProjectNote: ProjectNote!
-        
-        let myTeams = getProjectNote(projectID)
-        
-        if myTeams.count == 0
-        { // Add
-            myProjectNote = ProjectNote(context: objectContext)
-            myProjectNote.projectID = Int64(projectID)
-            myProjectNote.note = note
-            
-            myProjectNote.reviewPeriod = reviewPeriod
-            myProjectNote.predecessor = Int64(predecessor)
-            myProjectNote.teamID = Int64(teamID)
-            
-            if updateType == "CODE"
-            {
-                myProjectNote.updateTime =  NSDate()
-                myProjectNote.updateType = "Add"
-            }
-            else
-            {
-                myProjectNote.updateTime = updateTime as NSDate
-                myProjectNote.updateType = updateType
-            }
-        }
-        else
-        { // Update
-            myProjectNote = myTeams[0]
-            myProjectNote.note = note
-            myProjectNote.reviewPeriod = reviewPeriod
-            myProjectNote.predecessor = Int64(predecessor)
-            if updateType == "CODE"
-            {
-                if myProjectNote.updateType != "Add"
-                {
-                    myProjectNote.updateType = "Update"
-                }
-                myProjectNote.updateTime =  NSDate()
-            }
-            else
-            {
-                myProjectNote.updateTime = updateTime as NSDate
-                myProjectNote.updateType = updateType
-            }
-        }
-        
-        saveContext()
-    }
-    
-    func replaceProjectNote(_ projectID: Int, note: String, reviewPeriod: String, predecessor: Int, teamID: Int = currentUser.currentTeam!.teamID, updateTime: Date =  Date(), updateType: String = "CODE")
-    {
-        let myProjectNote = ProjectNote(context: objectContext)
-        myProjectNote.projectID = Int64(projectID)
-        myProjectNote.note = note
-        
-        myProjectNote.reviewPeriod = reviewPeriod
-        myProjectNote.predecessor = Int64(predecessor)
-        myProjectNote.teamID = Int64(teamID)
-
-        if updateType == "CODE"
-        {
-            myProjectNote.updateTime =  NSDate()
-            myProjectNote.updateType = "Add"
-        }
-        else
-        {
-            myProjectNote.updateTime = updateTime as NSDate
-            myProjectNote.updateType = updateType
-        }
-        
-        saveContext()
-    }
-    
-    func getProjectNote(_ projectID: Int)->[ProjectNote]
-    {
-        let fetchRequest = NSFetchRequest<ProjectNote>(entityName: "ProjectNote")
-        
-        // Create a new predicate that filters out any object that
-        // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(updateType != \"Delete\") && (projectID == \(projectID))")
-        
-        // Set the predicate on the fetch request
-        fetchRequest.predicate = predicate
-        
-        // Execute the fetch request, and cast the results to an array of LogItem objects
-        do
-        {
-            let fetchResults = try objectContext.fetch(fetchRequest)
-            return fetchResults
-        }
-        catch
-        {
-            print("Error occurred during execution: \(error)")
-            return []
-        }
-    }
-
     func initialiseTeamForProject(_ teamID: Int)
     {
         var maxID: Int = 1
@@ -1123,7 +970,7 @@ extension coreDatabase
             // Now go and populate the Decode for this
             
             let tempInt = "\(maxID)"
-            updateDecodeValue("Projects", codeValue: tempInt, codeType: "hidden", decode_privacy: "Public", teamID: currentUser.currentTeam!.teamID)
+            updateDecodeValue("Projects", codeValue: tempInt, codeType: "hidden", decode_privacy: "Public")
         }
         catch
         {
@@ -1136,28 +983,6 @@ extension coreDatabase
     func getProjectsForSync(_ syncDate: Date) -> [Projects]
     {
         let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
-        
-        let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
-        
-        // Set the predicate on the fetch request
-        
-        fetchRequest.predicate = predicate
-        // Execute the fetch request, and cast the results to an array of  objects
-        do
-        {
-            let fetchResults = try objectContext.fetch(fetchRequest)
-            return fetchResults
-        }
-        catch
-        {
-            print("Error occurred during execution: \(error)")
-            return []
-        }
-    }
-    
-    func getProjectNotesForSync(_ syncDate: Date) -> [ProjectNote]
-    {
-        let fetchRequest = NSFetchRequest<ProjectNote>(entityName: "ProjectNote")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
         
@@ -1196,23 +1021,6 @@ extension coreDatabase
         }
         
         saveContext()
-
-        let fetchRequest23 = NSFetchRequest<ProjectNote>(entityName: "ProjectNote")
-        
-        do
-        {
-            let fetchResults23 = try objectContext.fetch(fetchRequest23)
-            for myItem23 in fetchResults23
-            {
-                self.objectContext.delete(myItem23 as NSManagedObject)
-            }
-        }
-        catch
-        {
-            print("Error occurred during execution: \(error)")
-        }
-        
-        saveContext()
     }
 }
 
@@ -1224,16 +1032,11 @@ extension CloudKitInteraction
         {
             saveProjectsRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
         }
-        
-        for myItem in myDatabaseConnection.getProjectNotesForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Projects"))
-        {
-            saveProjectNoteRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
-        }
     }
 
     func updateProjectsInCoreData(teamID: Int)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "Projects") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "Projects") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -1262,7 +1065,7 @@ extension CloudKitInteraction
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
+        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
         let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1275,7 +1078,7 @@ extension CloudKitInteraction
         sem.wait()
         
         var myRecordList2: [CKRecordID] = Array()
-        let predicate2: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
+        let predicate2: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
         let query2: CKQuery = CKQuery(recordType: "ProjectNote", predicate: predicate2)
         publicDB.perform(query2, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -1290,7 +1093,7 @@ extension CloudKitInteraction
 
     func replaceProjectsInCoreData(teamID: Int)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
+        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
         let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -1330,9 +1133,8 @@ extension CloudKitInteraction
                 clientID = record.object(forKey: "clientID") as! Int
             }
             
-            myDatabaseConnection.replaceProject(projectID, projectEndDate: projectEndDate, projectName: projectName, projectStartDate: projectStartDate, projectStatus: projectStatus, reviewFrequency: reviewFrequency, lastReviewDate: lastReviewDate, GTDItemID: areaID, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, teamID: teamID, clientID: clientID, updateTime: updateTime, updateType: updateType)
-            
-            myDatabaseConnection.replaceProjectNote(projectID, note: note, reviewPeriod: reviewPeriod, predecessor: predecessor, teamID: teamID, updateTime: updateTime, updateType: updateType)
+            myDatabaseConnection.replaceProject(projectID, projectEndDate: projectEndDate, projectName: projectName, projectStartDate: projectStartDate, projectStatus: projectStatus, reviewFrequency: reviewFrequency, lastReviewDate: lastReviewDate, GTDItemID: areaID, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, teamID: teamID, clientID: clientID, note: note, reviewPeriod: reviewPeriod, predecessor: predecessor, updateTime: updateTime, updateType: updateType)
+
             usleep(useconds_t(self.sleepTime))
         }
         let operationQueue = OperationQueue()
@@ -1348,7 +1150,7 @@ extension CloudKitInteraction
     func saveProjectsRecordToCloudKit(_ sourceRecord: Projects, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID) AND (teamID == \(teamID)))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID)) AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Projects", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -1357,21 +1159,6 @@ extension CloudKitInteraction
             }
             else
             {
-                // First need to get additional info from other table
-                
-                let tempProjectNote = myDatabaseConnection.getProjectNote(Int(sourceRecord.projectID))
-                
-                var myNote: String = ""
-                var myReviewPeriod: String = ""
-                var myPredecessor: Int = 0
-                
-                if tempProjectNote.count > 0
-                {
-                    myNote = tempProjectNote[0].note!
-                    myReviewPeriod = tempProjectNote[0].reviewPeriod!
-                    myPredecessor = Int(tempProjectNote[0].predecessor)
-                }
-                
                 if records!.count > 0
                 {
                     let record = records!.first// as! CKRecord
@@ -1393,9 +1180,9 @@ extension CloudKitInteraction
                     record!.setValue(sourceRecord.repeatType, forKey: "repeatType")
                     record!.setValue(sourceRecord.reviewFrequency, forKey: "reviewFrequency")
                     record!.setValue(sourceRecord.teamID, forKey: "teamID")
-                    record!.setValue(myNote, forKey: "note")
-                    record!.setValue(myReviewPeriod, forKey: "reviewPeriod")
-                    record!.setValue(myPredecessor, forKey: "predecessor")
+                    record!.setValue(sourceRecord.note, forKey: "note")
+                    record!.setValue(sourceRecord.reviewPeriod, forKey: "reviewPeriod")
+                    record!.setValue(sourceRecord.predecessor, forKey: "predecessor")
                     record!.setValue(sourceRecord.clientID, forKey: "clientID")
                     
                     // Save this record again
@@ -1433,9 +1220,9 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.repeatType, forKey: "repeatType")
                     record.setValue(sourceRecord.reviewFrequency, forKey: "reviewFrequency")
                     record.setValue(sourceRecord.teamID, forKey: "teamID")
-                    record.setValue(myNote, forKey: "note")
-                    record.setValue(myReviewPeriod, forKey: "reviewPeriod")
-                    record.setValue(myPredecessor, forKey: "predecessor")
+                    record.setValue(sourceRecord.note, forKey: "note")
+                    record.setValue(sourceRecord.reviewPeriod, forKey: "reviewPeriod")
+                    record.setValue(sourceRecord.predecessor, forKey: "predecessor")
                     record.setValue(sourceRecord.clientID, forKey: "clientID")
 
                     record.setValue(teamID, forKey: "teamID")
@@ -1454,87 +1241,6 @@ extension CloudKitInteraction
                         }
                     })
                 }
-            }
-            sem.signal()
-        })
-        sem.wait()
-    }
-
-    func saveProjectNoteRecordToCloudKit(_ sourceRecord: ProjectNote, teamID: Int)
-    {
-        let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(projectID == \(sourceRecord.projectID) AND (teamID == \(teamID)))") // better be accurate to get only the record you need
-        let query = CKQuery(recordType: "Projects", predicate: predicate)
-        publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
-            if error != nil
-            {
-                NSLog("Error querying records: \(error!.localizedDescription)")
-            }
-            else
-            {
-                if records!.count > 0
-                {
-                    let record = records!.first// as! CKRecord
-                    // Now you have grabbed your existing record from iCloud
-                    // Apply whatever changes you want
-                    if sourceRecord.updateTime != nil
-                    {
-                        record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
-                    }
-                    record!.setValue(sourceRecord.updateType, forKey: "updateType")
-                    record!.setValue(sourceRecord.note, forKey: "note")
-                    record!.setValue(sourceRecord.reviewPeriod, forKey: "reviewPeriod")
-                    record!.setValue(sourceRecord.predecessor, forKey: "predecessor")
-                    
-                    // Save this record again
-                    self.publicDB.save(record!, completionHandler: { (savedRecord, saveError) in
-                        if saveError != nil
-                        {
-                            NSLog("Error saving record: \(saveError!.localizedDescription)")
-                        }
-                        else
-                        {
-                            if debugMessages
-                            {
-                                NSLog("Successfully updated record!")
-                            }
-                        }
-                    })
-                }
-                else
-                {  // Insert
-                    let record = CKRecord(recordType: "Projects")
-                    record.setValue(sourceRecord.projectID, forKey: "projectID")
-                    if sourceRecord.updateTime != nil
-                    {
-                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
-                    }
-                    record.setValue(sourceRecord.updateType, forKey: "updateType")
-                    if sourceRecord.updateTime != nil
-                    {
-                        record.setValue(sourceRecord.updateTime, forKey: "updateTime")
-                    }
-                    record.setValue(sourceRecord.updateType, forKey: "updateType")
-                    record.setValue(sourceRecord.note, forKey: "note")
-                    record.setValue(sourceRecord.reviewPeriod, forKey: "reviewPeriod")
-                    record.setValue(sourceRecord.predecessor, forKey: "predecessor")
-                    record.setValue(teamID, forKey: "teamID")
-
-                    self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
-                        if saveError != nil
-                        {
-                            NSLog("Error saving record: \(saveError!.localizedDescription)")
-                        }
-                        else
-                        {
-                            if debugMessages
-                            {
-                                NSLog("Successfully saved record!")
-                            }
-                        }
-                    })
-                }
-                
             }
             sem.signal()
         })
@@ -1578,9 +1284,6 @@ extension CloudKitInteraction
             clientID = sourceRecord.object(forKey: "clientID") as! Int
         }
         
-        myDatabaseConnection.saveProject(projectID, projectEndDate: projectEndDate, projectName: projectName, projectStartDate: projectStartDate, projectStatus: projectStatus, reviewFrequency: reviewFrequency, lastReviewDate: lastReviewDate, GTDItemID: areaID, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, teamID: teamID, clientID: clientID, updateTime: updateTime, updateType: updateType)
-        
-        myDatabaseConnection.saveProjectNote(projectID, note: note, reviewPeriod: reviewPeriod, predecessor: predecessor, teamID: teamID, updateTime: updateTime, updateType: updateType)
+        myDatabaseConnection.saveProject(projectID, projectEndDate: projectEndDate, projectName: projectName, projectStartDate: projectStartDate, projectStatus: projectStatus, reviewFrequency: reviewFrequency, lastReviewDate: lastReviewDate, GTDItemID: areaID, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, teamID: teamID, clientID: clientID, note: note, reviewPeriod: reviewPeriod, predecessor: predecessor, updateTime: updateTime, updateType: updateType)
     }
-
 }

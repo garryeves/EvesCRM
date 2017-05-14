@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		34050F691EC82B9300CC7CBE /* dropDownMenus.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34050F681EC82B9300CC7CBE /* dropDownMenus.storyboard */; };
+		34050F6C1EC82C0F00CC7CBE /* dateTimePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34050F6B1EC82C0F00CC7CBE /* dateTimePickerViewController.swift */; };
+		34050F6E1EC82C5500CC7CBE /* pickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34050F6D1EC82C5500CC7CBE /* pickerViewController.swift */; };
+		34050F701EC82C8F00CC7CBE /* timeSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34050F6F1EC82C8F00CC7CBE /* timeSelectViewController.swift */; };
 		3407F7AC1EC6CA4F008C5751 /* userRolesClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3407F7AB1EC6CA4F008C5751 /* userRolesClass.swift */; };
 		341323831EC3EA9700BBDE1E /* personClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341323821EC3EA9700BBDE1E /* personClass.swift */; };
 		341323871EC3FA8900BBDE1E /* contractShiftComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341323861EC3FA8900BBDE1E /* contractShiftComponent.swift */; };
@@ -29,6 +33,7 @@
 		349653171EC1E5B800210A46 /* evesSecurityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349653161EC1E5B800210A46 /* evesSecurityTests.swift */; };
 		349653221EC1E5B900210A46 /* evesSecurityUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349653211EC1E5B900210A46 /* evesSecurityUITests.swift */; };
 		349653331EC1F0DC00210A46 /* evesSecurityShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349653321EC1F0DC00210A46 /* evesSecurityShared.swift */; };
+		34C462781EC81D810037D79E /* userFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C462771EC81D810037D79E /* userFormViewController.swift */; };
 		34CEE96A1EC2BD8F00F85A11 /* EvesCRM.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 34CEE94D1EC2BD8F00F85A11 /* EvesCRM.xcdatamodeld */; };
 		34CEE96D1EC2BE4000F85A11 /* coreDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CEE96B1EC2BE4000F85A11 /* coreDatabase.swift */; };
 		34CEE96E1EC2BE4000F85A11 /* DBSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CEE96C1EC2BE4000F85A11 /* DBSync.swift */; };
@@ -80,6 +85,10 @@
 
 /* Begin PBXFileReference section */
 		32D10F38106CA072E7F5B8C3 /* Pods-evesSecurity.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-evesSecurity.release.xcconfig"; path = "Pods/Target Support Files/Pods-evesSecurity/Pods-evesSecurity.release.xcconfig"; sourceTree = "<group>"; };
+		34050F681EC82B9300CC7CBE /* dropDownMenus.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = dropDownMenus.storyboard; sourceTree = "<group>"; };
+		34050F6B1EC82C0F00CC7CBE /* dateTimePickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = dateTimePickerViewController.swift; sourceTree = "<group>"; };
+		34050F6D1EC82C5500CC7CBE /* pickerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = pickerViewController.swift; sourceTree = "<group>"; };
+		34050F6F1EC82C8F00CC7CBE /* timeSelectViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = timeSelectViewController.swift; sourceTree = "<group>"; };
 		3407F7AB1EC6CA4F008C5751 /* userRolesClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = userRolesClass.swift; sourceTree = "<group>"; };
 		341323821EC3EA9700BBDE1E /* personClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = personClass.swift; sourceTree = "<group>"; };
 		341323861EC3FA8900BBDE1E /* contractShiftComponent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = contractShiftComponent.swift; sourceTree = "<group>"; };
@@ -109,6 +118,7 @@
 		349653211EC1E5B900210A46 /* evesSecurityUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = evesSecurityUITests.swift; sourceTree = "<group>"; };
 		349653231EC1E5B900210A46 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		349653321EC1F0DC00210A46 /* evesSecurityShared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = evesSecurityShared.swift; sourceTree = "<group>"; };
+		34C462771EC81D810037D79E /* userFormViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = userFormViewController.swift; sourceTree = "<group>"; };
 		34CEE94E1EC2BD8F00F85A11 /* EvesCRM 10.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 10.xcdatamodel"; sourceTree = "<group>"; };
 		34CEE94F1EC2BD8F00F85A11 /* EvesCRM 11.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 11.xcdatamodel"; sourceTree = "<group>"; };
 		34CEE9501EC2BD8F00F85A11 /* EvesCRM 12.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 12.xcdatamodel"; sourceTree = "<group>"; };
@@ -308,12 +318,17 @@
 			isa = PBXGroup;
 			children = (
 				3496530A1EC1E5B800210A46 /* LaunchScreen.storyboard */,
+				34050F681EC82B9300CC7CBE /* dropDownMenus.storyboard */,
 				347BCEBD1EC559BD006B95BA /* LoginRoles.storyboard */,
 				349653021EC1E5B800210A46 /* Main.storyboard */,
 				349652FE1EC1E5B800210A46 /* AppDelegate.swift */,
 				349653001EC1E5B800210A46 /* ViewController.swift */,
+				34050F6B1EC82C0F00CC7CBE /* dateTimePickerViewController.swift */,
 				347BCEBF1EC55D88006B95BA /* newUserViewController.swift */,
 				347BCEC11EC563F0006B95BA /* orgEditViewController.swift */,
+				34C462771EC81D810037D79E /* userFormViewController.swift */,
+				34050F6D1EC82C5500CC7CBE /* pickerViewController.swift */,
+				34050F6F1EC82C8F00CC7CBE /* timeSelectViewController.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -464,6 +479,7 @@
 				349653091EC1E5B800210A46 /* Assets.xcassets in Resources */,
 				347BCEBE1EC559BD006B95BA /* LoginRoles.storyboard in Resources */,
 				349653041EC1E5B800210A46 /* Main.storyboard in Resources */,
+				34050F691EC82B9300CC7CBE /* dropDownMenus.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -536,6 +552,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34050F6E1EC82C5500CC7CBE /* pickerViewController.swift in Sources */,
 				34CEEA391EC2EB5E00F85A11 /* addressClass.swift in Sources */,
 				349653011EC1E5B800210A46 /* ViewController.swift in Sources */,
 				347BCEC21EC563F0006B95BA /* orgEditViewController.swift in Sources */,
@@ -563,15 +580,18 @@
 				34CEE96D1EC2BE4000F85A11 /* coreDatabase.swift in Sources */,
 				3413238B1EC40A1D00BBDE1E /* dropdownsClass.swift in Sources */,
 				34CEEA611EC31D6C00F85A11 /* personAddInfoEntryClass.swift in Sources */,
+				34C462781EC81D810037D79E /* userFormViewController.swift in Sources */,
 				34CEEA471EC3145200F85A11 /* personAdditionalInfoClass.swift in Sources */,
 				34CEE9901EC2C53400F85A11 /* CalendarDetails.swift in Sources */,
 				34CEE9DC1EC2C79600F85A11 /* taskUpdatesClass.swift in Sources */,
+				34050F6C1EC82C0F00CC7CBE /* dateTimePickerViewController.swift in Sources */,
 				3407F7AC1EC6CA4F008C5751 /* userRolesClass.swift in Sources */,
 				349653331EC1F0DC00210A46 /* evesSecurityShared.swift in Sources */,
 				34CEE9AC1EC2C63700F85A11 /* meetingAttendeeClass.swift in Sources */,
 				341323891EC403A700BBDE1E /* contractShift.swift in Sources */,
 				347BCEC01EC55D88006B95BA /* newUserViewController.swift in Sources */,
 				34CEE9781EC2C1DF00F85A11 /* teamClass.swift in Sources */,
+				34050F701EC82C8F00CC7CBE /* timeSelectViewController.swift in Sources */,
 				341323871EC3FA8900BBDE1E /* contractShiftComponent.swift in Sources */,
 				34CEE98A1EC2C50200F85A11 /* GTDItemClass.swift in Sources */,
 				3413239A1EC4530300BBDE1E /* UsersClass.swift in Sources */,

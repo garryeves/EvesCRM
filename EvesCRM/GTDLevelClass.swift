@@ -454,7 +454,7 @@ extension CloudKitInteraction
 
     func updateGTDLevelInCoreData(teamID: Int)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "GTDLevel") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "GTDLevel") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "GTDLevel", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -483,7 +483,7 @@ extension CloudKitInteraction
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
+        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
         let query: CKQuery = CKQuery(recordType: "GTDLevel", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -498,7 +498,7 @@ extension CloudKitInteraction
 
     func replaceGTDLevelInCoreData(teamID: Int)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
+        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
         let query: CKQuery = CKQuery(recordType: "GTDLevel", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -535,7 +535,7 @@ extension CloudKitInteraction
     func saveGTDLevelRecordToCloudKit(_ sourceRecord: GTDLevel, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(gTDLevel == \(sourceRecord.gTDLevel)) && (teamID == \(sourceRecord.teamID)) AND (teamID == \(teamID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(gTDLevel == \(sourceRecord.gTDLevel)) AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "GTDLevel", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil

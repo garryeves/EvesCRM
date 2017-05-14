@@ -391,9 +391,9 @@ extension CloudKitInteraction
         }
     }
     
-    func updateReportingMonthInCoreData(teamID: Int)
+    func updateReportingMonthInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "ReportingMonth") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "ReportingMonth") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "ReportingMonth", predicate: predicate)
         
         let operation = CKQueryOperation(query: query)
@@ -418,12 +418,12 @@ extension CloudKitInteraction
         }
     }
     
-    func deleteReportingMonth(ReportingMonthID: Int, teamID: Int)
+    func deleteReportingMonth(ReportingMonthID: Int)
     {
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID)) AND (monthStartDate == \(ReportingMonthID))")
+        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID)) AND (monthStartDate == \(ReportingMonthID))")
         let query: CKQuery = CKQuery(recordType: "ReportingMonth", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -437,9 +437,9 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func replaceReportingMonthInCoreData(teamID: Int)
+    func replaceReportingMonthInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
+        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
         let query: CKQuery = CKQuery(recordType: "ReportingMonth", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -453,6 +453,12 @@ extension CloudKitInteraction
             if record.object(forKey: "monthStartDate") != nil
             {
                 monthStartDate = record.object(forKey: "monthStartDate") as! Date
+            }
+            
+            var teamID: Int = 0
+            if record.object(forKey: "teamID") != nil
+            {
+                teamID = record.object(forKey: "teamID") as! Int
             }
             
             var updateTime = Date()
@@ -490,7 +496,7 @@ extension CloudKitInteraction
     {
         let sem = DispatchSemaphore(value: 0)
         
-        let predicate = NSPredicate(format: "(monthStartDate == \(sourceRecord.monthStartDate!)) AND (teamID == \(teamID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(monthStartDate == \(sourceRecord.monthStartDate!)) AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "ReportingMonth", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil

@@ -90,7 +90,7 @@ class contractShift: NSObject
     {
         super.init()
         
-        myContractShiftID = myDatabaseConnection.getNextID("ContractShift", teamID: teamID)
+        myContractShiftID = myDatabaseConnection.getNextID("ContractShift")
         myProjectID = projectID
         myTeamID = teamID
         
@@ -417,9 +417,9 @@ extension CloudKitInteraction
         }
     }
     
-    func updateContractShiftsInCoreData(teamID: Int)
+    func updateContractShiftsInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "ContractShifts") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "ContractShifts") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "ContractShifts", predicate: predicate)
         
         let operation = CKQueryOperation(query: query)
@@ -444,12 +444,12 @@ extension CloudKitInteraction
         }
     }
     
-    func deleteContractShifts(contractShiftID: Int, teamID: Int)
+    func deleteContractShifts(contractShiftID: Int)
     {
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID)) AND (contractShiftID == \(contractShiftID))")
+        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))AND (contractShiftID == \(contractShiftID))")
         let query: CKQuery = CKQuery(recordType: "ContractShifts", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -463,9 +463,9 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func replaceContractShiftsInCoreData(teamID: Int)
+    func replaceContractShiftsInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
+        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
         let query: CKQuery = CKQuery(recordType: "ContractShifts", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -494,6 +494,12 @@ extension CloudKitInteraction
             if record.object(forKey: "endDate") != nil
             {
                 endDate = record.object(forKey: "endDate") as! Date
+            }
+            
+            var teamID: Int = 0
+            if record.object(forKey: "teamID") != nil
+            {
+                teamID = record.object(forKey: "teamID") as! Int
             }
             
             var updateTime = Date()
@@ -532,7 +538,7 @@ extension CloudKitInteraction
     {
         let sem = DispatchSemaphore(value: 0)
         
-        let predicate = NSPredicate(format: "(contractShiftID == \(sourceRecord.contractShiftID)) AND (projectID == \(sourceRecord.projectID)) AND (teamID == \(teamID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(contractShiftID == \(sourceRecord.contractShiftID)) AND (projectID == \(sourceRecord.projectID)) AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "ContractShifts", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil

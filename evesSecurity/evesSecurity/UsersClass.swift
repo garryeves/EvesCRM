@@ -15,6 +15,7 @@ let NotificationUserRetrieved = Notification.Name("NotificationUserRetrieved")
 let NotificationUserCountQueryDone = Notification.Name("NotificationUserCountQueryDone")
 let NotificationUserCountQueryString = "NotificationUserCountQueryDone"
 let NotificationUserCreated = Notification.Name("NotificationUserCreated")
+let NotificationUserLoaded = Notification.Name("NotificationUserLoaded")
 
 class userItem: NSObject
 {
@@ -24,6 +25,7 @@ class userItem: NSObject
     fileprivate var myAuthorised: Bool = false
     fileprivate var myName: String = ""
     fileprivate var myPhraseDate: Date = getDefaultDate()
+    fileprivate var myEmail: String = ""
     fileprivate var myPassPhrase: String = ""
     fileprivate var myCurrentTeam: team!
     fileprivate var tempTeamID: Int = 0
@@ -66,6 +68,18 @@ class userItem: NSObject
         }
     }
     
+    var email: String
+    {
+        get
+        {
+            return myEmail
+        }
+        set
+        {
+            myEmail = newValue
+        }
+    }
+    
     var phraseDate: Date
     {
         get
@@ -75,6 +89,18 @@ class userItem: NSObject
         set
         {
             myPhraseDate = newValue
+        }
+    }
+    
+    var phraseDateText: String
+    {
+        get
+        {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateStyle = .short
+            dateFormatter.timeStyle = .short
+            
+            return dateFormatter.string(from: myPhraseDate)
         }
     }
     
@@ -102,7 +128,10 @@ class userItem: NSObject
     {
         super.init()
 
-        notificationCenter.addObserver(self, selector: #selector(self.queryFinished), name: NotificationUserRetrieved, object: nil)
+        // check to see if user exists
+        
+        notificationCenter.addObserver(self, selector: #selector(self.userRetieved), name: NotificationUserRetrieved, object: nil)
+        myCloudDB.getUser(userID)
     }
     
     func userRetieved()
@@ -117,8 +146,13 @@ class userItem: NSObject
             myName = record!.name
             myPhraseDate = record!.phraseDate
             myPassPhrase = record!.passPhrase
+            myEmail = record!.email
             
             loadTeams()
+            
+            loadRoles()
+            
+            notificationCenter.post(name: NotificationUserLoaded, object: nil)
         }
     }
     
@@ -132,6 +166,11 @@ class userItem: NSObject
         notificationCenter.addObserver(self, selector: #selector(self.queryFinished), name: NotificationUserCountQueryDone, object: nil)
         
         myCloudDB.getUserCount()
+    }
+    
+    func queryExistingFinished()
+    {
+        
     }
     
     func queryFinished()
@@ -172,7 +211,10 @@ class userItem: NSObject
     {
         let myItem = userRoleItem(userID: currentUser.userID, roleType: roleType, teamID: currentTeam!.teamID)
         myItem.accessLevel = accessLevel
-        
+    }
+    
+    func loadRoles()
+    {
         myRoles = userRoles(userID: currentUser.userID, teamID: currentTeam!.teamID)
     }
     
@@ -220,7 +262,7 @@ class userItem: NSObject
 
     func save()
     {
-        myCloudDB.saveUser(myUserID, name: myName, phraseDate: myPhraseDate, passPhrase: myPassPhrase)
+        myCloudDB.saveUser(myUserID, name: myName, phraseDate: myPhraseDate, passPhrase: myPassPhrase, email: myEmail)
     }
     
     func delete() -> Bool
@@ -238,19 +280,46 @@ class userItem: NSObject
     
     private func populatePrivateDecodes(teamID: Int)
     {
-        var decodeString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date", teamID: teamID)
+        var decodeString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date")
         
         if decodeString == ""
         {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("Calendar - Weeks before current date", codeValue: "1", codeType: "stepper", decode_privacy: "Private", teamID: teamID)
+            myDatabaseConnection.updateDecodeValue("Calendar - Weeks before current date", codeValue: "1", codeType: "stepper", decode_privacy: "Private")
         }
         
-        decodeString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date", teamID: teamID)
+        decodeString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date")
         
         if decodeString == ""
         {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("Calendar - Weeks after current date", codeValue: "4", codeType: "stepper", decode_privacy: "Private", teamID: teamID)
+            myDatabaseConnection.updateDecodeValue("Calendar - Weeks after current date", codeValue: "4", codeType: "stepper", decode_privacy: "Private")
         }
+    }
+    
+    func generatePassPhrase()
+    {
+        myPassPhrase = randomString(length: 16)
+        
+        let calendar = Calendar.current
+        myPhraseDate = calendar.date(byAdding: .day, value: 1, to: Date())!
+
+        save()
+    }
+    
+    private func randomString(length: Int) -> String
+    {
+        
+        let letters : String = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+        
+        var retString: String = ""
+        
+        for _ in 1...length
+        {
+            let randomIndex  = Int(arc4random_uniform(UInt32(letters.characters.count)))
+            let a = letters.index(letters.startIndex, offsetBy: randomIndex)
+            retString +=  String(letters[a])
+        }
+        
+        return retString
     }
 }
 
@@ -319,7 +388,8 @@ extension CloudKitInteraction
                     userID: record?.object(forKey: "userID") as! Int,
                     name: record?.object(forKey: "name") as! String,
                     passPhrase: record?.object(forKey: "passPhrase") as! String,
-                    phraseDate: record?.object(forKey: "phraseDate") as! Date)
+                    phraseDate: record?.object(forKey: "phraseDate") as! Date,
+                    email: record?.object(forKey: "email") as! String)
                 
                 NotificationCenter.default.post(name: NotificationUserRetrieved, object: nil)
             }
@@ -331,7 +401,7 @@ extension CloudKitInteraction
         return returnUserEntry
     }
 
-    func saveUser(_ userID: Int, name: String, phraseDate: Date, passPhrase: String)
+    func saveUser(_ userID: Int, name: String, phraseDate: Date, passPhrase: String, email: String)
     {
         let sem = DispatchSemaphore(value: 0)
 
@@ -352,11 +422,11 @@ extension CloudKitInteraction
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
 
-                    record!.setValue(userID, forKey: "userID")
                     record!.setValue(name, forKey: "name")
                     record!.setValue(phraseDate, forKey: "phraseDate")
                     record!.setValue(passPhrase, forKey: "passPhrase")
-
+                    record!.setValue(email, forKey: "email")
+                    
                     // Save this record again
                     self.publicDB.save(record!, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
@@ -379,6 +449,7 @@ extension CloudKitInteraction
                     record.setValue(name, forKey: "name")
                     record.setValue(phraseDate, forKey: "phraseDate")
                     record.setValue(passPhrase, forKey: "passPhrase")
+                    record.setValue(email, forKey: "email")
 
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil

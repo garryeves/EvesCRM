@@ -8,7 +8,7 @@
 
 import UIKit
 
-class orgEditViewController: UIViewController
+class orgEditViewController: UIViewController, MyPickerDelegate
 {
     @IBOutlet weak var txtOrgName: UITextField!
     @IBOutlet weak var txtExternalID: UITextField!
@@ -18,13 +18,15 @@ class orgEditViewController: UIViewController
     @IBOutlet weak var btnUsers: UIButton!
     @IBOutlet weak var bottomContraint: NSLayoutConstraint!
 
+    private var newUserCreated: Bool = false
+    private var displayList: [String] = Array()
+    
     var workingOrganisation: team?
     var loginDelegate: myLoginDelegate?
     @IBOutlet weak var btnStatus: UIButton!
     
     override func viewDidLoad()
     {
-        
         txtNotes.layer.borderColor = UIColor.lightGray.cgColor
         txtNotes.layer.borderWidth = 0.5
         txtNotes.layer.cornerRadius = 5.0
@@ -37,6 +39,7 @@ class orgEditViewController: UIViewController
             workingOrganisation = team()
             // Step 1 is to create a new team
             
+            btnStatus.setTitle("Open", for: .normal)
             btnSave.isEnabled = false
             btnUsers.isEnabled = false
         }
@@ -54,7 +57,6 @@ class orgEditViewController: UIViewController
         
         notificationCenter.addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         notificationCenter.addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
-
     }
     
     override func didReceiveMemoryWarning() {
@@ -65,6 +67,11 @@ class orgEditViewController: UIViewController
     @IBAction func btnCancel(_ sender: UIButton)
     {
         self.dismiss(animated: true, completion: nil)
+        
+        if newUserCreated
+        {
+            loginDelegate?.userCreated(currentUser!)
+        }
     }
     
     @IBAction func btnSave(_ sender: UIButton)
@@ -91,6 +98,20 @@ class orgEditViewController: UIViewController
     
     @IBAction func btnStatus(_ sender: UIButton)
     {
+        displayList.removeAll()
+        
+        displayList.append("")
+        
+        for myItem in (workingOrganisation?.getDropDown(dropDownType: "TeamState"))!
+        {
+            displayList.append(myItem)
+        }
+        
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+        pickerView.source = "status"
+        pickerView.delegate = self
+        pickerView.pickerValues = displayList
+        self.present(pickerView, animated: true, completion: nil)
     }
     
     @IBAction func btnUsers(_ sender: UIButton)
@@ -103,17 +124,16 @@ class orgEditViewController: UIViewController
         
         // Now lets go and create an initial user
 
-        currentUser = userItem(teamID: workingOrganisation!.teamID)
-
-        notificationCenter.addObserver(self, selector: #selector(self.addTeamToUser), name: NotificationUserCreated, object: nil)
-    }
-    
-    func addTeamToUser()
-    {
-        notificationCenter.removeObserver(NotificationUserCreated)
-        currentUser.addTeamToUser(workingOrganisation!)
-   
-        addInitialUserRoles()
+        if currentUser == nil
+        {
+            currentUser = userItem(teamID: workingOrganisation!.teamID)
+            
+            notificationCenter.addObserver(self, selector: #selector(self.addTeamToUser), name: NotificationUserCreated, object: nil)
+        }
+        else
+        {
+            addTeamToUser()
+        }
         
         DispatchQueue.main.async
         {
@@ -122,11 +142,38 @@ class orgEditViewController: UIViewController
         }
     }
     
+    func addTeamToUser()
+    {
+        notificationCenter.removeObserver(NotificationUserCreated)
+        currentUser.addTeamToUser(workingOrganisation!)
+   
+        addInitialUserRoles()
+    }
+    
     func addInitialUserRoles()
     {
+        writeDefaultString(userDefaultName, value: "\(currentUser.userID)")
+        myDatabaseConnection.multiDecodeSave = true
+        
         for myItem in (currentUser.currentTeam?.getRoleTypes())!
         {
             currentUser.addRoleToUser(roleType: myItem, accessLevel: "Write")
+            usleep(500)
+        }
+        
+        myDatabaseConnection.multiDecodeSave = false
+        
+        myCloudDB.saveDecodesToCloudKit()
+        
+        currentUser.loadRoles()
+        newUserCreated = true
+    }
+    
+    func myPickerDidFinish(_ source: String, selectedItem:Int)
+    {
+        if source == "status"
+        {
+            btnStatus.setTitle(displayList[selectedItem], for: .normal)
         }
     }
     

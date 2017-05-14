@@ -137,7 +137,7 @@ extension CloudKitInteraction
 
     func updateMeetingSupportingDocsInCoreData(teamID: Int)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingSupportingDocs") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingSupportingDocs") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -166,7 +166,7 @@ extension CloudKitInteraction
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
+        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
         let query: CKQuery = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -181,7 +181,7 @@ extension CloudKitInteraction
 
     func replaceMeetingSupportingDocsInCoreData(teamID: Int)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
+        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
         let query: CKQuery = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -214,7 +214,7 @@ extension CloudKitInteraction
     func saveMeetingSupportingDocsRecordToCloudKit(_ sourceRecord: MeetingSupportingDocs, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID)) AND (teamID == \(teamID))") // better be accurate to get only the
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (agendaID == \(sourceRecord.agendaID)) AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the
         let query = CKQuery(recordType: "MeetingSupportingDocs", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil

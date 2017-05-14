@@ -2108,7 +2108,7 @@ class iOSCalendar
         /* The event starts date */
         //Calculate - Days * hours * mins * secs
         
-        let myStartDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date", teamID: currentUser.currentTeam!.teamID)
+        let myStartDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date")
         // This is string value so need to convert to integer, and subtract from 0 to get a negative
         
         let myStartDateValue:TimeInterval = 0 - ((((myStartDateString as NSString).doubleValue * 7) + 1) * 24 * 60 * 60)
@@ -2118,7 +2118,7 @@ class iOSCalendar
         /* The end date */
         //Calculate - Days * hours * mins * secs
         
-        let myEndDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date", teamID: currentUser.currentTeam!.teamID)
+        let myEndDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date")
         // This is string value so need to convert to integer
         
         let myEndDateValue:TimeInterval = (myEndDateString as NSString).doubleValue * 7 * 24 * 60 * 60
@@ -2147,7 +2147,7 @@ class iOSCalendar
         /* The event starts date */
         //Calculate - Days * hours * mins * secs
         
-        let myStartDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date", teamID: currentUser.currentTeam!.teamID)
+        let myStartDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks before current date")
         // This is string value so need to convert to integer, and subtract from 0 to get a negative
         
         let myStartDateValue:TimeInterval = 0 - ((((myStartDateString as NSString).doubleValue * 7) + 1) * 24 * 60 * 60)
@@ -2157,7 +2157,7 @@ class iOSCalendar
         /* The end date */
         //Calculate - Days * hours * mins * secs
         
-        let myEndDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date", teamID: currentUser.currentTeam!.teamID)
+        let myEndDateString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date")
         // This is string value so need to convert to integer
         
         let myEndDateValue:TimeInterval = (myEndDateString as NSString).doubleValue * 7 * 24 * 60 * 60
@@ -3082,9 +3082,9 @@ extension CloudKitInteraction
         }
     }
 
-    func updateMeetingAgendaInCoreData(teamID: Int)
+    func updateMeetingAgendaInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingAgenda") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "MeetingAgenda") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -3108,12 +3108,12 @@ extension CloudKitInteraction
         }
     }
 
-    func deleteMeetingAgenda(teamID: Int)
+    func deleteMeetingAgenda(mmetingID: Int)
     {
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
+        let predicate: NSPredicate = NSPredicate(format: "(meetingID == \(mmetingID)) AND \(buildTeamList(currentUser.userID))")
         let query: CKQuery = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -3128,7 +3128,7 @@ extension CloudKitInteraction
 
     func replaceMeetingAgendaInCoreData(teamID: Int)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
+        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
         let query: CKQuery = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
 
         let operation = CKQueryOperation(query: query)
@@ -3174,7 +3174,7 @@ extension CloudKitInteraction
     func saveMeetingAgendaRecordToCloudKit(_ sourceRecord: MeetingAgenda, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") && (actualTeamID == \(sourceRecord.teamID)) AND (teamID == \(teamID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(meetingID == \"\(sourceRecord.meetingID!)\") AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "MeetingAgenda", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil

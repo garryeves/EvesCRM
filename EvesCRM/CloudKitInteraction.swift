@@ -39,6 +39,7 @@ struct returnUser
     var name: String
     var passPhrase: String
     var phraseDate: Date
+    var email: String
 }
 
 protocol ModelDelegate {
@@ -310,6 +311,40 @@ class CloudKitInteraction
             {
                 NSLog("Error = \(String(describing: error))")
             }
+        }
+    }
+    
+    func buildTeamList(_ userID: Int) -> String
+    {
+        let teamList = myDatabaseConnection.getTeamsForUser(userID: userID)
+        
+        if teamList.count == 0
+        {
+            return ""
+        }
+        else if teamList.count == 1
+        {
+            return "(teamID == \(teamList[0].teamID))"
+        }
+        else
+        {
+            var retString = "(teamID IN {"
+            var firstPass: Bool = true
+            
+            for myItem in teamList
+            {
+                if !firstPass
+                {
+                    retString += " , "
+                }
+                retString += "\(myItem.teamID))"
+                
+                firstPass = false
+            }
+            
+            retString += "})"
+            
+            return retString
         }
     }
 }

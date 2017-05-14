@@ -45,6 +45,20 @@ class coreDatabase: NSObject
     
     var objectContext: NSManagedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
     
+    var myMultiDecodeSave: Bool = false
+    
+    var multiDecodeSave: Bool
+    {
+        get
+        {
+            return myMultiDecodeSave
+        }
+        set
+        {
+            myMultiDecodeSave = newValue
+        }
+    }
+    
     override init()
     {
         super.init()

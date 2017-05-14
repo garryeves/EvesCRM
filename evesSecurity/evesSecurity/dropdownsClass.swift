@@ -331,9 +331,9 @@ extension CloudKitInteraction
         }
     }
     
-    func updateDropdownsInCoreData(teamID: Int)
+    func updateDropdownsInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "Dropdowns") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "Dropdowns") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Dropdowns", predicate: predicate)
         
         let operation = CKQueryOperation(query: query)
@@ -358,12 +358,12 @@ extension CloudKitInteraction
         }
     }
     
-    func deleteDropdowns(dropdownType: String, dropdownName: String, teamID: Int)
+    func deleteDropdowns(dropdownType: String, dropdownName: String)
     {
         let sem = DispatchSemaphore(value: 0);
 
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID)) AND (dropDownType == \"\(dropdownType)\") AND (dropdownName == \"\(dropdownName)\") AND (teamID == \(teamID))")
+        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID)) AND (dropDownType == \"\(dropdownType)\") AND (dropdownName == \"\(dropdownName)\") AND \(buildTeamList(currentUser.userID))")
         let query: CKQuery = CKQuery(recordType: "Dropdowns", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -377,9 +377,9 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func replaceDropdownsInCoreData(teamID: Int)
+    func replaceDropdownsInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
+        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
         let query: CKQuery = CKQuery(recordType: "Dropdowns", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -400,6 +400,12 @@ extension CloudKitInteraction
             if record.object(forKey: "updateType") != nil
             {
                 updateType = record.object(forKey: "updateType") as! String
+            }
+            
+            var teamID: Int = 0
+            if record.object(forKey: "teamID") != nil
+            {
+                teamID = record.object(forKey: "teamID") as! Int
             }
             
             myDatabaseConnection.replaceDropdowns(dropdownType,
@@ -424,7 +430,7 @@ extension CloudKitInteraction
     {
         let sem = DispatchSemaphore(value: 0)
         
-        let predicate = NSPredicate(format: "(dropDownType == \"\(sourceRecord.dropDownType!)\") AND (teamID == \(teamID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(dropDownType == \"\(sourceRecord.dropDownType!)\") AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Dropdowns", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil

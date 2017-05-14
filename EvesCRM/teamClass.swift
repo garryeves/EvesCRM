@@ -233,6 +233,8 @@ class team: NSObject
     
     func teamCreated()
     {
+        populateTeamStateDropDown()
+        
         populateRolesDropDown()
         
         populateStagesDropDown()
@@ -250,6 +252,16 @@ class team: NSObject
         populateContactsDropDown()
         
         notificationCenter.post(name: NotificationTeamCreated, object: nil)
+    }
+    
+    private func populateTeamStateDropDown()
+    {
+        myDatabaseConnection.saveDropdowns("TeamState", dropdownValue: "Open", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("TeamState", dropdownValue: "OnHold", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("TeamState", dropdownValue: "Closed", teamID: myTeamID)
+        usleep(500)
     }
     
     private func populateRolesDropDown()
@@ -353,6 +365,18 @@ class team: NSObject
     private func populatePublicDecodes()
     {
         // none at the moment but here for when it is needed
+    }
+    
+    func getDropDown(dropDownType: String)->[String]
+    {
+        var retArray: [String] = Array()
+        
+        for myItem in myDatabaseConnection.getDropdowns(dropdownType: dropDownType)
+        {
+            retArray.append(myItem.dropDownValue!)
+        }
+        
+        return retArray
     }
     
     fileprivate func createGTDLevels()
@@ -782,12 +806,10 @@ extension CloudKitInteraction
     
     func saveTeamToCloudKit()
     {
-print("GRE1")
         for myItem in myDatabaseConnection.getTeamsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Team"))
         {
             saveTeamRecordToCloudKit(myItem)
         }
-print("GRE2")
     }
     
     func updateTeamInCoreData()
@@ -878,11 +900,9 @@ print("GRE2")
     
     func saveTeamRecordToCloudKit(_ sourceRecord: Team)
     {
-print("GRE3")
         let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "(teamID == \(sourceRecord.teamID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Team", predicate: predicate)
-print("GRE4")
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
             {
@@ -890,10 +910,8 @@ print("GRE4")
             }
             else
             {
-print("GRE5")
                 if records!.count > 0
                 {
-print("GRE6")
                     let record = records!.first// as! CKRecord
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
@@ -908,7 +926,6 @@ print("GRE6")
                     record!.setValue(sourceRecord.type, forKey: "type")
                     record!.setValue(sourceRecord.predecessor, forKey: "predecessor")
                     record!.setValue(sourceRecord.externalID, forKey: "externalIDString")
-print("GRE7")
                     
                     // Save this record again
                     self.publicDB.save(record!, completionHandler: { (savedRecord, saveError) in
@@ -918,7 +935,6 @@ print("GRE7")
                         }
                         else
                         {
-print("GRE8")
                             if debugMessages
                             {
                                 NSLog("Successfully updated record!")
@@ -928,7 +944,6 @@ print("GRE8")
                 }
                 else
                 {  // Insert
-print("GRE9")
                     let record = CKRecord(recordType: "Team")
                     record.setValue(sourceRecord.teamID, forKey: "teamID")
                     if sourceRecord.updateTime != nil
@@ -943,7 +958,7 @@ print("GRE9")
                     record.setValue(sourceRecord.predecessor, forKey: "predecessor")
                     record.setValue(sourceRecord.externalID, forKey: "externalIDString")
                     record.setValue(sourceRecord.teamID, forKey: "teamID")
-print("GRE10")
+
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
                         {
@@ -951,7 +966,6 @@ print("GRE10")
                         }
                         else
                         {
-print("GRE11")
                             if debugMessages
                             {
                                 NSLog("Successfully saved record!")
@@ -960,11 +974,9 @@ print("GRE11")
                     })
                 }
             }
-print("GRE12")
             sem.signal()
         })
         sem.wait()
-print("GRE13")
     }
     
     func updateTeamRecord(_ sourceRecord: CKRecord)

@@ -351,7 +351,7 @@ extension CloudKitInteraction
 
     func updateTaskUpdatesInCoreData(teamID: Int)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "TaskUpdates") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "TaskUpdates") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "TaskUpdates", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -380,7 +380,7 @@ extension CloudKitInteraction
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
+        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
         let query: CKQuery = CKQuery(recordType: "TaskUpdates", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -395,7 +395,7 @@ extension CloudKitInteraction
 
     func replaceTaskUpdatesInCoreData(teamID: Int)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
+        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
         let query: CKQuery = CKQuery(recordType: "TaskUpdates", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -439,7 +439,7 @@ extension CloudKitInteraction
     func saveTaskUpdatesRecordToCloudKit(_ sourceRecord: TaskUpdates, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID)) && (updateDate == %@) AND (teamID == \(teamID))", sourceRecord.updateDate!) // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(taskID == \(sourceRecord.taskID)) && (updateDate == %@) AND \(buildTeamList(currentUser.userID))", sourceRecord.updateDate!) // better be accurate to get only the record you need
         let query = CKQuery(recordType: "TaskUpdates", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil

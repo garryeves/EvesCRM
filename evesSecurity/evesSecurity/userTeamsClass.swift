@@ -343,9 +343,9 @@ extension CloudKitInteraction
         }
     }
     
-    func updateUserTeamsInCoreData(teamID: Int)
+    func updateUserTeamsInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "UserTeams") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "UserTeams") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "UserTeams", predicate: predicate)
         
         let operation = CKQueryOperation(query: query)
@@ -370,12 +370,12 @@ extension CloudKitInteraction
         }
     }
     
-    func deleteUserTeams(userID: Int, teamID: Int)
+    func deleteUserTeams(userID: Int)
     {
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID)) AND (userID == \(userID))")
+        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID)) AND (userID == \(userID))")
         let query: CKQuery = CKQuery(recordType: "UserTeams", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -389,9 +389,9 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func replaceUserTeamsInCoreData(teamID: Int)
+    func replaceUserTeamsInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
+        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
         let query: CKQuery = CKQuery(recordType: "UserTeams", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         

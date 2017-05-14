@@ -11,6 +11,7 @@ import UIKit
 protocol myLoginDelegate
 {
     func orgEdit(_ organisation: team?)
+    func userCreated(_ userRecord: userItem?)
 }
 
 class ViewController: UIViewController, myLoginDelegate
@@ -20,8 +21,18 @@ class ViewController: UIViewController, myLoginDelegate
     {
         myDatabaseConnection = coreDatabase()
         myCloudDB = CloudKitInteraction()
-        
-        Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.loadNewUserScreen), userInfo: nil, repeats: false)
+
+        if readDefaultString(userDefaultName) == ""
+        {
+            Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.loadNewUserScreen), userInfo: nil, repeats: false)
+        }
+        else
+        {
+            notificationCenter.addObserver(self, selector: #selector(self.userLoaded), name: NotificationUserLoaded, object: nil)
+            
+            currentUser = userItem(userID: Int(readDefaultString(userDefaultName))!)
+
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -31,7 +42,7 @@ class ViewController: UIViewController, myLoginDelegate
  
     func loadNewUserScreen()
     {
-        let loginViewControl = loginStoryboard.instantiateViewController(withIdentifier: "newUser") as! newUserViewController
+        let loginViewControl = loginStoryboard.instantiateViewController(withIdentifier: "newInstance") as! newInstanceViewController
         loginViewControl.loginDelegate = self
         self.present(loginViewControl, animated: true, completion: nil)
     }
@@ -42,7 +53,25 @@ class ViewController: UIViewController, myLoginDelegate
         orgEditViewControl.loginDelegate = self
         orgEditViewControl.workingOrganisation = organisation
         self.present(orgEditViewControl, animated: true, completion: nil)
-
+    }
+    
+    func userCreated(_ userRecord: userItem?)
+    {
+        let userEditViewControl = loginStoryboard.instantiateViewController(withIdentifier: "userForm") as! userFormViewController
+        userEditViewControl.workingUser = userRecord
+        self.present(userEditViewControl, animated: true, completion: nil)
+    }
+    
+    func userLoaded()
+    {
+        notificationCenter.removeObserver(NotificationUserLoaded)
+        
+        print("User = \(currentUser.userID)  Name = \(currentUser.name)")
+        // temp
+        DispatchQueue.main.async
+        {
+            self.userCreated(currentUser)
+        }
     }
 }
 

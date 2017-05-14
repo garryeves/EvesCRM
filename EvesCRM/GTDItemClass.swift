@@ -262,7 +262,7 @@ class workingGTDItem: NSObject
     {
         super.init()
         
-        myGTDItemID = myDatabaseConnection.getNextID("GTDItem", teamID: teamID)
+        myGTDItemID = myDatabaseConnection.getNextID("GTDItem")
         myGTDParentID = parentID
         myLastReviewDate = getDefaultDate() as Date!
         myTeamID = teamID
@@ -728,7 +728,7 @@ extension CloudKitInteraction
 
     func updateGTDItemInCoreData(teamID: Int)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND (teamID == \(teamID))", myDatabaseConnection.getSyncDateForTable(tableName: "GTDItem") as CVarArg)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "GTDItem") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "GTDItem", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -757,7 +757,7 @@ extension CloudKitInteraction
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID))")
+        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
         let query: CKQuery = CKQuery(recordType: "GTDItem", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -772,7 +772,7 @@ extension CloudKitInteraction
 
     func replaceGTDItemInCoreData(teamID: Int)
     {
-        let predicate: NSPredicate = NSPredicate(format: "(teamID == \(teamID)")
+        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
         let query: CKQuery = CKQuery(recordType: "GTDItem", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
@@ -817,7 +817,7 @@ extension CloudKitInteraction
     func saveGTDItemRecordToCloudKit(_ sourceRecord: GTDItem, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0)
-        let predicate = NSPredicate(format: "(gTDItemID == \(sourceRecord.gTDItemID)) && (teamID == \(sourceRecord.teamID)) AND (teamID == \(teamID))")
+        let predicate = NSPredicate(format: "(gTDItemID == \(sourceRecord.gTDItemID)) AND \(buildTeamList(currentUser.userID))")
         let query = CKQuery(recordType: "GTDItem", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
