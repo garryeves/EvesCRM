@@ -165,7 +165,7 @@ class CloudKitInteraction
         queryOperation.queryCompletionBlock = { (cursor: CKQueryCursor?, error: Error?) -> Void in
             guard error==nil else {
                 // Handle the error
-                print("Error detected ; \(String(describing: error))")
+                print("Error detected ; \(error!.localizedDescription)")
                 return
             }
             

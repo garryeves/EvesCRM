@@ -51,10 +51,13 @@ class DBSync: NSObject
                 }
                 else
                 {
-                    syncToCloudKit()
+                    let syncDate = Date()
+                    
+                    syncToCloudKit(teamID: currentUser.currentTeam!.teamID)
         
-                    syncFromCloudKit()
-        
+                    syncFromCloudKit(teamID: currentUser.currentTeam!.teamID)
+                    setLastSyncDates(syncDate: syncDate)
+                    
                     myDatabaseConnection.clearDeletedItems()
                     myDatabaseConnection.clearSyncedItems()
 

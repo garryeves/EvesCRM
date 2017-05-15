@@ -90,7 +90,7 @@ extension coreDatabase
         }
     }
  
-    func updateDecodeValue(_ codeKey: String, codeValue: String, codeType: String, decode_privacy: String, updateTime: Date =  Date(), updateType: String = "CODE", updateCloud: Bool = true)
+    func updateDecodeValue(_ codeKey: String, codeValue: String, codeType: String, decode_privacy: String, updateCloud: Bool = true, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         // first check to see if decode exists, if not we create
         var myDecode: Decodes!
@@ -153,13 +153,10 @@ extension coreDatabase
         }
         
         saveContext()
-        
-        if !multiDecodeSave
-        {  // Only save to cloud after all of the items are updated, otherwise we end up duplicating data due to time delays going to cloud
-            if updateCloud
-            {
-                myCloudDB.saveDecodesToCloudKit()
-            }
+
+        if updateCloud
+        {
+            myCloudDB.saveDecodesToCloudKit()
         }
     }
 
@@ -265,12 +262,12 @@ extension coreDatabase
             let myValue = "\(coreDatabaseName) Sync \(storeInt)"
             
             writeDefaultString(coreDatabaseName, value: myValue)
-            
+print("GRE Writing device = \(Date())")
             updateDecodeValue("Device", codeValue:  "\(storeInt)", codeType: "hidden", decode_privacy: "Private")
         }
     }
 
-    func getNextID(_ tableName: String, initialValue: Int = 1) -> Int
+    func getNextID(_ tableName: String, saveToCloud: Bool = true, initialValue: Int = 1) -> Int
     {
         let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")
         let predicate = NSPredicate(format: "(decode_name == \"\(tableName)\") && (updateType != \"Delete\")")
@@ -286,7 +283,7 @@ extension coreDatabase
             {
                 // Create table entry
                 let storeKey = "\(initialValue)"
-                updateDecodeValue(tableName, codeValue: storeKey, codeType: "hidden", decode_privacy: "Public")
+                updateDecodeValue(tableName, codeValue: storeKey, codeType: "hidden", decode_privacy: "Public", updateCloud: saveToCloud)
                 return initialValue
             }
             else
@@ -295,7 +292,7 @@ extension coreDatabase
                 let storeint = Int(fetchResults[0].decode_value!)! + 1
                 
                 let storeKey = "\(storeint)"
-                updateDecodeValue(tableName, codeValue: storeKey, codeType: "hidden", decode_privacy: "Public")
+                updateDecodeValue(tableName, codeValue: storeKey, codeType: "hidden", decode_privacy: "Public", updateCloud: saveToCloud)
                 return storeint
             }
         }
@@ -419,14 +416,14 @@ extension coreDatabase
         saveContext()
     }
     
-    func setSyncDateforTable(tableName: String, syncDate: Date)
+    func setSyncDateforTable(tableName: String, syncDate: Date, updateCloud: Bool = true)
     {
         let myDateFormatter = DateFormatter()
         myDateFormatter.dateStyle = .full
         myDateFormatter.timeStyle = .full
         
         let dateString = myDateFormatter.string(from: syncDate)
-        myDatabaseConnection.updateDecodeValue(myDBSync.getSyncString(tableName), codeValue: dateString, codeType: "hidden", decode_privacy: "Private")
+        myDatabaseConnection.updateDecodeValue(myDBSync.getSyncString(tableName), codeValue: dateString, codeType: "hidden", decode_privacy: "Private", updateCloud: updateCloud)
     }
     
     func getSyncDateForTable(tableName: String) -> Date
@@ -952,7 +949,7 @@ extension CloudKitInteraction
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
         
-        myDatabaseConnection.updateDecodeValue(decodeName, codeValue: decodeValue, codeType: decodeType, decode_privacy: decode_privacy, updateTime: updateTime, updateType: updateType, updateCloud: false)
+        myDatabaseConnection.updateDecodeValue(decodeName, codeValue: decodeValue, codeType: decodeType, decode_privacy: decode_privacy, updateCloud: false, updateTime: updateTime, updateType: updateType)
     }
 
 }

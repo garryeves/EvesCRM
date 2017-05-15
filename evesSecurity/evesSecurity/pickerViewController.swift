@@ -21,7 +21,7 @@ import UIKit
 
 class PickerViewController: UIViewController
 {
-    @IBOutlet weak var btnSelect: UIBarButtonItem!
+    @IBOutlet weak var btnSelect: UIButton!
     @IBOutlet weak var navBar: UINavigationBar!
     @IBOutlet weak var myPicker: UIPickerView!
     
@@ -131,7 +131,7 @@ class PickerViewController: UIViewController
         return UIFont.systemFont(ofSize: UIFont.systemFontSize).lineHeight * maxLines * UIScreen.main.scale
     }
     
-    @IBAction func btnSelect(_ sender: UIBarButtonItem)
+    @IBAction func btnSelect(_ sender: UIButton)
     {
         delegate!.myPickerDidFinish!(source!, selectedItem: selectedRow)
         dismiss(animated: true, completion: nil)

@@ -356,7 +356,7 @@ extension coreDatabase
     
     func getPersonAddInfoEntriesForSync(_ syncDate: Date) -> [PersonAddInfoEntry]
     {
-        let fetchRequest = NSFetchRequest<PersonAddInfoEntry>(entityName: "AddrePersonAddInfoEntrysses")
+        let fetchRequest = NSFetchRequest<PersonAddInfoEntry>(entityName: "PersonAddInfoEntry")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
         

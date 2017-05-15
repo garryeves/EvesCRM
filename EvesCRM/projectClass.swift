@@ -1091,7 +1091,7 @@ extension CloudKitInteraction
         sem.wait()
     }
 
-    func replaceProjectsInCoreData(teamID: Int)
+    func replaceProjectsInCoreData()
     {
         let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
         let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)

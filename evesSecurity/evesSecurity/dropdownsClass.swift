@@ -178,7 +178,7 @@ extension coreDatabase
         }
         catch
         {
-            print("Error occurred during execution: \(error)")
+            print("Error occurred during execution: D \(error.localizedDescription)")
             return []
         }
     }
@@ -202,7 +202,7 @@ extension coreDatabase
         }
         catch
         {
-            print("Error occurred during execution: \(error)")
+            print("Error occurred during execution: E \(error.localizedDescription)")
             return []
         }
     }
@@ -223,7 +223,7 @@ extension coreDatabase
         }
         catch
         {
-            print("Error occurred during execution: \(error)")
+            print("Error occurred during execution: F \(error.localizedDescription)")
         }
         
         saveContext()
@@ -247,7 +247,7 @@ extension coreDatabase
         }
         catch
         {
-            print("Error occurred during execution: \(error)")
+            print("Error occurred during execution: G \(error.localizedDescription)")
         }
         saveContext()
     }
@@ -270,7 +270,7 @@ extension coreDatabase
         }
         catch
         {
-            print("Error occurred during execution: \(error)")
+            print("Error occurred during execution: H \(error.localizedDescription)")
         }
         
         saveContext()
@@ -294,7 +294,7 @@ extension coreDatabase
         }
         catch
         {
-            print("Error occurred during execution: \(error)")
+            print("Error occurred during execution: I \(error.localizedDescription)")
             return []
         }
     }
@@ -314,7 +314,7 @@ extension coreDatabase
         }
         catch
         {
-            print("Error occurred during execution: \(error)")
+            print("Error occurred during execution: J \(error.localizedDescription)")
         }
         
         saveContext()
@@ -325,8 +325,11 @@ extension CloudKitInteraction
 {
     func saveDropdownsToCloudKit()
     {
+print("GRE Sync date = \(myDatabaseConnection.getSyncDateForTable(tableName: "Dropdowns"))")
+        
         for myItem in myDatabaseConnection.getDropdownsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Dropdowns"))
         {
+print("GRE - record - \(myItem.dropDownType!) - \(myItem.dropDownValue!)")
             saveDropdownsRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
         }
     }
@@ -435,7 +438,7 @@ extension CloudKitInteraction
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
             {
-                NSLog("Error querying records: \(error!.localizedDescription)")
+                NSLog("Error querying records: A \(error!.localizedDescription)")
             }
             else
             {
@@ -459,7 +462,8 @@ extension CloudKitInteraction
                     self.publicDB.save(record!, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
                         {
-                            NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            NSLog("Error saving record: B \(saveError!.localizedDescription)")
+                            print("")
                         }
                         else
                         {
@@ -487,7 +491,7 @@ extension CloudKitInteraction
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
                         {
-                            NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            NSLog("Error saving record: C \(saveError!.localizedDescription)")
                         }
                         else
                         {

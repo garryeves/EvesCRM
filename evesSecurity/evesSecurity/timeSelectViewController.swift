@@ -14,7 +14,7 @@ class timeSelectViewController: UIViewController
 {
     @IBOutlet weak var txtMins: UITextField!
     @IBOutlet weak var txtSecs: UITextField!
-    @IBOutlet weak var btnSelect: UIBarButtonItem!
+    @IBOutlet weak var btnSelect: UIButton!
     
     var pickerValues: Double?
     var source: String?
@@ -86,7 +86,7 @@ class timeSelectViewController: UIViewController
         }
     }
     
-    @IBAction func btnSelect(_ sender: UIBarButtonItem)
+    @IBAction func btnSelect(_ sender: UIButton)
     {
         // work out the new time value
         

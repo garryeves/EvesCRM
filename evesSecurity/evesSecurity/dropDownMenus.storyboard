@@ -53,18 +53,6 @@
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sQA-5c-e3l">
-                                <rect key="frame" x="20" y="20" width="728" height="44"/>
-                                <items>
-                                    <navigationItem title="Enter Track Length" id="qBY-ep-Ycd">
-                                        <barButtonItem key="rightBarButtonItem" title="Select" id="NGB-Y9-5Gh" userLabel="btnSelect">
-                                            <connections>
-                                                <action selector="btnSelect:" destination="Kmf-Y4-P0a" id="LLq-0a-VJR"/>
-                                            </connections>
-                                        </barButtonItem>
-                                    </navigationItem>
-                                </items>
-                            </navigationBar>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="m" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Udy-f2-HEf" userLabel="labelMins">
                                 <rect key="frame" x="377" y="497" width="14.5" height="30"/>
                                 <constraints>
@@ -74,24 +62,31 @@
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mmr-ba-0Ef" userLabel="btnSelect">
+                                <rect key="frame" x="362" y="532" width="44" height="30"/>
+                                <state key="normal" title="Select"/>
+                                <connections>
+                                    <action selector="btnSelect:" destination="Kmf-Y4-P0a" eventType="touchUpInside" id="EZO-B7-uRr"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="MED-co-IDd" firstAttribute="leading" secondItem="Udy-f2-HEf" secondAttribute="trailing" constant="20" id="43p-Q1-uTA"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="sQA-5c-e3l" secondAttribute="trailing" id="7lb-dO-5NO"/>
+                            <constraint firstItem="mmr-ba-0Ef" firstAttribute="top" secondItem="ZyW-Go-clV" secondAttribute="bottom" constant="5" id="6I9-Le-WWk"/>
                             <constraint firstItem="ZyW-Go-clV" firstAttribute="centerY" secondItem="rpd-E3-eo4" secondAttribute="centerY" id="DWD-IS-Dj3"/>
                             <constraint firstItem="Udy-f2-HEf" firstAttribute="centerX" secondItem="rpd-E3-eo4" secondAttribute="centerX" id="EWr-1I-3Al"/>
                             <constraint firstItem="h92-9G-FPG" firstAttribute="top" secondItem="ZyW-Go-clV" secondAttribute="top" id="PMY-lK-YPR"/>
+                            <constraint firstItem="mmr-ba-0Ef" firstAttribute="centerX" secondItem="rpd-E3-eo4" secondAttribute="centerX" id="SLU-Io-6cu"/>
                             <constraint firstItem="h92-9G-FPG" firstAttribute="leading" secondItem="MED-co-IDd" secondAttribute="trailing" constant="5" id="SnG-h5-FU4"/>
-                            <constraint firstItem="sQA-5c-e3l" firstAttribute="leading" secondItem="rpd-E3-eo4" secondAttribute="leadingMargin" id="VpT-IR-YRW"/>
+                            <constraint firstItem="NR6-IO-U2b" firstAttribute="top" relation="greaterThanOrEqual" secondItem="mmr-ba-0Ef" secondAttribute="bottom" constant="5" id="cfD-6L-tIe"/>
                             <constraint firstItem="Udy-f2-HEf" firstAttribute="top" secondItem="ZyW-Go-clV" secondAttribute="top" id="euY-xQ-2Lm"/>
-                            <constraint firstItem="sQA-5c-e3l" firstAttribute="top" secondItem="9hs-zj-AvP" secondAttribute="bottom" id="tvc-cG-Cv1"/>
                             <constraint firstItem="MED-co-IDd" firstAttribute="top" secondItem="ZyW-Go-clV" secondAttribute="top" id="yVn-C7-85z"/>
                             <constraint firstItem="Udy-f2-HEf" firstAttribute="leading" secondItem="ZyW-Go-clV" secondAttribute="trailing" constant="5" id="yud-w5-CEu"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="btnSelect" destination="NGB-Y9-5Gh" id="Qek-xL-PE2"/>
+                        <outlet property="btnSelect" destination="mmr-ba-0Ef" id="czZ-lO-CwV"/>
                         <outlet property="txtMins" destination="ZyW-Go-clV" id="SkS-Lm-xRI"/>
                         <outlet property="txtSecs" destination="MED-co-IDd" id="LHm-Jz-Ek0"/>
                     </connections>
@@ -112,49 +107,42 @@
                         <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZJk-lM-vGX">
-                                <rect key="frame" x="20" y="20" width="728" height="44"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="44" id="hYG-V4-1kW"/>
-                                </constraints>
-                                <items>
-                                    <navigationItem id="O3W-of-wm8">
-                                        <barButtonItem key="rightBarButtonItem" title="Select" id="SyB-cd-cQL" userLabel="btnSelect">
-                                            <connections>
-                                                <action selector="btnSelect:" destination="gIR-tU-07p" id="mR4-BM-wDg"/>
-                                            </connections>
-                                        </barButtonItem>
-                                    </navigationItem>
-                                </items>
-                            </navigationBar>
                             <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eIp-1G-khM">
-                                <rect key="frame" x="20" y="64" width="728" height="960"/>
+                                <rect key="frame" x="20" y="25" width="728" height="959"/>
                                 <connections>
                                     <outlet property="dataSource" destination="gIR-tU-07p" id="cXc-GV-OZm"/>
                                     <outlet property="delegate" destination="gIR-tU-07p" id="Xh0-PY-KJi"/>
                                 </connections>
                             </pickerView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yeN-fR-qIy" userLabel="btnSelect">
+                                <rect key="frame" x="362" y="989" width="44" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="1NP-dC-VfN"/>
+                                </constraints>
+                                <state key="normal" title="Select"/>
+                                <connections>
+                                    <action selector="btnSelect:" destination="gIR-tU-07p" eventType="touchUpInside" id="6QT-NN-T1h"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="eIp-1G-khM" firstAttribute="leading" secondItem="Hbb-Vw-3H6" secondAttribute="leadingMargin" id="4uZ-Um-TiH"/>
                             <constraint firstAttribute="trailingMargin" secondItem="eIp-1G-khM" secondAttribute="trailing" id="9de-pv-rG5"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="ZJk-lM-vGX" secondAttribute="trailing" id="QqD-2G-KRO"/>
-                            <constraint firstItem="lnq-yp-r5k" firstAttribute="top" secondItem="eIp-1G-khM" secondAttribute="bottom" id="VmS-sJ-DwM"/>
-                            <constraint firstItem="ZJk-lM-vGX" firstAttribute="leading" secondItem="Hbb-Vw-3H6" secondAttribute="leadingMargin" id="WCu-k7-0yH"/>
-                            <constraint firstItem="eIp-1G-khM" firstAttribute="top" secondItem="ZJk-lM-vGX" secondAttribute="bottom" id="bav-xs-xhS"/>
-                            <constraint firstItem="ZJk-lM-vGX" firstAttribute="top" secondItem="wz7-oz-5dx" secondAttribute="bottom" id="uCs-sL-WWV"/>
+                            <constraint firstItem="yeN-fR-qIy" firstAttribute="centerX" secondItem="Hbb-Vw-3H6" secondAttribute="centerX" id="FGR-QB-Mci"/>
+                            <constraint firstItem="lnq-yp-r5k" firstAttribute="top" secondItem="yeN-fR-qIy" secondAttribute="bottom" constant="5" id="Uf3-Ny-ofz"/>
+                            <constraint firstItem="yeN-fR-qIy" firstAttribute="top" secondItem="eIp-1G-khM" secondAttribute="bottom" constant="5" id="i01-eP-Nxg"/>
+                            <constraint firstItem="eIp-1G-khM" firstAttribute="top" secondItem="wz7-oz-5dx" secondAttribute="bottom" constant="5" id="kxh-pQ-zCO"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="btnSelect" destination="SyB-cd-cQL" id="bco-QG-dA9"/>
+                        <outlet property="btnSelect" destination="yeN-fR-qIy" id="dnj-ZD-siK"/>
                         <outlet property="myPicker" destination="eIp-1G-khM" id="sfz-WR-ld4"/>
-                        <outlet property="navBar" destination="ZJk-lM-vGX" id="hZ7-pK-XQq"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8vq-Pp-ca7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2436" y="1002"/>
+            <point key="canvasLocation" x="2435.9375" y="1001.9531249999999"/>
         </scene>
         <!--DateTimePicker-->
         <scene sceneID="SnQ-LP-AHi">
@@ -168,23 +156,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PKS-AL-h75">
-                                <rect key="frame" x="20" y="20" width="728" height="44"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="44" id="kbR-98-myw"/>
-                                </constraints>
-                                <items>
-                                    <navigationItem title="Select Date/Time" id="gsf-2G-tKE">
-                                        <barButtonItem key="rightBarButtonItem" title="Select" id="JVE-vD-qXT" userLabel="btnSelect">
-                                            <connections>
-                                                <action selector="btnSelect:" destination="nrS-XI-BT4" id="aic-21-c65"/>
-                                            </connections>
-                                        </barButtonItem>
-                                    </navigationItem>
-                                </items>
-                            </navigationBar>
                             <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="dateAndTime" minuteInterval="5" translatesAutoresizingMaskIntoConstraints="NO" id="5K1-T3-QsO" userLabel="datePicker">
-                                <rect key="frame" x="20" y="74" width="728" height="940"/>
+                                <rect key="frame" x="20" y="25" width="728" height="959"/>
                                 <date key="date" timeIntervalSinceReferenceDate="480307233.385396">
                                     <!--2016-03-22 02:40:33 +0000-->
                                 </date>
@@ -192,20 +165,29 @@
                                     <action selector="datePicker:" destination="nrS-XI-BT4" eventType="valueChanged" id="nB4-XJ-ymj"/>
                                 </connections>
                             </datePicker>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DfC-TE-nM3" userLabel="btnSelect">
+                                <rect key="frame" x="362" y="989" width="44" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="W0K-x6-Fpq"/>
+                                </constraints>
+                                <state key="normal" title="Select"/>
+                                <connections>
+                                    <action selector="btnSelect:" destination="nrS-XI-BT4" eventType="touchUpInside" id="ncf-Ur-BLy"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="5K1-T3-QsO" secondAttribute="trailing" id="3c7-qt-ihe"/>
-                            <constraint firstItem="h0R-1B-feR" firstAttribute="top" secondItem="5K1-T3-QsO" secondAttribute="bottom" constant="10" id="42d-Wr-c3F"/>
-                            <constraint firstItem="PKS-AL-h75" firstAttribute="top" secondItem="zgT-SL-T9H" secondAttribute="bottom" id="Jik-8E-t88"/>
-                            <constraint firstItem="PKS-AL-h75" firstAttribute="leading" secondItem="m5Q-CA-0ho" secondAttribute="leadingMargin" id="mbf-tv-UTI"/>
+                            <constraint firstItem="DfC-TE-nM3" firstAttribute="top" secondItem="5K1-T3-QsO" secondAttribute="bottom" constant="5" id="CZQ-LI-hpB"/>
+                            <constraint firstItem="DfC-TE-nM3" firstAttribute="centerX" secondItem="m5Q-CA-0ho" secondAttribute="centerX" id="M1e-j9-icj"/>
+                            <constraint firstItem="5K1-T3-QsO" firstAttribute="top" secondItem="zgT-SL-T9H" secondAttribute="bottom" constant="5" id="PoO-LG-NLR"/>
+                            <constraint firstItem="h0R-1B-feR" firstAttribute="top" secondItem="DfC-TE-nM3" secondAttribute="bottom" constant="5" id="Sa5-qO-cYz"/>
                             <constraint firstItem="5K1-T3-QsO" firstAttribute="leading" secondItem="m5Q-CA-0ho" secondAttribute="leadingMargin" id="qcR-a4-uS2"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="PKS-AL-h75" secondAttribute="trailing" id="xQN-mM-CGN"/>
-                            <constraint firstItem="5K1-T3-QsO" firstAttribute="top" secondItem="PKS-AL-h75" secondAttribute="bottom" constant="10" id="zzL-CT-vkP"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="btnSelect" destination="JVE-vD-qXT" id="ezK-yG-hrh"/>
+                        <outlet property="btnSelect" destination="DfC-TE-nM3" id="WiR-fG-A6V"/>
                         <outlet property="datePicker" destination="5K1-T3-QsO" id="UzO-Vb-xfu"/>
                     </connections>
                 </viewController>

@@ -12,7 +12,7 @@ import UIKit
 class dateTimePickerView: UIViewController
 {
     @IBOutlet weak var datePicker: UIDatePicker!
-    @IBOutlet weak var btnSelect: UIBarButtonItem!
+    @IBOutlet weak var btnSelect: UIButton!
     
     var currentDate: Date!
     var source: String?
@@ -46,7 +46,7 @@ class dateTimePickerView: UIViewController
         btnSelect.isEnabled = true
     }
     
-    @IBAction func btnSelect(_ sender: UIBarButtonItem)
+    @IBAction func btnSelect(_ sender: UIButton)
     {
         delegate!.myPickerDidFinish!(source!, selectedDate: datePicker.date)
         dismiss(animated: true, completion: nil)

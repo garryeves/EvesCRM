@@ -8,7 +8,7 @@
 
 import UIKit
 
-class newInstanceViewController: UIViewController
+class newInstanceViewController: UIViewController, UIPopoverPresentationControllerDelegate
 {
     @IBOutlet weak var btnNew: UIButton!
     @IBOutlet weak var btnExisting: UIButton!
@@ -25,9 +25,44 @@ class newInstanceViewController: UIViewController
     override func viewDidLoad()
     {
         btnExisting.isEnabled = false
+     
+        let myReachability = Reachability()
+        if myReachability.isConnectedToNetwork()
+        {
+            btnNew.isEnabled = true
+            txtEmail.isEnabled = true
+            txtCode.isEnabled = true
+        }
+        else
+        {
+            // Not connected to Internet
+
+            btnNew.isEnabled = false
+            txtEmail.isEnabled = false
+            txtCode.isEnabled = false
+        }
         
         notificationCenter.addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         notificationCenter.addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+    }
+    
+    override func viewDidAppear(_ animated: Bool)
+    {
+        let myReachability = Reachability()
+        if !myReachability.isConnectedToNetwork()
+        {
+            let alert = UIAlertController(title: "Team Maintenance", message: "You must be connected to the Internet to create or edit teams", preferredStyle: .actionSheet)
+            
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+            
+            alert.isModalInPopover = true
+            let popover = alert.popoverPresentationController
+            popover!.delegate = self
+            popover!.sourceView = self.view
+            popover!.sourceRect = CGRect(x: (self.view.bounds.width / 2) - 850,y: (self.view.bounds.height / 2) - 350,width: 700 ,height: 700)
+            
+            self.present(alert, animated: false, completion: nil)
+        }
     }
     
     override func didReceiveMemoryWarning() {

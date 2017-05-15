@@ -511,7 +511,7 @@ extension CloudKitInteraction
         sem.wait()
     }
 
-    func replaceratesInCoreData()
+    func replaceRatesInCoreData()
     {
         let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
         let query: CKQuery = CKQuery(recordType: "Rates", predicate: predicate)

@@ -20,6 +20,9 @@
 		341323911EC4369700BBDE1E /* reportingMonthClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341323901EC4369700BBDE1E /* reportingMonthClass.swift */; };
 		341323941EC43C3500BBDE1E /* shiftsClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341323931EC43C3500BBDE1E /* shiftsClass.swift */; };
 		3413239A1EC4530300BBDE1E /* UsersClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341323991EC4530300BBDE1E /* UsersClass.swift */; };
+		344BF8291EC94D4B0066CD35 /* securityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344BF8281EC94D4B0066CD35 /* securityViewController.swift */; };
+		344BF82C1EC954C70066CD35 /* settingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344BF82B1EC954C70066CD35 /* settingViewController.swift */; };
+		344BF82E1EC96E180066CD35 /* setPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344BF82D1EC96E180066CD35 /* setPasswordViewController.swift */; };
 		347BCEBE1EC559BD006B95BA /* LoginRoles.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 347BCEBD1EC559BD006B95BA /* LoginRoles.storyboard */; };
 		347BCEC01EC55D88006B95BA /* newUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347BCEBF1EC55D88006B95BA /* newUserViewController.swift */; };
 		347BCEC21EC563F0006B95BA /* orgEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347BCEC11EC563F0006B95BA /* orgEditViewController.swift */; };
@@ -63,6 +66,7 @@
 		34CEEA431EC30B7700F85A11 /* Contacts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CEEA421EC30B7700F85A11 /* Contacts.swift */; };
 		34CEEA471EC3145200F85A11 /* personAdditionalInfoClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CEEA461EC3145200F85A11 /* personAdditionalInfoClass.swift */; };
 		34CEEA611EC31D6C00F85A11 /* personAddInfoEntryClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CEEA601EC31D6C00F85A11 /* personAddInfoEntryClass.swift */; };
+		34FC32B21EC97C250053443D /* validatePasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FC32B11EC97C250053443D /* validatePasswordViewController.swift */; };
 		D15FFF0B32F69D8B80D62D86 /* Pods_evesSecurity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E95CAD216C9C390B237B980 /* Pods_evesSecurity.framework */; };
 /* End PBXBuildFile section */
 
@@ -98,6 +102,9 @@
 		341323901EC4369700BBDE1E /* reportingMonthClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = reportingMonthClass.swift; sourceTree = "<group>"; };
 		341323931EC43C3500BBDE1E /* shiftsClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = shiftsClass.swift; sourceTree = "<group>"; };
 		341323991EC4530300BBDE1E /* UsersClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsersClass.swift; sourceTree = "<group>"; };
+		344BF8281EC94D4B0066CD35 /* securityViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = securityViewController.swift; sourceTree = "<group>"; };
+		344BF82B1EC954C70066CD35 /* settingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = settingViewController.swift; sourceTree = "<group>"; };
+		344BF82D1EC96E180066CD35 /* setPasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = setPasswordViewController.swift; sourceTree = "<group>"; };
 		347BCEBD1EC559BD006B95BA /* LoginRoles.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LoginRoles.storyboard; sourceTree = "<group>"; };
 		347BCEBF1EC55D88006B95BA /* newUserViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = newUserViewController.swift; sourceTree = "<group>"; };
 		347BCEC11EC563F0006B95BA /* orgEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = orgEditViewController.swift; sourceTree = "<group>"; };
@@ -176,6 +183,7 @@
 		34CEEA421EC30B7700F85A11 /* Contacts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Contacts.swift; sourceTree = "<group>"; };
 		34CEEA461EC3145200F85A11 /* personAdditionalInfoClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = personAdditionalInfoClass.swift; sourceTree = "<group>"; };
 		34CEEA601EC31D6C00F85A11 /* personAddInfoEntryClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = personAddInfoEntryClass.swift; sourceTree = "<group>"; };
+		34FC32B11EC97C250053443D /* validatePasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = validatePasswordViewController.swift; sourceTree = "<group>"; };
 		3E95CAD216C9C390B237B980 /* Pods_evesSecurity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_evesSecurity.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBDA3A3ECAE0F50940E17F68 /* Pods-evesSecurity.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-evesSecurity.debug.xcconfig"; path = "Pods/Target Support Files/Pods-evesSecurity/Pods-evesSecurity.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -263,38 +271,38 @@
 		3496532F1EC1F0A800210A46 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				349653321EC1F0DC00210A46 /* evesSecurityShared.swift */,
+				34CEEA381EC2EB5E00F85A11 /* addressClass.swift */,
 				34CEE98F1EC2C53400F85A11 /* CalendarDetails.swift */,
+				34CEEA3E1EC303CC00F85A11 /* clientsClass.swift */,
+				34CEEA421EC30B7700F85A11 /* Contacts.swift */,
 				34CEE9F11EC2C99C00F85A11 /* ContactDetails.swift */,
+				341323881EC403A700BBDE1E /* contractShift.swift */,
+				341323861EC3FA8900BBDE1E /* contractShiftComponent.swift */,
 				34CEE98D1EC2C52500F85A11 /* contextClass.swift */,
 				34CEE97F1EC2C41600F85A11 /* decodesClass.swift */,
-				349653321EC1F0DC00210A46 /* evesSecurityShared.swift */,
+				3413238A1EC40A1D00BBDE1E /* dropdownsClass.swift */,
 				34CEE98B1EC2C51300F85A11 /* GTDLevelClass.swift */,
 				34CEE9891EC2C50200F85A11 /* GTDItemClass.swift */,
 				34CEE9AD1EC2C65100F85A11 /* meetingAgendaItemClass.swift */,
 				34CEE9AB1EC2C63700F85A11 /* meetingAttendeeClass.swift */,
 				34CEE9EB1EC2C92400F85A11 /* meetingSupportingDocsClass.swift */,
 				34CEE97D1EC2C37E00F85A11 /* notificationDefinitions.swift */,
+				341323821EC3EA9700BBDE1E /* personClass.swift */,
+				34CEEA461EC3145200F85A11 /* personAdditionalInfoClass.swift */,
+				34CEEA601EC31D6C00F85A11 /* personAddInfoEntryClass.swift */,
 				34CEE9D31EC2C71C00F85A11 /* projectClass.swift */,
 				34CEE9D51EC2C74700F85A11 /* projectteamMemberClass.swift */,
+				3413238E1EC42F1F00BBDE1E /* ratesClass.swift */,
+				341323901EC4369700BBDE1E /* reportingMonthClass.swift */,
+				341323931EC43C3500BBDE1E /* shiftsClass.swift */,
 				34CEE9A91EC2C61500F85A11 /* taskClass.swift */,
 				34CEE9D71EC2C76300F85A11 /* taskContextsClass.swift */,
 				34CEE9D91EC2C78300F85A11 /* taskPredecessorClass.swift */,
 				34CEE9DB1EC2C79600F85A11 /* taskUpdatesClass.swift */,
 				34CEE9771EC2C1DF00F85A11 /* teamClass.swift */,
-				34CEEA381EC2EB5E00F85A11 /* addressClass.swift */,
-				34CEEA3E1EC303CC00F85A11 /* clientsClass.swift */,
-				34CEEA421EC30B7700F85A11 /* Contacts.swift */,
-				34CEEA461EC3145200F85A11 /* personAdditionalInfoClass.swift */,
-				34CEEA601EC31D6C00F85A11 /* personAddInfoEntryClass.swift */,
-				341323821EC3EA9700BBDE1E /* personClass.swift */,
-				341323861EC3FA8900BBDE1E /* contractShiftComponent.swift */,
-				341323881EC403A700BBDE1E /* contractShift.swift */,
-				3413238A1EC40A1D00BBDE1E /* dropdownsClass.swift */,
-				3413238E1EC42F1F00BBDE1E /* ratesClass.swift */,
-				341323901EC4369700BBDE1E /* reportingMonthClass.swift */,
-				341323931EC43C3500BBDE1E /* shiftsClass.swift */,
-				3407F7AB1EC6CA4F008C5751 /* userRolesClass.swift */,
 				341323991EC4530300BBDE1E /* UsersClass.swift */,
+				3407F7AB1EC6CA4F008C5751 /* userRolesClass.swift */,
 				347BCEC81EC59C43006B95BA /* userTeamsClass.swift */,
 			);
 			name = Classes;
@@ -329,6 +337,10 @@
 				34C462771EC81D810037D79E /* userFormViewController.swift */,
 				34050F6D1EC82C5500CC7CBE /* pickerViewController.swift */,
 				34050F6F1EC82C8F00CC7CBE /* timeSelectViewController.swift */,
+				344BF8281EC94D4B0066CD35 /* securityViewController.swift */,
+				344BF82B1EC954C70066CD35 /* settingViewController.swift */,
+				344BF82D1EC96E180066CD35 /* setPasswordViewController.swift */,
+				34FC32B11EC97C250053443D /* validatePasswordViewController.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -569,12 +581,15 @@
 				34CEE96A1EC2BD8F00F85A11 /* EvesCRM.xcdatamodeld in Sources */,
 				34CEE9761EC2C1A900F85A11 /* reachability.swift in Sources */,
 				34CEE9701EC2BE4E00F85A11 /* CloudKitInteraction.swift in Sources */,
+				344BF82E1EC96E180066CD35 /* setPasswordViewController.swift in Sources */,
+				344BF82C1EC954C70066CD35 /* settingViewController.swift in Sources */,
 				34CEE9EA1EC2C81800F85A11 /* EvesCRMSharedFiles.swift in Sources */,
 				341323911EC4369700BBDE1E /* reportingMonthClass.swift in Sources */,
 				34CEE96E1EC2BE4000F85A11 /* DBSync.swift in Sources */,
 				34CEE9EC1EC2C92400F85A11 /* meetingSupportingDocsClass.swift in Sources */,
 				34CEE9DA1EC2C78300F85A11 /* taskPredecessorClass.swift in Sources */,
 				34CEE9F21EC2C99C00F85A11 /* ContactDetails.swift in Sources */,
+				344BF8291EC94D4B0066CD35 /* securityViewController.swift in Sources */,
 				34CEE97E1EC2C37E00F85A11 /* notificationDefinitions.swift in Sources */,
 				34CEE9801EC2C41600F85A11 /* decodesClass.swift in Sources */,
 				34CEE96D1EC2BE4000F85A11 /* coreDatabase.swift in Sources */,
@@ -600,6 +615,7 @@
 				349652FF1EC1E5B800210A46 /* AppDelegate.swift in Sources */,
 				34CEE9D61EC2C74700F85A11 /* projectteamMemberClass.swift in Sources */,
 				34CEEA431EC30B7700F85A11 /* Contacts.swift in Sources */,
+				34FC32B21EC97C250053443D /* validatePasswordViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -15,6 +15,8 @@ var adbk: CNContactStore!
 
 let defaultsName = "group.com.garryeves.EvesCRM"
 let userDefaultName = "userID"
+let userDefaultPassword = "password"
+let userDefaultPasswordHint = "passwordHint"
 
 
 let loginStoryboard = UIStoryboard(name: "LoginRoles", bundle: nil)
@@ -67,6 +69,15 @@ func writeDefaultString(_ keyName: String, value: String)
     defaults.synchronize()
 }
 
+func writeDefaultInt(_ keyName: String, value: Int)
+{
+    let defaults = UserDefaults(suiteName: defaultsName)!
+    
+    defaults.set(value, forKey: keyName)
+    
+    defaults.synchronize()
+}
+
 func readDefaultString(_ keyName: String) -> String
 {
     let defaults = UserDefaults(suiteName: defaultsName)!
@@ -79,6 +90,29 @@ func readDefaultString(_ keyName: String) -> String
     {
         return ""
     }
+}
+
+func readDefaultInt(_ keyName: String) -> Int
+{
+    let defaults = UserDefaults(suiteName: defaultsName)!
+    
+    if defaults.string(forKey: keyName) != nil
+    {
+        return defaults.integer(forKey: keyName)
+    }
+    else
+    {
+        return -1
+    }
+}
+
+func removeDefaultString(_ keyName: String)
+{
+    let defaults = UserDefaults(suiteName: defaultsName)!
+    
+    defaults.removeObject(forKey: keyName)
+    
+    defaults.synchronize()
 }
 
 struct TableData

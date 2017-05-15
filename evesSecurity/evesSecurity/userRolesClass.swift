@@ -94,7 +94,7 @@ class userRoleItem: NSObject
     {
         super.init()
 
-        myRoleID = myDatabaseConnection.getNextID("UserRoles")
+        myRoleID = myDatabaseConnection.getNextID("UserRoles", saveToCloud: false)
         myUserID = userID
         myRoleType = roleType
         myTeamID = teamID

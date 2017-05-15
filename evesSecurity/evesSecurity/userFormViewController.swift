@@ -8,7 +8,7 @@
 
 import UIKit
 
-class userFormViewController: UIViewController
+class userFormViewController: UIViewController, UIPopoverPresentationControllerDelegate
 {
     @IBOutlet weak var btnSave: UIButton!
     @IBOutlet weak var btnCancel: UIButton!
@@ -19,12 +19,44 @@ class userFormViewController: UIViewController
     @IBOutlet weak var lblDate: UILabel!
     
     var workingUser: userItem!
+    var loginDelegate: myLoginDelegate?
     
     override func viewDidLoad()
     {
-        if workingUser != nil
+        let myReachability = Reachability()
+        if myReachability.isConnectedToNetwork()
         {
-            populateForm()
+            if workingUser != nil
+            {
+                populateForm()
+            }
+        }
+        else
+        {
+            // Not connected to Internet
+
+        }
+    }
+    
+    override func viewDidAppear(_ animated: Bool)
+    {
+        let myReachability = Reachability()
+        if !myReachability.isConnectedToNetwork()
+        {
+            let alert = UIAlertController(title: "Team Maintenance", message: "You must be connected to the Internet to create or edit teams", preferredStyle: .actionSheet)
+            
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
+                                          handler: { (action: UIAlertAction) -> () in
+                                            self.dismiss(animated: true, completion: nil)
+            }))
+            
+            alert.isModalInPopover = true
+            let popover = alert.popoverPresentationController
+            popover!.delegate = self
+            popover!.sourceView = self.view
+            popover!.sourceRect = CGRect(x: (self.view.bounds.width / 2) - 850,y: (self.view.bounds.height / 2) - 350,width: 700 ,height: 700)
+            
+            self.present(alert, animated: false, completion: nil)
         }
     }
     
@@ -43,6 +75,10 @@ class userFormViewController: UIViewController
     
     @IBAction func btnCancel(_ sender: UIButton)
     {
+        if loginDelegate != nil
+        {
+            loginDelegate?.loadMainScreen()
+        }
         self.dismiss(animated: true, completion: nil)
     }
     

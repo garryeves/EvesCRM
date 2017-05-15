@@ -51,6 +51,8 @@ class team: NSObject
     fileprivate var myGTD: [workingGTDLevel] = Array()
     fileprivate var myGTDTopLevel: [workingGTDItem] = Array()
     fileprivate var myContexts: [context] = Array()
+    fileprivate var myTaxNumber: String = ""
+    fileprivate var myCompanyRegNumber: String = ""
     fileprivate var saveCalled: Bool = false
     fileprivate var myMeetings: [calendarItem] = Array()
     
@@ -79,6 +81,29 @@ class team: NSObject
         }
     }
     
+    var taxNumber: String
+    {
+        get
+        {
+            return myTaxNumber
+        }
+        set
+        {
+            myTaxNumber = newValue
+        }
+    }
+    
+    var companyRegNumber: String
+    {
+        get
+        {
+            return myCompanyRegNumber
+        }
+        set
+        {
+            myCompanyRegNumber = newValue
+        }
+    }
     var status: String
     {
         get
@@ -203,6 +228,8 @@ class team: NSObject
             myNote = myItem.note!
             myPredecessor = Int(myItem.predecessor)
             myExternalID = myItem.externalID!
+            myTaxNumber = myItem.taxNumber!
+            myCompanyRegNumber = myItem.companyRegNumber!
         }
     }
 
@@ -228,11 +255,15 @@ class team: NSObject
 
         notificationCenter.addObserver(self, selector: #selector(self.teamCreated), name: NotificationTeamSaved, object: nil)
 
-        myCloudDB.createNewTeam(teamID: myTeamID, type: myType, status: myStatus)
+        myCloudDB.createNewTeam(teamID: myTeamID, type: myType, status: myStatus, taxNumber: myTaxNumber, companyRegNumber: myCompanyRegNumber)
     }
     
     func teamCreated()
     {
+        // Create an entry in the device coredata 
+        
+        save(false)
+        
         populateTeamStateDropDown()
         
         populateRolesDropDown()
@@ -432,11 +463,11 @@ class team: NSObject
         }
     }
     
-    func save()
+    func save(_ saveToCloud: Bool = true)
     {
-        myDatabaseConnection.saveTeam(myTeamID, name: myName, status: myStatus, note: myNote, type: myType, predecessor: myPredecessor, externalID: myExternalID)
+        myDatabaseConnection.saveTeam(myTeamID, name: myName, status: myStatus, note: myNote, type: myType, predecessor: myPredecessor, externalID: myExternalID, taxNumber: myTaxNumber, companyRegNumber: myCompanyRegNumber)
         
-        if !saveCalled
+        if !saveCalled && saveToCloud
         {
             saveCalled = true
             let _ = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.performSave), userInfo: nil, repeats: false)
@@ -511,7 +542,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func saveTeam(_ teamID: Int, name: String, status: String, note: String, type: String, predecessor: Int, externalID: String, updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveTeam(_ teamID: Int, name: String, status: String, note: String, type: String, predecessor: Int, externalID: String, taxNumber: String, companyRegNumber: String, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myTeam: Team!
         
@@ -527,6 +558,9 @@ extension coreDatabase
             myTeam.type = type
             myTeam.predecessor = Int64(predecessor)
             myTeam.externalID = externalID
+            myTeam.taxNumber = taxNumber
+            myTeam.companyRegNumber = companyRegNumber
+            
             if updateType == "CODE"
             {
                 myTeam.updateTime =  NSDate()
@@ -547,6 +581,9 @@ extension coreDatabase
             myTeam.type = type
             myTeam.predecessor = Int64(predecessor)
             myTeam.externalID = externalID
+            myTeam.taxNumber = taxNumber
+            myTeam.companyRegNumber = companyRegNumber
+            
             if updateType == "CODE"
             {
                 if myTeam.updateType != "Add"
@@ -565,7 +602,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceTeam(_ teamID: Int, name: String, status: String, note: String, type: String, predecessor: Int, externalID: String, updateTime: Date =  Date(), updateType: String = "CODE")
+    func replaceTeam(_ teamID: Int, name: String, status: String, note: String, type: String, predecessor: Int, externalID: String, taxNumber: String, companyRegNumber: String, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myTeam = Team(context: persistentContainer.viewContext)
         myTeam.teamID = Int64(teamID)
@@ -575,6 +612,9 @@ extension coreDatabase
         myTeam.type = type
         myTeam.predecessor = Int64(predecessor)
         myTeam.externalID = externalID
+        myTeam.taxNumber = taxNumber
+        myTeam.companyRegNumber = companyRegNumber
+        
         if updateType == "CODE"
         {
             myTeam.updateTime =  NSDate()
@@ -780,12 +820,14 @@ extension CloudKitInteraction
         return recordsInTable
     }
     
-    func createNewTeam(teamID: Int, type: String, status:String)
+    func createNewTeam(teamID: Int, type: String, status:String, taxNumber: String, companyRegNumber: String)
     {
         let record = CKRecord(recordType: "Team")
         record.setValue(teamID, forKey: "teamID")
         record.setValue(status, forKey: "status")
         record.setValue(type, forKey: "type")
+        record.setValue(taxNumber, forKey: "taxNumber")
+        record.setValue(companyRegNumber, forKey: "companyRegNumber")
         
         self.publicDB.save(record, completionHandler:
         { (savedRecord, saveError) in
@@ -884,8 +926,10 @@ extension CloudKitInteraction
             let type = record.object(forKey: "type") as! String
             let predecessor = record.object(forKey: "predecessor") as! Int
             let externalID = record.object(forKey: "externalIDString") as! String
+            let taxNumber = record.object(forKey: "taxNumber") as! String
+            let companyRegNumber = record.object(forKey: "companyRegNumber") as! String
             
-            myDatabaseConnection.replaceTeam(teamID, name: name, status: status, note: note, type: type, predecessor: predecessor, externalID: externalID, updateTime: updateTime, updateType: updateType)
+            myDatabaseConnection.replaceTeam(teamID, name: name, status: status, note: note, type: type, predecessor: predecessor, externalID: externalID, taxNumber: taxNumber, companyRegNumber: companyRegNumber, updateTime: updateTime, updateType: updateType)
             usleep(useconds_t(self.sleepTime))
         }
         let operationQueue = OperationQueue()
@@ -926,6 +970,8 @@ extension CloudKitInteraction
                     record!.setValue(sourceRecord.type, forKey: "type")
                     record!.setValue(sourceRecord.predecessor, forKey: "predecessor")
                     record!.setValue(sourceRecord.externalID, forKey: "externalIDString")
+                    record!.setValue(sourceRecord.taxNumber, forKey: "taxNumber")
+                    record!.setValue(sourceRecord.companyRegNumber, forKey: "companyRegNumber")
                     
                     // Save this record again
                     self.publicDB.save(record!, completionHandler: { (savedRecord, saveError) in
@@ -958,6 +1004,8 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.predecessor, forKey: "predecessor")
                     record.setValue(sourceRecord.externalID, forKey: "externalIDString")
                     record.setValue(sourceRecord.teamID, forKey: "teamID")
+                    record.setValue(sourceRecord.taxNumber, forKey: "taxNumber")
+                    record.setValue(sourceRecord.companyRegNumber, forKey: "companyRegNumber")
 
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
@@ -1000,7 +1048,9 @@ extension CloudKitInteraction
         let type = sourceRecord.object(forKey: "type") as! String
         let predecessor = sourceRecord.object(forKey: "predecessor") as! Int
         let externalID = sourceRecord.object(forKey: "externalIDString") as! String
+        let taxNumber = sourceRecord.object(forKey: "taxNumber") as! String
+        let companyRegNumber = sourceRecord.object(forKey: "companyRegNumber") as! String
         
-        myDatabaseConnection.saveTeam(teamID, name: name, status: status, note: note, type: type, predecessor: predecessor, externalID: externalID, updateTime: updateTime, updateType: updateType)
+        myDatabaseConnection.saveTeam(teamID, name: name, status: status, note: note, type: type, predecessor: predecessor, externalID: externalID, taxNumber: taxNumber, companyRegNumber: companyRegNumber, updateTime: updateTime, updateType: updateType)
     }
 }

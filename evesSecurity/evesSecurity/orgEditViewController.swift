@@ -8,7 +8,7 @@
 
 import UIKit
 
-class orgEditViewController: UIViewController, MyPickerDelegate
+class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresentationControllerDelegate
 {
     @IBOutlet weak var txtOrgName: UITextField!
     @IBOutlet weak var txtExternalID: UITextField!
@@ -17,6 +17,8 @@ class orgEditViewController: UIViewController, MyPickerDelegate
     @IBOutlet weak var btnSave: UIButton!
     @IBOutlet weak var btnUsers: UIButton!
     @IBOutlet weak var bottomContraint: NSLayoutConstraint!
+    @IBOutlet weak var txtCompanyNo: UITextField!
+    @IBOutlet weak var txtTaxNo: UITextField!
 
     private var newUserCreated: Bool = false
     private var displayList: [String] = Array()
@@ -48,15 +50,40 @@ class orgEditViewController: UIViewController, MyPickerDelegate
             txtOrgName.text = workingOrganisation!.name
             txtExternalID.text = workingOrganisation!.externalID
             txtNotes.text = workingOrganisation!.note
+            txtCompanyNo.text = workingOrganisation!.taxNumber
+            txtTaxNo.text = workingOrganisation!.companyRegNumber
+            
             btnCancel.isEnabled = true
             btnSave.isEnabled = true
             btnUsers.isEnabled = true
             btnStatus.isEnabled = true
             btnStatus.setTitle(workingOrganisation!.status, for: .normal)
         }
-        
+    
         notificationCenter.addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         notificationCenter.addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+    }
+    
+    override func viewDidAppear(_ animated: Bool)
+    {
+        let myReachability = Reachability()
+        if !myReachability.isConnectedToNetwork()
+        {
+            let alert = UIAlertController(title: "Team Maintenance", message: "You must be connected to the Internet to create or edit teams", preferredStyle: .actionSheet)
+            
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
+                                          handler: { (action: UIAlertAction) -> () in
+                                            self.dismiss(animated: true, completion: nil)
+            }))
+            
+            alert.isModalInPopover = true
+            let popover = alert.popoverPresentationController
+            popover!.delegate = self
+            popover!.sourceView = self.view
+            popover!.sourceRect = CGRect(x: (self.view.bounds.width / 2) - 850,y: (self.view.bounds.height / 2) - 350,width: 700 ,height: 700)
+            
+            self.present(alert, animated: false, completion: nil)
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -88,10 +115,11 @@ class orgEditViewController: UIViewController, MyPickerDelegate
             }
             
             workingOrganisation!.externalID = extID
-            
             workingOrganisation!.note = txtNotes.text
             workingOrganisation!.status = btnStatus.currentTitle!
-            
+            workingOrganisation!.taxNumber = txtCompanyNo.text!
+            workingOrganisation!.companyRegNumber = txtTaxNo.text!
+
             workingOrganisation?.save()
         }
     }
@@ -108,9 +136,20 @@ class orgEditViewController: UIViewController, MyPickerDelegate
         }
         
         let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+        pickerView.modalPresentationStyle = .popover
+        pickerView.isModalInPopover = true
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
         pickerView.source = "status"
         pickerView.delegate = self
         pickerView.pickerValues = displayList
+        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+
         self.present(pickerView, animated: true, completion: nil)
     }
     
@@ -152,16 +191,13 @@ class orgEditViewController: UIViewController, MyPickerDelegate
     
     func addInitialUserRoles()
     {
-        writeDefaultString(userDefaultName, value: "\(currentUser.userID)")
-        myDatabaseConnection.multiDecodeSave = true
+        writeDefaultInt(userDefaultName, value: currentUser.userID)
         
         for myItem in (currentUser.currentTeam?.getRoleTypes())!
         {
             currentUser.addRoleToUser(roleType: myItem, accessLevel: "Write")
             usleep(500)
         }
-        
-        myDatabaseConnection.multiDecodeSave = false
         
         myCloudDB.saveDecodesToCloudKit()
         
@@ -201,5 +237,9 @@ class orgEditViewController: UIViewController, MyPickerDelegate
             bottomContraint.constant = CGFloat(20)
         }
     }
+    
+//    func adaptivePresentationStyle(for controller: UIPresentationController, traitCollection: UITraitCollection) -> UIModalPresentationStyle {
+//        return .none
+//    }
 }
 

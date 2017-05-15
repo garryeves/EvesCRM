@@ -124,20 +124,43 @@ class userItem: NSObject
         }
     }
     
+    init(tempID: Int)
+    {
+        super.init()
+        myUserID = userID
+        myName = ""
+        myPassPhrase = ""
+        myEmail = ""
+    }
+    
     init(userID: Int)
     {
         super.init()
 
-        // check to see if user exists
-        
+        myUserID = userID
+    }
+    
+    func getUserDetails()
+    {
         notificationCenter.addObserver(self, selector: #selector(self.userRetieved), name: NotificationUserRetrieved, object: nil)
-        myCloudDB.getUser(userID)
+        
+        // check to see if user exists
+        let myReachability = Reachability()
+        if myReachability.isConnectedToNetwork()
+        {
+            myCloudDB.getUser(userID)
+        }
+        else
+        {
+            // Not connected to Internet
+            
+            myUserID = userID
+            NotificationCenter.default.post(name: NotificationUserRetrieved, object: nil)
+        }
     }
     
     func userRetieved()
     {
-        notificationCenter.removeObserver(NotificationUserRetrieved)
-        
         let record = myCloudDB.getUserRecord()
         
         if record != nil
@@ -147,13 +170,19 @@ class userItem: NSObject
             myPhraseDate = record!.phraseDate
             myPassPhrase = record!.passPhrase
             myEmail = record!.email
-            
-            loadTeams()
-            
-            loadRoles()
-            
-            notificationCenter.post(name: NotificationUserLoaded, object: nil)
         }
+        else
+        {
+            myName = ""
+            myPassPhrase = ""
+            myEmail = ""
+        }
+        
+        loadTeams()
+        
+        loadRoles()
+        
+        notificationCenter.post(name: NotificationUserLoaded, object: nil)
     }
     
     init(teamID: Int)
@@ -209,13 +238,13 @@ class userItem: NSObject
     
     func addRoleToUser(roleType: String, accessLevel: String)
     {
-        let myItem = userRoleItem(userID: currentUser.userID, roleType: roleType, teamID: currentTeam!.teamID)
+        let myItem = userRoleItem(userID: myUserID, roleType: roleType, teamID: currentTeam!.teamID)
         myItem.accessLevel = accessLevel
     }
     
     func loadRoles()
     {
-        myRoles = userRoles(userID: currentUser.userID, teamID: currentTeam!.teamID)
+        myRoles = userRoles(userID: myUserID, teamID: currentTeam!.teamID)
     }
     
     func setCurrentTeam(_ teamObject: team)
@@ -284,6 +313,7 @@ class userItem: NSObject
         
         if decodeString == ""
         {  // Nothing found so go and create
+print("GRE - write decode 1 - \(Date())")
             myDatabaseConnection.updateDecodeValue("Calendar - Weeks before current date", codeValue: "1", codeType: "stepper", decode_privacy: "Private")
         }
         
@@ -291,6 +321,7 @@ class userItem: NSObject
         
         if decodeString == ""
         {  // Nothing found so go and create
+print("GRE - write decode 2 - \(Date())")
             myDatabaseConnection.updateDecodeValue("Calendar - Weeks after current date", codeValue: "4", codeType: "stepper", decode_privacy: "Private")
         }
     }
@@ -320,6 +351,11 @@ class userItem: NSObject
         }
         
         return retString
+    }
+    
+    func syncDatabase()
+    {
+        myDBSync.sync()
     }
 }
 

@@ -12,26 +12,31 @@ protocol myLoginDelegate
 {
     func orgEdit(_ organisation: team?)
     func userCreated(_ userRecord: userItem?)
+    func loadMainScreen()
+    func passwordCorrect()
 }
 
 class ViewController: UIViewController, myLoginDelegate
 {
-
     override func viewDidLoad()
     {
         myDatabaseConnection = coreDatabase()
         myCloudDB = CloudKitInteraction()
 
-        if readDefaultString(userDefaultName) == ""
+        if readDefaultInt(userDefaultName) <= 0
         {
             Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.loadNewUserScreen), userInfo: nil, repeats: false)
         }
         else
         {
-            notificationCenter.addObserver(self, selector: #selector(self.userLoaded), name: NotificationUserLoaded, object: nil)
-            
-            currentUser = userItem(userID: Int(readDefaultString(userDefaultName))!)
-
+            if readDefaultString(userDefaultPassword) != ""
+            {
+                Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.showPasswordScreen), userInfo: nil, repeats: false)
+            }
+            else
+            {
+                passwordCorrect()
+            }
         }
     }
     
@@ -59,19 +64,36 @@ class ViewController: UIViewController, myLoginDelegate
     {
         let userEditViewControl = loginStoryboard.instantiateViewController(withIdentifier: "userForm") as! userFormViewController
         userEditViewControl.workingUser = userRecord
+        userEditViewControl.loginDelegate = self
         self.present(userEditViewControl, animated: true, completion: nil)
     }
     
     func userLoaded()
     {
         notificationCenter.removeObserver(NotificationUserLoaded)
+        loadMainScreen()
+    }
+    
+    func showPasswordScreen()
+    {
+        let passwordViewControl = loginStoryboard.instantiateViewController(withIdentifier: "enterPassword") as! validatePasswordViewController
+        passwordViewControl.loginDelegate = self
+        self.present(passwordViewControl, animated: true, completion: nil)
+    }
+    
+    func loadMainScreen()
+    {
+        currentUser.syncDatabase()
         
-        print("User = \(currentUser.userID)  Name = \(currentUser.name)")
-        // temp
-        DispatchQueue.main.async
-        {
-            self.userCreated(currentUser)
-        }
+        let mainViewControl = self.storyboard?.instantiateViewController(withIdentifier: "mainScreen") as! securityViewController
+        self.present(mainViewControl, animated: true, completion: nil)
+    }
+    
+    func passwordCorrect()
+    {
+        notificationCenter.addObserver(self, selector: #selector(self.userLoaded), name: NotificationUserLoaded, object: nil)
+        currentUser = userItem(userID: Int(readDefaultString(userDefaultName))!)
+        currentUser.getUserDetails()
     }
 }
 
