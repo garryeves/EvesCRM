@@ -23,7 +23,9 @@ class people: NSObject
             let myObject = person(personID: Int(myItem.personID),
                                   name: myItem.name!,
                                   dob: dob,
-                                  teamID: Int(myItem.teamID)
+                                  teamID: Int(myItem.teamID),
+                                  gender: myItem.gender!,
+                                  note: myItem.note!
                                    )
             myPeople.append(myObject)
         }
@@ -42,6 +44,8 @@ class person: NSObject
 {
     fileprivate var myPersonID: Int = 0
     fileprivate var myName: String = ""
+    fileprivate var myGender: String = ""
+    fileprivate var myNote: String = ""
     fileprivate var myDob: Date = getDefaultDate()
     fileprivate var myAddresses: personAddresses!
     fileprivate var myContacts: personContacts!
@@ -65,6 +69,39 @@ class person: NSObject
         set
         {
             myName = newValue
+            save()
+        }
+    }
+    
+    var gender: String
+    {
+        get
+        {
+            if myGender == ""
+            {
+                return "Select"
+            }
+            else
+            {
+                return myGender
+            }
+        }
+        set
+        {
+            myGender = newValue
+            save()
+        }
+    }
+    
+    var note: String
+    {
+        get
+        {
+            return myNote
+        }
+        set
+        {
+            myNote = newValue
             save()
         }
     }
@@ -127,12 +164,30 @@ class person: NSObject
         }
     }
     
-    override init()
+    var dobText: String
+    {
+        get
+        {
+            if myDob == getDefaultDate()
+            {
+                return "Select"
+            }
+            else
+            {
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateStyle = .short
+                
+                return dateFormatter.string(from: myDob)
+            }
+        }
+    }
+    
+    init(teamID: Int)
     {
         super.init()
         
         myPersonID = myDatabaseConnection.getNextID("Person")
-        myTeamID = currentUser.currentTeam!.teamID
+        myTeamID = teamID
         
         save()
     }
@@ -148,6 +203,8 @@ class person: NSObject
             myName = myItem.name!
             myDob = myItem.dob! as Date
             myTeamID = Int(myItem.teamID)
+            myGender = myItem.gender!
+            myNote = myItem.note!
             
             loadAddresses()
             
@@ -160,7 +217,9 @@ class person: NSObject
     init(personID: Int,
          name: String,
          dob: Date,
-         teamID: Int
+         teamID: Int,
+         gender: String,
+         note: String
          )
     {
         super.init()
@@ -169,6 +228,8 @@ class person: NSObject
         myName = name
         myDob = dob
         myTeamID = teamID
+        myGender = gender
+        myNote = note
         
         loadAddresses()
         
@@ -182,7 +243,9 @@ class person: NSObject
         myDatabaseConnection.savePerson(myPersonID,
                                          name: name,
                                          dob: dob,
-                                         teamID: myTeamID
+                                         teamID: myTeamID,
+                                         gender: myGender,
+                                         note: myNote
                                          )
     }
     
@@ -255,6 +318,8 @@ extension coreDatabase
                     name: String,
                     dob: Date,
                     teamID: Int,
+                    gender: String,
+                    note: String,
                      updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myItem: Person!
@@ -268,6 +333,8 @@ extension coreDatabase
             myItem.name = name
             myItem.dob = dob as NSDate
             myItem.teamID = Int64(teamID)
+            myItem.gender = gender
+            myItem.note = note
             
             if updateType == "CODE"
             {
@@ -286,6 +353,8 @@ extension coreDatabase
             myItem = myReturn[0]
             myItem.name = name
             myItem.dob = dob as NSDate
+            myItem.gender = gender
+            myItem.note = note
             
             if updateType == "CODE"
             {
@@ -309,6 +378,8 @@ extension coreDatabase
                        name: String,
                        dob: Date,
                        teamID: Int,
+                       gender: String,
+                       note: String,
                         updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myItem = Person(context: objectContext)
@@ -316,6 +387,8 @@ extension coreDatabase
         myItem.name = name
         myItem.dob = dob as NSDate
         myItem.teamID = Int64(teamID)
+        myItem.gender = gender
+        myItem.note = note
         
         if updateType == "CODE"
         {
@@ -573,6 +646,8 @@ extension CloudKitInteraction
         
         operation.recordFetchedBlock = { (record) in
             let name = record.object(forKey: "name") as! String
+            let gender = record.object(forKey: "gender") as! String
+            let note = record.object(forKey: "note") as! String
             
             var personID: Int = 0
             if record.object(forKey: "personID") != nil
@@ -606,7 +681,9 @@ extension CloudKitInteraction
             
             myDatabaseConnection.replacePerson(personID,
                                                 name: name,
-                                                dob: dob, teamID: teamID
+                                                dob: dob, teamID: teamID,
+                                                gender: gender,
+                                                note: note
                                                 , updateTime: updateTime, updateType: updateType)
             
             usleep(useconds_t(self.sleepTime))
@@ -645,6 +722,8 @@ extension CloudKitInteraction
                     
                     record!.setValue(sourceRecord.name, forKey: "name")
                     record!.setValue(sourceRecord.dob, forKey: "dob")
+                    record!.setValue(sourceRecord.gender, forKey: "gender")
+                    record!.setValue(sourceRecord.note, forKey: "note")
                     
                     if sourceRecord.updateTime != nil
                     {
@@ -673,6 +752,8 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.personID, forKey: "personID")
                     record.setValue(sourceRecord.name, forKey: "name")
                     record.setValue(sourceRecord.dob, forKey: "dob")
+                    record.setValue(sourceRecord.gender, forKey: "gender")
+                    record.setValue(sourceRecord.note, forKey: "note")
                     
                     record.setValue(teamID, forKey: "teamID")
                     
@@ -705,7 +786,9 @@ extension CloudKitInteraction
     func updatePersonRecord(_ sourceRecord: CKRecord)
     {
         let name = sourceRecord.object(forKey: "name") as! String
-        
+        let gender = sourceRecord.object(forKey: "gender") as! String
+        let note = sourceRecord.object(forKey: "note") as! String
+
         var personID: Int = 0
         if sourceRecord.object(forKey: "personID") != nil
         {
@@ -739,7 +822,9 @@ extension CloudKitInteraction
         
         myDatabaseConnection.savePerson(personID,
                                          name: name,
-                                         dob: dob, teamID: teamID
+                                         dob: dob, teamID: teamID,
+                                         gender: gender,
+                                         note: note
                                          , updateTime: updateTime, updateType: updateType)
     }
 }

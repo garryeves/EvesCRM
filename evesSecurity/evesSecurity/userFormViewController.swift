@@ -19,7 +19,7 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
     @IBOutlet weak var lblDate: UILabel!
     
     var workingUser: userItem!
-    var loginDelegate: myLoginDelegate?
+    var communicationDelegate: myCommunicationDelegate?
     
     override func viewDidLoad()
     {
@@ -43,7 +43,7 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
         let myReachability = Reachability()
         if !myReachability.isConnectedToNetwork()
         {
-            let alert = UIAlertController(title: "Team Maintenance", message: "You must be connected to the Internet to create or edit teams", preferredStyle: .actionSheet)
+            let alert = UIAlertController(title: "User Maintenance", message: "You must be connected to the Internet to create or edit users", preferredStyle: .actionSheet)
             
             alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
                                           handler: { (action: UIAlertAction) -> () in
@@ -75,9 +75,9 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
     
     @IBAction func btnCancel(_ sender: UIButton)
     {
-        if loginDelegate != nil
+        if communicationDelegate != nil
         {
-            loginDelegate?.loadMainScreen()
+            communicationDelegate?.loadMainScreen!()
         }
         self.dismiss(animated: true, completion: nil)
     }

@@ -40,6 +40,7 @@ struct returnUser
     var passPhrase: String
     var phraseDate: Date
     var email: String
+    var personID: Int
 }
 
 protocol ModelDelegate {

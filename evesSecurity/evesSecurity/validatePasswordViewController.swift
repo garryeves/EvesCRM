@@ -15,7 +15,7 @@ class validatePasswordViewController: UIViewController, UIPopoverPresentationCon
     @IBOutlet weak var btnBack: UIButton!
     @IBOutlet weak var txtPassword: UITextField!
 
-    var loginDelegate: myLoginDelegate?
+    var communicationDelegate: myCommunicationDelegate?
     
     override func viewDidLoad()
     {
@@ -30,7 +30,7 @@ class validatePasswordViewController: UIViewController, UIPopoverPresentationCon
     {
         if txtPassword.text?.uppercased() == readDefaultString(userDefaultPassword).uppercased()
         {
-            loginDelegate?.passwordCorrect()
+            communicationDelegate?.passwordCorrect!()
             self.dismiss(animated: true, completion: nil)
         }
         else

@@ -18,7 +18,7 @@ class newInstanceViewController: UIViewController, UIPopoverPresentationControll
     @IBOutlet weak var newButtonVerticalConstraint: NSLayoutConstraint!
     @IBOutlet weak var newTextVerticalConstraint: NSLayoutConstraint!
     
-    var loginDelegate: myLoginDelegate?
+    var communicationDelegate: myCommunicationDelegate?
     
     private var keyboardDisplayed: Bool = false
     
@@ -73,7 +73,7 @@ class newInstanceViewController: UIViewController, UIPopoverPresentationControll
     @IBAction func btnNew(_ sender: UIButton)
     {
         self.dismiss(animated: true, completion: nil)
-        loginDelegate?.orgEdit(nil)
+        communicationDelegate?.orgEdit!(nil)
     }
 
     @IBAction func btnExisting(_ sender: UIButton)

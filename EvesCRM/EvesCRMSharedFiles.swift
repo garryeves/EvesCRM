@@ -11,6 +11,15 @@ import EventKit
 import UIKit
 import Contacts
 
+@objc protocol myCommunicationDelegate
+{
+    @objc optional func orgEdit(_ organisation: team?)
+    @objc optional func userCreated(_ userRecord: userItem?)
+    @objc optional func loadMainScreen()
+    @objc optional func passwordCorrect()
+    @objc optional func refreshScreen()
+}
+
 var adbk: CNContactStore!
 
 let defaultsName = "group.com.garryeves.EvesCRM"

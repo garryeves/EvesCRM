@@ -64,16 +64,32 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tEQ-Uf-H1F" userLabel="btnPeople">
+                                <rect key="frame" x="619" y="974" width="109" height="30"/>
+                                <state key="normal" title="Maintain People"/>
+                                <connections>
+                                    <action selector="btnPeople:" destination="c4c-EF-mMl" eventType="touchUpInside" id="54w-lA-Fp5"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WP8-oZ-twa">
+                                <rect key="frame" x="618" y="111" width="110" height="30"/>
+                                <state key="normal" title="Maintain Clients"/>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="ogl-uy-hvp" firstAttribute="top" secondItem="tEQ-Uf-H1F" secondAttribute="bottom" constant="20" id="Ar1-yf-q4g"/>
                             <constraint firstAttribute="trailingMargin" secondItem="EUi-sI-Zz4" secondAttribute="trailing" id="E0j-kE-YMv"/>
+                            <constraint firstItem="WP8-oZ-twa" firstAttribute="top" secondItem="LJf-0N-5vg" secondAttribute="bottom" constant="20" id="Kdh-TV-JRU"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="tEQ-Uf-H1F" secondAttribute="trailing" constant="20" id="R7T-aX-awz"/>
                             <constraint firstItem="LJf-0N-5vg" firstAttribute="top" secondItem="EUi-sI-Zz4" secondAttribute="bottom" constant="20" id="YZC-Jc-iKb"/>
                             <constraint firstItem="EUi-sI-Zz4" firstAttribute="top" secondItem="T48-7S-xsl" secondAttribute="bottom" id="bCA-bE-yHQ"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="WP8-oZ-twa" secondAttribute="trailing" constant="20" id="oh5-Gn-itR"/>
                             <constraint firstAttribute="trailingMargin" secondItem="LJf-0N-5vg" secondAttribute="trailing" id="sCA-0e-iHZ"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="btnPeople" destination="tEQ-Uf-H1F" id="Uga-IH-FdZ"/>
                         <outlet property="btnSettings" destination="EUi-sI-Zz4" id="A2W-Tc-4Kl"/>
                     </connections>
                 </viewController>

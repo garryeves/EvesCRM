@@ -24,7 +24,7 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
     private var displayList: [String] = Array()
     
     var workingOrganisation: team?
-    var loginDelegate: myLoginDelegate?
+    var communicationDelegate: myCommunicationDelegate?
     @IBOutlet weak var btnStatus: UIButton!
     
     override func viewDidLoad()
@@ -97,7 +97,7 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
         
         if newUserCreated
         {
-            loginDelegate?.userCreated(currentUser!)
+            communicationDelegate?.userCreated!(currentUser!)
         }
     }
     

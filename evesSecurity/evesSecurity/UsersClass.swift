@@ -28,6 +28,8 @@ class userItem: NSObject
     fileprivate var myEmail: String = ""
     fileprivate var myPassPhrase: String = ""
     fileprivate var myCurrentTeam: team!
+    fileprivate var myPersonID: Int = 0
+
     fileprivate var tempTeamID: Int = 0
     
     fileprivate let defaultsName = "group.com.garryeves.EvesCRM"
@@ -80,6 +82,18 @@ class userItem: NSObject
         }
     }
     
+    var personID: Int
+    {
+        get
+        {
+            return myPersonID
+        }
+        set
+        {
+            myPersonID = newValue
+        }
+    }
+    
     var phraseDate: Date
     {
         get
@@ -124,15 +138,6 @@ class userItem: NSObject
         }
     }
     
-    init(tempID: Int)
-    {
-        super.init()
-        myUserID = userID
-        myName = ""
-        myPassPhrase = ""
-        myEmail = ""
-    }
-    
     init(userID: Int)
     {
         super.init()
@@ -170,6 +175,7 @@ class userItem: NSObject
             myPhraseDate = record!.phraseDate
             myPassPhrase = record!.passPhrase
             myEmail = record!.email
+            myPersonID = record!.personID
         }
         else
         {
@@ -291,7 +297,7 @@ class userItem: NSObject
 
     func save()
     {
-        myCloudDB.saveUser(myUserID, name: myName, phraseDate: myPhraseDate, passPhrase: myPassPhrase, email: myEmail)
+        myCloudDB.saveUser(myUserID, name: myName, phraseDate: myPhraseDate, passPhrase: myPassPhrase, email: myEmail, personID: myPersonID)
     }
     
     func delete() -> Bool
@@ -313,7 +319,6 @@ class userItem: NSObject
         
         if decodeString == ""
         {  // Nothing found so go and create
-print("GRE - write decode 1 - \(Date())")
             myDatabaseConnection.updateDecodeValue("Calendar - Weeks before current date", codeValue: "1", codeType: "stepper", decode_privacy: "Private")
         }
         
@@ -321,7 +326,6 @@ print("GRE - write decode 1 - \(Date())")
         
         if decodeString == ""
         {  // Nothing found so go and create
-print("GRE - write decode 2 - \(Date())")
             myDatabaseConnection.updateDecodeValue("Calendar - Weeks after current date", codeValue: "4", codeType: "stepper", decode_privacy: "Private")
         }
     }
@@ -425,7 +429,8 @@ extension CloudKitInteraction
                     name: record?.object(forKey: "name") as! String,
                     passPhrase: record?.object(forKey: "passPhrase") as! String,
                     phraseDate: record?.object(forKey: "phraseDate") as! Date,
-                    email: record?.object(forKey: "email") as! String)
+                    email: record?.object(forKey: "email") as! String,
+                    personID: record?.object(forKey: "personID") as! Int)
                 
                 NotificationCenter.default.post(name: NotificationUserRetrieved, object: nil)
             }
@@ -437,7 +442,7 @@ extension CloudKitInteraction
         return returnUserEntry
     }
 
-    func saveUser(_ userID: Int, name: String, phraseDate: Date, passPhrase: String, email: String)
+    func saveUser(_ userID: Int, name: String, phraseDate: Date, passPhrase: String, email: String, personID: Int)
     {
         let sem = DispatchSemaphore(value: 0)
 
@@ -462,6 +467,7 @@ extension CloudKitInteraction
                     record!.setValue(phraseDate, forKey: "phraseDate")
                     record!.setValue(passPhrase, forKey: "passPhrase")
                     record!.setValue(email, forKey: "email")
+                    record!.setValue(personID, forKey: "personID")
                     
                     // Save this record again
                     self.publicDB.save(record!, completionHandler: { (savedRecord, saveError) in
@@ -486,6 +492,7 @@ extension CloudKitInteraction
                     record.setValue(phraseDate, forKey: "phraseDate")
                     record.setValue(passPhrase, forKey: "passPhrase")
                     record.setValue(email, forKey: "email")
+                    record.setValue(personID, forKey: "personID")
 
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil

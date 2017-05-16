@@ -36,6 +36,8 @@
 		349653171EC1E5B800210A46 /* evesSecurityTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349653161EC1E5B800210A46 /* evesSecurityTests.swift */; };
 		349653221EC1E5B900210A46 /* evesSecurityUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349653211EC1E5B900210A46 /* evesSecurityUITests.swift */; };
 		349653331EC1F0DC00210A46 /* evesSecurityShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349653321EC1F0DC00210A46 /* evesSecurityShared.swift */; };
+		34968CDE1ECAC68D0009798B /* person.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34968CDD1ECAC68D0009798B /* person.storyboard */; };
+		34968CE01ECACA350009798B /* personViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34968CDF1ECACA350009798B /* personViewController.swift */; };
 		34C462781EC81D810037D79E /* userFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C462771EC81D810037D79E /* userFormViewController.swift */; };
 		34CEE96A1EC2BD8F00F85A11 /* EvesCRM.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 34CEE94D1EC2BD8F00F85A11 /* EvesCRM.xcdatamodeld */; };
 		34CEE96D1EC2BE4000F85A11 /* coreDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CEE96B1EC2BE4000F85A11 /* coreDatabase.swift */; };
@@ -66,6 +68,7 @@
 		34CEEA431EC30B7700F85A11 /* Contacts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CEEA421EC30B7700F85A11 /* Contacts.swift */; };
 		34CEEA471EC3145200F85A11 /* personAdditionalInfoClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CEEA461EC3145200F85A11 /* personAdditionalInfoClass.swift */; };
 		34CEEA611EC31D6C00F85A11 /* personAddInfoEntryClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CEEA601EC31D6C00F85A11 /* personAddInfoEntryClass.swift */; };
+		34E07BBA1ECAF02A007711A6 /* addressesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E07BB91ECAF02A007711A6 /* addressesViewController.swift */; };
 		34FC32B21EC97C250053443D /* validatePasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FC32B11EC97C250053443D /* validatePasswordViewController.swift */; };
 		D15FFF0B32F69D8B80D62D86 /* Pods_evesSecurity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E95CAD216C9C390B237B980 /* Pods_evesSecurity.framework */; };
 /* End PBXBuildFile section */
@@ -125,6 +128,8 @@
 		349653211EC1E5B900210A46 /* evesSecurityUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = evesSecurityUITests.swift; sourceTree = "<group>"; };
 		349653231EC1E5B900210A46 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		349653321EC1F0DC00210A46 /* evesSecurityShared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = evesSecurityShared.swift; sourceTree = "<group>"; };
+		34968CDD1ECAC68D0009798B /* person.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = person.storyboard; sourceTree = "<group>"; };
+		34968CDF1ECACA350009798B /* personViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = personViewController.swift; sourceTree = "<group>"; };
 		34C462771EC81D810037D79E /* userFormViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = userFormViewController.swift; sourceTree = "<group>"; };
 		34CEE94E1EC2BD8F00F85A11 /* EvesCRM 10.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 10.xcdatamodel"; sourceTree = "<group>"; };
 		34CEE94F1EC2BD8F00F85A11 /* EvesCRM 11.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 11.xcdatamodel"; sourceTree = "<group>"; };
@@ -183,6 +188,7 @@
 		34CEEA421EC30B7700F85A11 /* Contacts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Contacts.swift; sourceTree = "<group>"; };
 		34CEEA461EC3145200F85A11 /* personAdditionalInfoClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = personAdditionalInfoClass.swift; sourceTree = "<group>"; };
 		34CEEA601EC31D6C00F85A11 /* personAddInfoEntryClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = personAddInfoEntryClass.swift; sourceTree = "<group>"; };
+		34E07BB91ECAF02A007711A6 /* addressesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = addressesViewController.swift; sourceTree = "<group>"; };
 		34FC32B11EC97C250053443D /* validatePasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = validatePasswordViewController.swift; sourceTree = "<group>"; };
 		3E95CAD216C9C390B237B980 /* Pods_evesSecurity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_evesSecurity.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBDA3A3ECAE0F50940E17F68 /* Pods-evesSecurity.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-evesSecurity.debug.xcconfig"; path = "Pods/Target Support Files/Pods-evesSecurity/Pods-evesSecurity.debug.xcconfig"; sourceTree = "<group>"; };
@@ -329,6 +335,7 @@
 				34050F681EC82B9300CC7CBE /* dropDownMenus.storyboard */,
 				347BCEBD1EC559BD006B95BA /* LoginRoles.storyboard */,
 				349653021EC1E5B800210A46 /* Main.storyboard */,
+				34968CDD1ECAC68D0009798B /* person.storyboard */,
 				349652FE1EC1E5B800210A46 /* AppDelegate.swift */,
 				349653001EC1E5B800210A46 /* ViewController.swift */,
 				34050F6B1EC82C0F00CC7CBE /* dateTimePickerViewController.swift */,
@@ -341,6 +348,8 @@
 				344BF82B1EC954C70066CD35 /* settingViewController.swift */,
 				344BF82D1EC96E180066CD35 /* setPasswordViewController.swift */,
 				34FC32B11EC97C250053443D /* validatePasswordViewController.swift */,
+				34968CDF1ECACA350009798B /* personViewController.swift */,
+				34E07BB91ECAF02A007711A6 /* addressesViewController.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -490,6 +499,7 @@
 				3496530C1EC1E5B800210A46 /* LaunchScreen.storyboard in Resources */,
 				349653091EC1E5B800210A46 /* Assets.xcassets in Resources */,
 				347BCEBE1EC559BD006B95BA /* LoginRoles.storyboard in Resources */,
+				34968CDE1ECAC68D0009798B /* person.storyboard in Resources */,
 				349653041EC1E5B800210A46 /* Main.storyboard in Resources */,
 				34050F691EC82B9300CC7CBE /* dropDownMenus.storyboard in Resources */,
 			);
@@ -583,6 +593,7 @@
 				34CEE9701EC2BE4E00F85A11 /* CloudKitInteraction.swift in Sources */,
 				344BF82E1EC96E180066CD35 /* setPasswordViewController.swift in Sources */,
 				344BF82C1EC954C70066CD35 /* settingViewController.swift in Sources */,
+				34E07BBA1ECAF02A007711A6 /* addressesViewController.swift in Sources */,
 				34CEE9EA1EC2C81800F85A11 /* EvesCRMSharedFiles.swift in Sources */,
 				341323911EC4369700BBDE1E /* reportingMonthClass.swift in Sources */,
 				34CEE96E1EC2BE4000F85A11 /* DBSync.swift in Sources */,
@@ -592,6 +603,7 @@
 				344BF8291EC94D4B0066CD35 /* securityViewController.swift in Sources */,
 				34CEE97E1EC2C37E00F85A11 /* notificationDefinitions.swift in Sources */,
 				34CEE9801EC2C41600F85A11 /* decodesClass.swift in Sources */,
+				34968CE01ECACA350009798B /* personViewController.swift in Sources */,
 				34CEE96D1EC2BE4000F85A11 /* coreDatabase.swift in Sources */,
 				3413238B1EC40A1D00BBDE1E /* dropdownsClass.swift in Sources */,
 				34CEEA611EC31D6C00F85A11 /* personAddInfoEntryClass.swift in Sources */,

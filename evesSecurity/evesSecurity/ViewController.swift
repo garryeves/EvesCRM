@@ -8,15 +8,7 @@
 
 import UIKit
 
-protocol myLoginDelegate
-{
-    func orgEdit(_ organisation: team?)
-    func userCreated(_ userRecord: userItem?)
-    func loadMainScreen()
-    func passwordCorrect()
-}
-
-class ViewController: UIViewController, myLoginDelegate
+class ViewController: UIViewController, myCommunicationDelegate
 {
     override func viewDidLoad()
     {
@@ -48,14 +40,14 @@ class ViewController: UIViewController, myLoginDelegate
     func loadNewUserScreen()
     {
         let loginViewControl = loginStoryboard.instantiateViewController(withIdentifier: "newInstance") as! newInstanceViewController
-        loginViewControl.loginDelegate = self
+        loginViewControl.communicationDelegate = self
         self.present(loginViewControl, animated: true, completion: nil)
     }
     
     func orgEdit(_ organisation: team?)
     {
         let orgEditViewControl = loginStoryboard.instantiateViewController(withIdentifier: "orgEdit") as! orgEditViewController
-        orgEditViewControl.loginDelegate = self
+        orgEditViewControl.communicationDelegate = self
         orgEditViewControl.workingOrganisation = organisation
         self.present(orgEditViewControl, animated: true, completion: nil)
     }
@@ -64,7 +56,7 @@ class ViewController: UIViewController, myLoginDelegate
     {
         let userEditViewControl = loginStoryboard.instantiateViewController(withIdentifier: "userForm") as! userFormViewController
         userEditViewControl.workingUser = userRecord
-        userEditViewControl.loginDelegate = self
+        userEditViewControl.communicationDelegate = self
         self.present(userEditViewControl, animated: true, completion: nil)
     }
     
@@ -77,7 +69,7 @@ class ViewController: UIViewController, myLoginDelegate
     func showPasswordScreen()
     {
         let passwordViewControl = loginStoryboard.instantiateViewController(withIdentifier: "enterPassword") as! validatePasswordViewController
-        passwordViewControl.loginDelegate = self
+        passwordViewControl.communicationDelegate = self
         self.present(passwordViewControl, animated: true, completion: nil)
     }
     
@@ -85,8 +77,12 @@ class ViewController: UIViewController, myLoginDelegate
     {
         currentUser.syncDatabase()
         
-        let mainViewControl = self.storyboard?.instantiateViewController(withIdentifier: "mainScreen") as! securityViewController
-        self.present(mainViewControl, animated: true, completion: nil)
+        DispatchQueue.main.async
+        {
+            let mainViewControl = self.storyboard?.instantiateViewController(withIdentifier: "mainScreen") as! securityViewController
+            mainViewControl.communicationDelegate = self
+            self.present(mainViewControl, animated: true, completion: nil)
+        }
     }
     
     func passwordCorrect()

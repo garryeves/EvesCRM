@@ -463,7 +463,7 @@ print("GRE - record - \(myItem.dropDownType!) - \(myItem.dropDownValue!)")
                         if saveError != nil
                         {
                             NSLog("Error saving record: B \(saveError!.localizedDescription)")
-                            print("")
+                            print("next level = \(saveError!)")
                         }
                         else
                         {

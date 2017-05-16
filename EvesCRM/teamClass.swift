@@ -9,6 +9,7 @@
 import Foundation
 import CoreData
 import CloudKit
+import UIKit
 
 let NotificationTeamCreated = Notification.Name("NotificationTeamCreated")
 let NotificationTeamSaved = Notification.Name("NotificationTeamSaved")
@@ -53,6 +54,9 @@ class team: NSObject
     fileprivate var myContexts: [context] = Array()
     fileprivate var myTaxNumber: String = ""
     fileprivate var myCompanyRegNumber: String = ""
+    fileprivate var myNextInvoiceNumber: Int = 0
+    fileprivate var myCompanyLogo: UIImage!
+    fileprivate var logoChanged: Bool = false
     fileprivate var saveCalled: Bool = false
     fileprivate var myMeetings: [calendarItem] = Array()
     
@@ -66,6 +70,31 @@ class team: NSObject
         {
             myTeamID = newValue
             save()
+        }
+    }
+    
+    var nextInvoiceNumber: Int
+    {
+        get
+        {
+            return myNextInvoiceNumber
+        }
+        set
+        {
+            myNextInvoiceNumber = newValue
+        }
+    }
+    
+    var logo: UIImage?
+    {
+        get
+        {
+            return myCompanyLogo
+        }
+        set
+        {
+            myCompanyLogo = newValue
+            logoChanged = true
         }
     }
     
@@ -230,6 +259,11 @@ class team: NSObject
             myExternalID = myItem.externalID!
             myTaxNumber = myItem.taxNumber!
             myCompanyRegNumber = myItem.companyRegNumber!
+            myNextInvoiceNumber = Int(myItem.nextInvoiceNumber)
+            if myItem.logo != nil
+            {
+                myCompanyLogo = UIImage(data: myItem.logo! as Data)
+            }
         }
     }
 
@@ -255,7 +289,14 @@ class team: NSObject
 
         notificationCenter.addObserver(self, selector: #selector(self.teamCreated), name: NotificationTeamSaved, object: nil)
 
-        myCloudDB.createNewTeam(teamID: myTeamID, type: myType, status: myStatus, taxNumber: myTaxNumber, companyRegNumber: myCompanyRegNumber)
+        var tempLogo: NSData?
+        
+        if myCompanyLogo != nil
+        {
+            tempLogo = UIImagePNGRepresentation(myCompanyLogo) as NSData?
+        }
+        
+        myCloudDB.createNewTeam(teamID: myTeamID, type: myType, status: myStatus, taxNumber: myTaxNumber, companyRegNumber: myCompanyRegNumber, nextInvoiceNumber: myNextInvoiceNumber, logo: tempLogo)
     }
     
     func teamCreated()
@@ -465,7 +506,20 @@ class team: NSObject
     
     func save(_ saveToCloud: Bool = true)
     {
-        myDatabaseConnection.saveTeam(myTeamID, name: myName, status: myStatus, note: myNote, type: myType, predecessor: myPredecessor, externalID: myExternalID, taxNumber: myTaxNumber, companyRegNumber: myCompanyRegNumber)
+        myDatabaseConnection.saveTeam(myTeamID, name: myName, status: myStatus, note: myNote, type: myType, predecessor: myPredecessor, externalID: myExternalID, taxNumber: myTaxNumber, companyRegNumber: myCompanyRegNumber, nextInvoiceNumber: myNextInvoiceNumber)
+        
+        if logoChanged
+        {
+            var tempLogo: NSData?
+            
+            if myCompanyLogo != nil
+            {
+                tempLogo = UIImagePNGRepresentation(myCompanyLogo) as NSData?
+            }
+            
+            myDatabaseConnection.saveTeamLogo(teamID: myTeamID, logo: tempLogo!)
+            logoChanged = false
+        }
         
         if !saveCalled && saveToCloud
         {
@@ -542,7 +596,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func saveTeam(_ teamID: Int, name: String, status: String, note: String, type: String, predecessor: Int, externalID: String, taxNumber: String, companyRegNumber: String, updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveTeam(_ teamID: Int, name: String, status: String, note: String, type: String, predecessor: Int, externalID: String, taxNumber: String, companyRegNumber: String, nextInvoiceNumber: Int, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myTeam: Team!
         
@@ -560,6 +614,7 @@ extension coreDatabase
             myTeam.externalID = externalID
             myTeam.taxNumber = taxNumber
             myTeam.companyRegNumber = companyRegNumber
+            myTeam.nextInvoiceNumber = Int64(nextInvoiceNumber)
             
             if updateType == "CODE"
             {
@@ -583,6 +638,7 @@ extension coreDatabase
             myTeam.externalID = externalID
             myTeam.taxNumber = taxNumber
             myTeam.companyRegNumber = companyRegNumber
+            myTeam.nextInvoiceNumber = Int64(nextInvoiceNumber)
             
             if updateType == "CODE"
             {
@@ -602,7 +658,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceTeam(_ teamID: Int, name: String, status: String, note: String, type: String, predecessor: Int, externalID: String, taxNumber: String, companyRegNumber: String, updateTime: Date =  Date(), updateType: String = "CODE")
+    func replaceTeam(_ teamID: Int, name: String, status: String, note: String, type: String, predecessor: Int, externalID: String, taxNumber: String, companyRegNumber: String, nextInvoiceNumber: Int, logo: NSData, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myTeam = Team(context: persistentContainer.viewContext)
         myTeam.teamID = Int64(teamID)
@@ -614,7 +670,9 @@ extension coreDatabase
         myTeam.externalID = externalID
         myTeam.taxNumber = taxNumber
         myTeam.companyRegNumber = companyRegNumber
-        
+        myTeam.nextInvoiceNumber = Int64(nextInvoiceNumber)
+        myTeam.logo = logo
+
         if updateType == "CODE"
         {
             myTeam.updateTime =  NSDate()
@@ -630,6 +688,24 @@ extension coreDatabase
         self.refreshObject(myTeam)
     }
     
+    func saveTeamLogo(teamID: Int, logo: NSData)
+    {
+        var myTeam: Team!
+    
+        let myTeams = getTeam(teamID)
+    
+        myTeam = myTeams[0]
+        myTeam.logo = logo
+    
+        if myTeam.updateType != "Add"
+        {
+            myTeam.updateType = "Update"
+        }
+        myTeam.updateTime =  NSDate()
+
+        saveContext()
+    }
+
     func getTeam(_ teamID: Int)->[Team]
     {
         let fetchRequest = NSFetchRequest<Team>(entityName: "Team")
@@ -820,7 +896,7 @@ extension CloudKitInteraction
         return recordsInTable
     }
     
-    func createNewTeam(teamID: Int, type: String, status:String, taxNumber: String, companyRegNumber: String)
+    func createNewTeam(teamID: Int, type: String, status:String, taxNumber: String, companyRegNumber: String, nextInvoiceNumber: Int, logo: NSData?)
     {
         let record = CKRecord(recordType: "Team")
         record.setValue(teamID, forKey: "teamID")
@@ -828,6 +904,22 @@ extension CloudKitInteraction
         record.setValue(type, forKey: "type")
         record.setValue(taxNumber, forKey: "taxNumber")
         record.setValue(companyRegNumber, forKey: "companyRegNumber")
+        record.setValue(nextInvoiceNumber, forKey: "nextInvoiceNumber")
+        
+        do
+        {
+            if logo != nil
+            {
+                var tempURL: URL!
+                try logo?.write(to: tempURL, options: NSData.WritingOptions.atomicWrite)
+                let asset = CKAsset(fileURL: tempURL)
+                record.setValue(asset, forKey: "logo")
+            }
+        }
+        catch
+        {
+            print("Error writing data", error)
+        }
         
         self.publicDB.save(record, completionHandler:
         { (savedRecord, saveError) in
@@ -928,8 +1020,16 @@ extension CloudKitInteraction
             let externalID = record.object(forKey: "externalIDString") as! String
             let taxNumber = record.object(forKey: "taxNumber") as! String
             let companyRegNumber = record.object(forKey: "companyRegNumber") as! String
+            let nextInvoiceNumber = record.object(forKey: "nextInvoiceNumber") as! Int
             
-            myDatabaseConnection.replaceTeam(teamID, name: name, status: status, note: note, type: type, predecessor: predecessor, externalID: externalID, taxNumber: taxNumber, companyRegNumber: companyRegNumber, updateTime: updateTime, updateType: updateType)
+            var logo: NSData!
+            
+            if let asset = record["logo"] as? CKAsset
+            {
+                logo = NSData(contentsOf: asset.fileURL)
+            }
+            
+            myDatabaseConnection.replaceTeam(teamID, name: name, status: status, note: note, type: type, predecessor: predecessor, externalID: externalID, taxNumber: taxNumber, companyRegNumber: companyRegNumber, nextInvoiceNumber: nextInvoiceNumber, logo: logo, updateTime: updateTime, updateType: updateType)
             usleep(useconds_t(self.sleepTime))
         }
         let operationQueue = OperationQueue()
@@ -972,6 +1072,23 @@ extension CloudKitInteraction
                     record!.setValue(sourceRecord.externalID, forKey: "externalIDString")
                     record!.setValue(sourceRecord.taxNumber, forKey: "taxNumber")
                     record!.setValue(sourceRecord.companyRegNumber, forKey: "companyRegNumber")
+                    record!.setValue(sourceRecord.nextInvoiceNumber, forKey: "nextInvoiceNumber")
+                    
+                    do
+                    {
+                        if sourceRecord.logo != nil
+                        {
+                            var tempURL: URL!
+                            try sourceRecord.logo?.write(to: tempURL, options: NSData.WritingOptions.atomicWrite)
+                            let asset = CKAsset(fileURL: tempURL)
+                            record!.setValue(asset, forKey: "logo")
+                        }
+                    }
+                    catch
+                    {
+                        print("Error writing data", error)
+                    }
+
                     
                     // Save this record again
                     self.publicDB.save(record!, completionHandler: { (savedRecord, saveError) in
@@ -1006,6 +1123,22 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.teamID, forKey: "teamID")
                     record.setValue(sourceRecord.taxNumber, forKey: "taxNumber")
                     record.setValue(sourceRecord.companyRegNumber, forKey: "companyRegNumber")
+                    record.setValue(sourceRecord.nextInvoiceNumber, forKey: "nextInvoiceNumber")
+                    
+                    do
+                    {
+                        if sourceRecord.logo != nil
+                        {
+                            var tempURL: URL!
+                            try sourceRecord.logo?.write(to: tempURL, options: NSData.WritingOptions.atomicWrite)
+                            let asset = CKAsset(fileURL: tempURL)
+                            record.setValue(asset, forKey: "logo")
+                        }
+                    }
+                    catch
+                    {
+                        print("Error writing data", error)
+                    }
 
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
@@ -1050,7 +1183,20 @@ extension CloudKitInteraction
         let externalID = sourceRecord.object(forKey: "externalIDString") as! String
         let taxNumber = sourceRecord.object(forKey: "taxNumber") as! String
         let companyRegNumber = sourceRecord.object(forKey: "companyRegNumber") as! String
+        let nextInvoiceNumber = sourceRecord.object(forKey: "nextInvoiceNumber") as! Int
         
-        myDatabaseConnection.saveTeam(teamID, name: name, status: status, note: note, type: type, predecessor: predecessor, externalID: externalID, taxNumber: taxNumber, companyRegNumber: companyRegNumber, updateTime: updateTime, updateType: updateType)
+        var logo: NSData!
+        
+        if let asset = sourceRecord["logo"] as? CKAsset
+        {
+            logo = NSData(contentsOf: asset.fileURL)
+        }
+        
+        myDatabaseConnection.saveTeam(teamID, name: name, status: status, note: note, type: type, predecessor: predecessor, externalID: externalID, taxNumber: taxNumber, companyRegNumber: companyRegNumber, nextInvoiceNumber: nextInvoiceNumber, updateTime: updateTime, updateType: updateType)
+        
+        if logo != nil
+        {
+            myDatabaseConnection.saveTeamLogo(teamID: teamID, logo: logo)
+        }
     }
 }
