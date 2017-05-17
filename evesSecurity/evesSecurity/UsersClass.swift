@@ -319,15 +319,16 @@ class userItem: NSObject
         
         if decodeString == ""
         {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("Calendar - Weeks before current date", codeValue: "1", codeType: "stepper", decode_privacy: "Private")
+            myDatabaseConnection.updateDecodeValue("Calendar - Weeks before current date", codeValue: "1", codeType: "stepper", decode_privacy: "Private", updateCloud: false)
         }
         
         decodeString = myDatabaseConnection.getDecodeValue("Calendar - Weeks after current date")
         
         if decodeString == ""
         {  // Nothing found so go and create
-            myDatabaseConnection.updateDecodeValue("Calendar - Weeks after current date", codeValue: "4", codeType: "stepper", decode_privacy: "Private")
+            myDatabaseConnection.updateDecodeValue("Calendar - Weeks after current date", codeValue: "4", codeType: "stepper", decode_privacy: "Private", updateCloud: false)
         }
+        myCloudDB.saveDecodesToCloudKit()
     }
     
     func generatePassPhrase()
@@ -424,13 +425,50 @@ extension CloudKitInteraction
             else
             {
                 let record = records!.first
+                
+                var storedUserID: Int = 0
+                if record!.object(forKey: "userID") != nil
+                {
+                    storedUserID = record!.object(forKey: "userID") as! Int
+                }
+
+                var personID: Int = 0
+                if record!.object(forKey: "personID") != nil
+                {
+                    personID = record!.object(forKey: "personID") as! Int
+                }
+
+                var phraseDate = getDefaultDate()
+                if record!.object(forKey: "phraseDate") != nil
+                {
+                    phraseDate = record!.object(forKey: "phraseDate") as! Date
+                }
+                
+                var name: String = ""
+                if record!.object(forKey: "name") != nil
+                {
+                    name = record!.object(forKey: "name") as! String
+                }
+                
+                var passPhrase: String = ""
+                if record!.object(forKey: "passPhrase") != nil
+                {
+                    passPhrase = record!.object(forKey: "passPhrase") as! String
+                }
+                
+                var email: String = ""
+                if record!.object(forKey: "email") != nil
+                {
+                    email = record!.object(forKey: "email") as! String
+                }
+                
                 self.returnUserEntry = returnUser(
-                    userID: record?.object(forKey: "userID") as! Int,
-                    name: record?.object(forKey: "name") as! String,
-                    passPhrase: record?.object(forKey: "passPhrase") as! String,
-                    phraseDate: record?.object(forKey: "phraseDate") as! Date,
-                    email: record?.object(forKey: "email") as! String,
-                    personID: record?.object(forKey: "personID") as! Int)
+                    userID: storedUserID,
+                    name: name,
+                    passPhrase: passPhrase,
+                    phraseDate: phraseDate,
+                    email: email,
+                    personID: personID)
                 
                 NotificationCenter.default.post(name: NotificationUserRetrieved, object: nil)
             }

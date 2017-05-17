@@ -8,7 +8,7 @@
 
 import UIKit
 
-class personViewController: UIViewController, UIPopoverPresentationControllerDelegate, myCommunicationDelegate, UITableViewDataSource, UITableViewDelegate
+class personViewController: UIViewController, UIPopoverPresentationControllerDelegate, myCommunicationDelegate, UITableViewDataSource, UITableViewDelegate, MyPickerDelegate
 {
     @IBOutlet weak var tblPeople: UITableView!
     @IBOutlet weak var txtName: UITextField!
@@ -35,6 +35,7 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
     private var myAddInfo: [personAddInfoEntry] = Array()
     private var keyboardDisplayed: Bool = false
     private var selectedPerson: person!
+    private var displayList: [String] = Array()
     
     override func viewDidLoad()
     {
@@ -113,14 +114,8 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
             case tblPeople:
                 showFields()
                 selectedPerson = myPeople.people[indexPath.row]
-                txtName.text = myPeople.people[indexPath.row].name
-                btnDOB.setTitle(myPeople.people[indexPath.row].dobText, for: .normal)
-                btnGender.setTitle(myPeople.people[indexPath.row].gender, for: .normal)
-                txtNotes.text = myPeople.people[indexPath.row].note
-                    
-                loadAddInfo()
-                tblAddInfo.reloadData()
-                
+                loadDetails()
+            
             case tblAddInfo:
                 let _ = 1
                 
@@ -131,10 +126,58 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
     
     @IBAction func btnDOB(_ sender: UIButton)
     {
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "datePicker") as! dateTimePickerView
+        pickerView.modalPresentationStyle = .popover
+        //      pickerView.isModalInPopover = true
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        pickerView.source = "DOB"
+        pickerView.delegate = self
+        if selectedPerson.dob == getDefaultDate()
+        {
+            pickerView.currentDate = Date()
+        }
+        else
+        {
+            pickerView.currentDate = selectedPerson.dob
+        }
+        pickerView.showTimes = false
+        
+        pickerView.preferredContentSize = CGSize(width: 400,height: 400)
+        
+        self.present(pickerView, animated: true, completion: nil)
     }
     
     @IBAction func btnGender(_ sender: UIButton)
     {
+        displayList.removeAll()
+        
+        displayList.append("")
+        displayList.append("Female")
+        displayList.append("Male")
+        displayList.append("Other")
+        
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+        pickerView.modalPresentationStyle = .popover
+        //      pickerView.isModalInPopover = true
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        pickerView.source = "gender"
+        pickerView.delegate = self
+        pickerView.pickerValues = displayList
+        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+        
+        self.present(pickerView, animated: true, completion: nil)
     }
     
     @IBAction func btnAdd(_ sender: UIButton)
@@ -160,6 +203,8 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
             selectedPerson.note = txtNotes.text
                 
             selectedPerson.save()
+            
+            refreshScreen()
         }
     }
     
@@ -182,6 +227,19 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
     
     @IBAction func btnContacts(_ sender: UIButton)
     {
+        let contactsView = personStoryboard.instantiateViewController(withIdentifier: "contactsForm") as! contactsViewController
+        contactsView.modalPresentationStyle = .popover
+        
+        let popover = contactsView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        contactsView.workingPerson = selectedPerson
+        contactsView.preferredContentSize = CGSize(width: 700,height: 120)
+        
+        self.present(contactsView, animated: true, completion: nil)
     }
     
     @IBAction func btnBack(_ sender: UIButton)
@@ -202,6 +260,26 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         }
         else
         {
+            btnSave.isHidden = false
+        }
+    }
+    
+    func myPickerDidFinish(_ source: String, selectedItem:Int)
+    {
+        if source == "gender"
+        {
+            selectedPerson.gender = displayList[selectedItem]
+            btnGender.setTitle(displayList[selectedItem], for: .normal)
+            btnSave.isHidden = false
+        }
+    }
+
+    func myPickerDidFinish(_ source: String, selectedDate:Date)
+    {
+        if source == "DOB"
+        {
+            selectedPerson.dob = selectedDate
+            btnDOB.setTitle(selectedPerson.dobText, for: .normal)
             btnSave.isHidden = false
         }
     }
@@ -278,6 +356,24 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
     func refreshScreen()
     {
         myPeople = people()
+        
+        tblPeople.reloadData()
+        loadDetails()
+    }
+    
+    func loadDetails()
+    {
+        if selectedPerson != nil
+        {
+            txtName.text = selectedPerson.name
+            btnDOB.setTitle(selectedPerson.dobText, for: .normal)
+            btnGender.setTitle(selectedPerson.gender, for: .normal)
+            txtNotes.text = selectedPerson.note
+            btnAddresses.setTitle("Addresses (\(selectedPerson.addresses.count))", for: .normal)
+            btnContacts.setTitle("Contact Details (\(selectedPerson.contacts.count))", for: .normal)
+            loadAddInfo()
+            tblAddInfo.reloadData()
+        }
     }
     
     func clearAddInfo()

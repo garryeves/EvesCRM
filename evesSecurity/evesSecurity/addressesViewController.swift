@@ -16,7 +16,7 @@
 
 import UIKit
 
-class addressesViewController: UIViewController
+class addressesViewController: UIViewController, MyPickerDelegate, UIPopoverPresentationControllerDelegate
 {
     @IBOutlet weak var lblAddressType: UILabel!
     @IBOutlet weak var lblSreet1: UILabel!
@@ -35,10 +35,24 @@ class addressesViewController: UIViewController
     @IBOutlet weak var btnSave: UIButton!
     
     var workingPerson: person!
+    var workingClient: client!
+    var workingProject: project!
+    
+    private var displayList: [String] = Array()
+    private var workingAddress: address!
     
     override func viewDidLoad()
     {
-//        hideFields()
+        if workingPerson.addresses.count > 0
+        {
+            workingAddress = workingPerson.addresses[0]
+            displayItem()
+        }
+        else
+        {
+            btnAddressType.setTitle("Select", for: .normal)
+            hideFields()
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -48,12 +62,95 @@ class addressesViewController: UIViewController
     
     @IBAction func btnAddressType(_ sender: UIButton)
     {
+        displayList.removeAll()
         
-        showFields()
+        displayList.append("")
+        
+        for myItem in (currentUser.currentTeam?.getDropDown(dropDownType: "Address"))!
+        {
+            displayList.append(myItem)
+        }
+        
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+        pickerView.modalPresentationStyle = .popover
+  //      pickerView.isModalInPopover = true
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        pickerView.source = "address"
+        pickerView.delegate = self
+        pickerView.pickerValues = displayList
+        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+        
+        self.present(pickerView, animated: true, completion: nil)
     }
     
     @IBAction func btnSave(_ sender: UIButton)
     {
+        workingAddress.addressLine1 = txtStreet1.text!
+        workingAddress.addressLine2 = txtStreet2.text!
+        workingAddress.city = txtCity.text!
+        workingAddress.state = txtState.text!
+        workingAddress.country = txtCountry.text!
+        workingAddress.postcode = txtPostcode.text!
+        workingAddress.addressType = btnAddressType.currentTitle!
+        workingAddress.save()
+        workingPerson.loadAddresses()
+    }
+    
+    func myPickerDidFinish(_ source: String, selectedItem:Int)
+    {
+        if source == "address"
+        {
+            // loop through addresses to find matching record.  If none found then create a new address
+            var itemFound: Bool = false
+            
+            for myItem in workingPerson.addresses
+            {
+                if myItem.addressType == displayList[selectedItem]
+                {
+                    workingAddress = myItem
+                    itemFound = true
+                    break
+                }
+            }
+            
+            if !itemFound
+            {
+                workingAddress = address(teamID: currentUser.currentTeam!.teamID)
+                if workingPerson != nil
+                {
+                    workingAddress.personID = workingPerson.personID
+                }
+                if workingClient != nil
+                {
+                    workingAddress.personID = workingClient.clientID
+                }
+                if workingProject != nil
+                {
+                    workingAddress.personID = workingProject.projectID
+                }
+                workingAddress.addressType = displayList[selectedItem]
+            }
+            
+            displayItem()
+            showFields()
+        }
+    }
+    
+    func displayItem()
+    {
+        txtStreet1.text = workingAddress.addressLine1
+        txtStreet2.text = workingAddress.addressLine2
+        txtCity.text = workingAddress.city
+        txtState.text = workingAddress.state
+        txtCountry.text = workingAddress.country
+        txtPostcode.text = workingAddress.postcode
+        btnAddressType.setTitle(workingAddress.addressType, for: .normal)
     }
     
     func hideFields()

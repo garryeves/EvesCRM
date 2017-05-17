@@ -156,7 +156,10 @@ extension coreDatabase
 
         if updateCloud
         {
-            myCloudDB.saveDecodesToCloudKit()
+            DispatchQueue.global(qos: .background).async
+            {
+                myCloudDB.saveDecodesToCloudKit()
+            }
         }
     }
 
@@ -262,8 +265,8 @@ extension coreDatabase
             let myValue = "\(coreDatabaseName) Sync \(storeInt)"
             
             writeDefaultString(coreDatabaseName, value: myValue)
-print("GRE Writing device = \(Date())")
-            updateDecodeValue("Device", codeValue:  "\(storeInt)", codeType: "hidden", decode_privacy: "Private")
+
+            updateDecodeValue("Device", codeValue:  "\(storeInt)", codeType: "hidden", decode_privacy: "Private", updateCloud: false)
         }
     }
 
@@ -455,6 +458,8 @@ extension CloudKitInteraction
 {
     func saveDecodesToCloudKit()
     {
+        let syncDate = Date()
+        
         for myItem in myDatabaseConnection.getDecodesForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Decodes"))
         {
             if myItem.decode_privacy == "Public"
@@ -466,6 +471,7 @@ extension CloudKitInteraction
                 savePrivateDecodesRecordToCloudKit(myItem)
             }
         }
+        myDatabaseConnection.setSyncDateforTable(tableName: "Decodes", syncDate: syncDate, updateCloud: false)
     }
 
     func updatePublicDecodesInCoreData()

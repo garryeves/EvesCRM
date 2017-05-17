@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="12141" systemVersion="16E195" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="12141" systemVersion="16F73" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Addresses" representedClassName="Addresses" syncable="YES" codeGenerationType="class">
         <attribute name="addressID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="addressLine1" optional="YES" attributeType="String" syncable="YES"/>
@@ -25,9 +25,11 @@
         <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="Contacts" representedClassName="Contacts" syncable="YES" codeGenerationType="class">
+        <attribute name="clientID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="contactType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="contactValue" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="personID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="projectID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
@@ -394,7 +396,7 @@
     <elements>
         <element name="Addresses" positionX="-243" positionY="171" width="128" height="255"/>
         <element name="Clients" positionX="-279" positionY="135" width="128" height="135"/>
-        <element name="Contacts" positionX="-252" positionY="162" width="128" height="135"/>
+        <element name="Contacts" positionX="-252" positionY="162" width="128" height="165"/>
         <element name="Context" positionX="-270" positionY="108" width="128" height="225"/>
         <element name="ContractShiftComponent" positionX="-252" positionY="162" width="128" height="150"/>
         <element name="ContractShifts" positionX="-261" positionY="153" width="128" height="150"/>

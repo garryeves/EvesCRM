@@ -38,6 +38,7 @@
 		349653331EC1F0DC00210A46 /* evesSecurityShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349653321EC1F0DC00210A46 /* evesSecurityShared.swift */; };
 		34968CDE1ECAC68D0009798B /* person.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34968CDD1ECAC68D0009798B /* person.storyboard */; };
 		34968CE01ECACA350009798B /* personViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34968CDF1ECACA350009798B /* personViewController.swift */; };
+		34B43A701ECC0A7500BBE4D1 /* contactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B43A6F1ECC0A7500BBE4D1 /* contactsViewController.swift */; };
 		34C462781EC81D810037D79E /* userFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C462771EC81D810037D79E /* userFormViewController.swift */; };
 		34CEE96A1EC2BD8F00F85A11 /* EvesCRM.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 34CEE94D1EC2BD8F00F85A11 /* EvesCRM.xcdatamodeld */; };
 		34CEE96D1EC2BE4000F85A11 /* coreDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CEE96B1EC2BE4000F85A11 /* coreDatabase.swift */; };
@@ -130,6 +131,7 @@
 		349653321EC1F0DC00210A46 /* evesSecurityShared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = evesSecurityShared.swift; sourceTree = "<group>"; };
 		34968CDD1ECAC68D0009798B /* person.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = person.storyboard; sourceTree = "<group>"; };
 		34968CDF1ECACA350009798B /* personViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = personViewController.swift; sourceTree = "<group>"; };
+		34B43A6F1ECC0A7500BBE4D1 /* contactsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = contactsViewController.swift; sourceTree = "<group>"; };
 		34C462771EC81D810037D79E /* userFormViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = userFormViewController.swift; sourceTree = "<group>"; };
 		34CEE94E1EC2BD8F00F85A11 /* EvesCRM 10.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 10.xcdatamodel"; sourceTree = "<group>"; };
 		34CEE94F1EC2BD8F00F85A11 /* EvesCRM 11.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 11.xcdatamodel"; sourceTree = "<group>"; };
@@ -350,6 +352,7 @@
 				34FC32B11EC97C250053443D /* validatePasswordViewController.swift */,
 				34968CDF1ECACA350009798B /* personViewController.swift */,
 				34E07BB91ECAF02A007711A6 /* addressesViewController.swift */,
+				34B43A6F1ECC0A7500BBE4D1 /* contactsViewController.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -596,6 +599,7 @@
 				34E07BBA1ECAF02A007711A6 /* addressesViewController.swift in Sources */,
 				34CEE9EA1EC2C81800F85A11 /* EvesCRMSharedFiles.swift in Sources */,
 				341323911EC4369700BBDE1E /* reportingMonthClass.swift in Sources */,
+				34B43A701ECC0A7500BBE4D1 /* contactsViewController.swift in Sources */,
 				34CEE96E1EC2BE4000F85A11 /* DBSync.swift in Sources */,
 				34CEE9EC1EC2C92400F85A11 /* meetingSupportingDocsClass.swift in Sources */,
 				34CEE9DA1EC2C78300F85A11 /* taskPredecessorClass.swift in Sources */,

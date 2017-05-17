@@ -17,12 +17,42 @@ class personContacts: NSObject
     
     init(personID: Int)
     {
-        for myItem in myDatabaseConnection.getContactDetails(personID)
+        for myItem in myDatabaseConnection.getContactDetailsForPerson(personID)
         {
             let myObject = contact(personID: Int(myItem.personID),
                                    contactType: myItem.contactType!,
                                    contactValue: myItem.contactValue!,
-                                   teamID: Int(myItem.teamID))
+                                   teamID: Int(myItem.teamID),
+                                   clientID: Int(myItem.clientID),
+                                   projectID: Int(myItem.projectID))
+            myContacts.append(myObject)
+        }
+    }
+    
+    init(clientID: Int)
+    {
+        for myItem in myDatabaseConnection.getContactDetailsForClient(clientID)
+        {
+            let myObject = contact(personID: Int(myItem.personID),
+                                   contactType: myItem.contactType!,
+                                   contactValue: myItem.contactValue!,
+                                   teamID: Int(myItem.teamID),
+                                   clientID: Int(myItem.clientID),
+                                   projectID: Int(myItem.projectID))
+            myContacts.append(myObject)
+        }
+    }
+    
+    init(projectID: Int)
+    {
+        for myItem in myDatabaseConnection.getContactDetailsForProject(projectID)
+        {
+            let myObject = contact(personID: Int(myItem.personID),
+                                   contactType: myItem.contactType!,
+                                   contactValue: myItem.contactValue!,
+                                   teamID: Int(myItem.teamID),
+                                   clientID: Int(myItem.clientID),
+                                   projectID: Int(myItem.projectID))
             myContacts.append(myObject)
         }
     }
@@ -42,12 +72,42 @@ class contact: NSObject
     fileprivate var myContactType: String = ""
     fileprivate var myContactValue: String = ""
     fileprivate var myTeamID: Int = 0
+    fileprivate var myClientID: Int = 0
+    fileprivate var myProjectID: Int = 0
     
     var personID: Int
     {
         get
         {
             return myPersonID
+        }
+        set
+        {
+            return myPersonID = newValue
+        }
+    }
+    
+    var clientID: Int
+    {
+        get
+        {
+            return myClientID
+        }
+        set
+        {
+            return myClientID = newValue
+        }
+    }
+    
+    var projectID: Int
+    {
+        get
+        {
+            return myProjectID
+        }
+        set
+        {
+            return myProjectID = newValue
         }
     }
     
@@ -77,12 +137,12 @@ class contact: NSObject
         }
     }
     
-    override init()
+    init(teamID: Int)
     {
         super.init()
         
         myPersonID = myDatabaseConnection.getNextID("Contact")
-        myTeamID = currentUser.currentTeam!.teamID
+        myTeamID = teamID
         
         save()
     }
@@ -90,7 +150,7 @@ class contact: NSObject
     init(personID: Int)
     {
         super.init()
-        let myReturn = myDatabaseConnection.getContactDetails(personID)
+        let myReturn = myDatabaseConnection.getContactDetailsForPerson(personID)
         
         for myItem in myReturn
         {
@@ -98,13 +158,49 @@ class contact: NSObject
             myContactType = myItem.contactType!
             myContactValue = myItem.contactValue!
             myTeamID = Int(myItem.teamID)
+            myClientID = Int(myItem.clientID)
+            myProjectID = Int(myItem.projectID)
+        }
+    }
+    
+    init(clientID: Int)
+    {
+        super.init()
+        let myReturn = myDatabaseConnection.getContactDetailsForClient(clientID)
+        
+        for myItem in myReturn
+        {
+            myPersonID = Int(myItem.personID)
+            myContactType = myItem.contactType!
+            myContactValue = myItem.contactValue!
+            myTeamID = Int(myItem.teamID)
+            myClientID = Int(myItem.clientID)
+            myProjectID = Int(myItem.projectID)
+        }
+    }
+    
+    init(projectID: Int)
+    {
+        super.init()
+        let myReturn = myDatabaseConnection.getContactDetailsForProject(projectID)
+        
+        for myItem in myReturn
+        {
+            myPersonID = Int(myItem.personID)
+            myContactType = myItem.contactType!
+            myContactValue = myItem.contactValue!
+            myTeamID = Int(myItem.teamID)
+            myClientID = Int(myItem.clientID)
+            myProjectID = Int(myItem.projectID)
         }
     }
     
     init(personID: Int,
          contactType: String,
          contactValue: String,
-         teamID: Int)
+         teamID: Int,
+         clientID: Int,
+         projectID: Int)
     {
         super.init()
         
@@ -112,6 +208,8 @@ class contact: NSObject
         myContactType = contactType
         myContactValue = contactValue
         myTeamID = teamID
+        myClientID = clientID
+        myProjectID = projectID
     }
     
     func save()
@@ -119,12 +217,28 @@ class contact: NSObject
         myDatabaseConnection.saveContact(myPersonID,
                                          contactType: myContactType,
                                          contactValue: myContactValue,
-                                         teamID: myTeamID)
+                                         teamID: myTeamID,
+                                         clientID: myClientID,
+                                         projectID: myProjectID)
     }
     
     func delete()
     {
-        myDatabaseConnection.deleteContact(myPersonID, contactType: myContactType)
+        if myPersonID != 0
+        {
+            myDatabaseConnection.deleteContactForPerson(myPersonID, contactType: myContactType)
+        }
+        
+        if myClientID != 0
+        {
+            myDatabaseConnection.deleteContactForClient(myClientID, contactType: myContactType)
+        }
+        
+        if myProjectID != 0
+        {
+            myDatabaseConnection.deleteContactForProject(myProjectID, contactType: myContactType)
+        }
+
     }
 }
 
@@ -134,12 +248,27 @@ extension coreDatabase
                      contactType: String,
                      contactValue: String,
                      teamID: Int,
+                     clientID: Int,
+                     projectID: Int,
                      updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myItem: Contacts!
         
-        let myReturn = getContactDetails(personID, contactType: contactType)
+        var myReturn: [Contacts]!
         
+        if personID != 0
+        {
+            myReturn = getContactDetailsForPerson(personID, contactType: contactType)
+        }
+        else if clientID != 0
+        {
+            myReturn = getContactDetailsForClient(clientID, contactType: contactType)
+        }
+        else if projectID != 0
+        {
+            myReturn = getContactDetailsForProject(projectID, contactType: contactType)
+        }
+
         if myReturn.count == 0
         { // Add
             myItem = Contacts(context: objectContext)
@@ -147,6 +276,8 @@ extension coreDatabase
             myItem.contactType = contactType
             myItem.contactValue = contactValue
             myItem.teamID = Int64(teamID)
+            myItem.clientID = Int64(clientID)
+            myItem.projectID = Int64(projectID)
             
             if updateType == "CODE"
             {
@@ -164,6 +295,9 @@ extension coreDatabase
         {
             myItem = myReturn[0]
             myItem.contactValue = contactValue
+            myItem.clientID = Int64(clientID)
+            myItem.projectID = Int64(projectID)
+            myItem.personID = Int64(personID)
             
             if updateType == "CODE"
             {
@@ -187,6 +321,8 @@ extension coreDatabase
                         contactType: String,
                         contactValue: String,
                         teamID: Int,
+                        clientID: Int,
+                        projectID: Int,
                         updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myItem = Contacts(context: objectContext)
@@ -194,6 +330,8 @@ extension coreDatabase
         myItem.contactType = contactType
         myItem.contactValue = contactValue
         myItem.teamID = Int64(teamID)
+        myItem.clientID = Int64(clientID)
+        myItem.projectID = Int64(projectID)
         
         if updateType == "CODE"
         {
@@ -209,9 +347,9 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteContact(_ personID: Int, contactType: String)
+    func deleteContactForPerson(_ personID: Int, contactType: String)
     {
-        let myReturn = getContactDetails(personID, contactType: contactType)
+        let myReturn = getContactDetailsForPerson(personID, contactType: contactType)
         
         if myReturn.count > 0
         {
@@ -222,8 +360,36 @@ extension coreDatabase
         
         saveContext()
     }
-    
-    func getContactDetails(_ personID: Int, contactType: String)->[Contacts]
+
+    func deleteContactForClient(_ clientID: Int, contactType: String)
+    {
+        let myReturn = getContactDetailsForClient(clientID, contactType: contactType)
+        
+        if myReturn.count > 0
+        {
+            let myItem = myReturn[0]
+            myItem.updateTime =  NSDate()
+            myItem.updateType = "Delete"
+        }
+        
+        saveContext()
+    }
+
+    func deleteContactForProject(_ projectID: Int, contactType: String)
+    {
+        let myReturn = getContactDetailsForProject(projectID, contactType: contactType)
+        
+        if myReturn.count > 0
+        {
+            let myItem = myReturn[0]
+            myItem.updateTime =  NSDate()
+            myItem.updateType = "Delete"
+        }
+        
+        saveContext()
+    }
+
+    func getContactDetailsForPerson(_ personID: Int, contactType: String)->[Contacts]
     {
         let fetchRequest = NSFetchRequest<Contacts>(entityName: "Contacts")
         
@@ -247,13 +413,109 @@ extension coreDatabase
         }
     }
     
-    func getContactDetails(_ personID: Int)->[Contacts]
+    func getContactDetailsForClient(_ clientID: Int, contactType: String)->[Contacts]
+    {
+        let fetchRequest = NSFetchRequest<Contacts>(entityName: "Contacts")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(clientID == \(clientID)) && (contactType = \"\(contactType)\") AND (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func getContactDetailsForProject(_ projectID: Int, contactType: String)->[Contacts]
+    {
+        let fetchRequest = NSFetchRequest<Contacts>(entityName: "Contacts")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(projectID == \(projectID)) && (contactType = \"\(contactType)\") AND (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+
+    func getContactDetailsForPerson(_ personID: Int)->[Contacts]
     {
         let fetchRequest = NSFetchRequest<Contacts>(entityName: "Contacts")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         let predicate = NSPredicate(format: "(personID == \(personID)) && (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func getContactDetailsForClient(_ clientID: Int)->[Contacts]
+    {
+        let fetchRequest = NSFetchRequest<Contacts>(entityName: "Contacts")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(clientID == \(clientID)) && (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func getContactDetailsForProject(_ projectID: Int)->[Contacts]
+    {
+        let fetchRequest = NSFetchRequest<Contacts>(entityName: "Contacts")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(projectID == \(projectID)) && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -422,12 +684,12 @@ extension CloudKitInteraction
         }
     }
     
-    func deleteContact(personID: Int)
+    func deleteContact(personID: Int, clientID: Int, projectID: Int)
     {
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID)) AND (personID == \(personID))")
+        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID)) AND (personID == \(personID)) AND (clientID == \(clientID)) AND (projectID == \(projectID))")
         let query: CKQuery = CKQuery(recordType: "Contacts", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
@@ -477,10 +739,24 @@ extension CloudKitInteraction
                 teamID = record.object(forKey: "teamID") as! Int
             }
             
+            var clientID: Int = 0
+            if record.object(forKey: "clientID") != nil
+            {
+                clientID = record.object(forKey: "clientID") as! Int
+            }
+            
+            var projectID: Int = 0
+            if record.object(forKey: "projectID") != nil
+            {
+                projectID = record.object(forKey: "projectID") as! Int
+            }
+            
             myDatabaseConnection.replaceContact(personID,
                                                 contactType: contactType,
                                                 contactValue: contactValue,
-                                                teamID: teamID
+                                                teamID: teamID,
+                                                clientID: clientID,
+                                                projectID:  projectID
                 , updateTime: updateTime, updateType: updateType)
             
             usleep(useconds_t(self.sleepTime))
@@ -500,7 +776,7 @@ extension CloudKitInteraction
     {
         let sem = DispatchSemaphore(value: 0)
         
-        let predicate = NSPredicate(format: "(addressID == \(sourceRecord.personID)) AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(personID == \(sourceRecord.personID)) AND (clientID == \(sourceRecord.clientID)) AND (projectID == \(sourceRecord.projectID)) AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Contacts", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
@@ -520,6 +796,8 @@ extension CloudKitInteraction
                     record!.setValue(sourceRecord.personID, forKey: "personID")
                     record!.setValue(sourceRecord.contactType, forKey: "contactType")
                     record!.setValue(sourceRecord.contactValue, forKey: "contactValue")
+                    record!.setValue(sourceRecord.clientID, forKey: "clientID")
+                    record!.setValue(sourceRecord.projectID, forKey: "projectID")
                     
                     if sourceRecord.updateTime != nil
                     {
@@ -548,8 +826,8 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.personID, forKey: "personID")
                     record.setValue(sourceRecord.contactType, forKey: "contactType")
                     record.setValue(sourceRecord.contactValue, forKey: "contactValue")
-
-                    
+                    record.setValue(sourceRecord.clientID, forKey: "clientID")
+                    record.setValue(sourceRecord.projectID, forKey: "projectID")
                     record.setValue(teamID, forKey: "teamID")
                     
                     if sourceRecord.updateTime != nil
@@ -607,11 +885,24 @@ extension CloudKitInteraction
             teamID = sourceRecord.object(forKey: "teamID") as! Int
         }
         
+        var clientID: Int = 0
+        if sourceRecord.object(forKey: "clientID") != nil
+        {
+            clientID = sourceRecord.object(forKey: "clientID") as! Int
+        }
+        
+        var projectID: Int = 0
+        if sourceRecord.object(forKey: "projectID") != nil
+        {
+            projectID = sourceRecord.object(forKey: "projectID") as! Int
+        }
+        
         myDatabaseConnection.saveContact(personID,
                                          contactType: contactType,
                                          contactValue: contactValue,
-                                         teamID: teamID
+                                         teamID: teamID,
+                                         clientID: clientID,
+                                         projectID: projectID
             , updateTime: updateTime, updateType: updateType)
     }
-    
 }

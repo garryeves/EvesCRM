@@ -17,12 +17,22 @@ class dateTimePickerView: UIViewController
     var currentDate: Date!
     var source: String?
     var delegate: MyPickerDelegate?
+    var showTimes: Bool = true
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         
-        datePicker.minimumDate = Date()
+   //     datePicker.minimumDate = Date()
+     
+        if showTimes
+        {
+            datePicker.datePickerMode = .dateAndTime
+        }
+        else
+        {
+            datePicker.datePickerMode = .date
+        }
         
         if currentDate != nil
         {

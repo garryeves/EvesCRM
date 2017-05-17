@@ -101,23 +101,28 @@ extension coreDatabase
     {
         var myItem: Dropdowns!
         
-        myItem = Dropdowns(context: objectContext)
-        myItem.dropDownType = dropdownType
-        myItem.dropDownValue = dropdownValue
-        myItem.teamID = Int64(teamID)
+        let myReturn = getDropdowns(dropdownType: dropdownType, dropdownValue: dropdownValue, teamID: teamID)
         
-        if updateType == "CODE"
-        {
-            myItem.updateTime =  NSDate()
+        if myReturn.count == 0
+        { // Add
+            myItem = Dropdowns(context: objectContext)
+            myItem.dropDownType = dropdownType
+            myItem.dropDownValue = dropdownValue
+            myItem.teamID = Int64(teamID)
             
-            myItem.updateType = "Add"
+            if updateType == "CODE"
+            {
+                myItem.updateTime =  NSDate()
+                
+                myItem.updateType = "Add"
+            }
+            else
+            {
+                myItem.updateTime = updateTime as NSDate
+                myItem.updateType = updateType
+            }
         }
-        else
-        {
-            myItem.updateTime = updateTime as NSDate
-            myItem.updateType = updateType
-        }
-        
+
         saveContext()
     }
     
@@ -189,7 +194,7 @@ extension coreDatabase
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(dropDownType == \"\(dropdownType)\") AND (dropDownType == \"\(dropdownType)\") AND (teamID == \(teamID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(dropDownType == \"\(dropdownType)\") AND (dropDownValue == \"\(dropdownValue)\") AND (teamID == \(teamID)) && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -325,11 +330,8 @@ extension CloudKitInteraction
 {
     func saveDropdownsToCloudKit()
     {
-print("GRE Sync date = \(myDatabaseConnection.getSyncDateForTable(tableName: "Dropdowns"))")
-        
         for myItem in myDatabaseConnection.getDropdownsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Dropdowns"))
         {
-print("GRE - record - \(myItem.dropDownType!) - \(myItem.dropDownValue!)")
             saveDropdownsRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
         }
     }
@@ -510,9 +512,9 @@ print("GRE - record - \(myItem.dropDownType!) - \(myItem.dropDownValue!)")
     
     func updateDropdownsRecord(_ sourceRecord: CKRecord)
     {
+
         let dropdownType = sourceRecord.object(forKey: "dropDownType") as! String
         let dropDownValue = sourceRecord.object(forKey: "dropDownValue") as! String
-        
         var updateTime = Date()
         if sourceRecord.object(forKey: "updateTime") != nil
         {

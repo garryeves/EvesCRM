@@ -748,7 +748,7 @@ extension CloudKitInteraction
                 }
                 else
                 {  // Insert
-                    let record = CKRecord(recordType: "People")
+                    let record = CKRecord(recordType: "Person")
                     record.setValue(sourceRecord.personID, forKey: "personID")
                     record.setValue(sourceRecord.name, forKey: "name")
                     record.setValue(sourceRecord.dob, forKey: "dob")

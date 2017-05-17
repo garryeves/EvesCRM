@@ -52,12 +52,11 @@ class DBSync: NSObject
                 else
                 {
                     let syncDate = Date()
-                    
+
                     syncToCloudKit(teamID: currentUser.currentTeam!.teamID)
-        
                     syncFromCloudKit(teamID: currentUser.currentTeam!.teamID)
                     setLastSyncDates(syncDate: syncDate)
-                    
+                    notificationCenter.post(name: NotificationDBSyncCompleted, object: nil)
                     myDatabaseConnection.clearDeletedItems()
                     myDatabaseConnection.clearSyncedItems()
 
@@ -67,7 +66,6 @@ class DBSync: NSObject
 //                        firstRun = false
 //                    }
                     
-                    notificationCenter.post(name: NotificationDBSyncCompleted, object: nil)
                 }
             }
         }

@@ -44,6 +44,7 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
             btnStatus.setTitle("Open", for: .normal)
             btnSave.isEnabled = false
             btnUsers.isEnabled = false
+            txtOrgName.isEnabled = false
         }
         else
         {
@@ -178,12 +179,14 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
         {
             self.btnSave.isEnabled = true
             self.btnUsers.isEnabled = true
+            self.txtOrgName.isEnabled = true
         }
     }
     
     func addTeamToUser()
     {
         notificationCenter.removeObserver(NotificationUserCreated)
+      
         currentUser.addTeamToUser(workingOrganisation!)
    
         addInitialUserRoles()
@@ -192,15 +195,13 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
     func addInitialUserRoles()
     {
         writeDefaultInt(userDefaultName, value: currentUser.userID)
-        
+
         for myItem in (currentUser.currentTeam?.getRoleTypes())!
         {
             currentUser.addRoleToUser(roleType: myItem, accessLevel: "Write")
             usleep(500)
         }
-        
         myCloudDB.saveDecodesToCloudKit()
-        
         currentUser.loadRoles()
         newUserCreated = true
     }

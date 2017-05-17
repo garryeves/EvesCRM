@@ -306,23 +306,23 @@ class team: NSObject
         save(false)
         
         populateTeamStateDropDown()
-        
+        sleep(1)
         populateRolesDropDown()
-        
+        sleep(1)
         populateStagesDropDown()
-        
+        sleep(1)
         populatePublicDecodes()
-        
+        sleep(1)
         populatePrivacyDropDown()
-        
+        sleep(1)
         populateRoleTypesDropDown()
-        
+        sleep(1)
         populateRoleAccessDropDown()
-        
+        sleep(1)
         populateAddressDropDown()
-        
+        sleep(1)
         populateContactsDropDown()
-        
+        sleep(1)
         notificationCenter.post(name: NotificationTeamCreated, object: nil)
     }
     
@@ -914,6 +914,7 @@ extension CloudKitInteraction
                 try logo?.write(to: tempURL, options: NSData.WritingOptions.atomicWrite)
                 let asset = CKAsset(fileURL: tempURL)
                 record.setValue(asset, forKey: "logo")
+                tempURL = URL(fileURLWithPath: "dummy")
             }
         }
         catch
@@ -1082,6 +1083,7 @@ extension CloudKitInteraction
                             try sourceRecord.logo?.write(to: tempURL, options: NSData.WritingOptions.atomicWrite)
                             let asset = CKAsset(fileURL: tempURL)
                             record!.setValue(asset, forKey: "logo")
+                            tempURL = URL(fileURLWithPath: "dummy")
                         }
                     }
                     catch
@@ -1133,6 +1135,7 @@ extension CloudKitInteraction
                             try sourceRecord.logo?.write(to: tempURL, options: NSData.WritingOptions.atomicWrite)
                             let asset = CKAsset(fileURL: tempURL)
                             record.setValue(asset, forKey: "logo")
+                            tempURL = URL(fileURLWithPath: "dummy")
                         }
                     }
                     catch

@@ -54,6 +54,26 @@ class personAddresses: NSObject
         }
     }
     
+    init(projectID: Int)
+    {
+        for myItem in myDatabaseConnection.getAddressForProject(projectID: projectID)
+        {
+            let myContext = address(addressID: Int(myItem.addressID),
+                                    addressLine1: myItem.addressLine1!,
+                                    addressLine2: myItem.addressLine2!,
+                                    city: myItem.city!,
+                                    clientID: Int(myItem.clientID),
+                                    country: myItem.country!,
+                                    personID: Int(myItem.personID),
+                                    postcode: myItem.postcode!,
+                                    projectID: Int(myItem.projectID),
+                                    state: myItem.state!,
+                                    addressType: myItem.addressType!,
+                                    teamID: Int(myItem.teamID))
+            myAddresses.append(myContext)
+        }
+    }
+    
     var addresses: [address]
     {
         get
@@ -216,12 +236,12 @@ class address: NSObject
         }
     }
     
-    override init()
+    init(teamID: Int)
     {
         super.init()
         
-        myAddressID = myDatabaseConnection.getNextID("Person")
-        myTeamID = currentUser.currentTeam!.teamID
+        myAddressID = myDatabaseConnection.getNextID("Address")
+        myTeamID = teamID
         
         save()
     }
@@ -466,6 +486,30 @@ extension coreDatabase
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         let predicate = NSPredicate(format: "(clientID == \(clientID)) && (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func getAddressForProject(projectID: Int)->[Addresses]
+    {
+        let fetchRequest = NSFetchRequest<Addresses>(entityName: "Addresses")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(projectID == \(projectID)) && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
