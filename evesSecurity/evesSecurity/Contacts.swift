@@ -13,13 +13,13 @@ import CloudKit
 
 class personContacts: NSObject
 {
-    fileprivate var myContacts:[contact] = Array()
+    fileprivate var myContacts:[contactItem] = Array()
     
     init(personID: Int)
     {
         for myItem in myDatabaseConnection.getContactDetailsForPerson(personID)
         {
-            let myObject = contact(personID: Int(myItem.personID),
+            let myObject = contactItem(personID: Int(myItem.personID),
                                    contactType: myItem.contactType!,
                                    contactValue: myItem.contactValue!,
                                    teamID: Int(myItem.teamID),
@@ -33,7 +33,7 @@ class personContacts: NSObject
     {
         for myItem in myDatabaseConnection.getContactDetailsForClient(clientID)
         {
-            let myObject = contact(personID: Int(myItem.personID),
+            let myObject = contactItem(personID: Int(myItem.personID),
                                    contactType: myItem.contactType!,
                                    contactValue: myItem.contactValue!,
                                    teamID: Int(myItem.teamID),
@@ -47,7 +47,7 @@ class personContacts: NSObject
     {
         for myItem in myDatabaseConnection.getContactDetailsForProject(projectID)
         {
-            let myObject = contact(personID: Int(myItem.personID),
+            let myObject = contactItem(personID: Int(myItem.personID),
                                    contactType: myItem.contactType!,
                                    contactValue: myItem.contactValue!,
                                    teamID: Int(myItem.teamID),
@@ -57,7 +57,7 @@ class personContacts: NSObject
         }
     }
     
-    var contacts: [contact]
+    var contacts: [contactItem]
     {
         get
         {
@@ -66,7 +66,7 @@ class personContacts: NSObject
     }
 }
 
-class contact: NSObject
+class contactItem: NSObject
 {
     fileprivate var myPersonID: Int = 0
     fileprivate var myContactType: String = ""
@@ -120,7 +120,6 @@ class contact: NSObject
         set
         {
             myContactType = newValue
-            save()
         }
     }
     
@@ -133,7 +132,6 @@ class contact: NSObject
         set
         {
             myContactValue = newValue
-            save()
         }
     }
     
@@ -141,10 +139,7 @@ class contact: NSObject
     {
         super.init()
         
-        myPersonID = myDatabaseConnection.getNextID("Contact")
         myTeamID = teamID
-        
-        save()
     }
     
     init(personID: Int)
@@ -152,14 +147,15 @@ class contact: NSObject
         super.init()
         let myReturn = myDatabaseConnection.getContactDetailsForPerson(personID)
         
+        myPersonID = personID
+        
         for myItem in myReturn
         {
-            myPersonID = Int(myItem.personID)
             myContactType = myItem.contactType!
             myContactValue = myItem.contactValue!
-            myTeamID = Int(myItem.teamID)
             myClientID = Int(myItem.clientID)
             myProjectID = Int(myItem.projectID)
+            myTeamID = Int(myItem.teamID)
         }
     }
     
@@ -168,13 +164,14 @@ class contact: NSObject
         super.init()
         let myReturn = myDatabaseConnection.getContactDetailsForClient(clientID)
         
+        myClientID = clientID
+        
         for myItem in myReturn
         {
             myPersonID = Int(myItem.personID)
             myContactType = myItem.contactType!
             myContactValue = myItem.contactValue!
             myTeamID = Int(myItem.teamID)
-            myClientID = Int(myItem.clientID)
             myProjectID = Int(myItem.projectID)
         }
     }
@@ -184,6 +181,8 @@ class contact: NSObject
         super.init()
         let myReturn = myDatabaseConnection.getContactDetailsForProject(projectID)
         
+        myProjectID = projectID
+        
         for myItem in myReturn
         {
             myPersonID = Int(myItem.personID)
@@ -191,7 +190,6 @@ class contact: NSObject
             myContactValue = myItem.contactValue!
             myTeamID = Int(myItem.teamID)
             myClientID = Int(myItem.clientID)
-            myProjectID = Int(myItem.projectID)
         }
     }
     
@@ -203,7 +201,6 @@ class contact: NSObject
          projectID: Int)
     {
         super.init()
-        
         myPersonID = personID
         myContactType = contactType
         myContactValue = contactValue
@@ -253,7 +250,6 @@ extension coreDatabase
                      updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myItem: Contacts!
-        
         var myReturn: [Contacts]!
         
         if personID != 0
@@ -395,7 +391,7 @@ extension coreDatabase
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(personID == \(personID)) && (contactType = \"\(contactType)\") AND (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(personID == \(personID)) && (contactType == \"\(contactType)\") AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -419,7 +415,7 @@ extension coreDatabase
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(clientID == \(clientID)) && (contactType = \"\(contactType)\") AND (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(clientID == \(clientID)) && (contactType == \"\(contactType)\") AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -443,7 +439,7 @@ extension coreDatabase
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectID == \(projectID)) && (contactType = \"\(contactType)\") AND (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(projectID == \(projectID)) && (contactType == \"\(contactType)\") AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

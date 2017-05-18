@@ -28,6 +28,7 @@
 		347BCEC21EC563F0006B95BA /* orgEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347BCEC11EC563F0006B95BA /* orgEditViewController.swift */; };
 		347BCEC61EC56DAC006B95BA /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 347BCEC51EC56DAC006B95BA /* CloudKit.framework */; };
 		347BCEC91EC59C43006B95BA /* userTeamsClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347BCEC81EC59C43006B95BA /* userTeamsClass.swift */; };
+		3492932E1ECD797600AFAE25 /* addPerInfoMaintenanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3492932D1ECD797600AFAE25 /* addPerInfoMaintenanceViewController.swift */; };
 		349652FF1EC1E5B800210A46 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349652FE1EC1E5B800210A46 /* AppDelegate.swift */; };
 		349653011EC1E5B800210A46 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349653001EC1E5B800210A46 /* ViewController.swift */; };
 		349653041EC1E5B800210A46 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 349653021EC1E5B800210A46 /* Main.storyboard */; };
@@ -115,17 +116,18 @@
 		347BCEC41EC56DA7006B95BA /* evesSecurity.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = evesSecurity.entitlements; sourceTree = "<group>"; };
 		347BCEC51EC56DAC006B95BA /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		347BCEC81EC59C43006B95BA /* userTeamsClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = userTeamsClass.swift; sourceTree = "<group>"; };
-		349652FB1EC1E5B800210A46 /* evesSecurity.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = evesSecurity.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3492932D1ECD797600AFAE25 /* addPerInfoMaintenanceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = addPerInfoMaintenanceViewController.swift; sourceTree = "<group>"; };
+		349652FB1EC1E5B800210A46 /* Shift Dashboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Shift Dashboard.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		349652FE1EC1E5B800210A46 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		349653001EC1E5B800210A46 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		349653031EC1E5B800210A46 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		349653081EC1E5B800210A46 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3496530B1EC1E5B800210A46 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3496530D1EC1E5B800210A46 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		349653121EC1E5B800210A46 /* evesSecurityTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = evesSecurityTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		349653121EC1E5B800210A46 /* Shift DashboardTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Shift DashboardTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		349653161EC1E5B800210A46 /* evesSecurityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = evesSecurityTests.swift; sourceTree = "<group>"; };
 		349653181EC1E5B800210A46 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		3496531D1EC1E5B800210A46 /* evesSecurityUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = evesSecurityUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3496531D1EC1E5B800210A46 /* Shift DashboardUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Shift DashboardUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		349653211EC1E5B900210A46 /* evesSecurityUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = evesSecurityUITests.swift; sourceTree = "<group>"; };
 		349653231EC1E5B900210A46 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		349653321EC1F0DC00210A46 /* evesSecurityShared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = evesSecurityShared.swift; sourceTree = "<group>"; };
@@ -238,9 +240,9 @@
 		349652FC1EC1E5B800210A46 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				349652FB1EC1E5B800210A46 /* evesSecurity.app */,
-				349653121EC1E5B800210A46 /* evesSecurityTests.xctest */,
-				3496531D1EC1E5B800210A46 /* evesSecurityUITests.xctest */,
+				349652FB1EC1E5B800210A46 /* Shift Dashboard.app */,
+				349653121EC1E5B800210A46 /* Shift DashboardTests.xctest */,
+				3496531D1EC1E5B800210A46 /* Shift DashboardUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -353,6 +355,7 @@
 				34968CDF1ECACA350009798B /* personViewController.swift */,
 				34E07BB91ECAF02A007711A6 /* addressesViewController.swift */,
 				34B43A6F1ECC0A7500BBE4D1 /* contactsViewController.swift */,
+				3492932D1ECD797600AFAE25 /* addPerInfoMaintenanceViewController.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -378,9 +381,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		349652FA1EC1E5B800210A46 /* evesSecurity */ = {
+		349652FA1EC1E5B800210A46 /* Shift Dashboard */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 349653261EC1E5B900210A46 /* Build configuration list for PBXNativeTarget "evesSecurity" */;
+			buildConfigurationList = 349653261EC1E5B900210A46 /* Build configuration list for PBXNativeTarget "Shift Dashboard" */;
 			buildPhases = (
 				216046868713F08143F8DE88 /* [CP] Check Pods Manifest.lock */,
 				349652F71EC1E5B800210A46 /* Sources */,
@@ -393,14 +396,14 @@
 			);
 			dependencies = (
 			);
-			name = evesSecurity;
+			name = "Shift Dashboard";
 			productName = evesSecurity;
-			productReference = 349652FB1EC1E5B800210A46 /* evesSecurity.app */;
+			productReference = 349652FB1EC1E5B800210A46 /* Shift Dashboard.app */;
 			productType = "com.apple.product-type.application";
 		};
-		349653111EC1E5B800210A46 /* evesSecurityTests */ = {
+		349653111EC1E5B800210A46 /* Shift DashboardTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 349653291EC1E5B900210A46 /* Build configuration list for PBXNativeTarget "evesSecurityTests" */;
+			buildConfigurationList = 349653291EC1E5B900210A46 /* Build configuration list for PBXNativeTarget "Shift DashboardTests" */;
 			buildPhases = (
 				3496530E1EC1E5B800210A46 /* Sources */,
 				3496530F1EC1E5B800210A46 /* Frameworks */,
@@ -411,14 +414,14 @@
 			dependencies = (
 				349653141EC1E5B800210A46 /* PBXTargetDependency */,
 			);
-			name = evesSecurityTests;
+			name = "Shift DashboardTests";
 			productName = evesSecurityTests;
-			productReference = 349653121EC1E5B800210A46 /* evesSecurityTests.xctest */;
+			productReference = 349653121EC1E5B800210A46 /* Shift DashboardTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		3496531C1EC1E5B800210A46 /* evesSecurityUITests */ = {
+		3496531C1EC1E5B800210A46 /* Shift DashboardUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3496532C1EC1E5B900210A46 /* Build configuration list for PBXNativeTarget "evesSecurityUITests" */;
+			buildConfigurationList = 3496532C1EC1E5B900210A46 /* Build configuration list for PBXNativeTarget "Shift DashboardUITests" */;
 			buildPhases = (
 				349653191EC1E5B800210A46 /* Sources */,
 				3496531A1EC1E5B800210A46 /* Frameworks */,
@@ -429,9 +432,9 @@
 			dependencies = (
 				3496531F1EC1E5B800210A46 /* PBXTargetDependency */,
 			);
-			name = evesSecurityUITests;
+			name = "Shift DashboardUITests";
 			productName = evesSecurityUITests;
-			productReference = 3496531D1EC1E5B800210A46 /* evesSecurityUITests.xctest */;
+			productReference = 3496531D1EC1E5B800210A46 /* Shift DashboardUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -474,7 +477,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 349652F61EC1E5B800210A46 /* Build configuration list for PBXProject "evesSecurity" */;
+			buildConfigurationList = 349652F61EC1E5B800210A46 /* Build configuration list for PBXProject "Shift Dashboard" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -487,9 +490,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				349652FA1EC1E5B800210A46 /* evesSecurity */,
-				349653111EC1E5B800210A46 /* evesSecurityTests */,
-				3496531C1EC1E5B800210A46 /* evesSecurityUITests */,
+				349652FA1EC1E5B800210A46 /* Shift Dashboard */,
+				349653111EC1E5B800210A46 /* Shift DashboardTests */,
+				3496531C1EC1E5B800210A46 /* Shift DashboardUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -603,6 +606,7 @@
 				34CEE96E1EC2BE4000F85A11 /* DBSync.swift in Sources */,
 				34CEE9EC1EC2C92400F85A11 /* meetingSupportingDocsClass.swift in Sources */,
 				34CEE9DA1EC2C78300F85A11 /* taskPredecessorClass.swift in Sources */,
+				3492932E1ECD797600AFAE25 /* addPerInfoMaintenanceViewController.swift in Sources */,
 				34CEE9F21EC2C99C00F85A11 /* ContactDetails.swift in Sources */,
 				344BF8291EC94D4B0066CD35 /* securityViewController.swift in Sources */,
 				34CEE97E1EC2C37E00F85A11 /* notificationDefinitions.swift in Sources */,
@@ -656,12 +660,12 @@
 /* Begin PBXTargetDependency section */
 		349653141EC1E5B800210A46 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 349652FA1EC1E5B800210A46 /* evesSecurity */;
+			target = 349652FA1EC1E5B800210A46 /* Shift Dashboard */;
 			targetProxy = 349653131EC1E5B800210A46 /* PBXContainerItemProxy */;
 		};
 		3496531F1EC1E5B800210A46 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 349652FA1EC1E5B800210A46 /* evesSecurity */;
+			target = 349652FA1EC1E5B800210A46 /* Shift Dashboard */;
 			targetProxy = 3496531E1EC1E5B800210A46 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -824,7 +828,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.garryeves.evesSecurityTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/evesSecurity.app/evesSecurity";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Shift Dashboard.app/Shift Dashboard";
 			};
 			name = Debug;
 		};
@@ -839,7 +843,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.garryeves.evesSecurityTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/evesSecurity.app/evesSecurity";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Shift Dashboard.app/Shift Dashboard";
 			};
 			name = Release;
 		};
@@ -874,7 +878,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		349652F61EC1E5B800210A46 /* Build configuration list for PBXProject "evesSecurity" */ = {
+		349652F61EC1E5B800210A46 /* Build configuration list for PBXProject "Shift Dashboard" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				349653241EC1E5B900210A46 /* Debug */,
@@ -883,7 +887,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		349653261EC1E5B900210A46 /* Build configuration list for PBXNativeTarget "evesSecurity" */ = {
+		349653261EC1E5B900210A46 /* Build configuration list for PBXNativeTarget "Shift Dashboard" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				349653271EC1E5B900210A46 /* Debug */,
@@ -892,7 +896,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		349653291EC1E5B900210A46 /* Build configuration list for PBXNativeTarget "evesSecurityTests" */ = {
+		349653291EC1E5B900210A46 /* Build configuration list for PBXNativeTarget "Shift DashboardTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3496532A1EC1E5B900210A46 /* Debug */,
@@ -901,7 +905,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3496532C1EC1E5B900210A46 /* Build configuration list for PBXNativeTarget "evesSecurityUITests" */ = {
+		3496532C1EC1E5B900210A46 /* Build configuration list for PBXNativeTarget "Shift DashboardUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3496532D1EC1E5B900210A46 /* Debug */,

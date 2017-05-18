@@ -21,7 +21,7 @@ class contactsViewController: UIViewController, MyPickerDelegate, UIPopoverPrese
     var workingProject: project!
     
     private var displayList: [String] = Array()
-    private var workingContact: contact!
+    private var workingContact: contactItem!
     
     override func viewDidLoad()
     {
@@ -33,7 +33,7 @@ class contactsViewController: UIViewController, MyPickerDelegate, UIPopoverPrese
         else
         {
             btnSelect.setTitle("Select", for: .normal)
-  //          hideFields()
+            hideFields()
         }
     }
     
@@ -98,18 +98,18 @@ class contactsViewController: UIViewController, MyPickerDelegate, UIPopoverPrese
             
             if !itemFound
             {
-                workingContact = contact(teamID: currentUser.currentTeam!.teamID)
+                workingContact = contactItem(teamID: currentUser.currentTeam!.teamID)
                 if workingPerson != nil
                 {
                     workingContact.personID = workingPerson.personID
                 }
                 if workingClient != nil
                 {
-                    workingContact.personID = workingClient.clientID
+                    workingContact.clientID = workingClient.clientID
                 }
                 if workingProject != nil
                 {
-                    workingContact.personID = workingProject.projectID
+                    workingContact.projectID = workingProject.projectID
                 }
                 workingContact.contactType = displayList[selectedItem]
             }

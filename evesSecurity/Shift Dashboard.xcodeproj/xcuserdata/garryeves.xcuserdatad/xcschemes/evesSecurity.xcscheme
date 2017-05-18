@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "349652FA1EC1E5B800210A46"
-               BuildableName = "evesSecurity.app"
-               BlueprintName = "evesSecurity"
-               ReferencedContainer = "container:evesSecurity.xcodeproj">
+               BuildableName = "Shift Dashboard.app"
+               BlueprintName = "Shift Dashboard"
+               ReferencedContainer = "container:Shift Dashboard.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "349653111EC1E5B800210A46"
-               BuildableName = "evesSecurityTests.xctest"
-               BlueprintName = "evesSecurityTests"
-               ReferencedContainer = "container:evesSecurity.xcodeproj">
+               BuildableName = "Shift DashboardTests.xctest"
+               BlueprintName = "Shift DashboardTests"
+               ReferencedContainer = "container:Shift Dashboard.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -43,9 +43,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3496531C1EC1E5B800210A46"
-               BuildableName = "evesSecurityUITests.xctest"
-               BlueprintName = "evesSecurityUITests"
-               ReferencedContainer = "container:evesSecurity.xcodeproj">
+               BuildableName = "Shift DashboardUITests.xctest"
+               BlueprintName = "Shift DashboardUITests"
+               ReferencedContainer = "container:Shift Dashboard.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -53,9 +53,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "349652FA1EC1E5B800210A46"
-            BuildableName = "evesSecurity.app"
-            BlueprintName = "evesSecurity"
-            ReferencedContainer = "container:evesSecurity.xcodeproj">
+            BuildableName = "Shift Dashboard.app"
+            BlueprintName = "Shift Dashboard"
+            ReferencedContainer = "container:Shift Dashboard.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -76,9 +76,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "349652FA1EC1E5B800210A46"
-            BuildableName = "evesSecurity.app"
-            BlueprintName = "evesSecurity"
-            ReferencedContainer = "container:evesSecurity.xcodeproj">
+            BuildableName = "Shift Dashboard.app"
+            BlueprintName = "Shift Dashboard"
+            ReferencedContainer = "container:Shift Dashboard.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -95,9 +95,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "349652FA1EC1E5B800210A46"
-            BuildableName = "evesSecurity.app"
-            BlueprintName = "evesSecurity"
-            ReferencedContainer = "container:evesSecurity.xcodeproj">
+            BuildableName = "Shift Dashboard.app"
+            BlueprintName = "Shift Dashboard"
+            ReferencedContainer = "container:Shift Dashboard.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

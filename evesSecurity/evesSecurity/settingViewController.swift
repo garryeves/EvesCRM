@@ -14,6 +14,7 @@ class settingsViewController: UIViewController, UIPopoverPresentationControllerD
     @IBOutlet weak var btnUser: UIButton!
     @IBOutlet weak var btnBack: UIButton!
     @IBOutlet weak var btnPassword: UIButton!
+    @IBOutlet weak var btnPerAddInfo: UIButton!
     
     override func viewDidLoad()
     {
@@ -51,6 +52,12 @@ class settingsViewController: UIViewController, UIPopoverPresentationControllerD
         passwordView.preferredContentSize = CGSize(width: 600,height: 500)
         
         self.present(passwordView, animated: true, completion: nil)
+    }
+    
+    @IBAction func btnPerAddInfo(_ sender: UIButton)
+    {
+        let addPerInfoViewControl = personStoryboard.instantiateViewController(withIdentifier: "AddPersonInfo") as! addPerInfoMaintenanceViewController
+        self.present(addPerInfoViewControl, animated: true, completion: nil)
     }
     
     @IBAction func btnBack(_ sender: UIButton)

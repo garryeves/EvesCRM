@@ -74,6 +74,23 @@ class personAddInfoEntry: NSObject
         }
     }
     
+    var dateString: String
+    {
+        get
+        {
+            if myDateValue == getDefaultDate()
+            {
+               return "Select"
+            }
+            else
+            {
+                let myDateFormatter = DateFormatter()
+                myDateFormatter.dateStyle = .short
+                return myDateFormatter.string(from: myDateValue)
+            }
+        }
+    }
+    
     var stringValue: String
     {
         get
@@ -87,10 +104,13 @@ class personAddInfoEntry: NSObject
         }
     }
     
-    init(addInfoName: String, personID: Int)
+    init(addInfoName: String, personID: Int, teamID: Int)
     {
         super.init()
         let myReturn = myDatabaseConnection.getPersonAddInfoEntryDetails(addInfoName, personID: personID)
+        myTeamID = teamID
+        myPersonID = personID
+        myAddInfoName = addInfoName
         
         for myItem in myReturn
         {
@@ -124,7 +144,7 @@ class personAddInfoEntry: NSObject
                                                     dateValue: myDateValue,
                                                     personID: myPersonID,
                                                     stringValue: myStringValue,
-            teamID: myTeamID
+                                                    teamID: myTeamID
                                          )
     }
     

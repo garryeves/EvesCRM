@@ -9,7 +9,6 @@
 import Foundation
 import EventKit
 import UIKit
-import Contacts
 
 @objc protocol myCommunicationDelegate
 {
@@ -20,13 +19,12 @@ import Contacts
     @objc optional func refreshScreen()
 }
 
-var adbk: CNContactStore!
+var currentAddressBook: addressBookClass!
 
 let defaultsName = "group.com.garryeves.EvesCRM"
 let userDefaultName = "userID"
 let userDefaultPassword = "password"
 let userDefaultPasswordHint = "passwordHint"
-
 
 let loginStoryboard = UIStoryboard(name: "LoginRoles", bundle: nil)
 let pickerStoryboard = UIStoryboard(name: "dropDownMenus", bundle: nil)
@@ -248,30 +246,6 @@ struct TableData
 }
 
 // Here I am definging my own struct to use in the Display array.  This is to allow passing of multiple different types of information
-
-struct PeopleData
-{
-    var fullName: String
-    fileprivate var myDisplayFormat: String
-    var personRecord: CNContact
-    
-    var displaySpecialFormat: String
-        {
-        get {
-            return myDisplayFormat
-        }
-        set {
-            myDisplayFormat = newValue
-        }
-    }
-    
-    init(fullName: String, record: CNContact)
-    {
-        self.fullName = fullName
-        self.myDisplayFormat = ""
-        self.personRecord = record
-    }
-}
 
 // Overloading writeRowToArray a number of times to allow for collection of structs where I am going to allow user to interact and change data inside the app,rather than them having to go to source app.  The number of these will be kept to a minimum.
 

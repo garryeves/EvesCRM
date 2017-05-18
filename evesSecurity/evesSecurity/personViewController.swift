@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import ContactsUI
 
-class personViewController: UIViewController, UIPopoverPresentationControllerDelegate, myCommunicationDelegate, UITableViewDataSource, UITableViewDelegate, MyPickerDelegate
+class personViewController: UIViewController, UIPopoverPresentationControllerDelegate, myCommunicationDelegate, UITableViewDataSource, UITableViewDelegate, MyPickerDelegate, CNContactPickerDelegate
 {
     @IBOutlet weak var tblPeople: UITableView!
     @IBOutlet weak var txtName: UITextField!
@@ -32,10 +33,10 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
     var communicationDelegate: myCommunicationDelegate?
     
     private var myPeople: people!
-    private var myAddInfo: [personAddInfoEntry] = Array()
     private var keyboardDisplayed: Bool = false
     private var selectedPerson: person!
     private var displayList: [String] = Array()
+    fileprivate var addInfoRecords: personAdditionalInfos!
     
     override func viewDidLoad()
     {
@@ -44,10 +45,14 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         txtNotes.layer.cornerRadius = 5.0
         txtNotes.layer.masksToBounds = true
         
+        addInfoRecords = personAdditionalInfos(teamID: currentUser!.currentTeam!.teamID)
+        
         hideFields()
         
         refreshScreen()
         
+        NotificationCenter.default.addObserver(self, selector: #selector(self.refreshAddInfo), name: NotificationAddInfoDone, object: nil)
+
         notificationCenter.addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         notificationCenter.addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
@@ -72,7 +77,7 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
                 }
             
             case tblAddInfo:
-                return myAddInfo.count
+                return addInfoRecords.personAdditionalInfos.count
             
             default:
                 return 0
@@ -100,8 +105,69 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
                 return cell
                 
             case tblAddInfo:
-                return UITableViewCell()
+                let cell = tableView.dequeueReusableCell(withIdentifier:"cellAddInfo", for: indexPath) as! personAddInfoListItem
+
+                if selectedPerson != nil
+                {
+                    cell.lblDescription.text = addInfoRecords.personAdditionalInfos[indexPath.row].addInfoName
+                    
+                    switch addInfoRecords.personAdditionalInfos[indexPath.row].addInfoType
+                    {
+                        case perInfoText:
+                            cell.btnDate.isHidden = true
+                            cell.btnYesNo.isHidden = true
+                            cell.txtValue.isHidden = false
+                            
+                            // Get the value, if one exists
+                            
+                            let tempItem = personAddInfoEntry(addInfoName: addInfoRecords.personAdditionalInfos[indexPath.row].addInfoName, personID: selectedPerson.personID, teamID: currentUser.currentTeam!.teamID)
+                            
+                            cell.txtValue.text = tempItem.stringValue
+                            cell.addInfoEntry = tempItem
+                        
+                        case perInfoDate:
+                            cell.btnDate.isHidden = false
+                            cell.btnYesNo.isHidden = true
+                            cell.txtValue.isHidden = true
+                        
+                            // Get the value, if one exists
+                            
+                            let tempItem = personAddInfoEntry(addInfoName: addInfoRecords.personAdditionalInfos[indexPath.row].addInfoName, personID: selectedPerson.personID, teamID: currentUser.currentTeam!.teamID)
+                            
+                            cell.btnDate.setTitle(tempItem.dateString, for: .normal)
+                            cell.addInfoEntry = tempItem
+                        
+                        case perInfoYesNo:
+                            cell.btnDate.isHidden = true
+                            cell.btnYesNo.isHidden = false
+                            cell.txtValue.isHidden = true
+                            
+                            // Get the value, if one exists
+                            
+                            let tempItem = personAddInfoEntry(addInfoName: addInfoRecords.personAdditionalInfos[indexPath.row].addInfoName, personID: selectedPerson.personID, teamID: currentUser.currentTeam!.teamID)
+                            
+                            if tempItem.stringValue == ""
+                            {
+                                cell.btnYesNo.setTitle("Select", for: .normal)
+                            }
+                            else
+                            {
+                                cell.btnYesNo.setTitle(tempItem.stringValue, for: .normal)
+                            }
+                            
+                            cell.addInfoEntry = tempItem
+                        
+                        default:
+                            cell.btnDate.isHidden = true
+                            cell.btnYesNo.isHidden = true
+                            cell.txtValue.isHidden = true
+                    }
+            
+                    cell.parentViewController = self
+                }
+                return cell
                 
+            
             default:
                 return UITableViewCell()
         }
@@ -191,7 +257,6 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         btnGender.setTitle("Select", for: .normal)
         txtNotes.text = ""
         
-        clearAddInfo()
         tblAddInfo.reloadData()
     }
     
@@ -250,6 +315,94 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
     
     @IBAction func btnImport(_ sender: UIButton)
     {
+        let cnPicker = CNContactPickerViewController()
+        cnPicker.delegate = self
+        self.present(cnPicker, animated: true, completion: nil)
+    }
+    
+    func contactPicker(_ picker: CNContactPickerViewController, didSelect contacts: [CNContact])
+    {
+        contacts.forEach{ contact in
+            
+            let workingContact = iOSContact(contactRecord: contact)
+            
+            let workingRecord = person(teamID: currentUser.currentTeam!.teamID)
+            
+            workingRecord.name = workingContact.fullName
+            
+            if workingContact.dateOfBirth != nil
+            {
+                workingRecord.dob  = workingContact.dateOfBirth!
+            }
+            
+            workingRecord.save()
+            
+            for myItem in workingContact.addresses
+            {
+                for myType in ["Home", "Office", "Other"]
+                {
+                    if myItem.type == myType
+                    {
+                        let workingAddress = address(teamID: currentUser.currentTeam!.teamID)
+                        workingAddress.personID = workingRecord.personID
+                        workingAddress.addressType = myItem.type
+                        workingAddress.addressLine1 = myItem.line1
+                        workingAddress.addressLine2 = myItem.line2
+                        workingAddress.city = myItem.city
+                        workingAddress.state = myItem.state
+                        workingAddress.country = myItem.country
+                        workingAddress.postcode = myItem.postcode
+                        
+                        workingAddress.save()
+                        break
+                    }
+                }
+            }
+            
+            for myItem in workingContact.phoneNumbers
+            {
+                for myType in ["Home Phone", "Office Phone", "Mobile Phone"]
+                {
+                    if myItem.type == myType
+                    {
+                        let workingDetail = contactItem(teamID: currentUser.currentTeam!.teamID)
+                        workingDetail.personID = workingRecord.personID
+                        workingDetail.contactType = myItem.type
+                        workingDetail.contactValue = myItem.detail
+                        
+                        workingDetail.save()
+                        break
+                    }
+                }
+            }
+            
+            for myItem in workingContact.emailAddresses
+            {
+                for myType in ["Home Email", "Office Email"]
+                {
+                    if myItem.type == myType
+                    {
+                        let workingDetail = contactItem(teamID: currentUser.currentTeam!.teamID)
+                        workingDetail.personID = workingRecord.personID
+                        workingDetail.contactType = myItem.type
+                        workingDetail.contactValue = myItem.detail
+                        
+                        workingDetail.save()
+                        break
+                    }
+                }
+            }
+            
+            sleep(1)
+        }
+        
+        hideFields()
+        refreshScreen()
+    }
+    
+    func contactPickerDidCancel(_ picker: CNContactPickerViewController)
+    {
+        print("Cancel Contact Picker")
     }
     
     @IBAction func txtName(_ sender: UITextField)
@@ -299,7 +452,7 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         lblNotes.isHidden = true
         txtNotes.isHidden = true
         tblAddInfo.isHidden = true
-        btnImport.isHidden = true
+        btnImport.isHidden = false
     }
     
     func showFields()
@@ -316,7 +469,7 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         lblNotes.isHidden = false
         txtNotes.isHidden = false
         tblAddInfo.isHidden = false
-        btnImport.isHidden = false
+        btnImport.isHidden = true
     }
     
     func keyboardWillShow(_ notification: Notification)
@@ -365,25 +518,24 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
     {
         if selectedPerson != nil
         {
+            selectedPerson.loadAddresses()
+            selectedPerson.loadContacts()
+            selectedPerson.loadAddInfo()
+            
             txtName.text = selectedPerson.name
             btnDOB.setTitle(selectedPerson.dobText, for: .normal)
             btnGender.setTitle(selectedPerson.gender, for: .normal)
             txtNotes.text = selectedPerson.note
             btnAddresses.setTitle("Addresses (\(selectedPerson.addresses.count))", for: .normal)
             btnContacts.setTitle("Contact Details (\(selectedPerson.contacts.count))", for: .normal)
-            loadAddInfo()
+
             tblAddInfo.reloadData()
         }
     }
     
-    func clearAddInfo()
+    func refreshAddInfo()
     {
-        myAddInfo.removeAll()
-    }
-    
-    func loadAddInfo()
-    {
-        myAddInfo = selectedPerson.addInfo
+        tblAddInfo.reloadData()
     }
 }
 
@@ -393,5 +545,93 @@ class personListItem: UITableViewCell
     @IBOutlet weak var lblDOB: UILabel!
 }
 
+class personAddInfoListItem: UITableViewCell, MyPickerDelegate, UIPopoverPresentationControllerDelegate
+{
+    @IBOutlet weak var lblDescription: UILabel!
+    @IBOutlet weak var btnYesNo: UIButton!
+    @IBOutlet weak var btnDate: UIButton!
+    @IBOutlet weak var txtValue: UITextField!
+    
+    var parentViewController: personViewController!
+    var addInfoEntry: personAddInfoEntry!
+
+    fileprivate var displayList: [String] = Array()
+    
+    @IBAction func btnYesNo(_ sender: UIButton)
+    {
+        displayList.removeAll()
+        
+        displayList.append("")
+        displayList.append("Yes")
+        displayList.append("No")
+        
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+        pickerView.modalPresentationStyle = .popover
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        pickerView.source = "YesNo"
+        pickerView.delegate = self
+        pickerView.pickerValues = displayList
+        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+        
+        parentViewController.present(pickerView, animated: true, completion: nil)
+    }
+    
+    @IBAction func btnDate(_ sender: UIButton)
+    {
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "datePicker") as! dateTimePickerView
+        pickerView.modalPresentationStyle = .popover
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        pickerView.source = "Date"
+        pickerView.delegate = self
+        pickerView.currentDate = Date()
+        pickerView.showTimes = false
+        
+        pickerView.preferredContentSize = CGSize(width: 400,height: 400)
+        
+        parentViewController.present(pickerView, animated: true, completion: nil)
+    }
+    
+    @IBAction func txtValue(_ sender: UITextField)
+    {
+        addInfoEntry.stringValue = sender.text!
+        addInfoEntry.save()
+        NotificationCenter.default.post(name: NotificationAddInfoDone, object: nil)
+    }
+    
+    func myPickerDidFinish(_ source: String, selectedItem:Int)
+    {
+        if source == "YesNo"
+        {
+            if selectedItem >= 0
+            {
+                addInfoEntry.stringValue = displayList[selectedItem]
+                addInfoEntry.save()
+                NotificationCenter.default.post(name: NotificationAddInfoDone, object: nil)
+            }
+        }
+    }
+    
+    func myPickerDidFinish(_ source: String, selectedDate:Date)
+    {
+        if source == "Date"
+        {
+            addInfoEntry.dateValue = selectedDate
+            addInfoEntry.save()
+            NotificationCenter.default.post(name: NotificationAddInfoDone, object: nil)
+        }
+    }
+}
 
 

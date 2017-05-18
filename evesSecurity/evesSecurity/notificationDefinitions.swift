@@ -13,3 +13,4 @@ let notificationCenter = NotificationCenter.default
 let remoteCenter = UNUserNotificationCenter.current()
 
 let NotificationDBReplaceDone = Notification.Name("SecurityDBReplaceDone")
+let NotificationAddInfoDone = Notification.Name("NotificationAddInfoDone")

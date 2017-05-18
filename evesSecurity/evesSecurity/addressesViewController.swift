@@ -128,11 +128,11 @@ class addressesViewController: UIViewController, MyPickerDelegate, UIPopoverPres
                 }
                 if workingClient != nil
                 {
-                    workingAddress.personID = workingClient.clientID
+                    workingAddress.clientID = workingClient.clientID
                 }
                 if workingProject != nil
                 {
-                    workingAddress.personID = workingProject.projectID
+                    workingAddress.projectID = workingProject.projectID
                 }
                 workingAddress.addressType = displayList[selectedItem]
             }

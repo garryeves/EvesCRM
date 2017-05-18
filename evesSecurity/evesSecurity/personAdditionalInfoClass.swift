@@ -14,9 +14,9 @@ class personAdditionalInfos: NSObject
 {
     fileprivate var myAdditional:[personAdditionalInfo] = Array()
     
-    override init()
+    init(teamID: Int)
     {
-        for myItem in myDatabaseConnection.getPersonAdditionalInfo()
+        for myItem in myDatabaseConnection.getPersonAdditionalInfo(teamID: teamID)
         {
             let myObject = personAdditionalInfo(addInfoID: Int(myItem.addInfoID),
                                    addInfoName: myItem.addInfoName!,
@@ -60,7 +60,6 @@ class personAdditionalInfo: NSObject
         set
         {
             myAddInfoName = newValue
-            save()
         }
     }
     
@@ -73,16 +72,15 @@ class personAdditionalInfo: NSObject
         set
         {
             myAddInfoType = newValue
-            save()
         }
     }
     
-    override init()
+    init(teamID: Int)
     {
         super.init()
         
         myAddInfoID = myDatabaseConnection.getNextID("personAdditionalInfo")
-        myTeamID = currentUser.currentTeam!.teamID
+        myTeamID = teamID
         
         save()
     }
@@ -226,13 +224,13 @@ extension coreDatabase
         saveContext()
     }
     
-    func getPersonAdditionalInfo()->[PersonAdditionalInfo]
+    func getPersonAdditionalInfo(teamID: Int)->[PersonAdditionalInfo]
     {
         let fetchRequest = NSFetchRequest<PersonAdditionalInfo>(entityName: "PersonAdditionalInfo")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(teamID == \(teamID)) AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

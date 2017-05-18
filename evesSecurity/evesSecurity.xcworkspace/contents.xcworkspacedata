@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:evesSecurity.xcodeproj">
+      location = "group:/Users/garryeves/Documents/xcode/EvesCRM/evesSecurity/Shift Dashboard.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">

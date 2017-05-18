@@ -134,7 +134,7 @@ class person: NSObject
         }
     }
     
-    var contacts: [contact]
+    var contacts: [contactItem]
     {
         get
         {
@@ -205,12 +205,6 @@ class person: NSObject
             myTeamID = Int(myItem.teamID)
             myGender = myItem.gender!
             myNote = myItem.note!
-            
-            loadAddresses()
-            
-            loadContacts()
-            
-            loadAddInfo()
         }
     }
     
@@ -230,12 +224,6 @@ class person: NSObject
         myTeamID = teamID
         myGender = gender
         myNote = note
-        
-        loadAddresses()
-        
-        loadContacts()
-        
-        loadAddInfo()
     }
     
     func save()
