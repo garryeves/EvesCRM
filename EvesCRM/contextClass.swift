@@ -131,7 +131,6 @@ class context: NSObject
         set
         {
             myName = newValue
-            save()
         }
     }
     
@@ -144,7 +143,6 @@ class context: NSObject
         set
         {
             myContextType = newValue
-            save()
         }
     }
     
@@ -157,7 +155,6 @@ class context: NSObject
         set
         {
             myEmail = newValue
-            save()
         }
     }
     
@@ -170,7 +167,6 @@ class context: NSObject
         set
         {
             myAutoEmail = newValue
-            save()
         }
     }
     
@@ -183,7 +179,6 @@ class context: NSObject
         set
         {
             myParentContext = newValue
-            save()
         }
     }
     
@@ -196,7 +191,6 @@ class context: NSObject
         set
         {
             myStatus = newValue
-            save()
         }
     }
     
@@ -237,7 +231,6 @@ class context: NSObject
         set
         {
             myPersonID = newValue
-            save()
         }
     }
     
@@ -250,7 +243,6 @@ class context: NSObject
         set
         {
             myTeamID = newValue
-            save()
         }
     }
     
@@ -263,7 +255,6 @@ class context: NSObject
         set
         {
             myPredecessor = newValue
-            save()
         }
     }
     

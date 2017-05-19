@@ -73,7 +73,6 @@ class rate: NSObject
         set
         {
             myRateName = newValue
-            save()
         }
     }
     
@@ -86,7 +85,6 @@ class rate: NSObject
         set
         {
             myRateAmount = newValue
-            save()
         }
     }
 
@@ -99,7 +97,6 @@ class rate: NSObject
         set
         {
             myChargeAmount = newValue
-            save()
         }
     }
     
@@ -112,7 +109,6 @@ class rate: NSObject
         set
         {
             myStartDate = newValue
-            save()
         }
     }
 

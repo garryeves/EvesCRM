@@ -17,6 +17,7 @@ import UIKit
     @objc optional func loadMainScreen()
     @objc optional func passwordCorrect()
     @objc optional func refreshScreen()
+    @objc optional func callLoadMainScreen()
 }
 
 var currentAddressBook: addressBookClass!
@@ -28,6 +29,9 @@ let userDefaultPasswordHint = "passwordHint"
 
 let loginStoryboard = UIStoryboard(name: "LoginRoles", bundle: nil)
 let pickerStoryboard = UIStoryboard(name: "dropDownMenus", bundle: nil)
+let personStoryboard = UIStoryboard(name: "person", bundle: nil)
+let clientsStoryboard = UIStoryboard(name: "Clients", bundle: nil)
+let projectsStoryboard = UIStoryboard(name: "Projects", bundle: nil)
 
 #if os(OSX)
     import AppKit

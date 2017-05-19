@@ -154,7 +154,6 @@ class task: NSObject
         set
         {
             myTitle = newValue
-            save()
         }
     }
     
@@ -167,7 +166,6 @@ class task: NSObject
         set
         {
             myDetails = newValue
-            save()
         }
     }
     
@@ -180,7 +178,6 @@ class task: NSObject
         set
         {
             myDueDate = newValue
-            save()
         }
     }
     
@@ -214,7 +211,6 @@ class task: NSObject
         set
         {
             myStartDate = newValue
-            save()
         }
     }
     
@@ -253,7 +249,6 @@ class task: NSObject
                 checkForRepeat()
                 myCompletionDate = Date()
             }
-            save()
         }
     }
     
@@ -266,7 +261,6 @@ class task: NSObject
         set
         {
             myContexts = newValue
-            save()
         }
     }
     
@@ -280,7 +274,6 @@ class task: NSObject
         set
         {
             myPriority = newValue
-            save()
         }
     }
     
@@ -293,7 +286,6 @@ class task: NSObject
         set
         {
             myEnergyLevel = newValue
-            save()
         }
     }
     
@@ -306,7 +298,6 @@ class task: NSObject
         set
         {
             myEstimatedTime = newValue
-            save()
         }
     }
     
@@ -319,7 +310,6 @@ class task: NSObject
         set
         {
             myEstimatedTimeType = newValue
-            save()
         }
     }
     
@@ -341,8 +331,6 @@ class task: NSObject
             {
                 myTeamID = Int(tempProject[0].teamID)
             }
-            
-            save()
         }
     }
     
@@ -399,7 +387,6 @@ class task: NSObject
         set
         {
             myRepeatInterval = newValue
-            save()
         }
     }
     
@@ -412,7 +399,6 @@ class task: NSObject
         set
         {
             myRepeatType = newValue
-            save()
         }
     }
     
@@ -425,7 +411,6 @@ class task: NSObject
         set
         {
             myRepeatBase = newValue
-            save()
         }
     }
     
@@ -438,7 +423,6 @@ class task: NSObject
         set
         {
             myFlagged = newValue
-            save()
         }
     }
     
@@ -451,7 +435,6 @@ class task: NSObject
         set
         {
             myUrgency = newValue
-            save()
         }
     }
     
@@ -464,7 +447,6 @@ class task: NSObject
         set
         {
             myTeamID = newValue
-            save()
         }
     }
     

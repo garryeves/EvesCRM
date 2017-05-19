@@ -115,7 +115,6 @@ class address: NSObject
         set
         {
             myAddressLine1 = newValue
-            save()
         }
     }
     
@@ -128,7 +127,6 @@ class address: NSObject
         set
         {
             myAddressLine2 = newValue
-            save()
         }
     }
     
@@ -141,7 +139,6 @@ class address: NSObject
         set
         {
             myCity = newValue
-            save()
         }
     }
     
@@ -154,7 +151,6 @@ class address: NSObject
         set
         {
             myClientID = newValue
-            save()
         }
     }
     
@@ -167,7 +163,6 @@ class address: NSObject
         set
         {
             myCountry = newValue
-            save()
         }
     }
     
@@ -180,7 +175,6 @@ class address: NSObject
         set
         {
             myPersonID = newValue
-            save()
         }
     }
     
@@ -193,7 +187,6 @@ class address: NSObject
         set
         {
             myPostcode = newValue
-            save()
         }
     }
     
@@ -206,7 +199,6 @@ class address: NSObject
         set
         {
             myProjectID = newValue
-            save()
         }
     }
     
@@ -219,7 +211,6 @@ class address: NSObject
         set
         {
             myState = newValue
-            save()
         }
     }
     
@@ -232,7 +223,6 @@ class address: NSObject
         set
         {
             myAddressType = newValue
-            save()
         }
     }
     

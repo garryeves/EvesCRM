@@ -70,7 +70,6 @@ class personAddInfoEntry: NSObject
         set
         {
             myDateValue = newValue
-            save()
         }
     }
     
@@ -100,7 +99,6 @@ class personAddInfoEntry: NSObject
         set
         {
             myStringValue = newValue
-            save()
         }
     }
     

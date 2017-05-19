@@ -17,9 +17,10 @@
         <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="Clients" representedClassName="Clients" syncable="YES" codeGenerationType="class">
-        <attribute name="clientContact" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="clientContact" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="clientID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="clientName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="note" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
@@ -192,11 +193,13 @@
         <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="Person" representedClassName="Person" syncable="YES" codeGenerationType="class">
+        <attribute name="clientID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="dob" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="gender" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="note" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="personID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="projectID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
@@ -395,7 +398,7 @@
     </entity>
     <elements>
         <element name="Addresses" positionX="-243" positionY="171" width="128" height="255"/>
-        <element name="Clients" positionX="-279" positionY="135" width="128" height="135"/>
+        <element name="Clients" positionX="-279" positionY="135" width="128" height="150"/>
         <element name="Contacts" positionX="-252" positionY="162" width="128" height="165"/>
         <element name="Context" positionX="-270" positionY="108" width="128" height="225"/>
         <element name="ContractShiftComponent" positionX="-252" positionY="162" width="128" height="150"/>
@@ -412,7 +415,7 @@
         <element name="Outline" positionX="-279" positionY="135" width="128" height="165"/>
         <element name="OutlineDetails" positionX="-270" positionY="144" width="128" height="195"/>
         <element name="Panes" positionX="-270" positionY="27" width="128" height="150"/>
-        <element name="Person" positionX="-261" positionY="153" width="128" height="165"/>
+        <element name="Person" positionX="-261" positionY="153" width="128" height="195"/>
         <element name="PersonAddInfoEntry" positionX="-225" positionY="189" width="128" height="150"/>
         <element name="PersonAdditionalInfo" positionX="-234" positionY="180" width="128" height="135"/>
         <element name="ProcessedEmails" positionX="-279" positionY="135" width="128" height="135"/>

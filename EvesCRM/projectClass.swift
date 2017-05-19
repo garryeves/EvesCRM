@@ -10,6 +10,99 @@ import Foundation
 import CoreData
 import CloudKit
 
+class projects: NSObject
+{
+    fileprivate var myProjects:[project] = Array()
+    
+    init(clientID: Int)
+    {
+        for myItem in myDatabaseConnection.getProjectsForClient(clientID)
+        {
+            let myObject = project(projectID: Int(myItem.projectID),
+                                    projectEndDate: myItem.projectEndDate! as Date,
+                                    projectName: myItem.projectName!,
+                                    projectStartDate: myItem.projectStartDate! as Date,
+                                    projectStatus: myItem.projectStatus!,
+                                    reviewFrequency: Int(myItem.reviewFrequency),
+                                    lastReviewDate: myItem.lastReviewDate! as Date,
+                                    GTDItemID: Int(myItem.areaID),
+                                    repeatInterval: Int(myItem.repeatInterval),
+                                    repeatType: myItem.repeatType!,
+                                    repeatBase: myItem.repeatBase!,
+                                    teamID: Int(myItem.teamID),
+                                    clientID: Int(myItem.clientID),
+                                    note: myItem.note!,
+                                    reviewPeriod: myItem.reviewPeriod!,
+                                    predecessor: Int(myItem.predecessor))
+                
+            myProjects.append(myObject)
+        }
+        
+        if myProjects.count > 0
+        {
+            myProjects.sort
+            {
+                if $0.clientID == $1.clientID
+                {
+                    return $0.projectName < $1.projectName
+                }
+                else
+                {
+                    return $0.clientID < $1.clientID
+                }
+            }
+        }
+    }
+    
+    init(teamID: Int)
+    {
+        for myItem in myDatabaseConnection.getInDateProjectsForTeam(teamID)
+        {
+            let myObject = project(projectID: Int(myItem.projectID),
+                                   projectEndDate: myItem.projectEndDate! as Date,
+                                   projectName: myItem.projectName!,
+                                   projectStartDate: myItem.projectStartDate! as Date,
+                                   projectStatus: myItem.projectStatus!,
+                                   reviewFrequency: Int(myItem.reviewFrequency),
+                                   lastReviewDate: myItem.lastReviewDate! as Date,
+                                   GTDItemID: Int(myItem.areaID),
+                                   repeatInterval: Int(myItem.repeatInterval),
+                                   repeatType: myItem.repeatType!,
+                                   repeatBase: myItem.repeatBase!,
+                                   teamID: Int(myItem.teamID),
+                                   clientID: Int(myItem.clientID),
+                                   note: myItem.note!,
+                                   reviewPeriod: myItem.reviewPeriod!,
+                                   predecessor: Int(myItem.predecessor))
+            
+            myProjects.append(myObject)
+        }
+        
+        if myProjects.count > 0
+        {
+            myProjects.sort
+            {
+                if $0.clientID == $1.clientID
+                {
+                    return $0.projectName < $1.projectName
+                }
+                else
+                {
+                    return $0.clientID < $1.clientID
+                }
+            }
+        }
+    }
+
+    var projects: [project]
+    {
+        get
+        {
+            return myProjects
+        }
+    }
+}
+
 class project: NSObject // 10k level
 {
     fileprivate var myProjectEndDate: Date!
@@ -42,7 +135,6 @@ class project: NSObject // 10k level
         set
         {
             myProjectEndDate = newValue
-            save()
         }
     }
     
@@ -53,7 +145,6 @@ class project: NSObject // 10k level
             if myProjectEndDate == nil
             {
                 myProjectEndDate = getDefaultDate() as Date!
-                save()
                 return ""
             }
             else if myProjectEndDate == getDefaultDate() as Date
@@ -86,7 +177,6 @@ class project: NSObject // 10k level
         set
         {
             myProjectName = newValue
-            save()
         }
     }
     
@@ -99,7 +189,6 @@ class project: NSObject // 10k level
         set
         {
             myProjectStartDate = newValue
-            save()
         }
     }
     
@@ -126,7 +215,6 @@ class project: NSObject // 10k level
             if myProjectStartDate == nil
             {
                 myProjectStartDate = getDefaultDate() as Date!
-                save()
                 return ""
             }
             else if myProjectStartDate == getDefaultDate() as Date
@@ -156,7 +244,6 @@ class project: NSObject // 10k level
             {
                 checkForRepeat()
             }
-            save()
         }
     }
     
@@ -169,7 +256,6 @@ class project: NSObject // 10k level
         set
         {
             myReviewFrequency = newValue
-            save()
         }
     }
     
@@ -182,7 +268,6 @@ class project: NSObject // 10k level
         set
         {
             myLastReviewDate = newValue
-            save()
         }
     }
     
@@ -193,7 +278,6 @@ class project: NSObject // 10k level
             if myLastReviewDate == nil
             {
                 myLastReviewDate = getDefaultDate() as Date!
-                save()
                 return ""
             }
             else if myLastReviewDate == getDefaultDate() as Date
@@ -218,7 +302,6 @@ class project: NSObject // 10k level
         set
         {
             myReviewPeriod = newValue
-            save()
         }
     }
     
@@ -231,7 +314,6 @@ class project: NSObject // 10k level
         set
         {
             myGTDItemID = newValue
-            save()
         }
     }
     
@@ -244,7 +326,6 @@ class project: NSObject // 10k level
         set
         {
             myRepeatInterval = newValue
-            save()
         }
     }
     
@@ -257,7 +338,6 @@ class project: NSObject // 10k level
         set
         {
             myRepeatType = newValue
-            save()
         }
     }
     
@@ -270,7 +350,6 @@ class project: NSObject // 10k level
         set
         {
             myRepeatBase = newValue
-            save()
         }
     }
     
@@ -283,7 +362,6 @@ class project: NSObject // 10k level
         set
         {
             myTeamID = newValue
-            save()
         }
     }
     
@@ -296,7 +374,6 @@ class project: NSObject // 10k level
         set
         {
             myNote = newValue
-            save()
         }
     }
     
@@ -309,7 +386,6 @@ class project: NSObject // 10k level
         set
         {
             myPredecessor = newValue
-            save()
         }
     }
     
@@ -322,7 +398,6 @@ class project: NSObject // 10k level
         set
         {
             myClientID = newValue
-            save()
         }
     }
     
@@ -378,6 +453,37 @@ class project: NSObject // 10k level
         }
     }
 
+    init(projectID: Int, projectEndDate: Date, projectName: String, projectStartDate: Date, projectStatus: String, reviewFrequency: Int, lastReviewDate: Date, GTDItemID: Int, repeatInterval: Int, repeatType: String, repeatBase: String, teamID: Int, clientID: Int, note: String, reviewPeriod: String, predecessor: Int)
+    {
+        super.init()
+        myProjectEndDate = projectEndDate
+        myProjectID = projectID
+        myProjectName = projectName
+        myProjectStartDate = projectStartDate
+        myProjectStatus = projectStatus
+        myReviewFrequency = reviewFrequency
+        myLastReviewDate = lastReviewDate
+        myGTDItemID = GTDItemID
+        myRepeatInterval = repeatInterval
+        myRepeatType = repeatType
+        myRepeatBase = repeatBase
+        myTeamID = teamID
+        myClientID = clientID
+        myNote = note
+        myReviewPeriod = reviewPeriod
+        myPredecessor = predecessor
+        
+        // load team members
+        
+        loadTeamMembers()
+        
+        // load tasks
+        
+        loadTasks()
+    }
+
+    
+    
     func loadTeamMembers()
     {
         myTeamMembers.removeAll()
@@ -731,6 +837,79 @@ extension coreDatabase
             // Set the predicate on the fetch request
             fetchRequest.predicate = predicate
         }
+        
+        let sortDescriptor = NSSortDescriptor(key: "projectName", ascending: true)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func getInDateProjectsForTeam(_ teamID: Int, archiveFlag: Bool = false) -> [Projects]
+    {
+        let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        if !archiveFlag
+        {
+            var predicate: NSPredicate
+
+            predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND ((projectStartDate == nil) OR (projectStartDate <= %@) OR (projectStartDate == %@)) AND ((projectEndDate == nil) OR (projectEndDate >= %@) OR (projectEndDate == %@))", Date() as CVarArg, getDefaultDate() as CVarArg, Date() as CVarArg, getDefaultDate() as CVarArg)
+            
+            // Set the predicate on the fetch request
+            fetchRequest.predicate = predicate
+        }
+        else
+        {
+            // Create a new predicate that filters out any object that
+            // doesn't have a title of "Best Language" exactly.
+            let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(teamID))")
+            
+            // Set the predicate on the fetch request
+            fetchRequest.predicate = predicate
+        }
+        
+        let sortDescriptor = NSSortDescriptor(key: "projectName", ascending: true)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+
+    
+    func getProjectsForClient(_ clientID: Int) -> [Projects]
+    {
+        let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (clientID == \(clientID))")
+            
+            // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
         
         let sortDescriptor = NSSortDescriptor(key: "projectName", ascending: true)
         let sortDescriptors = [sortDescriptor]

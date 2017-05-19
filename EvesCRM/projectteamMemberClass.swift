@@ -28,7 +28,6 @@ class projectTeamMember: NSObject
         set
         {
             myProjectID = newValue
-            save()
         }
     }
     
@@ -41,7 +40,6 @@ class projectTeamMember: NSObject
         set
         {
             myProjectMemberNotes = newValue
-            save()
         }
     }
     
@@ -54,7 +52,6 @@ class projectTeamMember: NSObject
         set
         {
             myRoleID = newValue
-            save()
         }
     }
     
@@ -77,7 +74,6 @@ class projectTeamMember: NSObject
         set
         {
             myTeamMember = newValue
-            save()
         }
     }
     

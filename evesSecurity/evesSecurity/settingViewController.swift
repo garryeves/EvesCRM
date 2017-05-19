@@ -18,6 +18,9 @@ class settingsViewController: UIViewController, UIPopoverPresentationControllerD
     
     override func viewDidLoad()
     {
+        super.viewDidLoad()
+        
+        refreshScreen()
     }
     
     override func didReceiveMemoryWarning() {
@@ -63,6 +66,11 @@ class settingsViewController: UIViewController, UIPopoverPresentationControllerD
     @IBAction func btnBack(_ sender: UIButton)
     {
         dismiss(animated: true, completion: nil)
+    }
+    
+    func refreshScreen()
+    {
+        
     }
 }
 

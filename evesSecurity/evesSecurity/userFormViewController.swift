@@ -8,7 +8,7 @@
 
 import UIKit
 
-class userFormViewController: UIViewController, UIPopoverPresentationControllerDelegate
+class userFormViewController: UIViewController, UIPopoverPresentationControllerDelegate, UITableViewDataSource, UITableViewDelegate
 {
     @IBOutlet weak var btnSave: UIButton!
     @IBOutlet weak var btnCancel: UIButton!
@@ -17,12 +17,20 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
     @IBOutlet weak var txtEmail: UITextField!
     @IBOutlet weak var lblPhrase: UILabel!
     @IBOutlet weak var lblDate: UILabel!
+    @IBOutlet weak var tblUsers: UITableView!
+    @IBOutlet weak var btnAdd: UIButton!
     
     var workingUser: userItem!
     var communicationDelegate: myCommunicationDelegate?
+    var initialUser: Bool = false
     
     override func viewDidLoad()
     {
+        if initialUser
+        {
+            btnAdd.isHidden = true
+        }
+        
         let myReachability = Reachability()
         if myReachability.isConnectedToNetwork()
         {
@@ -65,6 +73,22 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
         // Dispose of any resources that can be recreated.
     }
 
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    {
+        return 0
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
+    {
+//        let cell = tableView.dequeueReusableCell(withIdentifier:"addInfoCell", for: indexPath) as! personAddInfoItem
+//        
+//        cell.lblDescription.text = addInfoRecords.personAdditionalInfos[indexPath.row].addInfoName
+//        cell.lblType.text = addInfoRecords.personAdditionalInfos[indexPath.row].addInfoType
+//        cell.addInfoID = addInfoRecords.personAdditionalInfos[indexPath.row].addInfoID
+//        
+        return UITableViewCell()
+    }
+
     @IBAction func btnSave(_ sender: UIButton)
     {
         workingUser.name = txtName.text!
@@ -75,11 +99,11 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
     
     @IBAction func btnCancel(_ sender: UIButton)
     {
+        self.dismiss(animated: true, completion: nil)
         if communicationDelegate != nil
         {
-            communicationDelegate?.loadMainScreen!()
+            communicationDelegate?.callLoadMainScreen!()
         }
-        self.dismiss(animated: true, completion: nil)
     }
     
     @IBAction func btnPassPhrase(_ sender: UIButton)
@@ -87,6 +111,10 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
         workingUser.generatePassPhrase()
         lblPhrase.text = workingUser.passPhrase
         lblDate.text = workingUser.phraseDateText
+    }
+    
+    @IBAction func btnAdd(_ sender: UIButton)
+    {
     }
     
     func populateForm()

@@ -61,7 +61,6 @@ class contractShiftComponent: NSObject
         set
         {
             myDayOfWeek = newValue
-            save()
         }
     }
     
@@ -74,7 +73,6 @@ class contractShiftComponent: NSObject
         set
         {
             myEndTime = newValue
-            save()
         }
     }
     
@@ -87,7 +85,6 @@ class contractShiftComponent: NSObject
         set
         {
             myStartTime = newValue
-            save()
         }
     }
     

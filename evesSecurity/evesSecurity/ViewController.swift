@@ -57,6 +57,7 @@ class ViewController: UIViewController, myCommunicationDelegate
         let userEditViewControl = loginStoryboard.instantiateViewController(withIdentifier: "userForm") as! userFormViewController
         userEditViewControl.workingUser = userRecord
         userEditViewControl.communicationDelegate = self
+        userEditViewControl.initialUser = true
         self.present(userEditViewControl, animated: true, completion: nil)
     }
     
@@ -71,6 +72,11 @@ class ViewController: UIViewController, myCommunicationDelegate
         let passwordViewControl = loginStoryboard.instantiateViewController(withIdentifier: "enterPassword") as! validatePasswordViewController
         passwordViewControl.communicationDelegate = self
         self.present(passwordViewControl, animated: true, completion: nil)
+    }
+    
+    func callLoadMainScreen()
+    {
+        Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.loadMainScreen), userInfo: nil, repeats: false)
     }
     
     func loadMainScreen()

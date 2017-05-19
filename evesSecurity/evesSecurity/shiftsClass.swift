@@ -93,7 +93,6 @@ class shift: NSObject
         set
         {
             myPersonID = newValue
-            save()
         }
     }
     
@@ -122,7 +121,6 @@ class shift: NSObject
         set
         {
             myStartTime = newValue
-            save()
         }
     }
     
@@ -135,17 +133,17 @@ class shift: NSObject
         set
         {
             myEndTime = newValue
-            save()
         }
     }
     
-    init(projectID: Int, workDate: Date)
+    init(projectID: Int, workDate: Date, teamID: Int)
     {
         super.init()
         
         myShiftID = myDatabaseConnection.getNextID("Shifts")
         myProjectID = projectID
-        myTeamID = currentUser.currentTeam!.teamID
+        myTeamID = teamID
+        
         
         myWorkDate = workDate
         

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="ipad9_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -13,7 +13,7 @@
         <!--New Instance-->
         <scene sceneID="ApU-s6-0sw">
             <objects>
-                <viewController storyboardIdentifier="newInstance" id="R7f-FH-ZDV" userLabel="New Instance" customClass="newInstanceViewController" customModule="evesSecurity" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="newInstance" id="R7f-FH-ZDV" userLabel="New Instance" customClass="newInstanceViewController" customModule="Shift_Dashboard" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="4qc-DW-wAd"/>
                         <viewControllerLayoutGuide type="bottom" id="jtz-8x-xjZ"/>
@@ -155,7 +155,7 @@ Note, you will only have 24 hours from the code being creted to enter it.  If yo
         <!--Organisation Edit-->
         <scene sceneID="MIQ-Vq-Vhc">
             <objects>
-                <viewController storyboardIdentifier="orgEdit" id="BL0-sa-lTT" userLabel="Organisation Edit" customClass="orgEditViewController" customModule="evesSecurity" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="orgEdit" id="BL0-sa-lTT" userLabel="Organisation Edit" customClass="orgEditViewController" customModule="Shift_Dashboard" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="5dF-iM-ioz"/>
                         <viewControllerLayoutGuide type="bottom" id="Wiv-DK-KeD"/>
@@ -216,8 +216,8 @@ Note, you will only have 24 hours from the code being creted to enter it.  If yo
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WaY-Jw-T4s" userLabel="btnCancel">
-                                <rect key="frame" x="650" y="974" width="48" height="30"/>
-                                <state key="normal" title="Cancel"/>
+                                <rect key="frame" x="664" y="974" width="34" height="30"/>
+                                <state key="normal" title="Back"/>
                                 <connections>
                                     <action selector="btnCancel:" destination="BL0-sa-lTT" eventType="touchUpInside" id="2f7-f6-TDO"/>
                                 </connections>
@@ -348,7 +348,7 @@ Note, you will only have 24 hours from the code being creted to enter it.  If yo
         <!--Validate Password-->
         <scene sceneID="cS3-GB-l1O">
             <objects>
-                <viewController storyboardIdentifier="enterPassword" id="fVZ-Xv-KnJ" userLabel="Validate Password" customClass="validatePasswordViewController" customModule="evesSecurity" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="enterPassword" id="fVZ-Xv-KnJ" userLabel="Validate Password" customClass="validatePasswordViewController" customModule="Shift_Dashboard" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="851-bD-Iyv"/>
                         <viewControllerLayoutGuide type="bottom" id="k4r-ga-57s"/>
@@ -419,7 +419,7 @@ Note, you will only have 24 hours from the code being creted to enter it.  If yo
         <!--User Form-->
         <scene sceneID="Mdp-k0-BC7">
             <objects>
-                <viewController storyboardIdentifier="userForm" id="TMw-rd-O2R" userLabel="User Form" customClass="userFormViewController" customModule="evesSecurity" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="userForm" id="TMw-rd-O2R" userLabel="User Form" customClass="userFormViewController" customModule="Shift_Dashboard" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="JxS-um-JiW"/>
                         <viewControllerLayoutGuide type="bottom" id="2hM-l5-gz4"/>
@@ -429,31 +429,25 @@ Note, you will only have 24 hours from the code being creted to enter it.  If yo
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="loF-On-eyS">
-                                <rect key="frame" x="40" y="108" width="45" height="21"/>
+                                <rect key="frame" x="230" y="108" width="45" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Email" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="i6w-BB-htF">
-                                <rect key="frame" x="40" y="163" width="41" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pass Phrase" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xC2-qg-j34">
-                                <rect key="frame" x="40" y="208" width="94" height="21"/>
+                                <rect key="frame" x="230" y="163" width="41" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="lblPhrase" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HD9-bJ-TXM">
-                                <rect key="frame" x="193" y="208" width="375" height="21"/>
+                                <rect key="frame" x="383" y="208" width="185" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pass Phrase Expiry" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VLm-hT-mIl">
-                                <rect key="frame" x="40" y="249" width="148" height="21"/>
+                                <rect key="frame" x="230" y="249" width="148" height="21"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="148" id="FyO-PD-mTC"/>
                                 </constraints>
@@ -462,21 +456,21 @@ Note, you will only have 24 hours from the code being creted to enter it.  If yo
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="lblDate" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fra-o9-X2f">
-                                <rect key="frame" x="193" y="249" width="375" height="21"/>
+                                <rect key="frame" x="383" y="249" width="185" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="f7E-Qq-7rS" userLabel="btnSave">
-                                <rect key="frame" x="40" y="290" width="34" height="30"/>
+                                <rect key="frame" x="230" y="290" width="34" height="30"/>
                                 <state key="normal" title="Save"/>
                                 <connections>
                                     <action selector="btnSave:" destination="TMw-rd-O2R" eventType="touchUpInside" id="FEt-Xc-f0x"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rha-up-JbW" userLabel="btnCancel">
-                                <rect key="frame" x="680" y="290" width="48" height="30"/>
-                                <state key="normal" title="Cancel"/>
+                                <rect key="frame" x="694" y="290" width="34" height="30"/>
+                                <state key="normal" title="Back"/>
                                 <connections>
                                     <action selector="btnCancel:" destination="TMw-rd-O2R" eventType="touchUpInside" id="mf0-xR-7ln"/>
                                 </connections>
@@ -492,20 +486,59 @@ Note, you will only have 24 hours from the code being creted to enter it.  If yo
                                 </connections>
                             </button>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="bzA-hu-bs2" userLabel="txtEmail">
-                                <rect key="frame" x="86" y="158" width="642" height="30"/>
+                                <rect key="frame" x="276" y="158" width="452" height="30"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" keyboardType="emailAddress"/>
                             </textField>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="3Wo-K1-AoT" userLabel="txtName">
-                                <rect key="frame" x="86" y="108" width="642" height="30"/>
+                                <rect key="frame" x="276" y="108" width="452" height="30"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="words"/>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="User Maintenance" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JN6-R8-JyK">
-                                <rect key="frame" x="20" y="40" width="728" height="48"/>
+                                <rect key="frame" x="220" y="40" width="528" height="48"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="40"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="i2H-1n-qe3" userLabel="tblUsers">
+                                <rect key="frame" x="20" y="40" width="200" height="914"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="200" id="px8-gx-1I1"/>
+                                </constraints>
+                                <prototypes>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cellUser" id="swe-1V-xkf">
+                                        <rect key="frame" x="0.0" y="28" width="200" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="swe-1V-xkf" id="zE7-af-ogx">
+                                            <rect key="frame" x="0.0" y="0.0" width="200" height="44"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B5P-L2-xuo">
+                                                    <rect key="frame" x="99" y="12" width="42" height="21"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </prototypes>
+                            </tableView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Wlg-ag-LXj" userLabel="btnAdd">
+                                <rect key="frame" x="40" y="974" width="64" height="30"/>
+                                <state key="normal" title="Add User"/>
+                                <connections>
+                                    <action selector="btnAdd:" destination="TMw-rd-O2R" eventType="touchUpInside" id="u3e-QC-7YZ"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Pass Phrase" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xC2-qg-j34">
+                                <rect key="frame" x="230" y="208" width="94" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -517,40 +550,47 @@ Note, you will only have 24 hours from the code being creted to enter it.  If yo
                             <constraint firstItem="HD9-bJ-TXM" firstAttribute="top" secondItem="bzA-hu-bs2" secondAttribute="bottom" constant="20" id="68E-Mv-2oO"/>
                             <constraint firstItem="2hM-l5-gz4" firstAttribute="top" relation="greaterThanOrEqual" secondItem="f7E-Qq-7rS" secondAttribute="bottom" constant="20" id="7QV-xb-1qZ"/>
                             <constraint firstItem="fra-o9-X2f" firstAttribute="leading" secondItem="VLm-hT-mIl" secondAttribute="trailing" constant="5" id="AyU-OJ-4Nt"/>
-                            <constraint firstItem="JN6-R8-JyK" firstAttribute="leading" secondItem="ymr-Qb-oi7" secondAttribute="leadingMargin" id="Byk-Hm-Ff7"/>
                             <constraint firstAttribute="trailingMargin" secondItem="rha-up-JbW" secondAttribute="trailing" constant="20" id="DAn-rw-caz"/>
+                            <constraint firstItem="i6w-BB-htF" firstAttribute="leading" secondItem="i2H-1n-qe3" secondAttribute="trailing" constant="10" id="EWO-zk-4wW"/>
+                            <constraint firstItem="VLm-hT-mIl" firstAttribute="leading" secondItem="i2H-1n-qe3" secondAttribute="trailing" constant="10" id="GxO-0A-5it"/>
                             <constraint firstAttribute="trailingMargin" secondItem="gKh-pB-kHV" secondAttribute="trailing" constant="20" id="HIH-Ei-a6k"/>
                             <constraint firstItem="VLm-hT-mIl" firstAttribute="top" secondItem="HD9-bJ-TXM" secondAttribute="bottom" constant="20" id="IbA-TM-UXN"/>
-                            <constraint firstItem="loF-On-eyS" firstAttribute="leading" secondItem="ymr-Qb-oi7" secondAttribute="leadingMargin" constant="20" id="Iez-yQ-Fk6"/>
+                            <constraint firstItem="2hM-l5-gz4" firstAttribute="top" secondItem="Wlg-ag-LXj" secondAttribute="bottom" constant="20" id="KXg-nW-7bs"/>
                             <constraint firstItem="2hM-l5-gz4" firstAttribute="top" relation="greaterThanOrEqual" secondItem="rha-up-JbW" secondAttribute="bottom" constant="20" id="L6M-cO-qys"/>
+                            <constraint firstItem="i2H-1n-qe3" firstAttribute="top" secondItem="JxS-um-JiW" secondAttribute="bottom" constant="20" id="OVU-Ro-gYp"/>
                             <constraint firstAttribute="trailingMargin" secondItem="bzA-hu-bs2" secondAttribute="trailing" constant="20" id="OjA-IS-GNi"/>
                             <constraint firstItem="bzA-hu-bs2" firstAttribute="top" secondItem="3Wo-K1-AoT" secondAttribute="bottom" constant="20" id="OwJ-28-a5H"/>
-                            <constraint firstItem="i6w-BB-htF" firstAttribute="leading" secondItem="ymr-Qb-oi7" secondAttribute="leadingMargin" constant="20" id="QRW-Kx-7jf"/>
-                            <constraint firstItem="xC2-qg-j34" firstAttribute="leading" secondItem="ymr-Qb-oi7" secondAttribute="leadingMargin" constant="20" id="UYd-LG-F6e"/>
+                            <constraint firstItem="Wlg-ag-LXj" firstAttribute="top" secondItem="i2H-1n-qe3" secondAttribute="bottom" constant="20" id="R3h-rW-hcv"/>
+                            <constraint firstItem="xC2-qg-j34" firstAttribute="leading" secondItem="i2H-1n-qe3" secondAttribute="trailing" constant="10" id="RHe-Hi-sqc"/>
+                            <constraint firstItem="f7E-Qq-7rS" firstAttribute="leading" secondItem="i2H-1n-qe3" secondAttribute="trailing" constant="10" id="Uua-tb-niQ"/>
                             <constraint firstAttribute="trailingMargin" secondItem="3Wo-K1-AoT" secondAttribute="trailing" constant="20" id="bLn-Uu-2Ai"/>
                             <constraint firstItem="HD9-bJ-TXM" firstAttribute="leading" secondItem="VLm-hT-mIl" secondAttribute="trailing" constant="5" id="dBk-Ph-Jud"/>
                             <constraint firstItem="xC2-qg-j34" firstAttribute="top" secondItem="bzA-hu-bs2" secondAttribute="bottom" constant="20" id="elf-4f-l8V"/>
                             <constraint firstItem="3Wo-K1-AoT" firstAttribute="top" secondItem="JN6-R8-JyK" secondAttribute="bottom" constant="20" id="fHy-AH-7fG"/>
+                            <constraint firstItem="loF-On-eyS" firstAttribute="leading" secondItem="i2H-1n-qe3" secondAttribute="trailing" constant="10" id="gj9-a2-bo5"/>
                             <constraint firstItem="3Wo-K1-AoT" firstAttribute="leading" secondItem="i6w-BB-htF" secondAttribute="trailing" constant="5" id="gli-hi-B9l"/>
-                            <constraint firstItem="VLm-hT-mIl" firstAttribute="leading" secondItem="ymr-Qb-oi7" secondAttribute="leadingMargin" constant="20" id="jyI-B0-Cxl"/>
                             <constraint firstItem="gKh-pB-kHV" firstAttribute="leading" secondItem="fra-o9-X2f" secondAttribute="trailing" constant="10" id="kXH-44-V0U"/>
                             <constraint firstItem="fra-o9-X2f" firstAttribute="top" secondItem="HD9-bJ-TXM" secondAttribute="bottom" constant="20" id="pd6-pO-h7V"/>
                             <constraint firstItem="f7E-Qq-7rS" firstAttribute="top" secondItem="fra-o9-X2f" secondAttribute="bottom" constant="20" id="qUK-5D-uuN"/>
                             <constraint firstItem="loF-On-eyS" firstAttribute="top" secondItem="JN6-R8-JyK" secondAttribute="bottom" constant="20" id="sPE-cG-s9a"/>
+                            <constraint firstItem="Wlg-ag-LXj" firstAttribute="leading" secondItem="ymr-Qb-oi7" secondAttribute="leadingMargin" constant="20" id="tV5-RK-O5g"/>
+                            <constraint firstItem="i2H-1n-qe3" firstAttribute="leading" secondItem="ymr-Qb-oi7" secondAttribute="leadingMargin" id="u6S-By-dwS"/>
                             <constraint firstItem="i6w-BB-htF" firstAttribute="top" secondItem="3Wo-K1-AoT" secondAttribute="bottom" constant="25" id="uM6-Jy-S14"/>
                             <constraint firstItem="JN6-R8-JyK" firstAttribute="top" secondItem="JxS-um-JiW" secondAttribute="bottom" constant="20" id="uMr-W6-qhL"/>
                             <constraint firstAttribute="trailingMargin" secondItem="JN6-R8-JyK" secondAttribute="trailing" id="vMh-Ns-VSp"/>
-                            <constraint firstItem="f7E-Qq-7rS" firstAttribute="leading" secondItem="ymr-Qb-oi7" secondAttribute="leadingMargin" constant="20" id="xNB-O1-UIu"/>
+                            <constraint firstItem="JN6-R8-JyK" firstAttribute="leading" secondItem="i2H-1n-qe3" secondAttribute="trailing" id="wFg-ln-pUJ"/>
                             <constraint firstItem="gKh-pB-kHV" firstAttribute="leading" secondItem="HD9-bJ-TXM" secondAttribute="trailing" constant="10" id="ycN-fd-mD1"/>
                             <constraint firstItem="rha-up-JbW" firstAttribute="top" secondItem="fra-o9-X2f" secondAttribute="bottom" constant="20" id="ysw-Zf-kP9"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="btnAdd" destination="Wlg-ag-LXj" id="mVI-BJ-tmU"/>
                         <outlet property="btnCancel" destination="rha-up-JbW" id="HUA-Yq-hkL"/>
                         <outlet property="btnPassPhrase" destination="gKh-pB-kHV" id="fkQ-Vw-stT"/>
                         <outlet property="btnSave" destination="f7E-Qq-7rS" id="9te-K2-T0f"/>
                         <outlet property="lblDate" destination="fra-o9-X2f" id="0Zj-AJ-c0b"/>
                         <outlet property="lblPhrase" destination="HD9-bJ-TXM" id="dio-aW-qzL"/>
+                        <outlet property="tblUsers" destination="i2H-1n-qe3" id="pzd-dc-zGN"/>
                         <outlet property="txtEmail" destination="bzA-hu-bs2" id="TQO-s8-Hhi"/>
                         <outlet property="txtName" destination="3Wo-K1-AoT" id="5BJ-5c-EyA"/>
                     </connections>
@@ -562,7 +602,7 @@ Note, you will only have 24 hours from the code being creted to enter it.  If yo
         <!--Set Password-->
         <scene sceneID="41b-4V-ovO">
             <objects>
-                <viewController storyboardIdentifier="setPassword" id="sTX-5Y-pI0" userLabel="Set Password" customClass="setPasswordViewController" customModule="evesSecurity" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="setPassword" id="sTX-5Y-pI0" userLabel="Set Password" customClass="setPasswordViewController" customModule="Shift_Dashboard" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="iww-5U-eYD"/>
                         <viewControllerLayoutGuide type="bottom" id="SHd-Hh-GCy"/>

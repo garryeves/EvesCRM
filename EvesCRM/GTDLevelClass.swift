@@ -26,7 +26,6 @@ class workingGTDLevel: NSObject
         set
         {
             myGTDLevel = newValue
-            save()
         }
     }
     
@@ -39,7 +38,6 @@ class workingGTDLevel: NSObject
         set
         {
             myTitle = newValue
-            save()
         }
     }
     

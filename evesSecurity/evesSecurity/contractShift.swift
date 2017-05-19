@@ -69,7 +69,6 @@ class contractShift: NSObject
         set
         {
             myStartDate = newValue
-            save()
         }
     }
     
@@ -82,7 +81,6 @@ class contractShift: NSObject
         set
         {
             myEndDate = newValue
-            save()
         }
     }
     

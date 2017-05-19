@@ -14,9 +14,9 @@ class people: NSObject
 {
     fileprivate var myPeople:[person] = Array()
     
-    override init()
+    init(teamID: Int)
     {
-        for myItem in myDatabaseConnection.getPeople(teamID: currentUser.currentTeam!.teamID)
+        for myItem in myDatabaseConnection.getPeople(teamID: teamID)
         {
             let dob: Date = myItem.dob! as Date
             
@@ -25,8 +25,48 @@ class people: NSObject
                                   dob: dob,
                                   teamID: Int(myItem.teamID),
                                   gender: myItem.gender!,
-                                  note: myItem.note!
+                                  note: myItem.note!,
+                                  clientID: Int(myItem.clientID),
+                                  projectID: Int(myItem.projectID)
                                    )
+            myPeople.append(myObject)
+        }
+    }
+    
+    init(clientID: Int)
+    {
+        for myItem in myDatabaseConnection.getPeopleForClient(clientID: clientID)
+        {
+            let dob: Date = myItem.dob! as Date
+            
+            let myObject = person(personID: Int(myItem.personID),
+                                  name: myItem.name!,
+                                  dob: dob,
+                                  teamID: Int(myItem.teamID),
+                                  gender: myItem.gender!,
+                                  note: myItem.note!,
+                                  clientID: Int(myItem.clientID),
+                                  projectID: Int(myItem.projectID)
+            )
+            myPeople.append(myObject)
+        }
+    }
+    
+    init(projectID: Int)
+    {
+        for myItem in myDatabaseConnection.getPeopleForProject(projectID: projectID)
+        {
+            let dob: Date = myItem.dob! as Date
+            
+            let myObject = person(personID: Int(myItem.personID),
+                                  name: myItem.name!,
+                                  dob: dob,
+                                  teamID: Int(myItem.teamID),
+                                  gender: myItem.gender!,
+                                  note: myItem.note!,
+                                  clientID: Int(myItem.clientID),
+                                  projectID: Int(myItem.projectID)
+            )
             myPeople.append(myObject)
         }
     }
@@ -43,6 +83,8 @@ class people: NSObject
 class person: NSObject
 {
     fileprivate var myPersonID: Int = 0
+    fileprivate var myClientID: Int = 0
+    fileprivate var myProjectID: Int = 0
     fileprivate var myName: String = ""
     fileprivate var myGender: String = ""
     fileprivate var myNote: String = ""
@@ -60,6 +102,30 @@ class person: NSObject
         }
     }
     
+    var clientID: Int
+    {
+        get
+        {
+            return myClientID
+        }
+        set
+        {
+            myClientID = newValue
+        }
+    }
+    
+    var projectID: Int
+    {
+        get
+        {
+            return myProjectID
+        }
+        set
+        {
+            myProjectID = newValue
+        }
+    }
+    
     var name: String
     {
         get
@@ -69,7 +135,6 @@ class person: NSObject
         set
         {
             myName = newValue
-            save()
         }
     }
     
@@ -89,7 +154,6 @@ class person: NSObject
         set
         {
             myGender = newValue
-            save()
         }
     }
     
@@ -102,7 +166,6 @@ class person: NSObject
         set
         {
             myNote = newValue
-            save()
         }
     }
     
@@ -115,7 +178,6 @@ class person: NSObject
         set
         {
             myDob = newValue
-            save()
         }
     }
     
@@ -205,6 +267,8 @@ class person: NSObject
             myTeamID = Int(myItem.teamID)
             myGender = myItem.gender!
             myNote = myItem.note!
+            myClientID = Int(myItem.clientID)
+            myProjectID = Int(myItem.projectID)
         }
     }
     
@@ -213,7 +277,9 @@ class person: NSObject
          dob: Date,
          teamID: Int,
          gender: String,
-         note: String
+         note: String,
+         clientID: Int,
+         projectID: Int
          )
     {
         super.init()
@@ -224,6 +290,8 @@ class person: NSObject
         myTeamID = teamID
         myGender = gender
         myNote = note
+        myClientID = clientID
+        myProjectID = projectID
     }
     
     func save()
@@ -233,7 +301,9 @@ class person: NSObject
                                          dob: dob,
                                          teamID: myTeamID,
                                          gender: myGender,
-                                         note: myNote
+                                         note: myNote,
+                                         clientID: myClientID,
+                                         projectID: myProjectID
                                          )
     }
     
@@ -308,6 +378,8 @@ extension coreDatabase
                     teamID: Int,
                     gender: String,
                     note: String,
+                    clientID: Int,
+                    projectID: Int,
                      updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myItem: Person!
@@ -323,6 +395,8 @@ extension coreDatabase
             myItem.teamID = Int64(teamID)
             myItem.gender = gender
             myItem.note = note
+            myItem.clientID = Int64(clientID)
+            myItem.projectID = Int64(projectID)
             
             if updateType == "CODE"
             {
@@ -343,6 +417,8 @@ extension coreDatabase
             myItem.dob = dob as NSDate
             myItem.gender = gender
             myItem.note = note
+            myItem.clientID = Int64(clientID)
+            myItem.projectID = Int64(projectID)
             
             if updateType == "CODE"
             {
@@ -368,6 +444,8 @@ extension coreDatabase
                        teamID: Int,
                        gender: String,
                        note: String,
+                       clientID: Int,
+                       projectID: Int,
                         updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myItem = Person(context: objectContext)
@@ -377,6 +455,8 @@ extension coreDatabase
         myItem.teamID = Int64(teamID)
         myItem.gender = gender
         myItem.note = note
+        myItem.clientID = Int64(clientID)
+        myItem.projectID = Int64(projectID)
         
         if updateType == "CODE"
         {
@@ -437,6 +517,54 @@ extension coreDatabase
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         let predicate = NSPredicate(format: "(updateType != \"Delete\") AND (teamID == \(teamID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func getPeopleForClient(clientID: Int)->[Person]
+    {
+        let fetchRequest = NSFetchRequest<Person>(entityName: "Person")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(updateType != \"Delete\") AND (clientID == \(clientID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func getPeopleForProject(projectID: Int)->[Person]
+    {
+        let fetchRequest = NSFetchRequest<Person>(entityName: "Person")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(updateType != \"Delete\") AND (projectID == \(projectID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -643,6 +771,18 @@ extension CloudKitInteraction
                 personID = record.object(forKey: "personID") as! Int
             }
             
+            var clientID: Int = 0
+            if record.object(forKey: "clientID") != nil
+            {
+                clientID = record.object(forKey: "clientID") as! Int
+            }
+            
+            var projectID: Int = 0
+            if record.object(forKey: "projectID") != nil
+            {
+                projectID = record.object(forKey: "projectID") as! Int
+            }
+            
             var dob = Date()
             if record.object(forKey: "dob") != nil
             {
@@ -671,7 +811,9 @@ extension CloudKitInteraction
                                                 name: name,
                                                 dob: dob, teamID: teamID,
                                                 gender: gender,
-                                                note: note
+                                                note: note,
+                                                clientID: clientID,
+                                                projectID: projectID
                                                 , updateTime: updateTime, updateType: updateType)
             
             usleep(useconds_t(self.sleepTime))
@@ -712,6 +854,8 @@ extension CloudKitInteraction
                     record!.setValue(sourceRecord.dob, forKey: "dob")
                     record!.setValue(sourceRecord.gender, forKey: "gender")
                     record!.setValue(sourceRecord.note, forKey: "note")
+                    record!.setValue(sourceRecord.clientID, forKey: "clientID")
+                    record!.setValue(sourceRecord.projectID, forKey: "projectID")
                     
                     if sourceRecord.updateTime != nil
                     {
@@ -742,6 +886,8 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.dob, forKey: "dob")
                     record.setValue(sourceRecord.gender, forKey: "gender")
                     record.setValue(sourceRecord.note, forKey: "note")
+                    record.setValue(sourceRecord.clientID, forKey: "clientID")
+                    record.setValue(sourceRecord.projectID, forKey: "projectID")
                     
                     record.setValue(teamID, forKey: "teamID")
                     
@@ -808,11 +954,25 @@ extension CloudKitInteraction
             teamID = sourceRecord.object(forKey: "teamID") as! Int
         }
         
+        var clientID: Int = 0
+        if sourceRecord.object(forKey: "clientID") != nil
+        {
+            clientID = sourceRecord.object(forKey: "clientID") as! Int
+        }
+        
+        var projectID: Int = 0
+        if sourceRecord.object(forKey: "projectID") != nil
+        {
+            projectID = sourceRecord.object(forKey: "projectID") as! Int
+        }
+        
         myDatabaseConnection.savePerson(personID,
                                          name: name,
                                          dob: dob, teamID: teamID,
                                          gender: gender,
-                                         note: note
+                                         note: note,
+                                         clientID: clientID,
+                                         projectID: projectID
                                          , updateTime: updateTime, updateType: updateType)
     }
 }

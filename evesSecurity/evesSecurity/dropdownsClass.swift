@@ -58,7 +58,6 @@ class dropdownItem: NSObject
         set
         {
             myDropdownValue = newValue
-            save()
         }
     }
     

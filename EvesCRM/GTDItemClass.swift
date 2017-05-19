@@ -37,7 +37,6 @@ class workingGTDItem: NSObject
         set
         {
             myGTDItemID = newValue
-            save()
         }
     }
     
@@ -50,7 +49,6 @@ class workingGTDItem: NSObject
         set
         {
             myGTDID = newValue
-            save()
         }
     }
     
@@ -63,7 +61,6 @@ class workingGTDItem: NSObject
         set
         {
             myGTDParentID = newValue
-            save()
         }
     }
     
@@ -76,7 +73,6 @@ class workingGTDItem: NSObject
         set
         {
             myGTDLevel = newValue
-            save()
         }
     }
     
@@ -89,7 +85,6 @@ class workingGTDItem: NSObject
         set
         {
             myTitle = newValue
-            save()
         }
     }
     
@@ -102,7 +97,6 @@ class workingGTDItem: NSObject
         set
         {
             myStatus = newValue
-            save()
         }
     }
     
@@ -123,7 +117,6 @@ class workingGTDItem: NSObject
         set
         {
             myTeamID = newValue
-            save()
         }
     }
     
@@ -136,7 +129,6 @@ class workingGTDItem: NSObject
         set
         {
             myNote = newValue
-            save()
         }
     }
     
@@ -149,7 +141,6 @@ class workingGTDItem: NSObject
         set
         {
             myLastReviewDate = newValue
-            save()
         }
     }
     
@@ -160,7 +151,6 @@ class workingGTDItem: NSObject
             if myLastReviewDate == nil
             {
                 myLastReviewDate = getDefaultDate() as Date!
-                save()
                 return ""
             }
             else if myLastReviewDate == getDefaultDate() as Date
@@ -185,7 +175,6 @@ class workingGTDItem: NSObject
         set
         {
             myReviewFrequency = newValue
-            save()
         }
     }
     
@@ -198,7 +187,6 @@ class workingGTDItem: NSObject
         set
         {
             myReviewPeriod = newValue
-            save()
         }
     }
     
@@ -211,7 +199,6 @@ class workingGTDItem: NSObject
         set
         {
             myPredecessor = newValue
-            save()
         }
     }
     

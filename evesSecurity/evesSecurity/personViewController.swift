@@ -31,6 +31,8 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
     @IBOutlet weak var bottomContraint: NSLayoutConstraint!
     
     var communicationDelegate: myCommunicationDelegate?
+    var clientID: Int!
+    var projectID: Int!
     
     private var myPeople: people!
     private var keyboardDisplayed: Bool = false
@@ -250,6 +252,16 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
     {
         selectedPerson = person(teamID: currentUser.currentTeam!.teamID)
         
+        if clientID != nil
+        {
+            selectedPerson.clientID = clientID
+        }
+        
+        if projectID != nil
+        {
+            selectedPerson.projectID = projectID
+        }
+        
         showFields()
         
         txtName.text = ""
@@ -327,6 +339,15 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
             let workingContact = iOSContact(contactRecord: contact)
             
             let workingRecord = person(teamID: currentUser.currentTeam!.teamID)
+            if clientID != nil
+            {
+                workingRecord.clientID = clientID
+            }
+            
+            if projectID != nil
+            {
+                workingRecord.projectID = projectID
+            }
             
             workingRecord.name = workingContact.fullName
             
@@ -508,7 +529,18 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
     
     func refreshScreen()
     {
-        myPeople = people()
+        if clientID != nil
+        {
+            myPeople = people(clientID: clientID)
+        }
+        else if projectID != nil
+        {
+            myPeople = people(projectID: projectID)
+        }
+        else
+        {
+            myPeople = people(teamID: currentUser.currentTeam!.teamID)
+        }
         
         tblPeople.reloadData()
         loadDetails()

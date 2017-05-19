@@ -60,7 +60,6 @@ class reportingMonthItem: NSObject
         set
         {
             myMonthName = newValue
-            save()
         }
     }
     
@@ -73,7 +72,6 @@ class reportingMonthItem: NSObject
         set
         {
             myYearName = newValue
-            save()
         }
     }
     

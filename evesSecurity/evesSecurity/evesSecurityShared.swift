@@ -18,8 +18,6 @@ let appName = "EvesMeeting"
 var userName: String = ""
 var userEmail: String = ""
 
-let personStoryboard = UIStoryboard(name: "person", bundle: nil)
-
 extension coreDatabase
 {
     func clearDeletedItems()
