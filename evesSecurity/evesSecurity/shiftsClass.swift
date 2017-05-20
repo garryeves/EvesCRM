@@ -383,6 +383,30 @@ extension coreDatabase
         }
     }
     
+    func getShiftForRate(projectID: Int, rateID: Int)->[Shifts]
+    {
+        let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(projectID == \(projectID)) AND (rateID == \(rateID)) && (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
     func getShiftDetails(_ shiftID: Int)->[Shifts]
     {
         let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")

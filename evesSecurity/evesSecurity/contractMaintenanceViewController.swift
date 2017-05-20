@@ -8,8 +8,9 @@
 
 import UIKit
 
-class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopoverPresentationControllerDelegate
+class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopoverPresentationControllerDelegate, UITableViewDataSource, UITableViewDelegate, myCommunicationDelegate
 {
+    @IBOutlet weak var tblRates: UITableView!
     @IBOutlet weak var txtName: UITextField!
     @IBOutlet weak var txtNote: UITextView!
     @IBOutlet weak var btnStatus: UIButton!
@@ -18,11 +19,14 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
     @IBOutlet weak var btnSave: UIButton!
     @IBOutlet weak var btnBack: UIButton!
     @IBOutlet weak var btnContacts: UIButton!
+    @IBOutlet weak var btnAdd: UIButton!
+    @IBOutlet weak var lblRates: UILabel!
     
     var communicationDelegate: myCommunicationDelegate?
     var workingContract: project!
     
     fileprivate var displayList: [String] = Array()
+    fileprivate var ratesList: rates!
     
     override func viewDidLoad()
     {
@@ -31,38 +35,7 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
         txtNote.layer.cornerRadius = 5.0
         txtNote.layer.masksToBounds = true
         
-        if workingContract != nil
-        {
-            txtName.text = workingContract.projectName
-            txtNote.text = workingContract.note
-            
-            if workingContract.projectStatus == ""
-            {
-                btnStatus.setTitle("Set", for: .normal)
-            }
-            else
-            {
-                btnStatus.setTitle(workingContract.projectStatus, for: .normal)
-            }
-            
-            if workingContract.projectStartDate == getDefaultDate()
-            {
-                btnStartDate.setTitle("Set", for: .normal)
-            }
-            else
-            {
-                btnStartDate.setTitle(workingContract.displayProjectStartDate, for: .normal)
-            }
-            
-            if workingContract.projectEndDate == getDefaultDate()
-            {
-                btnEndDate.setTitle("Set", for: .normal)
-            }
-            else
-            {
-                btnEndDate.setTitle(workingContract.displayProjectEndDate, for: .normal)
-            }
-        }
+        refreshScreen()
     }
     
     override func didReceiveMemoryWarning() {
@@ -70,6 +43,72 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
         // Dispose of any resources that can be recreated.
     }
     
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
+    {
+        return ratesList.rates.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
+    {
+        
+        // if rate has a shift them do not allow iot to be removed, unenable button
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier:"cellRates", for: indexPath) as! ratesListItem
+
+        
+        cell.lblName.text = ratesList.rates[indexPath.row].rateName
+        cell.lblClient.text = formatCurrency(value: ratesList.rates[indexPath.row].chargeAmount)
+        cell.lblStaff.text = formatCurrency(value: ratesList.rates[indexPath.row].rateAmount)
+        cell.lblStart.text = ratesList.rates[indexPath.row].displayStartDate
+        
+        // Calculate GP%
+        
+        let GP = ((ratesList.rates[indexPath.row].chargeAmount - ratesList.rates[indexPath.row].rateAmount) / ratesList.rates[indexPath.row].chargeAmount) * 100
+        
+        cell.lblGP.text = String(format: "%.1f", GP)
+        
+        if ratesList.rates[indexPath.row].hasShiftEntry
+        {
+            cell.btnRemove.isEnabled = false
+        }
+        else
+        {
+            cell.btnRemove.isEnabled = true
+        }
+
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
+    {
+        let rateMaintenanceEditViewControl = projectsStoryboard.instantiateViewController(withIdentifier: "rateMaintenance") as! rateMaintenanceViewController
+        rateMaintenanceEditViewControl.communicationDelegate = self
+        rateMaintenanceEditViewControl.workingRate = ratesList.rates[indexPath.row]
+        rateMaintenanceEditViewControl.modalPresentationStyle = .popover
+        
+        let popover = rateMaintenanceEditViewControl.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = tableView
+        popover.sourceRect = tableView.bounds
+        popover.permittedArrowDirections = .any
+        
+        rateMaintenanceEditViewControl.preferredContentSize = CGSize(width: 500,height: 200)
+        
+        self.present(rateMaintenanceEditViewControl, animated: true, completion: nil)
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
+    {
+        let headerView = tableView.dequeueReusableCell(withIdentifier: "cellHeader") as! ratesHeaderItem
+    
+        return headerView
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
+    {
+        return 50
+    }
+
     @IBAction func btnSave(_ sender: UIButton)
     {
         if txtName.text == ""
@@ -196,6 +235,26 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
         self.present(peopleEditViewControl, animated: true, completion: nil)
     }
     
+    @IBAction func btnAdd(_ sender: UIButton)
+    {
+        let tempRate = rate(projectID: workingContract.projectID, teamID: workingContract.teamID)
+        
+        let rateMaintenanceEditViewControl = projectsStoryboard.instantiateViewController(withIdentifier: "rateMaintenance") as! rateMaintenanceViewController
+        rateMaintenanceEditViewControl.communicationDelegate = self
+        rateMaintenanceEditViewControl.workingRate = tempRate
+        rateMaintenanceEditViewControl.modalPresentationStyle = .popover
+        
+        let popover = rateMaintenanceEditViewControl.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        rateMaintenanceEditViewControl.preferredContentSize = CGSize(width: 500,height: 200)
+        
+        self.present(rateMaintenanceEditViewControl, animated: true, completion: nil)
+    }
+    
     func myPickerDidFinish(_ source: String, selectedItem:Int)
     {
         if source == "status"
@@ -239,4 +298,86 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
             }
         }
     }
+    
+    func refreshScreen()
+    {
+        if workingContract != nil
+        {
+            txtName.text = workingContract.projectName
+            txtNote.text = workingContract.note
+            
+            if workingContract.projectStatus == ""
+            {
+                btnStatus.setTitle("Set", for: .normal)
+            }
+            else
+            {
+                btnStatus.setTitle(workingContract.projectStatus, for: .normal)
+            }
+            
+            if workingContract.projectStartDate == getDefaultDate()
+            {
+                btnStartDate.setTitle("Set", for: .normal)
+            }
+            else
+            {
+                btnStartDate.setTitle(workingContract.displayProjectStartDate, for: .normal)
+            }
+            
+            if workingContract.projectEndDate == getDefaultDate()
+            {
+                btnEndDate.setTitle("Set", for: .normal)
+            }
+            else
+            {
+                btnEndDate.setTitle(workingContract.displayProjectEndDate, for: .normal)
+            }
+            
+            ratesList = rates(projectID: workingContract.projectID)
+            
+            if workingContract.projectName == ""
+            {
+                tblRates.isHidden = true
+                lblRates.isHidden = true
+                btnAdd.isHidden = true
+            }
+            else
+            {
+                tblRates.isHidden = false
+                lblRates.isHidden = false
+                btnAdd.isHidden = false
+                
+                tblRates.reloadData()
+            }
+        }
+    }
+}
+
+class ratesHeaderItem: UITableViewCell
+{
+    @IBOutlet weak var lblName: UILabel!
+    @IBOutlet weak var lblStart: UILabel!
+    @IBOutlet weak var lblStaff: UILabel!
+    @IBOutlet weak var lblClient: UILabel!
+}
+
+class ratesListItem: UITableViewCell
+{
+    @IBOutlet weak var lblName: UILabel!
+    @IBOutlet weak var lblStart: UILabel!
+    @IBOutlet weak var lblStaff: UILabel!
+    @IBOutlet weak var lblClient: UILabel!
+    @IBOutlet weak var lblGP: UILabel!
+    @IBOutlet weak var btnRemove: UIButton!
+    
+    override func layoutSubviews()
+    {
+        contentView.frame = bounds
+        super.layoutSubviews()
+    }
+    
+    @IBAction func btnRemove(_ sender: UIButton)
+    {
+    }
+    
 }

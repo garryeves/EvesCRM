@@ -23,6 +23,7 @@
 		344BF8291EC94D4B0066CD35 /* securityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344BF8281EC94D4B0066CD35 /* securityViewController.swift */; };
 		344BF82C1EC954C70066CD35 /* settingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344BF82B1EC954C70066CD35 /* settingViewController.swift */; };
 		344BF82E1EC96E180066CD35 /* setPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344BF82D1EC96E180066CD35 /* setPasswordViewController.swift */; };
+		3460BE681ECFCC5C00857332 /* rateMaintenanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3460BE671ECFCC5C00857332 /* rateMaintenanceViewController.swift */; };
 		347BCEBE1EC559BD006B95BA /* LoginRoles.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 347BCEBD1EC559BD006B95BA /* LoginRoles.storyboard */; };
 		347BCEC01EC55D88006B95BA /* newUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347BCEBF1EC55D88006B95BA /* newUserViewController.swift */; };
 		347BCEC21EC563F0006B95BA /* orgEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347BCEC11EC563F0006B95BA /* orgEditViewController.swift */; };
@@ -114,6 +115,7 @@
 		344BF8281EC94D4B0066CD35 /* securityViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = securityViewController.swift; sourceTree = "<group>"; };
 		344BF82B1EC954C70066CD35 /* settingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = settingViewController.swift; sourceTree = "<group>"; };
 		344BF82D1EC96E180066CD35 /* setPasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = setPasswordViewController.swift; sourceTree = "<group>"; };
+		3460BE671ECFCC5C00857332 /* rateMaintenanceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = rateMaintenanceViewController.swift; sourceTree = "<group>"; };
 		347BCEBD1EC559BD006B95BA /* LoginRoles.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LoginRoles.storyboard; sourceTree = "<group>"; };
 		347BCEBF1EC55D88006B95BA /* newUserViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = newUserViewController.swift; sourceTree = "<group>"; };
 		347BCEC11EC563F0006B95BA /* orgEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = orgEditViewController.swift; sourceTree = "<group>"; };
@@ -368,6 +370,7 @@
 				3492932D1ECD797600AFAE25 /* addPerInfoMaintenanceViewController.swift */,
 				34B35A801ECE77A300B4FFD7 /* clientMaintenanceViewController.swift */,
 				34B35A841ECEC7A900B4FFD7 /* contractMaintenanceViewController.swift */,
+				3460BE671ECFCC5C00857332 /* rateMaintenanceViewController.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -611,6 +614,7 @@
 				3413238F1EC42F1F00BBDE1E /* ratesClass.swift in Sources */,
 				34CEEA3F1EC303CC00F85A11 /* clientsClass.swift in Sources */,
 				34CEE96A1EC2BD8F00F85A11 /* EvesCRM.xcdatamodeld in Sources */,
+				3460BE681ECFCC5C00857332 /* rateMaintenanceViewController.swift in Sources */,
 				34CEE9761EC2C1A900F85A11 /* reachability.swift in Sources */,
 				34CEE9701EC2BE4E00F85A11 /* CloudKitInteraction.swift in Sources */,
 				344BF82E1EC96E180066CD35 /* setPasswordViewController.swift in Sources */,

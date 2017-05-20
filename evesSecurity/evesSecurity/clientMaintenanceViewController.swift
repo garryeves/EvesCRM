@@ -219,21 +219,11 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
 class contractsSummaryItem: UITableViewCell
 {
     @IBOutlet weak var lblContractName: UILabel!
-    @IBOutlet weak var btnRates: UIButton!
-    @IBOutlet weak var btnShifts: UIButton!
     
     override func layoutSubviews()
     {
         contentView.frame = bounds
         super.layoutSubviews()
-    }
-    
-    @IBAction func btnRates(_ sender: UIButton)
-    {
-    }
-    
-    @IBAction func btnShifts(_ sender: UIButton)
-    {
     }
 }
 

@@ -84,6 +84,21 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
             }
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath)
+    {
+        switch tableView
+        {
+            case tblData1:
+                let contractEditViewControl = projectsStoryboard.instantiateViewController(withIdentifier: "contractMaintenance") as! contractMaintenanceViewController
+                contractEditViewControl.communicationDelegate = self
+                contractEditViewControl.workingContract = contractList.projects[indexPath.row]
+                self.present(contractEditViewControl, animated: true, completion: nil)
+                
+            default:
+                let _ = 1
+        }
+    }
+    
     @IBAction func btnSettings(_ sender: UIButton)
     {
         let userEditViewControl = self.storyboard?.instantiateViewController(withIdentifier: "settings") as! settingsViewController

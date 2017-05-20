@@ -27,9 +27,24 @@ class rates: NSObject
             teamID: Int(myItem.teamID))
             myRates.append(myObject)
         }
+        
+        if myRates.count > 0
+        {
+            myRates.sort
+            {
+                if $0.startDate == $1.startDate
+                {
+                    return $0.rateName < $1.rateName
+                }
+                else
+                {
+                    return $0.startDate < $1.startDate
+                }
+            }
+        }
     }
     
-    var Rates: [rate]
+    var rates: [rate]
     {
         get
         {
@@ -109,6 +124,38 @@ class rate: NSObject
         set
         {
             myStartDate = newValue
+        }
+    }
+    
+    var displayStartDate: String
+    {
+        get
+        {
+            if myStartDate == getDefaultDate() as Date
+            {
+                return ""
+            }
+            else
+            {
+                let myDateFormatter = DateFormatter()
+                myDateFormatter.dateStyle = DateFormatter.Style.medium
+                return myDateFormatter.string(from: myStartDate)
+            }
+        }
+    }
+    
+    var hasShiftEntry: Bool
+    {
+        get
+        {
+            if myDatabaseConnection.getShiftForRate(projectID: myProjectID, rateID: myRateID).count > 0
+            {
+                return true
+            }
+            else
+            {
+                return false
+            }
         }
     }
 

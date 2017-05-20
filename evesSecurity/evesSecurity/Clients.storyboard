@@ -88,48 +88,20 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OpM-bL-oRS" userLabel="lblContractName">
-                                                    <rect key="frame" x="8" y="8" width="362" height="27.5"/>
+                                                    <rect key="frame" x="8" y="8" width="462" height="27.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ads-Wd-gsp" userLabel="btnRates">
-                                                    <rect key="frame" x="380" y="8" width="40" height="27.5"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="40" id="LHh-Ob-471"/>
-                                                    </constraints>
-                                                    <state key="normal" title="Rates"/>
-                                                    <connections>
-                                                        <action selector="btnRates:" destination="clc-ef-WcK" eventType="touchUpInside" id="A0w-2L-lsg"/>
-                                                    </connections>
-                                                </button>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qXg-Cs-DPW" userLabel="btnShifts">
-                                                    <rect key="frame" x="430" y="8" width="40" height="27.5"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="40" id="d4s-Kd-k7u"/>
-                                                    </constraints>
-                                                    <state key="normal" title="Shifts"/>
-                                                    <connections>
-                                                        <action selector="btnShifts:" destination="clc-ef-WcK" eventType="touchUpInside" id="hwd-Lt-gFZ"/>
-                                                    </connections>
-                                                </button>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="OpM-bL-oRS" firstAttribute="leading" secondItem="jaN-EP-n4Q" secondAttribute="leadingMargin" id="AkG-qn-rNY"/>
-                                                <constraint firstAttribute="trailingMargin" secondItem="qXg-Cs-DPW" secondAttribute="trailing" id="BLA-YR-3se"/>
-                                                <constraint firstItem="qXg-Cs-DPW" firstAttribute="leading" secondItem="ads-Wd-gsp" secondAttribute="trailing" constant="10" id="K5n-Ln-dta"/>
-                                                <constraint firstItem="ads-Wd-gsp" firstAttribute="top" secondItem="jaN-EP-n4Q" secondAttribute="topMargin" id="TnP-C5-Ffs"/>
-                                                <constraint firstItem="ads-Wd-gsp" firstAttribute="leading" secondItem="OpM-bL-oRS" secondAttribute="trailing" constant="10" id="dda-zP-NsL"/>
                                                 <constraint firstItem="OpM-bL-oRS" firstAttribute="top" secondItem="jaN-EP-n4Q" secondAttribute="topMargin" id="gaV-sn-pHP"/>
-                                                <constraint firstItem="qXg-Cs-DPW" firstAttribute="top" secondItem="jaN-EP-n4Q" secondAttribute="topMargin" id="mGe-iU-nWO"/>
-                                                <constraint firstAttribute="bottomMargin" secondItem="ads-Wd-gsp" secondAttribute="bottom" id="oF9-h5-KCJ"/>
-                                                <constraint firstAttribute="bottomMargin" secondItem="qXg-Cs-DPW" secondAttribute="bottom" id="uYJ-ii-CYe"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="OpM-bL-oRS" secondAttribute="trailing" id="iEm-1H-Usx"/>
                                                 <constraint firstAttribute="bottomMargin" secondItem="OpM-bL-oRS" secondAttribute="bottom" id="vAV-iD-hfo"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <outlet property="btnRates" destination="ads-Wd-gsp" id="7Wp-Co-1Yd"/>
-                                            <outlet property="btnShifts" destination="qXg-Cs-DPW" id="hsC-eP-CSe"/>
                                             <outlet property="lblContractName" destination="OpM-bL-oRS" id="a1P-At-C7s"/>
                                         </connections>
                                     </tableViewCell>
@@ -163,7 +135,7 @@
                                         <rect key="frame" x="0.0" y="28" width="200" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="2GF-Bz-JV9" id="Zz5-fT-9z0">
-                                            <rect key="frame" x="0.0" y="0.0" width="200" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="200" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JWF-5P-0BU" userLabel="lblName">

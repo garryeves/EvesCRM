@@ -107,7 +107,7 @@ class project: NSObject // 10k level
 {
     fileprivate var myProjectEndDate: Date!
     fileprivate var myProjectID: Int = 0
-    fileprivate var myProjectName: String = "New project"
+    fileprivate var myProjectName: String = ""
     fileprivate var myProjectStartDate: Date!
     fileprivate var myProjectStatus: String = ""
     fileprivate var myReviewFrequency: Int = 0
