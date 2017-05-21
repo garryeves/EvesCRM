@@ -13,6 +13,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     @IBOutlet weak var btnPeople: UIButton!
     @IBOutlet weak var btnClients: UIButton!
     @IBOutlet weak var tblData1: UITableView!
+    @IBOutlet weak var btnRoster: UIButton!
     
     fileprivate var contractList: projects!
     
@@ -116,6 +117,13 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         let clientMaintenanceViewControl = clientsStoryboard.instantiateViewController(withIdentifier: "clientMaintenance") as! clientMaintenanceViewController
         clientMaintenanceViewControl.communicationDelegate = self
         self.present(clientMaintenanceViewControl, animated: true, completion: nil)
+    }
+    
+    @IBAction func btnRoster(_ sender: UIButton)
+    {
+        let rosterMaintenanceViewControl = shiftsStoryboard.instantiateViewController(withIdentifier: "rosterForm") as! shiftMaintenanceViewController
+        rosterMaintenanceViewControl.communicationDelegate = self
+        self.present(rosterMaintenanceViewControl, animated: true, completion: nil)
     }
     
     func refreshScreen()

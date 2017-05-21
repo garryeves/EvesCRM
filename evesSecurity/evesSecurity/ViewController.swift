@@ -15,6 +15,8 @@ class ViewController: UIViewController, myCommunicationDelegate
         myDatabaseConnection = coreDatabase()
         myCloudDB = CloudKitInteraction()
 
+        
+//myDatabaseConnection.quickFixProjects()
         if readDefaultInt(userDefaultName) <= 0
         {
             Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.loadNewUserScreen), userInfo: nil, repeats: false)

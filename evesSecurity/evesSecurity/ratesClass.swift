@@ -638,8 +638,7 @@ extension CloudKitInteraction
     func saveRatesRecordToCloudKit(_ sourceRecord: Rates, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0)
-        
-        let predicate = NSPredicate(format: "(ratesID == \(sourceRecord.rateID)) AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(rateID == \(sourceRecord.rateID)) AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Rates", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil

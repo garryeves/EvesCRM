@@ -32,6 +32,7 @@ let pickerStoryboard = UIStoryboard(name: "dropDownMenus", bundle: nil)
 let personStoryboard = UIStoryboard(name: "person", bundle: nil)
 let clientsStoryboard = UIStoryboard(name: "Clients", bundle: nil)
 let projectsStoryboard = UIStoryboard(name: "Projects", bundle: nil)
+let shiftsStoryboard = UIStoryboard(name: "Shifts", bundle: nil)
 
 #if os(OSX)
     import AppKit
@@ -1568,4 +1569,21 @@ func formatCurrency(value: Double) -> String
     formatter.locale = Locale(identifier: Locale.current.identifier)
     let result = formatter.string(from: value as NSNumber);
     return result!;
+}
+
+func getDayOfWeek(_ today:Date) -> Int?
+{
+    let myCalendar = Calendar(identifier: .gregorian)
+    let weekDay = myCalendar.component(.weekday, from: today)
+    return weekDay
+}
+
+func addDays(to: Date, days: Int) -> Date
+{
+    let myCalendar = Calendar(identifier: .gregorian)
+    
+    var interval = DateComponents()
+    interval.day = days
+    
+    return myCalendar.date(byAdding: interval, to: to)!
 }

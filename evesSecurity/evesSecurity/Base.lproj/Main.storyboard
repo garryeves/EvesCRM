@@ -80,7 +80,7 @@
                                         <rect key="frame" x="0.0" y="28" width="688" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Cwe-kN-AWb" id="8gv-Xy-VwJ">
-                                            <rect key="frame" x="0.0" y="0.0" width="688" height="43.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="688" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hH3-G6-f0e" userLabel="lblName">
@@ -178,6 +178,13 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LOn-au-bgS" userLabel="btnRoster">
+                                <rect key="frame" x="40" y="974" width="45" height="30"/>
+                                <state key="normal" title="Roster"/>
+                                <connections>
+                                    <action selector="btnRoster:" destination="c4c-EF-mMl" eventType="touchUpInside" id="rD6-Wo-mae"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -189,16 +196,19 @@
                             <constraint firstItem="WP8-oZ-twa" firstAttribute="top" secondItem="yqt-jc-Ra1" secondAttribute="bottom" constant="20" id="Qgs-fp-3nj"/>
                             <constraint firstAttribute="trailingMargin" secondItem="tEQ-Uf-H1F" secondAttribute="trailing" constant="20" id="R7T-aX-awz"/>
                             <constraint firstItem="tEQ-Uf-H1F" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="WP8-oZ-twa" secondAttribute="trailing" constant="5" id="SfX-JL-50b"/>
+                            <constraint firstItem="LOn-au-bgS" firstAttribute="top" secondItem="yqt-jc-Ra1" secondAttribute="bottom" constant="20" id="TjL-5k-Gtq"/>
                             <constraint firstAttribute="trailingMargin" secondItem="yqt-jc-Ra1" secondAttribute="trailing" constant="20" id="Zbq-CF-UTy"/>
                             <constraint firstItem="EUi-sI-Zz4" firstAttribute="top" secondItem="T48-7S-xsl" secondAttribute="bottom" id="bCA-bE-yHQ"/>
                             <constraint firstItem="yqt-jc-Ra1" firstAttribute="top" secondItem="rzm-5y-Rny" secondAttribute="bottom" constant="20" id="bHM-XA-mCL"/>
                             <constraint firstItem="rzm-5y-Rny" firstAttribute="centerX" secondItem="vpA-Se-cFr" secondAttribute="centerX" id="jMo-EI-JjQ"/>
+                            <constraint firstItem="LOn-au-bgS" firstAttribute="leading" secondItem="vpA-Se-cFr" secondAttribute="leadingMargin" constant="20" id="tbr-1W-coU"/>
                             <constraint firstItem="WP8-oZ-twa" firstAttribute="leading" secondItem="vpA-Se-cFr" secondAttribute="leadingMargin" constant="320" id="yFm-dV-ySw"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="btnClients" destination="WP8-oZ-twa" id="wMH-NE-Vln"/>
                         <outlet property="btnPeople" destination="tEQ-Uf-H1F" id="Uga-IH-FdZ"/>
+                        <outlet property="btnRoster" destination="LOn-au-bgS" id="Cmh-26-HXM"/>
                         <outlet property="btnSettings" destination="EUi-sI-Zz4" id="A2W-Tc-4Kl"/>
                         <outlet property="tblData1" destination="yqt-jc-Ra1" id="OiC-Qx-Ned"/>
                     </connections>

@@ -21,6 +21,10 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
     @IBOutlet weak var btnContacts: UIButton!
     @IBOutlet weak var btnAdd: UIButton!
     @IBOutlet weak var lblRates: UILabel!
+    @IBOutlet weak var txtDept: UITextField!
+    @IBOutlet weak var txtInvoicingDay: UITextField!
+    @IBOutlet weak var txtDaysToPay: UITextField!
+    @IBOutlet weak var btnInvoicingFrequency: UIButton!
     
     var communicationDelegate: myCommunicationDelegate?
     var workingContract: project!
@@ -132,6 +136,11 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
         {
             workingContract.projectName = txtName.text!
             workingContract.note = txtNote.text!
+            workingContract.clientDept = txtDept.text!
+            workingContract.invoicingDay = Int(txtInvoicingDay.text!)!
+            workingContract.daysToPay = Int(txtDaysToPay.text!)!
+            
+            
             workingContract.save()
         }
     }
@@ -255,6 +264,31 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
         self.present(rateMaintenanceEditViewControl, animated: true, completion: nil)
     }
     
+    @IBAction func btnInvoicingFrequency(_ sender: UIButton)
+    {
+        displayList.removeAll()
+        
+        displayList.append("")
+        displayList.append("Monthly")
+        displayList.append("At Completion")
+        
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+        pickerView.modalPresentationStyle = .popover
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        pickerView.source = "InvoicingFrequency"
+        pickerView.delegate = self
+        pickerView.pickerValues = displayList
+        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+        
+        self.present(pickerView, animated: true, completion: nil)
+    }
+
     func myPickerDidFinish(_ source: String, selectedItem:Int)
     {
         if source == "status"
@@ -267,6 +301,18 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
             else
             {
                 btnStatus.setTitle(workingContract.projectStatus, for: .normal)
+            }
+        }
+        else if source == "InvoicingFrequency"
+        {
+            workingContract.invoicingFrequency = displayList[selectedItem]
+            if workingContract.invoicingFrequency == ""
+            {
+                btnInvoicingFrequency.setTitle("Set", for: .normal)
+            }
+            else
+            {
+                btnInvoicingFrequency.setTitle(workingContract.invoicingFrequency, for: .normal)
             }
         }
     }
@@ -305,6 +351,9 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
         {
             txtName.text = workingContract.projectName
             txtNote.text = workingContract.note
+            txtDept.text = workingContract.clientDept
+            txtInvoicingDay.text = "\(workingContract.invoicingDay)"
+            txtDaysToPay.text = "\(workingContract.daysToPay)"
             
             if workingContract.projectStatus == ""
             {
@@ -331,6 +380,15 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
             else
             {
                 btnEndDate.setTitle(workingContract.displayProjectEndDate, for: .normal)
+            }
+            
+            if workingContract.invoicingFrequency == ""
+            {
+                btnInvoicingFrequency.setTitle("Set", for: .normal)
+            }
+            else
+            {
+                btnInvoicingFrequency.setTitle(workingContract.invoicingFrequency, for: .normal)
             }
             
             ratesList = rates(projectID: workingContract.projectID)

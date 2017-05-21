@@ -33,7 +33,11 @@ class projects: NSObject
                                     clientID: Int(myItem.clientID),
                                     note: myItem.note!,
                                     reviewPeriod: myItem.reviewPeriod!,
-                                    predecessor: Int(myItem.predecessor))
+                                    predecessor: Int(myItem.predecessor),
+                                    clientDept: myItem.clientDept!,
+                                    invoicingFrequency: myItem.invoicingFrequency!,
+                                    invoicingDay: Int(myItem.invoicingDay),
+                                    daysToPay: Int(myItem.daysToPay))
                 
             myProjects.append(myObject)
         }
@@ -73,7 +77,11 @@ class projects: NSObject
                                    clientID: Int(myItem.clientID),
                                    note: myItem.note!,
                                    reviewPeriod: myItem.reviewPeriod!,
-                                   predecessor: Int(myItem.predecessor))
+                                   predecessor: Int(myItem.predecessor),
+                                   clientDept: myItem.clientDept!,
+                                   invoicingFrequency: myItem.invoicingFrequency!,
+                                   invoicingDay: Int(myItem.invoicingDay),
+                                   daysToPay: Int(myItem.daysToPay))
             
             myProjects.append(myObject)
         }
@@ -124,6 +132,10 @@ class project: NSObject // 10k level
     fileprivate var myPredecessor: Int = 0
     fileprivate var saveCalled: Bool = false
     fileprivate var myClientID: Int = 0
+    fileprivate var myClientDept: String = ""
+    fileprivate var myInvoicingFrequency: String = ""
+    fileprivate var myInvoicingDay: Int = 0
+    fileprivate var myDaysToPay: Int = 0
     
     var projectEndDate: Date
     {
@@ -401,6 +413,54 @@ class project: NSObject // 10k level
         }
     }
     
+    var clientDept: String
+    {
+        get
+        {
+            return myClientDept
+        }
+        set
+        {
+            myClientDept = newValue
+        }
+    }
+    
+    var invoicingFrequency: String
+    {
+        get
+        {
+            return myInvoicingFrequency
+        }
+        set
+        {
+            myInvoicingFrequency = newValue
+        }
+    }
+    
+    var invoicingDay: Int
+    {
+        get
+        {
+            return myInvoicingDay
+        }
+        set
+        {
+            myInvoicingDay = newValue
+        }
+    }
+    
+    var daysToPay: Int
+    {
+        get
+        {
+            return myDaysToPay
+        }
+        set
+        {
+            myDaysToPay = newValue
+        }
+    }
+    
     init(teamID: Int)
     {
         super.init()
@@ -442,6 +502,10 @@ class project: NSObject // 10k level
             myNote = myProject.note!
             myReviewPeriod = myProject.reviewPeriod!
             myPredecessor = Int(myProject.predecessor)
+            myClientDept = myProject.clientDept!
+            myInvoicingFrequency = myProject.invoicingFrequency!
+            myInvoicingDay = Int(myProject.invoicingDay)
+            myDaysToPay = Int(myProject.daysToPay)
             
             // load team members
             
@@ -453,7 +517,7 @@ class project: NSObject // 10k level
         }
     }
 
-    init(projectID: Int, projectEndDate: Date, projectName: String, projectStartDate: Date, projectStatus: String, reviewFrequency: Int, lastReviewDate: Date, GTDItemID: Int, repeatInterval: Int, repeatType: String, repeatBase: String, teamID: Int, clientID: Int, note: String, reviewPeriod: String, predecessor: Int)
+    init(projectID: Int, projectEndDate: Date, projectName: String, projectStartDate: Date, projectStatus: String, reviewFrequency: Int, lastReviewDate: Date, GTDItemID: Int, repeatInterval: Int, repeatType: String, repeatBase: String, teamID: Int, clientID: Int, note: String, reviewPeriod: String, predecessor: Int, clientDept: String, invoicingFrequency: String, invoicingDay: Int, daysToPay: Int)
     {
         super.init()
         myProjectEndDate = projectEndDate
@@ -472,6 +536,10 @@ class project: NSObject // 10k level
         myNote = note
         myReviewPeriod = reviewPeriod
         myPredecessor = predecessor
+        myClientDept = clientDept
+        myInvoicingFrequency = invoicingFrequency
+        myInvoicingDay = invoicingDay
+        myDaysToPay = daysToPay
         
         // load team members
         
@@ -528,7 +596,26 @@ class project: NSObject // 10k level
  
     func save()
     {
-        myDatabaseConnection.saveProject(myProjectID, projectEndDate: myProjectEndDate, projectName: myProjectName, projectStartDate: myProjectStartDate, projectStatus: myProjectStatus, reviewFrequency: myReviewFrequency, lastReviewDate: myLastReviewDate, GTDItemID: myGTDItemID, repeatInterval: myRepeatInterval, repeatType: myRepeatType, repeatBase: myRepeatBase, teamID: myTeamID, clientID: myClientID, note: myNote, reviewPeriod: myReviewPeriod, predecessor: myPredecessor)
+        myDatabaseConnection.saveProject(myProjectID,
+                                         projectEndDate: myProjectEndDate,
+                                         projectName: myProjectName,
+                                         projectStartDate: myProjectStartDate,
+                                         projectStatus: myProjectStatus,
+                                         reviewFrequency: myReviewFrequency,
+                                         lastReviewDate: myLastReviewDate,
+                                         GTDItemID: myGTDItemID,
+                                         repeatInterval: myRepeatInterval,
+                                         repeatType: myRepeatType,
+                                         repeatBase: myRepeatBase,
+                                         teamID: myTeamID,
+                                         clientID: myClientID,
+                                         note: myNote,
+                                         reviewPeriod: myReviewPeriod,
+                                         predecessor: myPredecessor,
+                                         clientDept: myClientDept,
+                                         invoicingFrequency: myInvoicingFrequency,
+                                         invoicingDay: myInvoicingDay,
+                                         daysToPay: myDaysToPay)
         
         // Save Team Members
         
@@ -616,6 +703,10 @@ class project: NSObject // 10k level
             newProject.repeatBase = myRepeatBase
             newProject.note = myNote
             newProject.clientID = myClientID
+            newProject.clientDept = myClientDept
+            newProject.invoicingFrequency = myInvoicingFrequency
+            newProject.invoicingDay = myInvoicingDay
+            newProject.daysToPay = myDaysToPay
             
             // Populate team Members
             
@@ -719,7 +810,6 @@ extension coreDatabase
     
     func getProjectDetails(_ projectID: Int)->[Projects]
     {
-        
         let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
         
         // Create a new predicate that filters out any object that
@@ -928,7 +1018,7 @@ extension coreDatabase
         }
     }
 
-    func saveProject(_ projectID: Int, projectEndDate: Date, projectName: String, projectStartDate: Date, projectStatus: String, reviewFrequency: Int, lastReviewDate: Date, GTDItemID: Int, repeatInterval: Int, repeatType: String, repeatBase: String, teamID: Int, clientID: Int, note: String, reviewPeriod: String, predecessor: Int, updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveProject(_ projectID: Int, projectEndDate: Date, projectName: String, projectStartDate: Date, projectStatus: String, reviewFrequency: Int, lastReviewDate: Date, GTDItemID: Int, repeatInterval: Int, repeatType: String, repeatBase: String, teamID: Int, clientID: Int, note: String, reviewPeriod: String, predecessor: Int, clientDept: String, invoicingFrequency: String, invoicingDay: Int, daysToPay: Int, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myProject: Projects!
         
@@ -953,6 +1043,10 @@ extension coreDatabase
             myProject.note = note
             myProject.reviewPeriod = reviewPeriod
             myProject.predecessor = Int64(predecessor)
+            myProject.clientDept = clientDept
+            myProject.invoicingFrequency = invoicingFrequency
+            myProject.invoicingDay = Int64(invoicingDay)
+            myProject.daysToPay = Int64(daysToPay)
             
             if updateType == "CODE"
             {
@@ -983,6 +1077,10 @@ extension coreDatabase
             myProject.note = note
             myProject.reviewPeriod = reviewPeriod
             myProject.predecessor = Int64(predecessor)
+            myProject.clientDept = clientDept
+            myProject.invoicingFrequency = invoicingFrequency
+            myProject.invoicingDay = Int64(invoicingDay)
+            myProject.daysToPay = Int64(daysToPay)
             
             if updateType == "CODE"
             {
@@ -1002,7 +1100,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceProject(_ projectID: Int, projectEndDate: Date, projectName: String, projectStartDate: Date, projectStatus: String, reviewFrequency: Int, lastReviewDate: Date, GTDItemID: Int, repeatInterval: Int, repeatType: String, repeatBase: String, teamID: Int, clientID: Int, note: String, reviewPeriod: String, predecessor: Int, updateTime: Date =  Date(), updateType: String = "CODE")
+    func replaceProject(_ projectID: Int, projectEndDate: Date, projectName: String, projectStartDate: Date, projectStatus: String, reviewFrequency: Int, lastReviewDate: Date, GTDItemID: Int, repeatInterval: Int, repeatType: String, repeatBase: String, teamID: Int, clientID: Int, note: String, reviewPeriod: String, predecessor: Int, clientDept: String, invoicingFrequency: String, invoicingDay: Int, daysToPay: Int, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         
         let myProject = Projects(context: objectContext)
@@ -1022,6 +1120,10 @@ extension coreDatabase
         myProject.note = note
         myProject.reviewPeriod = reviewPeriod
         myProject.predecessor = Int64(predecessor)
+        myProject.clientDept = clientDept
+        myProject.invoicingFrequency = invoicingFrequency
+        myProject.invoicingDay = Int64(invoicingDay)
+        myProject.daysToPay = Int64(daysToPay)
         
         if updateType == "CODE"
         {
@@ -1201,6 +1303,33 @@ extension coreDatabase
         
         saveContext()
     }
+
+    func quickFixProjects()
+    {
+        let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
+
+        // Create a new fetch request using the entity
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            for myProject in fetchResults
+            {
+                myProject.clientDept = ""
+                myProject.invoicingFrequency = ""
+                myProject.invoicingDay = 0
+                myProject.daysToPay = 0
+                myProject.updateTime = NSDate()
+                myProject.updateType = "Update"
+                saveContext()
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+    }
 }
 
 extension CloudKitInteraction
@@ -1312,7 +1441,21 @@ extension CloudKitInteraction
                 clientID = record.object(forKey: "clientID") as! Int
             }
             
-            myDatabaseConnection.replaceProject(projectID, projectEndDate: projectEndDate, projectName: projectName, projectStartDate: projectStartDate, projectStatus: projectStatus, reviewFrequency: reviewFrequency, lastReviewDate: lastReviewDate, GTDItemID: areaID, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, teamID: teamID, clientID: clientID, note: note, reviewPeriod: reviewPeriod, predecessor: predecessor, updateTime: updateTime, updateType: updateType)
+            let clientDept = record.object(forKey: "clientDept") as! String
+            let invoicingFrequency = record.object(forKey: "invoicingFrequency") as! String
+            
+            var invoicingDay: Int = 0
+            if record.object(forKey: "invoicingDay") != nil
+            {
+                invoicingDay = record.object(forKey: "invoicingDay") as! Int
+            }
+            var daysToPay: Int = 0
+            if record.object(forKey: "daysToPay") != nil
+            {
+                daysToPay = record.object(forKey: "daysToPay") as! Int
+            }
+
+            myDatabaseConnection.replaceProject(projectID, projectEndDate: projectEndDate, projectName: projectName, projectStartDate: projectStartDate, projectStatus: projectStatus, reviewFrequency: reviewFrequency, lastReviewDate: lastReviewDate, GTDItemID: areaID, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, teamID: teamID, clientID: clientID, note: note, reviewPeriod: reviewPeriod, predecessor: predecessor, clientDept: clientDept, invoicingFrequency: invoicingFrequency, invoicingDay: invoicingDay, daysToPay:daysToPay, updateTime: updateTime, updateType: updateType)
 
             usleep(useconds_t(self.sleepTime))
         }
@@ -1363,6 +1506,10 @@ extension CloudKitInteraction
                     record!.setValue(sourceRecord.reviewPeriod, forKey: "reviewPeriod")
                     record!.setValue(sourceRecord.predecessor, forKey: "predecessor")
                     record!.setValue(sourceRecord.clientID, forKey: "clientID")
+                    record!.setValue(sourceRecord.clientDept, forKey: "clientDept")
+                    record!.setValue(sourceRecord.invoicingFrequency, forKey: "invoicingFrequency")
+                    record!.setValue(sourceRecord.invoicingDay, forKey: "invoicingDay")
+                    record!.setValue(sourceRecord.daysToPay, forKey: "daysToPay")
                     
                     // Save this record again
                     self.publicDB.save(record!, completionHandler: { (savedRecord, saveError) in
@@ -1403,6 +1550,10 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.reviewPeriod, forKey: "reviewPeriod")
                     record.setValue(sourceRecord.predecessor, forKey: "predecessor")
                     record.setValue(sourceRecord.clientID, forKey: "clientID")
+                    record.setValue(sourceRecord.clientDept, forKey: "clientDept")
+                    record.setValue(sourceRecord.invoicingFrequency, forKey: "invoicingFrequency")
+                    record.setValue(sourceRecord.invoicingDay, forKey: "invoicingDay")
+                    record.setValue(sourceRecord.daysToPay, forKey: "daysToPay")
 
                     record.setValue(teamID, forKey: "teamID")
                     
@@ -1463,6 +1614,20 @@ extension CloudKitInteraction
             clientID = sourceRecord.object(forKey: "clientID") as! Int
         }
         
-        myDatabaseConnection.saveProject(projectID, projectEndDate: projectEndDate, projectName: projectName, projectStartDate: projectStartDate, projectStatus: projectStatus, reviewFrequency: reviewFrequency, lastReviewDate: lastReviewDate, GTDItemID: areaID, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, teamID: teamID, clientID: clientID, note: note, reviewPeriod: reviewPeriod, predecessor: predecessor, updateTime: updateTime, updateType: updateType)
+        let clientDept = sourceRecord.object(forKey: "clientDept") as! String
+        let invoicingFrequency = sourceRecord.object(forKey: "invoicingFrequency") as! String
+        
+        var invoicingDay: Int = 0
+        if sourceRecord.object(forKey: "invoicingDay") != nil
+        {
+            invoicingDay = sourceRecord.object(forKey: "invoicingDay") as! Int
+        }
+        var daysToPay: Int = 0
+        if sourceRecord.object(forKey: "daysToPay") != nil
+        {
+            daysToPay = sourceRecord.object(forKey: "daysToPay") as! Int
+        }
+        
+        myDatabaseConnection.saveProject(projectID, projectEndDate: projectEndDate, projectName: projectName, projectStartDate: projectStartDate, projectStatus: projectStatus, reviewFrequency: reviewFrequency, lastReviewDate: lastReviewDate, GTDItemID: areaID, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, teamID: teamID, clientID: clientID, note: note, reviewPeriod: reviewPeriod, predecessor: predecessor, clientDept: clientDept, invoicingFrequency: invoicingFrequency, invoicingDay: invoicingDay, daysToPay:daysToPay, updateTime: updateTime, updateType: updateType)
     }
 }
