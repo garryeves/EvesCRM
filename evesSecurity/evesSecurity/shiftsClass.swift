@@ -13,44 +13,30 @@ import CloudKit
 struct mergedShiftList
 {
     var contract: String!
+    var projectID: Int!
     var description: String!
     var WEDate: Date!
-    
-    var dateMon: Date!
-    var dowMon: String!
-    var shiftMon: shift!
-    
-    var dateTue: Date!
-    var dowTue: String!
-    var shiftTue: shift!
-    
-    var dateWed: Date!
-    var dowWed: String!
-    var shiftWed: shift!
-    
-    var dateThu: Date!
-    var dowThu: String!
-    var shiftThu: shift!
-    
-    var dateFri: Date!
-    var dowFri: String!
-    var shiftFri: shift!
-    
-    var dateSat: Date!
-    var dowSat: String!
-    var shiftSat: shift!
-    
-    var dateSun: Date!
-    var dowSun: String!
-    var shiftSun: shift!
+    var shiftLineID: Int!
+    var monShift: shift!
+    var tueShift: shift!
+    var wedShift: shift!
+    var thuShift: shift!
+    var friShift: shift!
+    var satShift: shift!
+    var sunShift: shift!
 }
 
 class shifts: NSObject
 {
     fileprivate var myShifts:[shift] = Array()
+    fileprivate var myWeeklyShifts:[mergedShiftList] = Array()
     
     init(teamID: Int, WEDate: Date)
     {
+        super.init()
+        
+        myWeeklyShifts.removeAll()
+        
         for myItem in myDatabaseConnection.getShifts(teamID: teamID, WEDate: WEDate)
         {
             let myObject = shift(shiftID: Int(myItem.shiftID),
@@ -61,14 +47,26 @@ class shifts: NSObject
                                  startTime: myItem.startTime! as Date,
                                  endTime: myItem.endTime! as Date,
                                  teamID: Int(myItem.teamID),
-                                 weekEndDate: myItem.weekEndDate! as Date
+                                 weekEndDate: myItem.weekEndDate! as Date,
+                                 status: myItem.status!,
+                                 shiftLineID: Int(myItem.shiftLineID),
+                                 rateID: Int(myItem.rateID)
             )
             myShifts.append(myObject)
+        }
+        
+        if myShifts.count > 0
+        {
+            createWeeklyArray()
         }
     }
     
     init(personID: Int, searchFrom: Date, searchTo: Date, teamID: Int)
     {
+        super.init()
+        
+        myWeeklyShifts.removeAll()
+
         for myItem in myDatabaseConnection.getShifts(personID: personID, searchFrom: searchFrom, searchTo: searchTo, teamID: teamID)
         {
             let myObject = shift(shiftID: Int(myItem.shiftID),
@@ -79,14 +77,26 @@ class shifts: NSObject
                                  startTime: myItem.startTime! as Date,
                                  endTime: myItem.endTime! as Date,
                                  teamID: Int(myItem.teamID),
-                                 weekEndDate: myItem.weekEndDate! as Date
+                                 weekEndDate: myItem.weekEndDate! as Date,
+                                 status: myItem.status!,
+                                 shiftLineID: Int(myItem.shiftLineID),
+                                 rateID: Int(myItem.rateID)
                                    )
             myShifts.append(myObject)
+        }
+        
+        if myShifts.count > 0
+        {
+            createWeeklyArray()
         }
     }
     
     init(projectID: Int, searchFrom: Date, searchTo: Date, teamID: Int)
     {
+        super.init()
+        
+        myWeeklyShifts.removeAll()
+
         for myItem in myDatabaseConnection.getShifts(projectID: projectID, searchFrom: searchFrom, searchTo: searchTo, teamID: teamID)
         {
             let myObject = shift(shiftID: Int(myItem.shiftID),
@@ -97,10 +107,159 @@ class shifts: NSObject
                                  startTime: myItem.startTime! as Date,
                                  endTime: myItem.endTime! as Date,
                                  teamID: Int(myItem.teamID),
-                                 weekEndDate: myItem.weekEndDate! as Date
+                                 weekEndDate: myItem.weekEndDate! as Date,
+                                 status: myItem.status!,
+                                 shiftLineID: Int(myItem.shiftLineID),
+                                 rateID: Int(myItem.rateID)
             )
             myShifts.append(myObject)
         }
+        
+        if myShifts.count > 0
+        {
+            createWeeklyArray()
+        }
+    }
+    
+    private func createWeeklyArray()
+    {
+        // sort the array by week, contract, line ID
+        
+        if myShifts.count > 0
+        {
+            myShifts.sort
+            {
+                print("Level 1 \($0.workDate) == \($1.workDate)")
+                // Because workdate has time it throws everything out
+                
+                if $0.workDate == $1.workDate
+                {
+                    print("Level 2 \($0.projectID) == \($1.projectID)")
+                    if $0.projectID == $1.projectID
+                    {
+                        print("Level 3 \($0.shiftLineID) == \($1.shiftLineID)")
+                        return $0.shiftLineID < $1.shiftLineID
+                    }
+                    else
+                    {
+                        return $0.projectID < $1.projectID
+                    }
+                }
+                else
+                {
+                    return $0.workDate < $1.workDate
+                }
+            }
+        }
+        
+        // now we iterate through the array and build the weekly array
+        var contract: String!
+        var projectID: Int!
+        var description: String!
+        var WEDate: Date!
+        var shiftLineID: Int!
+        
+        var monShift: shift!
+        var tueShift: shift!
+        var wedShift: shift!
+        var thuShift: shift!
+        var friShift: shift!
+        var satShift: shift!
+        var sunShift: shift!
+        
+        for myItem in myShifts
+        {
+print("Desc = \(myItem.shiftDescription) - \(myItem.shiftLineID)")
+            if shiftLineID != nil
+            {
+                if shiftLineID != myItem.shiftLineID
+                {
+                    // Thus is a new week
+                    let tempShift = mergedShiftList(contract: contract,
+                                                    projectID: projectID,
+                                                    description: description,
+                                                    WEDate: WEDate,
+                                                    shiftLineID: shiftLineID,
+                                                    monShift: monShift,
+                                                    tueShift: tueShift,
+                                                    wedShift: wedShift,
+                                                    thuShift: thuShift,
+                                                    friShift: friShift,
+                                                    satShift: satShift,
+                                                    sunShift: sunShift
+                                                   )
+
+                    myWeeklyShifts.append(tempShift)
+                    
+                    let myContract = project(projectID: myItem.projectID)
+                    contract = myContract.projectName
+                    projectID = myItem.projectID
+                    description = myItem.shiftDescription
+                    WEDate = myItem.weekEndDate
+                    shiftLineID = myItem.shiftLineID
+                    
+                    monShift = nil
+                    tueShift = nil
+                    wedShift = nil
+                    thuShift = nil
+                    friShift = nil
+                    satShift = nil
+                    sunShift = nil
+                }
+            }
+            else
+            {
+                let myContract = project(projectID: myItem.projectID)
+                contract = myContract.projectName
+                projectID = myItem.projectID
+                description = myItem.shiftDescription
+                WEDate = myItem.weekEndDate
+                shiftLineID = myItem.shiftLineID
+            }
+            
+            switch myItem.dayOfWeekNumber
+            {
+                case 1: // Sun
+                    sunShift = myItem
+
+                case 2: // Mon
+                    monShift = myItem
+                    
+                case 3: // Tue
+                    tueShift = myItem
+                    
+                case 4: // Wed
+                    wedShift = myItem
+                    
+                case 5: // Thu
+                    thuShift = myItem
+                    
+                case 6: // Fri
+                    friShift = myItem
+                    
+                case 7: // Sat
+                    satShift = myItem
+                    
+                default: print("Shift createWeeklyArray hit default - value = \(myItem.dayOfWeekNumber)")
+
+            }
+        }
+        
+        let tempShift = mergedShiftList(contract: contract,
+                                        projectID: projectID,
+                                        description: description,
+                                        WEDate: WEDate,
+                                        shiftLineID: shiftLineID,
+                                        monShift: monShift,
+                                        tueShift: tueShift,
+                                        wedShift: wedShift,
+                                        thuShift: thuShift,
+                                        friShift: friShift,
+                                        satShift: satShift,
+                                        sunShift: sunShift
+        )
+        
+        myWeeklyShifts.append(tempShift)
     }
     
     var shifts: [shift]
@@ -108,6 +267,14 @@ class shifts: NSObject
         get
         {
             return myShifts
+        }
+    }
+    
+    var weeklyShifts: [mergedShiftList]
+    {
+        get
+        {
+            return myWeeklyShifts
         }
     }
 }
@@ -123,12 +290,23 @@ class shift: NSObject
     fileprivate var myEndTime: Date!
     fileprivate var myWeekEndDate: Date!
     fileprivate var myTeamID: Int = 0
+    fileprivate var myStatus: String = ""
+    fileprivate var myShiftLineID: Int = 0
+    fileprivate var myRateID: Int = 0
     
     var shiftID: Int
     {
         get
         {
             return myShiftID
+        }
+    }
+    
+    var shiftLineID: Int
+    {
+        get
+        {
+            return myShiftLineID
         }
     }
     
@@ -152,11 +330,61 @@ class shift: NSObject
         }
     }
     
+    var personName: String
+    {
+        get
+        {
+            return person(personID: myPersonID).name
+        }
+    }
+    
+    var rateID: Int
+    {
+        get
+        {
+            return myRateID
+        }
+        set
+        {
+            myRateID = newValue
+        }
+    }
+    
+    var rateDescription: String
+    {
+        get
+        {
+            return rate(rateID: myRateID).rateName
+        }
+    }
+    
+    var status: String
+    {
+        get
+        {
+            return myStatus
+        }
+        set
+        {
+            myStatus = newValue
+        }
+    }
+    
     var workDate: Date
     {
         get
         {
             return myWorkDate
+        }
+    }
+    
+    var workDateString: String
+    {
+        get
+        {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateStyle = .long
+            return dateFormatter.string(from: myWorkDate)
         }
     }
     
@@ -167,6 +395,16 @@ class shift: NSObject
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "E"
             return dateFormatter.string(from: myWorkDate)
+        }
+    }
+    
+    var dayOfWeekNumber: Int
+    {
+        get
+        {
+            let myCalendar = Calendar(identifier: .gregorian)
+            let weekDay = myCalendar.component(.weekday, from: myWorkDate)
+            return weekDay
         }
     }
     
@@ -194,6 +432,16 @@ class shift: NSObject
         }
     }
     
+    var startTimeString: String
+    {
+        get
+        {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "HH:mm"
+            return dateFormatter.string(from: myStartTime)
+        }
+    }
+    
     var endTime: Date
     {
         get
@@ -206,6 +454,16 @@ class shift: NSObject
         }
     }
     
+    var endTimeString: String
+    {
+        get
+        {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "HH:mm"
+            return dateFormatter.string(from: endTime)
+        }
+    }
+    
     var weekEndDate: Date
     {
         get
@@ -215,7 +473,7 @@ class shift: NSObject
     }
     
     
-    init(projectID: Int, workDate: Date, weekEndDate: Date, teamID: Int)
+    init(projectID: Int, workDate: Date, weekEndDate: Date, teamID: Int, shiftLineID: Int)
     {
         super.init()
         
@@ -223,8 +481,9 @@ class shift: NSObject
         myProjectID = projectID
         myTeamID = teamID
         myWeekEndDate = weekEndDate
-        
+        myStatus = "Open"
         myWorkDate = workDate
+        myShiftLineID = shiftLineID
         
         save()
     }
@@ -245,7 +504,9 @@ class shift: NSObject
             myEndTime = myItem.endTime! as Date
             myTeamID = Int(myItem.teamID)
             myWeekEndDate = myItem.weekEndDate! as Date
-
+            myStatus = myItem.status!
+            myShiftLineID = Int(myItem.shiftLineID)
+            myRateID = Int(myItem.rateID)
         }
     }
     
@@ -257,7 +518,10 @@ class shift: NSObject
          startTime: Date,
          endTime: Date,
          teamID: Int,
-         weekEndDate: Date
+         weekEndDate: Date,
+         status: String,
+         shiftLineID: Int,
+         rateID: Int
          )
     {
         super.init()
@@ -271,20 +535,29 @@ class shift: NSObject
         myEndTime = endTime
         myTeamID = teamID
         myWeekEndDate = weekEndDate
+        myStatus = status
+        myShiftLineID = shiftLineID
+        myRateID = rateID
     }
     
     func save()
     {
-        myDatabaseConnection.saveShifts(myShiftID,
-                                        projectID: myProjectID,
-                                        personID: myPersonID,
-                                        workDate: myWorkDate,
-                                        shiftDescription: myShiftDescription,
-                                        startTime: myStartTime,
-                                        endTime: myEndTime,
-                                        teamID: myTeamID,
-                                        weekEndDate: myWeekEndDate
-                                         )
+        if myStartTime != nil && myEndTime != nil
+        {
+            myDatabaseConnection.saveShifts(myShiftID,
+                                            projectID: myProjectID,
+                                            personID: myPersonID,
+                                            workDate: myWorkDate,
+                                            shiftDescription: myShiftDescription,
+                                            startTime: myStartTime,
+                                            endTime: myEndTime,
+                                            teamID: myTeamID,
+                                            weekEndDate: myWeekEndDate,
+                                            status: myStatus,
+                                            shiftLineID: myShiftLineID,
+                                            rateID: myRateID
+                                             )
+        }
     }
     
     func delete()
@@ -304,9 +577,19 @@ extension coreDatabase
                     endTime: Date,
                     teamID: Int,
                     weekEndDate: Date,
+                    status: String,
+                    shiftLineID: Int,
+                    rateID: Int,
                      updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myItem: Shifts!
+        
+        // get the current calendar
+        let calendar = Calendar.current
+        // get the start of the day of the selected date
+        let adjustedWorkDate = calendar.startOfDay(for: workDate)
+        // get the start of the day of the selected date
+        let adjustedWEDate = calendar.startOfDay(for: weekEndDate)
         
         let myReturn = getShiftDetails(shiftID)
         
@@ -316,12 +599,15 @@ extension coreDatabase
             myItem.shiftID = Int64(shiftID)
             myItem.projectID = Int64(projectID)
             myItem.personID = Int64(personID)
-            myItem.workDate = workDate as NSDate
+            myItem.workDate = adjustedWorkDate as NSDate
             myItem.shiftDescription = shiftDescription
             myItem.startTime = startTime as NSDate
             myItem.endTime = endTime as NSDate
             myItem.teamID = Int64(teamID)
-            myItem.weekEndDate = weekEndDate as NSDate
+            myItem.weekEndDate = adjustedWEDate as NSDate
+            myItem.status = status
+            myItem.shiftLineID = Int64(shiftLineID)
+            myItem.rateID = Int64(rateID)
             
             if updateType == "CODE"
             {
@@ -342,7 +628,10 @@ extension coreDatabase
             myItem.shiftDescription = shiftDescription
             myItem.startTime = startTime as NSDate
             myItem.endTime = endTime as NSDate
-            
+            myItem.status = status
+            myItem.shiftLineID = Int64(shiftLineID)
+            myItem.rateID = Int64(rateID)
+
             if updateType == "CODE"
             {
                 myItem.updateTime =  NSDate()
@@ -370,19 +659,32 @@ extension coreDatabase
                        endTime: Date,
                        teamID: Int,
                        weekEndDate: Date,
+                       status: String,
+                       shiftLineID: Int,
+                       rateID: Int,
                         updateTime: Date =  Date(), updateType: String = "CODE")
     {
+        // get the current calendar
+        let calendar = Calendar.current
+        // get the start of the day of the selected date
+        let adjustedWorkDate = calendar.startOfDay(for: workDate)
+        // get the start of the day of the selected date
+        let adjustedWEDate = calendar.startOfDay(for: weekEndDate)
+        
         let myItem = Shifts(context: objectContext)
         myItem.shiftID = Int64(shiftID)
         myItem.projectID = Int64(projectID)
         myItem.personID = Int64(personID)
-        myItem.workDate = workDate as NSDate
+        myItem.workDate = adjustedWorkDate as NSDate
         myItem.shiftDescription = shiftDescription
         myItem.startTime = startTime as NSDate
         myItem.endTime = endTime as NSDate
         myItem.teamID = Int64(teamID)
-        myItem.weekEndDate = weekEndDate as NSDate
-        
+        myItem.weekEndDate = adjustedWEDate as NSDate
+        myItem.status = status
+        myItem.shiftLineID = Int64(shiftLineID)
+        myItem.rateID = Int64(rateID)
+
         if updateType == "CODE"
         {
             myItem.updateTime =  NSDate()
@@ -415,9 +717,16 @@ extension coreDatabase
     {
         let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
         
+        // get the current calendar
+        let calendar = Calendar.current
+        // get the start of the day of the selected date
+        let startDate = calendar.startOfDay(for: WEDate)
+        // get the start of the day after the selected date
+        let endDate = calendar.date(byAdding: .day, value: 1, to: startDate)!
+        
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(weekEndDate == %@) AND (teamID == \(teamID)) && (updateType != \"Delete\")", WEDate as CVarArg)
+        let predicate = NSPredicate(format: "(weekEndDate >= %@) AND (weekEndDate <= %@) AND (teamID == \(teamID)) && (updateType != \"Delete\")", startDate as CVarArg, endDate as CVarArg)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -720,6 +1029,7 @@ extension CloudKitInteraction
         
         operation.recordFetchedBlock = { (record) in
             let shiftDescription = record.object(forKey: "shiftDescription") as! String
+            let status = record.object(forKey: "status") as! String
             
             var shiftID: Int = 0
             if record.object(forKey: "shiftID") != nil
@@ -727,6 +1037,18 @@ extension CloudKitInteraction
                 shiftID = record.object(forKey: "shiftID") as! Int
             }
 
+            var rateID: Int = 0
+            if record.object(forKey: "rateID") != nil
+            {
+                rateID = record.object(forKey: "rateID") as! Int
+            }
+            
+            var shiftLineID: Int = 0
+            if record.object(forKey: "shiftLineID") != nil
+            {
+                shiftLineID = record.object(forKey: "shiftLineID") as! Int
+            }
+            
             var projectID: Int = 0
             if record.object(forKey: "projectID") != nil
             {
@@ -789,7 +1111,10 @@ extension CloudKitInteraction
                                                startTime: startTime,
                                                endTime: endTime,
                                                teamID: teamID,
-                                               weekEndDate: weekEndDate
+                                               weekEndDate: weekEndDate,
+                                               status: status,
+                                               shiftLineID: shiftLineID,
+                                               rateID: rateID
                                                 , updateTime: updateTime, updateType: updateType)
             
             usleep(useconds_t(self.sleepTime))
@@ -825,10 +1150,13 @@ extension CloudKitInteraction
                     let record = records!.first// as! CKRecord
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
-                    
+ 
                     record!.setValue(sourceRecord.personID, forKey: "personID")
                     record!.setValue(sourceRecord.startTime, forKey: "startTime")
                     record!.setValue(sourceRecord.endTime, forKey: "endTime")
+                    record!.setValue(sourceRecord.status, forKey: "status")
+                    record!.setValue(sourceRecord.shiftLineID, forKey: "shiftLineID")
+                    record!.setValue(sourceRecord.rateID, forKey: "rateID")
                     
                     if sourceRecord.updateTime != nil
                     {
@@ -862,7 +1190,10 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.startTime, forKey: "startTime")
                     record.setValue(sourceRecord.endTime, forKey: "endTime")
                     record.setValue(sourceRecord.weekEndDate, forKey: "weekEndDate")
-                    
+                    record.setValue(sourceRecord.status, forKey: "status")
+                    record.setValue(sourceRecord.shiftLineID, forKey: "shiftLineID")
+                    record.setValue(sourceRecord.rateID, forKey: "rateID")
+
                     record.setValue(teamID, forKey: "teamID")
                     
                     if sourceRecord.updateTime != nil
@@ -894,11 +1225,24 @@ extension CloudKitInteraction
     func updateShiftsRecord(_ sourceRecord: CKRecord)
     {
         let shiftDescription = sourceRecord.object(forKey: "shiftDescription") as! String
-        
+        let status = sourceRecord.object(forKey: "status") as! String
+
         var shiftID: Int = 0
         if sourceRecord.object(forKey: "shiftID") != nil
         {
             shiftID = sourceRecord.object(forKey: "shiftID") as! Int
+        }
+        
+        var rateID: Int = 0
+        if sourceRecord.object(forKey: "rateID") != nil
+        {
+            rateID = sourceRecord.object(forKey: "rateID") as! Int
+        }
+        
+        var shiftLineID: Int = 0
+        if sourceRecord.object(forKey: "shiftLineID") != nil
+        {
+            shiftLineID = sourceRecord.object(forKey: "shiftLineID") as! Int
         }
         
         var projectID: Int = 0
@@ -963,7 +1307,10 @@ extension CloudKitInteraction
                                         startTime: startTime,
                                         endTime: endTime,
                                         teamID: teamID,
-                                        weekEndDate: weekEndDate
+                                        weekEndDate: weekEndDate,
+                                        status: status,
+                                        shiftLineID: shiftLineID,
+                                        rateID: rateID
                                          , updateTime: updateTime, updateType: updateType)
     }
 }

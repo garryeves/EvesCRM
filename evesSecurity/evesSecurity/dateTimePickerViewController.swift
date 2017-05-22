@@ -18,6 +18,10 @@ class dateTimePickerView: UIViewController
     var source: String?
     var delegate: MyPickerDelegate?
     var showTimes: Bool = true
+    var showDates: Bool = true
+    var minutesInterval: Int = 1
+    var minimumDate: Date!
+    var maximumDate: Date!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,11 +31,30 @@ class dateTimePickerView: UIViewController
      
         if showTimes
         {
-            datePicker.datePickerMode = .dateAndTime
+            if showDates
+            {
+                datePicker.datePickerMode = .dateAndTime
+            }
+            else
+            {
+                datePicker.datePickerMode = .time
+            }
         }
         else
         {
             datePicker.datePickerMode = .date
+        }
+        
+        datePicker.minuteInterval = minutesInterval
+        
+        if minimumDate != nil
+        {
+            datePicker.minimumDate = minimumDate
+        }
+        
+        if maximumDate != nil
+        {
+            datePicker.maximumDate = maximumDate
         }
         
         if currentDate != nil

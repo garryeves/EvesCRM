@@ -269,8 +269,11 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
         displayList.removeAll()
         
         displayList.append("")
-        displayList.append("Monthly")
+        displayList.append("Annualy")
         displayList.append("At Completion")
+        displayList.append("Milestones")
+        displayList.append("Monthly")
+        displayList.append("Quarterly")
         
         let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
         pickerView.modalPresentationStyle = .popover

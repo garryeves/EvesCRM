@@ -27,7 +27,8 @@ class people: NSObject
                                   gender: myItem.gender!,
                                   note: myItem.note!,
                                   clientID: Int(myItem.clientID),
-                                  projectID: Int(myItem.projectID)
+                                  projectID: Int(myItem.projectID),
+                                  canRoster: myItem.canRoster!
                                    )
             myPeople.append(myObject)
         }
@@ -46,7 +47,8 @@ class people: NSObject
                                   gender: myItem.gender!,
                                   note: myItem.note!,
                                   clientID: Int(myItem.clientID),
-                                  projectID: Int(myItem.projectID)
+                                  projectID: Int(myItem.projectID),
+                                  canRoster: myItem.canRoster!
             )
             myPeople.append(myObject)
         }
@@ -65,7 +67,8 @@ class people: NSObject
                                   gender: myItem.gender!,
                                   note: myItem.note!,
                                   clientID: Int(myItem.clientID),
-                                  projectID: Int(myItem.projectID)
+                                  projectID: Int(myItem.projectID),
+                                  canRoster: myItem.canRoster!
             )
             myPeople.append(myObject)
         }
@@ -93,6 +96,7 @@ class person: NSObject
     fileprivate var myContacts: personContacts!
     fileprivate var myAddInfo: personAddInfoEntries!
     fileprivate var myTeamID: Int = 0
+    fileprivate var myCanRoster: String = ""
     
     var personID: Int
     {
@@ -244,6 +248,18 @@ class person: NSObject
         }
     }
     
+    var canRoster: String
+    {
+        get
+        {
+            return myCanRoster
+        }
+        set
+        {
+            myCanRoster = newValue
+        }
+    }
+    
     init(teamID: Int)
     {
         super.init()
@@ -269,6 +285,7 @@ class person: NSObject
             myNote = myItem.note!
             myClientID = Int(myItem.clientID)
             myProjectID = Int(myItem.projectID)
+            myCanRoster = myItem.canRoster!
         }
     }
     
@@ -279,7 +296,8 @@ class person: NSObject
          gender: String,
          note: String,
          clientID: Int,
-         projectID: Int
+         projectID: Int,
+         canRoster: String
          )
     {
         super.init()
@@ -292,6 +310,7 @@ class person: NSObject
         myNote = note
         myClientID = clientID
         myProjectID = projectID
+        myCanRoster = canRoster
     }
     
     func save()
@@ -303,7 +322,8 @@ class person: NSObject
                                          gender: myGender,
                                          note: myNote,
                                          clientID: myClientID,
-                                         projectID: myProjectID
+                                         projectID: myProjectID,
+                                         canRoster: myCanRoster
                                          )
     }
     
@@ -380,6 +400,7 @@ extension coreDatabase
                     note: String,
                     clientID: Int,
                     projectID: Int,
+                    canRoster: String,
                      updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myItem: Person!
@@ -397,6 +418,7 @@ extension coreDatabase
             myItem.note = note
             myItem.clientID = Int64(clientID)
             myItem.projectID = Int64(projectID)
+            myItem.canRoster = canRoster
             
             if updateType == "CODE"
             {
@@ -419,6 +441,7 @@ extension coreDatabase
             myItem.note = note
             myItem.clientID = Int64(clientID)
             myItem.projectID = Int64(projectID)
+            myItem.canRoster = canRoster
             
             if updateType == "CODE"
             {
@@ -446,6 +469,7 @@ extension coreDatabase
                        note: String,
                        clientID: Int,
                        projectID: Int,
+                       canRoster: String,
                         updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myItem = Person(context: objectContext)
@@ -457,6 +481,7 @@ extension coreDatabase
         myItem.note = note
         myItem.clientID = Int64(clientID)
         myItem.projectID = Int64(projectID)
+        myItem.canRoster = canRoster
         
         if updateType == "CODE"
         {
@@ -694,6 +719,33 @@ extension coreDatabase
         
         saveContext()
     }
+    
+    func quickFixPerson()
+    {
+        let fetchRequest2 = NSFetchRequest<Person>(entityName: "Person")
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults2 = try objectContext.fetch(fetchRequest2)
+            for myItem in fetchResults2
+            {
+                myItem.canRoster = ""
+                
+                myItem.updateTime =  NSDate()
+                if myItem.updateType != "Add"
+                {
+                    myItem.updateType = "Update"
+                }
+                
+                saveContext()
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+    }
 }
 
 extension CloudKitInteraction
@@ -764,7 +816,8 @@ extension CloudKitInteraction
             let name = record.object(forKey: "name") as! String
             let gender = record.object(forKey: "gender") as! String
             let note = record.object(forKey: "note") as! String
-            
+            let canRoster = record.object(forKey: "canRoster") as! String
+
             var personID: Int = 0
             if record.object(forKey: "personID") != nil
             {
@@ -813,7 +866,8 @@ extension CloudKitInteraction
                                                 gender: gender,
                                                 note: note,
                                                 clientID: clientID,
-                                                projectID: projectID
+                                                projectID: projectID,
+                                                canRoster: canRoster
                                                 , updateTime: updateTime, updateType: updateType)
             
             usleep(useconds_t(self.sleepTime))
@@ -856,6 +910,7 @@ extension CloudKitInteraction
                     record!.setValue(sourceRecord.note, forKey: "note")
                     record!.setValue(sourceRecord.clientID, forKey: "clientID")
                     record!.setValue(sourceRecord.projectID, forKey: "projectID")
+                    record!.setValue(sourceRecord.canRoster, forKey: "canRoster")
                     
                     if sourceRecord.updateTime != nil
                     {
@@ -888,6 +943,7 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.note, forKey: "note")
                     record.setValue(sourceRecord.clientID, forKey: "clientID")
                     record.setValue(sourceRecord.projectID, forKey: "projectID")
+                    record.setValue(sourceRecord.canRoster, forKey: "canRoster")
                     
                     record.setValue(teamID, forKey: "teamID")
                     
@@ -922,6 +978,7 @@ extension CloudKitInteraction
         let name = sourceRecord.object(forKey: "name") as! String
         let gender = sourceRecord.object(forKey: "gender") as! String
         let note = sourceRecord.object(forKey: "note") as! String
+        let canRoster = sourceRecord.object(forKey: "canRoster") as! String
 
         var personID: Int = 0
         if sourceRecord.object(forKey: "personID") != nil
@@ -972,7 +1029,8 @@ extension CloudKitInteraction
                                          gender: gender,
                                          note: note,
                                          clientID: clientID,
-                                         projectID: projectID
+                                         projectID: projectID,
+                                         canRoster: canRoster
                                          , updateTime: updateTime, updateType: updateType)
     }
 }
