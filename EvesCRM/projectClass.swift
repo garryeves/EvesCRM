@@ -14,9 +14,11 @@ class projects: NSObject
 {
     fileprivate var myProjects:[project] = Array()
     
-    init(clientID: Int)
+    init(clientID: Int, type: String = "")
     {
-        for myItem in myDatabaseConnection.getProjectsForClient(clientID)
+        super.init()
+        
+        for myItem in myDatabaseConnection.getProjects(clientID: clientID, type: type)
         {
             let myObject = project(projectID: Int(myItem.projectID),
                                     projectEndDate: myItem.projectEndDate! as Date,
@@ -37,30 +39,20 @@ class projects: NSObject
                                     clientDept: myItem.clientDept!,
                                     invoicingFrequency: myItem.invoicingFrequency!,
                                     invoicingDay: Int(myItem.invoicingDay),
-                                    daysToPay: Int(myItem.daysToPay))
+                                    daysToPay: Int(myItem.daysToPay),
+                                    type: myItem.type!)
                 
             myProjects.append(myObject)
         }
         
-        if myProjects.count > 0
-        {
-            myProjects.sort
-            {
-                if $0.clientID == $1.clientID
-                {
-                    return $0.projectName < $1.projectName
-                }
-                else
-                {
-                    return $0.clientID < $1.clientID
-                }
-            }
-        }
+        sortArrayByClient()
     }
     
-    init(teamID: Int)
+    init(teamID: Int, type: String = "")
     {
-        for myItem in myDatabaseConnection.getInDateProjectsForTeam(teamID)
+        super.init()
+        
+        for myItem in myDatabaseConnection.getProjects(teamID: teamID, type: type)
         {
             let myObject = project(projectID: Int(myItem.projectID),
                                    projectEndDate: myItem.projectEndDate! as Date,
@@ -81,27 +73,64 @@ class projects: NSObject
                                    clientDept: myItem.clientDept!,
                                    invoicingFrequency: myItem.invoicingFrequency!,
                                    invoicingDay: Int(myItem.invoicingDay),
-                                   daysToPay: Int(myItem.daysToPay))
+                                   daysToPay: Int(myItem.daysToPay),
+                                   type: myItem.type!)
+
             
             myProjects.append(myObject)
         }
         
+        sortArrayByClient()
+    }
+    
+    private func sortArrayByName()
+    {
         if myProjects.count > 0
         {
             myProjects.sort
             {
-                if $0.clientID == $1.clientID
+                if $0.projectName == $1.projectName
                 {
-                    return $0.projectName < $1.projectName
+                    return $0.clientID < $1.clientID
                 }
                 else
                 {
-                    return $0.clientID < $1.clientID
+                    return $0.projectName < $1.projectName
                 }
             }
         }
     }
 
+    private func sortArrayByClient()
+    {
+        if myProjects.count > 0
+        {
+            myProjects.sort
+                {
+                    if $0.clientID == $1.clientID
+                    {
+                        return $0.projectName < $1.projectName
+                    }
+                    else
+                    {
+                        return $0.clientID < $1.clientID
+                    }
+            }
+        }
+    }
+    
+    func sortOrder(by: String)
+    {
+        if by == "Name"
+        {
+            sortArrayByName()
+        }
+        else
+        {
+            sortArrayByClient()
+        }
+    }
+    
     var projects: [project]
     {
         get
@@ -136,6 +165,7 @@ class project: NSObject // 10k level
     fileprivate var myInvoicingFrequency: String = ""
     fileprivate var myInvoicingDay: Int = 0
     fileprivate var myDaysToPay: Int = 0
+    fileprivate var myType: String = ""
     
     var projectEndDate: Date
     {
@@ -147,6 +177,19 @@ class project: NSObject // 10k level
         set
         {
             myProjectEndDate = newValue
+        }
+    }
+    
+    var type: String
+    {
+        get
+        {
+            
+            return myType
+        }
+        set
+        {
+            myType = newValue
         }
     }
     
@@ -473,6 +516,7 @@ class project: NSObject // 10k level
         myProjectStartDate = getDefaultDate() as Date!
         myLastReviewDate = getDefaultDate() as Date!
         myTeamID = teamID
+        myType = type
         
         save()
     }
@@ -506,6 +550,7 @@ class project: NSObject // 10k level
             myInvoicingFrequency = myProject.invoicingFrequency!
             myInvoicingDay = Int(myProject.invoicingDay)
             myDaysToPay = Int(myProject.daysToPay)
+            myType = myProject.type!
             
             // load team members
             
@@ -517,7 +562,7 @@ class project: NSObject // 10k level
         }
     }
 
-    init(projectID: Int, projectEndDate: Date, projectName: String, projectStartDate: Date, projectStatus: String, reviewFrequency: Int, lastReviewDate: Date, GTDItemID: Int, repeatInterval: Int, repeatType: String, repeatBase: String, teamID: Int, clientID: Int, note: String, reviewPeriod: String, predecessor: Int, clientDept: String, invoicingFrequency: String, invoicingDay: Int, daysToPay: Int)
+    init(projectID: Int, projectEndDate: Date, projectName: String, projectStartDate: Date, projectStatus: String, reviewFrequency: Int, lastReviewDate: Date, GTDItemID: Int, repeatInterval: Int, repeatType: String, repeatBase: String, teamID: Int, clientID: Int, note: String, reviewPeriod: String, predecessor: Int, clientDept: String, invoicingFrequency: String, invoicingDay: Int, daysToPay: Int, type: String)
     {
         super.init()
         myProjectEndDate = projectEndDate
@@ -540,6 +585,7 @@ class project: NSObject // 10k level
         myInvoicingFrequency = invoicingFrequency
         myInvoicingDay = invoicingDay
         myDaysToPay = daysToPay
+        myType = type
         
         // load team members
         
@@ -615,7 +661,8 @@ class project: NSObject // 10k level
                                          clientDept: myClientDept,
                                          invoicingFrequency: myInvoicingFrequency,
                                          invoicingDay: myInvoicingDay,
-                                         daysToPay: myDaysToPay)
+                                         daysToPay: myDaysToPay,
+                                         type: myType)
         
         // Save Team Members
         
@@ -694,6 +741,7 @@ class project: NSObject // 10k level
             // Create new Project
             
             let newProject = project(teamID: myTeamID)
+            newProject.type = myType
             newProject.projectEndDate = tempEndDate
             newProject.projectName = myProjectName
             newProject.projectStartDate = tempStartDate
@@ -902,18 +950,25 @@ extension coreDatabase
         }
     }
 
-    func getProjects(_ teamID: Int, archiveFlag: Bool = false) -> [Projects]
+    func getProjects(teamID: Int, type: String, archiveFlag: Bool = false) -> [Projects]
     {
         let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        
+
+        var predicate: NSPredicate
+
         if !archiveFlag
         {
-            var predicate: NSPredicate
-            
-            predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID))")
+            if type == ""
+            {
+                predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID))")
+            }
+            else
+            {
+                predicate = NSPredicate(format: "(type == \"\(type)\") AND (projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID))")
+            }
             
             // Set the predicate on the fetch request
             fetchRequest.predicate = predicate
@@ -922,15 +977,18 @@ extension coreDatabase
         {
             // Create a new predicate that filters out any object that
             // doesn't have a title of "Best Language" exactly.
-            let predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(teamID))")
+            if type == ""
+            {
+                predicate = NSPredicate(format: "(updateType != \"Delete\") && (teamID == \(teamID))")
+            }
+            else
+            {
+                predicate = NSPredicate(format: "(type == \"\(type)\") AND (updateType != \"Delete\") && (teamID == \(teamID))")
+            }
             
             // Set the predicate on the fetch request
             fetchRequest.predicate = predicate
         }
-        
-        let sortDescriptor = NSSortDescriptor(key: "projectName", ascending: true)
-        let sortDescriptors = [sortDescriptor]
-        fetchRequest.sortDescriptors = sortDescriptors
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
@@ -971,10 +1029,6 @@ extension coreDatabase
             fetchRequest.predicate = predicate
         }
         
-        let sortDescriptor = NSSortDescriptor(key: "projectName", ascending: true)
-        let sortDescriptors = [sortDescriptor]
-        fetchRequest.sortDescriptors = sortDescriptors
-        
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
@@ -989,21 +1043,25 @@ extension coreDatabase
     }
 
     
-    func getProjectsForClient(_ clientID: Int) -> [Projects]
+    func getProjects(clientID: Int, type: String) -> [Projects]
     {
         let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         
-        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (clientID == \(clientID))")
-            
+        var predicate: NSPredicate
+        
+        if type == ""
+        {
+            predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (clientID == \(clientID))")
+        }
+        else
+        {
+            predicate = NSPredicate(format: "(type == \"\(type)\") AND (projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (clientID == \(clientID))")
+        }
             // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
-        
-        let sortDescriptor = NSSortDescriptor(key: "projectName", ascending: true)
-        let sortDescriptors = [sortDescriptor]
-        fetchRequest.sortDescriptors = sortDescriptors
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
@@ -1018,7 +1076,7 @@ extension coreDatabase
         }
     }
 
-    func saveProject(_ projectID: Int, projectEndDate: Date, projectName: String, projectStartDate: Date, projectStatus: String, reviewFrequency: Int, lastReviewDate: Date, GTDItemID: Int, repeatInterval: Int, repeatType: String, repeatBase: String, teamID: Int, clientID: Int, note: String, reviewPeriod: String, predecessor: Int, clientDept: String, invoicingFrequency: String, invoicingDay: Int, daysToPay: Int, updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveProject(_ projectID: Int, projectEndDate: Date, projectName: String, projectStartDate: Date, projectStatus: String, reviewFrequency: Int, lastReviewDate: Date, GTDItemID: Int, repeatInterval: Int, repeatType: String, repeatBase: String, teamID: Int, clientID: Int, note: String, reviewPeriod: String, predecessor: Int, clientDept: String, invoicingFrequency: String, invoicingDay: Int, daysToPay: Int, type: String, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myProject: Projects!
         
@@ -1047,6 +1105,7 @@ extension coreDatabase
             myProject.invoicingFrequency = invoicingFrequency
             myProject.invoicingDay = Int64(invoicingDay)
             myProject.daysToPay = Int64(daysToPay)
+            myProject.type = type
             
             if updateType == "CODE"
             {
@@ -1081,6 +1140,7 @@ extension coreDatabase
             myProject.invoicingFrequency = invoicingFrequency
             myProject.invoicingDay = Int64(invoicingDay)
             myProject.daysToPay = Int64(daysToPay)
+            myProject.type = type
             
             if updateType == "CODE"
             {
@@ -1100,7 +1160,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceProject(_ projectID: Int, projectEndDate: Date, projectName: String, projectStartDate: Date, projectStatus: String, reviewFrequency: Int, lastReviewDate: Date, GTDItemID: Int, repeatInterval: Int, repeatType: String, repeatBase: String, teamID: Int, clientID: Int, note: String, reviewPeriod: String, predecessor: Int, clientDept: String, invoicingFrequency: String, invoicingDay: Int, daysToPay: Int, updateTime: Date =  Date(), updateType: String = "CODE")
+    func replaceProject(_ projectID: Int, projectEndDate: Date, projectName: String, projectStartDate: Date, projectStatus: String, reviewFrequency: Int, lastReviewDate: Date, GTDItemID: Int, repeatInterval: Int, repeatType: String, repeatBase: String, teamID: Int, clientID: Int, note: String, reviewPeriod: String, predecessor: Int, clientDept: String, invoicingFrequency: String, invoicingDay: Int, daysToPay: Int, type: String, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         
         let myProject = Projects(context: objectContext)
@@ -1124,6 +1184,7 @@ extension coreDatabase
         myProject.invoicingFrequency = invoicingFrequency
         myProject.invoicingDay = Int64(invoicingDay)
         myProject.daysToPay = Int64(daysToPay)
+        myProject.type = type
         
         if updateType == "CODE"
         {
@@ -1316,10 +1377,7 @@ extension coreDatabase
             let fetchResults = try objectContext.fetch(fetchRequest)
             for myProject in fetchResults
             {
-                myProject.clientDept = ""
-                myProject.invoicingFrequency = ""
-                myProject.invoicingDay = 0
-                myProject.daysToPay = 0
+                myProject.type = "Regular"
                 myProject.updateTime = NSDate()
                 myProject.updateType = "Update"
                 saveContext()
@@ -1384,19 +1442,6 @@ extension CloudKitInteraction
             sem.signal()
         })
         sem.wait()
-        
-        var myRecordList2: [CKRecordID] = Array()
-        let predicate2: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
-        let query2: CKQuery = CKQuery(recordType: "ProjectNote", predicate: predicate2)
-        publicDB.perform(query2, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
-            for record in results!
-            {
-                myRecordList2.append(record.recordID)
-            }
-            self.performPublicDelete(myRecordList2)
-            sem.signal()
-        })
-        sem.wait()
     }
 
     func replaceProjectsInCoreData()
@@ -1433,6 +1478,7 @@ extension CloudKitInteraction
             let note = record.object(forKey: "note") as! String
             let reviewPeriod = record.object(forKey: "reviewPeriod") as! String
             let predecessor = record.object(forKey: "predecessor") as! Int
+            let type = record.object(forKey: "type") as! String
             
             var clientID: Int = 0
             
@@ -1455,7 +1501,7 @@ extension CloudKitInteraction
                 daysToPay = record.object(forKey: "daysToPay") as! Int
             }
 
-            myDatabaseConnection.replaceProject(projectID, projectEndDate: projectEndDate, projectName: projectName, projectStartDate: projectStartDate, projectStatus: projectStatus, reviewFrequency: reviewFrequency, lastReviewDate: lastReviewDate, GTDItemID: areaID, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, teamID: teamID, clientID: clientID, note: note, reviewPeriod: reviewPeriod, predecessor: predecessor, clientDept: clientDept, invoicingFrequency: invoicingFrequency, invoicingDay: invoicingDay, daysToPay:daysToPay, updateTime: updateTime, updateType: updateType)
+            myDatabaseConnection.replaceProject(projectID, projectEndDate: projectEndDate, projectName: projectName, projectStartDate: projectStartDate, projectStatus: projectStatus, reviewFrequency: reviewFrequency, lastReviewDate: lastReviewDate, GTDItemID: areaID, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, teamID: teamID, clientID: clientID, note: note, reviewPeriod: reviewPeriod, predecessor: predecessor, clientDept: clientDept, invoicingFrequency: invoicingFrequency, invoicingDay: invoicingDay, daysToPay:daysToPay, type: type, updateTime: updateTime, updateType: updateType)
 
             usleep(useconds_t(self.sleepTime))
         }
@@ -1510,7 +1556,8 @@ extension CloudKitInteraction
                     record!.setValue(sourceRecord.invoicingFrequency, forKey: "invoicingFrequency")
                     record!.setValue(sourceRecord.invoicingDay, forKey: "invoicingDay")
                     record!.setValue(sourceRecord.daysToPay, forKey: "daysToPay")
-                    
+                    record!.setValue(sourceRecord.type, forKey: "type")
+
                     // Save this record again
                     self.publicDB.save(record!, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
@@ -1554,7 +1601,8 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.invoicingFrequency, forKey: "invoicingFrequency")
                     record.setValue(sourceRecord.invoicingDay, forKey: "invoicingDay")
                     record.setValue(sourceRecord.daysToPay, forKey: "daysToPay")
-
+                    record.setValue(sourceRecord.type, forKey: "type")
+                    
                     record.setValue(teamID, forKey: "teamID")
                     
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
@@ -1606,7 +1654,8 @@ extension CloudKitInteraction
         let note = sourceRecord.object(forKey: "note") as! String
         let reviewPeriod = sourceRecord.object(forKey: "reviewPeriod") as! String
         let predecessor = sourceRecord.object(forKey: "predecessor") as! Int
-        
+        let type = sourceRecord.object(forKey: "type") as! String
+
         var clientID: Int = 0
         
         if sourceRecord.object(forKey: "clientID") != nil
@@ -1628,6 +1677,6 @@ extension CloudKitInteraction
             daysToPay = sourceRecord.object(forKey: "daysToPay") as! Int
         }
         
-        myDatabaseConnection.saveProject(projectID, projectEndDate: projectEndDate, projectName: projectName, projectStartDate: projectStartDate, projectStatus: projectStatus, reviewFrequency: reviewFrequency, lastReviewDate: lastReviewDate, GTDItemID: areaID, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, teamID: teamID, clientID: clientID, note: note, reviewPeriod: reviewPeriod, predecessor: predecessor, clientDept: clientDept, invoicingFrequency: invoicingFrequency, invoicingDay: invoicingDay, daysToPay:daysToPay, updateTime: updateTime, updateType: updateType)
+        myDatabaseConnection.saveProject(projectID, projectEndDate: projectEndDate, projectName: projectName, projectStartDate: projectStartDate, projectStatus: projectStatus, reviewFrequency: reviewFrequency, lastReviewDate: lastReviewDate, GTDItemID: areaID, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, teamID: teamID, clientID: clientID, note: note, reviewPeriod: reviewPeriod, predecessor: predecessor, clientDept: clientDept, invoicingFrequency: invoicingFrequency, invoicingDay: invoicingDay, daysToPay:daysToPay, type: type, updateTime: updateTime, updateType: updateType)
     }
 }

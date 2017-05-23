@@ -84,7 +84,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hH3-G6-f0e" userLabel="lblName">
-                                                    <rect key="frame" x="163" y="8" width="244" height="27.5"/>
+                                                    <rect key="frame" x="163" y="8" width="139" height="27.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
@@ -135,6 +135,15 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ips-2q-75p" userLabel="lblType">
+                                                    <rect key="frame" x="307" y="8" width="100" height="27.5"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="100" id="js4-mR-jkV"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="nTb-W5-FGQ" firstAttribute="leading" secondItem="8gv-Xy-VwJ" secondAttribute="leadingMargin" id="5Ll-74-o4m"/>
@@ -145,16 +154,19 @@
                                                 <constraint firstAttribute="bottomMargin" secondItem="hH3-G6-f0e" secondAttribute="bottom" id="Hib-OC-SJs"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="hrG-Fn-2au" secondAttribute="trailing" id="Kf2-Jl-iIV"/>
                                                 <constraint firstAttribute="bottomMargin" secondItem="d4C-d5-9hl" secondAttribute="bottom" id="NAP-RJ-7aJ"/>
+                                                <constraint firstItem="Ips-2q-75p" firstAttribute="top" secondItem="8gv-Xy-VwJ" secondAttribute="topMargin" id="NEr-S2-0wr"/>
                                                 <constraint firstItem="iaU-d1-bsv" firstAttribute="top" secondItem="8gv-Xy-VwJ" secondAttribute="topMargin" id="P1E-he-aXc"/>
                                                 <constraint firstItem="hrG-Fn-2au" firstAttribute="leading" secondItem="iaU-d1-bsv" secondAttribute="trailing" constant="5" id="XLI-Lo-eyR"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="Ips-2q-75p" secondAttribute="bottom" id="a6h-ih-EyZ"/>
                                                 <constraint firstItem="d4C-d5-9hl" firstAttribute="leading" secondItem="11n-fM-eVs" secondAttribute="trailing" constant="5" id="fZ4-2x-Nda"/>
                                                 <constraint firstItem="hH3-G6-f0e" firstAttribute="leading" secondItem="nTb-W5-FGQ" secondAttribute="trailing" constant="5" id="kLk-T2-HHE"/>
                                                 <constraint firstAttribute="bottomMargin" secondItem="11n-fM-eVs" secondAttribute="bottom" id="kSG-7l-0Du"/>
                                                 <constraint firstItem="hH3-G6-f0e" firstAttribute="top" secondItem="8gv-Xy-VwJ" secondAttribute="topMargin" id="lm4-J7-Zlw"/>
-                                                <constraint firstItem="11n-fM-eVs" firstAttribute="leading" secondItem="hH3-G6-f0e" secondAttribute="trailing" constant="5" id="nQx-Cx-ifZ"/>
+                                                <constraint firstItem="11n-fM-eVs" firstAttribute="leading" secondItem="Ips-2q-75p" secondAttribute="trailing" constant="5" id="m9r-S7-8pZ"/>
                                                 <constraint firstItem="d4C-d5-9hl" firstAttribute="top" secondItem="8gv-Xy-VwJ" secondAttribute="topMargin" id="pEs-sF-dce"/>
                                                 <constraint firstItem="nTb-W5-FGQ" firstAttribute="top" secondItem="8gv-Xy-VwJ" secondAttribute="topMargin" id="tAa-rH-Nlp"/>
                                                 <constraint firstItem="iaU-d1-bsv" firstAttribute="leading" secondItem="d4C-d5-9hl" secondAttribute="trailing" constant="5" id="wVu-JS-C9H"/>
+                                                <constraint firstItem="Ips-2q-75p" firstAttribute="leading" secondItem="hH3-G6-f0e" secondAttribute="trailing" constant="5" id="x2w-gK-Xf2"/>
                                                 <constraint firstItem="hrG-Fn-2au" firstAttribute="top" secondItem="8gv-Xy-VwJ" secondAttribute="topMargin" id="z05-zA-IJe"/>
                                             </constraints>
                                         </tableViewCellContentView>
@@ -164,6 +176,7 @@
                                             <outlet property="lblEndDate" destination="iaU-d1-bsv" id="iC3-Qi-ah9"/>
                                             <outlet property="lblName" destination="hH3-G6-f0e" id="Eqa-UE-EOR"/>
                                             <outlet property="lblStartDate" destination="11n-fM-eVs" id="TXB-xD-Z4u"/>
+                                            <outlet property="lblType" destination="Ips-2q-75p" id="lf5-1j-M43"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -185,9 +198,17 @@
                                     <action selector="btnRoster:" destination="c4c-EF-mMl" eventType="touchUpInside" id="rD6-Wo-mae"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="juK-oK-HaW" userLabel="btnEvents">
+                                <rect key="frame" x="105" y="974" width="102" height="30"/>
+                                <state key="normal" title="Event Planning"/>
+                                <connections>
+                                    <action selector="btnEvents:" destination="c4c-EF-mMl" eventType="touchUpInside" id="pKq-u2-7Nr"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="juK-oK-HaW" firstAttribute="leading" secondItem="LOn-au-bgS" secondAttribute="trailing" constant="20" id="13W-3n-uEV"/>
                             <constraint firstItem="ogl-uy-hvp" firstAttribute="top" secondItem="tEQ-Uf-H1F" secondAttribute="bottom" constant="20" id="Ar1-yf-q4g"/>
                             <constraint firstItem="yqt-jc-Ra1" firstAttribute="leading" secondItem="vpA-Se-cFr" secondAttribute="leadingMargin" constant="20" id="Cd1-5s-aI3"/>
                             <constraint firstAttribute="trailingMargin" secondItem="EUi-sI-Zz4" secondAttribute="trailing" id="E0j-kE-YMv"/>
@@ -200,6 +221,7 @@
                             <constraint firstAttribute="trailingMargin" secondItem="yqt-jc-Ra1" secondAttribute="trailing" constant="20" id="Zbq-CF-UTy"/>
                             <constraint firstItem="EUi-sI-Zz4" firstAttribute="top" secondItem="T48-7S-xsl" secondAttribute="bottom" id="bCA-bE-yHQ"/>
                             <constraint firstItem="yqt-jc-Ra1" firstAttribute="top" secondItem="rzm-5y-Rny" secondAttribute="bottom" constant="20" id="bHM-XA-mCL"/>
+                            <constraint firstItem="juK-oK-HaW" firstAttribute="top" secondItem="yqt-jc-Ra1" secondAttribute="bottom" constant="20" id="bUF-Az-zTz"/>
                             <constraint firstItem="rzm-5y-Rny" firstAttribute="centerX" secondItem="vpA-Se-cFr" secondAttribute="centerX" id="jMo-EI-JjQ"/>
                             <constraint firstItem="LOn-au-bgS" firstAttribute="leading" secondItem="vpA-Se-cFr" secondAttribute="leadingMargin" constant="20" id="tbr-1W-coU"/>
                             <constraint firstItem="WP8-oZ-twa" firstAttribute="leading" secondItem="vpA-Se-cFr" secondAttribute="leadingMargin" constant="320" id="yFm-dV-ySw"/>
@@ -207,6 +229,7 @@
                     </view>
                     <connections>
                         <outlet property="btnClients" destination="WP8-oZ-twa" id="wMH-NE-Vln"/>
+                        <outlet property="btnEvents" destination="juK-oK-HaW" id="gFj-mZ-QoV"/>
                         <outlet property="btnPeople" destination="tEQ-Uf-H1F" id="Uga-IH-FdZ"/>
                         <outlet property="btnRoster" destination="LOn-au-bgS" id="Cmh-26-HXM"/>
                         <outlet property="btnSettings" destination="EUi-sI-Zz4" id="A2W-Tc-4Kl"/>

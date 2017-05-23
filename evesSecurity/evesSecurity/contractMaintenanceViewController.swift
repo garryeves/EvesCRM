@@ -25,6 +25,7 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
     @IBOutlet weak var txtInvoicingDay: UITextField!
     @IBOutlet weak var txtDaysToPay: UITextField!
     @IBOutlet weak var btnInvoicingFrequency: UIButton!
+    @IBOutlet weak var btnType: UIButton!
     
     var communicationDelegate: myCommunicationDelegate?
     var workingContract: project!
@@ -292,6 +293,34 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
         self.present(pickerView, animated: true, completion: nil)
     }
 
+    @IBAction func btnType(_ sender: UIButton)
+    {
+        displayList.removeAll()
+        
+        displayList.append("")
+        
+        for myItem in (currentUser.currentTeam?.getDropDown(dropDownType: "ProjectType"))!
+        {
+            displayList.append(myItem)
+        }
+        
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+        pickerView.modalPresentationStyle = .popover
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        pickerView.source = "type"
+        pickerView.delegate = self
+        pickerView.pickerValues = displayList
+        pickerView.preferredContentSize = CGSize(width: 300,height: 400)
+        
+        self.present(pickerView, animated: true, completion: nil)
+    }
+    
     func myPickerDidFinish(_ source: String, selectedItem:Int)
     {
         if source == "status"
@@ -316,6 +345,18 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
             else
             {
                 btnInvoicingFrequency.setTitle(workingContract.invoicingFrequency, for: .normal)
+            }
+        }
+        else if source == "type"
+        {
+            workingContract.type = displayList[selectedItem]
+            if workingContract.type == ""
+            {
+                btnType.setTitle("Set", for: .normal)
+            }
+            else
+            {
+                btnType.setTitle(workingContract.type, for: .normal)
             }
         }
     }
@@ -392,6 +433,15 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
             else
             {
                 btnInvoicingFrequency.setTitle(workingContract.invoicingFrequency, for: .normal)
+            }
+            
+            if workingContract.type == ""
+            {
+                btnType.setTitle("Set", for: .normal)
+            }
+            else
+            {
+                btnType.setTitle(workingContract.type, for: .normal)
             }
             
             ratesList = rates(projectID: workingContract.projectID)

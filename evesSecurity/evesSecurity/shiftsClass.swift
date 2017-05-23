@@ -31,13 +31,13 @@ class shifts: NSObject
     fileprivate var myShifts:[shift] = Array()
     fileprivate var myWeeklyShifts:[mergedShiftList] = Array()
     
-    init(teamID: Int, WEDate: Date)
+    init(teamID: Int, WEDate: Date, type: String)
     {
         super.init()
         
         myWeeklyShifts.removeAll()
         
-        for myItem in myDatabaseConnection.getShifts(teamID: teamID, WEDate: WEDate)
+        for myItem in myDatabaseConnection.getShifts(teamID: teamID, WEDate: WEDate, type: type)
         {
             let myObject = shift(shiftID: Int(myItem.shiftID),
                                  projectID: Int(myItem.projectID),
@@ -50,7 +50,8 @@ class shifts: NSObject
                                  weekEndDate: myItem.weekEndDate! as Date,
                                  status: myItem.status!,
                                  shiftLineID: Int(myItem.shiftLineID),
-                                 rateID: Int(myItem.rateID)
+                                 rateID: Int(myItem.rateID),
+                                 type: myItem.type!
             )
             myShifts.append(myObject)
         }
@@ -61,13 +62,13 @@ class shifts: NSObject
         }
     }
     
-    init(personID: Int, searchFrom: Date, searchTo: Date, teamID: Int)
+    init(personID: Int, searchFrom: Date, searchTo: Date, teamID: Int, type: String)
     {
         super.init()
         
         myWeeklyShifts.removeAll()
 
-        for myItem in myDatabaseConnection.getShifts(personID: personID, searchFrom: searchFrom, searchTo: searchTo, teamID: teamID)
+        for myItem in myDatabaseConnection.getShifts(personID: personID, searchFrom: searchFrom, searchTo: searchTo, teamID: teamID, type: type)
         {
             let myObject = shift(shiftID: Int(myItem.shiftID),
                                  projectID: Int(myItem.projectID),
@@ -80,7 +81,9 @@ class shifts: NSObject
                                  weekEndDate: myItem.weekEndDate! as Date,
                                  status: myItem.status!,
                                  shiftLineID: Int(myItem.shiftLineID),
-                                 rateID: Int(myItem.rateID)
+                                 rateID: Int(myItem.rateID),
+                                 type: myItem.type!
+
                                    )
             myShifts.append(myObject)
         }
@@ -91,13 +94,13 @@ class shifts: NSObject
         }
     }
     
-    init(projectID: Int, searchFrom: Date, searchTo: Date, teamID: Int)
+    init(projectID: Int, searchFrom: Date, searchTo: Date, teamID: Int, type: String)
     {
         super.init()
         
         myWeeklyShifts.removeAll()
 
-        for myItem in myDatabaseConnection.getShifts(projectID: projectID, searchFrom: searchFrom, searchTo: searchTo, teamID: teamID)
+        for myItem in myDatabaseConnection.getShifts(projectID: projectID, searchFrom: searchFrom, searchTo: searchTo, teamID: teamID, type: type)
         {
             let myObject = shift(shiftID: Int(myItem.shiftID),
                                  projectID: Int(myItem.projectID),
@@ -110,7 +113,9 @@ class shifts: NSObject
                                  weekEndDate: myItem.weekEndDate! as Date,
                                  status: myItem.status!,
                                  shiftLineID: Int(myItem.shiftLineID),
-                                 rateID: Int(myItem.rateID)
+                                 rateID: Int(myItem.rateID),
+                                 type: myItem.type!
+
             )
             myShifts.append(myObject)
         }
@@ -129,25 +134,22 @@ class shifts: NSObject
         {
             myShifts.sort
             {
-                print("Level 1 \($0.workDate) == \($1.workDate)")
                 // Because workdate has time it throws everything out
                 
-                if $0.workDate == $1.workDate
+                if $0.projectID == $1.projectID
                 {
-                    print("Level 2 \($0.projectID) == \($1.projectID)")
-                    if $0.projectID == $1.projectID
+                    if $0.shiftLineID == $1.shiftLineID
                     {
-                        print("Level 3 \($0.shiftLineID) == \($1.shiftLineID)")
-                        return $0.shiftLineID < $1.shiftLineID
+                        return $0.workDate < $1.workDate
                     }
                     else
                     {
-                        return $0.projectID < $1.projectID
+                        return $0.shiftLineID < $1.shiftLineID
                     }
                 }
                 else
                 {
-                    return $0.workDate < $1.workDate
+                    return $0.projectID < $1.projectID
                 }
             }
         }
@@ -169,7 +171,6 @@ class shifts: NSObject
         
         for myItem in myShifts
         {
-print("Desc = \(myItem.shiftDescription) - \(myItem.shiftLineID)")
             if shiftLineID != nil
             {
                 if shiftLineID != myItem.shiftLineID
@@ -293,6 +294,7 @@ class shift: NSObject
     fileprivate var myStatus: String = ""
     fileprivate var myShiftLineID: Int = 0
     fileprivate var myRateID: Int = 0
+    fileprivate var myType: String = ""
     
     var shiftID: Int
     {
@@ -315,6 +317,14 @@ class shift: NSObject
         get
         {
             return myProjectID
+        }
+    }
+    
+    var type: String
+    {
+        get
+        {
+            return myType
         }
     }
     
@@ -473,7 +483,7 @@ class shift: NSObject
     }
     
     
-    init(projectID: Int, workDate: Date, weekEndDate: Date, teamID: Int, shiftLineID: Int)
+    init(projectID: Int, workDate: Date, weekEndDate: Date, teamID: Int, shiftLineID: Int, type: String)
     {
         super.init()
         
@@ -484,6 +494,7 @@ class shift: NSObject
         myStatus = "Open"
         myWorkDate = workDate
         myShiftLineID = shiftLineID
+        myType = type
         
         save()
     }
@@ -507,6 +518,7 @@ class shift: NSObject
             myStatus = myItem.status!
             myShiftLineID = Int(myItem.shiftLineID)
             myRateID = Int(myItem.rateID)
+            myType = myItem.type!
         }
     }
     
@@ -521,7 +533,8 @@ class shift: NSObject
          weekEndDate: Date,
          status: String,
          shiftLineID: Int,
-         rateID: Int
+         rateID: Int,
+         type: String
          )
     {
         super.init()
@@ -538,6 +551,7 @@ class shift: NSObject
         myStatus = status
         myShiftLineID = shiftLineID
         myRateID = rateID
+        myType = type
     }
     
     func save()
@@ -555,7 +569,8 @@ class shift: NSObject
                                             weekEndDate: myWeekEndDate,
                                             status: myStatus,
                                             shiftLineID: myShiftLineID,
-                                            rateID: myRateID
+                                            rateID: myRateID,
+                                            type: myType
                                              )
         }
     }
@@ -580,6 +595,7 @@ extension coreDatabase
                     status: String,
                     shiftLineID: Int,
                     rateID: Int,
+                    type: String,
                      updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myItem: Shifts!
@@ -608,6 +624,7 @@ extension coreDatabase
             myItem.status = status
             myItem.shiftLineID = Int64(shiftLineID)
             myItem.rateID = Int64(rateID)
+            myItem.type = type
             
             if updateType == "CODE"
             {
@@ -662,6 +679,7 @@ extension coreDatabase
                        status: String,
                        shiftLineID: Int,
                        rateID: Int,
+                       type: String,
                         updateTime: Date =  Date(), updateType: String = "CODE")
     {
         // get the current calendar
@@ -684,6 +702,7 @@ extension coreDatabase
         myItem.status = status
         myItem.shiftLineID = Int64(shiftLineID)
         myItem.rateID = Int64(rateID)
+        myItem.type = type
 
         if updateType == "CODE"
         {
@@ -713,7 +732,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func getShifts(teamID: Int, WEDate: Date)->[Shifts]
+    func getShifts(teamID: Int, WEDate: Date, type: String)->[Shifts]
     {
         let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
         
@@ -726,7 +745,7 @@ extension coreDatabase
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(weekEndDate >= %@) AND (weekEndDate <= %@) AND (teamID == \(teamID)) && (updateType != \"Delete\")", startDate as CVarArg, endDate as CVarArg)
+        let predicate = NSPredicate(format: "(weekEndDate >= %@) AND (weekEndDate <= %@) AND (teamID == \(teamID)) AND (type == \"\(type)\") AND (updateType != \"Delete\")", startDate as CVarArg, endDate as CVarArg)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -747,13 +766,13 @@ extension coreDatabase
         }
     }
     
-    func getShifts(personID: Int, searchFrom: Date, searchTo: Date, teamID: Int)->[Shifts]
+    func getShifts(personID: Int, searchFrom: Date, searchTo: Date, teamID: Int, type: String)->[Shifts]
     {
         let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(personID == \(personID)) AND (workDate >= %@) AND (workDate <= %@) AND (teamID == \(teamID)) && (updateType != \"Delete\")", searchFrom as CVarArg, searchTo as CVarArg)
+        let predicate = NSPredicate(format: "(personID == \(personID)) AND (workDate >= %@) AND (workDate <= %@) AND (teamID == \(teamID)) AND (type == \"\(type)\") AND (updateType != \"Delete\")", searchFrom as CVarArg, searchTo as CVarArg)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -774,13 +793,13 @@ extension coreDatabase
         }
     }
     
-    func getShifts(projectID: Int, searchFrom: Date, searchTo: Date, teamID: Int)->[Shifts]
+    func getShifts(projectID: Int, searchFrom: Date, searchTo: Date, teamID: Int, type: String)->[Shifts]
     {
         let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectID == \(projectID)) AND (workDate >= %@) AND (workDate <= %@) AND (teamID == \(teamID)) && (updateType != \"Delete\")", searchFrom as CVarArg, searchTo as CVarArg)
+        let predicate = NSPredicate(format: "(projectID == \(projectID)) AND (workDate >= %@) AND (workDate <= %@) AND (teamID == \(teamID)) AND (type == \"\(type)\") AND (updateType != \"Delete\")", searchFrom as CVarArg, searchTo as CVarArg)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -801,13 +820,13 @@ extension coreDatabase
         }
     }
     
-    func getShiftForRate(projectID: Int, rateID: Int)->[Shifts]
+    func getShiftForRate(projectID: Int, rateID: Int, type: String)->[Shifts]
     {
         let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectID == \(projectID)) AND (rateID == \(rateID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(projectID == \(projectID)) AND (rateID == \(rateID)) AND (type == \"\(type)\") AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1030,6 +1049,7 @@ extension CloudKitInteraction
         operation.recordFetchedBlock = { (record) in
             let shiftDescription = record.object(forKey: "shiftDescription") as! String
             let status = record.object(forKey: "status") as! String
+            let type = record.object(forKey: "type") as! String
             
             var shiftID: Int = 0
             if record.object(forKey: "shiftID") != nil
@@ -1114,7 +1134,8 @@ extension CloudKitInteraction
                                                weekEndDate: weekEndDate,
                                                status: status,
                                                shiftLineID: shiftLineID,
-                                               rateID: rateID
+                                               rateID: rateID,
+                                               type: type
                                                 , updateTime: updateTime, updateType: updateType)
             
             usleep(useconds_t(self.sleepTime))
@@ -1193,6 +1214,7 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.status, forKey: "status")
                     record.setValue(sourceRecord.shiftLineID, forKey: "shiftLineID")
                     record.setValue(sourceRecord.rateID, forKey: "rateID")
+                    record.setValue(sourceRecord.type, forKey: "type")
 
                     record.setValue(teamID, forKey: "teamID")
                     
@@ -1226,6 +1248,7 @@ extension CloudKitInteraction
     {
         let shiftDescription = sourceRecord.object(forKey: "shiftDescription") as! String
         let status = sourceRecord.object(forKey: "status") as! String
+        let type = sourceRecord.object(forKey: "type") as! String
 
         var shiftID: Int = 0
         if sourceRecord.object(forKey: "shiftID") != nil
@@ -1310,7 +1333,8 @@ extension CloudKitInteraction
                                         weekEndDate: weekEndDate,
                                         status: status,
                                         shiftLineID: shiftLineID,
-                                        rateID: rateID
+                                        rateID: rateID,
+                                        type: type
                                          , updateTime: updateTime, updateType: updateType)
     }
 }

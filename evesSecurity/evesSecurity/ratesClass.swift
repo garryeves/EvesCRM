@@ -10,6 +10,12 @@ import Foundation
 import CoreData
 import CloudKit
 
+let shiftShiftType = "shift"
+let eventShiftType = "event"
+let calloutShiftType = "callout"
+let overtimeShiftType = "overtime"
+let regularShiftType = "regular"
+
 class rates: NSObject
 {
     fileprivate var myRates:[rate] = Array()
@@ -148,7 +154,7 @@ class rate: NSObject
     {
         get
         {
-            if myDatabaseConnection.getShiftForRate(projectID: myProjectID, rateID: myRateID).count > 0
+            if myDatabaseConnection.getShiftForRate(projectID: myProjectID, rateID: myRateID, type: shiftShiftType).count > 0
             {
                 return true
             }

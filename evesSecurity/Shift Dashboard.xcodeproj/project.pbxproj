@@ -20,6 +20,10 @@
 		341323911EC4369700BBDE1E /* reportingMonthClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341323901EC4369700BBDE1E /* reportingMonthClass.swift */; };
 		341323941EC43C3500BBDE1E /* shiftsClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341323931EC43C3500BBDE1E /* shiftsClass.swift */; };
 		3413239A1EC4530300BBDE1E /* UsersClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341323991EC4530300BBDE1E /* UsersClass.swift */; };
+		343757D21ED3F26300A9D313 /* eventPlanningViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 343757D11ED3F26300A9D313 /* eventPlanningViewController.swift */; };
+		343757D41ED3F27E00A9D313 /* eventTemplateVoewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 343757D31ED3F27E00A9D313 /* eventTemplateVoewController.swift */; };
+		343757D61ED3FA3A00A9D313 /* eventTemplateClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 343757D51ED3FA3A00A9D313 /* eventTemplateClass.swift */; };
+		343757D81ED4070600A9D313 /* eventTemplateHeadClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 343757D71ED4070600A9D313 /* eventTemplateHeadClass.swift */; };
 		344BF8291EC94D4B0066CD35 /* securityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344BF8281EC94D4B0066CD35 /* securityViewController.swift */; };
 		344BF82C1EC954C70066CD35 /* settingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344BF82B1EC954C70066CD35 /* settingViewController.swift */; };
 		344BF82E1EC96E180066CD35 /* setPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 344BF82D1EC96E180066CD35 /* setPasswordViewController.swift */; };
@@ -114,6 +118,10 @@
 		341323901EC4369700BBDE1E /* reportingMonthClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = reportingMonthClass.swift; sourceTree = "<group>"; };
 		341323931EC43C3500BBDE1E /* shiftsClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = shiftsClass.swift; sourceTree = "<group>"; };
 		341323991EC4530300BBDE1E /* UsersClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsersClass.swift; sourceTree = "<group>"; };
+		343757D11ED3F26300A9D313 /* eventPlanningViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = eventPlanningViewController.swift; sourceTree = "<group>"; };
+		343757D31ED3F27E00A9D313 /* eventTemplateVoewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = eventTemplateVoewController.swift; sourceTree = "<group>"; };
+		343757D51ED3FA3A00A9D313 /* eventTemplateClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = eventTemplateClass.swift; sourceTree = "<group>"; };
+		343757D71ED4070600A9D313 /* eventTemplateHeadClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = eventTemplateHeadClass.swift; sourceTree = "<group>"; };
 		344BF8281EC94D4B0066CD35 /* securityViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = securityViewController.swift; sourceTree = "<group>"; };
 		344BF82B1EC954C70066CD35 /* settingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = settingViewController.swift; sourceTree = "<group>"; };
 		344BF82D1EC96E180066CD35 /* setPasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = setPasswordViewController.swift; sourceTree = "<group>"; };
@@ -328,6 +336,8 @@
 				341323991EC4530300BBDE1E /* UsersClass.swift */,
 				3407F7AB1EC6CA4F008C5751 /* userRolesClass.swift */,
 				347BCEC81EC59C43006B95BA /* userTeamsClass.swift */,
+				343757D51ED3FA3A00A9D313 /* eventTemplateClass.swift */,
+				343757D71ED4070600A9D313 /* eventTemplateHeadClass.swift */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -377,6 +387,8 @@
 				34B35A841ECEC7A900B4FFD7 /* contractMaintenanceViewController.swift */,
 				3460BE671ECFCC5C00857332 /* rateMaintenanceViewController.swift */,
 				3463FA9D1ED15B3F00486195 /* shiftMaintenanceViewController.swift */,
+				343757D11ED3F26300A9D313 /* eventPlanningViewController.swift */,
+				343757D31ED3F27E00A9D313 /* eventTemplateVoewController.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -606,6 +618,7 @@
 			files = (
 				34050F6E1EC82C5500CC7CBE /* pickerViewController.swift in Sources */,
 				34CEEA391EC2EB5E00F85A11 /* addressClass.swift in Sources */,
+				343757D21ED3F26300A9D313 /* eventPlanningViewController.swift in Sources */,
 				34B35A811ECE77A300B4FFD7 /* clientMaintenanceViewController.swift in Sources */,
 				349653011EC1E5B800210A46 /* ViewController.swift in Sources */,
 				347BCEC21EC563F0006B95BA /* orgEditViewController.swift in Sources */,
@@ -632,6 +645,7 @@
 				34B43A701ECC0A7500BBE4D1 /* contactsViewController.swift in Sources */,
 				34CEE96E1EC2BE4000F85A11 /* DBSync.swift in Sources */,
 				34CEE9EC1EC2C92400F85A11 /* meetingSupportingDocsClass.swift in Sources */,
+				343757D41ED3F27E00A9D313 /* eventTemplateVoewController.swift in Sources */,
 				34CEE9DA1EC2C78300F85A11 /* taskPredecessorClass.swift in Sources */,
 				3492932E1ECD797600AFAE25 /* addPerInfoMaintenanceViewController.swift in Sources */,
 				34CEE9F21EC2C99C00F85A11 /* ContactDetails.swift in Sources */,
@@ -648,6 +662,7 @@
 				34CEE9DC1EC2C79600F85A11 /* taskUpdatesClass.swift in Sources */,
 				34050F6C1EC82C0F00CC7CBE /* dateTimePickerViewController.swift in Sources */,
 				3407F7AC1EC6CA4F008C5751 /* userRolesClass.swift in Sources */,
+				343757D61ED3FA3A00A9D313 /* eventTemplateClass.swift in Sources */,
 				349653331EC1F0DC00210A46 /* evesSecurityShared.swift in Sources */,
 				34CEE9AC1EC2C63700F85A11 /* meetingAttendeeClass.swift in Sources */,
 				341323891EC403A700BBDE1E /* contractShift.swift in Sources */,
@@ -662,6 +677,7 @@
 				34CEE9741EC2BEC200F85A11 /* UserInfo.swift in Sources */,
 				349652FF1EC1E5B800210A46 /* AppDelegate.swift in Sources */,
 				34CEE9D61EC2C74700F85A11 /* projectteamMemberClass.swift in Sources */,
+				343757D81ED4070600A9D313 /* eventTemplateHeadClass.swift in Sources */,
 				34CEEA431EC30B7700F85A11 /* Contacts.swift in Sources */,
 				34FC32B21EC97C250053443D /* validatePasswordViewController.swift in Sources */,
 			);

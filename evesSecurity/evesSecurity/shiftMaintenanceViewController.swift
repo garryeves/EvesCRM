@@ -215,7 +215,7 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
         lblWEDate.text = dateFormatter.string(from: currentWeekEndingDate)
         
         peopleList = people(teamID: currentUser.currentTeam!.teamID)
-        shiftList = shifts(teamID: currentUser.currentTeam!.teamID, WEDate: currentWeekEndingDate).weeklyShifts
+        shiftList = shifts(teamID: currentUser.currentTeam!.teamID, WEDate: currentWeekEndingDate, type: shiftShiftType).weeklyShifts
 
         if shiftList.count == 0
         {
@@ -343,9 +343,9 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                 print("shiftListItem btnRate got unexpected entry")
         }
         
-        pickerView.delegate = mainView
+        pickerView.delegate = sourceView
         pickerView.pickerValues = displayList
-        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+        pickerView.preferredContentSize = CGSize(width: 300,height: 500)
         
         mainView.present(pickerView, animated: true, completion: nil)
     }
@@ -397,9 +397,9 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                 print("shiftListItem btnPerson got unexpected entry")
         }
 
-        pickerView.delegate = mainView
+        pickerView.delegate = sourceView
         pickerView.pickerValues = displayList
-        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+        pickerView.preferredContentSize = CGSize(width: 300,height: 500)
         
         mainView.present(pickerView, animated: true, completion: nil)
     }
@@ -983,7 +983,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
             shiftLineID = myDatabaseConnection.getNextID("shiftLineID")
         }
         
-        let newShift = shift(projectID: weeklyRecord.projectID, workDate: workDate, weekEndDate: weeklyRecord.WEDate, teamID: currentUser.currentTeam!.teamID, shiftLineID: shiftLineID)
+        let newShift = shift(projectID: weeklyRecord.projectID, workDate: workDate, weekEndDate: weeklyRecord.WEDate, teamID: currentUser.currentTeam!.teamID, shiftLineID: shiftLineID, type: shiftShiftType)
         
         newShift.shiftDescription = txtDescription.text!
         

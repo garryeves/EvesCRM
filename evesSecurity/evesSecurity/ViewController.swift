@@ -18,7 +18,7 @@ class ViewController: UIViewController, myCommunicationDelegate
         
 //myDatabaseConnection.quickFixProjects()
 //myDatabaseConnection.quickFixPerson()
-        
+//myDatabaseConnection.quickFixTeams()
         
         if readDefaultInt(userDefaultName) <= 0
         {

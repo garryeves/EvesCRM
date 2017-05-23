@@ -14,6 +14,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     @IBOutlet weak var btnClients: UIButton!
     @IBOutlet weak var tblData1: UITableView!
     @IBOutlet weak var btnRoster: UIButton!
+    @IBOutlet weak var btnEvents: UIButton!
     
     fileprivate var contractList: projects!
     
@@ -26,7 +27,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         btnSettings.setTitle(NSString(string: "\u{2699}") as String, for: UIControlState())
         
         btnPeople.setTitle("Maintain People", for: .normal)
-        
+
         refreshScreen()
     }
     
@@ -66,6 +67,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                 cell.lblName.text = contractList.projects[indexPath.row].projectName
                 cell.lblStartDate.text = contractList.projects[indexPath.row].displayProjectStartDate
                 cell.lblEndDate.text = contractList.projects[indexPath.row].displayProjectEndDate
+                cell.lblType.text = contractList.projects[indexPath.row].type
 
                 if contractList.projects[indexPath.row].clientID != lastClientID
                 {
@@ -126,10 +128,28 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         self.present(rosterMaintenanceViewControl, animated: true, completion: nil)
     }
     
+    @IBAction func btnEvents(_ sender: UIButton)
+    {
+        let eventsViewControl = shiftsStoryboard.instantiateViewController(withIdentifier: "eventPlanningForm") as! eventPlanningViewController
+        eventsViewControl.communicationDelegate = self
+        self.present(eventsViewControl, animated: true, completion: nil)
+    }
+    
     func refreshScreen()
     {
         contractList = projects(teamID: currentUser.currentTeam!.teamID)
         tblData1.reloadData()
+        
+        let tempEvents = projects(teamID: currentUser.currentTeam!.teamID, type: "Event")
+        
+        if tempEvents.projects.count == 0
+        {
+            btnEvents.isEnabled = false
+        }
+        else
+        {
+            btnEvents.isEnabled = true
+        }
     }
 }
 
@@ -140,6 +160,7 @@ class contractsListItem: UITableViewCell
     @IBOutlet weak var lblEndDate: UILabel!
     @IBOutlet weak var btnRoster: UIButton!
     @IBOutlet weak var lblClient: UILabel!
+    @IBOutlet weak var lblType: UILabel!
     
     override func layoutSubviews()
     {

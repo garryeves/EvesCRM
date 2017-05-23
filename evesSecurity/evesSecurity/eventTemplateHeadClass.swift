@@ -1,8 +1,8 @@
 //
-//  dropdownsClass.swift
-//  evesSecurity
+//  EventTemplateHeadClass.swift
+//  Shift Dashboard
 //
-//  Created by Garry Eves on 11/5/17.
+//  Created by Garry Eves on 23/5/17.
 //  Copyright © 2017 Garry Eves. All rights reserved.
 //
 
@@ -10,103 +10,145 @@ import Foundation
 import CoreData
 import CloudKit
 
-class dropdowns: NSObject
+class eventTemplateHeads: NSObject
 {
-    fileprivate var myDropdowns:[dropdownItem] = Array()
+    fileprivate var myEventTemplateHead:[eventTemplateHead] = Array()
     
-    init(dropdownType: String)
+    init(teamID: Int)
     {
-        for myItem in myDatabaseConnection.getDropdowns(dropdownType: dropdownType)
+        for myItem in myDatabaseConnection.getEventTemplateHeadItems(teamID: teamID)
         {
-            let myObject = dropdownItem(dropdownType: myItem.dropDownType!,
-                                   dropdownValue: myItem.dropDownValue!,
-                                   teamID: Int(myItem.teamID)
-                                   )
-            myDropdowns.append(myObject)
+            let myObject = eventTemplateHead(eventID: Int(myItem.eventID),
+                                         eventName: myItem.eventName!,
+                                         teamID: Int(myItem.teamID))
+            
+            myEventTemplateHead.append(myObject)
         }
     }
     
-    var dropdowns: [dropdownItem]
+    var templates: [eventTemplateHead]
     {
         get
         {
-            return myDropdowns
+            return myEventTemplateHead
         }
     }
 }
 
-class dropdownItem: NSObject
+class eventTemplateHead: NSObject
 {
-    fileprivate var myDropdownValue: String = ""
-    fileprivate var myDropdownType: String = ""
+    fileprivate var myEventID: Int = 0
+    fileprivate var myEventName: String = ""
     fileprivate var myTeamID: Int = 0
+    fileprivate var myRoles: eventTemplates!
     
-    var dropdownType: String
+    var eventID: Int
     {
         get
         {
-            return myDropdownType
+            return myEventID
         }
     }
     
-    var dropdownValue: String
+    var eventName: String
     {
         get
         {
-            return myDropdownValue
+            return myEventName
         }
         set
         {
-            myDropdownValue = newValue
+            myEventName = newValue
         }
     }
     
-    init(dropdownType: String, teamID: Int)
+    var roles: eventTemplates?
+    {
+        get
+        {
+            return myRoles
+        }
+    }
+    
+    init(teamID: Int)
     {
         super.init()
         
-        myDropdownType = dropdownType
+        myEventID = myDatabaseConnection.getNextID("EventTemplateHead")
         myTeamID = teamID
         save()
     }
     
-    init(dropdownType: String, dropdownValue: String, teamID: Int)
+    init(eventID: Int)
+    {
+        super.init()
+        let myReturn = myDatabaseConnection.getEventTemplateHead(eventID: eventID)
+        
+        for myItem in myReturn
+        {
+            myEventID = Int(myItem.eventID)
+            myEventName = myItem.eventName!
+            myTeamID = Int(myItem.teamID)
+        }
+    }
+    
+    init(eventID: Int,
+         eventName: String,
+         teamID: Int)
     {
         super.init()
         
-        myDropdownType = dropdownType
-        myDropdownValue = dropdownValue
+        myEventID = eventID
+        myEventName = eventName
         myTeamID = teamID
-        save()
     }
     
     func save()
     {
-        myDatabaseConnection.saveDropdowns(myDropdownType, dropdownValue: myDropdownValue, teamID: myTeamID)
+        myDatabaseConnection.saveEventTemplateHead(myEventID,
+                                               eventName: myEventName,
+                                               teamID: myTeamID)
     }
     
     func delete()
     {
-        myDatabaseConnection.deleteDropdowns(myDropdownType, dropdownValue: myDropdownValue, teamID: myTeamID)
+        myDatabaseConnection.deleteEventTemplateHead(myEventID)
+    }
+    
+    func loadRoles()
+    {
+        myRoles = eventTemplates(eventID: myEventID)
+    }
+    
+    func addRole(role: String,
+                 numRequired: Int,
+                 dateModifier: Int,
+                 startTime: Date,
+                 endTime: Date)
+    {
+        let newRole = eventTemplate(eventID: myEventID, role: role, dateModifier: dateModifier, startTime: startTime, endTime: endTime, teamID: myTeamID)
+        newRole.numRequired = numRequired
+        
+        newRole.save()
     }
 }
 
 extension coreDatabase
 {
-    func saveDropdowns(_ dropdownType: String,
-                        dropdownValue: String,
-                        teamID: Int,
-                     updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveEventTemplateHead(_ eventID: Int,
+                           eventName: String,
+                           teamID: Int,
+                           updateTime: Date =  Date(), updateType: String = "CODE")
     {
-        var myItem: Dropdowns!
+        var myItem: EventTemplateHead!
         
-        let myReturn = getDropdowns(dropdownType: dropdownType, dropdownValue: dropdownValue, teamID: teamID)
+        let myReturn = getEventTemplateHead(eventID: eventID)
         
         if myReturn.count == 0
         { // Add
-            myItem = Dropdowns(context: objectContext)
-            myItem.dropDownType = dropdownType
-            myItem.dropDownValue = dropdownValue
+            myItem = EventTemplateHead(context: objectContext)
+            myItem.eventID = Int64(eventID)
+            myItem.eventName = eventName
             myItem.teamID = Int64(teamID)
             
             if updateType == "CODE"
@@ -121,18 +163,37 @@ extension coreDatabase
                 myItem.updateType = updateType
             }
         }
-
+        else
+        {
+            myItem = myReturn[0]
+            myItem.eventName = eventName
+            
+            if updateType == "CODE"
+            {
+                myItem.updateTime =  NSDate()
+                if myItem.updateType != "Add"
+                {
+                    myItem.updateType = "Update"
+                }
+            }
+            else
+            {
+                myItem.updateTime = updateTime as NSDate
+                myItem.updateType = updateType
+            }
+        }
+        
         saveContext()
     }
     
-    func replaceDropdowns(_ dropdownType: String,
-                          dropdownValue: String,
-                          teamID: Int,
-                        updateTime: Date =  Date(), updateType: String = "CODE")
+    func replaceEventTemplateHead(_ eventID: Int,
+                           eventName: String,
+                              teamID: Int,
+                              updateTime: Date =  Date(), updateType: String = "CODE")
     {
-        let myItem = Dropdowns(context: objectContext)
-        myItem.dropDownType = dropdownType
-        myItem.dropDownValue = dropdownValue
+        let myItem = EventTemplateHead(context: objectContext)
+        myItem.eventID = Int64(eventID)
+        myItem.eventName = eventName
         myItem.teamID = Int64(teamID)
         
         if updateType == "CODE"
@@ -149,9 +210,9 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteDropdowns(_ dropdownType: String, dropdownValue: String, teamID: Int)
+    func deleteEventTemplateHead(_ eventID: Int)
     {
-        let myReturn = getDropdowns(dropdownType: dropdownType, dropdownValue: dropdownValue, teamID: teamID)
+        let myReturn = getEventTemplateHead(eventID: eventID)
         
         if myReturn.count > 0
         {
@@ -163,13 +224,13 @@ extension coreDatabase
         saveContext()
     }
     
-    func getDropdowns(dropdownType: String)->[Dropdowns]
+    func getEventTemplateHeadItems(teamID: Int)->[EventTemplateHead]
     {
-        let fetchRequest = NSFetchRequest<Dropdowns>(entityName: "Dropdowns")
+        let fetchRequest = NSFetchRequest<EventTemplateHead>(entityName: "EventTemplateHead")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(dropDownType == \"\(dropdownType)\") && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "teamID == \(teamID)")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -182,18 +243,19 @@ extension coreDatabase
         }
         catch
         {
-            print("Error occurred during execution: D \(error.localizedDescription)")
+            print("Error occurred during execution: E \(error.localizedDescription)")
             return []
         }
     }
+
     
-    func getDropdowns(dropdownType: String, dropdownValue: String, teamID: Int)->[Dropdowns]
+    func getEventTemplateHead(eventID: Int)->[EventTemplateHead]
     {
-        let fetchRequest = NSFetchRequest<Dropdowns>(entityName: "Dropdowns")
+        let fetchRequest = NSFetchRequest<EventTemplateHead>(entityName: "EventTemplateHead")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(dropDownType == \"\(dropdownType)\") AND (dropDownValue == \"\(dropdownValue)\") AND (teamID == \(teamID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "eventID == \(eventID)")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -211,9 +273,9 @@ extension coreDatabase
         }
     }
     
-    func resetAllDropdowns()
+    func resetAllEventTemplateHead()
     {
-        let fetchRequest = NSFetchRequest<Dropdowns>(entityName: "Dropdowns")
+        let fetchRequest = NSFetchRequest<EventTemplateHead>(entityName: "EventTemplateHead")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
@@ -233,9 +295,9 @@ extension coreDatabase
         saveContext()
     }
     
-    func clearDeletedDropdowns(predicate: NSPredicate)
+    func clearDeletedEventTemplateHead(predicate: NSPredicate)
     {
-        let fetchRequest2 = NSFetchRequest<Dropdowns>(entityName: "Dropdowns")
+        let fetchRequest2 = NSFetchRequest<EventTemplateHead>(entityName: "EventTemplateHead")
         
         // Set the predicate on the fetch request
         fetchRequest2.predicate = predicate
@@ -256,9 +318,9 @@ extension coreDatabase
         saveContext()
     }
     
-    func clearSyncedDropdowns(predicate: NSPredicate)
+    func clearSyncedEventTemplateHead(predicate: NSPredicate)
     {
-        let fetchRequest2 = NSFetchRequest<Dropdowns>(entityName: "Dropdowns")
+        let fetchRequest2 = NSFetchRequest<EventTemplateHead>(entityName: "EventTemplateHead")
         
         // Set the predicate on the fetch request
         fetchRequest2.predicate = predicate
@@ -280,9 +342,9 @@ extension coreDatabase
         saveContext()
     }
     
-    func getDropdownsForSync(_ syncDate: Date) -> [Dropdowns]
+    func getEventTemplateHeadForSync(_ syncDate: Date) -> [EventTemplateHead]
     {
-        let fetchRequest = NSFetchRequest<Dropdowns>(entityName: "Dropdowns")
+        let fetchRequest = NSFetchRequest<EventTemplateHead>(entityName: "EventTemplateHead")
         
         let predicate = NSPredicate(format: "(updateTime >= %@)", syncDate as CVarArg)
         
@@ -303,9 +365,9 @@ extension coreDatabase
         }
     }
     
-    func deleteAllDropdowns()
+    func deleteAllEventTemplateHead()
     {
-        let fetchRequest2 = NSFetchRequest<Dropdowns>(entityName: "Dropdowns")
+        let fetchRequest2 = NSFetchRequest<EventTemplateHead>(entityName: "EventTemplateHead")
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
@@ -327,18 +389,18 @@ extension coreDatabase
 
 extension CloudKitInteraction
 {
-    func saveDropdownsToCloudKit()
+    func saveEventTemplateHeadToCloudKit()
     {
-        for myItem in myDatabaseConnection.getDropdownsForSync(myDatabaseConnection.getSyncDateForTable(tableName: "Dropdowns"))
+        for myItem in myDatabaseConnection.getEventTemplateHeadForSync(myDatabaseConnection.getSyncDateForTable(tableName: "EventTemplateHead"))
         {
-            saveDropdownsRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
+            saveEventTemplateHeadRecordToCloudKit(myItem, teamID: currentUser.currentTeam!.teamID)
         }
     }
     
-    func updateDropdownsInCoreData()
+    func updateEventTemplateHeadInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "Dropdowns") as CVarArg)
-        let query: CKQuery = CKQuery(recordType: "Dropdowns", predicate: predicate)
+        let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "EventTemplateHead") as CVarArg)
+        let query: CKQuery = CKQuery(recordType: "EventTemplateHead", predicate: predicate)
         
         let operation = CKQueryOperation(query: query)
         
@@ -347,7 +409,7 @@ extension CloudKitInteraction
         operation.recordFetchedBlock = { (record) in
             self.recordCount += 1
             
-            self.updateDropdownsRecord(record)
+            self.updateEventTemplateHeadRecord(record)
             self.recordCount -= 1
             
             usleep(useconds_t(self.sleepTime))
@@ -362,13 +424,13 @@ extension CloudKitInteraction
         }
     }
     
-    func deleteDropdowns(dropdownType: String, dropdownName: String)
+    func deleteEventTemplateHead(eventID: Int)
     {
         let sem = DispatchSemaphore(value: 0);
-
+        
         var myRecordList: [CKRecordID] = Array()
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID)) AND (dropDownType == \"\(dropdownType)\") AND (dropdownName == \"\(dropdownName)\")")
-        let query: CKQuery = CKQuery(recordType: "Dropdowns", predicate: predicate)
+        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID)) AND (eventID == \(eventID))")
+        let query: CKQuery = CKQuery(recordType: "EventTemplateHead", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: {(results: [CKRecord]?, error: Error?) in
             for record in results!
             {
@@ -381,18 +443,23 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func replaceDropdownsInCoreData()
+    func replaceEventTemplateHeadInCoreData()
     {
         let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
-        let query: CKQuery = CKQuery(recordType: "Dropdowns", predicate: predicate)
+        let query: CKQuery = CKQuery(recordType: "EventTemplateHead", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
         waitFlag = true
         
         operation.recordFetchedBlock = { (record) in
-
-            let dropdownType = record.object(forKey: "dropDownType") as! String
-            let dropDownValue = record.object(forKey: "dropDownValue") as! String
+            
+            let eventName = record.object(forKey: "eventName") as! String
+            
+            var eventID: Int = 0
+            if record.object(forKey: "eventID") != nil
+            {
+                eventID = record.object(forKey: "eventID") as! Int
+            }
             
             var updateTime = Date()
             if record.object(forKey: "updateTime") != nil
@@ -412,10 +479,10 @@ extension CloudKitInteraction
                 teamID = record.object(forKey: "teamID") as! Int
             }
             
-            myDatabaseConnection.replaceDropdowns(dropdownType,
-                                                dropdownValue: dropDownValue,
-                                                teamID: teamID
-                                                , updateTime: updateTime, updateType: updateType)
+            myDatabaseConnection.replaceEventTemplateHead(eventID,
+                                                      eventName: eventName,
+                                                      teamID: teamID
+                , updateTime: updateTime, updateType: updateType)
             
             usleep(useconds_t(self.sleepTime))
         }
@@ -430,12 +497,12 @@ extension CloudKitInteraction
         }
     }
     
-    func saveDropdownsRecordToCloudKit(_ sourceRecord: Dropdowns, teamID: Int)
+    func saveEventTemplateHeadRecordToCloudKit(_ sourceRecord: EventTemplateHead, teamID: Int)
     {
         let sem = DispatchSemaphore(value: 0)
         
-        let predicate = NSPredicate(format: "(dropDownType == \"\(sourceRecord.dropDownType!)\") AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the record you need
-        let query = CKQuery(recordType: "Dropdowns", predicate: predicate)
+        let predicate = NSPredicate(format: "\(buildTeamList(currentUser.userID)) AND (eventID == \(sourceRecord.eventID))") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "EventTemplateHead", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
             {
@@ -451,7 +518,8 @@ extension CloudKitInteraction
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
                     
-                    record!.setValue(sourceRecord.dropDownValue, forKey: "dropDownValue")
+                    record!.setValue(sourceRecord.eventName, forKey: "eventName")
+                    
                     
                     if sourceRecord.updateTime != nil
                     {
@@ -477,10 +545,9 @@ extension CloudKitInteraction
                 }
                 else
                 {  // Insert
-                    let record = CKRecord(recordType: "Dropdowns")
-                    record.setValue(sourceRecord.dropDownType, forKey: "dropDownType")
-                    record.setValue(sourceRecord.dropDownValue, forKey: "dropDownValue")
-                    
+                    let record = CKRecord(recordType: "EventTemplateHead")
+                    record.setValue(sourceRecord.eventID, forKey: "eventID")
+                    record.setValue(sourceRecord.eventName, forKey: "eventName")
                     record.setValue(teamID, forKey: "teamID")
                     
                     if sourceRecord.updateTime != nil
@@ -509,11 +576,16 @@ extension CloudKitInteraction
         sem.wait()
     }
     
-    func updateDropdownsRecord(_ sourceRecord: CKRecord)
+    func updateEventTemplateHeadRecord(_ sourceRecord: CKRecord)
     {
-
-        let dropdownType = sourceRecord.object(forKey: "dropDownType") as! String
-        let dropDownValue = sourceRecord.object(forKey: "dropDownValue") as! String
+        let eventName = sourceRecord.object(forKey: "eventName") as! String
+        
+        var eventID: Int = 0
+        if sourceRecord.object(forKey: "eventID") != nil
+        {
+            eventID = sourceRecord.object(forKey: "eventID") as! Int
+        }
+        
         var updateTime = Date()
         if sourceRecord.object(forKey: "updateTime") != nil
         {
@@ -532,10 +604,12 @@ extension CloudKitInteraction
             teamID = sourceRecord.object(forKey: "teamID") as! Int
         }
         
-        myDatabaseConnection.saveDropdowns(dropdownType,
-                                         dropdownValue: dropDownValue,
-                                         teamID: teamID
-                                         , updateTime: updateTime, updateType: updateType)
+        myDatabaseConnection.saveEventTemplateHead(eventID,
+                                               eventName: eventName,
+                                               teamID: teamID
+            , updateTime: updateTime, updateType: updateType)
     }
 }
+
+
 

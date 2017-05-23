@@ -16,6 +16,8 @@ class people: NSObject
     
     init(teamID: Int)
     {
+        super.init()
+        
         for myItem in myDatabaseConnection.getPeople(teamID: teamID)
         {
             let dob: Date = myItem.dob! as Date
@@ -32,10 +34,13 @@ class people: NSObject
                                    )
             myPeople.append(myObject)
         }
+        sortArray()
     }
     
     init(clientID: Int)
     {
+        super.init()
+        
         for myItem in myDatabaseConnection.getPeopleForClient(clientID: clientID)
         {
             let dob: Date = myItem.dob! as Date
@@ -52,10 +57,13 @@ class people: NSObject
             )
             myPeople.append(myObject)
         }
+        sortArray()
     }
     
     init(projectID: Int)
     {
+        super.init()
+        
         for myItem in myDatabaseConnection.getPeopleForProject(projectID: projectID)
         {
             let dob: Date = myItem.dob! as Date
@@ -71,6 +79,27 @@ class people: NSObject
                                   canRoster: myItem.canRoster!
             )
             myPeople.append(myObject)
+        }
+        sortArray()
+    }
+    
+    private func sortArray()
+    {
+        if myPeople.count > 0
+        {
+            myPeople.sort
+                {
+                    // Because workdate has time it throws everything out
+                    
+                    if $0.name == $1.name
+                    {
+                        return $0.dob < $1.dob
+                    }
+                    else
+                    {
+                        return $0.name < $1.name
+                    }
+            }
         }
     }
     

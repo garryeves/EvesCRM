@@ -66,7 +66,7 @@ class dateTimePickerView: UIViewController
             datePicker.date = Date()
         }
         
-        btnSelect.isEnabled = false
+   //     btnSelect.isEnabled = false
     }
     
     override func didReceiveMemoryWarning() {

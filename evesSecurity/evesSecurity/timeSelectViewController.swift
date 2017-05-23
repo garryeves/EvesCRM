@@ -40,7 +40,7 @@ class timeSelectViewController: UIViewController
             txtSecs.text = "0"
         }
         
-        btnSelect.isEnabled = false
+  //      btnSelect.isEnabled = false
     }
     
     override func didReceiveMemoryWarning() {

@@ -59,6 +59,7 @@ class team: NSObject
     fileprivate var logoChanged: Bool = false
     fileprivate var saveCalled: Bool = false
     fileprivate var myMeetings: [calendarItem] = Array()
+    fileprivate var mySubscriptionDate: Date!
     
     var teamID: Int
     {
@@ -240,6 +241,15 @@ class team: NSObject
             return myContexts
         }
     }
+    
+    var subscriptionDate: Date
+    {
+        get
+        {
+            return mySubscriptionDate
+        }
+    }
+    
 
     init(teamID: Int)
     {
@@ -260,6 +270,8 @@ class team: NSObject
             myTaxNumber = myItem.taxNumber!
             myCompanyRegNumber = myItem.companyRegNumber!
             myNextInvoiceNumber = Int(myItem.nextInvoiceNumber)
+            mySubscriptionDate = myItem.subscriptionDate! as Date
+
             if myItem.logo != nil
             {
                 myCompanyLogo = UIImage(data: myItem.logo! as Data)
@@ -296,7 +308,7 @@ class team: NSObject
             tempLogo = UIImagePNGRepresentation(myCompanyLogo) as NSData?
         }
         
-        myCloudDB.createNewTeam(teamID: myTeamID, type: myType, status: myStatus, taxNumber: myTaxNumber, companyRegNumber: myCompanyRegNumber, nextInvoiceNumber: myNextInvoiceNumber, logo: tempLogo)
+        myCloudDB.createNewTeam(teamID: myTeamID, type: myType, status: myStatus, taxNumber: myTaxNumber, companyRegNumber: myCompanyRegNumber, nextInvoiceNumber: myNextInvoiceNumber, logo: tempLogo, subscriptionDate: mySubscriptionDate)
     }
     
     func teamCreated()
@@ -323,6 +335,9 @@ class team: NSObject
         sleep(1)
         populateContactsDropDown()
         sleep(1)
+        populateProjectTypeDropDown()
+        sleep(1)
+        
         notificationCenter.post(name: NotificationTeamCreated, object: nil)
     }
     
@@ -434,6 +449,32 @@ class team: NSObject
         usleep(500)
     }
     
+    private func populateProjectTypeDropDown()
+    {
+        myDatabaseConnection.saveDropdowns("ProjectType", dropdownValue: "Event", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("ProjectType", dropdownValue: "Regular", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("ProjectType", dropdownValue: "Project", teamID: myTeamID)
+        usleep(500)
+    }
+    
+    private func populateShowRoles()
+    {
+        myDatabaseConnection.saveDropdowns("ShowRole", dropdownValue: "Steward", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("ShowRole", dropdownValue: "Security", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("ShowRole", dropdownValue: "1st Aid", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("ShowRole", dropdownValue: "Team Lead", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("ShowRole", dropdownValue: "Manager", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("ShowRole", dropdownValue: "chauffeur", teamID: myTeamID)
+        usleep(500)
+    }
+    
     private func populatePublicDecodes()
     {
         // none at the moment but here for when it is needed
@@ -506,7 +547,7 @@ class team: NSObject
     
     func save(_ saveToCloud: Bool = true)
     {
-        myDatabaseConnection.saveTeam(myTeamID, name: myName, status: myStatus, note: myNote, type: myType, predecessor: myPredecessor, externalID: myExternalID, taxNumber: myTaxNumber, companyRegNumber: myCompanyRegNumber, nextInvoiceNumber: myNextInvoiceNumber)
+        myDatabaseConnection.saveTeam(myTeamID, name: myName, status: myStatus, note: myNote, type: myType, predecessor: myPredecessor, externalID: myExternalID, taxNumber: myTaxNumber, companyRegNumber: myCompanyRegNumber, nextInvoiceNumber: myNextInvoiceNumber, subscriptionDate: mySubscriptionDate)
         
         if logoChanged
         {
@@ -596,7 +637,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func saveTeam(_ teamID: Int, name: String, status: String, note: String, type: String, predecessor: Int, externalID: String, taxNumber: String, companyRegNumber: String, nextInvoiceNumber: Int, updateTime: Date =  Date(), updateType: String = "CODE")
+    func saveTeam(_ teamID: Int, name: String, status: String, note: String, type: String, predecessor: Int, externalID: String, taxNumber: String, companyRegNumber: String, nextInvoiceNumber: Int, subscriptionDate: Date, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myTeam: Team!
         
@@ -615,6 +656,7 @@ extension coreDatabase
             myTeam.taxNumber = taxNumber
             myTeam.companyRegNumber = companyRegNumber
             myTeam.nextInvoiceNumber = Int64(nextInvoiceNumber)
+            myTeam.subscriptionDate = subscriptionDate as NSDate
             
             if updateType == "CODE"
             {
@@ -639,6 +681,7 @@ extension coreDatabase
             myTeam.taxNumber = taxNumber
             myTeam.companyRegNumber = companyRegNumber
             myTeam.nextInvoiceNumber = Int64(nextInvoiceNumber)
+            myTeam.subscriptionDate = subscriptionDate as NSDate
             
             if updateType == "CODE"
             {
@@ -658,7 +701,7 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceTeam(_ teamID: Int, name: String, status: String, note: String, type: String, predecessor: Int, externalID: String, taxNumber: String, companyRegNumber: String, nextInvoiceNumber: Int, logo: NSData, updateTime: Date =  Date(), updateType: String = "CODE")
+    func replaceTeam(_ teamID: Int, name: String, status: String, note: String, type: String, predecessor: Int, externalID: String, taxNumber: String, companyRegNumber: String, nextInvoiceNumber: Int, logo: NSData, subscriptionDate: Date, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myTeam = Team(context: persistentContainer.viewContext)
         myTeam.teamID = Int64(teamID)
@@ -672,6 +715,7 @@ extension coreDatabase
         myTeam.companyRegNumber = companyRegNumber
         myTeam.nextInvoiceNumber = Int64(nextInvoiceNumber)
         myTeam.logo = logo
+        myTeam.subscriptionDate = subscriptionDate as NSDate
 
         if updateType == "CODE"
         {
@@ -868,6 +912,26 @@ extension coreDatabase
         
         saveContext()
     }
+    
+    func quickFixTeams()
+    {
+        let fetchRequest22 = NSFetchRequest<Team>(entityName: "Team")
+        
+        do
+        {
+            let fetchResults22 = try objectContext.fetch(fetchRequest22)
+            for myItem22 in fetchResults22
+            {
+                myItem22.subscriptionDate = NSDate()
+                myItem22.updateTime =  NSDate()
+                saveContext()
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+    }
 }
 
 extension CloudKitInteraction
@@ -896,7 +960,7 @@ extension CloudKitInteraction
         return recordsInTable
     }
     
-    func createNewTeam(teamID: Int, type: String, status:String, taxNumber: String, companyRegNumber: String, nextInvoiceNumber: Int, logo: NSData?)
+    func createNewTeam(teamID: Int, type: String, status:String, taxNumber: String, companyRegNumber: String, nextInvoiceNumber: Int, logo: NSData?, subscriptionDate: Date)
     {
         let record = CKRecord(recordType: "Team")
         record.setValue(teamID, forKey: "teamID")
@@ -905,6 +969,7 @@ extension CloudKitInteraction
         record.setValue(taxNumber, forKey: "taxNumber")
         record.setValue(companyRegNumber, forKey: "companyRegNumber")
         record.setValue(nextInvoiceNumber, forKey: "nextInvoiceNumber")
+        record.setValue(subscriptionDate, forKey: "subscriptionDate")
         
         do
         {
@@ -1023,6 +1088,12 @@ extension CloudKitInteraction
             let companyRegNumber = record.object(forKey: "companyRegNumber") as! String
             let nextInvoiceNumber = record.object(forKey: "nextInvoiceNumber") as! Int
             
+            var subscriptionDate = Date()
+            if record.object(forKey: "subscriptionDate") != nil
+            {
+                subscriptionDate = record.object(forKey: "subscriptionDate") as! Date
+            }
+            
             var logo: NSData!
             
             if let asset = record["logo"] as? CKAsset
@@ -1030,7 +1101,7 @@ extension CloudKitInteraction
                 logo = NSData(contentsOf: asset.fileURL)
             }
             
-            myDatabaseConnection.replaceTeam(teamID, name: name, status: status, note: note, type: type, predecessor: predecessor, externalID: externalID, taxNumber: taxNumber, companyRegNumber: companyRegNumber, nextInvoiceNumber: nextInvoiceNumber, logo: logo, updateTime: updateTime, updateType: updateType)
+            myDatabaseConnection.replaceTeam(teamID, name: name, status: status, note: note, type: type, predecessor: predecessor, externalID: externalID, taxNumber: taxNumber, companyRegNumber: companyRegNumber, nextInvoiceNumber: nextInvoiceNumber, logo: logo, subscriptionDate: subscriptionDate, updateTime: updateTime, updateType: updateType)
             usleep(useconds_t(self.sleepTime))
         }
         let operationQueue = OperationQueue()
@@ -1074,6 +1145,7 @@ extension CloudKitInteraction
                     record!.setValue(sourceRecord.taxNumber, forKey: "taxNumber")
                     record!.setValue(sourceRecord.companyRegNumber, forKey: "companyRegNumber")
                     record!.setValue(sourceRecord.nextInvoiceNumber, forKey: "nextInvoiceNumber")
+                    record!.setValue(sourceRecord.subscriptionDate, forKey: "subscriptionDate")
                     
                     do
                     {
@@ -1126,6 +1198,7 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.taxNumber, forKey: "taxNumber")
                     record.setValue(sourceRecord.companyRegNumber, forKey: "companyRegNumber")
                     record.setValue(sourceRecord.nextInvoiceNumber, forKey: "nextInvoiceNumber")
+                    record.setValue(sourceRecord.subscriptionDate, forKey: "subscriptionDate")
                     
                     do
                     {
@@ -1188,6 +1261,12 @@ extension CloudKitInteraction
         let companyRegNumber = sourceRecord.object(forKey: "companyRegNumber") as! String
         let nextInvoiceNumber = sourceRecord.object(forKey: "nextInvoiceNumber") as! Int
         
+        var subscriptionDate = Date()
+        if sourceRecord.object(forKey: "subscriptionDate") != nil
+        {
+            subscriptionDate = sourceRecord.object(forKey: "subscriptionDate") as! Date
+        }
+
         var logo: NSData!
         
         if let asset = sourceRecord["logo"] as? CKAsset
@@ -1195,7 +1274,7 @@ extension CloudKitInteraction
             logo = NSData(contentsOf: asset.fileURL)
         }
         
-        myDatabaseConnection.saveTeam(teamID, name: name, status: status, note: note, type: type, predecessor: predecessor, externalID: externalID, taxNumber: taxNumber, companyRegNumber: companyRegNumber, nextInvoiceNumber: nextInvoiceNumber, updateTime: updateTime, updateType: updateType)
+        myDatabaseConnection.saveTeam(teamID, name: name, status: status, note: note, type: type, predecessor: predecessor, externalID: externalID, taxNumber: taxNumber, companyRegNumber: companyRegNumber, nextInvoiceNumber: nextInvoiceNumber, subscriptionDate: subscriptionDate, updateTime: updateTime, updateType: updateType)
         
         if logo != nil
         {

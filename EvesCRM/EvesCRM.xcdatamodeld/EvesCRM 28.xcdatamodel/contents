@@ -82,6 +82,25 @@
         <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="EventTemplate" representedClassName="EventTemplate" syncable="YES" codeGenerationType="class">
+        <attribute name="dateModifier" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="endTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="eventID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="eventName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="numRequired" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="role" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="startTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
+    <entity name="EventTemplateHead" representedClassName="EventTemplateHead" syncable="YES" codeGenerationType="class">
+        <attribute name="eventID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="eventName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="GTDItem" representedClassName="GTDItem" syncable="YES" codeGenerationType="class">
         <attribute name="gTDItemID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="gTDLevel" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
@@ -251,6 +270,7 @@
         <attribute name="reviewFrequency" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="reviewPeriod" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
@@ -300,6 +320,7 @@
         <attribute name="startTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="updateTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="updateType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="weekEndDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
@@ -375,6 +396,7 @@
         <attribute name="note" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="predecessor" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="status" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="subscriptionDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="taxNumber" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="teamID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="type" optional="YES" attributeType="String" syncable="YES"/>
@@ -427,21 +449,23 @@
         <element name="PersonAddInfoEntry" positionX="-225" positionY="189" width="128" height="150"/>
         <element name="PersonAdditionalInfo" positionX="-234" positionY="180" width="128" height="135"/>
         <element name="ProcessedEmails" positionX="-279" positionY="135" width="128" height="135"/>
-        <element name="Projects" positionX="-63" positionY="-18" width="128" height="375"/>
+        <element name="Projects" positionX="-63" positionY="-18" width="128" height="390"/>
         <element name="ProjectTeamMembers" positionX="-290" positionY="-9" width="128" height="150"/>
         <element name="Rates" positionX="-279" positionY="135" width="128" height="180"/>
         <element name="ReportingMonth" positionX="-270" positionY="144" width="128" height="135"/>
         <element name="Roles" positionX="-486" positionY="-18" width="128" height="120"/>
-        <element name="Shifts" positionX="-243" positionY="171" width="128" height="255"/>
+        <element name="Shifts" positionX="-243" positionY="171" width="128" height="270"/>
         <element name="Stages" positionX="-270" positionY="45" width="128" height="105"/>
         <element name="Task" positionX="-279" positionY="99" width="128" height="345"/>
         <element name="TaskAttachment" positionX="-279" positionY="135" width="128" height="135"/>
         <element name="TaskContext" positionX="-261" positionY="117" width="128" height="120"/>
         <element name="TaskPredecessor" positionX="-279" positionY="135" width="128" height="135"/>
         <element name="TaskUpdates" positionX="-279" positionY="99" width="128" height="150"/>
-        <element name="Team" positionX="-270" positionY="144" width="128" height="255"/>
+        <element name="Team" positionX="-270" positionY="144" width="128" height="270"/>
         <element name="UserRoles" positionX="-225" positionY="189" width="128" height="150"/>
         <element name="Users" positionX="-234" positionY="180" width="128" height="135"/>
         <element name="UserTeams" positionX="-279" positionY="135" width="128" height="105"/>
+        <element name="EventTemplate" positionX="-279" positionY="135" width="128" height="195"/>
+        <element name="EventTemplateHead" positionX="-270" positionY="144" width="128" height="120"/>
     </elements>
 </model>
