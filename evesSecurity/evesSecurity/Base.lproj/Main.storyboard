@@ -80,7 +80,7 @@
                                         <rect key="frame" x="0.0" y="28" width="688" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Cwe-kN-AWb" id="8gv-Xy-VwJ">
-                                            <rect key="frame" x="0.0" y="0.0" width="688" height="44"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="688" height="43.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hH3-G6-f0e" userLabel="lblName">
@@ -116,7 +116,7 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hrG-Fn-2au" userLabel="btnRoster">
+                                                <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hrG-Fn-2au" userLabel="btnRoster">
                                                     <rect key="frame" x="635" y="8" width="45" height="27.5"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="45" id="e2j-DB-cy1"/>

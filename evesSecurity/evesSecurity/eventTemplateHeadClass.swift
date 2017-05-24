@@ -37,28 +37,28 @@ class eventTemplateHeads: NSObject
 
 class eventTemplateHead: NSObject
 {
-    fileprivate var myEventID: Int = 0
-    fileprivate var myEventName: String = ""
+    fileprivate var myTemplateID: Int = 0
+    fileprivate var myTemplateName: String = ""
     fileprivate var myTeamID: Int = 0
     fileprivate var myRoles: eventTemplates!
     
-    var eventID: Int
+    var templateID: Int
     {
         get
         {
-            return myEventID
+            return myTemplateID
         }
     }
     
-    var eventName: String
+    var templateName: String
     {
         get
         {
-            return myEventName
+            return myTemplateName
         }
         set
         {
-            myEventName = newValue
+            myTemplateName = newValue
         }
     }
     
@@ -74,7 +74,7 @@ class eventTemplateHead: NSObject
     {
         super.init()
         
-        myEventID = myDatabaseConnection.getNextID("EventTemplateHead")
+        myTemplateID = myDatabaseConnection.getNextID("EventTemplateHead")
         myTeamID = teamID
         save()
     }
@@ -82,12 +82,12 @@ class eventTemplateHead: NSObject
     init(eventID: Int)
     {
         super.init()
-        let myReturn = myDatabaseConnection.getEventTemplateHead(eventID: eventID)
+        let myReturn = myDatabaseConnection.getEventTemplateHead(templateID: eventID)
         
         for myItem in myReturn
         {
-            myEventID = Int(myItem.eventID)
-            myEventName = myItem.eventName!
+            myTemplateID = Int(myItem.eventID)
+            myTemplateName = myItem.eventName!
             myTeamID = Int(myItem.teamID)
         }
     }
@@ -98,26 +98,26 @@ class eventTemplateHead: NSObject
     {
         super.init()
         
-        myEventID = eventID
-        myEventName = eventName
+        myTemplateID = eventID
+        myTemplateName = eventName
         myTeamID = teamID
     }
     
     func save()
     {
-        myDatabaseConnection.saveEventTemplateHead(myEventID,
-                                               eventName: myEventName,
+        myDatabaseConnection.saveEventTemplateHead(myTemplateID,
+                                               templateName: myTemplateName,
                                                teamID: myTeamID)
     }
     
     func delete()
     {
-        myDatabaseConnection.deleteEventTemplateHead(myEventID)
+        myDatabaseConnection.deleteEventTemplateHead(myTemplateID)
     }
     
     func loadRoles()
     {
-        myRoles = eventTemplates(eventID: myEventID)
+        myRoles = eventTemplates(eventID: myTemplateID)
     }
     
     func addRole(role: String,
@@ -126,7 +126,7 @@ class eventTemplateHead: NSObject
                  startTime: Date,
                  endTime: Date)
     {
-        let newRole = eventTemplate(eventID: myEventID, role: role, dateModifier: dateModifier, startTime: startTime, endTime: endTime, teamID: myTeamID)
+        let newRole = eventTemplate(eventID: myTemplateID, role: role, dateModifier: dateModifier, startTime: startTime, endTime: endTime, teamID: myTeamID)
         newRole.numRequired = numRequired
         
         newRole.save()
@@ -135,20 +135,20 @@ class eventTemplateHead: NSObject
 
 extension coreDatabase
 {
-    func saveEventTemplateHead(_ eventID: Int,
-                           eventName: String,
+    func saveEventTemplateHead(_ templateID: Int,
+                           templateName: String,
                            teamID: Int,
                            updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myItem: EventTemplateHead!
         
-        let myReturn = getEventTemplateHead(eventID: eventID)
+        let myReturn = getEventTemplateHead(templateID: templateID)
         
         if myReturn.count == 0
         { // Add
             myItem = EventTemplateHead(context: objectContext)
-            myItem.eventID = Int64(eventID)
-            myItem.eventName = eventName
+            myItem.eventID = Int64(templateID)
+            myItem.eventName = templateName
             myItem.teamID = Int64(teamID)
             
             if updateType == "CODE"
@@ -166,7 +166,7 @@ extension coreDatabase
         else
         {
             myItem = myReturn[0]
-            myItem.eventName = eventName
+            myItem.eventName = templateName
             
             if updateType == "CODE"
             {
@@ -186,14 +186,14 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceEventTemplateHead(_ eventID: Int,
-                           eventName: String,
+    func replaceEventTemplateHead(_ templateID: Int,
+                           templateName: String,
                               teamID: Int,
                               updateTime: Date =  Date(), updateType: String = "CODE")
     {
         let myItem = EventTemplateHead(context: objectContext)
-        myItem.eventID = Int64(eventID)
-        myItem.eventName = eventName
+        myItem.eventID = Int64(templateID)
+        myItem.eventName = templateName
         myItem.teamID = Int64(teamID)
         
         if updateType == "CODE"
@@ -210,9 +210,9 @@ extension coreDatabase
         saveContext()
     }
     
-    func deleteEventTemplateHead(_ eventID: Int)
+    func deleteEventTemplateHead(_ templateID: Int)
     {
-        let myReturn = getEventTemplateHead(eventID: eventID)
+        let myReturn = getEventTemplateHead(templateID: templateID)
         
         if myReturn.count > 0
         {
@@ -249,13 +249,13 @@ extension coreDatabase
     }
 
     
-    func getEventTemplateHead(eventID: Int)->[EventTemplateHead]
+    func getEventTemplateHead(templateID: Int)->[EventTemplateHead]
     {
         let fetchRequest = NSFetchRequest<EventTemplateHead>(entityName: "EventTemplateHead")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "eventID == \(eventID)")
+        let predicate = NSPredicate(format: "eventID == \(templateID)")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -480,7 +480,7 @@ extension CloudKitInteraction
             }
             
             myDatabaseConnection.replaceEventTemplateHead(eventID,
-                                                      eventName: eventName,
+                                                      templateName: eventName,
                                                       teamID: teamID
                 , updateTime: updateTime, updateType: updateType)
             
@@ -605,7 +605,7 @@ extension CloudKitInteraction
         }
         
         myDatabaseConnection.saveEventTemplateHead(eventID,
-                                               eventName: eventName,
+                                               templateName: eventName,
                                                teamID: teamID
             , updateTime: updateTime, updateType: updateType)
     }

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class clientMaintenanceViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, myCommunicationDelegate
+class clientMaintenanceViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, myCommunicationDelegate, UIPopoverPresentationControllerDelegate
 {
     @IBOutlet weak var txtName: UITextField!
     @IBOutlet weak var txtNotes: UITextView!
@@ -23,6 +23,9 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
     @IBOutlet weak var lblContact: UILabel!
     @IBOutlet weak var lblNote: UILabel!
     @IBOutlet weak var lblName: UILabel!
+    @IBOutlet weak var tblRates: UITableView!
+    @IBOutlet weak var btnAdd: UIButton!
+    @IBOutlet weak var lblRates: UILabel!
     
     var communicationDelegate: myCommunicationDelegate?
     
@@ -30,7 +33,7 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
     fileprivate var contractsList: projects!
     fileprivate var selectedClient: client!
     fileprivate var selectedContract: project!
-    
+    fileprivate var ratesList: rates!
     
     override func viewDidLoad()
     {
@@ -71,7 +74,17 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
                 {
                     return contractsList.projects.count
                 }
-
+            
+            case tblRates:
+                if ratesList == nil
+                {
+                    return 0
+                }
+                else
+                {
+                    return ratesList.rates.count
+                }
+            
             default:
                 return 0
         }
@@ -95,6 +108,33 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
             
                 return cell
             
+            case tblRates:
+                // if rate has a shift them do not allow iot to be removed, unenable button
+                
+                let cell = tableView.dequeueReusableCell(withIdentifier:"cellRates", for: indexPath) as! ratesListItem
+                
+                cell.lblName.text = ratesList.rates[indexPath.row].rateName
+                cell.lblClient.text = formatCurrency(value: ratesList.rates[indexPath.row].chargeAmount)
+                cell.lblStaff.text = formatCurrency(value: ratesList.rates[indexPath.row].rateAmount)
+                cell.lblStart.text = ratesList.rates[indexPath.row].displayStartDate
+                
+                // Calculate GP%
+                
+                let GP = ((ratesList.rates[indexPath.row].chargeAmount - ratesList.rates[indexPath.row].rateAmount) / ratesList.rates[indexPath.row].chargeAmount) * 100
+                
+                cell.lblGP.text = String(format: "%.1f", GP)
+                
+                if ratesList.rates[indexPath.row].hasShiftEntry
+                {
+                    cell.btnRemove.isEnabled = false
+                }
+                else
+                {
+                    cell.btnRemove.isEnabled = true
+                }
+                
+            return cell
+
             default:
                 return UITableViewCell()
         }
@@ -120,12 +160,54 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
                 contractEditViewControl.communicationDelegate = self
                 contractEditViewControl.workingContract = selectedContract
                 self.present(contractEditViewControl, animated: true, completion: nil)
+            
+            case tblRates:
+                let rateMaintenanceEditViewControl = projectsStoryboard.instantiateViewController(withIdentifier: "rateMaintenance") as! rateMaintenanceViewController
+                rateMaintenanceEditViewControl.communicationDelegate = self
+                rateMaintenanceEditViewControl.workingRate = ratesList.rates[indexPath.row]
+                rateMaintenanceEditViewControl.modalPresentationStyle = .popover
                 
+                let popover = rateMaintenanceEditViewControl.popoverPresentationController!
+                popover.delegate = self
+                popover.sourceView = tableView
+                popover.sourceRect = tableView.bounds
+                popover.permittedArrowDirections = .any
+                
+                rateMaintenanceEditViewControl.preferredContentSize = CGSize(width: 500,height: 200)
+                
+                self.present(rateMaintenanceEditViewControl, animated: true, completion: nil)
+
             default:
                 let _ = 1
         }
     }
     
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
+    {
+        if tableView == tblRates
+        {
+            let headerView = tableView.dequeueReusableCell(withIdentifier: "cellHeader") as! ratesHeaderItem
+            
+            return headerView
+        }
+        else
+        {
+            return nil
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
+    {
+        if tableView == tblRates
+        {
+            return 30
+        }
+        else
+        {
+            return 0
+        }
+    }
+
     @IBAction func btnSave(_ sender: UIButton)
     {
         selectedClient.name = txtName.text!
@@ -167,6 +249,26 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
         refreshScreen()
     }
     
+    @IBAction func btnAdd(_ sender: UIButton)
+    {
+        let tempRate = rate(clientID: selectedClient.clientID, teamID: currentUser.currentTeam!.teamID)
+        
+        let rateMaintenanceEditViewControl = projectsStoryboard.instantiateViewController(withIdentifier: "rateMaintenance") as! rateMaintenanceViewController
+        rateMaintenanceEditViewControl.communicationDelegate = self
+        rateMaintenanceEditViewControl.workingRate = tempRate
+        rateMaintenanceEditViewControl.modalPresentationStyle = .popover
+        
+        let popover = rateMaintenanceEditViewControl.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        rateMaintenanceEditViewControl.preferredContentSize = CGSize(width: 500,height: 200)
+        
+        self.present(rateMaintenanceEditViewControl, animated: true, completion: nil)
+    }
+    
     func hideFields()
     {
         txtName.isHidden = true
@@ -179,6 +281,9 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
         lblContact.isHidden = true
         lblNote.isHidden = true
         lblName.isHidden = true
+        tblRates.isHidden = true
+        btnAdd.isHidden = true
+        lblRates.isHidden = true
     }
     
     func showFields()
@@ -193,6 +298,9 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
         lblContact.isHidden = false
         lblNote.isHidden = false
         lblName.isHidden = false
+        tblRates.isHidden = false
+        btnAdd.isHidden = false
+        lblRates.isHidden = false
     }
     
     func refreshScreen()
@@ -204,6 +312,9 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
         {
             txtName.text = ""
             txtNotes.text = ""
+            tblRates.isHidden = true
+            lblRates.isHidden = true
+            btnAdd.isHidden = true
         }
         else
         {
@@ -212,6 +323,23 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
 
             txtName.text = selectedClient.name
             txtNotes.text = selectedClient.note
+            
+            ratesList = rates(clientID: selectedClient.clientID)
+            
+            if selectedClient.name == ""
+            {
+                tblRates.isHidden = true
+                lblRates.isHidden = true
+                btnAdd.isHidden = true
+            }
+            else
+            {
+                tblRates.isHidden = false
+                lblRates.isHidden = false
+                btnAdd.isHidden = false
+                
+                tblRates.reloadData()
+            }
         }
     }
 }
@@ -237,3 +365,32 @@ class clientsListItem: UITableViewCell
         super.layoutSubviews()
     }
 }
+
+class ratesHeaderItem: UITableViewCell
+{
+    @IBOutlet weak var lblName: UILabel!
+    @IBOutlet weak var lblStart: UILabel!
+    @IBOutlet weak var lblStaff: UILabel!
+    @IBOutlet weak var lblClient: UILabel!
+}
+
+class ratesListItem: UITableViewCell
+{
+    @IBOutlet weak var lblName: UILabel!
+    @IBOutlet weak var lblStart: UILabel!
+    @IBOutlet weak var lblStaff: UILabel!
+    @IBOutlet weak var lblClient: UILabel!
+    @IBOutlet weak var lblGP: UILabel!
+    @IBOutlet weak var btnRemove: UIButton!
+    
+    override func layoutSubviews()
+    {
+        contentView.frame = bounds
+        super.layoutSubviews()
+    }
+    
+    @IBAction func btnRemove(_ sender: UIButton)
+    {
+    }
+}
+

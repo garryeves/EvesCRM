@@ -100,7 +100,7 @@ class eventTemplateVoewController: UIViewController, UITableViewDataSource, UITa
             case tblTemplates:
                 let cell = tableView.dequeueReusableCell(withIdentifier:"templateCell", for: indexPath) as! templateListItem
                 
-                cell.lblName.text = templates.templates[indexPath.row].eventName
+                cell.lblName.text = templates.templates[indexPath.row].templateName
                 
                 return cell
                 
@@ -171,7 +171,6 @@ class eventTemplateVoewController: UIViewController, UITableViewDataSource, UITa
         }
     }
     
-    
     @IBAction func btnBack(_ sender: UIButton)
     {
         communicationDelegate?.refreshScreen!()
@@ -199,7 +198,7 @@ class eventTemplateVoewController: UIViewController, UITableViewDataSource, UITa
         }
         else
         {
-            currentTemplate.eventName = txtName.text!
+            currentTemplate.templateName = txtName.text!
             
             currentTemplate.save()
             
@@ -524,7 +523,7 @@ class eventTemplateVoewController: UIViewController, UITableViewDataSource, UITa
         
         if currentTemplate != nil
         {
-            txtName.text = currentTemplate.eventName
+            txtName.text = currentTemplate.templateName
 
             currentTemplate.loadRoles()
             tblRoles.reloadData()

@@ -504,6 +504,14 @@ class project: NSObject // 10k level
         }
     }
     
+    var staff: shifts?
+    {
+        get
+        {
+            return shifts(projectID: myProjectID)
+        }
+    }
+    
     init(teamID: Int)
     {
         super.init()

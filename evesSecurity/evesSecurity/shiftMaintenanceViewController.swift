@@ -65,7 +65,16 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
         cell.sourceView = cell
         cell.peopleList = peopleList
         cell.weeklyRecord = shiftList[indexPath.row]
-        cell.rateList = rates(projectID: shiftList[indexPath.row].projectID)
+        
+        // Get the client details
+        
+        let tempProject = project(projectID: shiftList[indexPath.row].projectID)
+        
+        if tempProject.clientID != 0
+        {
+            cell.rateList = rates(clientID: tempProject.clientID)
+        }
+
         cell.shiftLineID = shiftList[indexPath.row].shiftLineID
 
         cell.lblContract.text = shiftList[indexPath.row].contract
@@ -161,6 +170,36 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
     
     @IBAction func btnCreateShift(_ sender: UIButton)
     {
+        // get the details for previous week
+        
+        let previousWEDate = addDays(to: currentWeekEndingDate, days: -7)
+        
+        // now go and see if there are any entries for that weeks
+      
+        let previousShifts = shifts(teamID: currentUser.currentTeam!.teamID, WEDate: previousWEDate)
+        
+        var recordCount: Int = 0
+        for myItem in previousShifts.shifts
+        {
+            var newShift: shift!
+            
+            if recordCount == previousShifts.shifts.count - 1
+            {
+                newShift = shift(projectID: myItem.projectID, workDate: addDays(to: myItem.workDate, days: 7), weekEndDate: currentWeekEndingDate, teamID: currentUser.currentTeam!.teamID, shiftLineID: myItem.shiftLineID, type: myItem.type)
+            }
+            else
+            {
+                newShift = shift(projectID: myItem.projectID, workDate: addDays(to: myItem.workDate, days: 7), weekEndDate: currentWeekEndingDate, teamID: currentUser.currentTeam!.teamID, shiftLineID: myItem.shiftLineID, type: myItem.type, saveToCloud: false)
+                recordCount += 1
+            }
+            
+            newShift.shiftDescription = myItem.shiftDescription
+            newShift.startTime = myItem.startTime
+            newShift.endTime = myItem.endTime
+            newShift.save()
+        }
+        
+        refreshScreen()
     }
     
     @IBAction func btnPreviousWeek(_ sender: UIButton)
@@ -221,11 +260,13 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
         {
             lblWETitle.isHidden = true
             btnCreateShift.isHidden = false
+            btnAdd.isHidden = true
         }
         else
         {
             lblWETitle.isHidden = false
             btnCreateShift.isHidden = true
+            btnAdd.isHidden = false
         }
         
         tblShifts.reloadData()

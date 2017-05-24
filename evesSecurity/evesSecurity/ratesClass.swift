@@ -11,7 +11,7 @@ import CoreData
 import CloudKit
 
 let shiftShiftType = "shift"
-let eventShiftType = "event"
+let eventShiftType = "Event"
 let calloutShiftType = "callout"
 let overtimeShiftType = "overtime"
 let regularShiftType = "regular"
@@ -20,12 +20,12 @@ class rates: NSObject
 {
     fileprivate var myRates:[rate] = Array()
     
-    init(projectID: Int)
+    init(clientID: Int)
     {
-        for myItem in myDatabaseConnection.getRates(projectID: projectID)
+        for myItem in myDatabaseConnection.getRates(clientID: clientID)
         {
             let myObject = rate(rateID: Int(myItem.rateID),
-                                projectID: Int(myItem.projectID),
+                                clientID: Int(myItem.clientID),
                                 rateName: myItem.rateName!,
                                 rateAmount: myItem.rateAmount,
                                 chargeAmount: myItem.chargeAmount,
@@ -62,7 +62,7 @@ class rates: NSObject
 class rate: NSObject
 {
     fileprivate var myRateID: Int = 0
-    fileprivate var myProjectID: Int = 0
+    fileprivate var myClientID: Int = 0
     fileprivate var myRateName: String = ""
     fileprivate var myRateAmount: Double = 0.0
     fileprivate var myChargeAmount: Double = 0.0
@@ -77,11 +77,11 @@ class rate: NSObject
         }
     }
     
-    var projectID: Int
+    var clientID: Int
     {
         get
         {
-            return myProjectID
+            return myClientID
         }
     }
     
@@ -154,7 +154,7 @@ class rate: NSObject
     {
         get
         {
-            if myDatabaseConnection.getShiftForRate(projectID: myProjectID, rateID: myRateID, type: shiftShiftType).count > 0
+            if myDatabaseConnection.getShiftForRate(rateID: myRateID, type: shiftShiftType).count > 0
             {
                 return true
             }
@@ -165,12 +165,12 @@ class rate: NSObject
         }
     }
 
-    init(projectID: Int, teamID: Int)
+    init(clientID: Int, teamID: Int)
     {
         super.init()
         
         myRateID = myDatabaseConnection.getNextID("Rates")
-        myProjectID = projectID
+        myClientID = clientID
         myTeamID = teamID
         
         save()
@@ -184,7 +184,7 @@ class rate: NSObject
         for myItem in myReturn
         {
             myRateID = Int(myItem.rateID)
-            myProjectID = Int(myItem.projectID)
+            myClientID = Int(myItem.clientID)
             myRateName = myItem.rateName!
             myRateAmount = myItem.rateAmount
             myChargeAmount = myItem.chargeAmount
@@ -194,7 +194,7 @@ class rate: NSObject
     }
     
     init(rateID: Int,
-         projectID: Int,
+         clientID: Int,
          rateName: String,
          rateAmount: Double,
          chargeAmount: Double,
@@ -205,7 +205,7 @@ class rate: NSObject
         super.init()
         
         myRateID = rateID
-        myProjectID = projectID
+        myClientID = clientID
         myRateName = rateName
         myRateAmount = rateAmount
         myChargeAmount = chargeAmount
@@ -216,7 +216,7 @@ class rate: NSObject
     func save()
     {
         myDatabaseConnection.saveRates(myRateID,
-                                       projectID: myProjectID,
+                                       clientID: myClientID,
                                         rateName: myRateName,
                                         rateAmount: myRateAmount,
                                         chargeAmount: myChargeAmount,
@@ -234,7 +234,7 @@ class rate: NSObject
 extension coreDatabase
 {
     func saveRates(_ rateID: Int,
-                   projectID: Int,
+                   clientID: Int,
                    rateName: String,
                    rateAmount: Double,
                    chargeAmount: Double,
@@ -250,7 +250,7 @@ extension coreDatabase
         { // Add
             myItem = Rates(context: objectContext)
             myItem.rateID = Int64(rateID)
-            myItem.projectID = Int64(projectID)
+            myItem.clientID = Int64(clientID)
             myItem.rateName = rateName
             myItem.rateAmount = rateAmount
             myItem.chargeAmount = chargeAmount
@@ -272,7 +272,7 @@ extension coreDatabase
         else
         {
             myItem = myReturn[0]
-            myItem.projectID = Int64(projectID)
+            myItem.clientID = Int64(clientID)
             myItem.rateName = rateName
             myItem.rateAmount = rateAmount
             myItem.chargeAmount = chargeAmount
@@ -297,7 +297,7 @@ extension coreDatabase
     }
     
     func replaceRates(_ rateID: Int,
-                      projectID: Int,
+                      clientID: Int,
                       rateName: String,
                       rateAmount: Double,
                       chargeAmount: Double,
@@ -307,7 +307,7 @@ extension coreDatabase
     {
         let myItem = Rates(context: objectContext)
         myItem.rateID = Int64(rateID)
-        myItem.projectID = Int64(projectID)
+        myItem.clientID = Int64(clientID)
         myItem.rateName = rateName
         myItem.rateAmount = rateAmount
         myItem.chargeAmount = chargeAmount
@@ -342,13 +342,13 @@ extension coreDatabase
         saveContext()
     }
     
-    func getRates(projectID: Int)->[Rates]
+    func getRates(clientID: Int)->[Rates]
     {
         let fetchRequest = NSFetchRequest<Rates>(entityName: "Rates")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectID == \(projectID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(clientID == \(clientID)) && (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -577,10 +577,10 @@ extension CloudKitInteraction
                 rateID = record.object(forKey: "rateID") as! Int
             }
             
-            var projectID: Int = 0
-            if record.object(forKey: "projectID") != nil
+            var clientID: Int = 0
+            if record.object(forKey: "clientID") != nil
             {
-                projectID = record.object(forKey: "projectID") as! Int
+                clientID = record.object(forKey: "clientID") as! Int
             }
             
             var rateAmount: Double = 0.0
@@ -620,7 +620,7 @@ extension CloudKitInteraction
             }
             
             myDatabaseConnection.replaceRates(rateID,
-                                                projectID: projectID,
+                                                clientID: clientID,
                                                 rateName: rateName,
                                                 rateAmount: rateAmount,
                                                 chargeAmount: chargeAmount,
@@ -661,7 +661,7 @@ extension CloudKitInteraction
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
                     
-                    record!.setValue(sourceRecord.projectID, forKey: "projectID")
+                    record!.setValue(sourceRecord.clientID, forKey: "clientID")
                     record!.setValue(sourceRecord.rateName, forKey: "rateName")
                     record!.setValue(sourceRecord.rateAmount, forKey: "rateAmount")
                     record!.setValue(sourceRecord.chargeAmount, forKey: "chargeAmount")
@@ -692,7 +692,7 @@ extension CloudKitInteraction
                 {  // Insert
                     let record = CKRecord(recordType: "Rates")
                     record.setValue(sourceRecord.rateID, forKey: "rateID")
-                    record.setValue(sourceRecord.projectID, forKey: "projectID")
+                    record.setValue(sourceRecord.clientID, forKey: "clientID")
                     record.setValue(sourceRecord.rateName, forKey: "rateName")
                     record.setValue(sourceRecord.rateAmount, forKey: "rateAmount")
                     record.setValue(sourceRecord.chargeAmount, forKey: "chargeAmount")
@@ -736,10 +736,10 @@ extension CloudKitInteraction
             rateID = sourceRecord.object(forKey: "rateID") as! Int
         }
         
-        var projectID: Int = 0
-        if sourceRecord.object(forKey: "projectID") != nil
+        var clientID: Int = 0
+        if sourceRecord.object(forKey: "clientID") != nil
         {
-            projectID = sourceRecord.object(forKey: "projectID") as! Int
+            clientID = sourceRecord.object(forKey: "clientID") as! Int
         }
         
         var rateAmount: Double = 0.0
@@ -779,7 +779,7 @@ extension CloudKitInteraction
         }
         
         myDatabaseConnection.saveRates(rateID,
-                                         projectID: projectID,
+                                         clientID: clientID,
                                          rateName: rateName,
                                          rateAmount: rateAmount,
                                          chargeAmount: chargeAmount,

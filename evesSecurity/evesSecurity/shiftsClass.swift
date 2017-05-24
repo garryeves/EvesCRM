@@ -60,8 +60,43 @@ class shifts: NSObject
         {
             createWeeklyArray()
         }
+        
+        sortArray()
     }
     
+    init(teamID: Int, WEDate: Date, includeEvents: Bool = false)
+    {
+        super.init()
+        
+        myWeeklyShifts.removeAll()
+        
+        for myItem in myDatabaseConnection.getShifts(teamID: teamID, WEDate: WEDate, includeEvents: includeEvents)
+        {
+            let myObject = shift(shiftID: Int(myItem.shiftID),
+                                 projectID: Int(myItem.projectID),
+                                 personID: Int(myItem.personID),
+                                 workDate: myItem.workDate! as Date,
+                                 shiftDescription: myItem.shiftDescription!,
+                                 startTime: myItem.startTime! as Date,
+                                 endTime: myItem.endTime! as Date,
+                                 teamID: Int(myItem.teamID),
+                                 weekEndDate: myItem.weekEndDate! as Date,
+                                 status: myItem.status!,
+                                 shiftLineID: Int(myItem.shiftLineID),
+                                 rateID: Int(myItem.rateID),
+                                 type: myItem.type!
+            )
+            myShifts.append(myObject)
+        }
+        
+        if myShifts.count > 0
+        {
+            createWeeklyArray()
+        }
+        
+        sortArray()
+    }
+
     init(personID: Int, searchFrom: Date, searchTo: Date, teamID: Int, type: String)
     {
         super.init()
@@ -92,6 +127,8 @@ class shifts: NSObject
         {
             createWeeklyArray()
         }
+        
+        sortArray()
     }
     
     init(projectID: Int, searchFrom: Date, searchTo: Date, teamID: Int, type: String)
@@ -123,6 +160,62 @@ class shifts: NSObject
         if myShifts.count > 0
         {
             createWeeklyArray()
+        }
+        
+        sortArray()
+    }
+    
+    init(projectID: Int)
+    {
+        super.init()
+        
+        myWeeklyShifts.removeAll()
+        
+        for myItem in myDatabaseConnection.getShifts(projectID: projectID)
+        {
+            let myObject = shift(shiftID: Int(myItem.shiftID),
+                                 projectID: Int(myItem.projectID),
+                                 personID: Int(myItem.personID),
+                                 workDate: myItem.workDate! as Date,
+                                 shiftDescription: myItem.shiftDescription!,
+                                 startTime: myItem.startTime! as Date,
+                                 endTime: myItem.endTime! as Date,
+                                 teamID: Int(myItem.teamID),
+                                 weekEndDate: myItem.weekEndDate! as Date,
+                                 status: myItem.status!,
+                                 shiftLineID: Int(myItem.shiftLineID),
+                                 rateID: Int(myItem.rateID),
+                                 type: myItem.type!
+                
+            )
+            myShifts.append(myObject)
+        }
+        
+        if myShifts.count > 0
+        {
+            createWeeklyArray()
+        }
+        
+        sortArray()
+    }
+    
+    private func sortArray()
+    {
+        if myShifts.count > 0
+        {
+            myShifts.sort
+                {
+                    // Because workdate has time it throws everything out
+                    
+                    if $0.workDate == $1.workDate
+                    {
+                        return $0.shiftDescription < $1.shiftDescription
+                    }
+                    else
+                    {
+                        return $0.workDate < $1.workDate
+                    }
+            }
         }
     }
     
@@ -344,7 +437,14 @@ class shift: NSObject
     {
         get
         {
-            return person(personID: myPersonID).name
+            if myPersonID == 0
+            {
+                return "Select Person"
+            }
+            else
+            {
+                return person(personID: myPersonID).name
+            }
         }
     }
     
@@ -364,7 +464,14 @@ class shift: NSObject
     {
         get
         {
-            return rate(rateID: myRateID).rateName
+            if myRateID == 0
+            {
+                return "Select Rate"
+            }
+            else
+            {
+                return rate(rateID: myRateID).rateName
+            }
         }
     }
     
@@ -392,9 +499,7 @@ class shift: NSObject
     {
         get
         {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateStyle = .long
-            return dateFormatter.string(from: myWorkDate)
+            return formatDateToString(myWorkDate)
         }
     }
     
@@ -483,11 +588,11 @@ class shift: NSObject
     }
     
     
-    init(projectID: Int, workDate: Date, weekEndDate: Date, teamID: Int, shiftLineID: Int, type: String)
+    init(projectID: Int, workDate: Date, weekEndDate: Date, teamID: Int, shiftLineID: Int, type: String, saveToCloud: Bool = true)
     {
         super.init()
         
-        myShiftID = myDatabaseConnection.getNextID("Shifts")
+        myShiftID = myDatabaseConnection.getNextID("Shifts", saveToCloud: saveToCloud)
         myProjectID = projectID
         myTeamID = teamID
         myWeekEndDate = weekEndDate
@@ -766,6 +871,50 @@ extension coreDatabase
         }
     }
     
+    func getShifts(teamID: Int, WEDate: Date, includeEvents: Bool)->[Shifts]
+    {
+        let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
+        
+        // get the current calendar
+        let calendar = Calendar.current
+        // get the start of the day of the selected date
+        let startDate = calendar.startOfDay(for: WEDate)
+        // get the start of the day after the selected date
+        let endDate = calendar.date(byAdding: .day, value: 1, to: startDate)!
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate
+        
+        if includeEvents
+        {
+            predicate = NSPredicate(format: "(weekEndDate >= %@) AND (weekEndDate <= %@) AND (teamID == \(teamID)) AND (updateType != \"Delete\")", startDate as CVarArg, endDate as CVarArg)
+        }
+        else
+        {
+            predicate = NSPredicate(format: "(weekEndDate >= %@) AND (weekEndDate <= %@) AND (teamID == \(teamID)) AND (type != \"\(eventShiftType)\") AND (updateType != \"Delete\")", startDate as CVarArg, endDate as CVarArg)
+        }
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        let sortDescriptor = NSSortDescriptor(key: "workDate", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
     func getShifts(personID: Int, searchFrom: Date, searchTo: Date, teamID: Int, type: String)->[Shifts]
     {
         let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
@@ -820,13 +969,40 @@ extension coreDatabase
         }
     }
     
-    func getShiftForRate(projectID: Int, rateID: Int, type: String)->[Shifts]
+    func getShifts(projectID: Int)->[Shifts]
     {
         let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectID == \(projectID)) AND (rateID == \(rateID)) AND (type == \"\(type)\") AND (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(projectID == \(projectID)) AND (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        let sortDescriptor = NSSortDescriptor(key: "workDate", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func getShiftForRate(rateID: Int, type: String)->[Shifts]
+    {
+        let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(rateID == \(rateID)) AND (type == \"\(type)\") AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

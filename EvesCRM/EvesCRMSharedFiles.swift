@@ -1587,3 +1587,24 @@ func addDays(to: Date, days: Int) -> Date
     
     return myCalendar.date(byAdding: interval, to: to)!
 }
+
+func getWeekEndingDate(_ from: Date) -> Date
+{
+    let dateModifier = (7 - getDayOfWeek(from)!) + 1
+    
+    if dateModifier != 7
+    {
+        return addDays(to: from, days: dateModifier)
+    }
+    else
+    {
+        return from
+    }
+}
+
+func formatDateToString(_ from: Date) -> String
+{
+    let myDateFormatter = DateFormatter()
+    myDateFormatter.dateFormat = "E dd MMM yy"
+    return myDateFormatter.string(from: from)
+}
