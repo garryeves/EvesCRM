@@ -23,22 +23,25 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
     
     fileprivate var peopleList: people!
     fileprivate var shiftList: [mergedShiftList] = Array()
-    fileprivate var currentWeekEndingDate: Date!
+    var currentWeekEndingDate: Date!
     fileprivate var contractList: projects!
     fileprivate var displayList: [String] = Array()
     
     override func viewDidLoad()
     {
-        // work out the current weekending date
-        let dateModifier = (7 - getDayOfWeek(Date())!) + 1
-        
-        if dateModifier != 7
+        if currentWeekEndingDate == nil
         {
-            currentWeekEndingDate = addDays(to: Date(), days: dateModifier)
-        }
-        else
-        {
-            currentWeekEndingDate = Date()
+            // work out the current weekending date
+            let dateModifier = (7 - getDayOfWeek(Date())!) + 1
+            
+            if dateModifier != 7
+            {
+                currentWeekEndingDate = addDays(to: Date(), days: dateModifier)
+            }
+            else
+            {
+                currentWeekEndingDate = Date()
+            }
         }
         
         refreshScreen()
@@ -80,22 +83,42 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
         cell.lblContract.text = shiftList[indexPath.row].contract
         cell.txtDescription.text = shiftList[indexPath.row].description
     
-        displayTableRowDay(btnStart: cell.btnStartSun, btnEnd: cell.btnEndSun, btnRate: cell.btnRateSun, btnPerson: cell.btnPersonSun, lblTitle: cell.lblTitleSun, sourceShift: shiftList[indexPath.row].sunShift, dateAdjustment: 0)
-        displayTableRowDay(btnStart: cell.btnStartMon, btnEnd: cell.btnEndMon, btnRate: cell.btnRateMon, btnPerson: cell.btnPersonMon, lblTitle: cell.lblTitleMon, sourceShift: shiftList[indexPath.row].monShift, dateAdjustment: -6)
-        displayTableRowDay(btnStart: cell.btnStartTue, btnEnd: cell.btnEndTue, btnRate: cell.btnRateTue, btnPerson: cell.btnPersonTue, lblTitle: cell.lblTitleTue, sourceShift: shiftList[indexPath.row].tueShift, dateAdjustment: -5)
-        displayTableRowDay(btnStart: cell.btnStartWed, btnEnd: cell.btnEndWed, btnRate: cell.btnRateWed, btnPerson: cell.btnPersonWed, lblTitle: cell.lblTitleWed, sourceShift: shiftList[indexPath.row].wedShift, dateAdjustment: -4)
-        displayTableRowDay(btnStart: cell.btnStartThu, btnEnd: cell.btnEndThu, btnRate: cell.btnRateThu, btnPerson: cell.btnPersonThu, lblTitle: cell.lblTitleThu, sourceShift: shiftList[indexPath.row].thuShift, dateAdjustment: -3)
-        displayTableRowDay(btnStart: cell.btnStartFri, btnEnd: cell.btnEndFri, btnRate: cell.btnRateFri, btnPerson: cell.btnPersonFri, lblTitle: cell.lblTitleFri, sourceShift: shiftList[indexPath.row].friShift, dateAdjustment: -2)
-        displayTableRowDay(btnStart: cell.btnStartSat, btnEnd: cell.btnEndSat, btnRate: cell.btnRateSat, btnPerson: cell.btnPersonSat, lblTitle: cell.lblTitleSat, sourceShift: shiftList[indexPath.row].satShift, dateAdjustment: -1)
+        displayTableRowDay(btnStart: cell.btnStartSun, btnEnd: cell.btnEndSun, btnRate: cell.btnRateSun, btnPerson: cell.btnPersonSun, sourceShift: shiftList[indexPath.row].sunShift, dateAdjustment: 0)
+        displayTableRowDay(btnStart: cell.btnStartMon, btnEnd: cell.btnEndMon, btnRate: cell.btnRateMon, btnPerson: cell.btnPersonMon, sourceShift: shiftList[indexPath.row].monShift, dateAdjustment: -6)
+        displayTableRowDay(btnStart: cell.btnStartTue, btnEnd: cell.btnEndTue, btnRate: cell.btnRateTue, btnPerson: cell.btnPersonTue, sourceShift: shiftList[indexPath.row].tueShift, dateAdjustment: -5)
+        displayTableRowDay(btnStart: cell.btnStartWed, btnEnd: cell.btnEndWed, btnRate: cell.btnRateWed, btnPerson: cell.btnPersonWed, sourceShift: shiftList[indexPath.row].wedShift, dateAdjustment: -4)
+        displayTableRowDay(btnStart: cell.btnStartThu, btnEnd: cell.btnEndThu, btnRate: cell.btnRateThu, btnPerson: cell.btnPersonThu, sourceShift: shiftList[indexPath.row].thuShift, dateAdjustment: -3)
+        displayTableRowDay(btnStart: cell.btnStartFri, btnEnd: cell.btnEndFri, btnRate: cell.btnRateFri, btnPerson: cell.btnPersonFri, sourceShift: shiftList[indexPath.row].friShift, dateAdjustment: -2)
+        displayTableRowDay(btnStart: cell.btnStartSat, btnEnd: cell.btnEndSat, btnRate: cell.btnRateSat, btnPerson: cell.btnPersonSat, sourceShift: shiftList[indexPath.row].satShift, dateAdjustment: -1)
  
         return cell
     }
     
-    private func displayTableRowDay(btnStart: UIButton, btnEnd: UIButton, btnRate: UIButton, btnPerson: UIButton, lblTitle: UILabel, sourceShift: shift?, dateAdjustment: Int)
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
     {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "E dd MMM"
         
+        let headerView = tableView.dequeueReusableCell(withIdentifier: "shiftHeader") as! shiftHeaderItem
+        
+        headerView.lblMon.text = dateFormatter.string(from: addDays(to: currentWeekEndingDate, days: -6))
+        headerView.lblTue.text = dateFormatter.string(from: addDays(to: currentWeekEndingDate, days: -5))
+        headerView.lblWed.text = dateFormatter.string(from: addDays(to: currentWeekEndingDate, days: -4))
+        headerView.lblThu.text = dateFormatter.string(from: addDays(to: currentWeekEndingDate, days: -3))
+        headerView.lblFri.text = dateFormatter.string(from: addDays(to: currentWeekEndingDate, days: -2))
+        headerView.lblSat.text = dateFormatter.string(from: addDays(to: currentWeekEndingDate, days: -1))
+        headerView.lblSun.text = dateFormatter.string(from: currentWeekEndingDate)
+        
+        return headerView
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
+    {
+        return 35
+    }
+    
+    private func displayTableRowDay(btnStart: UIButton, btnEnd: UIButton, btnRate: UIButton, btnPerson: UIButton, sourceShift: shift?, dateAdjustment: Int)
+    {
         if sourceShift != nil
         {
             btnStart.setTitle(sourceShift?.startTimeString, for: .normal)
@@ -103,7 +126,7 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
             
             if sourceShift?.rateID == 0
             {
-                btnRate.setTitle("Select Rate", for: .normal)
+                btnRate.setTitle("Rate", for: .normal)
             }
             else
             {
@@ -112,24 +135,25 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
             
             if sourceShift?.personID == 0
             {
-                btnPerson.setTitle("Select Person", for: .normal)
+                btnPerson.setTitle("Person", for: .normal)
             }
             else
             {
                 btnPerson.setTitle(sourceShift?.personName, for: .normal)
             }
 
-            lblTitle.text = sourceShift?.workDateString
+            btnRate.isHidden = false
+            btnPerson.isHidden = false
         }
         else
         {
-            btnStart.setTitle("Select", for: .normal)
-            btnEnd.setTitle("Select", for: .normal)
-            btnRate.setTitle("Select Rate", for: .normal)
-            btnPerson.setTitle("Select Person", for: .normal)
-            lblTitle.text = dateFormatter.string(from: addDays(to: currentWeekEndingDate, days: dateAdjustment))
+            btnStart.setTitle("Set", for: .normal)
+            btnEnd.setTitle("Set", for: .normal)
+            btnRate.isHidden = true
+            btnPerson.isHidden = true
+            btnRate.setTitle("Rate", for: .normal)
+            btnPerson.setTitle("Person", for: .normal)
         }
-
     }
     
     @IBAction func btnBack(_ sender: UIButton)
@@ -140,7 +164,7 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
     
     @IBAction func btnAdd(_ sender: UIButton)
     {
-        contractList = projects(teamID: currentUser.currentTeam!.teamID)
+        contractList = projects(teamID: currentUser.currentTeam!.teamID, includeEvents: false)
         
         displayList.removeAll()
         
@@ -294,31 +318,24 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
     @IBOutlet weak var btnEndSun: UIButton!
     @IBOutlet weak var btnRateMon: UIButton!
     @IBOutlet weak var btnPersonMon: UIButton!
-    @IBOutlet weak var lblTitleMon: UILabel!
     
     @IBOutlet weak var btnRateTue: UIButton!
     @IBOutlet weak var btnPersonTue: UIButton!
-    @IBOutlet weak var lblTitleTue: UILabel!
     
     @IBOutlet weak var btnRateWed: UIButton!
     @IBOutlet weak var btnPersonWed: UIButton!
-    @IBOutlet weak var lblTitleWed: UILabel!
     
     @IBOutlet weak var btnRateThu: UIButton!
     @IBOutlet weak var btnPersonThu: UIButton!
-    @IBOutlet weak var lblTitleThu: UILabel!
     
     @IBOutlet weak var btnRateFri: UIButton!
     @IBOutlet weak var btnPersonFri: UIButton!
-    @IBOutlet weak var lblTitleFri: UILabel!
     
     @IBOutlet weak var btnRateSat: UIButton!
     @IBOutlet weak var btnPersonSat: UIButton!
-    @IBOutlet weak var lblTitleSat: UILabel!
     
     @IBOutlet weak var btnRateSun: UIButton!
     @IBOutlet weak var btnPersonSun: UIButton!
-    @IBOutlet weak var lblTitleSun: UILabel!
     
     var peopleList: people!
     var rateList: rates!
@@ -461,7 +478,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
         {
             case btnStartMon:
                 pickerView.source = "btnStartMon"
-                if btnStartMon.currentTitle == "Select"
+                if btnStartMon.currentTitle == "Set"
                 {
                     pickerView.currentDate = getDefaultDate()
                 }
@@ -472,7 +489,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                 
             case btnEndMon:
                 pickerView.source = "btnEndMon"
-                if btnStartMon.currentTitle == "Select"
+                if btnEndMon.currentTitle == "Set"
                 {
                     pickerView.currentDate = getDefaultDate()
                 }
@@ -483,7 +500,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
             
             case btnStartTue:
                 pickerView.source = "btnStartTue"
-                if btnStartMon.currentTitle == "Select"
+                if btnStartTue.currentTitle == "Set"
                 {
                     pickerView.currentDate = getDefaultDate()
                 }
@@ -494,7 +511,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
             
             case btnEndTue:
                 pickerView.source = "btnEndTue"
-                if btnStartMon.currentTitle == "Select"
+                if btnEndTue.currentTitle == "Set"
                 {
                     pickerView.currentDate = getDefaultDate()
                 }
@@ -505,7 +522,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
 
             case btnStartWed:
                 pickerView.source = "btnStartWed"
-                if btnStartMon.currentTitle == "Select"
+                if btnStartWed.currentTitle == "Set"
                 {
                     pickerView.currentDate = getDefaultDate()
                 }
@@ -516,7 +533,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
             
             case btnEndWed:
                 pickerView.source = "btnEndWed"
-                if btnStartMon.currentTitle == "Select"
+                if btnEndWed.currentTitle == "Set"
                 {
                     pickerView.currentDate = getDefaultDate()
                 }
@@ -527,7 +544,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
 
             case btnStartThu:
                 pickerView.source = "btnStartThu"
-                if btnStartMon.currentTitle == "Select"
+                if btnStartThu.currentTitle == "Set"
                 {
                     pickerView.currentDate = getDefaultDate()
                 }
@@ -538,7 +555,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
             
             case btnEndThu:
                 pickerView.source = "btnEndThu"
-                if btnStartMon.currentTitle == "Select"
+                if btnEndThu.currentTitle == "Set"
                 {
                     pickerView.currentDate = getDefaultDate()
                 }
@@ -549,7 +566,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
 
             case btnStartFri:
                 pickerView.source = "btnStartFri"
-                if btnStartMon.currentTitle == "Select"
+                if btnStartFri.currentTitle == "Set"
                 {
                     pickerView.currentDate = getDefaultDate()
                 }
@@ -560,7 +577,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
             
             case btnEndFri:
                 pickerView.source = "btnEndFri"
-                if btnStartMon.currentTitle == "Select"
+                if btnEndFri.currentTitle == "Set"
                 {
                     pickerView.currentDate = getDefaultDate()
                 }
@@ -571,7 +588,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
 
             case btnStartSat:
                 pickerView.source = "btnStartSat"
-                if btnStartMon.currentTitle == "Select"
+                if btnStartSat.currentTitle == "Set"
                 {
                     pickerView.currentDate = getDefaultDate()
                 }
@@ -582,7 +599,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
             
             case btnEndSat:
                 pickerView.source = "btnEndSat"
-                if btnStartMon.currentTitle == "Select"
+                if btnEndSat.currentTitle == "Set"
                 {
                     pickerView.currentDate = getDefaultDate()
                 }
@@ -593,7 +610,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
 
             case btnStartSun:
                 pickerView.source = "btnStartSun"
-                if btnStartMon.currentTitle == "Select"
+                if btnStartSun.currentTitle == "Set"
                 {
                     pickerView.currentDate = getDefaultDate()
                 }
@@ -604,7 +621,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
             
             case btnEndSun:
                 pickerView.source = "btnEndSun"
-                if btnStartMon.currentTitle == "Select"
+                if btnEndSun.currentTitle == "Set"
                 {
                     pickerView.currentDate = getDefaultDate()
                 }
@@ -1029,6 +1046,23 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
         newShift.shiftDescription = txtDescription.text!
         
         return newShift
+    }
+}
+
+class shiftHeaderItem: UITableViewCell
+{
+    @IBOutlet weak var lblSun: UILabel!
+    @IBOutlet weak var lblMon: UILabel!
+    @IBOutlet weak var lblTue: UILabel!
+    @IBOutlet weak var lblWed: UILabel!
+    @IBOutlet weak var lblThu: UILabel!
+    @IBOutlet weak var lblFri: UILabel!
+    @IBOutlet weak var lblSat: UILabel!
+    
+    override func layoutSubviews()
+    {
+        contentView.frame = bounds
+        super.layoutSubviews()
     }
 }
 

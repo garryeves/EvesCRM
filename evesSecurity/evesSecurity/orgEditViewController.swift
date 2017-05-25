@@ -98,7 +98,7 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
         
         if newUserCreated
         {
-            communicationDelegate?.userCreated!(currentUser!)
+            communicationDelegate?.userCreated!(currentUser, teamID: workingOrganisation!.teamID)
         }
     }
     

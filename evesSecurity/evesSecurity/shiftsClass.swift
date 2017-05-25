@@ -199,6 +199,60 @@ class shifts: NSObject
         sortArray()
     }
     
+    init(query: String, teamID: Int)
+    {
+        super.init()
+        
+        var returnArray: [Shifts]!
+        
+        myShifts.removeAll()
+        
+        switch query
+        {
+            case "shifts no person or rate":
+                returnArray = myDatabaseConnection.getShiftsNoPersonOrRate(teamID: teamID)
+                
+            case "shifts no person":
+                returnArray = myDatabaseConnection.getShiftsNoPerson(teamID: teamID)
+                
+            case "shifts no rate":
+                returnArray = myDatabaseConnection.getShiftsNoRate(teamID: teamID)
+                
+            default:
+                let _ = 1
+        }
+        
+        if returnArray != nil
+        {
+            for myItem in returnArray
+            {
+                let myObject = shift(shiftID: Int(myItem.shiftID),
+                                     projectID: Int(myItem.projectID),
+                                     personID: Int(myItem.personID),
+                                     workDate: myItem.workDate! as Date,
+                                     shiftDescription: myItem.shiftDescription!,
+                                     startTime: myItem.startTime! as Date,
+                                     endTime: myItem.endTime! as Date,
+                                     teamID: Int(myItem.teamID),
+                                     weekEndDate: myItem.weekEndDate! as Date,
+                                     status: myItem.status!,
+                                     shiftLineID: Int(myItem.shiftLineID),
+                                     rateID: Int(myItem.rateID),
+                                     type: myItem.type!
+                    
+                )
+                myShifts.append(myObject)
+            }
+            
+            if myShifts.count > 0
+            {
+                createWeeklyArray()
+            }
+            
+            sortArray()
+        }
+    }
+    
     private func sortArray()
     {
         if myShifts.count > 0
@@ -1019,6 +1073,87 @@ extension coreDatabase
             return []
         }
     }
+
+    func getShiftsNoPersonOrRate(teamID: Int)->[Shifts]
+    {
+        let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(personID == 0) AND (rateID == 0) AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        let sortDescriptor = NSSortDescriptor(key: "workDate", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+
+    func getShiftsNoPerson(teamID: Int)->[Shifts]
+    {
+        let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(personID == 0) AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        let sortDescriptor = NSSortDescriptor(key: "workDate", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func getShiftsNoRate(teamID: Int)->[Shifts]
+    {
+        let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(rateID == 0) AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        let sortDescriptor = NSSortDescriptor(key: "workDate", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
     
     func getShiftDetails(_ shiftID: Int)->[Shifts]
     {
@@ -1154,6 +1289,31 @@ extension coreDatabase
             print("Error occurred during execution: \(error)")
         }
         
+        saveContext()
+    }
+    
+    func quickFixShifts()
+    {        
+        let fetchRequest2 = NSFetchRequest<Shifts>(entityName: "Shifts")
+        
+        let predicate = NSPredicate(format: "(type == nil)")
+        
+        // Set the predicate on the fetch request
+        fetchRequest2.predicate = predicate
+
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults2 = try objectContext.fetch(fetchRequest2)
+            for myItem2 in fetchResults2
+            {
+                self.objectContext.delete(myItem2 as NSManagedObject)
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
         saveContext()
     }
 }

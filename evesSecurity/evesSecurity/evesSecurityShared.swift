@@ -120,6 +120,8 @@ extension DBSync
         myCloudDB.saveEventTemplateToCloudKit()
         progressMessage("syncToCloudKit saveEventTemplateHeadToCloudKit")
         myCloudDB.saveEventTemplateHeadToCloudKit()
+        progressMessage("syncToCloudKit saveUserTeamsToCloudKit")
+        myCloudDB.saveUserTeamsToCloudKit()
         
         notificationCenter.post(name: NotificationCloudSyncFinished, object: nil)
     }
@@ -162,6 +164,8 @@ extension DBSync
         myCloudDB.updateEventTemplateInCoreData()
         progressMessage("updateContractShiftsInCoreData updateEventTemplateHeadInCoreData")
         myCloudDB.updateEventTemplateHeadInCoreData()
+        progressMessage("updateContractShiftsInCoreData updateUserTeamsInCoreData")
+        myCloudDB.updateUserTeamsInCoreData()
         
         notificationCenter.post(name: NotificationCloudSyncFinished, object: nil)
     }
@@ -206,6 +210,8 @@ extension DBSync
         myCloudDB.replaceEventTemplateInCoreData()
         progressMessage("replaceContractShiftsInCoreData replaceEventTemplateHeadInCoreData")
         myCloudDB.replaceEventTemplateHeadInCoreData()
+        progressMessage("replaceContractShiftsInCoreData replaceUserTeamsInCoreData")
+        myCloudDB.replaceUserTeamsInCoreData()
         
         notificationCenter.post(name: NotificationCloudSyncFinished, object: nil)
     }
@@ -249,6 +255,8 @@ extension DBSync
          myCloudDB.deleteContractShifts()   eventtemplate
          progressMessage("syncToCloudKit ContractShifts")
          myCloudDB.deleteContractShifts() event template head
+         progressMessage("syncToCloudKit ContractShifts")
+         myCloudDB.deleteContractShifts() user teams
 
    */
         
@@ -287,11 +295,13 @@ extension DBSync
         progressMessage("setLastSyncDates UserRoles")
         myDatabaseConnection.setSyncDateforTable(tableName: "UserRoles", syncDate: syncDate, updateCloud: false)
         progressMessage("setLastSyncDates ContractShifts")
-        myDatabaseConnection.setSyncDateforTable(tableName: "ContractShifts", syncDate: syncDate, updateCloud: true)
+        myDatabaseConnection.setSyncDateforTable(tableName: "ContractShifts", syncDate: syncDate, updateCloud: false)
         progressMessage("setLastSyncDates ContractShifts")
-        myDatabaseConnection.setSyncDateforTable(tableName: "EventTemplate", syncDate: syncDate, updateCloud: true)
+        myDatabaseConnection.setSyncDateforTable(tableName: "EventTemplate", syncDate: syncDate, updateCloud: false)
         progressMessage("setLastSyncDates ContractShifts")
-        myDatabaseConnection.setSyncDateforTable(tableName: "EventTemplateHead", syncDate: syncDate, updateCloud: true)
+        myDatabaseConnection.setSyncDateforTable(tableName: "EventTemplateHead", syncDate: syncDate, updateCloud: false)
+        progressMessage("setLastSyncDates UserTeams")
+        myDatabaseConnection.setSyncDateforTable(tableName: "UserTeams", syncDate: syncDate, updateCloud: true)
     }
 }
 

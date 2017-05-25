@@ -10,6 +10,10 @@ import Foundation
 import CoreData
 import CloudKit
 
+let eventProjectType = "Event"
+let regularProjectType = "Regular"
+let projectProjectType = "Project"
+
 class projects: NSObject
 {
     fileprivate var myProjects:[project] = Array()
@@ -48,11 +52,22 @@ class projects: NSObject
         sortArrayByClient()
     }
     
-    init(teamID: Int, type: String = "")
+    init(teamID: Int, includeEvents: Bool, type: String = "")
     {
         super.init()
         
-        for myItem in myDatabaseConnection.getProjects(teamID: teamID, type: type)
+        var returnArray: [Projects]!
+        
+        if includeEvents
+        {
+            returnArray = myDatabaseConnection.getProjects(teamID: teamID, type: type)
+        }
+        else
+        {
+            returnArray = myDatabaseConnection.getProjectsNotEvent(teamID: teamID)
+        }
+        
+        for myItem in returnArray
         {
             let myObject = project(projectID: Int(myItem.projectID),
                                    projectEndDate: myItem.projectEndDate! as Date,
@@ -83,6 +98,66 @@ class projects: NSObject
         sortArrayByClient()
     }
     
+    init(query: String, teamID: Int)
+    {
+        super.init()
+        
+        var returnArray: [Projects]!
+        
+        myProjects.removeAll()
+
+        switch query
+        {
+            case "project type":
+                returnArray = myDatabaseConnection.getProjectsWithNoType(teamID: teamID)
+        
+            case "project no start or end":
+                returnArray = myDatabaseConnection.getProjectsWithNoStartOrEndDate(teamID: teamID)
+                
+            case "project no start":
+                returnArray = myDatabaseConnection.getProjectsWithNoStartDate(teamID: teamID)
+                
+            case "project no end":
+                returnArray = myDatabaseConnection.getProjectsWithNoEndDate(teamID: teamID)
+            
+            default:
+                let _ = 1
+        }
+        
+        if returnArray != nil
+        {
+            for myItem in returnArray
+            {
+                let myObject = project(projectID: Int(myItem.projectID),
+                                       projectEndDate: myItem.projectEndDate! as Date,
+                                       projectName: myItem.projectName!,
+                                       projectStartDate: myItem.projectStartDate! as Date,
+                                       projectStatus: myItem.projectStatus!,
+                                       reviewFrequency: Int(myItem.reviewFrequency),
+                                       lastReviewDate: myItem.lastReviewDate! as Date,
+                                       GTDItemID: Int(myItem.areaID),
+                                       repeatInterval: Int(myItem.repeatInterval),
+                                       repeatType: myItem.repeatType!,
+                                       repeatBase: myItem.repeatBase!,
+                                       teamID: Int(myItem.teamID),
+                                       clientID: Int(myItem.clientID),
+                                       note: myItem.note!,
+                                       reviewPeriod: myItem.reviewPeriod!,
+                                       predecessor: Int(myItem.predecessor),
+                                       clientDept: myItem.clientDept!,
+                                       invoicingFrequency: myItem.invoicingFrequency!,
+                                       invoicingDay: Int(myItem.invoicingDay),
+                                       daysToPay: Int(myItem.daysToPay),
+                                       type: myItem.type!)
+                
+                
+                myProjects.append(myObject)
+            }
+            
+            sortArrayByClient()
+        }
+    }
+
     private func sortArrayByName()
     {
         if myProjects.count > 0
@@ -1084,6 +1159,131 @@ extension coreDatabase
         }
     }
 
+    func getProjectsWithNoType(teamID: Int) -> [Projects]
+    {
+        let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (type = \"\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+
+    func getProjectsWithNoStartOrEndDate(teamID: Int) -> [Projects]
+    {
+        let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (projectStartDate == %@) AND (projectEndDate == %@)", getDefaultDate() as CVarArg, getDefaultDate() as CVarArg)
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+
+    func getProjectsWithNoStartDate(teamID: Int) -> [Projects]
+    {
+        let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (projectStartDate == %@) AND (projectEndDate != %@)", getDefaultDate() as CVarArg, getDefaultDate() as CVarArg)
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func getProjectsWithNoEndDate(teamID: Int) -> [Projects]
+    {
+        let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (projectStartDate != %@) AND (projectEndDate == %@)", getDefaultDate() as CVarArg, getDefaultDate() as CVarArg)
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func getProjectsNotEvent(teamID: Int) -> [Projects]
+    {
+        let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (type != \"\(eventProjectType)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
     func saveProject(_ projectID: Int, projectEndDate: Date, projectName: String, projectStartDate: Date, projectStatus: String, reviewFrequency: Int, lastReviewDate: Date, GTDItemID: Int, repeatInterval: Int, repeatType: String, repeatBase: String, teamID: Int, clientID: Int, note: String, reviewPeriod: String, predecessor: Int, clientDept: String, invoicingFrequency: String, invoicingDay: Int, daysToPay: Int, type: String, updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myProject: Projects!
@@ -1377,6 +1577,11 @@ extension coreDatabase
     {
         let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
 
+        let predicate = NSPredicate(format: "(type = \"Regular\")")
+        
+        // Set the predicate on the fetch request
+        
+        fetchRequest.predicate = predicate
         // Create a new fetch request using the entity
         
         // Execute the fetch request, and cast the results to an array of LogItem objects
@@ -1387,7 +1592,6 @@ extension coreDatabase
             {
                 myProject.type = "Regular"
                 myProject.updateTime = NSDate()
-                myProject.updateType = "Update"
                 saveContext()
             }
         }

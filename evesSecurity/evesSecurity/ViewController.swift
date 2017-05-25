@@ -19,6 +19,7 @@ class ViewController: UIViewController, myCommunicationDelegate
 //myDatabaseConnection.quickFixProjects()
 //myDatabaseConnection.quickFixPerson()
 //myDatabaseConnection.quickFixTeams()
+//myDatabaseConnection.quickFixShifts()
         
         if readDefaultInt(userDefaultName) <= 0
         {
@@ -57,8 +58,14 @@ class ViewController: UIViewController, myCommunicationDelegate
         self.present(orgEditViewControl, animated: true, completion: nil)
     }
     
-    func userCreated(_ userRecord: userItem?)
+    func userCreated(_ userRecord: userItem, teamID: Int)
     {
+        // Add the user/team combo to userteams
+        
+        let myItem = userTeamItem(userID: userRecord.userID, teamID: teamID)
+        
+        myItem.save()
+        
         let userEditViewControl = loginStoryboard.instantiateViewController(withIdentifier: "userForm") as! userFormViewController
         userEditViewControl.workingUser = userRecord
         userEditViewControl.communicationDelegate = self
@@ -86,6 +93,11 @@ class ViewController: UIViewController, myCommunicationDelegate
     
     func loadMainScreen()
     {
+//garry
+//let myItem = userTeamItem(userID: currentUser.userID, teamID: currentUser.currentTeam!.teamID)
+//
+//myItem.save()
+        
         currentUser.syncDatabase()
         
         DispatchQueue.main.async

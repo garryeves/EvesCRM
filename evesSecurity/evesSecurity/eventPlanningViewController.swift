@@ -27,7 +27,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
     var communicationDelegate: myCommunicationDelegate?
     
     fileprivate var eventList: projects!
-    fileprivate var currentEvent: project!
+    var currentEvent: project!
     fileprivate var displayList: [String] = Array()
     fileprivate var currentTemplate: eventTemplateHead!
     fileprivate var templateList: eventTemplateHeads!
@@ -125,28 +125,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
         {
             case tblEvents:
                 currentEvent = eventList.projects[indexPath.row]
-                rateList = rates(clientID: currentEvent.clientID)
-
                 refreshScreen()
-                if currentEvent.staff?.shifts.count == 0
-                {
-                    hideFields()
-                }
-                else
-                {
-                    showFields()
-                }
-            
-                lblContractName.text = currentEvent.projectName
-                newRoleDate = currentEvent.projectStartDate
-            
-                eventDays.removeAll()
-                eventDays.append(addDays(to: currentEvent.projectStartDate, days: -2))
-                eventDays.append(addDays(to: currentEvent.projectStartDate, days: -1))
-                eventDays.append(currentEvent.projectStartDate)
-                eventDays.append(addDays(to: currentEvent.projectStartDate, days: 1))
-                eventDays.append(addDays(to: currentEvent.projectStartDate, days: 2))
-                btnDate.setTitle(formatDateToString(currentEvent.projectStartDate), for: .normal)
             
             case tblRoles:
                 let _ = 1
@@ -475,11 +454,33 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
     
     func refreshScreen()
     {
-        eventList = projects(teamID: currentUser.currentTeam!.teamID, type: eventShiftType)
+        eventList = projects(teamID: currentUser.currentTeam!.teamID, includeEvents: true, type: eventShiftType)
         tblEvents.reloadData()
         
         if currentEvent != nil
         {
+            rateList = rates(clientID: currentEvent.clientID)
+            
+            if currentEvent.staff?.shifts.count == 0
+            {
+                hideFields()
+            }
+            else
+            {
+                showFields()
+            }
+            
+            lblContractName.text = currentEvent.projectName
+            newRoleDate = currentEvent.projectStartDate
+            
+            eventDays.removeAll()
+            eventDays.append(addDays(to: currentEvent.projectStartDate, days: -2))
+            eventDays.append(addDays(to: currentEvent.projectStartDate, days: -1))
+            eventDays.append(currentEvent.projectStartDate)
+            eventDays.append(addDays(to: currentEvent.projectStartDate, days: 1))
+            eventDays.append(addDays(to: currentEvent.projectStartDate, days: 2))
+            btnDate.setTitle(formatDateToString(currentEvent.projectStartDate), for: .normal)
+
             tblRoles.reloadData()
         }
     }

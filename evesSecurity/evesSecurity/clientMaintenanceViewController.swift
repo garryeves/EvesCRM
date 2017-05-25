@@ -31,7 +31,7 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
     
     fileprivate var clientList: clients!
     fileprivate var contractsList: projects!
-    fileprivate var selectedClient: client!
+    var selectedClient: client!
     fileprivate var selectedContract: project!
     fileprivate var ratesList: rates!
     
@@ -146,13 +146,7 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
         {
             case tblClients:
                 selectedClient = clientList.clients[indexPath.row]
-                contractsList = projects(clientID: selectedClient.clientID)
-            
-                txtName.text = selectedClient.name
-                txtNotes.text = selectedClient.note
-                showFields()
-                
-                tblContracts.reloadData()
+                refreshScreen()
                 
             case tblContracts:
                 selectedContract = contractsList.projects[indexPath.row]
@@ -325,6 +319,8 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
             txtNotes.text = selectedClient.note
             
             ratesList = rates(clientID: selectedClient.clientID)
+            
+            showFields()
             
             if selectedClient.name == ""
             {

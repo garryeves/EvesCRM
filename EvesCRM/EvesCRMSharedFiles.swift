@@ -13,7 +13,7 @@ import UIKit
 @objc protocol myCommunicationDelegate
 {
     @objc optional func orgEdit(_ organisation: team?)
-    @objc optional func userCreated(_ userRecord: userItem?)
+    @objc optional func userCreated(_ userRecord: userItem, teamID: Int)
     @objc optional func loadMainScreen()
     @objc optional func passwordCorrect()
     @objc optional func refreshScreen()

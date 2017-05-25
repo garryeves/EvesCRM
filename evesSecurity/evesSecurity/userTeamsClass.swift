@@ -68,8 +68,13 @@ class userTeamItem: NSObject
     {
         super.init()
         
-        myTeamID = userID
-        myUserID = teamID
+        myTeamID = teamID
+        myUserID = userID
+    }
+    
+    func save()
+    {
+        myDatabaseConnection.saveUserTeam(myUserID, teamID: myTeamID)
     }
     
     func delete()

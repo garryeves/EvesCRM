@@ -28,6 +28,52 @@ class clients: NSObject
         }
     }
     
+    init(query: String, teamID: Int)
+    {
+        var returnArray: [Clients] = Array()
+        
+        myClients.removeAll()
+        
+        switch query
+        {
+            case "client no project":
+                for myItem in myDatabaseConnection.getClients(teamID: teamID)
+                {
+                    let myReturn = projects(clientID: Int(myItem.clientID))
+                    
+                    if myReturn.projects.count == 0
+                    {
+                        returnArray.append(myItem)
+                    }
+                }
+            
+            case "client no rate":
+                for myItem in myDatabaseConnection.getClients(teamID: teamID)
+                {
+                    let myReturn = rates(clientID: Int(myItem.clientID))
+                    
+                    if myReturn.rates.count == 0
+                    {
+                        returnArray.append(myItem)
+                    }
+                }
+            
+            default:
+                let _ = 1
+        }
+        
+        for myItem in returnArray
+        {
+            let myObject = client(clientID: Int(myItem.clientID),
+                                  clientName: myItem.clientName!,
+                                  clientContact: Int(myItem.clientContact),
+                                  teamID: Int(myItem.teamID),
+                                  note: myItem.note!
+            )
+            myClients.append(myObject)
+        }
+    }
+    
     var clients: [client]
     {
         get
