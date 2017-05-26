@@ -47,18 +47,18 @@ class team: NSObject
     fileprivate var myType: String = ""
     fileprivate var myPredecessor: Int = 0
     fileprivate var myExternalID: String = ""
-    fileprivate var myRoles: [Roles]!
-    fileprivate var myStages:[Stages]!
-    fileprivate var myGTD: [workingGTDLevel] = Array()
-    fileprivate var myGTDTopLevel: [workingGTDItem] = Array()
-    fileprivate var myContexts: [context] = Array()
+    fileprivate var myRoles: [Int] = Array()
+    fileprivate var myStages:[Int] = Array()
+    fileprivate var myGTD: [Int] = Array()
+    fileprivate var myGTDTopLevel: [Int] = Array()
+    fileprivate var myContexts: [Int] = Array()
     fileprivate var myTaxNumber: String = ""
     fileprivate var myCompanyRegNumber: String = ""
     fileprivate var myNextInvoiceNumber: Int = 0
     fileprivate var myCompanyLogo: UIImage!
     fileprivate var logoChanged: Bool = false
     fileprivate var saveCalled: Bool = false
-    fileprivate var myMeetings: [calendarItem] = Array()
+    fileprivate var myMeetings: [Int] = Array()
     fileprivate var mySubscriptionDate: Date!
     fileprivate var mySubscriptionLevel: Int!
     
@@ -195,7 +195,7 @@ class team: NSObject
         }
     }
 
-    var roles: [Roles]
+    var roles: [Int]
     {
         get
         {
@@ -203,7 +203,7 @@ class team: NSObject
         }
     }
     
-    var stages: [Stages]
+    var stages: [Int]
     {
         get
         {
@@ -211,7 +211,7 @@ class team: NSObject
         }
     }
     
-    var meetings: [calendarItem]
+    var meetings: [Int]
     {
         get
         {
@@ -219,7 +219,7 @@ class team: NSObject
         }
     }
 
-    var GTDLevels: [workingGTDLevel]
+    var GTDLevels: [Int]
     {
         get
         {
@@ -227,7 +227,7 @@ class team: NSObject
         }
     }
 
-    var GTDTopLevel: [workingGTDItem]
+    var GTDTopLevel: [Int]
     {
         get
         {
@@ -235,7 +235,7 @@ class team: NSObject
         }
     }
 
-    var contexts: [context]
+    var contexts: [Int]
     {
         get
         {
@@ -507,10 +507,10 @@ class team: NSObject
     {
         // Create Initial GTD Levels
         
-        myDatabaseConnection.saveGTDLevel(1, levelName: "Purpose and Core Values", teamID: myTeamID)
-        myDatabaseConnection.saveGTDLevel(2, levelName: "Vision", teamID: myTeamID)
-        myDatabaseConnection.saveGTDLevel(3, levelName: "Goals and Objectives", teamID: myTeamID)
-        myDatabaseConnection.saveGTDLevel(4, levelName: "Areas of Responsibility", teamID: myTeamID)
+//        myDatabaseConnection.saveGTDLevel(1, levelName: "Purpose and Core Values", teamID: myTeamID)
+//        myDatabaseConnection.saveGTDLevel(2, levelName: "Vision", teamID: myTeamID)
+//        myDatabaseConnection.saveGTDLevel(3, levelName: "Goals and Objectives", teamID: myTeamID)
+//        myDatabaseConnection.saveGTDLevel(4, levelName: "Areas of Responsibility", teamID: myTeamID)
     }
     
     func getRoleTypes() -> [String]
@@ -524,38 +524,38 @@ class team: NSObject
         return retArray
     }
     
-    func loadGTDLevels()
-    {
-        myGTD.removeAll()
-        for myItem in myDatabaseConnection.getGTDLevels(myTeamID)
-        {
-            let myWorkingLevel = workingGTDLevel(sourceGTDLevel: Int(myItem.gTDLevel), teamID: myTeamID)
-            myGTD.append(myWorkingLevel)
-        }
-
-        loadGTDTopLevel()
-    }
+//    func loadGTDLevels()
+//    {
+//        myGTD.removeAll()
+//        for myItem in myDatabaseConnection.getGTDLevels(myTeamID)
+//        {
+//            let myWorkingLevel = workingGTDLevel(sourceGTDLevel: Int(myItem.gTDLevel), teamID: myTeamID)
+//            myGTD.append(myWorkingLevel)
+//        }
+//
+//        loadGTDTopLevel()
+//    }
     
-    func loadGTDTopLevel()
-    {
-        myGTDTopLevel.removeAll()
-        for myItem in myDatabaseConnection.getGTDItemsForLevel(1, teamID: myTeamID)
-        {
-            let myWorkingLevel = workingGTDItem(GTDItemID: Int(myItem.gTDItemID), teamID: myTeamID)
-            myGTDTopLevel.append(myWorkingLevel)
-        }
-    }
-    
-    func loadContexts()
-    {
-        myContexts.removeAll()
-        for myItem in myDatabaseConnection.getContexts(myTeamID)
-        {
-            let myWorkingContext = context(sourceContext: myItem)
-            myContexts.append(myWorkingContext)
-        }
-    }
-    
+//    func loadGTDTopLevel()
+//    {
+//        myGTDTopLevel.removeAll()
+//        for myItem in myDatabaseConnection.getGTDItemsForLevel(1, teamID: myTeamID)
+//        {
+//            let myWorkingLevel = workingGTDItem(GTDItemID: Int(myItem.gTDItemID), teamID: myTeamID)
+//            myGTDTopLevel.append(myWorkingLevel)
+//        }
+//    }
+//    
+//    func loadContexts()
+//    {
+//        myContexts.removeAll()
+//        for myItem in myDatabaseConnection.getContexts(myTeamID)
+//        {
+//            let myWorkingContext = context(sourceContext: myItem)
+//            myContexts.append(myWorkingContext)
+//        }
+//    }
+//    
     func save(_ saveToCloud: Bool = true)
     {
         myDatabaseConnection.saveTeam(myTeamID, name: myName, status: myStatus, note: myNote, type: myType, predecessor: myPredecessor, externalID: myExternalID, taxNumber: myTaxNumber, companyRegNumber: myCompanyRegNumber, nextInvoiceNumber: myNextInvoiceNumber, subscriptionDate: mySubscriptionDate, subscriptionLevel: mySubscriptionLevel)
@@ -589,16 +589,16 @@ class team: NSObject
         saveCalled = false
     }
     
-    func loadMeetings()
-    {
-        myMeetings.removeAll()
-        
-        for meetingItem in myDatabaseConnection.getAgendaForTeam(myTeamID)
-        {
-            let tempItem = calendarItem(meetingAgenda: meetingItem)
-            myMeetings.append(tempItem)
-        }
-    }
+//    func loadMeetings()
+//    {
+//        myMeetings.removeAll()
+//        
+//        for meetingItem in myDatabaseConnection.getAgendaForTeam(myTeamID)
+//        {
+//            let tempItem = calendarItem(meetingAgenda: meetingItem)
+//            myMeetings.append(tempItem)
+//        }
+//    }
 }
 
 extension coreDatabase
@@ -882,7 +882,7 @@ extension coreDatabase
         
         saveContext()
         
-        deleteAllGTDLevelRecords()
+ //       deleteAllGTDLevelRecords()
     }
     
     func getTeamsForSync(_ syncDate: Date) -> [Team]

@@ -224,7 +224,7 @@ class project: NSObject // 10k level
     fileprivate var myProjectStatus: String = ""
     fileprivate var myReviewFrequency: Int = 0
     fileprivate var myLastReviewDate: Date!
-    fileprivate var myTeamMembers: [projectTeamMember] = Array()
+    fileprivate var myTeamMembers: [Int] = Array()
     fileprivate var myTasks: [task] = Array()
     fileprivate var myGTDItemID: Int = 0
     fileprivate var myRepeatInterval: Int = 0
@@ -322,7 +322,7 @@ class project: NSObject // 10k level
         }
     }
     
-    var teamMembers: [projectTeamMember]
+    var teamMembers: [Int]
     {
         get
         {
@@ -637,7 +637,7 @@ class project: NSObject // 10k level
             
             // load team members
             
-            loadTeamMembers()
+  //          loadTeamMembers()
             
             // load tasks
             
@@ -672,30 +672,28 @@ class project: NSObject // 10k level
         
         // load team members
         
-        loadTeamMembers()
+//        loadTeamMembers()
         
         // load tasks
         
         loadTasks()
     }
 
-    
-    
-    func loadTeamMembers()
-    {
-        myTeamMembers.removeAll()
-        
-        let myProjectTeamMembers = myDatabaseConnection.getTeamMembers(myProjectID)
-        
-        for myTeamMember in myProjectTeamMembers
-        {
-            let myMember = projectTeamMember(projectID: Int(myTeamMember.projectID), teamMember: myTeamMember.teamMember!, roleID: Int(myTeamMember.roleID), teamID: myTeamID)
-            
-            myMember.projectMemberNotes = myTeamMember.projectMemberNotes!
-            
-            myTeamMembers.append(myMember)
-        }
-    }
+//    func loadTeamMembers()
+//    {
+//        myTeamMembers.removeAll()
+//        
+//        let myProjectTeamMembers = myDatabaseConnection.getTeamMembers(myProjectID)
+//        
+//        for myTeamMember in myProjectTeamMembers
+//        {
+//            let myMember = projectTeamMember(projectID: Int(myTeamMember.projectID), teamMember: myTeamMember.teamMember!, roleID: Int(myTeamMember.roleID), teamID: myTeamID)
+//            
+//            myMember.projectMemberNotes = myTeamMember.projectMemberNotes!
+//            
+//            myTeamMembers.append(myMember)
+//        }
+//    }
     
     func addTask(_ taskItem: task)
     {
@@ -749,11 +747,11 @@ class project: NSObject // 10k level
         
         // Save Team Members
         
-        for myMember in myTeamMembers
-        {
-            myMember.save()
-        }
-        
+//        for myMember in myTeamMembers
+//        {
+//            myMember.save()
+//        }
+//        
         // Save Tasks
         
         for myProjectTask in myTasks
@@ -841,14 +839,14 @@ class project: NSObject // 10k level
             
             // Populate team Members
             
-            let myProjectTeamMembers = myDatabaseConnection.getTeamMembers(myProjectID)
+//            let myProjectTeamMembers = myDatabaseConnection.getTeamMembers(myProjectID)
             
-            for myTeamMember in myProjectTeamMembers
-            {
-                let myMember = projectTeamMember(projectID: newProject.projectID, teamMember: myTeamMember.teamMember!, roleID: Int(myTeamMember.roleID), teamID: myTeamID)
-                
-                myMember.projectMemberNotes = myTeamMember.projectMemberNotes!
-            }
+//            for myTeamMember in myProjectTeamMembers
+//            {
+//                let myMember = projectTeamMember(projectID: newProject.projectID, teamMember: myTeamMember.teamMember!, roleID: Int(myTeamMember.roleID), teamID: myTeamID)
+//                
+//                myMember.projectMemberNotes = myTeamMember.projectMemberNotes!
+//            }
             
             // Populate tasks, but have the marked as Open
             
@@ -872,12 +870,12 @@ class project: NSObject // 10k level
                 myNewTask.flagged = myProjectTask.flagged as! Bool
                 myNewTask.urgency = myProjectTask.urgency!
 
-                let myContextList = myDatabaseConnection.getContextsForTask(Int(myProjectTask.taskID))
-                
-                for myContextItem in myContextList
-                {
-                    myNewTask.addContext(Int(myContextItem.contextID))
-                }
+//                let myContextList = myDatabaseConnection.getContextsForTask(Int(myProjectTask.taskID))
+//                
+//                for myContextItem in myContextList
+//                {
+//                    myNewTask.addContext(Int(myContextItem.contextID))
+//                }
             }
         }
     }

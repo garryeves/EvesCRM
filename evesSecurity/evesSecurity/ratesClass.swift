@@ -10,12 +10,6 @@ import Foundation
 import CoreData
 import CloudKit
 
-let shiftShiftType = "shift"
-let eventShiftType = "Event"
-let calloutShiftType = "callout"
-let overtimeShiftType = "overtime"
-let regularShiftType = "regular"
-
 class rates: NSObject
 {
     fileprivate var myRates:[rate] = Array()

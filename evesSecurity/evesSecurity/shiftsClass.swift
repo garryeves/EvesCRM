@@ -24,6 +24,7 @@ struct mergedShiftList
     var friShift: shift!
     var satShift: shift!
     var sunShift: shift!
+    var type: String!
 }
 
 class shifts: NSObject
@@ -307,6 +308,7 @@ class shifts: NSObject
         var description: String!
         var WEDate: Date!
         var shiftLineID: Int!
+        var type: String!
         
         var monShift: shift!
         var tueShift: shift!
@@ -334,7 +336,8 @@ class shifts: NSObject
                                                     thuShift: thuShift,
                                                     friShift: friShift,
                                                     satShift: satShift,
-                                                    sunShift: sunShift
+                                                    sunShift: sunShift,
+                                                    type: type
                                                    )
 
                     myWeeklyShifts.append(tempShift)
@@ -345,6 +348,7 @@ class shifts: NSObject
                     description = myItem.shiftDescription
                     WEDate = myItem.weekEndDate
                     shiftLineID = myItem.shiftLineID
+                    type = myItem.type
                     
                     monShift = nil
                     tueShift = nil
@@ -363,6 +367,7 @@ class shifts: NSObject
                 description = myItem.shiftDescription
                 WEDate = myItem.weekEndDate
                 shiftLineID = myItem.shiftLineID
+                type = myItem.type
             }
             
             switch myItem.dayOfWeekNumber
@@ -404,7 +409,8 @@ class shifts: NSObject
                                         thuShift: thuShift,
                                         friShift: friShift,
                                         satShift: satShift,
-                                        sunShift: sunShift
+                                        sunShift: sunShift,
+                                        type: type
         )
         
         myWeeklyShifts.append(tempShift)
@@ -472,6 +478,10 @@ class shift: NSObject
         get
         {
             return myType
+        }
+        set
+        {
+            myType = newValue
         }
     }
     
@@ -807,6 +817,7 @@ extension coreDatabase
             myItem.status = status
             myItem.shiftLineID = Int64(shiftLineID)
             myItem.rateID = Int64(rateID)
+            myItem.type = type
 
             if updateType == "CODE"
             {
@@ -1514,7 +1525,8 @@ extension CloudKitInteraction
                     record!.setValue(sourceRecord.status, forKey: "status")
                     record!.setValue(sourceRecord.shiftLineID, forKey: "shiftLineID")
                     record!.setValue(sourceRecord.rateID, forKey: "rateID")
-                    
+                    record!.setValue(sourceRecord.type, forKey: "type")
+
                     if sourceRecord.updateTime != nil
                     {
                         record!.setValue(sourceRecord.updateTime, forKey: "updateTime")

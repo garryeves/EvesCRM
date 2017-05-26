@@ -82,7 +82,8 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
 
         cell.lblContract.text = shiftList[indexPath.row].contract
         cell.txtDescription.text = shiftList[indexPath.row].description
-    
+        cell.btnShiftType.setTitle(shiftList[indexPath.row].type, for: .normal)
+        
         displayTableRowDay(btnStart: cell.btnStartSun, btnEnd: cell.btnEndSun, btnRate: cell.btnRateSun, btnPerson: cell.btnPersonSun, sourceShift: shiftList[indexPath.row].sunShift, dateAdjustment: 0)
         displayTableRowDay(btnStart: cell.btnStartMon, btnEnd: cell.btnEndMon, btnRate: cell.btnRateMon, btnPerson: cell.btnPersonMon, sourceShift: shiftList[indexPath.row].monShift, dateAdjustment: -6)
         displayTableRowDay(btnStart: cell.btnStartTue, btnEnd: cell.btnEndTue, btnRate: cell.btnRateTue, btnPerson: cell.btnPersonTue, sourceShift: shiftList[indexPath.row].tueShift, dateAdjustment: -5)
@@ -257,7 +258,8 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
                                                 thuShift: nil,
                                                 friShift: nil,
                                                 satShift: nil,
-                                                sunShift: nil
+                                                sunShift: nil,
+                                                type: nil
                 )
                 
                 shiftList.append(tempShift)
@@ -279,7 +281,7 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
         
         peopleList = people(teamID: currentUser.currentTeam!.teamID)
         shiftList = shifts(teamID: currentUser.currentTeam!.teamID, WEDate: currentWeekEndingDate, type: shiftShiftType).weeklyShifts
-
+ 
         if shiftList.count == 0
         {
             lblWETitle.isHidden = true
@@ -337,6 +339,16 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
     @IBOutlet weak var btnRateSun: UIButton!
     @IBOutlet weak var btnPersonSun: UIButton!
     
+    @IBOutlet weak var btnShiftType: UIButton!
+    
+    @IBOutlet weak var constrainStartMon: NSLayoutConstraint!
+    @IBOutlet weak var contraintMonTue: NSLayoutConstraint!
+    @IBOutlet weak var constraintTueWed: NSLayoutConstraint!
+    @IBOutlet weak var constraintWedThu: NSLayoutConstraint!
+    @IBOutlet weak var constraintThuFri: NSLayoutConstraint!
+    @IBOutlet weak var constrainFriSat: NSLayoutConstraint!
+    @IBOutlet weak var constraintSatSun: NSLayoutConstraint!
+    
     var peopleList: people!
     var rateList: rates!
     var weeklyRecord: mergedShiftList!
@@ -351,6 +363,19 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
     override func layoutSubviews()
     {
         contentView.frame = bounds
+        
+        let step1 = (bounds.width - (6 * 3) - 16) / 7   // This gives the width of the cell  width - gaps between cells - standard inset
+        let step2 = CGFloat(45 + 45 + 8)    // This is the size of the group to display - width of both fields + the dash
+        let step3 = ((step1 - step2) / 2) + CGFloat(3)   // This is the amount to indent
+ 
+        contraintMonTue.constant = step3
+        constraintTueWed.constant = step3
+        constraintWedThu.constant = step3
+        constraintThuFri.constant = step3
+        constrainFriSat.constant = step3
+        constraintSatSun.constant = step3
+        constrainStartMon.constant = step3
+
         super.layoutSubviews()
     }
 
@@ -644,6 +669,34 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
         mainView.present(pickerView, animated: true, completion: nil)
     }
     
+    @IBAction func btnShiftType(_ sender: UIButton)
+    {
+        displayList.removeAll()
+        
+        displayList.append("")
+        
+        displayList.append(calloutShiftType)
+        displayList.append(overtimeShiftType)
+        displayList.append(regularShiftType)
+        displayList.append(shiftShiftType)
+        
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+        pickerView.modalPresentationStyle = .popover
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = sourceView
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        pickerView.source = "shiftType"
+        
+        pickerView.delegate = sourceView
+        pickerView.pickerValues = displayList
+        pickerView.preferredContentSize = CGSize(width: 300,height: 500)
+        
+        mainView.present(pickerView, animated: true, completion: nil)
+    }
+    
     @IBAction func txtDescription(_ sender: UITextField)
     {
         if weeklyRecord.sunShift == nil && weeklyRecord.sunShift == nil && weeklyRecord.sunShift == nil && weeklyRecord.sunShift == nil && weeklyRecord.sunShift == nil && weeklyRecord.sunShift == nil && weeklyRecord.sunShift == nil && weeklyRecord.sunShift == nil
@@ -705,7 +758,78 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
             // We have a new object, with a selected item, so we can go ahead and create a new summary row
             switch source
             {
-                case "btnRateMon":
+                case "shiftType":
+                    var workingType: String = ""
+                    
+                    if selectedItem > 0
+                    {
+                        switch selectedItem
+                        {
+                            case 1:
+                            workingType = calloutShiftType
+                                
+                            case 2:
+                                workingType = overtimeShiftType
+                                    
+                            case 3:
+                                workingType = regularShiftType
+                                
+                            case 4:
+                                workingType = shiftShiftType
+                                
+                            default:
+                                workingType = "Unknown"
+                            
+                        }
+                        
+                        // Update the rows, because of the way I built the data model need to update each days entry
+                        
+                        if weeklyRecord.monShift != nil
+                        {
+                            weeklyRecord.monShift.type = workingType
+                            weeklyRecord.monShift.save()
+                        }
+                        
+                        if weeklyRecord.tueShift != nil
+                        {
+                            weeklyRecord.tueShift.type = workingType
+                            weeklyRecord.tueShift.save()
+                        }
+                        
+                        if weeklyRecord.wedShift != nil
+                        {
+                            weeklyRecord.wedShift.type = workingType
+                            weeklyRecord.wedShift.save()
+                        }
+                        
+                        if weeklyRecord.thuShift != nil
+                        {
+                            weeklyRecord.thuShift.type = workingType
+                            weeklyRecord.thuShift.save()
+                        }
+                        
+                        if weeklyRecord.friShift != nil
+                        {
+                            weeklyRecord.friShift.type = workingType
+                            weeklyRecord.friShift.save()
+                        }
+                        
+                        if weeklyRecord.satShift != nil
+                        {
+                            weeklyRecord.satShift.type = workingType
+                            weeklyRecord.satShift.save()
+                        }
+                        
+                        if weeklyRecord.sunShift != nil
+                        {
+                            weeklyRecord.sunShift.type = workingType
+                            weeklyRecord.sunShift.save()
+                        }
+                        
+                        btnShiftType.setTitle(workingType, for: .normal)
+                    }
+
+            case "btnRateMon":
                     btnRateMon.setTitle(rateList.rates[selectedItem - 1].rateName, for: .normal)
                 
                     if weeklyRecord.monShift == nil

@@ -42,6 +42,9 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         btnPeople.setTitle("Maintain People", for: .normal)
 
         refreshScreen()
+        
+        btnMaintainReports.isHidden = true
+        btnReport.isHidden = true
     }
     
     override func didReceiveMemoryWarning() {

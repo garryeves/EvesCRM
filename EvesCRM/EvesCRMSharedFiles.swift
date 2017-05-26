@@ -34,6 +34,15 @@ let clientsStoryboard = UIStoryboard(name: "Clients", bundle: nil)
 let projectsStoryboard = UIStoryboard(name: "Projects", bundle: nil)
 let shiftsStoryboard = UIStoryboard(name: "Shifts", bundle: nil)
 
+let shiftShiftType = "Shift"
+let eventShiftType = "Event"
+let calloutShiftType = "On Call"
+let overtimeShiftType = "Overtime"
+let regularShiftType = "Regular"
+
+
+
+
 #if os(OSX)
     import AppKit
 #endif
@@ -137,7 +146,7 @@ struct TableData
     fileprivate var myNotes: String
     fileprivate var myCalendarItemIdentifier: String
     fileprivate var myTask: task?
-    fileprivate var myEvent: calendarItem?
+//    fileprivate var myEvent: Int
     fileprivate var myObject: AnyObject?
     fileprivate var myCalendarEvent: EKEvent?
     
@@ -203,17 +212,17 @@ struct TableData
         }
     }
     
-    var calendarItem: calendarItem?
-    {
-        get
-        {
-            return myEvent
-        }
-        set
-        {
-            myEvent = newValue
-        }
-    }
+//    var calendarItem: calendarItem?
+//    {
+//        get
+//        {
+//            return myEvent
+//        }
+//        set
+//        {
+//            myEvent = newValue
+//        }
+//    }
     
     var event: EKEvent?
     {
@@ -284,21 +293,21 @@ func writeRowToArray(_ displayText: String, table: inout [TableData], targetTask
     table.append(myDisplay)
 }
 
-func writeRowToArray(_ displayText: String, table: inout [TableData], targetEvent: calendarItem, displayFormat: String="")
-{
-    // Create the struct for this record
-    
-    var myDisplay: TableData = TableData(displayText: displayText)
-    
-    if displayFormat != ""
-    {
-        myDisplay.displaySpecialFormat = displayFormat
-    }
-    
-    myDisplay.calendarItem = targetEvent
-    
-    table.append(myDisplay)
-}
+//func writeRowToArray(_ displayText: String, table: inout [TableData], targetEvent: calendarItem, displayFormat: String="")
+//{
+//    // Create the struct for this record
+//    
+//    var myDisplay: TableData = TableData(displayText: displayText)
+//    
+//    if displayFormat != ""
+//    {
+//        myDisplay.displaySpecialFormat = displayFormat
+//    }
+//    
+//    myDisplay.calendarItem = targetEvent
+//    
+//    table.append(myDisplay)
+//}
 
 func writeRowToArray(_ displayText: String, table: inout [TableData], targetObject: AnyObject, displayFormat: String="")
 {
@@ -1021,10 +1030,10 @@ class textViewTapGestureRecognizer:UITapGestureRecognizer
                 {
                     myType = "team"
                 }
-                else if newValue is workingGTDItem
-                {
-                    myType = "workingGTDItem"
-                }
+//                else if newValue is workingGTDItem
+//                {
+//                    myType = "workingGTDItem"
+//                }
                 else if newValue is project
                 {
                     myType = "project"
@@ -1033,10 +1042,10 @@ class textViewTapGestureRecognizer:UITapGestureRecognizer
                 {
                     myType = "task"
                 }
-                else if newValue is context
-                {
-                    myType = "context"
-                }
+//                else if newValue is context
+//                {
+//                    myType = "context"
+//                }
             }
         }
     
@@ -1144,10 +1153,10 @@ class cellDetails: NSObject
             {
                 myType = "team"
             }
-            else if newValue is workingGTDItem
-            {
-                myType = "workingGTDItem"
-            }
+//            else if newValue is workingGTDItem
+//            {
+//                myType = "workingGTDItem"
+//            }
             else if newValue is project
             {
                 myType = "project"
@@ -1156,10 +1165,10 @@ class cellDetails: NSObject
             {
                 myType = "task"
             }
-            else if newValue is context
-            {
-                myType = "context"
-            }
+//            else if newValue is context
+//            {
+//                myType = "context"
+//            }
         }
     }
 
