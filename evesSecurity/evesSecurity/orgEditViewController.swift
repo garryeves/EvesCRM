@@ -196,12 +196,26 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
     {
         writeDefaultInt(userDefaultName, value: currentUser.userID)
 
-        for myItem in (currentUser.currentTeam?.getRoleTypes())!
+        var recordCount: Int = 0
+        
+        let processRecords = currentUser.currentTeam?.getRoleTypes()
+        
+        for myItem in processRecords!
         {
-            currentUser.addRoleToUser(roleType: myItem, accessLevel: "Write")
-            usleep(500)
+            if recordCount == processRecords!.count - 1
+            {
+                currentUser.addRoleToUser(roleType: myItem, accessLevel: "Write", saveToCloud: true)
+                usleep(500)
+            }
+            else
+            {
+                currentUser.addRoleToUser(roleType: myItem, accessLevel: "Write", saveToCloud: false)
+                recordCount += 1
+                usleep(500)
+            }
         }
-        myCloudDB.saveDecodesToCloudKit()
+        
+ //       myCloudDB.saveDecodesToCloudKit()
         currentUser.loadRoles()
         newUserCreated = true
     }

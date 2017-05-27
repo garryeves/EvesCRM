@@ -90,11 +90,11 @@ class userRoleItem: NSObject
         }
     }
 
-    init(userID: Int, roleType: String, teamID: Int)
+    init(userID: Int, roleType: String, teamID: Int, saveToCloud: Bool)
     {
         super.init()
 
-        myRoleID = myDatabaseConnection.getNextID("UserRoles", saveToCloud: false)
+        myRoleID = myDatabaseConnection.getNextID("UserRoles", saveToCloud: saveToCloud)
         myUserID = userID
         myRoleType = roleType
         myTeamID = teamID

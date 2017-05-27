@@ -540,12 +540,12 @@ extension CloudKitInteraction
     {
         let sem = DispatchSemaphore(value: 0)
         
-        let predicate = NSPredicate(format: "(addInfoName == \"\(sourceRecord.addInfoName!)\") AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(addInfoName == \"\(sourceRecord.addInfoName!)\") AND (personID == \(sourceRecord.personID)) AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "PersonAddInfoEntry", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
             {
-                NSLog("Error querying records: \(error!.localizedDescription)")
+                NSLog("Error querying records:  GRE D - \(error!.localizedDescription)")
             }
             else
             {
@@ -572,7 +572,7 @@ extension CloudKitInteraction
                     self.publicDB.save(record!, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
                         {
-                            NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            NSLog("Error saving record:  GRE E - \(saveError!.localizedDescription)")
                         }
                         else
                         {
@@ -602,7 +602,7 @@ extension CloudKitInteraction
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
                         {
-                            NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            NSLog("Error saving record:  GRE F - \(saveError!.localizedDescription)")
                         }
                         else
                         {

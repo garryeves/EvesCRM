@@ -616,7 +616,7 @@ extension CloudKitInteraction
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
             {
-                NSLog("Error querying records: \(error!.localizedDescription)")
+                NSLog("Error querying records: GRE Decode 1 \(error!.localizedDescription)")
             }
             else
             {
@@ -768,7 +768,7 @@ extension CloudKitInteraction
                         self.publicDB.save(record!, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                                NSLog("Error saving record: GRE Decode 2 \(saveError!.localizedDescription)")
                             }
                             else
                             {
@@ -797,7 +797,7 @@ extension CloudKitInteraction
                     self.publicDB.save(todoRecord, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
                         {
-                            NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            NSLog("Error saving record: GRE Decode 3 \(saveError!.localizedDescription)")
                         }
                         else
                         {
@@ -889,7 +889,7 @@ extension CloudKitInteraction
                         self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil
                             {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                                NSLog("Error saving record: GRE Decode 4 \(saveError!.localizedDescription)")
                             }
                             else
                             {
@@ -918,7 +918,7 @@ extension CloudKitInteraction
                     self.privateDB.save(todoRecord, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
                         {
-                            NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            NSLog("Error saving record: GRE Decode 5 \(saveError!.localizedDescription)")
                         }
                         else
                         {

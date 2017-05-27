@@ -501,12 +501,12 @@ extension CloudKitInteraction
     {
         let sem = DispatchSemaphore(value: 0)
         
-        let predicate = NSPredicate(format: "(addressID == \(sourceRecord.addInfoID)) AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(addInfoName == \"\(sourceRecord.addInfoName!)\") AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "PersonAdditionalInfo", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
             {
-                NSLog("Error querying records: \(error!.localizedDescription)")
+                NSLog("Error querying records: GRE A - \(error!.localizedDescription)")
             }
             else
             {
@@ -520,7 +520,7 @@ extension CloudKitInteraction
                     
                     record!.setValue(sourceRecord.addInfoID, forKey: "addInfoID")
                     record!.setValue(sourceRecord.addInfoName, forKey: "addInfoName")
-                    record!.setValue(sourceRecord.addInfoName, forKey: "addInfoType")
+                    record!.setValue(sourceRecord.addInfoType, forKey: "addInfoType")
                     
                     if sourceRecord.updateTime != nil
                     {
@@ -532,7 +532,7 @@ extension CloudKitInteraction
                     self.publicDB.save(record!, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
                         {
-                            NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            NSLog("Error saving record:  GRE B - \(saveError!.localizedDescription)")
                         }
                         else
                         {
@@ -560,7 +560,7 @@ extension CloudKitInteraction
                     self.publicDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
                         {
-                            NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            NSLog("Error saving record:  GRE C - \(saveError!.localizedDescription)")
                         }
                         else
                         {

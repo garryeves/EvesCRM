@@ -675,10 +675,13 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
         
         displayList.append("")
         
-        displayList.append(calloutShiftType)
-        displayList.append(overtimeShiftType)
-        displayList.append(regularShiftType)
-        displayList.append(shiftShiftType)
+        for myItem in (currentUser.currentTeam?.getDropDown(dropDownType: "Shift"))!
+        {
+            if myItem != eventShiftType
+            {
+                displayList.append(myItem)
+            }
+        }
         
         let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
         pickerView.modalPresentationStyle = .popover

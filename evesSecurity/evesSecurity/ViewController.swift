@@ -98,6 +98,28 @@ class ViewController: UIViewController, myCommunicationDelegate
 //
 //myItem.save()
         
+//myDatabaseConnection.deleteDropdowns("Stages")
+//myDatabaseConnection.deleteDropdowns("Project")
+//myDatabaseConnection.deleteDropdowns("Event")
+//myDatabaseConnection.deleteDropdowns("Regular")
+//myDatabaseConnection.deleteDropdowns("Sales")
+//myDatabaseConnection.deleteDropdowns("ShiftType")
+//myDatabaseConnection.deleteDropdowns("ProjectType")
+//        
+//currentUser.currentTeam!.populateShiftTypeDropDown()
+//currentUser.currentTeam!.populateProjectStageDropDown()
+//currentUser.currentTeam!.populateProjectTypeDropDown()
+    
+//let tempCal = Calendar.current
+//let syncDate = tempCal.date(byAdding: .day, value:-1, to: Date())
+//
+//myDatabaseConnection.setSyncDateforTable(tableName: "PersonAdditionalInfo", syncDate: syncDate!, updateCloud: true)
+//myDatabaseConnection.setSyncDateforTable(tableName: "PersonAddInfoEntry", syncDate: syncDate!, updateCloud: true)
+        
+        
+        
+        
+
         currentUser.syncDatabase()
         
         DispatchQueue.main.async

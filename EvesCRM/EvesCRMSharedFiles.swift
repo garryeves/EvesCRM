@@ -34,15 +34,6 @@ let clientsStoryboard = UIStoryboard(name: "Clients", bundle: nil)
 let projectsStoryboard = UIStoryboard(name: "Projects", bundle: nil)
 let shiftsStoryboard = UIStoryboard(name: "Shifts", bundle: nil)
 
-let shiftShiftType = "Shift"
-let eventShiftType = "Event"
-let calloutShiftType = "On Call"
-let overtimeShiftType = "Overtime"
-let regularShiftType = "Regular"
-
-
-
-
 #if os(OSX)
     import AppKit
 #endif

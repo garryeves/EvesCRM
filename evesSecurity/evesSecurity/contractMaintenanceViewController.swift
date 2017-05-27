@@ -87,7 +87,7 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
         
         displayList.append("")
         
-        for myItem in (currentUser.currentTeam?.getDropDown(dropDownType: "Stages"))!
+        for myItem in (currentUser.currentTeam?.getDropDown(dropDownType: btnType.currentTitle!))!
         {
             displayList.append(myItem)
         }
@@ -104,7 +104,7 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
         pickerView.source = "status"
         pickerView.delegate = self
         pickerView.pickerValues = displayList
-        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+        pickerView.preferredContentSize = CGSize(width: 400,height: 400)
         
         self.present(pickerView, animated: true, completion: nil)
     }
@@ -225,7 +225,7 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
         pickerView.source = "type"
         pickerView.delegate = self
         pickerView.pickerValues = displayList
-        pickerView.preferredContentSize = CGSize(width: 300,height: 400)
+        pickerView.preferredContentSize = CGSize(width: 400,height: 400)
         
         self.present(pickerView, animated: true, completion: nil)
     }
@@ -347,10 +347,12 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
             if workingContract.type == ""
             {
                 btnType.setTitle("Set", for: .normal)
+                btnStatus.isEnabled = false
             }
             else
             {
                 btnType.setTitle(workingContract.type, for: .normal)
+                btnStatus.isEnabled = true
             }
         }
     }

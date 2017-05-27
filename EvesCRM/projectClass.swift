@@ -370,7 +370,7 @@ class project: NSObject // 10k level
         {
             myProjectStatus = newValue
             
-            if newValue == "Archived" || newValue == "Completed"
+            if newValue == "Archived"
             {
                 checkForRepeat()
             }
@@ -915,7 +915,7 @@ extension coreDatabase
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (areaID == \(GTDItemID)) && (updateType != \"Delete\") && (teamID == \(teamID))")
+        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Deleted\") && (areaID == \(GTDItemID)) && (updateType != \"Delete\") && (teamID == \(teamID))")
         
         let sortDescriptor = NSSortDescriptor(key: "projectID", ascending: true)
         let sortDescriptors = [sortDescriptor]
@@ -1044,11 +1044,11 @@ extension coreDatabase
         {
             if type == ""
             {
-                predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID))")
+                predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID))")
             }
             else
             {
-                predicate = NSPredicate(format: "(type == \"\(type)\") AND (projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID))")
+                predicate = NSPredicate(format: "(type == \"\(type)\") AND (projectStatus != \"Archived\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID))")
             }
             
             // Set the predicate on the fetch request
@@ -1095,7 +1095,7 @@ extension coreDatabase
         {
             var predicate: NSPredicate
 
-            predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND ((projectStartDate == nil) OR (projectStartDate <= %@) OR (projectStartDate == %@)) AND ((projectEndDate == nil) OR (projectEndDate >= %@) OR (projectEndDate == %@))", Date() as CVarArg, getDefaultDate() as CVarArg, Date() as CVarArg, getDefaultDate() as CVarArg)
+            predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND ((projectStartDate == nil) OR (projectStartDate <= %@) OR (projectStartDate == %@)) AND ((projectEndDate == nil) OR (projectEndDate >= %@) OR (projectEndDate == %@))", Date() as CVarArg, getDefaultDate() as CVarArg, Date() as CVarArg, getDefaultDate() as CVarArg)
             
             // Set the predicate on the fetch request
             fetchRequest.predicate = predicate
@@ -1135,11 +1135,11 @@ extension coreDatabase
         
         if type == ""
         {
-            predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (clientID == \(clientID))")
+            predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (clientID == \(clientID))")
         }
         else
         {
-            predicate = NSPredicate(format: "(type == \"\(type)\") AND (projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (clientID == \(clientID))")
+            predicate = NSPredicate(format: "(type == \"\(type)\") AND (projectStatus != \"Archived\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (clientID == \(clientID))")
         }
             // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1164,7 +1164,7 @@ extension coreDatabase
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         
-        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (type = \"\")")
+        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (type = \"\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1189,7 +1189,7 @@ extension coreDatabase
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         
-        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (projectStartDate == %@) AND (projectEndDate == %@)", getDefaultDate() as CVarArg, getDefaultDate() as CVarArg)
+        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (projectStartDate == %@) AND (projectEndDate == %@)", getDefaultDate() as CVarArg, getDefaultDate() as CVarArg)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1214,7 +1214,7 @@ extension coreDatabase
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         
-        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (projectStartDate == %@) AND (projectEndDate != %@)", getDefaultDate() as CVarArg, getDefaultDate() as CVarArg)
+        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (projectStartDate == %@) AND (projectEndDate != %@)", getDefaultDate() as CVarArg, getDefaultDate() as CVarArg)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1239,7 +1239,7 @@ extension coreDatabase
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         
-        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (projectStartDate != %@) AND (projectEndDate == %@)", getDefaultDate() as CVarArg, getDefaultDate() as CVarArg)
+        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (projectStartDate != %@) AND (projectEndDate == %@)", getDefaultDate() as CVarArg, getDefaultDate() as CVarArg)
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1264,7 +1264,7 @@ extension coreDatabase
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         
-        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Completed\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (type != \"\(eventProjectType)\")")
+        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (type != \"\(eventProjectType)\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

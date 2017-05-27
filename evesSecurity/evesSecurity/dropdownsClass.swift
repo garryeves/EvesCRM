@@ -323,6 +323,34 @@ extension coreDatabase
         
         saveContext()
     }
+    
+    func deleteDropdowns(_ forType: String)
+    {
+        let fetchRequest = NSFetchRequest<Dropdowns>(entityName: "Dropdowns")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(dropDownType == \"\(forType)\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            for myItem in fetchResults
+            {
+                self.objectContext.delete(myItem as NSManagedObject)
+            }
+        }
+        catch
+        {
+            print("Error occurred during execution: J \(error.localizedDescription)")
+        }
+        
+        saveContext()
+    }
 }
 
 extension CloudKitInteraction
@@ -434,7 +462,7 @@ extension CloudKitInteraction
     {
         let sem = DispatchSemaphore(value: 0)
         
-        let predicate = NSPredicate(format: "(dropDownType == \"\(sourceRecord.dropDownType!)\") AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the record you need
+        let predicate = NSPredicate(format: "(dropDownType == \"\(sourceRecord.dropDownType!)\") AND (dropDownValue == \"\(sourceRecord.dropDownValue!)\")  AND \(buildTeamList(currentUser.userID))") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Dropdowns", predicate: predicate)
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil

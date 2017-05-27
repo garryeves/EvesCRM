@@ -16,6 +16,12 @@ let NotificationTeamSaved = Notification.Name("NotificationTeamSaved")
 let NotificationTeamCountQueryDone = Notification.Name("NotificationTeamCountQueryDone")
 let NotificationTeamCountQueryString = "NotificationTeamCountQueryDone"
 
+let shiftShiftType = "Shift"
+let eventShiftType = "Event"
+let calloutShiftType = "On Call"
+let overtimeShiftType = "Overtime"
+let regularShiftType = "Regular"
+
 class teams: NSObject
 {
     private var myTeams: [team] = Array()
@@ -60,7 +66,7 @@ class team: NSObject
     fileprivate var saveCalled: Bool = false
     fileprivate var myMeetings: [Int] = Array()
     fileprivate var mySubscriptionDate: Date!
-    fileprivate var mySubscriptionLevel: Int!
+    fileprivate var mySubscriptionLevel: Int = 1
     
     var teamID: Int
     {
@@ -317,6 +323,13 @@ class team: NSObject
             tempLogo = UIImagePNGRepresentation(myCompanyLogo) as NSData?
         }
         
+        if mySubscriptionDate == nil
+        {
+            let myCal = Calendar.current
+            
+            mySubscriptionDate = myCal.date(byAdding: .month, value: 1, to: Date())!
+        }
+        
         myCloudDB.createNewTeam(teamID: myTeamID, type: myType, status: myStatus, taxNumber: myTaxNumber, companyRegNumber: myCompanyRegNumber, nextInvoiceNumber: myNextInvoiceNumber, logo: tempLogo, subscriptionDate: mySubscriptionDate, subscriptionLevel: 1)
     }
     
@@ -330,7 +343,7 @@ class team: NSObject
         sleep(1)
         populateRolesDropDown()
         sleep(1)
-        populateStagesDropDown()
+        populateProjectStageDropDown()
         sleep(1)
         populatePublicDecodes()
         sleep(1)
@@ -347,6 +360,8 @@ class team: NSObject
         populateProjectTypeDropDown()
         sleep(1)
         populateShowRoles()
+        sleep(1)
+        populateShiftTypeDropDown()
         sleep(1)
 
         notificationCenter.post(name: NotificationTeamCreated, object: nil)
@@ -379,26 +394,95 @@ class team: NSObject
         myDatabaseConnection.saveDropdowns("Roles", dropdownValue: "Tester", teamID: myTeamID)
         usleep(500)
     }
-    
-    private func populateStagesDropDown()
+
+    private func populateProjectStageDropDown()
     {
-        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Definition", teamID: myTeamID)
+        myDatabaseConnection.saveDropdowns("Project", dropdownValue: "Definition", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Initiation", teamID: myTeamID)
+        myDatabaseConnection.saveDropdowns("Project", dropdownValue: "Initiation", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Planning", teamID: myTeamID)
+        myDatabaseConnection.saveDropdowns("Project", dropdownValue: "Planning", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Execution", teamID: myTeamID)
+        myDatabaseConnection.saveDropdowns("Project", dropdownValue: "Execution", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Monitoring & Control", teamID: myTeamID)
+        myDatabaseConnection.saveDropdowns("Project", dropdownValue: "Monitoring & Control", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Closure", teamID: myTeamID)
+        myDatabaseConnection.saveDropdowns("Project", dropdownValue: "Closure", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Completed", teamID: myTeamID)
+        myDatabaseConnection.saveDropdowns("Project", dropdownValue: "Completed", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "Archived", teamID: myTeamID)
+        myDatabaseConnection.saveDropdowns("Project", dropdownValue: "Archived", teamID: myTeamID)
         usleep(500)
-        myDatabaseConnection.saveDropdowns("Stages", dropdownValue: "On Hold", teamID: myTeamID)
+        myDatabaseConnection.saveDropdowns("Project", dropdownValue: "On Hold", teamID: myTeamID)
+        usleep(500)
+        
+        myDatabaseConnection.saveDropdowns("Event", dropdownValue: "Initiation", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Event", dropdownValue: "Planning", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Event", dropdownValue: "Execution", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Event", dropdownValue: "Closure", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Event", dropdownValue: "Completed", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Event", dropdownValue: "Archived", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Event", dropdownValue: "On Hold", teamID: myTeamID)
+        usleep(500)
+        
+        myDatabaseConnection.saveDropdowns("Regular", dropdownValue: "Definition", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Regular", dropdownValue: "Initiation", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Regular", dropdownValue: "Planning", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Regular", dropdownValue: "Execution", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Regular", dropdownValue: "Monitoring & Control", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Regular", dropdownValue: "Closure", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Regular", dropdownValue: "Completed", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Regular", dropdownValue: "Archived", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Regular", dropdownValue: "On Hold", teamID: myTeamID)
+        usleep(500)
+        
+        myDatabaseConnection.saveDropdowns("Sales", dropdownValue: "Requirement Gathering", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Sales", dropdownValue: "Darft Contract", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Sales", dropdownValue: "Review Contract", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Sales", dropdownValue: "Contract Submitted", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Sales", dropdownValue: "Response Received", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Sales", dropdownValue: "Awaiting Client", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Sales", dropdownValue: "Contract Won", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Sales", dropdownValue: "Contract Not Won", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Sales", dropdownValue: "Archived", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Sales", dropdownValue: "On Hold", teamID: myTeamID)
+        usleep(500)
+    }
+    
+    private func populateShiftTypeDropDown()
+    {
+        myDatabaseConnection.saveDropdowns("ShiftType", dropdownValue: shiftShiftType, teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("ShiftType", dropdownValue: eventShiftType, teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("ShiftType", dropdownValue: calloutShiftType, teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("ShiftType", dropdownValue: overtimeShiftType, teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("ShiftType", dropdownValue: regularShiftType, teamID: myTeamID)
         usleep(500)
     }
     
@@ -407,22 +491,6 @@ class team: NSObject
         myDatabaseConnection.saveDropdowns("Privacy", dropdownValue: "Private", teamID: myTeamID)
         usleep(500)
         myDatabaseConnection.saveDropdowns("Privacy", dropdownValue: "Public", teamID: myTeamID)
-        usleep(500)
-    }
-    
-    private func populateRoleTypesDropDown()
-    {
-        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Admin", teamID: myTeamID)
-        usleep(500)
-        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Rostering", teamID: myTeamID)
-        usleep(500)
-        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Invoicing", teamID: myTeamID)
-        usleep(500)
-        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Financials", teamID: myTeamID)
-        usleep(500)
-        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "HR", teamID: myTeamID)
-        usleep(500)
-        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Sales", teamID: myTeamID)
         usleep(500)
     }
     
@@ -468,6 +536,8 @@ class team: NSObject
         usleep(500)
         myDatabaseConnection.saveDropdowns("ProjectType", dropdownValue: "Project", teamID: myTeamID)
         usleep(500)
+        myDatabaseConnection.saveDropdowns("ProjectType", dropdownValue: "Sales", teamID: myTeamID)
+        usleep(500)
     }
     
     private func populateShowRoles()
@@ -483,6 +553,22 @@ class team: NSObject
         myDatabaseConnection.saveDropdowns("ShowRole", dropdownValue: "Manager", teamID: myTeamID)
         usleep(500)
         myDatabaseConnection.saveDropdowns("ShowRole", dropdownValue: "chauffeur", teamID: myTeamID)
+        usleep(500)
+    }
+    
+    private func populateRoleTypesDropDown()
+    {
+        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Admin", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Rostering", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Invoicing", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Financials", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "HR", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Sales", teamID: myTeamID)
         usleep(500)
     }
     

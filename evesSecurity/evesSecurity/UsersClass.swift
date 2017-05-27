@@ -242,9 +242,9 @@ class userItem: NSObject
         }
     }
     
-    func addRoleToUser(roleType: String, accessLevel: String)
+    func addRoleToUser(roleType: String, accessLevel: String, saveToCloud: Bool)
     {
-        let myItem = userRoleItem(userID: myUserID, roleType: roleType, teamID: currentTeam!.teamID)
+        let myItem = userRoleItem(userID: myUserID, roleType: roleType, teamID: currentTeam!.teamID, saveToCloud: saveToCloud)
         myItem.accessLevel = accessLevel
     }
     
