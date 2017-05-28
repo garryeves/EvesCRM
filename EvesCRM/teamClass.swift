@@ -14,7 +14,6 @@ import UIKit
 let NotificationTeamCreated = Notification.Name("NotificationTeamCreated")
 let NotificationTeamSaved = Notification.Name("NotificationTeamSaved")
 let NotificationTeamCountQueryDone = Notification.Name("NotificationTeamCountQueryDone")
-let NotificationTeamCountQueryString = "NotificationTeamCountQueryDone"
 
 let shiftShiftType = "Shift"
 let eventShiftType = "Event"
@@ -1052,7 +1051,7 @@ extension CloudKitInteraction
         }
         let operationQueue = OperationQueue()
         
-        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue, notification: NotificationTeamCountQueryString)
+        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue, notification: NotificationTeamCountQueryDone)
     }
     
     func teamCount() -> Int
@@ -1159,7 +1158,7 @@ extension CloudKitInteraction
 
     func replaceTeamInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(value: true)
+        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
         
         let query: CKQuery = CKQuery(recordType: "Team", predicate: predicate)
         let operation = CKQueryOperation(query: query)
@@ -1203,7 +1202,13 @@ extension CloudKitInteraction
                 logo = NSData(contentsOf: asset.fileURL)
             }
             
-            myDatabaseConnection.replaceTeam(teamID, name: name, status: status, note: note, type: type, predecessor: predecessor, externalID: externalID, taxNumber: taxNumber, companyRegNumber: companyRegNumber, nextInvoiceNumber: nextInvoiceNumber, logo: logo, subscriptionDate: subscriptionDate, subscriptionLevel: subscriptionLevel, updateTime: updateTime, updateType: updateType)
+            myDatabaseConnection.saveTeam(teamID, name: name, status: status, note: note, type: type, predecessor: predecessor, externalID: externalID, taxNumber: taxNumber, companyRegNumber: companyRegNumber, nextInvoiceNumber: nextInvoiceNumber, subscriptionDate: subscriptionDate, subscriptionLevel: subscriptionLevel, updateTime: updateTime, updateType: updateType)
+            
+            if logo != nil
+            {
+                myDatabaseConnection.saveTeamLogo(teamID: teamID, logo: logo)
+            }
+            
             usleep(useconds_t(self.sleepTime))
         }
         let operationQueue = OperationQueue()

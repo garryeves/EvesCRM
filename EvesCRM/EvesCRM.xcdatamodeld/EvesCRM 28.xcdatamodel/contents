@@ -153,8 +153,10 @@
         <attribute name="yearName" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <entity name="Shifts" representedClassName="Shifts" syncable="YES" codeGenerationType="class">
+        <attribute name="clientInvoiceNumber" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="endTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="personID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="personInvoiceNumber" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="projectID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="rateID" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="shiftDescription" optional="YES" attributeType="String" syncable="YES"/>
@@ -256,7 +258,7 @@
         <element name="Projects" positionX="-63" positionY="-18" width="128" height="390"/>
         <element name="Rates" positionX="-279" positionY="135" width="128" height="180"/>
         <element name="ReportingMonth" positionX="-270" positionY="144" width="128" height="135"/>
-        <element name="Shifts" positionX="-243" positionY="171" width="128" height="270"/>
+        <element name="Shifts" positionX="-243" positionY="171" width="128" height="300"/>
         <element name="Task" positionX="-279" positionY="99" width="128" height="345"/>
         <element name="TaskUpdates" positionX="-279" positionY="99" width="128" height="150"/>
         <element name="Team" positionX="-270" positionY="144" width="128" height="285"/>

@@ -139,6 +139,7 @@ Note, you will only have 24 hours from the code being creted to enter it.  If yo
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="ExistingHeightConstraint" destination="BZB-CC-bhE" id="W1D-k8-aJ0"/>
                         <outlet property="btnExisting" destination="bVM-jY-sFk" id="nOZ-0b-xtr"/>
                         <outlet property="btnNew" destination="h3g-M8-yj3" id="ram-6D-iJh"/>
                         <outlet property="newButtonVerticalConstraint" destination="DdJ-XN-158" id="2f9-aX-eje"/>
@@ -510,24 +511,36 @@ Note, you will only have 24 hours from the code being creted to enter it.  If yo
                                     <constraint firstAttribute="width" constant="200" id="px8-gx-1I1"/>
                                 </constraints>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cellUser" id="swe-1V-xkf">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cellUser" id="swe-1V-xkf" customClass="userDisplayItem" customModule="Shift_Dashboard" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="200" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="swe-1V-xkf" id="zE7-af-ogx">
                                             <rect key="frame" x="0.0" y="0.0" width="200" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B5P-L2-xuo">
-                                                    <rect key="frame" x="99" y="12" width="42" height="21"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B5P-L2-xuo">
+                                                    <rect key="frame" x="8" y="8" width="184" height="27.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
+                                            <constraints>
+                                                <constraint firstItem="B5P-L2-xuo" firstAttribute="leading" secondItem="zE7-af-ogx" secondAttribute="leadingMargin" id="7DM-Bf-0iu"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="B5P-L2-xuo" secondAttribute="trailing" id="mUf-X1-6Tj"/>
+                                                <constraint firstItem="B5P-L2-xuo" firstAttribute="top" secondItem="zE7-af-ogx" secondAttribute="topMargin" id="reZ-6e-4eT"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="B5P-L2-xuo" secondAttribute="bottom" id="uYP-Pq-bPb"/>
+                                            </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="lblName" destination="B5P-L2-xuo" id="0J6-7I-InR"/>
+                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="TMw-rd-O2R" id="zOK-ji-0IJ"/>
+                                    <outlet property="delegate" destination="TMw-rd-O2R" id="fGe-8d-ZHf"/>
+                                </connections>
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Wlg-ag-LXj" userLabel="btnAdd">
                                 <rect key="frame" x="40" y="974" width="64" height="30"/>
@@ -589,6 +602,8 @@ Note, you will only have 24 hours from the code being creted to enter it.  If yo
                         <outlet property="btnPassPhrase" destination="gKh-pB-kHV" id="fkQ-Vw-stT"/>
                         <outlet property="btnSave" destination="f7E-Qq-7rS" id="9te-K2-T0f"/>
                         <outlet property="lblDate" destination="fra-o9-X2f" id="0Zj-AJ-c0b"/>
+                        <outlet property="lblEmail" destination="HD9-bJ-TXM" id="Ynh-A6-BR3"/>
+                        <outlet property="lblName" destination="loF-On-eyS" id="3WF-Sg-JNw"/>
                         <outlet property="lblPhrase" destination="HD9-bJ-TXM" id="dio-aW-qzL"/>
                         <outlet property="tblUsers" destination="i2H-1n-qe3" id="pzd-dc-zGN"/>
                         <outlet property="txtEmail" destination="bzA-hu-bs2" id="TQO-s8-Hhi"/>

@@ -43,6 +43,8 @@ struct returnUser
     var personID: Int
 }
 
+var returnUserArray: [returnUser] = Array()
+
 protocol ModelDelegate {
     func errorUpdating(_ error: Error)
     func modelUpdated()
@@ -157,7 +159,7 @@ class CloudKitInteraction
         sem.wait()
     }
     
-    func executePublicQueryOperation(queryOperation: CKQueryOperation, onOperationQueue operationQueue: OperationQueue, notification: String = "", childQuery: Bool = false)
+    func executePublicQueryOperation(queryOperation: CKQueryOperation, onOperationQueue operationQueue: OperationQueue, notification: Notification.Name = Notification.Name("Dummy"), childQuery: Bool = false)
     {
         // Setup the query operation
         queryOperation.database = publicDB
@@ -177,7 +179,7 @@ class CloudKitInteraction
                     
                     queryCursorOperation.recordFetchedBlock = queryOperation.recordFetchedBlock
                     
-                    self.executePublicQueryOperation(queryOperation: queryCursorOperation, onOperationQueue: operationQueue, notification: "", childQuery: true)
+                    self.executePublicQueryOperation(queryOperation: queryCursorOperation, onOperationQueue: operationQueue, notification: Notification.Name("Dummy"), childQuery: true)
                 }
             }
         }
@@ -189,9 +191,9 @@ class CloudKitInteraction
             }
             self.waitFlag = false
 
-            if notification != ""
+            if notification != Notification.Name("Dummy")
             {
-                notificationCenter.post(name: Notification.Name(notification), object: nil)
+                notificationCenter.post(name: notification, object: nil)
             }
         }
         
@@ -338,7 +340,7 @@ class CloudKitInteraction
                 {
                     retString += " , "
                 }
-                retString += "\(myItem.teamID))"
+                retString += "\(myItem.teamID)"
                 
                 firstPass = false
             }

@@ -468,7 +468,8 @@ extension CloudKitInteraction
             }
             else
             {
-                savePrivateDecodesRecordToCloudKit(myItem)
+                // At this moment we do not need to sync private decodes, as they are only device specific items
+//                savePrivateDecodesRecordToCloudKit(myItem)
             }
         }
         myDatabaseConnection.setSyncDateforTable(tableName: "Decodes", syncDate: syncDate, updateCloud: false)
@@ -501,29 +502,29 @@ extension CloudKitInteraction
     }
     
     func updateDecodesInCoreData()
-    {
-        let predicate: NSPredicate = NSPredicate(value: true)
-        
-        let query: CKQuery = CKQuery(recordType: "Decodes", predicate: predicate)
-        let operation = CKQueryOperation(query: query)
-        
-        waitFlag = true
-        
-        operation.recordFetchedBlock = { (record) in
-            self.recordCount += 1
-            self.updateDecodeRecord(record)
-            self.recordCount -= 1
-            usleep(useconds_t(self.sleepTime))
-        }
-        
-        let operationQueue = OperationQueue()
-        
-        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
+    {  // Not currently using private decodes
+//        let predicate: NSPredicate = NSPredicate(value: true)
+//        
+//        let query: CKQuery = CKQuery(recordType: "Decodes", predicate: predicate)
+//        let operation = CKQueryOperation(query: query)
+//        
+//        waitFlag = true
+//        
+//        operation.recordFetchedBlock = { (record) in
+//            self.recordCount += 1
+//            self.updateDecodeRecord(record)
+//            self.recordCount -= 1
+//            usleep(useconds_t(self.sleepTime))
+//        }
+//        
+//        let operationQueue = OperationQueue()
+//        
+//        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+//        
+//        while waitFlag
+//        {
+//            sleep(UInt32(0.5))
+//        }
     }
 
 //    func deletePublicDecodes()
@@ -600,7 +601,7 @@ extension CloudKitInteraction
         }
         let operationQueue = OperationQueue()
         
-        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
         
         while waitFlag
         {

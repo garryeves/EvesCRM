@@ -17,6 +17,7 @@ class newInstanceViewController: UIViewController, UIPopoverPresentationControll
     @IBOutlet weak var newTextHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var newButtonVerticalConstraint: NSLayoutConstraint!
     @IBOutlet weak var newTextVerticalConstraint: NSLayoutConstraint!
+    @IBOutlet weak var ExistingHeightConstraint: NSLayoutConstraint!
     
     var communicationDelegate: myCommunicationDelegate?
     
@@ -78,8 +79,82 @@ class newInstanceViewController: UIViewController, UIPopoverPresentationControll
 
     @IBAction func btnExisting(_ sender: UIButton)
     {
+        // first lets check we have the fields
         
+        if txtCode.text! == "" || txtEmail.text! == ""
+        {
+            let alert = UIAlertController(title: "Join a team", message: "You must provide both your email address, and the code provided by your Administrator", preferredStyle: .actionSheet)
+            
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+            
+            alert.isModalInPopover = true
+            let popover = alert.popoverPresentationController
+            popover!.delegate = self
+            popover!.sourceView = self.view
+            popover!.sourceRect = CGRect(x: (self.view.bounds.width / 2) - 850,y: (self.view.bounds.height / 2) - 350,width: 700 ,height: 700)
+            
+            self.present(alert, animated: false, completion: nil)
+        }
+        else
+        {
+            btnExisting.isEnabled = false
+            btnNew.isEnabled = false
+            btnExisting.setTitle("Processing.  Please wait", for: .normal)
 
+            notificationCenter.addObserver(self, selector: #selector(self.userValidated), name: NotificationValidateUser, object: nil)
+            
+            
+            myCloudDB.validateUser(email: txtEmail.text!, passPhrase: txtCode.text!)
+        }
+    }
+    
+    func userValidated()
+    {
+        notificationCenter.removeObserver(NotificationValidateUser)
+        
+    
+        if myCloudDB.retrieveUserList().count > 0
+        {
+            currentUser = userItem(userID: myCloudDB.retrieveUserList()[0].userID)
+            writeDefaultInt(userDefaultName, value: currentUser.userID)
+            
+            
+            myCloudDB.replaceUserTeamsInCoreData()
+            
+            sleep(2)
+            myCloudDB.replaceTeamInCoreData()
+            
+            sleep(2)
+            
+            currentUser.loadTeams()
+            
+            currentUser.addInitialUserRoles()
+            
+            communicationDelegate!.loadMainScreen!()
+            self.dismiss(animated: true, completion: nil)
+        }
+        else
+        {
+            let alert = UIAlertController(title: "Join a team", message: "Your details do not match.  Please try again or contact your Administrator for a new code", preferredStyle: .actionSheet)
+            
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: nil))
+            
+            alert.isModalInPopover = true
+            let popover = alert.popoverPresentationController
+            popover!.delegate = self
+            popover!.sourceView = self.view
+            popover!.sourceRect = CGRect(x: (self.view.bounds.width / 2) - 850,y: (self.view.bounds.height / 2) - 350,width: 700 ,height: 700)
+            
+            self.present(alert, animated: false, completion: nil)
+            
+            
+            DispatchQueue.main.async
+            {
+                self.btnExisting.setTitle("Join an existing Organisation", for: .normal)
+                self.btnExisting.isEnabled = true
+                self.btnNew.isEnabled = true
+            }
+        }
     }
     
     @IBAction func txtEntry(_ sender: UITextField)
@@ -105,6 +180,7 @@ class newInstanceViewController: UIViewController, UIPopoverPresentationControll
                 newTextHeightConstraint.constant = newTextHeightConstraint.constant - 100
                 newButtonVerticalConstraint.constant = newButtonVerticalConstraint.constant - 100
                 newTextVerticalConstraint.constant = newTextVerticalConstraint.constant - 100
+                ExistingHeightConstraint.constant = 0
                 
                 keyboardDisplayed = true
             }
@@ -122,7 +198,7 @@ class newInstanceViewController: UIViewController, UIPopoverPresentationControll
             newTextHeightConstraint.constant = newTextHeightConstraint.constant + 100
             newButtonVerticalConstraint.constant = newButtonVerticalConstraint.constant + 100
             newTextVerticalConstraint.constant = newTextVerticalConstraint.constant + 100
-            
+            ExistingHeightConstraint.constant = 150
             keyboardDisplayed = false
         }
         self.updateViewConstraints()

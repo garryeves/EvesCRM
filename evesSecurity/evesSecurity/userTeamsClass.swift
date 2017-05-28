@@ -396,7 +396,17 @@ extension CloudKitInteraction
     
     func replaceUserTeamsInCoreData()
     {
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
+        var predicate = NSPredicate()
+        
+        if buildTeamList(currentUser.userID) == ""
+        {
+            predicate = NSPredicate(format: "userID == \(currentUser.userID)")
+        }
+        else
+        {
+            predicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
+        }
+
         let query: CKQuery = CKQuery(recordType: "UserTeams", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         

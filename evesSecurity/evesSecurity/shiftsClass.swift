@@ -52,7 +52,9 @@ class shifts: NSObject
                                  status: myItem.status!,
                                  shiftLineID: Int(myItem.shiftLineID),
                                  rateID: Int(myItem.rateID),
-                                 type: myItem.type!
+                                 type: myItem.type!,
+                                 clientInvoiceNumber: Int(myItem.clientInvoiceNumber),
+                                 personInvoiceNumber: Int(myItem.personInvoiceNumber)
             )
             myShifts.append(myObject)
         }
@@ -85,7 +87,9 @@ class shifts: NSObject
                                  status: myItem.status!,
                                  shiftLineID: Int(myItem.shiftLineID),
                                  rateID: Int(myItem.rateID),
-                                 type: myItem.type!
+                                 type: myItem.type!,
+                                 clientInvoiceNumber: Int(myItem.clientInvoiceNumber),
+                                 personInvoiceNumber: Int(myItem.personInvoiceNumber)
             )
             myShifts.append(myObject)
         }
@@ -118,7 +122,9 @@ class shifts: NSObject
                                  status: myItem.status!,
                                  shiftLineID: Int(myItem.shiftLineID),
                                  rateID: Int(myItem.rateID),
-                                 type: myItem.type!
+                                 type: myItem.type!,
+                                 clientInvoiceNumber: Int(myItem.clientInvoiceNumber),
+                                 personInvoiceNumber: Int(myItem.personInvoiceNumber)
 
                                    )
             myShifts.append(myObject)
@@ -152,7 +158,9 @@ class shifts: NSObject
                                  status: myItem.status!,
                                  shiftLineID: Int(myItem.shiftLineID),
                                  rateID: Int(myItem.rateID),
-                                 type: myItem.type!
+                                 type: myItem.type!,
+                                 clientInvoiceNumber: Int(myItem.clientInvoiceNumber),
+                                 personInvoiceNumber: Int(myItem.personInvoiceNumber)
 
             )
             myShifts.append(myObject)
@@ -186,7 +194,9 @@ class shifts: NSObject
                                  status: myItem.status!,
                                  shiftLineID: Int(myItem.shiftLineID),
                                  rateID: Int(myItem.rateID),
-                                 type: myItem.type!
+                                 type: myItem.type!,
+                                 clientInvoiceNumber: Int(myItem.clientInvoiceNumber),
+                                 personInvoiceNumber: Int(myItem.personInvoiceNumber)
                 
             )
             myShifts.append(myObject)
@@ -239,7 +249,9 @@ class shifts: NSObject
                                      status: myItem.status!,
                                      shiftLineID: Int(myItem.shiftLineID),
                                      rateID: Int(myItem.rateID),
-                                     type: myItem.type!
+                                     type: myItem.type!,
+                                     clientInvoiceNumber: Int(myItem.clientInvoiceNumber),
+                                     personInvoiceNumber: Int(myItem.personInvoiceNumber)
                     
                 )
                 myShifts.append(myObject)
@@ -448,6 +460,8 @@ class shift: NSObject
     fileprivate var myShiftLineID: Int = 0
     fileprivate var myRateID: Int = 0
     fileprivate var myType: String = ""
+    fileprivate var myClientInvoiceNumber = 0
+    fileprivate var myPersonInvoiceNumber = 0
     
     var shiftID: Int
     {
@@ -651,6 +665,30 @@ class shift: NSObject
         }
     }
     
+    var clientInvoiceNumber: Int
+    {
+        get
+        {
+            return myClientInvoiceNumber
+        }
+        set
+        {
+            myClientInvoiceNumber = newValue
+        }
+    }
+    
+    var personInvoiceNumber: Int
+    {
+        get
+        {
+            return myPersonInvoiceNumber
+        }
+        set
+        {
+            myPersonInvoiceNumber = newValue
+        }
+    }
+    
     
     init(projectID: Int, workDate: Date, weekEndDate: Date, teamID: Int, shiftLineID: Int, type: String, saveToCloud: Bool = true)
     {
@@ -688,6 +726,8 @@ class shift: NSObject
             myShiftLineID = Int(myItem.shiftLineID)
             myRateID = Int(myItem.rateID)
             myType = myItem.type!
+            myClientInvoiceNumber = Int(myItem.clientInvoiceNumber)
+            myPersonInvoiceNumber = Int(myItem.personInvoiceNumber)
         }
     }
     
@@ -703,7 +743,9 @@ class shift: NSObject
          status: String,
          shiftLineID: Int,
          rateID: Int,
-         type: String
+         type: String,
+         clientInvoiceNumber: Int,
+         personInvoiceNumber: Int
          )
     {
         super.init()
@@ -721,6 +763,8 @@ class shift: NSObject
         myShiftLineID = shiftLineID
         myRateID = rateID
         myType = type
+        myClientInvoiceNumber = clientInvoiceNumber
+        myPersonInvoiceNumber = personInvoiceNumber
     }
     
     func save()
@@ -739,7 +783,9 @@ class shift: NSObject
                                             status: myStatus,
                                             shiftLineID: myShiftLineID,
                                             rateID: myRateID,
-                                            type: myType
+                                            type: myType,
+                                            clientInvoiceNumber: myClientInvoiceNumber,
+                                            personInvoiceNumber: myPersonInvoiceNumber
                                              )
         }
     }
@@ -765,6 +811,8 @@ extension coreDatabase
                     shiftLineID: Int,
                     rateID: Int,
                     type: String,
+                    clientInvoiceNumber: Int,
+                    personInvoiceNumber: Int,
                      updateTime: Date =  Date(), updateType: String = "CODE")
     {
         var myItem: Shifts!
@@ -794,6 +842,8 @@ extension coreDatabase
             myItem.shiftLineID = Int64(shiftLineID)
             myItem.rateID = Int64(rateID)
             myItem.type = type
+            myItem.clientInvoiceNumber = Int64(clientInvoiceNumber)
+            myItem.personInvoiceNumber = Int64(personInvoiceNumber)
             
             if updateType == "CODE"
             {
@@ -818,6 +868,8 @@ extension coreDatabase
             myItem.shiftLineID = Int64(shiftLineID)
             myItem.rateID = Int64(rateID)
             myItem.type = type
+            myItem.clientInvoiceNumber = Int64(clientInvoiceNumber)
+            myItem.personInvoiceNumber = Int64(personInvoiceNumber)
 
             if updateType == "CODE"
             {
@@ -850,6 +902,8 @@ extension coreDatabase
                        shiftLineID: Int,
                        rateID: Int,
                        type: String,
+                       clientInvoiceNumber: Int,
+                       personInvoiceNumber: Int,
                         updateTime: Date =  Date(), updateType: String = "CODE")
     {
         // get the current calendar
@@ -873,6 +927,8 @@ extension coreDatabase
         myItem.shiftLineID = Int64(shiftLineID)
         myItem.rateID = Int64(rateID)
         myItem.type = type
+        myItem.clientInvoiceNumber = Int64(clientInvoiceNumber)
+        myItem.personInvoiceNumber = Int64(personInvoiceNumber)
 
         if updateType == "CODE"
         {
@@ -1457,7 +1513,19 @@ extension CloudKitInteraction
             {
                 teamID = record.object(forKey: "teamID") as! Int
             }
-            
+
+            var clientInvoiceNumber: Int = 0
+            if record.object(forKey: "clientInvoiceNumber") != nil
+            {
+                clientInvoiceNumber = record.object(forKey: "clientInvoiceNumber") as! Int
+            }
+
+            var personInvoiceNumber: Int = 0
+            if record.object(forKey: "personInvoiceNumber") != nil
+            {
+                personInvoiceNumber = record.object(forKey: "personInvoiceNumber") as! Int
+            }
+
             var updateTime = Date()
             if record.object(forKey: "updateTime") != nil
             {
@@ -1482,7 +1550,9 @@ extension CloudKitInteraction
                                                status: status,
                                                shiftLineID: shiftLineID,
                                                rateID: rateID,
-                                               type: type
+                                               type: type,
+                                               clientInvoiceNumber: clientInvoiceNumber,
+                                               personInvoiceNumber: personInvoiceNumber
                                                 , updateTime: updateTime, updateType: updateType)
             
             usleep(useconds_t(self.sleepTime))
@@ -1526,7 +1596,9 @@ extension CloudKitInteraction
                     record!.setValue(sourceRecord.shiftLineID, forKey: "shiftLineID")
                     record!.setValue(sourceRecord.rateID, forKey: "rateID")
                     record!.setValue(sourceRecord.type, forKey: "type")
-
+                    record!.setValue(sourceRecord.clientInvoiceNumber, forKey: "clientInvoiceNumber")
+                    record!.setValue(sourceRecord.personInvoiceNumber, forKey: "personInvoiceNumber")
+                    
                     if sourceRecord.updateTime != nil
                     {
                         record!.setValue(sourceRecord.updateTime, forKey: "updateTime")
@@ -1563,6 +1635,8 @@ extension CloudKitInteraction
                     record.setValue(sourceRecord.shiftLineID, forKey: "shiftLineID")
                     record.setValue(sourceRecord.rateID, forKey: "rateID")
                     record.setValue(sourceRecord.type, forKey: "type")
+                    record.setValue(sourceRecord.clientInvoiceNumber, forKey: "clientInvoiceNumber")
+                    record.setValue(sourceRecord.personInvoiceNumber, forKey: "personInvoiceNumber")
 
                     record.setValue(teamID, forKey: "teamID")
                     
@@ -1670,6 +1744,19 @@ extension CloudKitInteraction
             teamID = sourceRecord.object(forKey: "teamID") as! Int
         }
         
+        var clientInvoiceNumber: Int = 0
+        if sourceRecord.object(forKey: "clientInvoiceNumber") != nil
+        {
+            clientInvoiceNumber = sourceRecord.object(forKey: "clientInvoiceNumber") as! Int
+        }
+        
+        var personInvoiceNumber: Int = 0
+        if sourceRecord.object(forKey: "personInvoiceNumber") != nil
+        {
+            personInvoiceNumber = sourceRecord.object(forKey: "personInvoiceNumber") as! Int
+        }
+
+        
         myDatabaseConnection.saveShifts(shiftID,
                                         projectID: projectID,
                                         personID: personID,
@@ -1682,7 +1769,9 @@ extension CloudKitInteraction
                                         status: status,
                                         shiftLineID: shiftLineID,
                                         rateID: rateID,
-                                        type: type
+                                        type: type,
+                                        clientInvoiceNumber: clientInvoiceNumber,
+                                        personInvoiceNumber: personInvoiceNumber
                                          , updateTime: updateTime, updateType: updateType)
     }
 }

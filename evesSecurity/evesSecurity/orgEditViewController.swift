@@ -61,6 +61,16 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
             btnStatus.setTitle(workingOrganisation!.status, for: .normal)
         }
     
+        let myReachability = Reachability()
+        if myReachability.isConnectedToNetwork()
+        {
+            btnUsers.isEnabled = true
+        }
+        else
+        {
+            btnUsers.isEnabled = false
+        }
+        
         notificationCenter.addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         notificationCenter.addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
@@ -156,6 +166,8 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
     
     @IBAction func btnUsers(_ sender: UIButton)
     {
+        let userEditViewControl = loginStoryboard.instantiateViewController(withIdentifier: "userForm") as! userFormViewController
+        self.present(userEditViewControl, animated: true, completion: nil)
     }
     
     func teamCreated(_ notification: Notification)
@@ -166,7 +178,7 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
 
         if currentUser == nil
         {
-            currentUser = userItem(teamID: workingOrganisation!.teamID)
+            currentUser = userItem(currentTeam: workingOrganisation!)
             
             notificationCenter.addObserver(self, selector: #selector(self.addTeamToUser), name: NotificationUserCreated, object: nil)
         }
@@ -186,8 +198,6 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
     func addTeamToUser()
     {
         notificationCenter.removeObserver(NotificationUserCreated)
-      
-        currentUser.addTeamToUser(workingOrganisation!)
    
         addInitialUserRoles()
     }
@@ -196,27 +206,7 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
     {
         writeDefaultInt(userDefaultName, value: currentUser.userID)
 
-        var recordCount: Int = 0
-        
-        let processRecords = currentUser.currentTeam?.getRoleTypes()
-        
-        for myItem in processRecords!
-        {
-            if recordCount == processRecords!.count - 1
-            {
-                currentUser.addRoleToUser(roleType: myItem, accessLevel: "Write", saveToCloud: true)
-                usleep(500)
-            }
-            else
-            {
-                currentUser.addRoleToUser(roleType: myItem, accessLevel: "Write", saveToCloud: false)
-                recordCount += 1
-                usleep(500)
-            }
-        }
-        
- //       myCloudDB.saveDecodesToCloudKit()
-        currentUser.loadRoles()
+        currentUser.addInitialUserRoles()
         newUserCreated = true
     }
     

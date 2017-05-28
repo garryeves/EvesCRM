@@ -45,6 +45,7 @@ class DBSync: NSObject
                     notificationCenter.addObserver(self, selector: #selector(self.DBReplaceDone), name: NotificationDBReplaceDone, object: nil)
                     replaceWithCloudKit()
                     
+                    usleep(500)
                     setLastSyncDates(syncDate: Date())
                     
                     notificationCenter.post(name: NotificationDBReplaceDone, object: nil)
