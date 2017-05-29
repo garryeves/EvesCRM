@@ -95,7 +95,10 @@ class projects: NSObject
             myProjects.append(myObject)
         }
         
-        sortArrayByClient()
+        if type != eventProjectType
+        {
+            sortArrayByClient()
+        }
     }
     
     init(query: String, teamID: Int)
@@ -1071,6 +1074,10 @@ extension coreDatabase
             fetchRequest.predicate = predicate
         }
         
+        let sortDescriptor = NSSortDescriptor(key: "projectStartDate", ascending: true)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
         // Execute the fetch request, and cast the results to an array of LogItem objects
         do
         {
@@ -1616,19 +1623,29 @@ extension CloudKitInteraction
         let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
+        while waitFlag
+        {
+            usleep(self.sleepTime)
+        }
+        
         waitFlag = true
         
         operation.recordFetchedBlock = { (record) in
+            while self.recordCount > 0
+            {
+                usleep(self.sleepTime)
+            }
+            
             self.recordCount += 1
 
             self.updateProjectsRecord(record)
             self.recordCount -= 1
 
-            usleep(useconds_t(self.sleepTime))
+//            usleep(self.sleepTime)
         }
         let operationQueue = OperationQueue()
         
-        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        executePublicQueryOperation(targetTable: "Projects", queryOperation: operation, onOperationQueue: operationQueue)
         
         while waitFlag
         {
@@ -1713,11 +1730,11 @@ extension CloudKitInteraction
 
             myDatabaseConnection.replaceProject(projectID, projectEndDate: projectEndDate, projectName: projectName, projectStartDate: projectStartDate, projectStatus: projectStatus, reviewFrequency: reviewFrequency, lastReviewDate: lastReviewDate, GTDItemID: areaID, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, teamID: teamID, clientID: clientID, note: note, reviewPeriod: reviewPeriod, predecessor: predecessor, clientDept: clientDept, invoicingFrequency: invoicingFrequency, invoicingDay: invoicingDay, daysToPay:daysToPay, type: type, updateTime: updateTime, updateType: updateType)
 
-            usleep(useconds_t(self.sleepTime))
+            usleep(self.sleepTime)
         }
         let operationQueue = OperationQueue()
         
-        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        executePublicQueryOperation(targetTable: "Projects", queryOperation: operation, onOperationQueue: operationQueue)
         
         while waitFlag
         {

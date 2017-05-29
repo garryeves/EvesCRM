@@ -369,20 +369,30 @@ extension CloudKitInteraction
         let query: CKQuery = CKQuery(recordType: "Dropdowns", predicate: predicate)
         
         let operation = CKQueryOperation(query: query)
+
+        while waitFlag
+        {
+            usleep(self.sleepTime)
+        }
         
         waitFlag = true
         
         operation.recordFetchedBlock = { (record) in
+            while self.recordCount > 0
+            {
+                usleep(self.sleepTime)
+            }
+            
             self.recordCount += 1
             
             self.updateDropdownsRecord(record)
             self.recordCount -= 1
             
-            usleep(useconds_t(self.sleepTime))
+//            usleep(self.sleepTime)
         }
         let operationQueue = OperationQueue()
         
-        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        executePublicQueryOperation(targetTable: "Dropdowns", queryOperation: operation, onOperationQueue: operationQueue)
         
         while waitFlag
         {
@@ -445,12 +455,12 @@ extension CloudKitInteraction
                                                 teamID: teamID
                                                 , updateTime: updateTime, updateType: updateType)
             
-            usleep(useconds_t(self.sleepTime))
+            usleep(self.sleepTime)
         }
         
         let operationQueue = OperationQueue()
         
-        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        executePublicQueryOperation(targetTable: "Dropdowns", queryOperation: operation, onOperationQueue: operationQueue)
         
         while waitFlag
         {

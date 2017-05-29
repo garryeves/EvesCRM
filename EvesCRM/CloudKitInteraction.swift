@@ -57,8 +57,8 @@ class CloudKitInteraction
     let publicDB : CKDatabase
     let privateDB : CKDatabase
     
-    var waitFlag: Bool = true
-    let sleepTime = 500
+    var waitFlag: Bool = false
+    let sleepTime: useconds_t = useconds_t(20000)
     var recordCount: Int = 0
     var recordsInTable: Int = 0
     var returnUserEntry: returnUser!
@@ -67,13 +67,7 @@ class CloudKitInteraction
 
     init()
     {
-        #if os(iOS)
-            container = CKContainer.init(identifier: "iCloud.com.garryeves.EvesCRM")
-        #elseif os(OSX)
-            container = CKContainer.init(identifier: "iCloud.com.garryeves.EvesCRM")
-        #else
-            NSLog("Unexpected OS")
-        #endif
+        container = CKContainer.init(identifier: "iCloud.com.garryeves.EvesCRM")
 
         publicDB = container.publicCloudDatabase // data saved here can be seen by all users
         privateDB = container.privateCloudDatabase // this is the one to use to save the data
@@ -159,7 +153,7 @@ class CloudKitInteraction
         sem.wait()
     }
     
-    func executePublicQueryOperation(queryOperation: CKQueryOperation, onOperationQueue operationQueue: OperationQueue, notification: Notification.Name = Notification.Name("Dummy"), childQuery: Bool = false)
+    func executePublicQueryOperation(targetTable: String, queryOperation: CKQueryOperation, onOperationQueue operationQueue: OperationQueue, notification: Notification.Name = Notification.Name("Dummy"), childQuery: Bool = false)
     {
         // Setup the query operation
         queryOperation.database = publicDB
@@ -179,7 +173,7 @@ class CloudKitInteraction
                     
                     queryCursorOperation.recordFetchedBlock = queryOperation.recordFetchedBlock
                     
-                    self.executePublicQueryOperation(queryOperation: queryCursorOperation, onOperationQueue: operationQueue, notification: Notification.Name("Dummy"), childQuery: true)
+                    self.executePublicQueryOperation(targetTable: targetTable, queryOperation: queryCursorOperation, onOperationQueue: operationQueue, notification: Notification.Name("Dummy"), childQuery: true)
                 }
             }
         }

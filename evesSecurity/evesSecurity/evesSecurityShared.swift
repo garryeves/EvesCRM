@@ -13,7 +13,7 @@ import CloudKit
 import UIKit
 
 let coreDatabaseName = "EvesCRM"
-let appName = "EvesMeeting"
+let appName = "EvesSecurity"
 
 var userName: String = ""
 var userEmail: String = ""
@@ -22,16 +22,16 @@ extension coreDatabase
 {
     func clearDeletedItems()
     {
-        let predicate = NSPredicate(format: "(updateType == \"Delete\")")
-        
-        clearDeletedTeam(predicate: predicate)
+//        let predicate = NSPredicate(format: "(updateType == \"Delete\")")
+//        
+//        clearDeletedTeam(predicate: predicate)
     }
     
     func clearSyncedItems()
     {
-        let predicate = NSPredicate(format: "(updateType != \"\")")
-        
-        clearSyncedTeam(predicate: predicate)
+//        let predicate = NSPredicate(format: "(updateType != \"\")")
+//        
+//        clearSyncedTeam(predicate: predicate)
     }
     
     func deleteAllCoreData()
@@ -86,36 +86,52 @@ extension DBSync
     {
         progressMessage("syncToCloudKit Team")
         myCloudDB.saveTeamToCloudKit()
+
         progressMessage("syncToCloudKit Decode")
         myCloudDB.saveDecodesToCloudKit()
+        
         progressMessage("syncToCloudKit Addresses")
         myCloudDB.saveAddressToCloudKit()
+        
         progressMessage("syncToCloudKit Clients")
         myCloudDB.saveClientToCloudKit(teamID: teamID)
+        
         progressMessage("syncToCloudKit Contacts")
         myCloudDB.saveContactToCloudKit()
+        
         progressMessage("syncToCloudKit Dropdowns")
         myCloudDB.saveDropdownsToCloudKit()
+        
         progressMessage("syncToCloudKit Person")
         myCloudDB.savePersonToCloudKit()
+        
         progressMessage("syncToCloudKit PersonAdditionalInfo")
         myCloudDB.savePersonAdditionalInfoToCloudKit()
+        
         progressMessage("syncToCloudKit PersonAdditionalItem")
         myCloudDB.savePersonAddInfoEntryToCloudKit()
+        
         progressMessage("syncToCloudKit Projects")
         myCloudDB.saveProjectsToCloudKit()
+        
         progressMessage("syncToCloudKit Rates")
         myCloudDB.saveRatesToCloudKit()
+        
         progressMessage("syncToCloudKit ReportingMonth")
         myCloudDB.saveReportingMonthToCloudKit()
+        
         progressMessage("syncToCloudKit Shifts")
         myCloudDB.saveShiftsToCloudKit()
+        
         progressMessage("syncToCloudKit UserRoles")
         myCloudDB.saveUserRolesToCloudKit()
+        
         progressMessage("syncToCloudKit saveEventTemplateToCloudKit")
         myCloudDB.saveEventTemplateToCloudKit()
+        
         progressMessage("syncToCloudKit saveEventTemplateHeadToCloudKit")
         myCloudDB.saveEventTemplateHeadToCloudKit()
+        
         progressMessage("syncToCloudKit saveUserTeamsToCloudKit")
         myCloudDB.saveUserTeamsToCloudKit()
         
@@ -126,36 +142,52 @@ extension DBSync
     {
         progressMessage("syncFromCloudKit Team")
         myCloudDB.updateTeamInCoreData()
+        
         progressMessage("updateDecodesInCoreData Decode")
         myCloudDB.updateDecodesInCoreData()
+        
         progressMessage("updateAddressInCoreData Addresses")
         myCloudDB.updateAddressInCoreData()
+        
         progressMessage("updateClientInCoreData Clients")
         myCloudDB.updateClientInCoreData()
+        
         progressMessage("updateContactInCoreData Contacts")
         myCloudDB.updateContactInCoreData()
+        
         progressMessage("updateDropdownsInCoreData Dropdowns")
         myCloudDB.updateDropdownsInCoreData()
+        
         progressMessage("updatePersonInCoreData Person")
         myCloudDB.updatePersonInCoreData()
+        
         progressMessage("updatePersonAdditionalInfoInCoreData PersonAdditionalInfo")
         myCloudDB.updatePersonAdditionalInfoInCoreData()
+        
         progressMessage("updatePersonAddInfoEntryInCoreData PersonAdditionalItem")
         myCloudDB.updatePersonAddInfoEntryInCoreData()
+        
         progressMessage("updateProjectsInCoreData Projects")
         myCloudDB.updateProjectsInCoreData(teamID: teamID)
+        
         progressMessage("updateRatesInCoreData Rates")
         myCloudDB.updateRatesInCoreData()
+        
         progressMessage("updateReportingMonthInCoreData ReportingMonth")
         myCloudDB.updateReportingMonthInCoreData()
+        
         progressMessage("updateShiftsInCoreData Shifts")
         myCloudDB.updateShiftsInCoreData()
+        
         progressMessage("updateUserRolesInCoreData UserRoles")
         myCloudDB.updateUserRolesInCoreData()
+        
         progressMessage("updateContractShiftsInCoreData updateEventTemplateInCoreData")
         myCloudDB.updateEventTemplateInCoreData()
+        
         progressMessage("updateContractShiftsInCoreData updateEventTemplateHeadInCoreData")
         myCloudDB.updateEventTemplateHeadInCoreData()
+        
         progressMessage("updateContractShiftsInCoreData updateUserTeamsInCoreData")
         myCloudDB.updateUserTeamsInCoreData()
         
@@ -166,40 +198,54 @@ extension DBSync
     {
         progressMessage("replaceWithCloudKit Team")
         myCloudDB.replaceTeamInCoreData()
+        
         progressMessage("replaceContractShiftsInCoreData replaceUserTeamsInCoreData")
         myCloudDB.replaceUserTeamsInCoreData()
         
         progressMessage("replaceDecodesInCoreData Decode")
         myCloudDB.replaceDecodesInCoreData()
+        
         progressMessage("replaceAddressInCoreData Addresses")
         myCloudDB.replaceAddressInCoreData()
+        
         progressMessage("replaceClientInCoreData Clients")
         myCloudDB.replaceClientInCoreData()
+        
         progressMessage("replaceContactInCoreData Contacts")
         myCloudDB.replaceContactInCoreData()
+        
         progressMessage("replaceDropdownsInCoreData Dropdowns")
         myCloudDB.replaceDropdownsInCoreData()
+        
         progressMessage("replacePersonInCoreData Person")
         myCloudDB.replacePersonInCoreData()
+        
         progressMessage("replacePersonAdditionalInfoInCoreData PersonAdditionalInfo")
         myCloudDB.replacePersonAdditionalInfoInCoreData()
+        
         progressMessage("replacePersonAddInfoEntryInCoreData PersonAdditionalItem")
         myCloudDB.replacePersonAddInfoEntryInCoreData()
+        
         progressMessage("replaceProjectsInCoreData Projects")
         myCloudDB.replaceProjectsInCoreData()
+        
         progressMessage("replaceRatesInCoreData Rates")
         myCloudDB.replaceRatesInCoreData()
+        
         progressMessage("replaceReportingMonthInCoreData ReportingMonth")
         myCloudDB.replaceReportingMonthInCoreData()
+        
         progressMessage("replaceShiftsInCoreData Shifts")
         myCloudDB.replaceShiftsInCoreData()
+        
         progressMessage("replaceUserRolesInCoreData UserRoles")
         myCloudDB.replaceUserRolesInCoreData()
+        
         progressMessage("replaceContractShiftsInCoreData replaceEventTemplateInCoreData")
         myCloudDB.replaceEventTemplateInCoreData()
+        
         progressMessage("replaceContractShiftsInCoreData replaceEventTemplateHeadInCoreData")
         myCloudDB.replaceEventTemplateHeadInCoreData()
-
         
         notificationCenter.post(name: NotificationCloudSyncFinished, object: nil)
     }
@@ -211,37 +257,51 @@ extension DBSync
         
         progressMessage("syncToCloudKit Decode")
         myCloudDB.deletePrivateDecodes()
-        progressMessage("syncToCloudKit Addresses")
+        
+         progressMessage("syncToCloudKit Addresses")
         myCloudDB.deleteAddresses()
-        progressMessage("syncToCloudKit Clients")
+        
+         progressMessage("syncToCloudKit Clients")
         myCloudDB.deleteClients()
+         
         progressMessage("syncToCloudKit Contacts")
         myCloudDB.deleteContacts)
-        progressMessage("syncToCloudKit Dropdowns")
+        
+         progressMessage("syncToCloudKit Dropdowns")
         myCloudDB.deleteDropdowns()
-        progressMessage("syncToCloudKit Person")
+        
+         progressMessage("syncToCloudKit Person")
         myCloudDB.deletePerson()
-        progressMessage("syncToCloudKit PersonAdditionalInfo")
+        
+         progressMessage("syncToCloudKit PersonAdditionalInfo")
         myCloudDB.deletePersonAdditionalInfo()
-        progressMessage("syncToCloudKit PersonAdditionalItem")
+        
+         progressMessage("syncToCloudKit PersonAdditionalItem")
         myCloudDB.deletePersonAddInfoEntry()
-        progressMessage("syncToCloudKit Projects")
+        
+         progressMessage("syncToCloudKit Projects")
         myCloudDB.deleteProjects()
-        progressMessage("syncToCloudKit Rates")
+        
+         progressMessage("syncToCloudKit Rates")
         myCloudDB.deleteRates()
-        progressMessage("syncToCloudKit ReportingMonth")
+        
+         progressMessage("syncToCloudKit ReportingMonth")
         myCloudDB.deleteReportingMonth()
-        progressMessage("syncToCloudKit Shifts")
+        
+         progressMessage("syncToCloudKit Shifts")
         myCloudDB.deleteShifts()
         progressMessage("syncToCloudKit UserRoles")
         myCloudDB.deleteUserRoles()
+        
          progressMessage("syncToCloudKit ContractShifts")
          myCloudDB.deleteContractShifts()   eventtemplate
+        
          progressMessage("syncToCloudKit ContractShifts")
          myCloudDB.deleteContractShifts() event template head
+         
          progressMessage("syncToCloudKit ContractShifts")
          myCloudDB.deleteContractShifts() user teams
-
+         
    */
         
     }

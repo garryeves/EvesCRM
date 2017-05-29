@@ -1567,11 +1567,11 @@ extension CloudKitInteraction
             self.updateTaskRecord(record)
             self.recordCount -= 1
 
-            usleep(useconds_t(self.sleepTime))
+            usleep(self.sleepTime)
         }
         let operationQueue = OperationQueue()
         
-        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        executePublicQueryOperation(targetTable: "Task", queryOperation: operation, onOperationQueue: operationQueue)
         
         while waitFlag
         {
@@ -1638,12 +1638,12 @@ extension CloudKitInteraction
             let projectID = record.object(forKey: "projectID") as! Int
             
             myDatabaseConnection.replaceTask(taskID, title: title, details: details, dueDate: dueDate, startDate: startDate, status: status, priority: priority, energyLevel: energyLevel, estimatedTime: estimatedTime, estimatedTimeType: estimatedTimeType, projectID: projectID, completionDate: completionDate, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, flagged: flagged, urgency: urgency, teamID: teamID, updateTime: updateTime, updateType: updateType)
-            usleep(useconds_t(self.sleepTime))
+            usleep(self.sleepTime)
         }
         
         let operationQueue = OperationQueue()
         
-        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        executePublicQueryOperation(targetTable: "Task", queryOperation: operation, onOperationQueue: operationQueue)
         
         while waitFlag
         {

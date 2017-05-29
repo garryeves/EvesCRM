@@ -408,7 +408,7 @@ extension CloudKitInteraction
         }
         let operationQueue = OperationQueue()
         
-        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue, notification: NotificationUserCountQueryDone)
+        executePublicQueryOperation(targetTable: "DBUsers", queryOperation: operation, onOperationQueue: operationQueue, notification: NotificationUserCountQueryDone)
     }
     
     func userCount() -> Int
@@ -607,12 +607,12 @@ extension CloudKitInteraction
         
         operation.recordFetchedBlock = { (record) in
             self.processUserList(record)
-            usleep(useconds_t(self.sleepTime))
+            usleep(self.sleepTime)
         }
         
         let operationQueue = OperationQueue()
         
-        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue, notification: NotificationUserListLoaded)
+        executePublicQueryOperation(targetTable: "DBUsers", queryOperation: operation, onOperationQueue: operationQueue, notification: NotificationUserListLoaded)
     }
     
     private func processUserList(_ sourceRecord: CKRecord)
@@ -679,12 +679,12 @@ extension CloudKitInteraction
         
         operation.recordFetchedBlock = { (record) in
             self.processUserList(record)
-            usleep(useconds_t(self.sleepTime))
+            usleep(self.sleepTime)
         }
         
         let operationQueue = OperationQueue()
         
-        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue, notification: NotificationValidateUser)
+        executePublicQueryOperation(targetTable: "DBUsers", queryOperation: operation, onOperationQueue: operationQueue, notification: NotificationValidateUser)
     }
 }
 

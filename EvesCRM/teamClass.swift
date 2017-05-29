@@ -1051,7 +1051,7 @@ extension CloudKitInteraction
         }
         let operationQueue = OperationQueue()
         
-        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue, notification: NotificationTeamCountQueryDone)
+        executePublicQueryOperation(targetTable: "Team", queryOperation: operation, onOperationQueue: operationQueue, notification: NotificationTeamCountQueryDone)
     }
     
     func teamCount() -> Int
@@ -1118,19 +1118,29 @@ extension CloudKitInteraction
         let query: CKQuery = CKQuery(recordType: "Team", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
+        while waitFlag
+        {
+            usleep(self.sleepTime)
+        }
+        
         waitFlag = true
         
         operation.recordFetchedBlock = { (record) in
+            while self.recordCount > 0
+            {
+                usleep(self.sleepTime)
+            }
+            
             self.recordCount += 1
 
                 self.updateTeamRecord(record)
             self.recordCount -= 1
 
-                usleep(useconds_t(self.sleepTime))
+//                usleep(self.sleepTime)
             }
         let operationQueue = OperationQueue()
         
-        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        executePublicQueryOperation(targetTable: "Team", queryOperation: operation, onOperationQueue: operationQueue)
         
         while waitFlag
         {
@@ -1209,11 +1219,11 @@ extension CloudKitInteraction
                 myDatabaseConnection.saveTeamLogo(teamID: teamID, logo: logo)
             }
             
-            usleep(useconds_t(self.sleepTime))
+            usleep(self.sleepTime)
         }
         let operationQueue = OperationQueue()
         
-        executePublicQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
+        executePublicQueryOperation(targetTable: "Team", queryOperation: operation, onOperationQueue: operationQueue)
         
         while waitFlag
         {

@@ -70,7 +70,7 @@ This option will then guide you through creating an Organisation and then allow 
                                 </constraints>
                                 <string key="text">Use this option if you have been provided with a code for an organisation.
 
-Note, you will only have 24 hours from the code being creted to enter it.  If you have gone over this then please contact your Organisations Administrator to issue you with a new codel</string>
+Note, you will only have 24 hours from the code being created to enter it.  If you have gone over this then please contact your Organisations Administrator to issue you with a new codel</string>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>

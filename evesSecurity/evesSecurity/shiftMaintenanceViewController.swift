@@ -224,7 +224,17 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
             newShift.save()
         }
         
-        refreshScreen()
+        if recordCount == 0
+        {
+            //No previous weeks so we only need to show the sleect contract bits
+            lblWETitle.isHidden = false
+            btnCreateShift.isHidden = true
+            btnAdd.isHidden = false
+        }
+        else
+        {
+            refreshScreen()
+        }
     }
     
     @IBAction func btnPreviousWeek(_ sender: UIButton)
@@ -389,6 +399,9 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
         {
             displayList.append(myItem.rateName)
         }
+        
+        displayList.append("")
+        displayList.append("Delete Shift")
         
         let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
         pickerView.modalPresentationStyle = .popover
@@ -833,6 +846,30 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                     }
 
             case "btnRateMon":
+                
+                    // For Rates, the last 2 rows are used to determin if should delete the shift
+                    
+                    if selectedItem > displayList.count - 2
+                    {
+                        if displayList[selectedItem] == "Delete Shift"
+                        {
+                            if weeklyRecord.monShift != nil
+                            {
+                                weeklyRecord.monShift.delete()
+                                
+                                weeklyRecord.monShift = nil
+                                
+                                btnRateMon.isHidden = true
+                                btnPersonMon.isHidden = true
+                                
+                                btnStartMon.setTitle("00:00", for: .normal)
+                                btnEndMon.setTitle("00:00", for: .normal)
+                            }
+                        }
+                        
+                        break
+                    }
+
                     btnRateMon.setTitle(rateList.rates[selectedItem - 1].rateName, for: .normal)
                 
                     if weeklyRecord.monShift == nil
@@ -844,6 +881,30 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                     weeklyRecord.monShift.save()
                 
                 case "btnRateTue":
+                    
+                    // For Rates, the last 2 rows are used to determin if should delete the shift
+                    
+                    if selectedItem > displayList.count - 2
+                    {
+                        if displayList[selectedItem] == "Delete Shift"
+                        {
+                            if weeklyRecord.tueShift != nil
+                            {
+                                weeklyRecord.tueShift.delete()
+                                
+                                weeklyRecord.tueShift = nil
+                                
+                                btnRateTue.isHidden = true
+                                btnPersonTue.isHidden = true
+                                
+                                btnStartTue.setTitle("00:00", for: .normal)
+                                btnEndTue.setTitle("00:00", for: .normal)
+                            }
+                        }
+                        
+                        break
+                    }
+                    
                     btnRateTue.setTitle(rateList.rates[selectedItem - 1].rateName, for: .normal)
                     
                     if weeklyRecord.tueShift == nil
@@ -855,6 +916,29 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                     weeklyRecord.tueShift.save()
                 
                 case "btnRateWed":
+                    // For Rates, the last 2 rows are used to determin if should delete the shift
+                    
+                    if selectedItem > displayList.count - 2
+                    {
+                        if displayList[selectedItem] == "Delete Shift"
+                        {
+                            if weeklyRecord.wedShift != nil
+                            {
+                                weeklyRecord.wedShift.delete()
+                                
+                                weeklyRecord.wedShift = nil
+                                
+                                btnRateWed.isHidden = true
+                                btnPersonWed.isHidden = true
+                                
+                                btnStartWed.setTitle("00:00", for: .normal)
+                                btnEndWed.setTitle("00:00", for: .normal)
+                            }
+                        }
+                        
+                        break
+                    }
+                    
                     btnRateWed.setTitle(rateList.rates[selectedItem - 1].rateName, for: .normal)
                     
                     if weeklyRecord.wedShift == nil
@@ -866,6 +950,29 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                     weeklyRecord.wedShift.save()
                 
                 case "btnRateThu":
+                    // For Rates, the last 2 rows are used to determin if should delete the shift
+                    
+                    if selectedItem > displayList.count - 2
+                    {
+                        if displayList[selectedItem] == "Delete Shift"
+                        {
+                            if weeklyRecord.thuShift != nil
+                            {
+                                weeklyRecord.thuShift.delete()
+                                
+                                weeklyRecord.thuShift = nil
+                                
+                                btnRateThu.isHidden = true
+                                btnPersonThu.isHidden = true
+                                
+                                btnStartThu.setTitle("00:00", for: .normal)
+                                btnEndThu.setTitle("00:00", for: .normal)
+                            }
+                        }
+                        
+                        break
+                    }
+                    
                     btnRateThu.setTitle(rateList.rates[selectedItem - 1].rateName, for: .normal)
                     
                     if weeklyRecord.thuShift == nil
@@ -877,6 +984,29 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                     weeklyRecord.thuShift.save()
                 
                 case "btnRateFri":
+                    // For Rates, the last 2 rows are used to determin if should delete the shift
+                    
+                    if selectedItem > displayList.count - 2
+                    {
+                        if displayList[selectedItem] == "Delete Shift"
+                        {
+                            if weeklyRecord.friShift != nil
+                            {
+                                weeklyRecord.friShift.delete()
+                                
+                                weeklyRecord.friShift = nil
+                                
+                                btnRateFri.isHidden = true
+                                btnPersonFri.isHidden = true
+                                
+                                btnStartFri.setTitle("00:00", for: .normal)
+                                btnEndFri.setTitle("00:00", for: .normal)
+                            }
+                        }
+                        
+                        break
+                    }
+                    
                     btnRateFri.setTitle(rateList.rates[selectedItem - 1].rateName, for: .normal)
                     
                     if weeklyRecord.friShift == nil
@@ -888,6 +1018,29 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                     weeklyRecord.friShift.save()
                 
                 case "btnRateSat":
+                    // For Rates, the last 2 rows are used to determin if should delete the shift
+                    
+                    if selectedItem > displayList.count - 2
+                    {
+                        if displayList[selectedItem] == "Delete Shift"
+                        {
+                            if weeklyRecord.satShift != nil
+                            {
+                                weeklyRecord.satShift.delete()
+                                
+                                weeklyRecord.satShift = nil
+                                
+                                btnRateSat.isHidden = true
+                                btnPersonSat.isHidden = true
+                                
+                                btnStartSat.setTitle("00:00", for: .normal)
+                                btnEndSat.setTitle("00:00", for: .normal)
+                            }
+                        }
+                        
+                        break
+                    }
+                    
                     btnRateSat.setTitle(rateList.rates[selectedItem - 1].rateName, for: .normal)
                     
                     if weeklyRecord.satShift == nil
@@ -899,6 +1052,29 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                     weeklyRecord.satShift.save()
                 
                 case "btnRateSun":
+                    // For Rates, the last 2 rows are used to determin if should delete the shift
+                    
+                    if selectedItem > displayList.count - 2
+                    {
+                        if displayList[selectedItem] == "Delete Shift"
+                        {
+                            if weeklyRecord.sunShift != nil
+                            {
+                                weeklyRecord.sunShift.delete()
+                                
+                                weeklyRecord.sunShift = nil
+                                
+                                btnRateSun.isHidden = true
+                                btnPersonSun.isHidden = true
+                                
+                                btnStartSun.setTitle("00:00", for: .normal)
+                                btnEndSun.setTitle("00:00", for: .normal)
+                            }
+                        }
+                        
+                        break
+                    }
+                    
                     btnRateSun.setTitle(rateList.rates[selectedItem - 1].rateName, for: .normal)
                     
                     if weeklyRecord.sunShift == nil
@@ -1005,6 +1181,8 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                 if weeklyRecord.monShift == nil
                 {
                     weeklyRecord.monShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -6))
+                    btnRateMon.isHidden = false
+                    btnPersonMon.isHidden = false
                 }
                 
                 weeklyRecord.monShift.startTime = selectedDate
@@ -1016,6 +1194,8 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                 if weeklyRecord.monShift == nil
                 {
                     weeklyRecord.monShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -6))
+                    btnRateMon.isHidden = false
+                    btnPersonMon.isHidden = false
                 }
                 
                 weeklyRecord.monShift.endTime = selectedDate
@@ -1028,6 +1208,8 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                 if weeklyRecord.tueShift == nil
                 {
                     weeklyRecord.tueShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -5))
+                    btnRateTue.isHidden = false
+                    btnPersonTue.isHidden = false
                 }
                 
                 weeklyRecord.tueShift.startTime = selectedDate
@@ -1039,6 +1221,8 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                 if weeklyRecord.tueShift == nil
                 {
                     weeklyRecord.tueShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -5))
+                    btnRateTue.isHidden = false
+                    btnPersonTue.isHidden = false
                 }
                 
                 weeklyRecord.tueShift.endTime = selectedDate
@@ -1050,6 +1234,8 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                 if weeklyRecord.wedShift == nil
                 {
                     weeklyRecord.wedShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -4))
+                    btnRateWed.isHidden = false
+                    btnPersonWed.isHidden = false
                 }
                 
                 weeklyRecord.wedShift.startTime = selectedDate
@@ -1061,6 +1247,8 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                 if weeklyRecord.wedShift == nil
                 {
                     weeklyRecord.wedShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -4))
+                    btnRateWed.isHidden = false
+                    btnPersonWed.isHidden = false
                 }
                 
                 weeklyRecord.wedShift.endTime = selectedDate
@@ -1072,6 +1260,8 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                 if weeklyRecord.thuShift == nil
                 {
                     weeklyRecord.thuShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -3))
+                    btnRateThu.isHidden = false
+                    btnPersonThu.isHidden = false
                 }
                 
                 weeklyRecord.thuShift.startTime = selectedDate
@@ -1083,6 +1273,8 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                 if weeklyRecord.thuShift == nil
                 {
                     weeklyRecord.thuShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -3))
+                    btnRateThu.isHidden = false
+                    btnPersonThu.isHidden = false
                 }
                 
                 weeklyRecord.thuShift.endTime = selectedDate
@@ -1094,6 +1286,8 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                 if weeklyRecord.friShift == nil
                 {
                     weeklyRecord.friShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -2))
+                    btnRateFri.isHidden = false
+                    btnPersonFri.isHidden = false
                 }
                 
                 weeklyRecord.friShift.startTime = selectedDate
@@ -1105,6 +1299,8 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                 if weeklyRecord.friShift == nil
                 {
                     weeklyRecord.friShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -2))
+                    btnRateFri.isHidden = false
+                    btnPersonFri.isHidden = false
                 }
                 
                 weeklyRecord.friShift.endTime = selectedDate
@@ -1116,6 +1312,8 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                 if weeklyRecord.satShift == nil
                 {
                     weeklyRecord.satShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -1))
+                    btnRateSat.isHidden = false
+                    btnPersonSat.isHidden = false
                 }
                 
                 weeklyRecord.satShift.startTime = selectedDate
@@ -1127,6 +1325,8 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                 if weeklyRecord.satShift == nil
                 {
                     weeklyRecord.satShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -1))
+                    btnRateSat.isHidden = false
+                    btnPersonSat.isHidden = false
                 }
                 
                 weeklyRecord.satShift.endTime = selectedDate
@@ -1138,6 +1338,8 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                 if weeklyRecord.sunShift == nil
                 {
                     weeklyRecord.sunShift = createShiftEntry(workDate: weeklyRecord.WEDate)
+                    btnRateSun.isHidden = false
+                    btnPersonSun.isHidden = false
                 }
                 
                 weeklyRecord.sunShift.startTime = selectedDate
@@ -1149,6 +1351,8 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                 if weeklyRecord.sunShift == nil
                 {
                     weeklyRecord.sunShift = createShiftEntry(workDate: weeklyRecord.WEDate)
+                    btnRateSun.isHidden = false
+                    btnPersonSun.isHidden = false
                 }
                 
                 weeklyRecord.sunShift.endTime = selectedDate
