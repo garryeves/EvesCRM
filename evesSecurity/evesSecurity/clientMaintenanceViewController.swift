@@ -26,6 +26,11 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
     @IBOutlet weak var tblRates: UITableView!
     @IBOutlet weak var btnAdd: UIButton!
     @IBOutlet weak var lblRates: UILabel!
+    @IBOutlet weak var lblRateName: UILabel!
+    @IBOutlet weak var lblStart: UILabel!
+    @IBOutlet weak var lblStaff: UILabel!
+    @IBOutlet weak var lblClient: UILabel!
+    @IBOutlet weak var lblGP: UILabel!
     
     var communicationDelegate: myCommunicationDelegate?
     
@@ -124,15 +129,6 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
                 
                 cell.lblGP.text = String(format: "%.1f", GP)
                 
-                if ratesList.rates[indexPath.row].hasShiftEntry
-                {
-                    cell.btnRemove.isEnabled = false
-                }
-                else
-                {
-                    cell.btnRemove.isEnabled = true
-                }
-                
             return cell
 
             default:
@@ -176,29 +172,17 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
         }
     }
     
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath)
     {
         if tableView == tblRates
         {
-            let headerView = tableView.dequeueReusableCell(withIdentifier: "cellHeader") as! ratesHeaderItem
-            
-            return headerView
-        }
-        else
-        {
-            return nil
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
-    {
-        if tableView == tblRates
-        {
-            return 30
-        }
-        else
-        {
-            return 0
+            if editingStyle == .delete
+            {
+                ratesList.rates[indexPath.row].delete()
+                // Get row details to delete
+                ratesList = rates(clientID: selectedClient.clientID)
+                tblRates.reloadData()
+            }
         }
     }
 
@@ -278,6 +262,11 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
         tblRates.isHidden = true
         btnAdd.isHidden = true
         lblRates.isHidden = true
+        lblRateName.isHidden = true
+        lblStart.isHidden = true
+        lblStaff.isHidden = true
+        lblClient.isHidden = true
+        lblGP.isHidden = true
     }
     
     func showFields()
@@ -295,6 +284,11 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
         tblRates.isHidden = false
         btnAdd.isHidden = false
         lblRates.isHidden = false
+        lblRateName.isHidden = false
+        lblStart.isHidden = false
+        lblStaff.isHidden = false
+        lblClient.isHidden = false
+        lblGP.isHidden = false
     }
     
     func refreshScreen()
@@ -308,6 +302,11 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
             txtNotes.text = ""
             tblRates.isHidden = true
             lblRates.isHidden = true
+            lblRateName.isHidden = true
+            lblStart.isHidden = true
+            lblStaff.isHidden = true
+            lblClient.isHidden = true
+            lblGP.isHidden = true
             btnAdd.isHidden = true
         }
         else
@@ -326,12 +325,22 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
             {
                 tblRates.isHidden = true
                 lblRates.isHidden = true
+                lblRateName.isHidden = true
+                lblStart.isHidden = true
+                lblStaff.isHidden = true
+                lblClient.isHidden = true
+                lblGP.isHidden = true
                 btnAdd.isHidden = true
             }
             else
             {
                 tblRates.isHidden = false
                 lblRates.isHidden = false
+                lblRateName.isHidden = false
+                lblStart.isHidden = false
+                lblStaff.isHidden = false
+                lblClient.isHidden = false
+                lblGP.isHidden = false
                 btnAdd.isHidden = false
                 
                 tblRates.reloadData()
@@ -362,14 +371,6 @@ class clientsListItem: UITableViewCell
     }
 }
 
-class ratesHeaderItem: UITableViewCell
-{
-    @IBOutlet weak var lblName: UILabel!
-    @IBOutlet weak var lblStart: UILabel!
-    @IBOutlet weak var lblStaff: UILabel!
-    @IBOutlet weak var lblClient: UILabel!
-}
-
 class ratesListItem: UITableViewCell
 {
     @IBOutlet weak var lblName: UILabel!
@@ -377,16 +378,11 @@ class ratesListItem: UITableViewCell
     @IBOutlet weak var lblStaff: UILabel!
     @IBOutlet weak var lblClient: UILabel!
     @IBOutlet weak var lblGP: UILabel!
-    @IBOutlet weak var btnRemove: UIButton!
     
     override func layoutSubviews()
     {
         contentView.frame = bounds
         super.layoutSubviews()
-    }
-    
-    @IBAction func btnRemove(_ sender: UIButton)
-    {
     }
 }
 

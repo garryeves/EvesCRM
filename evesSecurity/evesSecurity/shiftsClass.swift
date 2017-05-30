@@ -101,6 +101,41 @@ class shifts: NSObject
         
         sortArray()
     }
+    
+    init(projectID: Int, month: String, year: String)
+    {
+        super.init()
+        
+        myWeeklyShifts.removeAll()
+        
+        for myItem in myDatabaseConnection.getShifts(projectID: projectID, month: month, year: year)
+        {
+            let myObject = shift(shiftID: Int(myItem.shiftID),
+                                 projectID: Int(myItem.projectID),
+                                 personID: Int(myItem.personID),
+                                 workDate: myItem.workDate! as Date,
+                                 shiftDescription: myItem.shiftDescription!,
+                                 startTime: myItem.startTime! as Date,
+                                 endTime: myItem.endTime! as Date,
+                                 teamID: Int(myItem.teamID),
+                                 weekEndDate: myItem.weekEndDate! as Date,
+                                 status: myItem.status!,
+                                 shiftLineID: Int(myItem.shiftLineID),
+                                 rateID: Int(myItem.rateID),
+                                 type: myItem.type!,
+                                 clientInvoiceNumber: Int(myItem.clientInvoiceNumber),
+                                 personInvoiceNumber: Int(myItem.personInvoiceNumber)
+            )
+            myShifts.append(myObject)
+        }
+        
+        if myShifts.count > 0
+        {
+            createWeeklyArray()
+        }
+        
+        sortArray()
+    }
 
     init(personID: Int, searchFrom: Date, searchTo: Date, teamID: Int, type: String)
     {
@@ -689,6 +724,117 @@ class shift: NSObject
         }
     }
     
+    var numHours: Int
+    {
+        get
+        {
+            if startTime > endTime
+            {
+                // Start date is after endTime, so add 24 hours to end time (becuase of date handling
+                
+                let modifiedEndTime = Calendar.current.date(byAdding: .day, value: 1, to: endTime)!
+                
+                return dateDifferenceHours(startTime, to: modifiedEndTime)
+            }
+            else
+            {
+                return dateDifferenceHours(startTime, to: endTime)
+            }
+        }
+    }
+    
+    var numMins: Double
+    {
+        get
+        {
+            var tempNum: Int = 0
+            
+            if startTime > endTime
+            {
+                // Start date is after endTime, so add 24 hours to end time (becuase of date handling
+                
+                let modifiedEndTime = Calendar.current.date(byAdding: .day, value: 1, to: endTime)!
+
+                tempNum = dateDifferenceMinutes(startTime, to: modifiedEndTime)
+            }
+            else
+            {
+                tempNum = dateDifferenceMinutes(startTime, to: endTime)
+            }
+    
+            if tempNum > 0 && tempNum < 16
+            {
+                return 0.25
+            }
+            else if tempNum > 15 && tempNum < 31
+            {
+                return 0.5
+            }
+            else if tempNum > 30 && tempNum < 46
+            {
+                return 0.75
+            }
+            else if tempNum > 45 && tempNum < 61
+            {
+                return 1
+            }
+            
+            return 0
+        }
+    }
+    
+    var income: Double
+    {
+        get
+        {
+            if rateID == 0
+            {
+                return 0
+            }
+            else
+            {
+                // Go and get the rate
+                
+                let rateRecord = rate(rateID: rateID)
+                
+                if rateRecord.chargeAmount == 0
+                {
+                    return 0
+                }
+                else
+                {
+                    return calculateAmount(numHours: numHours, numMins: numMins, rate: rateRecord.chargeAmount)
+                }
+            }
+            
+        }
+    }
+    
+    var expense: Double
+    {
+        get
+        {
+            if rateID == 0
+            {
+                return 0
+            }
+            else
+            {
+                // Go and get the rate
+                
+                let rateRecord = rate(rateID: rateID)
+                
+                if rateRecord.rateAmount == 0
+                {
+                    return 0
+                }
+                else
+                {
+                    return calculateAmount(numHours: numHours, numMins: numMins, rate: rateRecord.rateAmount)
+                }
+            }
+        }
+    }
     
     init(projectID: Int, workDate: Date, weekEndDate: Date, teamID: Int, shiftLineID: Int, type: String, saveToCloud: Bool = true)
     {
@@ -793,6 +939,169 @@ class shift: NSObject
     func delete()
     {
         myDatabaseConnection.deleteShifts(myShiftID)
+    }
+}
+
+extension team
+{
+    var reportingMonths: [String]
+    {
+        get
+        {
+            var returnArray: [String] = Array()
+            var workingArray: [Int] = Array()
+            
+            for myItem in myDatabaseConnection.getShifts(teamID: teamID)
+            {
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "MM"
+                
+                let month = dateFormatter.string(from: myItem.workDate! as Date)
+                
+                let monthInt = Int(month)
+                
+                var found: Bool = false
+                
+                for myMonth in workingArray
+                {
+                    if myMonth == monthInt
+                    {
+                        found = true
+                        break
+                    }
+                }
+                
+                if !found
+                {
+                    workingArray.append(monthInt!)
+                }
+            }
+            
+            // Now we have all the entries sort into numerical ascending order
+            
+            if workingArray.count > 0
+            {
+                workingArray.sort { $0 < $1 }
+            }
+            
+            // Now Convert to Month Names
+            
+            for myItem in workingArray
+            {
+                switch myItem
+                {
+                    case 1:
+                        returnArray.append("January")
+                        
+                    case 2:
+                        returnArray.append("February")
+                        
+                    case 3:
+                        returnArray.append("March")
+
+                    case 4:
+                        returnArray.append("April")
+
+                    case 5:
+                        returnArray.append("May")
+
+                    case 6:
+                        returnArray.append("June")
+
+                    case 7:
+                        returnArray.append("July")
+
+                    case 8:
+                        returnArray.append("August")
+
+                    case 9:
+                        returnArray.append("September")
+
+                    case 10:
+                        returnArray.append("October")
+
+                    case 11:
+                        returnArray.append("November")
+                    
+                    case 12:
+                        returnArray.append("December")
+                    
+                    default:
+                        print("Teams reportingMonths - got unexpected month - myItem")
+                }
+                
+            }
+            
+            return returnArray
+        }
+    }
+}
+
+extension projects
+{
+    func loadFinancials(month: String, year: String)
+    {
+        // Need to get the
+        
+        // get the projects for the team
+        
+        for workingProject in projects
+        {
+            workingProject.loadFinancials(month: month, year: year)
+        }
+    }
+}
+
+extension project
+{
+    func loadFinancials(month: String = "", year: String = "")
+    {
+        var financeArray: [monthlyFinancialsStruct] = Array()
+        
+        if month == ""
+        {
+            // Going to get all financials
+print("GRE - Do project loadFinancials for all")
+     
+            
+            
+        }
+        else
+        {
+            let shiftArray = shifts(projectID: projectID, month: month, year: year)
+            
+            financeArray.append(processMonth(shiftArray: shiftArray, month: month, year: year))
+        }
+
+        financials = financeArray
+    }
+    
+    private func processMonth(shiftArray: shifts, month: String, year: String) -> monthlyFinancialsStruct
+    {
+        var income: Double = 0.0
+        var expenditure: Double = 0.0
+        var hours: Double = 0.0
+        
+        for myItem in shiftArray.shifts
+        {
+            income += myItem.income
+            expenditure += myItem.expense
+            hours += Double(myItem.numHours)
+            hours += myItem.numMins
+            
+//            print("GRE - date = \(myItem.workDate) - start \(myItem.startTimeString) End - \(myItem.endTimeString) hours \(myItem.numHours):\(myItem.numMins)")
+//            print("")
+//            print("GRE - expense \(myItem.expense)    income \(myItem.income)")
+//            print("")
+        }
+        
+        return monthlyFinancialsStruct(
+            month: month,
+            year: year,
+            income: income,
+            expense: expenditure,
+            hours: hours
+        )
     }
 }
 
@@ -958,6 +1267,33 @@ extension coreDatabase
         saveContext()
     }
     
+    func getShifts(teamID: Int)->[Shifts]
+    {
+        let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(teamID == \(teamID)) AND (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        let sortDescriptor = NSSortDescriptor(key: "workDate", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
     func getShifts(teamID: Int, WEDate: Date, type: String)->[Shifts]
     {
         let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
@@ -1035,6 +1371,48 @@ extension coreDatabase
             return []
         }
     }
+    
+    func getShifts(projectID: Int, month: String, year: String)->[Shifts]
+    {
+        let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
+        
+        // get the current calendar
+        let calendar = Calendar.current
+        // get the start of the day of the selected date
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd MMMM yyyy"
+        
+        let dateString = "01 \(month) \(year)"
+        let calculatedDate = dateFormatter.date(from: dateString)
+        
+        let startDate = calendar.startOfDay(for: calculatedDate!)
+        // get the start of the day after the selected date
+        let endDate = calendar.date(byAdding: .month, value: 1, to: startDate)!
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(workDate >= %@) AND (workDate < %@) AND (projectID == \(projectID)) AND (updateType != \"Delete\")", startDate as CVarArg, endDate as CVarArg)
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        let sortDescriptor = NSSortDescriptor(key: "workDate", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+
     
     func getShifts(personID: Int, searchFrom: Date, searchTo: Date, teamID: Int, type: String)->[Shifts]
     {

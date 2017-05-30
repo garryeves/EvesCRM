@@ -14,9 +14,19 @@ let eventProjectType = "Event"
 let regularProjectType = "Regular"
 let projectProjectType = "Project"
 
+struct monthlyFinancialsStruct
+{
+    var month: String
+    var year: String
+    var income: Double
+    var expense: Double
+    var hours: Double
+}
+
 class projects: NSObject
 {
     fileprivate var myProjects:[project] = Array()
+    fileprivate var myWorkingItem: Any!
     
     init(clientID: Int, type: String = "")
     {
@@ -216,6 +226,18 @@ class projects: NSObject
             return myProjects
         }
     }
+    
+    var workingItem: Any!
+    {
+        get
+        {
+            return myWorkingItem
+        }
+        set
+        {
+            myWorkingItem = newValue
+        }
+    }
 }
 
 class project: NSObject // 10k level
@@ -244,6 +266,7 @@ class project: NSObject // 10k level
     fileprivate var myInvoicingDay: Int = 0
     fileprivate var myDaysToPay: Int = 0
     fileprivate var myType: String = ""
+    fileprivate var myFinancials: [monthlyFinancialsStruct] = Array()
     
     var projectEndDate: Date
     {
@@ -587,6 +610,18 @@ class project: NSObject // 10k level
         get
         {
             return shifts(projectID: myProjectID)
+        }
+    }
+    
+    var financials: [monthlyFinancialsStruct]
+    {
+        get
+        {
+            return myFinancials
+        }
+        set
+        {
+            myFinancials = newValue
         }
     }
     

@@ -145,6 +145,21 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
 
             btnRate.isHidden = false
             btnPerson.isHidden = false
+            
+            if sourceShift?.clientInvoiceNumber != 0 || sourceShift?.personInvoiceNumber != 0
+            {
+                btnRate.isEnabled = false
+                
+                if sourceShift?.personInvoiceNumber != 0
+                {
+                    btnPerson.isEnabled = false
+                }
+            }
+            else
+            {
+                btnRate.isEnabled = true
+                btnPerson.isEnabled = true
+            }
         }
         else
         {

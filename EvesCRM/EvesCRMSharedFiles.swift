@@ -1608,3 +1608,36 @@ func formatDateToString(_ from: Date) -> String
     myDateFormatter.dateFormat = "E dd MMM yy"
     return myDateFormatter.string(from: from)
 }
+
+func dateDifferenceHours(_ from: Date, to: Date) -> Int
+{
+    return Calendar.current.dateComponents([.hour], from: from, to: to).hour ?? 0
+}
+
+func dateDifferenceMinutes(_ from: Date, to: Date) -> Int
+{
+    // Get number of hours
+    
+    let numHours = dateDifferenceHours(from, to: to)
+    
+    let numMins = Calendar.current.dateComponents([.minute], from: from, to: to).minute ?? 0
+    
+    return numMins - (numHours * 60)
+}
+
+func calculateAmount(numHours: Int, numMins: Double, rate: Double) -> Double
+{
+    var calcAmount: Double
+    
+    if numHours == 0 && numMins == 0
+    {
+        return 0.0
+    }
+    else
+    {
+        calcAmount = Double(numHours) + numMins
+
+        
+        return calcAmount * rate
+    }
+}
