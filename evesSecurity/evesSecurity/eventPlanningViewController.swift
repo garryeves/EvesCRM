@@ -167,6 +167,19 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
         }
     }
     
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath)
+    {
+        if tableView == tblRoles
+        {
+            if editingStyle == .delete
+            {
+                currentEvent.staff?.shifts[indexPath.row].delete()
+         
+                tblRoles.reloadData()
+            }
+        }
+    }
+    
     @IBAction func btnBack(_ sender: UIButton)
     {
         communicationDelegate?.refreshScreen!()

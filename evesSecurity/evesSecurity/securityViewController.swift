@@ -21,6 +21,17 @@ struct reportListStruct
     var reportID: Int
 }
 
+struct displayStruct
+{
+    var line1: String
+    var line2: String
+    var line3: String
+    var line4: String
+    var line5: String
+    var line6: String
+    var line7: String
+}
+
 class securityViewController: UIViewController, myCommunicationDelegate, UITableViewDataSource, UITableViewDelegate, MyPickerDelegate, UIPopoverPresentationControllerDelegate
 {
     @IBOutlet weak var btnSettings: UIButton!
@@ -35,6 +46,14 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     @IBOutlet weak var btnMaintainReports: UIButton!
     @IBOutlet weak var lblDropdown: UILabel!
     @IBOutlet weak var btnDropdown: UIButton!
+    @IBOutlet weak var lbl1: UILabel!
+    @IBOutlet weak var lbl2: UILabel!
+    @IBOutlet weak var lbl3: UILabel!
+    @IBOutlet weak var lbl4: UILabel!
+    @IBOutlet weak var lbl5: UILabel!
+    @IBOutlet weak var lbl6: UILabel!
+    @IBOutlet weak var lbl7: UILabel!
+    @IBOutlet weak var btnMonthlyRoster: UIButton!
     
     fileprivate var contractList: projects!
     fileprivate var alertList: [alertStruct] = Array()
@@ -43,9 +62,9 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     fileprivate var displayList: [String] = Array()
     fileprivate var monthList: [String] = Array()
     
-    fileprivate var lastClientID: Int = 0
     fileprivate var currentReportID: Int = 0
     fileprivate var workingYear: String = ""
+    fileprivate var displayArray: [displayStruct] = Array()
     
     var communicationDelegate: myCommunicationDelegate?
     
@@ -91,18 +110,11 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
             case tblData1:
                 switch currentReportID
                 {
-                    case 0:
-                        if contractList == nil
-                        {
-                            return 0
-                        }
-                        else
-                        {
-                            lastClientID = 0
-                            return contractList.projects.count
-                        }
-                    case 1:
-                        return 0
+                    case 0, 1:
+                        return displayArray.count
+                        
+//                    case 1:
+//                        return displayArray.count
                 
                     case 2:
                         return 0
@@ -149,10 +161,17 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         switch tableView
         {
             case tblData1:
-                let contractEditViewControl = projectsStoryboard.instantiateViewController(withIdentifier: "contractMaintenance") as! contractMaintenanceViewController
-                contractEditViewControl.communicationDelegate = self
-                contractEditViewControl.workingContract = contractList.projects[indexPath.row]
-                self.present(contractEditViewControl, animated: true, completion: nil)
+                switch currentReportID
+                {
+                    case 0:
+                        let contractEditViewControl = projectsStoryboard.instantiateViewController(withIdentifier: "contractMaintenance") as! contractMaintenanceViewController
+                        contractEditViewControl.communicationDelegate = self
+                        contractEditViewControl.workingContract = contractList.projects[indexPath.row]
+                        self.present(contractEditViewControl, animated: true, completion: nil)
+                    
+                    default:
+                        let _ = 1
+                }
             
             case tblAlerts:
                 switch alertList[indexPath.row].source
@@ -198,43 +217,27 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                 let _ = 1
         }
     }
+    
     func buildRowForReport(_ tableView: UITableView, indexPath: IndexPath) -> contractsListItem
     {
         switch currentReportID
         {
-            case 0:
+            case 0, 1:
                 let cell = tableView.dequeueReusableCell(withIdentifier:"cellData1", for: indexPath) as! contractsListItem
                 
-                if contractList.projects[indexPath.row].clientID != lastClientID
-                {
-                    let tempClient = client(clientID: contractList.projects[indexPath.row].clientID)
-                    cell.lbl1.text = tempClient.name
-                    lastClientID = contractList.projects[indexPath.row].clientID
-                }
-                else
-                {
-                    cell.lbl1.text = ""
-                }
-                
-                cell.lbl2.text = contractList.projects[indexPath.row].projectName
-                cell.lbl3.text = "\(contractList.projects[indexPath.row].financials[0].expense)"
-                cell.lbl4.text = "\(contractList.projects[indexPath.row].financials[0].hours)"
-                cell.lbl5.text = "\(contractList.projects[indexPath.row].financials[0].income)"
-                
-                let profit = contractList.projects[indexPath.row].financials[0].income - contractList.projects[indexPath.row].financials[0].expense
-                
-                let gp = (profit/contractList.projects[indexPath.row].financials[0].income)  * 100
-                
-                cell.lbl6.text = "\(profit)"
-                cell.lbl7.text = "\(gp)"
-                
-                
+                cell.lbl1.text = displayArray[indexPath.row].line1
+                cell.lbl2.text = displayArray[indexPath.row].line2
+                cell.lbl3.text = displayArray[indexPath.row].line3
+                cell.lbl4.text = displayArray[indexPath.row].line4
+                cell.lbl5.text = displayArray[indexPath.row].line5
+                cell.lbl6.text = displayArray[indexPath.row].line6
+                cell.lbl7.text = displayArray[indexPath.row].line7
                 
                 return cell
             
-            case 1:
-                return contractsListItem()
-                
+//            case 1:
+//                return contractsListItem()
+            
             case 2:
                 return contractsListItem()
                 
@@ -278,6 +281,13 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         let eventsViewControl = shiftsStoryboard.instantiateViewController(withIdentifier: "eventPlanningForm") as! eventPlanningViewController
         eventsViewControl.communicationDelegate = self
         self.present(eventsViewControl, animated: true, completion: nil)
+    }
+    
+    @IBAction func btnMonthlyRoster(_ sender: UIButton)
+    {
+        let rosterViewControl = shiftsStoryboard.instantiateViewController(withIdentifier: "monthlyRoster") as! monthlyRosterViewController
+        rosterViewControl.communicationDelegate = self
+        self.present(rosterViewControl, animated: true, completion: nil)
     }
     
     @IBAction func btnReport(_ sender: UIButton)
@@ -650,6 +660,14 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
             print("unknown entry myPickerDidFinish - source - \(source)")
         }
 
+        lbl1.isHidden = true
+        lbl2.isHidden = true
+        lbl3.isHidden = true
+        lbl4.isHidden = true
+        lbl5.isHidden = true
+        lbl6.isHidden = true
+        lbl7.isHidden = true
+        
         // see if we can run the report, and if so do it
         
         switch currentReportID
@@ -661,6 +679,55 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
 
                     contractList.loadFinancials(month: btnDropdown.currentTitle!, year: workingYear)
 
+                    displayArray.removeAll()
+                    
+                    var lastClientID: Int = 0
+                    
+                    for myItem in contractList.projects
+                    {
+                        var clientName: String = ""
+                        if myItem.clientID != lastClientID
+                        {
+                            let tempClient = client(clientID: myItem.clientID)
+                            clientName = tempClient.name
+                            lastClientID = myItem.clientID
+                        }
+                        
+                        let profit = myItem.financials[0].income - myItem.financials[0].expense
+                        
+                        let gp = (profit/myItem.financials[0].income)  * 100
+                        
+                        if myItem.financials[0].income != 0 || myItem.financials[0].expense != 0
+                        {
+                            let newEentry = displayStruct(
+                                                        line1: clientName,
+                                                        line2: myItem.projectName,
+                                                        line3: formatCurrency(value: myItem.financials[0].expense),
+                                                        line4: "\(myItem.financials[0].hours)",
+                                                        line5: formatCurrency(value: myItem.financials[0].income),
+                                                        line6: formatCurrency(value: profit),
+                                                        line7: "\(gp)%"
+                                                            )
+                            displayArray.append(newEentry)
+                        }
+                    }
+  
+                    lbl1.isHidden = false
+                    lbl2.isHidden = false
+                    lbl3.isHidden = false
+                    lbl4.isHidden = false
+                    lbl5.isHidden = false
+                    lbl6.isHidden = false
+                    lbl7.isHidden = false
+                    
+                    lbl1.text = "Client"
+                    lbl2.text = "Contract"
+                    lbl3.text = "Labour Cost"
+                    lbl4.text = "Labour Hours"
+                    lbl5.text = "Income"
+                    lbl6.text = "Profit"
+                    lbl7.text = "GP%"
+                    
                     tblData1.isHidden = false
                     tblData1.reloadData()
                 }
@@ -670,8 +737,52 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                 }
             
             case 1:
-                tblData1.isHidden = false
-                tblData1.reloadData()
+                if btnDropdown.currentTitle != "Select"
+                {
+                    displayArray.removeAll()
+                    
+                    for myItem in people(teamID: currentUser.currentTeam!.teamID).people
+                    {
+                        let monthReport = myItem.getFinancials(month: btnDropdown.currentTitle!, year: workingYear)
+                        
+                        if monthReport.hours != 0
+                        {
+                            let newEentry = displayStruct(
+                                line1: "",
+                                line2: myItem.name,
+                                line3: "\(monthReport.hours)",
+                                line4: formatCurrency(value: monthReport.wage),
+                                line5: "",
+                                line6: "",
+                                line7: ""
+                            )
+                            displayArray.append(newEentry)
+                        }
+                    }
+                    
+                    lbl1.isHidden = true
+                    lbl2.isHidden = false
+                    lbl3.isHidden = false
+                    lbl4.isHidden = false
+                    lbl5.isHidden = true
+                    lbl6.isHidden = true
+                    lbl7.isHidden = true
+                    
+                    lbl1.text = ""
+                    lbl2.text = "Name"
+                    lbl3.text = "Hours"
+                    lbl4.text = "Pay"
+                    lbl5.text = ""
+                    lbl6.text = ""
+                    lbl7.text = ""
+                    
+                    tblData1.isHidden = false
+                    tblData1.reloadData()
+                }
+                else
+                {
+                    tblData1.isHidden = true
+            }
             
             case 2:
             

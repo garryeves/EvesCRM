@@ -44,6 +44,7 @@
 		349653331EC1F0DC00210A46 /* evesSecurityShared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349653321EC1F0DC00210A46 /* evesSecurityShared.swift */; };
 		34968CDE1ECAC68D0009798B /* person.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34968CDD1ECAC68D0009798B /* person.storyboard */; };
 		34968CE01ECACA350009798B /* personViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34968CDF1ECACA350009798B /* personViewController.swift */; };
+		3499EDF41EDE8B720027CE5C /* monthlyRosterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3499EDF31EDE8B720027CE5C /* monthlyRosterViewController.swift */; };
 		34B35A7F1ECE6D0A00B4FFD7 /* Clients.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34B35A7E1ECE6D0A00B4FFD7 /* Clients.storyboard */; };
 		34B35A811ECE77A300B4FFD7 /* clientMaintenanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B35A801ECE77A300B4FFD7 /* clientMaintenanceViewController.swift */; };
 		34B35A831ECEC2D600B4FFD7 /* Projects.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34B35A821ECEC2D600B4FFD7 /* Projects.storyboard */; };
@@ -138,6 +139,7 @@
 		349653321EC1F0DC00210A46 /* evesSecurityShared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = evesSecurityShared.swift; sourceTree = "<group>"; };
 		34968CDD1ECAC68D0009798B /* person.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = person.storyboard; sourceTree = "<group>"; };
 		34968CDF1ECACA350009798B /* personViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = personViewController.swift; sourceTree = "<group>"; };
+		3499EDF31EDE8B720027CE5C /* monthlyRosterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = monthlyRosterViewController.swift; sourceTree = "<group>"; };
 		34B35A7E1ECE6D0A00B4FFD7 /* Clients.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Clients.storyboard; sourceTree = "<group>"; };
 		34B35A801ECE77A300B4FFD7 /* clientMaintenanceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = clientMaintenanceViewController.swift; sourceTree = "<group>"; };
 		34B35A821ECEC2D600B4FFD7 /* Projects.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Projects.storyboard; sourceTree = "<group>"; };
@@ -345,9 +347,10 @@
 				347BCEC11EC563F0006B95BA /* orgEditViewController.swift */,
 				343757D11ED3F26300A9D313 /* eventPlanningViewController.swift */,
 				343757D31ED3F27E00A9D313 /* eventTemplateVoewController.swift */,
+				3499EDF31EDE8B720027CE5C /* monthlyRosterViewController.swift */,
+				347BCEBF1EC55D88006B95BA /* newUserViewController.swift */,
 				34968CDF1ECACA350009798B /* personViewController.swift */,
 				34050F6D1EC82C5500CC7CBE /* pickerViewController.swift */,
-				347BCEBF1EC55D88006B95BA /* newUserViewController.swift */,
 				3460BE671ECFCC5C00857332 /* rateMaintenanceViewController.swift */,
 				344BF8281EC94D4B0066CD35 /* securityViewController.swift */,
 				344BF82D1EC96E180066CD35 /* setPasswordViewController.swift */,
@@ -628,6 +631,7 @@
 				349653331EC1F0DC00210A46 /* evesSecurityShared.swift in Sources */,
 				3463FA9E1ED15B3F00486195 /* shiftMaintenanceViewController.swift in Sources */,
 				347BCEC01EC55D88006B95BA /* newUserViewController.swift in Sources */,
+				3499EDF41EDE8B720027CE5C /* monthlyRosterViewController.swift in Sources */,
 				34CEE9781EC2C1DF00F85A11 /* teamClass.swift in Sources */,
 				34050F701EC82C8F00CC7CBE /* timeSelectViewController.swift in Sources */,
 				3413239A1EC4530300BBDE1E /* UsersClass.swift in Sources */,

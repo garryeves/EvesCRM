@@ -10,6 +10,14 @@ import Foundation
 import CoreData
 import CloudKit
 
+struct monthlyPersonFinancialsStruct
+{
+    var month: String
+    var year: String
+    var wage: Double
+    var hours: Double
+}
+
 class people: NSObject
 {
     fileprivate var myPeople:[person] = Array()
@@ -126,6 +134,7 @@ class person: NSObject
     fileprivate var myAddInfo: personAddInfoEntries!
     fileprivate var myTeamID: Int = 0
     fileprivate var myCanRoster: String = ""
+    var tempArray: [Any] = Array()
     
     var personID: Int
     {

@@ -1105,6 +1105,95 @@ print("GRE - Do project loadFinancials for all")
     }
 }
 
+extension person
+{
+    func getFinancials(month: String, year: String) -> monthlyPersonFinancialsStruct
+    {
+        // get the current calendar
+        let calendar = Calendar.current
+        // get the start of the day of the selected date
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd MMMM yyyy"
+        
+        let dateString = "01 \(month) \(year)"
+        let calculatedDate = dateFormatter.date(from: dateString)
+        
+        let startDate = calendar.startOfDay(for: calculatedDate!)
+        // get the start of the day after the selected date
+        let endDate = calendar.date(byAdding: .month, value: 1, to: startDate)!
+
+        var wage: Double = 0.0
+        var hours: Double = 0.0
+        
+        for myShift in shifts(personID: personID, searchFrom: startDate, searchTo: endDate, teamID: currentUser.currentTeam!.teamID, type: "").shifts
+        {
+            wage += myShift.expense
+            hours += Double(myShift.numHours)
+            hours += myShift.numMins
+        }
+        
+        let retVal = monthlyPersonFinancialsStruct(
+            month: month,
+            year: year,
+            wage: wage,
+            hours: hours
+        )
+        
+        return retVal
+    }
+    
+    func loadShifts(month: String, year: String)
+    {
+        tempArray.removeAll()
+        
+        // get the current calendar
+        let calendar = Calendar.current
+        // get the start of the day of the selected date
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd MMMM yyyy"
+        
+        let dateString = "01 \(month) \(year)"
+        let calculatedDate = dateFormatter.date(from: dateString)
+        
+        let startDate = calendar.startOfDay(for: calculatedDate!)
+        // get the start of the day after the selected date
+        let endDate = calendar.date(byAdding: .month, value: 1, to: startDate)!
+        
+        let tempShifts = shifts(personID: personID, searchFrom: startDate, searchTo: endDate, teamID: currentUser.currentTeam!.teamID, type: "")
+        
+        var sortingArray = tempShifts.shifts
+        
+        if sortingArray.count > 0
+        {
+            sortingArray.sort
+            {
+                // Because workdate has time it throws everything out
+                
+                if $0.workDate == $1.workDate
+                {
+                    return $0.startTime < $1.startTime
+                }
+                else
+                {
+                    return $0.workDate < $1.workDate
+                }
+            }
+        }
+        
+        tempArray = sortingArray
+    }
+
+    var shiftArray: [shift]
+    {
+        get
+        {
+            return tempArray as! [shift]
+        }
+    }
+}
+
 extension coreDatabase
 {
     func saveShifts(_ shiftID: Int,
@@ -1414,14 +1503,24 @@ extension coreDatabase
     }
 
     
-    func getShifts(personID: Int, searchFrom: Date, searchTo: Date, teamID: Int, type: String)->[Shifts]
+    func getShifts(personID: Int, searchFrom: Date, searchTo: Date, teamID: Int, type: String = "")->[Shifts]
     {
         let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(personID == \(personID)) AND (workDate >= %@) AND (workDate <= %@) AND (teamID == \(teamID)) AND (type == \"\(type)\") AND (updateType != \"Delete\")", searchFrom as CVarArg, searchTo as CVarArg)
         
+        var predicate = NSPredicate()
+        
+        if type == ""
+        {
+            predicate = NSPredicate(format: "(personID == \(personID)) AND (workDate >= %@) AND (workDate <= %@) AND (teamID == \(teamID)) AND (updateType != \"Delete\")", searchFrom as CVarArg, searchTo as CVarArg)
+        }
+        else
+        {
+            predicate = NSPredicate(format: "(personID == \(personID)) AND (workDate >= %@) AND (workDate <= %@) AND (teamID == \(teamID)) AND (type == \"\(type)\") AND (updateType != \"Delete\")", searchFrom as CVarArg, searchTo as CVarArg)
+        }
+
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         
