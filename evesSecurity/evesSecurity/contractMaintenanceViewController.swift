@@ -15,14 +15,14 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
     @IBOutlet weak var btnStatus: UIButton!
     @IBOutlet weak var btnStartDate: UIButton!
     @IBOutlet weak var btnEndDate: UIButton!
-    @IBOutlet weak var btnSave: UIButton!
-    @IBOutlet weak var btnBack: UIButton!
     @IBOutlet weak var btnContacts: UIButton!
     @IBOutlet weak var txtDept: UITextField!
     @IBOutlet weak var txtInvoicingDay: UITextField!
     @IBOutlet weak var txtDaysToPay: UITextField!
     @IBOutlet weak var btnInvoicingFrequency: UIButton!
     @IBOutlet weak var btnType: UIButton!
+    @IBOutlet weak var btnBack: UIBarButtonItem!
+    @IBOutlet weak var btnSave: UIBarButtonItem!
     
     var communicationDelegate: myCommunicationDelegate?
     var workingContract: project!
@@ -44,7 +44,7 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
         // Dispose of any resources that can be recreated.
     }
     
-    @IBAction func btnSave(_ sender: UIButton)
+    @IBAction func btnSave(_ sender: UIBarButtonItem)
     {
         if txtName.text == ""
         {
@@ -75,7 +75,7 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
         }
     }
     
-    @IBAction func btnBack(_ sender: UIButton)
+    @IBAction func btnBack(_ sender: UIBarButtonItem)
     {
         communicationDelegate?.refreshScreen!()
         self.dismiss(animated: true, completion: nil)

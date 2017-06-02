@@ -13,7 +13,8 @@ class setPasswordViewController: UIViewController, UIPopoverPresentationControll
     @IBOutlet weak var txtPassword: UITextField!
     @IBOutlet weak var txtVeriftPassword: UITextField!
     @IBOutlet weak var txtHint: UITextField!
-    @IBOutlet weak var btnSetPassword: UIButton!
+    @IBOutlet weak var btnSetPassword: UIBarButtonItem!
+    @IBOutlet weak var btnBack: UIBarButtonItem!
     
     override func viewDidLoad()
     {
@@ -24,9 +25,8 @@ class setPasswordViewController: UIViewController, UIPopoverPresentationControll
         // Dispose of any resources that can be recreated.
     }
     
-    @IBAction func btnSetPassword(_ sender: UIButton)
+    @IBAction func btnSetPassword(_ sender: UIBarButtonItem)
     {
-        
         if txtPassword.text == txtVeriftPassword.text
         {
             // Passwords are the same
@@ -53,8 +53,8 @@ class setPasswordViewController: UIViewController, UIPopoverPresentationControll
                 alert.isModalInPopover = true
                 let popover = alert.popoverPresentationController
                 popover!.delegate = self
-                popover!.sourceView = sender
-                popover!.sourceRect = sender.bounds
+                popover!.sourceView = txtPassword
+                popover!.sourceRect = txtPassword.bounds
                 
                 alert.preferredContentSize = CGSize(width: 600,height: 500)
                 self.present(alert, animated: false, completion: nil)
@@ -72,13 +72,19 @@ class setPasswordViewController: UIViewController, UIPopoverPresentationControll
             alert.isModalInPopover = true
             let popover = alert.popoverPresentationController
             popover!.delegate = self
-            popover!.sourceView = sender
-            popover!.sourceRect = sender.bounds
+            popover!.sourceView = txtPassword
+            popover!.sourceRect = txtPassword.bounds
             
             alert.preferredContentSize = CGSize(width: 600,height: 500)
             self.present(alert, animated: false, completion: nil)
         }
     }
+
+    @IBAction func btnBack(_ sender: UIBarButtonItem)
+    {
+        dismiss(animated: true, completion: nil)
+    }
+        
 }
 
 

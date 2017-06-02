@@ -18,17 +18,17 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
     @IBOutlet weak var lblName: UILabel!
     @IBOutlet weak var lblDOB: UILabel!
     @IBOutlet weak var lblGener: UILabel!
-    @IBOutlet weak var btnAdd: UIButton!
-    @IBOutlet weak var btnSave: UIButton!
     @IBOutlet weak var btnAddresses: UIButton!
     @IBOutlet weak var btnContacts: UIButton!
     @IBOutlet weak var lblAddInfo: UILabel!
     @IBOutlet weak var lblNotes: UILabel!
     @IBOutlet weak var txtNotes: UITextView!
     @IBOutlet weak var tblAddInfo: UITableView!
-    @IBOutlet weak var btnBack: UIButton!
     @IBOutlet weak var btnImport: UIButton!
     @IBOutlet weak var bottomContraint: NSLayoutConstraint!
+    @IBOutlet weak var btnBack: UIBarButtonItem!
+    @IBOutlet weak var btnSave: UIBarButtonItem!
+    @IBOutlet weak var btnAdd: UIBarButtonItem!
     
     var communicationDelegate: myCommunicationDelegate?
     var clientID: Int!
@@ -248,7 +248,7 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         self.present(pickerView, animated: true, completion: nil)
     }
     
-    @IBAction func btnAdd(_ sender: UIButton)
+    @IBAction func btnAdd(_ sender: UIBarButtonItem)
     {
         selectedPerson = person(teamID: currentUser.currentTeam!.teamID)
         
@@ -272,13 +272,13 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         tblAddInfo.reloadData()
     }
     
-    @IBAction func btnSave(_ sender: UIButton)
+    @IBAction func btnSave(_ sender: UIBarButtonItem)
     {
         if selectedPerson != nil
         {
             selectedPerson.name = txtName.text!
             selectedPerson.note = txtNotes.text
-                
+            
             selectedPerson.save()
             
             refreshScreen()
@@ -319,7 +319,7 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         self.present(contactsView, animated: true, completion: nil)
     }
     
-    @IBAction func btnBack(_ sender: UIButton)
+    @IBAction func btnBack(_ sender: UIBarButtonItem)
     {
         self.dismiss(animated: true, completion: nil)
         communicationDelegate?.refreshScreen!()
@@ -430,11 +430,11 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
     {
         if sender.text == ""
         {
-            btnSave.isHidden = true
+            btnSave.isEnabled = false
         }
         else
         {
-            btnSave.isHidden = false
+            btnSave.isEnabled = true
         }
     }
     
@@ -444,7 +444,7 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         {
             selectedPerson.gender = displayList[selectedItem]
             btnGender.setTitle(displayList[selectedItem], for: .normal)
-            btnSave.isHidden = false
+            btnSave.isEnabled = true
         }
     }
 
@@ -454,7 +454,7 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         {
             selectedPerson.dob = selectedDate
             btnDOB.setTitle(selectedPerson.dobText, for: .normal)
-            btnSave.isHidden = false
+            btnSave.isEnabled = true
         }
     }
     
@@ -466,7 +466,7 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         lblName.isHidden = true
         lblDOB.isHidden = true
         lblGener.isHidden = true
-        btnSave.isHidden = true
+        btnSave.isEnabled = false
         btnAddresses.isHidden = true
         btnContacts.isHidden = true
         lblAddInfo.isHidden = true

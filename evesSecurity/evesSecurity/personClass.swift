@@ -20,7 +20,7 @@ struct monthlyPersonFinancialsStruct
 
 class people: NSObject
 {
-    fileprivate var myPeople:[person] = Array()
+    var myPeople:[person] = Array()
     
     init(teamID: Int)
     {
@@ -91,7 +91,7 @@ class people: NSObject
         sortArray()
     }
     
-    private func sortArray()
+    func sortArray()
     {
         if myPeople.count > 0
         {

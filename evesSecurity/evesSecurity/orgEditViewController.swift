@@ -13,12 +13,12 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
     @IBOutlet weak var txtOrgName: UITextField!
     @IBOutlet weak var txtExternalID: UITextField!
     @IBOutlet weak var txtNotes: UITextView!
-    @IBOutlet weak var btnCancel: UIButton!
-    @IBOutlet weak var btnSave: UIButton!
     @IBOutlet weak var btnUsers: UIButton!
     @IBOutlet weak var bottomContraint: NSLayoutConstraint!
     @IBOutlet weak var txtCompanyNo: UITextField!
     @IBOutlet weak var txtTaxNo: UITextField!
+    @IBOutlet weak var btnBack: UIBarButtonItem!
+    @IBOutlet weak var btnSave: UIBarButtonItem!
 
     private var newUserCreated: Bool = false
     private var displayList: [String] = Array()
@@ -54,7 +54,7 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
             txtCompanyNo.text = workingOrganisation!.taxNumber
             txtTaxNo.text = workingOrganisation!.companyRegNumber
             
-            btnCancel.isEnabled = true
+            btnBack.isEnabled = true
             btnSave.isEnabled = true
             btnUsers.isEnabled = true
             btnStatus.isEnabled = true
@@ -97,12 +97,7 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
         }
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    @IBAction func btnCancel(_ sender: UIButton)
+    @IBAction func btnBack(_ sender: UIBarButtonItem)
     {
         self.dismiss(animated: true, completion: nil)
         
@@ -111,8 +106,12 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
             communicationDelegate?.userCreated!(currentUser, teamID: workingOrganisation!.teamID)
         }
     }
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
     
-    @IBAction func btnSave(_ sender: UIButton)
+    @IBAction func btnSave(_ sender: UIBarButtonItem)
     {
         if workingOrganisation != nil
         {
@@ -130,7 +129,7 @@ class orgEditViewController: UIViewController, MyPickerDelegate, UIPopoverPresen
             workingOrganisation!.status = btnStatus.currentTitle!
             workingOrganisation!.taxNumber = txtCompanyNo.text!
             workingOrganisation!.companyRegNumber = txtTaxNo.text!
-
+            
             workingOrganisation?.save()
         }
     }

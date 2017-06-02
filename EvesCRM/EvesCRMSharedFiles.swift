@@ -1561,7 +1561,7 @@ extension String  {
     }
 }
 
-func formatCurrency(value: Double) -> String
+func formatCurrency(_ value: Double) -> String
 {
     let formatter = NumberFormatter()
     formatter.numberStyle = .currency
@@ -1609,6 +1609,13 @@ func formatDateToString(_ from: Date) -> String
     return myDateFormatter.string(from: from)
 }
 
+func formatDateToShortString(_ from: Date) -> String
+{
+    let myDateFormatter = DateFormatter()
+    myDateFormatter.dateFormat = "E dd/MM"
+    return myDateFormatter.string(from: from)
+}
+
 func dateDifferenceHours(_ from: Date, to: Date) -> Int
 {
     return Calendar.current.dateComponents([.hour], from: from, to: to).hour ?? 0
@@ -1641,3 +1648,152 @@ func calculateAmount(numHours: Int, numMins: Double, rate: Double) -> Double
         return calcAmount * rate
     }
 }
+
+func formatHours(_ amount: Double) -> String
+{
+    // Format the hours display
+    
+    if amount == Double(Int(amount))
+    {
+        return "\(Int(amount))"
+    }
+    else
+    {
+        return "\(amount)"
+    }
+}
+
+func formatPercent(_ amount: Double) -> String
+{
+    // Format the hours display
+    
+    if amount == Double(Int(amount))
+    {
+        return "\(Int(amount))%"
+    }
+    else
+    {
+        let doubleStr = String(format: "%.1f", amount)
+        // Need to format to only 1 decimal place
+        return "\(doubleStr)%"
+    }
+}
+
+func createActivityController(_ message: NSMutableData, subject: String = "") -> UIActivityViewController
+{
+    // Build up the details we want to share
+    
+    let activityItems = [message]
+
+    let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+    
+    activityViewController.excludedActivityTypes =  [
+        .addToReadingList,
+        //.airDrop,
+        .assignToContact,
+        //        CopyToPasteboard,
+        //        message,
+        //        Mail,
+        .openInIBooks,
+        .postToFlickr,
+        .postToTwitter,
+        .postToFacebook,
+        .postToTencentWeibo,
+        .postToVimeo,
+        .postToWeibo,
+        //        Print,
+        .saveToCameraRoll
+    ]
+    
+    if subject != ""
+    {
+        activityViewController.setValue(subject, forKey: "Subject")
+    }
+
+    if UIDevice.current.userInterfaceIdiom == .pad
+    {
+        activityViewController.modalPresentationStyle = UIModalPresentationStyle.popover
+    }
+    
+    return activityViewController
+}
+
+func createActivityController(_ message: String, subject: String = "") -> UIActivityViewController
+{
+    // Build up the details we want to share
+    
+    let activityItems = [message]
+    
+    let activityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+    
+    activityViewController.excludedActivityTypes =  [
+        .addToReadingList,
+        .airDrop,
+        .assignToContact,
+        //        CopyToPasteboard,
+        //        message,
+        //        Mail,
+        .openInIBooks,
+        .postToFlickr,
+        .postToTwitter,
+        .postToFacebook,
+        .postToTencentWeibo,
+        .postToVimeo,
+        .postToWeibo,
+        //        Print,
+        .saveToCameraRoll
+    ]
+    
+    if subject != ""
+    {
+        activityViewController.setValue(subject, forKey: "Subject")
+    }
+    
+    if UIDevice.current.userInterfaceIdiom == .pad
+    {
+        activityViewController.modalPresentationStyle = UIModalPresentationStyle.popover
+    }
+    
+    return activityViewController
+}
+
+func writePDFHeaderEntry(title: String, x: Int, y: Int, width: Int, height: Int)
+{
+    let titleParagraphStyle = NSMutableParagraphStyle()
+    titleParagraphStyle.alignment = .left
+    
+    let titleFontAttributes = [
+        NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12),
+        NSParagraphStyleAttributeName:titleParagraphStyle,
+        NSForegroundColorAttributeName: UIColor.gray
+    ]
+    
+    let headerRect = CGRect(
+        x: x,
+        y: y,
+        width: width,
+        height: height)
+    
+    title.draw(in: headerRect, withAttributes: titleFontAttributes)
+}
+
+func writePDFEntry(title: String, x: Int, y: Int, width: Int, height: Int)
+{
+    let titleParagraphStyle = NSMutableParagraphStyle()
+    titleParagraphStyle.alignment = .left
+    
+    let dataFontAttributes = [
+        NSFontAttributeName: UIFont.systemFont(ofSize: 10),
+        NSParagraphStyleAttributeName:titleParagraphStyle,
+        NSForegroundColorAttributeName: UIColor.gray
+    ]
+    
+    let headerRect = CGRect(
+        x: x,
+        y: y,
+        width: width,
+        height: height)
+    
+    title.draw(in: headerRect, withAttributes: dataFontAttributes)
+}
+

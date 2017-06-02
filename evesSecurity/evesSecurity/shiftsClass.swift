@@ -102,6 +102,41 @@ class shifts: NSObject
         sortArray()
     }
     
+    init(teamID: Int, month: String, year: String)
+    {
+        super.init()
+        
+        myWeeklyShifts.removeAll()
+        
+        for myItem in myDatabaseConnection.getShifts(teamID: teamID, month: month, year: year)
+        {
+            let myObject = shift(shiftID: Int(myItem.shiftID),
+                                 projectID: Int(myItem.projectID),
+                                 personID: Int(myItem.personID),
+                                 workDate: myItem.workDate! as Date,
+                                 shiftDescription: myItem.shiftDescription!,
+                                 startTime: myItem.startTime! as Date,
+                                 endTime: myItem.endTime! as Date,
+                                 teamID: Int(myItem.teamID),
+                                 weekEndDate: myItem.weekEndDate! as Date,
+                                 status: myItem.status!,
+                                 shiftLineID: Int(myItem.shiftLineID),
+                                 rateID: Int(myItem.rateID),
+                                 type: myItem.type!,
+                                 clientInvoiceNumber: Int(myItem.clientInvoiceNumber),
+                                 personInvoiceNumber: Int(myItem.personInvoiceNumber)
+            )
+            myShifts.append(myObject)
+        }
+        
+        if myShifts.count > 0
+        {
+            createWeeklyArray()
+        }
+        
+        sortArray()
+    }
+    
     init(projectID: Int, month: String, year: String)
     {
         super.init()
@@ -616,6 +651,14 @@ class shift: NSObject
         }
     }
     
+    var workDateShortString: String
+    {
+        get
+        {
+            return formatDateToShortString(myWorkDate)
+        }
+    }
+    
     var dayOfWeek: String
     {
         get
@@ -1105,6 +1148,37 @@ print("GRE - Do project loadFinancials for all")
     }
 }
 
+extension people
+{
+    convenience init(teamID: Int, month: String, year: String)
+    {
+        self.init(teamID: teamID)
+    
+        var workingArray: [person] = Array()
+        
+        // get list of shifts for the month
+        
+        let shiftList = shifts(teamID: teamID, month: month, year: year)
+        
+        for myItem in myPeople
+        {
+            // See if the person has any shifts in the month
+            
+            for myShift in shiftList.shifts
+            {
+                if myShift.personID == myItem.personID
+                {
+                    workingArray.append(myItem)
+                    break
+                }
+            }
+        }
+        
+        self.myPeople = workingArray
+        self.sortArray()
+    }
+}
+
 extension person
 {
     func getFinancials(month: String, year: String) -> monthlyPersonFinancialsStruct
@@ -1116,8 +1190,12 @@ extension person
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMMM yyyy"
         
+        dateFormatter.timeZone = TimeZone(abbreviation: "GMT")
+        
         let dateString = "01 \(month) \(year)"
         let calculatedDate = dateFormatter.date(from: dateString)
+
+ //       calendar.timeZone  = TimeZone(abbreviation: "GMT")!
         
         let startDate = calendar.startOfDay(for: calculatedDate!)
         // get the start of the day after the selected date
@@ -1125,7 +1203,7 @@ extension person
 
         var wage: Double = 0.0
         var hours: Double = 0.0
-        
+
         for myShift in shifts(personID: personID, searchFrom: startDate, searchTo: endDate, teamID: currentUser.currentTeam!.teamID, type: "").shifts
         {
             wage += myShift.expense
@@ -1502,7 +1580,47 @@ extension coreDatabase
         }
     }
 
-    
+    func getShifts(teamID: Int, month: String, year: String)->[Shifts]
+    {
+        let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
+        
+        // get the current calendar
+        let calendar = Calendar.current
+        // get the start of the day of the selected date
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd MMMM yyyy"
+        
+        let dateString = "01 \(month) \(year)"
+        let calculatedDate = dateFormatter.date(from: dateString)
+        
+        let startDate = calendar.startOfDay(for: calculatedDate!)
+        // get the start of the day after the selected date
+        let endDate = calendar.date(byAdding: .month, value: 1, to: startDate)!
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(workDate >= %@) AND (workDate < %@) AND (teamID == \(teamID)) AND (updateType != \"Delete\")", startDate as CVarArg, endDate as CVarArg)
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        let sortDescriptor = NSSortDescriptor(key: "workDate", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+
     func getShifts(personID: Int, searchFrom: Date, searchTo: Date, teamID: Int, type: String = "")->[Shifts]
     {
         let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
@@ -1514,11 +1632,11 @@ extension coreDatabase
         
         if type == ""
         {
-            predicate = NSPredicate(format: "(personID == \(personID)) AND (workDate >= %@) AND (workDate <= %@) AND (teamID == \(teamID)) AND (updateType != \"Delete\")", searchFrom as CVarArg, searchTo as CVarArg)
+            predicate = NSPredicate(format: "(personID == \(personID)) AND (workDate >= %@) AND (workDate < %@) AND (teamID == \(teamID)) AND (updateType != \"Delete\")", searchFrom as CVarArg, searchTo as CVarArg)
         }
         else
         {
-            predicate = NSPredicate(format: "(personID == \(personID)) AND (workDate >= %@) AND (workDate <= %@) AND (teamID == \(teamID)) AND (type == \"\(type)\") AND (updateType != \"Delete\")", searchFrom as CVarArg, searchTo as CVarArg)
+            predicate = NSPredicate(format: "(personID == \(personID)) AND (workDate >= %@) AND (workDate < %@) AND (teamID == \(teamID)) AND (type == \"\(type)\") AND (updateType != \"Delete\")", searchFrom as CVarArg, searchTo as CVarArg)
         }
 
         // Set the predicate on the fetch request

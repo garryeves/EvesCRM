@@ -10,17 +10,17 @@ import UIKit
 
 class userFormViewController: UIViewController, UIPopoverPresentationControllerDelegate, UITableViewDataSource, UITableViewDelegate
 {
-    @IBOutlet weak var btnSave: UIButton!
-    @IBOutlet weak var btnCancel: UIButton!
     @IBOutlet weak var btnPassPhrase: UIButton!
     @IBOutlet weak var txtName: UITextField!
     @IBOutlet weak var txtEmail: UITextField!
     @IBOutlet weak var lblPhrase: UILabel!
     @IBOutlet weak var lblDate: UILabel!
     @IBOutlet weak var tblUsers: UITableView!
-    @IBOutlet weak var btnAdd: UIButton!
     @IBOutlet weak var lblName: UILabel!
     @IBOutlet weak var lblEmail: UILabel!
+    @IBOutlet weak var btnBack: UIBarButtonItem!
+    @IBOutlet weak var btnSave: UIBarButtonItem!
+    @IBOutlet weak var btnAdd: UIBarButtonItem!
     
     var workingUser: userItem!
     var communicationDelegate: myCommunicationDelegate?
@@ -109,17 +109,17 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
         populateForm()
     }
 
-    @IBAction func btnSave(_ sender: UIButton)
+    @IBAction func btnSave(_ sender: UIBarButtonItem)
     {
         workingUser.name = txtName.text!
         workingUser.email = txtEmail.text!
-            
+        
         workingUser.save()
         
         getUserList()
     }
     
-    @IBAction func btnCancel(_ sender: UIButton)
+    @IBAction func btnBack(_ sender: UIBarButtonItem)
     {
         self.dismiss(animated: true, completion: nil)
         if communicationDelegate != nil
@@ -135,7 +135,7 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
         lblDate.text = workingUser.phraseDateText
     }
     
-    @IBAction func btnAdd(_ sender: UIButton)
+    @IBAction func btnAdd(_ sender: UIBarButtonItem)
     {
         btnSave.isEnabled = false
         notificationCenter.addObserver(self, selector: #selector(self.userCreated), name: NotificationUserCreated, object: nil)
@@ -166,15 +166,15 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
         lblDate.isHidden = true
         lblName.isHidden = true
         lblEmail.isHidden = true
-        btnSave.isHidden = true
+        btnSave.isEnabled = false
         btnPassPhrase.isHidden = true
         if initialUser
         {
-            btnAdd.isHidden = true
+            btnAdd.isEnabled = false
         }
         else
         {
-            btnAdd.isHidden = false
+            btnAdd.isEnabled = true
         }
     }
     
@@ -188,15 +188,15 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
         lblDate.isHidden = false
         lblName.isHidden = false
         lblEmail.isHidden = false
-        btnSave.isHidden = false
+        btnSave.isEnabled = true
         btnPassPhrase.isHidden = false
         if initialUser
         {
-            btnAdd.isHidden = true
+            btnAdd.isEnabled = false
         }
         else
         {
-            btnAdd.isHidden = false
+            btnAdd.isEnabled = true
         }
     }
     

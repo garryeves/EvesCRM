@@ -30,10 +30,10 @@ class rateMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopov
             txtName.text = workingRate.rateName
             
             workingStaff = workingRate.rateAmount
-            txtStaff.text = formatCurrency(value: workingStaff)
+            txtStaff.text = formatCurrency(workingStaff)
             
             workingClient = workingRate.chargeAmount
-            txtClient.text = formatCurrency(value: workingClient)
+            txtClient.text = formatCurrency(workingClient)
 
             if workingRate.startDate == getDefaultDate()
             {
@@ -71,12 +71,12 @@ class rateMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopov
             if sender == txtStaff
             {
                 workingStaff = Double(sender.text!)!
-                sender.text = formatCurrency(value: workingStaff)
+                sender.text = formatCurrency(workingStaff)
             }
             else if sender == txtClient
             {
                 workingClient = Double(sender.text!)!
-                sender.text = formatCurrency(value: workingClient)
+                sender.text = formatCurrency(workingClient)
             }
         }
     }

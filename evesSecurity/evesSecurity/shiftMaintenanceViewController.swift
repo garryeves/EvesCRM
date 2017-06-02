@@ -14,7 +14,7 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
     @IBOutlet weak var lblWETitle: UILabel!
     @IBOutlet weak var tblShifts: UITableView!
     @IBOutlet weak var btnAdd: UIButton!
-    @IBOutlet weak var btnBack: UIButton!
+    @IBOutlet weak var btnback: UIBarButtonItem!
     @IBOutlet weak var btnCreateShift: UIButton!
     @IBOutlet weak var btnPreviousWeek: UIButton!
     @IBOutlet weak var btnNextWeek: UIButton!
@@ -172,7 +172,7 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
         }
     }
     
-    @IBAction func btnBack(_ sender: UIButton)
+    @IBAction func btnBack(_ sender: UIBarButtonItem)
     {
         communicationDelegate?.refreshScreen!()
         self.dismiss(animated: true, completion: nil)

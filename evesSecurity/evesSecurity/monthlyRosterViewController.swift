@@ -10,19 +10,27 @@ import UIKit
 
 class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, myCommunicationDelegate, UIPopoverPresentationControllerDelegate, MyPickerDelegate
 {
+    @IBOutlet weak var lblMonth: UILabel!
+    @IBOutlet weak var lblContactDetails: UILabel!
     @IBOutlet weak var btnMonth: UIButton!
     @IBOutlet weak var tblRoster: UITableView!
-    @IBOutlet weak var btnBack: UIButton!
-    @IBOutlet weak var btnPerson: UIButton!
     @IBOutlet weak var tblContact: UITableView!
     @IBOutlet weak var tblPerson: UITableView!
+    @IBOutlet weak var lblYear: UILabel!
+    @IBOutlet weak var btnYear: UIButton!
+    @IBOutlet weak var btnBack: UIBarButtonItem!
+    @IBOutlet weak var btnShare: UIBarButtonItem!
 
     var communicationDelegate: myCommunicationDelegate?
     
-    fileprivate var selectedPerson: person!
+    var selectedPerson: person!
+    var month: String!
+    var year: String!
+    
     fileprivate var peopleList: people!
     fileprivate var displayList: [String] = Array()
     fileprivate var monthList: [String] = Array()
+    
     
     override func viewDidLoad()
     {
@@ -30,8 +38,33 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
         {
             self.populateMonthList()
         }
+
+        if month != nil
+        {
+            btnMonth.setTitle(month, for: .normal)
+        }
         
-        peopleList = people(teamID: currentUser.currentTeam!.teamID)
+        if year != nil
+        {
+            btnYear.setTitle(year, for: .normal)
+        }
+        else
+        {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "YYYY"
+            btnYear.setTitle(dateFormatter.string(from: Date()), for: .normal)
+        }
+
+        if selectedPerson != nil
+        {
+            selectedPerson.loadContacts()
+            tblContact.reloadData()
+            refreshScreen()
+        }
+        else
+        {
+            hideFields()
+        }
     }
     
     override func didReceiveMemoryWarning() {
@@ -87,7 +120,6 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
                 
                 cell.lblType.text = selectedPerson.contacts[indexPath.row].contactType
                 cell.lblDetails.text = selectedPerson.contacts[indexPath.row].contactValue
-                cell.btnShare.isHidden = true
                 
                 return cell
                 
@@ -131,13 +163,13 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
                 let _ = 1
         }
     }
-    
-    @IBAction func btnBack(_ sender: UIButton)
+
+    @IBAction func btnBack(_ sender: UIBarButtonItem)
     {
         communicationDelegate?.refreshScreen!()
         self.dismiss(animated: true, completion: nil)
     }
-    
+        
     @IBAction func btnMonth(_ sender: UIButton)
     {
         displayList.removeAll()
@@ -164,6 +196,55 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
         self.present(pickerView, animated: true, completion: nil)
     }
         
+    
+    @IBAction func btnYear(_ sender: UIButton)
+    {
+        displayList.removeAll()
+        
+        displayList.append("2017")
+        displayList.append("2018")
+        
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+        pickerView.modalPresentationStyle = .popover
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        pickerView.source = "year"
+        pickerView.delegate = self
+        pickerView.pickerValues = displayList
+        pickerView.preferredContentSize = CGSize(width: 400,height: 400)
+        
+        self.present(pickerView, animated: true, completion: nil)
+    }
+    
+    @IBAction func btnShare(_ sender: UIBarButtonItem)
+    {
+        var messageString: String = ""
+        
+        if selectedPerson != nil
+        {
+            messageString +=  "Your shifts for \(currentUser.currentTeam!.name) for the month of \(btnMonth.currentTitle!)\n\n"
+            
+            
+            for myItem in selectedPerson.shiftArray
+            {
+                let tempProject = project(projectID: myItem.projectID)
+                
+                messageString += "\(myItem.workDateString) \(myItem.startTimeString) - \(myItem.endTimeString) at \(tempProject.projectName) \n\n"
+            }
+            
+            let activityViewController: UIActivityViewController = createActivityController(messageString)
+            
+            activityViewController.popoverPresentationController!.sourceView = btnMonth
+            
+            present(activityViewController, animated:true, completion:nil)
+        }
+    }
+    
     func myPickerDidFinish(_ source: String, selectedItem:Int)
     {
         var workingItem: Int = 0
@@ -180,6 +261,19 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
         if source == "month"
         {
             btnMonth.setTitle(displayList[workingItem], for: .normal)
+            peopleList = people(teamID: currentUser.currentTeam!.teamID, month: btnMonth.currentTitle!, year: btnYear.currentTitle!)
+            tblPerson.reloadData()
+            showFields()
+        }
+        else if source == "year"
+        {
+            btnYear.setTitle(displayList[workingItem], for: .normal)
+            if btnMonth.currentTitle! != "Select"
+            {
+                peopleList = people(teamID: currentUser.currentTeam!.teamID, month: btnMonth.currentTitle!, year: btnYear.currentTitle!)
+                tblPerson.reloadData()
+                showFields()
+            }
         }
         else
         {
@@ -188,7 +282,33 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
         
         refreshScreen()
     }
-        
+    
+    func hideFields()
+    {
+        btnBack.isEnabled = true
+        btnMonth.isHidden = false
+        lblMonth.isHidden = true
+        lblContactDetails.isHidden = true
+        tblRoster.isHidden = true
+        tblContact.isHidden = true
+        tblPerson.isHidden = true
+        lblYear.isHidden = true
+        btnYear.isHidden = true
+    }
+    
+    func showFields()
+    {
+        btnBack.isEnabled = true
+        btnMonth.isHidden = false
+        lblMonth.isHidden = false
+        lblContactDetails.isHidden = false
+        tblRoster.isHidden = false
+        tblContact.isHidden = false
+        tblPerson.isHidden = false
+        lblYear.isHidden = false
+        btnYear.isHidden = false
+    }
+    
     func refreshScreen()
     {
         if btnMonth.currentTitle! != "Select" && selectedPerson != nil
@@ -200,7 +320,7 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
             tblRoster.reloadData()
         }
     }
-
+    
     func populateMonthList()
     {
         monthList.removeAll()
@@ -216,16 +336,11 @@ class rosterContactItem: UITableViewCell
 {
     @IBOutlet weak var lblType: UILabel!
     @IBOutlet weak var lblDetails: UILabel!
-    @IBOutlet weak var btnShare: UIButton!
     
     override func layoutSubviews()
     {
         contentView.frame = bounds
         super.layoutSubviews()
-    }
-    
-    @IBAction func btnShare(_ sender: UIButton)
-    {
     }
 }
 

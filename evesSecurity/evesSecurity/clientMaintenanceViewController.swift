@@ -14,10 +14,7 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
     @IBOutlet weak var txtNotes: UITextView!
     @IBOutlet weak var tblContracts: UITableView!
     @IBOutlet weak var btnAddContract: UIButton!
-    @IBOutlet weak var btnAddClient: UIButton!
     @IBOutlet weak var btnContact: UIButton!
-    @IBOutlet weak var btnSave: UIButton!
-    @IBOutlet weak var btnBack: UIButton!
     @IBOutlet weak var tblClients: UITableView!
     @IBOutlet weak var lblContracts: UILabel!
     @IBOutlet weak var lblContact: UILabel!
@@ -31,6 +28,9 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
     @IBOutlet weak var lblStaff: UILabel!
     @IBOutlet weak var lblClient: UILabel!
     @IBOutlet weak var lblGP: UILabel!
+    @IBOutlet weak var btnBack: UIBarButtonItem!
+    @IBOutlet weak var btnSave: UIBarButtonItem!
+    @IBOutlet weak var btnAddClient: UIBarButtonItem!
     
     var communicationDelegate: myCommunicationDelegate?
     
@@ -119,8 +119,8 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
                 let cell = tableView.dequeueReusableCell(withIdentifier:"cellRates", for: indexPath) as! ratesListItem
                 
                 cell.lblName.text = ratesList.rates[indexPath.row].rateName
-                cell.lblClient.text = formatCurrency(value: ratesList.rates[indexPath.row].chargeAmount)
-                cell.lblStaff.text = formatCurrency(value: ratesList.rates[indexPath.row].rateAmount)
+                cell.lblClient.text = formatCurrency(ratesList.rates[indexPath.row].chargeAmount)
+                cell.lblStaff.text = formatCurrency(ratesList.rates[indexPath.row].rateAmount)
                 cell.lblStart.text = ratesList.rates[indexPath.row].displayStartDate
                 
                 // Calculate GP%
@@ -186,19 +186,19 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
         }
     }
 
-    @IBAction func btnSave(_ sender: UIButton)
+    @IBAction func btnBack(_ sender: UIBarButtonItem)
+    {
+        communicationDelegate?.refreshScreen!()
+        self.dismiss(animated: true, completion: nil)
+    }
+    
+    @IBAction func btnSave(_ sender: UIBarButtonItem)
     {
         selectedClient.name = txtName.text!
         selectedClient.note = txtNotes.text!
         selectedClient.save()
         
         refreshScreen()
-    }
-    
-    @IBAction func btnBack(_ sender: UIButton)
-    {
-        communicationDelegate?.refreshScreen!()
-        self.dismiss(animated: true, completion: nil)
     }
     
     @IBAction func btnContact(_ sender: UIButton)
@@ -220,7 +220,7 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
         self.present(contractEditViewControl, animated: true, completion: nil)
     }
     
-    @IBAction func btnAddClient(_ sender: UIButton)
+    @IBAction func btnAddClient(_ sender: UIBarButtonItem)
     {
         selectedClient = client(teamID: currentUser.currentTeam!.teamID)
         showFields()
@@ -254,7 +254,7 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
         tblContracts.isHidden = true
         btnAddContract.isHidden = true
         btnContact.isHidden = true
-        btnSave.isHidden = true
+        btnSave.isEnabled = false
         lblContracts.isHidden = true
         lblContact.isHidden = true
         lblNote.isHidden = true
@@ -276,7 +276,7 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
         tblContracts.isHidden = false
         btnAddContract.isHidden = false
         btnContact.isHidden = false
-        btnSave.isHidden = false
+        btnSave.isEnabled = true
         lblContracts.isHidden = false
         lblContact.isHidden = false
         lblNote.isHidden = false

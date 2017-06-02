@@ -13,7 +13,6 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
     @IBOutlet weak var btnTemplate: UIButton!
     @IBOutlet weak var btnCreatePlan: UIButton!
     @IBOutlet weak var btnMaintainTemplates: UIButton!
-    @IBOutlet weak var btnBack: UIButton!
     @IBOutlet weak var tblEvents: UITableView!
     @IBOutlet weak var tblRoles: UITableView!
     @IBOutlet weak var lblAddToRole: UILabel!
@@ -23,6 +22,13 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
     @IBOutlet weak var lblContractName: UILabel!
     @IBOutlet weak var lblDate: UILabel!
     @IBOutlet weak var btnDate: UIButton!
+    @IBOutlet weak var lblRoleHead: UILabel!
+    @IBOutlet weak var lblPersonHead: UILabel!
+    @IBOutlet weak var lblRateHead: UILabel!
+    @IBOutlet weak var lblDateHead: UILabel!
+    @IBOutlet weak var lblStarHead: UILabel!
+    @IBOutlet weak var lblEndHead: UILabel!
+    @IBOutlet weak var btnBack: UIBarButtonItem!
     
     var communicationDelegate: myCommunicationDelegate?
     
@@ -100,7 +106,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
                 let cell = tableView.dequeueReusableCell(withIdentifier:"cellEvent", for: indexPath) as! eventRoleItem
                 
                 cell.lblRole.text = currentEvent.staff?.shifts[indexPath.row].shiftDescription
-                cell.lblDate.text = currentEvent.staff?.shifts[indexPath.row].workDateString
+                cell.lblDate.text = currentEvent.staff?.shifts[indexPath.row].workDateShortString
                 cell.btnRate.setTitle(currentEvent.staff?.shifts[indexPath.row].rateDescription, for: .normal)
                 cell.btnPerson.setTitle(currentEvent.staff?.shifts[indexPath.row].personName, for: .normal)
                 cell.btnStart.setTitle(currentEvent.staff?.shifts[indexPath.row].startTimeString, for: .normal)
@@ -136,37 +142,6 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
         }
     }
     
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
-    {
-        switch tableView
-        {
-            case tblEvents:
-                return nil
-                
-            case tblRoles:
-                let headerView = tableView.dequeueReusableCell(withIdentifier: "cellEventHeader") as! eventRoleHeaderItem
-                return headerView
-            
-            default:
-                return nil
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
-    {
-        switch tableView
-        {
-            case tblEvents:
-                return 0
-                
-            case tblRoles:
-                return 30
-                
-            default:
-                return 0
-        }
-    }
-    
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath)
     {
         if tableView == tblRoles
@@ -180,7 +155,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
         }
     }
     
-    @IBAction func btnBack(_ sender: UIButton)
+    @IBAction func btnBack(_ sender: UIBarButtonItem)
     {
         communicationDelegate?.refreshScreen!()
         self.dismiss(animated: true, completion: nil)
@@ -435,6 +410,12 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
         btnAddRole.isHidden = true
         lblDate.isHidden = true
         btnDate.isHidden = true
+        lblRoleHead.isHidden = true
+        lblPersonHead.isHidden = true
+        lblRateHead.isHidden = true
+        lblDateHead.isHidden = true
+        lblStarHead.isHidden = true
+        lblEndHead.isHidden = true
     }
     
     func showFields()
@@ -449,6 +430,12 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
         lblDate.isHidden = false
         btnDate.isHidden = false
         lblContractName.isHidden = false
+        lblRoleHead.isHidden = false
+        lblPersonHead.isHidden = false
+        lblRateHead.isHidden = false
+        lblDateHead.isHidden = false
+        lblStarHead.isHidden = false
+        lblEndHead.isHidden = false
     }
     
     func hideAllFields()
@@ -463,6 +450,12 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
         lblDate.isHidden = true
         btnDate.isHidden = true
         lblContractName.isHidden = true
+        lblRoleHead.isHidden = true
+        lblPersonHead.isHidden = true
+        lblRateHead.isHidden = true
+        lblDateHead.isHidden = true
+        lblStarHead.isHidden = true
+        lblEndHead.isHidden = true
     }
     
     func refreshScreen()
@@ -688,18 +681,3 @@ class eventRoleItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
     }
 }
 
-class eventRoleHeaderItem: UITableViewCell
-{
-    @IBOutlet weak var lblRole: UILabel!
-    @IBOutlet weak var lblPerson: UILabel!
-    @IBOutlet weak var lblRate: UILabel!
-    @IBOutlet weak var lblDate: UILabel!
-    @IBOutlet weak var lblStart: UILabel!
-    @IBOutlet weak var lblEnd: UILabel!
-    
-    override func layoutSubviews()
-    {
-        contentView.frame = bounds
-        super.layoutSubviews()
-    }
-}

@@ -30,17 +30,20 @@ struct displayStruct
     var line5: String
     var line6: String
     var line7: String
+    var sourceObject: Any
 }
 
 class securityViewController: UIViewController, myCommunicationDelegate, UITableViewDataSource, UITableViewDelegate, MyPickerDelegate, UIPopoverPresentationControllerDelegate
 {
-    @IBOutlet weak var btnSettings: UIButton!
+    @IBOutlet weak var btnSettings: UIBarButtonItem!
+    @IBOutlet weak var btnShare: UIBarButtonItem!
+    @IBOutlet weak var navBar: UINavigationBar!
+    @IBOutlet weak var navBarTitle: UINavigationItem!
     @IBOutlet weak var btnPeople: UIButton!
     @IBOutlet weak var btnClients: UIButton!
     @IBOutlet weak var tblData1: UITableView!
     @IBOutlet weak var btnRoster: UIButton!
     @IBOutlet weak var btnEvents: UIButton!
-    @IBOutlet weak var lblHeader: UILabel!
     @IBOutlet weak var tblAlerts: UITableView!
     @IBOutlet weak var btnReport: UIButton!
     @IBOutlet weak var btnMaintainReports: UIButton!
@@ -54,6 +57,8 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     @IBOutlet weak var lbl6: UILabel!
     @IBOutlet weak var lbl7: UILabel!
     @IBOutlet weak var btnMonthlyRoster: UIButton!
+    @IBOutlet weak var lblYear: UILabel!
+    @IBOutlet weak var btnYear: UIButton!
     
     fileprivate var contractList: projects!
     fileprivate var alertList: [alertStruct] = Array()
@@ -63,14 +68,19 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     fileprivate var monthList: [String] = Array()
     
     fileprivate var currentReportID: Int = 0
-    fileprivate var workingYear: String = ""
     fileprivate var displayArray: [displayStruct] = Array()
+    fileprivate var reportString: String = ""
+    
+    fileprivate var paperSize = CGRect(x:0.0, y:0.0, width:595.276, height:841.89)
+
     
     var communicationDelegate: myCommunicationDelegate?
     
     override func viewDidLoad()
     {
-        btnSettings.setTitle(NSString(string: "\u{2699}") as String, for: UIControlState())
+ //       btnSettings.setTitle(NSString(string: "\u{2699}") as String, for: UIControlState())
+        
+        btnSettings.title = NSString(string: "\u{2699}") as String
         
         btnPeople.setTitle("Maintain People", for: .normal)
 
@@ -79,14 +89,36 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
             currentReportID = readDefaultInt("reportID")
         }
 
+        if readDefaultInt("reportMonth") >= 0
+        {
+            let tempInt = readDefaultInt("reportMonth")
+            let tempString = "\(tempInt)"
+            btnDropdown.setTitle(tempString, for: .normal)
+        }
+        else
+        {
+            btnDropdown.setTitle("Select", for: .normal)
+        }
+        
+        if readDefaultInt("reportYear") >= 0
+        {
+            let tempInt = readDefaultInt("reportYear")
+            let tempString = "\(tempInt)"
+            btnYear.setTitle(tempString, for: .normal)
+        }
+        else
+        {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "YYYY"
+            btnYear.setTitle(dateFormatter.string(from: Date()), for: .normal)
+        }
+        
         lblDropdown.isHidden = true
         btnDropdown.isHidden = true
+        lblYear.isHidden = true
+        btnYear.isHidden = true
         tblData1.isHidden = true
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "YYYY"
-        workingYear = dateFormatter.string(from: Date())
-        
+
         refreshScreen()
         
         DispatchQueue.global().async
@@ -102,12 +134,18 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         // Dispose of any resources that can be recreated.
     }
     
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
         switch tableView
         {
             case tblData1:
+//                pdfData = NSMutableData()
+//                //UIGraphicsBeginPDFContextToData(pdfData, paperSize, nil)
+//                UIGraphicsBeginPDFPageWithInfo(paperSize, nil)
+                
+                
+                reportString = ""
+                
                 switch currentReportID
                 {
                     case 0, 1:
@@ -170,7 +208,15 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                         self.present(contractEditViewControl, animated: true, completion: nil)
                     
                     default:
-                        let _ = 1
+                        let rosterViewControl = shiftsStoryboard.instantiateViewController(withIdentifier: "monthlyRoster") as! monthlyRosterViewController
+                        rosterViewControl.communicationDelegate = self
+                        
+                        let tempPerson = displayArray[indexPath.row].sourceObject as! person
+                        rosterViewControl.selectedPerson = tempPerson
+                        
+                        rosterViewControl.month = btnDropdown.currentTitle!
+                        rosterViewControl.year = btnYear.currentTitle!
+                        self.present(rosterViewControl, animated: true, completion: nil)
                 }
             
             case tblAlerts:
@@ -234,10 +280,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                 cell.lbl7.text = displayArray[indexPath.row].line7
                 
                 return cell
-            
-//            case 1:
-//                return contractsListItem()
-            
+
             case 2:
                 return contractsListItem()
                 
@@ -250,10 +293,153 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         }
     }
     
-    @IBAction func btnSettings(_ sender: UIButton)
+    @IBAction func btnSettings(_ sender: UIBarButtonItem)
     {
         let userEditViewControl = self.storyboard?.instantiateViewController(withIdentifier: "settings") as! settingsViewController
         self.present(userEditViewControl, animated: true, completion: nil)
+    }
+    
+    @IBAction func btnShare(_ sender: UIBarButtonItem)
+    {
+        var leftSide: Int = 0
+        var topSide: Int = 0
+        let height: Int = 30
+        var subject: String = "'"
+        
+        let pdfData: NSMutableData = NSMutableData()
+        UIGraphicsBeginPDFContextToData(pdfData, .zero, nil)
+        UIGraphicsBeginPDFPageWithInfo(paperSize, nil)
+        
+        switch currentReportID
+        {
+            case 0:  // Contract for month
+                subject = "Contracts for the month of \(btnDropdown.currentTitle!)"
+                
+                let column1Width = 100
+                let column2Width = 150
+                let column3Width = 50
+                let column4Width = 50
+                let column5Width = 50
+                let column6Width = 50
+                let column7Width = 50
+                
+                report0Header(column1Width: column1Width, column2Width: column2Width, column3Width: column3Width, column4Width: column4Width, column5Width: column5Width, column6Width: column6Width, column7Width: column7Width)
+
+                for myItem in displayArray
+                {
+                    topSide += 5 + height
+
+                    if CGFloat(topSide) >= paperSize.height
+                    {
+                        UIGraphicsBeginPDFPageWithInfo(paperSize, nil)
+                        report0Header(column1Width: column1Width, column2Width: column2Width, column3Width: column3Width, column4Width: column4Width, column5Width: column5Width, column6Width: column6Width, column7Width: column7Width)
+                        topSide = 5 + height
+                    }
+                    
+                    leftSide = 0
+                    
+                    writePDFEntry(title: myItem.line1, x: leftSide, y: topSide, width: column1Width, height: height)
+                    leftSide += 5 + column1Width
+                    
+                    writePDFEntry(title: myItem.line2, x: leftSide, y: topSide, width: column2Width, height: height)
+                    leftSide += 5 + column2Width
+                    
+                    writePDFEntry(title: myItem.line3, x: leftSide, y: topSide, width: column3Width, height: height)
+                    leftSide += 5 + column3Width
+                    
+                    writePDFEntry(title: myItem.line4, x: leftSide, y: topSide, width: column4Width, height: height)
+                    leftSide += 5 + column4Width
+                    
+                    writePDFEntry(title: myItem.line5, x: leftSide, y: topSide, width: column5Width, height: height)
+                    leftSide += 5 + column5Width
+                    
+                    writePDFEntry(title: myItem.line6, x: leftSide, y: topSide, width: column6Width, height: height)
+                    leftSide += 5 + column6Width
+                    
+                    writePDFEntry(title: myItem.line7, x: leftSide, y: topSide, width: column7Width, height: height)
+                }
+            
+            case 1:  // Wage per person for month
+                subject = "Wages for the month of \(btnDropdown.currentTitle!)"
+                
+                let column1Width = 150
+                let column2Width = 50
+                let column3Width = 50
+                
+                report1Header(column1Width: column1Width, column2Width: 50, column3Width: 50)
+                
+                for myItem in displayArray
+                {
+                    topSide += 5 + height
+                    if CGFloat(topSide) >= paperSize.height
+                    {
+                        UIGraphicsBeginPDFPageWithInfo(paperSize, nil)
+                        report1Header(column1Width: column1Width, column2Width: 50, column3Width: 50)
+                        topSide = 5 + height
+                    }
+
+                    leftSide = 0
+                    
+                    writePDFEntry(title: myItem.line2, x: leftSide, y: topSide, width: column1Width, height: height)
+                    leftSide += 5 + column1Width
+                    
+                    writePDFEntry(title: myItem.line3, x: leftSide, y: topSide, width: column2Width, height: height)
+                    leftSide += 5 + column2Width
+                    
+                    writePDFEntry(title: myItem.line4, x: leftSide, y: topSide, width: column3Width, height: height)
+            }
+                
+            default:
+                print("btnShare hit default - \(currentReportID)")
+        }
+        
+        UIGraphicsEndPDFContext()
+        
+        let activityViewController: UIActivityViewController = createActivityController(pdfData, subject: subject)
+        
+        activityViewController.popoverPresentationController!.sourceView = self.view
+        
+        present(activityViewController, animated:true, completion:nil)
+    }
+    
+    func report0Header(column1Width: Int, column2Width: Int, column3Width: Int, column4Width: Int, column5Width: Int, column6Width: Int, column7Width: Int)
+    {
+        var leftSide: Int = 0
+        let height: Int = 30
+        
+        writePDFHeaderEntry(title: "Client", x: leftSide, y: 0, width: column1Width, height: height)
+        leftSide += 5 + column1Width
+
+        writePDFHeaderEntry(title: "Contract", x: leftSide, y: 0, width: column2Width, height: height)
+        leftSide += 5 + column2Width
+
+        writePDFHeaderEntry(title: "Cost", x: leftSide, y: 0, width: column3Width, height: height)
+        leftSide += 5 + column3Width
+
+        writePDFHeaderEntry(title: "Hours", x: leftSide, y: 0, width: column4Width, height: height)
+        leftSide += 5 + column4Width
+
+        writePDFHeaderEntry(title: "Income", x: leftSide, y: 0, width: column5Width, height: height)
+        leftSide += 5 + column5Width
+
+        writePDFHeaderEntry(title: "Profit", x: leftSide, y: 0, width: column6Width, height: height)
+        leftSide += 5 + column6Width
+
+        writePDFHeaderEntry(title: "GP%", x: leftSide, y: 0, width: column7Width, height: height)
+    }
+    
+    func report1Header(column1Width: Int, column2Width: Int, column3Width: Int)
+    {
+        var leftSide: Int = 0
+        let height: Int = 30
+        
+        writePDFHeaderEntry(title: "Name", x: leftSide, y: 0, width: column1Width, height: height)
+        leftSide += 5 + column1Width
+        
+        writePDFHeaderEntry(title: "Hours", x: leftSide, y: 0, width: column2Width, height: height)
+        leftSide += 5 + column2Width
+        
+        writePDFHeaderEntry(title: "Pay", x: leftSide, y: 0, width: column3Width, height: height)
     }
 
     @IBAction func btnPeople(_ sender: UIButton)
@@ -371,9 +557,33 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         
     }
     
+    @IBAction func btnYear(_ sender: UIButton)
+    {
+        displayList.removeAll()
+        
+        displayList.append("2017")
+        displayList.append("2018")
+        
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+        pickerView.modalPresentationStyle = .popover
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        pickerView.source = "year"
+        pickerView.delegate = self
+        pickerView.pickerValues = displayList
+        pickerView.preferredContentSize = CGSize(width: 400,height: 400)
+        
+        self.present(pickerView, animated: true, completion: nil)
+    }
+    
     func refreshScreen()
     {
-        lblHeader.text = currentUser.currentTeam!.name
+        navBarTitle.title = currentUser.currentTeam!.name
         
         let tempEvents = projects(teamID: currentUser.currentTeam!.teamID, includeEvents: true, type: eventProjectType)
         
@@ -604,8 +814,10 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                     
                     lblDropdown.isHidden = false
                     btnDropdown.isHidden = false
-                    btnDropdown.setTitle("Select", for: .normal)
-                    lblDropdown.text = "Month:"
+                    lblYear.isHidden = false
+                    btnYear.isHidden = false
+                    
+                    populateDropdowns()
                 
                 case 1:
                     if btnDropdown.currentTitle == "Select"
@@ -619,8 +831,10 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                     
                     lblDropdown.isHidden = false
                     btnDropdown.isHidden = false
-                    btnDropdown.setTitle("Select", for: .normal)
-                    lblDropdown.text = "Month:"
+                    lblYear.isHidden = false
+                    btnYear.isHidden = false
+                    
+                    populateDropdowns()
                 
                 case 2:
                     if btnDropdown.currentTitle == "Select"
@@ -634,6 +848,8 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                     
                     lblDropdown.isHidden = false
                     btnDropdown.isHidden = false
+                    lblYear.isHidden = false
+                    btnYear.isHidden = false
                     btnDropdown.setTitle("Select", for: .normal)
                     lblDropdown.text = "Year:"
                 
@@ -641,6 +857,8 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                     tblData1.isHidden = true
                     lblDropdown.isHidden = true
                     btnDropdown.isHidden = true
+                    lblYear.isHidden = true
+                    btnYear.isHidden = true
                 
                 default:
                     print("unknow entry myPickerDidFinish - selectedItem - \(selectedItem)")
@@ -654,6 +872,13 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         else if source == "dropdown"
         {
             btnDropdown.setTitle(displayList[workingItem], for: .normal)
+            
+            writeDefaultString("reportMonth", value: displayList[workingItem])
+        }
+        else if source == "year"
+        {
+            btnYear.setTitle(displayList[workingItem], for: .normal)
+            writeDefaultString("reportYear", value: displayList[workingItem])
         }
         else
         {
@@ -672,12 +897,12 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         
         switch currentReportID
         {
-            case 0:
+            case 0:  // Contract for month
                 if btnDropdown.currentTitle != "Select"
                 {
                     contractList = projects(teamID: currentUser.currentTeam!.teamID, includeEvents: true)
 
-                    contractList.loadFinancials(month: btnDropdown.currentTitle!, year: workingYear)
+                    contractList.loadFinancials(month: btnDropdown.currentTitle!, year: btnYear.currentTitle!)
 
                     displayArray.removeAll()
                     
@@ -702,11 +927,12 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                             let newEentry = displayStruct(
                                                         line1: clientName,
                                                         line2: myItem.projectName,
-                                                        line3: formatCurrency(value: myItem.financials[0].expense),
-                                                        line4: "\(myItem.financials[0].hours)",
-                                                        line5: formatCurrency(value: myItem.financials[0].income),
-                                                        line6: formatCurrency(value: profit),
-                                                        line7: "\(gp)%"
+                                                        line3: formatCurrency(myItem.financials[0].expense),
+                                                        line4: formatHours(myItem.financials[0].hours),
+                                                        line5: formatCurrency(myItem.financials[0].income),
+                                                        line6: formatCurrency(profit),
+                                                        line7: formatPercent(gp),
+                                                        sourceObject: myItem
                                                             )
                             displayArray.append(newEentry)
                         }
@@ -722,8 +948,8 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                     
                     lbl1.text = "Client"
                     lbl2.text = "Contract"
-                    lbl3.text = "Labour Cost"
-                    lbl4.text = "Labour Hours"
+                    lbl3.text = "Cost"
+                    lbl4.text = "Hours"
                     lbl5.text = "Income"
                     lbl6.text = "Profit"
                     lbl7.text = "GP%"
@@ -736,27 +962,28 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                     tblData1.isHidden = true
                 }
             
-            case 1:
+            case 1:  // Wage per person for month
                 if btnDropdown.currentTitle != "Select"
                 {
                     displayArray.removeAll()
                     
                     for myItem in people(teamID: currentUser.currentTeam!.teamID).people
                     {
-                        let monthReport = myItem.getFinancials(month: btnDropdown.currentTitle!, year: workingYear)
+                        let monthReport = myItem.getFinancials(month: btnDropdown.currentTitle!, year: btnYear.currentTitle!)
                         
                         if monthReport.hours != 0
                         {
-                            let newEentry = displayStruct(
+                            let newEntry = displayStruct(
                                 line1: "",
                                 line2: myItem.name,
-                                line3: "\(monthReport.hours)",
-                                line4: formatCurrency(value: monthReport.wage),
+                                line3: formatHours(monthReport.hours),
+                                line4: formatCurrency(monthReport.wage),
                                 line5: "",
                                 line6: "",
-                                line7: ""
+                                line7: "",
+                                sourceObject: myItem
                             )
-                            displayArray.append(newEentry)
+                            displayArray.append(newEntry)
                         }
                     }
                     
@@ -796,6 +1023,42 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                 
             default:
                 print("unknow entry myPickerDidFinish - selectedItem - \(selectedItem)")
+        }
+    }
+    
+    func populateDropdowns()
+    {
+        switch currentReportID
+        {
+            case 0, 1:
+                lblDropdown.text = "Month:"
+                if readDefaultInt("reportID") >= 0
+                {
+                    currentReportID = readDefaultInt("reportID")
+                }
+                
+                if readDefaultString("reportMonth") != ""
+                {
+                    btnDropdown.setTitle(readDefaultString("reportMonth"), for: .normal)
+                }
+                else
+                {
+                    btnDropdown.setTitle("Select", for: .normal)
+                }
+                
+                if readDefaultString("reportYear") != ""
+                {
+                    btnYear.setTitle(readDefaultString("reportYear"), for: .normal)
+                }
+                else
+                {
+                    let dateFormatter = DateFormatter()
+                    dateFormatter.dateFormat = "YYYY"
+                    btnYear.setTitle(dateFormatter.string(from: Date()), for: .normal)
+                }
+
+            default:
+                print("populateDropdowns fot default : btnReport.currentTitle!")
         }
     }
     

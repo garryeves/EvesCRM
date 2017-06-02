@@ -27,15 +27,15 @@ class eventTemplateVoewController: UIViewController, UITableViewDataSource, UITa
     @IBOutlet weak var btnEndTime: UIButton!
     @IBOutlet weak var btnStartTime: UIButton!
     @IBOutlet weak var btnAdd: UIButton!
-    @IBOutlet weak var btnNewTemplates: UIButton!
     @IBOutlet weak var lblTemplateName: UILabel!
     @IBOutlet weak var lblRole: UILabel!
     @IBOutlet weak var lblNumRequired: UILabel!
     @IBOutlet weak var lblOn: UILabel!
     @IBOutlet weak var lblStart: UILabel!
     @IBOutlet weak var lblEnd: UILabel!
-    @IBOutlet weak var btnBack: UIButton!
-    @IBOutlet weak var btnSave: UIButton!
+    @IBOutlet weak var btnBack: UIBarButtonItem!
+    @IBOutlet weak var btnSave: UIBarButtonItem!
+    @IBOutlet weak var btnNewTemplates: UIBarButtonItem!
     
     var communicationDelegate: myCommunicationDelegate?
 
@@ -171,13 +171,13 @@ class eventTemplateVoewController: UIViewController, UITableViewDataSource, UITa
         }
     }
     
-    @IBAction func btnBack(_ sender: UIButton)
+    @IBAction func btnBack(_ sender: UIBarButtonItem)
     {
         communicationDelegate?.refreshScreen!()
         self.dismiss(animated: true, completion: nil)
     }
     
-    @IBAction func btnSave(_ sender: UIButton)
+    @IBAction func btnSave(_ sender: UIBarButtonItem)
     {
         if txtName.text == ""
         {
@@ -204,7 +204,6 @@ class eventTemplateVoewController: UIViewController, UITableViewDataSource, UITa
             
             refreshScreen()
         }
-
     }
     
     @IBAction func btnOn(_ sender: UIButton)
@@ -263,10 +262,10 @@ class eventTemplateVoewController: UIViewController, UITableViewDataSource, UITa
         self.present(pickerView, animated: true, completion: nil)
     }
     
-    @IBAction func btnNewTemplate(_ sender: UIButton)
+    @IBAction func btnNewtemplates(_ sender: UIBarButtonItem)
     {
         currentTemplate = eventTemplateHead(teamID: currentUser.currentTeam!.teamID)
-        btnSave.isHidden = false
+        btnSave.isEnabled = true
         txtName.isHidden = false
         lblTemplateName.isHidden = false
         btnRole.setTitle("Select", for: .normal)
@@ -495,7 +494,7 @@ class eventTemplateVoewController: UIViewController, UITableViewDataSource, UITa
         lblOn.isHidden = true
         lblStart.isHidden = true
         lblEnd.isHidden = true
-        btnSave.isHidden = true
+        btnSave.isEnabled = false
     }
     
     func showFields()
@@ -512,7 +511,7 @@ class eventTemplateVoewController: UIViewController, UITableViewDataSource, UITa
         lblOn.isHidden = false
         lblStart.isHidden = false
         lblEnd.isHidden = false
-        btnSave.isHidden = false
+        btnSave.isEnabled = true
         txtName.isHidden = false
     }
     

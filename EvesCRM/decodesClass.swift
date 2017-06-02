@@ -94,7 +94,14 @@ extension coreDatabase
     {
         // first check to see if decode exists, if not we create
         var myDecode: Decodes!
-
+        
+        while self.coreDataRecordCount > 0
+        {
+            usleep(self.sleepTime)
+        }
+        
+        self.coreDataRecordCount += 1
+        
         if getDecodeValue(codeKey) == ""
         { // Add
             myDecode = Decodes(context: objectContext)
@@ -154,6 +161,8 @@ extension coreDatabase
         
         saveContext()
 
+        self.coreDataRecordCount -= 1
+        
         if updateCloud
         {
             DispatchQueue.global(qos: .background).async
@@ -634,6 +643,7 @@ extension CloudKitInteraction
         let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "(decode_name == \"\(sourceRecord.decode_name!)\")") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "Decodes", predicate: predicate)
+        
         publicDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
             if error != nil
             {
@@ -773,6 +783,13 @@ extension CloudKitInteraction
                     
                     if updateRecord
                     {
+                        while self.recordCount > 0
+                        {
+                            usleep(self.sleepTime)
+                        }
+                        
+                        self.recordCount += 1
+                        
                         // Now you have grabbed your existing record from iCloud
                         // Apply whatever changes you want
                         record!.setValue(sourceRecord.decode_value, forKey: "decode_value")
@@ -799,6 +816,7 @@ extension CloudKitInteraction
                                 }
                             }
                         })
+                        self.recordCount -= 1
                     }
                 }
                 else
@@ -815,6 +833,13 @@ extension CloudKitInteraction
                     }
                     todoRecord.setValue(sourceRecord.updateType, forKey: "updateType")
                     
+                    while self.recordCount > 0
+                    {
+                        usleep(self.sleepTime)
+                    }
+                    
+                    self.recordCount += 1
+                    
                     self.publicDB.save(todoRecord, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil
                         {
@@ -828,6 +853,7 @@ extension CloudKitInteraction
                             }
                         }
                     })
+                    self.recordCount -= 1
                 }
             }
             sem.signal()

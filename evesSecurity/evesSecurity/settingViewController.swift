@@ -12,9 +12,9 @@ class settingsViewController: UIViewController, UIPopoverPresentationControllerD
 {
     @IBOutlet weak var btnTeam: UIButton!
     @IBOutlet weak var btnUser: UIButton!
-    @IBOutlet weak var btnBack: UIButton!
     @IBOutlet weak var btnPassword: UIButton!
     @IBOutlet weak var btnPerAddInfo: UIButton!
+    @IBOutlet weak var btnBack: UIBarButtonItem!
     
     override func viewDidLoad()
     {
@@ -63,7 +63,7 @@ class settingsViewController: UIViewController, UIPopoverPresentationControllerD
         self.present(addPerInfoViewControl, animated: true, completion: nil)
     }
     
-    @IBAction func btnBack(_ sender: UIButton)
+    @IBAction func btnBack(_ sender: Any)
     {
         dismiss(animated: true, completion: nil)
     }

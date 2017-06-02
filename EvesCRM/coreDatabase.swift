@@ -45,6 +45,9 @@ class coreDatabase: NSObject
     
     var objectContext: NSManagedObjectContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
     
+    var coreDataRecordCount: Int = 0
+    let sleepTime: useconds_t = useconds_t(20000)
+    
     override init()
     {
         super.init()

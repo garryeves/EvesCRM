@@ -18,6 +18,7 @@ class addPerInfoMaintenanceViewController: UIViewController, UIPopoverPresentati
     @IBOutlet weak var btnType: UIButton!
     @IBOutlet weak var btnSave: UIButton!
     @IBOutlet weak var tblInfo: UITableView!
+    @IBOutlet weak var btnBack: UIBarButtonItem!
     
     fileprivate var addInfoRecords: personAdditionalInfos!
     
@@ -114,8 +115,8 @@ class addPerInfoMaintenanceViewController: UIViewController, UIPopoverPresentati
             btnSave.isHidden = true
         }
     }
-   
-    @IBAction func btnBack(_ sender: UIButton)
+
+    @IBAction func btnBack(_ sender: UIBarButtonItem)
     {
         self.dismiss(animated: true, completion: nil)
     }
