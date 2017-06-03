@@ -29,6 +29,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
     @IBOutlet weak var lblStarHead: UILabel!
     @IBOutlet weak var lblEndHead: UILabel!
     @IBOutlet weak var btnBack: UIBarButtonItem!
+    @IBOutlet weak var btnShare: UIBarButtonItem!
     
     var communicationDelegate: myCommunicationDelegate?
     
@@ -290,13 +291,70 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
     
     @IBAction func btnAddRole(_ sender: UIButton)
     {
-        
-        
-        print("Role Date = \(newRoleDate)")
-        
         createShiftEntry(teamID: currentUser.currentTeam!.teamID, projectID: currentEvent.projectID, shiftDescription: btnSelect.currentTitle!, workDay: newRoleDate, startTime: getDefaultDate(), endTime: getDefaultDate())
         
         refreshScreen()
+    }
+    
+    @IBAction func btnShare(_ sender: UIBarButtonItem)
+    {
+        let tempReport = report()
+        
+        let titleString = "\(currentUser.currentTeam!.name) Event Plan for \(currentEvent.projectName)"
+        tempReport.name = titleString
+        
+        let headerLine = reportLine()
+        headerLine.column1 = "Name"
+        tempReport.columnWidth1 = 150
+        headerLine.column2 = "Date"
+        tempReport.columnWidth2 = 80
+        headerLine.column3 = "Start"
+        tempReport.columnWidth3 = 50
+        headerLine.column4 = "End"
+        tempReport.columnWidth4 = 50
+        headerLine.column5 = "Role"
+        tempReport.columnWidth5 = 150
+        
+        tempReport.header = headerLine
+        
+        var currentDate: String = ""
+        var firstTime: Bool = true
+        
+        if currentEvent.staff != nil
+        {
+            for myShift in currentEvent.staff!.shifts
+            {
+                if myShift.workDateString != currentDate
+                {
+                    if !firstTime
+                    {
+                        let drawLine = reportLine()
+                        drawLine.drawLine = true
+                        tempReport.append(drawLine)
+                    }
+                    firstTime = false
+                    currentDate = myShift.workDateString
+                }
+                
+                let newTimeLine = reportLine()
+                
+                newTimeLine.column1 = myShift.personName
+                newTimeLine.column2 = myShift.workDateString
+                newTimeLine.column3 = myShift.startTimeString
+                newTimeLine.column4 = myShift.endTimeString
+                newTimeLine.column5 = myShift.shiftDescription
+
+                tempReport.append(newTimeLine)
+            }
+            
+            tempReport.createPDF()
+            
+            let activityViewController: UIActivityViewController = createActivityController(tempReport.PDF!, subject: titleString)
+            
+            activityViewController.popoverPresentationController!.sourceView = btnAddRole
+            
+            present(activityViewController, animated:true, completion:nil)
+        }
     }
     
     func myPickerDidFinish(_ source: String, selectedItem:Int)

@@ -668,6 +668,11 @@
                                                 <action selector="btnBack:" destination="AMn-e9-Bjg" id="1FY-cT-VAD"/>
                                             </connections>
                                         </barButtonItem>
+                                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="1OB-9u-kH5" userLabel="btnShare">
+                                            <connections>
+                                                <action selector="btnShare:" destination="AMn-e9-Bjg" id="Q3k-MX-rF9"/>
+                                            </connections>
+                                        </barButtonItem>
                                     </navigationItem>
                                 </items>
                             </navigationBar>
@@ -702,6 +707,7 @@
                         <outlet property="btnCreateShift" destination="a52-D1-Gx6" id="thf-aX-fEN"/>
                         <outlet property="btnNextWeek" destination="mxL-2C-msB" id="GyC-Ab-sIX"/>
                         <outlet property="btnPreviousWeek" destination="mTm-F5-Fae" id="kGY-xP-gu4"/>
+                        <outlet property="btnShare" destination="1OB-9u-kH5" id="cBg-gp-A30"/>
                         <outlet property="btnback" destination="1GD-JH-vAz" id="9DE-CS-jHb"/>
                         <outlet property="lblWEDate" destination="OtQ-jD-jXM" id="r0F-iv-wka"/>
                         <outlet property="lblWETitle" destination="Elg-9j-tAq" id="HWe-VU-KLe"/>
@@ -1020,6 +1026,11 @@
                                                 <action selector="btnBack:" destination="Qzn-bI-amV" id="kJ4-n1-BTG"/>
                                             </connections>
                                         </barButtonItem>
+                                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="6RF-jj-Xw8" userLabel="btnShare">
+                                            <connections>
+                                                <action selector="btnShare:" destination="Qzn-bI-amV" id="xCt-c2-1Zu"/>
+                                            </connections>
+                                        </barButtonItem>
                                     </navigationItem>
                                 </items>
                             </navigationBar>
@@ -1080,6 +1091,7 @@
                         <outlet property="btnDate" destination="hqB-Ic-a18" id="PuY-FO-Iyp"/>
                         <outlet property="btnMaintainTemplates" destination="ZMj-DB-2Xb" id="IpP-BK-i0t"/>
                         <outlet property="btnSelect" destination="VGb-zg-gpr" id="uC3-Wz-Cdd"/>
+                        <outlet property="btnShare" destination="6RF-jj-Xw8" id="9sL-06-no0"/>
                         <outlet property="btnTemplate" destination="EjT-u0-LbK" id="yvr-GE-nt4"/>
                         <outlet property="lblAddToRole" destination="CQQ-a4-L6T" id="0Ht-Dh-Z6i"/>
                         <outlet property="lblContractName" destination="2IC-22-Pnv" id="pfV-zh-WfA"/>

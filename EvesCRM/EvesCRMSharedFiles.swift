@@ -1757,43 +1757,4 @@ func createActivityController(_ message: String, subject: String = "") -> UIActi
     return activityViewController
 }
 
-func writePDFHeaderEntry(title: String, x: Int, y: Int, width: Int, height: Int)
-{
-    let titleParagraphStyle = NSMutableParagraphStyle()
-    titleParagraphStyle.alignment = .left
-    
-    let titleFontAttributes = [
-        NSFontAttributeName: UIFont.boldSystemFont(ofSize: 12),
-        NSParagraphStyleAttributeName:titleParagraphStyle,
-        NSForegroundColorAttributeName: UIColor.gray
-    ]
-    
-    let headerRect = CGRect(
-        x: x,
-        y: y,
-        width: width,
-        height: height)
-    
-    title.draw(in: headerRect, withAttributes: titleFontAttributes)
-}
-
-func writePDFEntry(title: String, x: Int, y: Int, width: Int, height: Int)
-{
-    let titleParagraphStyle = NSMutableParagraphStyle()
-    titleParagraphStyle.alignment = .left
-    
-    let dataFontAttributes = [
-        NSFontAttributeName: UIFont.systemFont(ofSize: 10),
-        NSParagraphStyleAttributeName:titleParagraphStyle,
-        NSForegroundColorAttributeName: UIColor.gray
-    ]
-    
-    let headerRect = CGRect(
-        x: x,
-        y: y,
-        width: width,
-        height: height)
-    
-    title.draw(in: headerRect, withAttributes: dataFontAttributes)
-}
 

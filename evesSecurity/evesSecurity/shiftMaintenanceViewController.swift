@@ -18,6 +18,7 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
     @IBOutlet weak var btnCreateShift: UIButton!
     @IBOutlet weak var btnPreviousWeek: UIButton!
     @IBOutlet weak var btnNextWeek: UIButton!
+    @IBOutlet weak var btnShare: UIBarButtonItem!
 
     var communicationDelegate: myCommunicationDelegate?
     
@@ -262,6 +263,147 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
     {
         currentWeekEndingDate = addDays(to: currentWeekEndingDate, days: 7)
         refreshScreen()
+    }
+    
+    @IBAction func btnShare(_ sender: UIBarButtonItem)
+    {
+        let tempReport = report()
+        
+        let titleString = "\(currentUser.currentTeam!.name) Roster For Week Ending \(lblWEDate.text!)"
+        tempReport.name = titleString
+
+        let headerLine = reportLine()
+        headerLine.column1 = "Name"
+        tempReport.columnWidth1 = 150
+        headerLine.column2 = "Mon"
+        tempReport.columnWidth2 = 80
+        headerLine.column3 = "Tue"
+        tempReport.columnWidth3 = 80
+        headerLine.column4 = "Wed"
+        tempReport.columnWidth4 = 80
+        headerLine.column5 = "Thu"
+        tempReport.columnWidth5 = 80
+        headerLine.column6 = "Fri"
+        tempReport.columnWidth6 = 80
+        headerLine.column7 = "Sat"
+        tempReport.columnWidth7 = 80
+        headerLine.column8 = "Sun"
+        tempReport.columnWidth8 = 80
+
+        tempReport.header = headerLine
+        tempReport.landscape()
+        
+        var currentContract: String = ""
+        
+        var firstTime: Bool = true
+        
+        if shiftList.count > 0
+        {
+            for myShift in shiftList
+            {
+                if myShift.contract != currentContract
+                {
+                    if !firstTime
+                    {
+                        let drawLine = reportLine()
+                        drawLine.drawLine = true
+                        tempReport.append(drawLine)
+                    }
+                    firstTime = false
+                    let newReportLine = reportLine()
+                    newReportLine.column1 = myShift.contract
+                    tempReport.append(newReportLine)
+                    currentContract = myShift.contract
+                }
+                else
+                {
+                    let drawLine = reportLine()
+                    drawLine.drawLine = true
+                    drawLine.lineColour = UIColor.gray
+                    
+                    tempReport.append(drawLine)
+                }
+                
+                let newTimeLine = reportLine()
+                let newPersonLine = reportLine()
+                
+                newTimeLine.column1 = myShift.description
+            
+                if myShift.monShift != nil
+                {
+                    newTimeLine.column2 = "\(myShift.monShift.startTimeString) - \(myShift.monShift.endTimeString)"
+                    if myShift.monShift.personID != 0
+                    {
+                        newPersonLine.column2 = "\(myShift.monShift.personName)"
+                    }
+                }
+                
+                if myShift.tueShift != nil
+                {
+                    newTimeLine.column3 = "\(myShift.tueShift.startTimeString) - \(myShift.tueShift.endTimeString)"
+                    if myShift.tueShift.personID != 0
+                    {
+                        newPersonLine.column3 = "\(myShift.tueShift.personName)"
+                    }
+                }
+                
+                if myShift.wedShift != nil
+                {
+                    newTimeLine.column4 = "\(myShift.wedShift.startTimeString) - \(myShift.wedShift.endTimeString)"
+                    if myShift.wedShift.personID != 0
+                    {
+                        newPersonLine.column4 = "\(myShift.wedShift.personName)"
+                    }
+                }
+                
+                if myShift.thuShift != nil
+                {
+                    newTimeLine.column5 = "\(myShift.thuShift.startTimeString) - \(myShift.thuShift.endTimeString)"
+                    if myShift.thuShift.personID != 0
+                    {
+                        newPersonLine.column5 = "\(myShift.thuShift.personName)"
+                    }
+                }
+                
+                if myShift.friShift != nil
+                {
+                    newTimeLine.column6 = "\(myShift.friShift.startTimeString) - \(myShift.friShift.endTimeString)"
+                    if myShift.friShift.personID != 0
+                    {
+                        newPersonLine.column6 = "\(myShift.friShift.personName)"
+                    }
+                }
+                
+                if myShift.satShift != nil
+                {
+                    newTimeLine.column7 = "\(myShift.satShift.startTimeString) - \(myShift.satShift.endTimeString)"
+                    if myShift.satShift.personID != 0
+                    {
+                        newPersonLine.column7 = "\(myShift.satShift.personName)"
+                    }
+                }
+                
+                if myShift.sunShift != nil
+                {
+                    newTimeLine.column8 = "\(myShift.sunShift.startTimeString) - \(myShift.sunShift.endTimeString)"
+                    if myShift.sunShift.personID != 0
+                    {
+                        newPersonLine.column8 = "\(myShift.sunShift.personName)"
+                    }
+                }
+                
+                tempReport.append(newTimeLine)
+                tempReport.append(newPersonLine)
+            }
+        
+            tempReport.createPDF()
+            
+            let activityViewController: UIActivityViewController = createActivityController(tempReport.PDF!, subject: titleString)
+            
+            activityViewController.popoverPresentationController!.sourceView = btnCreateShift
+            
+            present(activityViewController, animated:true, completion:nil)
+        }
     }
 
     func myPickerDidFinish(_ source: String, selectedItem:Int)

@@ -15,24 +15,6 @@ struct alertStruct
     var sourceObject: AnyObject!
 }
 
-struct reportListStruct
-{
-    var reportName: String
-    var reportID: Int
-}
-
-struct displayStruct
-{
-    var line1: String
-    var line2: String
-    var line3: String
-    var line4: String
-    var line5: String
-    var line6: String
-    var line7: String
-    var sourceObject: Any
-}
-
 class securityViewController: UIViewController, myCommunicationDelegate, UITableViewDataSource, UITableViewDelegate, MyPickerDelegate, UIPopoverPresentationControllerDelegate
 {
     @IBOutlet weak var btnSettings: UIBarButtonItem!
@@ -56,6 +38,27 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     @IBOutlet weak var lbl5: UILabel!
     @IBOutlet weak var lbl6: UILabel!
     @IBOutlet weak var lbl7: UILabel!
+    @IBOutlet weak var lbl8: UILabel!
+    @IBOutlet weak var lbl9: UILabel!
+    @IBOutlet weak var lbl10: UILabel!
+    @IBOutlet weak var lbl11: UILabel!
+    @IBOutlet weak var lbl13: UILabel!
+    @IBOutlet weak var lbl12: UILabel!
+    @IBOutlet weak var lbl14: UILabel!
+    @IBOutlet weak var constraintWidth1: NSLayoutConstraint!
+    @IBOutlet weak var constraintWidth2: NSLayoutConstraint!
+    @IBOutlet weak var constraintWidth3: NSLayoutConstraint!
+    @IBOutlet weak var constraintWidth4: NSLayoutConstraint!
+    @IBOutlet weak var constraintWidth5: NSLayoutConstraint!
+    @IBOutlet weak var constraintWidth6: NSLayoutConstraint!
+    @IBOutlet weak var constraintWidth7: NSLayoutConstraint!
+    @IBOutlet weak var constraintWidth8: NSLayoutConstraint!
+    @IBOutlet weak var constraintWidth9: NSLayoutConstraint!
+    @IBOutlet weak var constraintWidth10: NSLayoutConstraint!
+    @IBOutlet weak var constraintWidth11: NSLayoutConstraint!
+    @IBOutlet weak var constraintWidth12: NSLayoutConstraint!
+    @IBOutlet weak var constraintWidth13: NSLayoutConstraint!
+    @IBOutlet weak var constraintWidth14: NSLayoutConstraint!
     @IBOutlet weak var btnMonthlyRoster: UIButton!
     @IBOutlet weak var lblYear: UILabel!
     @IBOutlet weak var btnYear: UIButton!
@@ -63,16 +66,12 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     fileprivate var contractList: projects!
     fileprivate var alertList: [alertStruct] = Array()
     
-    fileprivate var reportList: [reportListStruct] = Array()
+    fileprivate var reportList: reports = reports()
     fileprivate var displayList: [String] = Array()
     fileprivate var monthList: [String] = Array()
     
     fileprivate var currentReportID: Int = 0
-    fileprivate var displayArray: [displayStruct] = Array()
     fileprivate var reportString: String = ""
-    
-    fileprivate var paperSize = CGRect(x:0.0, y:0.0, width:595.276, height:841.89)
-
     
     var communicationDelegate: myCommunicationDelegate?
     
@@ -139,32 +138,15 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         switch tableView
         {
             case tblData1:
-//                pdfData = NSMutableData()
-//                //UIGraphicsBeginPDFContextToData(pdfData, paperSize, nil)
-//                UIGraphicsBeginPDFPageWithInfo(paperSize, nil)
-                
-                
-                reportString = ""
-                
-                switch currentReportID
+                for myItem in reportList.reports
                 {
-                    case 0, 1:
-                        return displayArray.count
-                        
-//                    case 1:
-//                        return displayArray.count
-                
-                    case 2:
-                        return 0
-                    
-                    case 3:
-                        return 0
-                    
-                    default:
-                        print("unknow entry numberOfRowsInSection - currentReportID - \(currentReportID)")
-                        return 0
+                    if myItem.name == btnReport.currentTitle!
+                    {
+                        return myItem.count
+                    }
                 }
             
+                return 0
             case tblAlerts:
                  return alertList.count
             
@@ -178,7 +160,32 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         switch tableView
         {
             case tblData1:
-                let cell = buildRowForReport(tableView, indexPath: indexPath)
+                let cell = tableView.dequeueReusableCell(withIdentifier:"cellData1", for: indexPath) as! contractsListItem
+                
+                for myItem in reportList.reports
+                {
+                    if myItem.name == btnReport.currentTitle!
+                    {
+                        let reportEntry = myItem.lines[indexPath.row]
+                        buildReportCell(label: cell.lbl1, text: reportEntry.column1, width: CGFloat(myItem.columnWidth1), constraint: cell.constraintWidth1)
+                        buildReportCell(label: cell.lbl2, text: reportEntry.column2, width: CGFloat(myItem.columnWidth2), constraint: cell.constraintWidth2)
+                        buildReportCell(label: cell.lbl3, text: reportEntry.column3, width: CGFloat(myItem.columnWidth3), constraint: cell.constraintWidth3)
+                        buildReportCell(label: cell.lbl4, text: reportEntry.column4, width: CGFloat(myItem.columnWidth4), constraint: cell.constraintWidth4)
+                        buildReportCell(label: cell.lbl5, text: reportEntry.column5, width: CGFloat(myItem.columnWidth5), constraint: cell.constraintWidth5)
+                        buildReportCell(label: cell.lbl6, text: reportEntry.column6, width: CGFloat(myItem.columnWidth6), constraint: cell.constraintWidth6)
+                        buildReportCell(label: cell.lbl7, text: reportEntry.column7, width: CGFloat(myItem.columnWidth7), constraint: cell.constraintWidth7)
+                        buildReportCell(label: cell.lbl8, text: reportEntry.column8, width: CGFloat(myItem.columnWidth8), constraint: cell.constraintWidth8)
+                        buildReportCell(label: cell.lbl9, text: reportEntry.column9, width: CGFloat(myItem.columnWidth9), constraint: cell.constraintWidth9)
+                        buildReportCell(label: cell.lbl10, text: reportEntry.column10, width: CGFloat(myItem.columnWidth10), constraint: cell.constraintWidth10)
+                        buildReportCell(label: cell.lbl11, text: reportEntry.column11, width: CGFloat(myItem.columnWidth11), constraint: cell.constraintWidth11)
+                        buildReportCell(label: cell.lbl12, text: reportEntry.column12, width: CGFloat(myItem.columnWidth12), constraint: cell.constraintWidth12)
+                        buildReportCell(label: cell.lbl13, text: reportEntry.column13, width: CGFloat(myItem.columnWidth13), constraint: cell.constraintWidth13)
+                        buildReportCell(label: cell.lbl14, text: reportEntry.column14, width: CGFloat(myItem.columnWidth14), constraint: cell.constraintWidth14)
+                        
+                        break
+                    }
+                }
+                
                 return cell
             
             case tblAlerts:
@@ -199,26 +206,48 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         switch tableView
         {
             case tblData1:
-                switch currentReportID
+                for reportEntry in reportList.reports
                 {
-                    case 0:
-                        let contractEditViewControl = projectsStoryboard.instantiateViewController(withIdentifier: "contractMaintenance") as! contractMaintenanceViewController
-                        contractEditViewControl.communicationDelegate = self
-                        contractEditViewControl.workingContract = contractList.projects[indexPath.row]
-                        self.present(contractEditViewControl, animated: true, completion: nil)
-                    
-                    default:
-                        let rosterViewControl = shiftsStoryboard.instantiateViewController(withIdentifier: "monthlyRoster") as! monthlyRosterViewController
-                        rosterViewControl.communicationDelegate = self
-                        
-                        let tempPerson = displayArray[indexPath.row].sourceObject as! person
-                        rosterViewControl.selectedPerson = tempPerson
-                        
-                        rosterViewControl.month = btnDropdown.currentTitle!
-                        rosterViewControl.year = btnYear.currentTitle!
-                        self.present(rosterViewControl, animated: true, completion: nil)
+                    if reportEntry.name == btnReport.currentTitle!
+                    {
+                        switch reportEntry.name
+                        {
+                            case "Contract for Month":  // Contract for month
+                                let contractEditViewControl = projectsStoryboard.instantiateViewController(withIdentifier: "contractMaintenance") as! contractMaintenanceViewController
+                                contractEditViewControl.communicationDelegate = self
+                                
+                                let tempObject = reportEntry.lines[indexPath.row].sourceObject as! project
+                                contractEditViewControl.workingContract = tempObject
+                                
+                                //contractEditViewControl.workingContract = contractList.projects[indexPath.row]
+                                self.present(contractEditViewControl, animated: true, completion: nil)
+                                
+                            case "Wages for Month":  // Wage per person for month
+                                let rosterViewControl = shiftsStoryboard.instantiateViewController(withIdentifier: "monthlyRoster") as! monthlyRosterViewController
+                                rosterViewControl.communicationDelegate = self
+                                
+                                let tempObject = reportEntry.lines[indexPath.row].sourceObject as! person
+                                rosterViewControl.selectedPerson = tempObject
+                                
+                                rosterViewControl.month = btnDropdown.currentTitle!
+                                rosterViewControl.year = btnYear.currentTitle!
+                                self.present(rosterViewControl, animated: true, completion: nil)
+                                
+                            case "Contract for Year":
+                                let _ = 1
+                                
+                            case "Annual Report":
+                                let _ = 1
+                                
+                            default:
+                                print("unknow entry myPickerDidFinish - selectedItem - \(reportEntry.name)")
+                        }
+
+                       
+                        break
+                    }
                 }
-            
+
             case tblAlerts:
                 switch alertList[indexPath.row].source
                 {
@@ -264,35 +293,6 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         }
     }
     
-    func buildRowForReport(_ tableView: UITableView, indexPath: IndexPath) -> contractsListItem
-    {
-        switch currentReportID
-        {
-            case 0, 1:
-                let cell = tableView.dequeueReusableCell(withIdentifier:"cellData1", for: indexPath) as! contractsListItem
-                
-                cell.lbl1.text = displayArray[indexPath.row].line1
-                cell.lbl2.text = displayArray[indexPath.row].line2
-                cell.lbl3.text = displayArray[indexPath.row].line3
-                cell.lbl4.text = displayArray[indexPath.row].line4
-                cell.lbl5.text = displayArray[indexPath.row].line5
-                cell.lbl6.text = displayArray[indexPath.row].line6
-                cell.lbl7.text = displayArray[indexPath.row].line7
-                
-                return cell
-
-            case 2:
-                return contractsListItem()
-                
-            case 3:
-                return contractsListItem()
-                
-            default:
-                print("unknow entry buildRowForReport - currentReportID - \(currentReportID)")
-                return contractsListItem()
-        }
-    }
-    
     @IBAction func btnSettings(_ sender: UIBarButtonItem)
     {
         let userEditViewControl = self.storyboard?.instantiateViewController(withIdentifier: "settings") as! settingsViewController
@@ -301,147 +301,26 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     
     @IBAction func btnShare(_ sender: UIBarButtonItem)
     {
-        var leftSide: Int = 0
-        var topSide: Int = 0
-        let height: Int = 30
-        var subject: String = "'"
-        
-        let pdfData: NSMutableData = NSMutableData()
-        UIGraphicsBeginPDFContextToData(pdfData, .zero, nil)
-        UIGraphicsBeginPDFPageWithInfo(paperSize, nil)
-        
-        switch currentReportID
+        for myItem in reportList.reports
         {
-            case 0:  // Contract for month
-                subject = "Contracts for the month of \(btnDropdown.currentTitle!)"
+            if myItem.name == btnReport.currentTitle!
+            {
+                myItem.createPDF()
                 
-                let column1Width = 100
-                let column2Width = 150
-                let column3Width = 50
-                let column4Width = 50
-                let column5Width = 50
-                let column6Width = 50
-                let column7Width = 50
-                
-                report0Header(column1Width: column1Width, column2Width: column2Width, column3Width: column3Width, column4Width: column4Width, column5Width: column5Width, column6Width: column6Width, column7Width: column7Width)
-
-                for myItem in displayArray
+                if myItem.PDF != nil
                 {
-                    topSide += 5 + height
-
-                    if CGFloat(topSide) >= paperSize.height
-                    {
-                        UIGraphicsBeginPDFPageWithInfo(paperSize, nil)
-                        report0Header(column1Width: column1Width, column2Width: column2Width, column3Width: column3Width, column4Width: column4Width, column5Width: column5Width, column6Width: column6Width, column7Width: column7Width)
-                        topSide = 5 + height
-                    }
+                    let activityViewController: UIActivityViewController = createActivityController(myItem.PDF!, subject: myItem.subject)
                     
-                    leftSide = 0
+                    activityViewController.popoverPresentationController!.sourceView = self.view
                     
-                    writePDFEntry(title: myItem.line1, x: leftSide, y: topSide, width: column1Width, height: height)
-                    leftSide += 5 + column1Width
-                    
-                    writePDFEntry(title: myItem.line2, x: leftSide, y: topSide, width: column2Width, height: height)
-                    leftSide += 5 + column2Width
-                    
-                    writePDFEntry(title: myItem.line3, x: leftSide, y: topSide, width: column3Width, height: height)
-                    leftSide += 5 + column3Width
-                    
-                    writePDFEntry(title: myItem.line4, x: leftSide, y: topSide, width: column4Width, height: height)
-                    leftSide += 5 + column4Width
-                    
-                    writePDFEntry(title: myItem.line5, x: leftSide, y: topSide, width: column5Width, height: height)
-                    leftSide += 5 + column5Width
-                    
-                    writePDFEntry(title: myItem.line6, x: leftSide, y: topSide, width: column6Width, height: height)
-                    leftSide += 5 + column6Width
-                    
-                    writePDFEntry(title: myItem.line7, x: leftSide, y: topSide, width: column7Width, height: height)
+                    present(activityViewController, animated:true, completion:nil)
                 }
-            
-            case 1:  // Wage per person for month
-                subject = "Wages for the month of \(btnDropdown.currentTitle!)"
-                
-                let column1Width = 150
-                let column2Width = 50
-                let column3Width = 50
-                
-                report1Header(column1Width: column1Width, column2Width: 50, column3Width: 50)
-                
-                for myItem in displayArray
-                {
-                    topSide += 5 + height
-                    if CGFloat(topSide) >= paperSize.height
-                    {
-                        UIGraphicsBeginPDFPageWithInfo(paperSize, nil)
-                        report1Header(column1Width: column1Width, column2Width: 50, column3Width: 50)
-                        topSide = 5 + height
-                    }
-
-                    leftSide = 0
-                    
-                    writePDFEntry(title: myItem.line2, x: leftSide, y: topSide, width: column1Width, height: height)
-                    leftSide += 5 + column1Width
-                    
-                    writePDFEntry(title: myItem.line3, x: leftSide, y: topSide, width: column2Width, height: height)
-                    leftSide += 5 + column2Width
-                    
-                    writePDFEntry(title: myItem.line4, x: leftSide, y: topSide, width: column3Width, height: height)
+                break
             }
-                
-            default:
-                print("btnShare hit default - \(currentReportID)")
         }
-        
-        UIGraphicsEndPDFContext()
-        
-        let activityViewController: UIActivityViewController = createActivityController(pdfData, subject: subject)
-        
-        activityViewController.popoverPresentationController!.sourceView = self.view
-        
-        present(activityViewController, animated:true, completion:nil)
     }
     
-    func report0Header(column1Width: Int, column2Width: Int, column3Width: Int, column4Width: Int, column5Width: Int, column6Width: Int, column7Width: Int)
-    {
-        var leftSide: Int = 0
-        let height: Int = 30
-        
-        writePDFHeaderEntry(title: "Client", x: leftSide, y: 0, width: column1Width, height: height)
-        leftSide += 5 + column1Width
-
-        writePDFHeaderEntry(title: "Contract", x: leftSide, y: 0, width: column2Width, height: height)
-        leftSide += 5 + column2Width
-
-        writePDFHeaderEntry(title: "Cost", x: leftSide, y: 0, width: column3Width, height: height)
-        leftSide += 5 + column3Width
-
-        writePDFHeaderEntry(title: "Hours", x: leftSide, y: 0, width: column4Width, height: height)
-        leftSide += 5 + column4Width
-
-        writePDFHeaderEntry(title: "Income", x: leftSide, y: 0, width: column5Width, height: height)
-        leftSide += 5 + column5Width
-
-        writePDFHeaderEntry(title: "Profit", x: leftSide, y: 0, width: column6Width, height: height)
-        leftSide += 5 + column6Width
-
-        writePDFHeaderEntry(title: "GP%", x: leftSide, y: 0, width: column7Width, height: height)
-    }
-    
-    func report1Header(column1Width: Int, column2Width: Int, column3Width: Int)
-    {
-        var leftSide: Int = 0
-        let height: Int = 30
-        
-        writePDFHeaderEntry(title: "Name", x: leftSide, y: 0, width: column1Width, height: height)
-        leftSide += 5 + column1Width
-        
-        writePDFHeaderEntry(title: "Hours", x: leftSide, y: 0, width: column2Width, height: height)
-        leftSide += 5 + column2Width
-        
-        writePDFHeaderEntry(title: "Pay", x: leftSide, y: 0, width: column3Width, height: height)
-    }
-
+ 
     @IBAction func btnPeople(_ sender: UIButton)
     {
         let peopleEditViewControl = personStoryboard.instantiateViewController(withIdentifier: "personForm") as! personViewController
@@ -480,9 +359,9 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     {
         displayList.removeAll()
         
-        for myItem in reportList
+        for myItem in reportList.reports
         {
-            displayList.append(myItem.reportName)
+            displayList.append(myItem.name)
         }
         
         let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
@@ -773,15 +652,67 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     func buildReportList()
     {
         reportList.removeAll()
+    
+        buildReportLine(name: "Contract for Month",
+                        text1: "Client", width1: 200,
+                        text2: "Contract", width2: 200,
+                        text3: "Hours", width3: 100,
+                        text4: "Cost", width4: 100,
+                        text5: "Income", width5: 100,
+                        text6: "Profit", width6: 100,
+                        text7: "GP%", width7: 50
+                        )
+
+        buildReportLine(name: "Wages for Month",
+                        text1: "Name", width1: 200,
+                        text2: "Hours", width2: 100,
+                        text3: "Pay", width3: 100
+                        )
+
+        buildReportLine(name: "Contract for Year")
+
+        buildReportLine(name: "Annual Report")
+
+    }
+    
+    func buildReportLine(name: String, text1: String = "", width1: Int = 0, text2: String = "", width2: Int = 0, text3: String = "", width3: Int = 0, text4: String = "", width4: Int = 0, text5: String = "", width5: Int = 0, text6: String = "", width6: Int = 0, text7: String = "", width7: Int = 0, text8: String = "", width8: Int = 0, text9: String = "", width9: Int = 0, text10: String = "", width10: Int = 0, text11: String = "", width11: Int = 0, text12: String = "", width12: Int = 0, text13: String = "", width13: Int = 0, text14: String = "", width14: Int = 0)
+    {
+        let newReport = report()
+        newReport.name = name
+        newReport.columnWidth1 = width1
+        newReport.columnWidth2 = width2
+        newReport.columnWidth3 = width3
+        newReport.columnWidth4 = width4
+        newReport.columnWidth5 = width5
+        newReport.columnWidth6 = width6
+        newReport.columnWidth7 = width7
+        newReport.columnWidth8 = width8
+        newReport.columnWidth9 = width9
+        newReport.columnWidth10 = width10
+        newReport.columnWidth11 = width11
+        newReport.columnWidth12 = width12
+        newReport.columnWidth13 = width13
+        newReport.columnWidth14 = width14
         
-        let report1 = reportListStruct(reportName: "Contract for Month", reportID: 0)
-        reportList.append(report1)
-        let report2 = reportListStruct(reportName: "Wages for Month", reportID: 0)
-        reportList.append(report2)
-        let report3 = reportListStruct(reportName: "Contract for Year", reportID: 0)
-        reportList.append(report3)
-        let report4 = reportListStruct(reportName: "Annual Report", reportID: 0)
-        reportList.append(report4)
+        let newReportHeader = reportLine()
+        newReportHeader.column1 = text1
+        newReportHeader.column2 = text2
+        newReportHeader.column3 = text3
+        newReportHeader.column4 = text4
+        newReportHeader.column5 = text5
+        newReportHeader.column6 = text6
+        newReportHeader.column7 = text7
+        newReportHeader.column8 = text8
+        newReportHeader.column9 = text9
+        newReportHeader.column10 = text10
+        newReportHeader.column11 = text11
+        newReportHeader.column12 = text12
+        newReportHeader.column13 = text13
+        newReportHeader.column14 = text14
+        
+        newReport.header = newReportHeader
+        
+        reportList.append(newReport)
     }
     
     func myPickerDidFinish(_ source: String, selectedItem:Int)
@@ -798,7 +729,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         
         if source == "report"
         {
-            btnReport.setTitle(reportList[workingItem].reportName, for: .normal)
+            btnReport.setTitle(reportList.reports[workingItem].name, for: .normal)
             
             switch workingItem
             {
@@ -884,32 +815,73 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         {
             print("unknown entry myPickerDidFinish - source - \(source)")
         }
-
-        lbl1.isHidden = true
-        lbl2.isHidden = true
-        lbl3.isHidden = true
-        lbl4.isHidden = true
-        lbl5.isHidden = true
-        lbl6.isHidden = true
-        lbl7.isHidden = true
         
         // see if we can run the report, and if so do it
         
-        switch currentReportID
+        for myItem in reportList.reports
         {
-            case 0:  // Contract for month
-                if btnDropdown.currentTitle != "Select"
+            if myItem.name == btnReport.currentTitle!
+            {
+                buildReport(myItem)
+                break
+            }
+        }
+    }
+    
+    func buildReportCell(label: UILabel, text: String, width: CGFloat, constraint: NSLayoutConstraint)
+    {
+        if width == 0.0
+        {
+            label.isHidden = true
+        }
+        else
+        {
+            label.isHidden = false
+        }
+        constraint.constant = width
+        
+        label.text = text
+    }
+    
+    func buildReport(_ reportEntry: report)
+    {
+        buildReportCell(label: lbl1, text: reportEntry.header.column1, width: CGFloat(reportEntry.columnWidth1), constraint: constraintWidth1)
+        buildReportCell(label: lbl2, text: reportEntry.header.column2, width: CGFloat(reportEntry.columnWidth2), constraint: constraintWidth2)
+        buildReportCell(label: lbl3, text: reportEntry.header.column3, width: CGFloat(reportEntry.columnWidth3), constraint: constraintWidth3)
+        buildReportCell(label: lbl4, text: reportEntry.header.column4, width: CGFloat(reportEntry.columnWidth4), constraint: constraintWidth4)
+        buildReportCell(label: lbl5, text: reportEntry.header.column5, width: CGFloat(reportEntry.columnWidth5), constraint: constraintWidth5)
+        buildReportCell(label: lbl6, text: reportEntry.header.column6, width: CGFloat(reportEntry.columnWidth6), constraint: constraintWidth6)
+        buildReportCell(label: lbl7, text: reportEntry.header.column7, width: CGFloat(reportEntry.columnWidth7), constraint: constraintWidth7)
+        buildReportCell(label: lbl8, text: reportEntry.header.column8, width: CGFloat(reportEntry.columnWidth8), constraint: constraintWidth8)
+        buildReportCell(label: lbl9, text: reportEntry.header.column9, width: CGFloat(reportEntry.columnWidth9), constraint: constraintWidth9)
+        buildReportCell(label: lbl10, text: reportEntry.header.column10, width: CGFloat(reportEntry.columnWidth10), constraint: constraintWidth10)
+        buildReportCell(label: lbl11, text: reportEntry.header.column11, width: CGFloat(reportEntry.columnWidth11), constraint: constraintWidth11)
+        buildReportCell(label: lbl12, text: reportEntry.header.column12, width: CGFloat(reportEntry.columnWidth12), constraint: constraintWidth12)
+        buildReportCell(label: lbl13, text: reportEntry.header.column13, width: CGFloat(reportEntry.columnWidth13), constraint: constraintWidth13)
+        buildReportCell(label: lbl14, text: reportEntry.header.column14, width: CGFloat(reportEntry.columnWidth14), constraint: constraintWidth14)
+    
+        reportEntry.removeAll()
+        // Lets process through the report
+        
+        switch reportEntry.name
+        {
+            case "Contract for Month":  // Contract for month
+                contractList = projects(teamID: currentUser.currentTeam!.teamID, includeEvents: true)
+                
+                contractList.loadFinancials(month: btnDropdown.currentTitle!, year: btnYear.currentTitle!)
+                
+                var lastClientID: Int = -1
+                
+                for myItem in contractList.projects
                 {
-                    contractList = projects(teamID: currentUser.currentTeam!.teamID, includeEvents: true)
-
-                    contractList.loadFinancials(month: btnDropdown.currentTitle!, year: btnYear.currentTitle!)
-
-                    displayArray.removeAll()
+                    let profit = myItem.financials[0].income - myItem.financials[0].expense
                     
-                    var lastClientID: Int = 0
+                    let gp = (profit/myItem.financials[0].income)  * 100
                     
-                    for myItem in contractList.projects
+                    if myItem.financials[0].income != 0 || myItem.financials[0].expense != 0
                     {
+                        let newReportLine = reportLine()
+                        
                         var clientName: String = ""
                         if myItem.clientID != lastClientID
                         {
@@ -918,112 +890,56 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                             lastClientID = myItem.clientID
                         }
                         
-                        let profit = myItem.financials[0].income - myItem.financials[0].expense
+                        newReportLine.column1 = clientName
+                        newReportLine.column2 = myItem.projectName
+                        newReportLine.column3 = formatCurrency(myItem.financials[0].expense)
+                        newReportLine.column4 = formatHours(myItem.financials[0].hours)
+                        newReportLine.column5 = formatCurrency(myItem.financials[0].income)
+                        newReportLine.column6 = formatCurrency(profit)
+                        newReportLine.column7 = formatPercent(gp)
+                        newReportLine.sourceObject = myItem
                         
-                        let gp = (profit/myItem.financials[0].income)  * 100
-                        
-                        if myItem.financials[0].income != 0 || myItem.financials[0].expense != 0
-                        {
-                            let newEentry = displayStruct(
-                                                        line1: clientName,
-                                                        line2: myItem.projectName,
-                                                        line3: formatCurrency(myItem.financials[0].expense),
-                                                        line4: formatHours(myItem.financials[0].hours),
-                                                        line5: formatCurrency(myItem.financials[0].income),
-                                                        line6: formatCurrency(profit),
-                                                        line7: formatPercent(gp),
-                                                        sourceObject: myItem
-                                                            )
-                            displayArray.append(newEentry)
-                        }
+                        reportEntry.append(newReportLine)
                     }
-  
-                    lbl1.isHidden = false
-                    lbl2.isHidden = false
-                    lbl3.isHidden = false
-                    lbl4.isHidden = false
-                    lbl5.isHidden = false
-                    lbl6.isHidden = false
-                    lbl7.isHidden = false
-                    
-                    lbl1.text = "Client"
-                    lbl2.text = "Contract"
-                    lbl3.text = "Cost"
-                    lbl4.text = "Hours"
-                    lbl5.text = "Income"
-                    lbl6.text = "Profit"
-                    lbl7.text = "GP%"
-                    
-                    tblData1.isHidden = false
-                    tblData1.reloadData()
                 }
-                else
+
+                
+            case "Wages for Month":  // Wage per person for month
+
+                for myItem in people(teamID: currentUser.currentTeam!.teamID).people
                 {
-                    tblData1.isHidden = true
-                }
-            
-            case 1:  // Wage per person for month
-                if btnDropdown.currentTitle != "Select"
-                {
-                    displayArray.removeAll()
+                    let monthReport = myItem.getFinancials(month: btnDropdown.currentTitle!, year: btnYear.currentTitle!)
                     
-                    for myItem in people(teamID: currentUser.currentTeam!.teamID).people
+                    if monthReport.hours != 0
                     {
-                        let monthReport = myItem.getFinancials(month: btnDropdown.currentTitle!, year: btnYear.currentTitle!)
+                        let newReportLine = reportLine()
                         
-                        if monthReport.hours != 0
-                        {
-                            let newEntry = displayStruct(
-                                line1: "",
-                                line2: myItem.name,
-                                line3: formatHours(monthReport.hours),
-                                line4: formatCurrency(monthReport.wage),
-                                line5: "",
-                                line6: "",
-                                line7: "",
-                                sourceObject: myItem
-                            )
-                            displayArray.append(newEntry)
-                        }
+                        newReportLine.column1 = myItem.name
+                        newReportLine.column2 = formatHours(monthReport.hours)
+                        newReportLine.column3 = formatCurrency(monthReport.wage)
+
+                        newReportLine.sourceObject = myItem
+                        
+                        reportEntry.append(newReportLine)
                     }
-                    
-                    lbl1.isHidden = true
-                    lbl2.isHidden = false
-                    lbl3.isHidden = false
-                    lbl4.isHidden = false
-                    lbl5.isHidden = true
-                    lbl6.isHidden = true
-                    lbl7.isHidden = true
-                    
-                    lbl1.text = ""
-                    lbl2.text = "Name"
-                    lbl3.text = "Hours"
-                    lbl4.text = "Pay"
-                    lbl5.text = ""
-                    lbl6.text = ""
-                    lbl7.text = ""
-                    
-                    tblData1.isHidden = false
-                    tblData1.reloadData()
                 }
-                else
-                {
-                    tblData1.isHidden = true
-            }
-            
-            case 2:
-            
+                
+            case "Contract for Year":
+                
                 tblData1.isHidden = false
                 tblData1.reloadData()
-            
-            case 3:
+                
+            case "Annual Report":
                 
                 tblData1.isHidden = false
                 tblData1.reloadData()
                 
             default:
-                print("unknow entry myPickerDidFinish - selectedItem - \(selectedItem)")
+                print("unknow entry myPickerDidFinish - selectedItem - \(reportEntry.name)")
         }
+
+        tblData1.isHidden = false
+        tblData1.reloadData()
     }
     
     func populateDropdowns()
@@ -1082,6 +998,27 @@ class contractsListItem: UITableViewCell
     @IBOutlet weak var lbl5: UILabel!
     @IBOutlet weak var lbl6: UILabel!
     @IBOutlet weak var lbl7: UILabel!
+    @IBOutlet weak var lbl8: UILabel!
+    @IBOutlet weak var lbl9: UILabel!
+    @IBOutlet weak var lbl10: UILabel!
+    @IBOutlet weak var lbl11: UILabel!
+    @IBOutlet weak var lbl12: UILabel!
+    @IBOutlet weak var lbl13: UILabel!
+    @IBOutlet weak var lbl14: UILabel!
+    @IBOutlet weak var constraintWidth1: NSLayoutConstraint!
+    @IBOutlet weak var constraintWidth2: NSLayoutConstraint!
+    @IBOutlet weak var constraintWidth3: NSLayoutConstraint!
+    @IBOutlet weak var constraintWidth4: NSLayoutConstraint!
+    @IBOutlet weak var constraintWidth5: NSLayoutConstraint!
+    @IBOutlet weak var constraintWidth6: NSLayoutConstraint!
+    @IBOutlet weak var constraintWidth7: NSLayoutConstraint!
+    @IBOutlet weak var constraintWidth8: NSLayoutConstraint!
+    @IBOutlet weak var constraintWidth9: NSLayoutConstraint!
+    @IBOutlet weak var constraintWidth10: NSLayoutConstraint!
+    @IBOutlet weak var constraintWidth11: NSLayoutConstraint!
+    @IBOutlet weak var constraintWidth12: NSLayoutConstraint!
+    @IBOutlet weak var constraintWidth13: NSLayoutConstraint!
+    @IBOutlet weak var constraintWidth14: NSLayoutConstraint!
     
     override func layoutSubviews()
     {

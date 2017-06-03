@@ -227,8 +227,8 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
         
         if selectedPerson != nil
         {
+            let titleString = "Your shifts for \(currentUser.currentTeam!.name) for the month of \(btnMonth.currentTitle!)"
             messageString +=  "Your shifts for \(currentUser.currentTeam!.name) for the month of \(btnMonth.currentTitle!)\n\n"
-            
             
             for myItem in selectedPerson.shiftArray
             {
@@ -237,7 +237,7 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
                 messageString += "\(myItem.workDateString) \(myItem.startTimeString) - \(myItem.endTimeString) at \(tempProject.projectName) \n\n"
             }
             
-            let activityViewController: UIActivityViewController = createActivityController(messageString)
+            let activityViewController: UIActivityViewController = createActivityController(messageString, subject: titleString)
             
             activityViewController.popoverPresentationController!.sourceView = btnMonth
             
