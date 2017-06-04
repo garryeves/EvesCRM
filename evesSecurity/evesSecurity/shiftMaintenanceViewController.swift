@@ -33,11 +33,11 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
         if currentWeekEndingDate == nil
         {
             // work out the current weekending date
-            let dateModifier = (7 - getDayOfWeek(Date())!) + 1
+            let dateModifier = (7 - Date().getDayOfWeek) + 1
             
             if dateModifier != 7
             {
-                currentWeekEndingDate = addDays(to: Date(), days: dateModifier)
+                currentWeekEndingDate = Date().add(.day, amount: dateModifier)
             }
             else
             {
@@ -103,12 +103,12 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
         
         let headerView = tableView.dequeueReusableCell(withIdentifier: "shiftHeader") as! shiftHeaderItem
         
-        headerView.lblMon.text = dateFormatter.string(from: addDays(to: currentWeekEndingDate, days: -6))
-        headerView.lblTue.text = dateFormatter.string(from: addDays(to: currentWeekEndingDate, days: -5))
-        headerView.lblWed.text = dateFormatter.string(from: addDays(to: currentWeekEndingDate, days: -4))
-        headerView.lblThu.text = dateFormatter.string(from: addDays(to: currentWeekEndingDate, days: -3))
-        headerView.lblFri.text = dateFormatter.string(from: addDays(to: currentWeekEndingDate, days: -2))
-        headerView.lblSat.text = dateFormatter.string(from: addDays(to: currentWeekEndingDate, days: -1))
+        headerView.lblMon.text = dateFormatter.string(from: currentWeekEndingDate.add(.day, amount: -6))
+        headerView.lblTue.text = dateFormatter.string(from: currentWeekEndingDate.add(.day, amount: -5))
+        headerView.lblWed.text = dateFormatter.string(from: currentWeekEndingDate.add(.day, amount: -4))
+        headerView.lblThu.text = dateFormatter.string(from: currentWeekEndingDate.add(.day, amount: -3))
+        headerView.lblFri.text = dateFormatter.string(from: currentWeekEndingDate.add(.day, amount: -2))
+        headerView.lblSat.text = dateFormatter.string(from: currentWeekEndingDate.add(.day, amount: -1))
         headerView.lblSun.text = dateFormatter.string(from: currentWeekEndingDate)
         
         return headerView
@@ -213,7 +213,7 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
     {
         // get the details for previous week
         
-        let previousWEDate = addDays(to: currentWeekEndingDate, days: -7)
+        let previousWEDate = currentWeekEndingDate.add(.day, amount: -7)
         
         // now go and see if there are any entries for that weeks
       
@@ -226,11 +226,11 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
             
             if recordCount == previousShifts.shifts.count - 1
             {
-                newShift = shift(projectID: myItem.projectID, workDate: addDays(to: myItem.workDate, days: 7), weekEndDate: currentWeekEndingDate, teamID: currentUser.currentTeam!.teamID, shiftLineID: myItem.shiftLineID, type: myItem.type)
+                newShift = shift(projectID: myItem.projectID, workDate: myItem.workDate.add(.day, amount: 7), weekEndDate: currentWeekEndingDate, teamID: currentUser.currentTeam!.teamID, shiftLineID: myItem.shiftLineID, type: myItem.type)
             }
             else
             {
-                newShift = shift(projectID: myItem.projectID, workDate: addDays(to: myItem.workDate, days: 7), weekEndDate: currentWeekEndingDate, teamID: currentUser.currentTeam!.teamID, shiftLineID: myItem.shiftLineID, type: myItem.type, saveToCloud: false)
+                newShift = shift(projectID: myItem.projectID, workDate: myItem.workDate.add(.day, amount: 7), weekEndDate: currentWeekEndingDate, teamID: currentUser.currentTeam!.teamID, shiftLineID: myItem.shiftLineID, type: myItem.type, saveToCloud: false)
                 recordCount += 1
             }
             
@@ -255,22 +255,22 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
     
     @IBAction func btnPreviousWeek(_ sender: UIButton)
     {
-        currentWeekEndingDate = addDays(to: currentWeekEndingDate, days: -7)
+        currentWeekEndingDate = currentWeekEndingDate.add(.day, amount: -7)
         refreshScreen()
     }
     
     @IBAction func btnNextWeek(_ sender: UIButton)
     {
-        currentWeekEndingDate = addDays(to: currentWeekEndingDate, days: 7)
+        currentWeekEndingDate = currentWeekEndingDate.add(.day, amount: 7)
         refreshScreen()
     }
     
     @IBAction func btnShare(_ sender: UIBarButtonItem)
     {
-        let tempReport = report()
+        let tempReport = report(name: reportWeeklyRoster)
         
         let titleString = "\(currentUser.currentTeam!.name) Roster For Week Ending \(lblWEDate.text!)"
-        tempReport.name = titleString
+        tempReport.subject = titleString
 
         let headerLine = reportLine()
         headerLine.column1 = "Name"
@@ -396,9 +396,9 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
                 tempReport.append(newPersonLine)
             }
         
-            tempReport.createPDF()
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [tempReport], applicationActivities: nil)
             
-            let activityViewController: UIActivityViewController = createActivityController(tempReport.PDF!, subject: titleString)
+            activityViewController.excludedActivityTypes = shareExclutionArray
             
             activityViewController.popoverPresentationController!.sourceView = btnCreateShift
             
@@ -1031,7 +1031,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                 
                     if weeklyRecord.monShift == nil
                     {
-                        weeklyRecord.monShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -6))
+                        weeklyRecord.monShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -6))
                     }
 
                     weeklyRecord.monShift.rateID = rateList.rates[selectedItem - 1].rateID
@@ -1066,7 +1066,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                     
                     if weeklyRecord.tueShift == nil
                     {
-                        weeklyRecord.tueShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -5))
+                        weeklyRecord.tueShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -5))
                     }
                 
                     weeklyRecord.tueShift.rateID = rateList.rates[selectedItem - 1].rateID
@@ -1100,7 +1100,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                     
                     if weeklyRecord.wedShift == nil
                     {
-                        weeklyRecord.wedShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -4))
+                        weeklyRecord.wedShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -4))
                     }
                     
                     weeklyRecord.wedShift.rateID = rateList.rates[selectedItem - 1].rateID
@@ -1134,7 +1134,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                     
                     if weeklyRecord.thuShift == nil
                     {
-                        weeklyRecord.thuShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -3))
+                        weeklyRecord.thuShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -3))
                     }
                     
                     weeklyRecord.thuShift.rateID = rateList.rates[selectedItem - 1].rateID
@@ -1168,7 +1168,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                     
                     if weeklyRecord.friShift == nil
                     {
-                        weeklyRecord.friShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -2))
+                        weeklyRecord.friShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -2))
                     }
 
                     weeklyRecord.friShift.rateID = rateList.rates[selectedItem - 1].rateID
@@ -1202,7 +1202,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                     
                     if weeklyRecord.satShift == nil
                     {
-                        weeklyRecord.satShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -1))
+                        weeklyRecord.satShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -1))
                     }
                     
                     weeklyRecord.satShift.rateID = rateList.rates[selectedItem - 1].rateID
@@ -1247,7 +1247,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                   
                     if weeklyRecord.monShift == nil
                     {
-                        weeklyRecord.monShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -6))
+                        weeklyRecord.monShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -6))
                     }
                     
                     weeklyRecord.monShift.personID = peopleList.people[selectedItem - 1].personID
@@ -1258,7 +1258,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                     
                     if weeklyRecord.tueShift == nil
                     {
-                        weeklyRecord.tueShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -5))
+                        weeklyRecord.tueShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -5))
                     }
                     
                     weeklyRecord.tueShift.personID = peopleList.people[selectedItem - 1].personID
@@ -1269,7 +1269,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                     
                     if weeklyRecord.wedShift == nil
                     {
-                        weeklyRecord.wedShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -4))
+                        weeklyRecord.wedShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -4))
                     }
                     
                     weeklyRecord.wedShift.personID = peopleList.people[selectedItem - 1].personID
@@ -1280,7 +1280,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                     
                     if weeklyRecord.thuShift == nil
                     {
-                        weeklyRecord.thuShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -3))
+                        weeklyRecord.thuShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -3))
                     }
                     
                     weeklyRecord.thuShift.personID = peopleList.people[selectedItem - 1].personID
@@ -1291,7 +1291,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                     
                     if weeklyRecord.friShift == nil
                     {
-                        weeklyRecord.friShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -2))
+                        weeklyRecord.friShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -2))
                     }
                     
                     weeklyRecord.friShift.personID = peopleList.people[selectedItem - 1].personID
@@ -1302,7 +1302,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                     
                     if weeklyRecord.satShift == nil
                     {
-                        weeklyRecord.satShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -1))
+                        weeklyRecord.satShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -1))
                     }
                     
                     weeklyRecord.satShift.personID = peopleList.people[selectedItem - 1].personID
@@ -1337,7 +1337,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
                 
                 if weeklyRecord.monShift == nil
                 {
-                    weeklyRecord.monShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -6))
+                    weeklyRecord.monShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -6))
                     btnRateMon.isHidden = false
                     btnPersonMon.isHidden = false
                 }
@@ -1350,7 +1350,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
 
                 if weeklyRecord.monShift == nil
                 {
-                    weeklyRecord.monShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -6))
+                    weeklyRecord.monShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -6))
                     btnRateMon.isHidden = false
                     btnPersonMon.isHidden = false
                 }
@@ -1364,7 +1364,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
 
                 if weeklyRecord.tueShift == nil
                 {
-                    weeklyRecord.tueShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -5))
+                    weeklyRecord.tueShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -5))
                     btnRateTue.isHidden = false
                     btnPersonTue.isHidden = false
                 }
@@ -1377,7 +1377,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
 
                 if weeklyRecord.tueShift == nil
                 {
-                    weeklyRecord.tueShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -5))
+                    weeklyRecord.tueShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -5))
                     btnRateTue.isHidden = false
                     btnPersonTue.isHidden = false
                 }
@@ -1390,7 +1390,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
 
                 if weeklyRecord.wedShift == nil
                 {
-                    weeklyRecord.wedShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -4))
+                    weeklyRecord.wedShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -4))
                     btnRateWed.isHidden = false
                     btnPersonWed.isHidden = false
                 }
@@ -1403,7 +1403,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
 
                 if weeklyRecord.wedShift == nil
                 {
-                    weeklyRecord.wedShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -4))
+                    weeklyRecord.wedShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -4))
                     btnRateWed.isHidden = false
                     btnPersonWed.isHidden = false
                 }
@@ -1416,7 +1416,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
 
                 if weeklyRecord.thuShift == nil
                 {
-                    weeklyRecord.thuShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -3))
+                    weeklyRecord.thuShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -3))
                     btnRateThu.isHidden = false
                     btnPersonThu.isHidden = false
                 }
@@ -1429,7 +1429,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
 
                 if weeklyRecord.thuShift == nil
                 {
-                    weeklyRecord.thuShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -3))
+                    weeklyRecord.thuShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -3))
                     btnRateThu.isHidden = false
                     btnPersonThu.isHidden = false
                 }
@@ -1442,7 +1442,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
 
                 if weeklyRecord.friShift == nil
                 {
-                    weeklyRecord.friShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -2))
+                    weeklyRecord.friShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -2))
                     btnRateFri.isHidden = false
                     btnPersonFri.isHidden = false
                 }
@@ -1455,7 +1455,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
 
                 if weeklyRecord.friShift == nil
                 {
-                    weeklyRecord.friShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -2))
+                    weeklyRecord.friShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -2))
                     btnRateFri.isHidden = false
                     btnPersonFri.isHidden = false
                 }
@@ -1468,7 +1468,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
 
                 if weeklyRecord.satShift == nil
                 {
-                    weeklyRecord.satShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -1))
+                    weeklyRecord.satShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -1))
                     btnRateSat.isHidden = false
                     btnPersonSat.isHidden = false
                 }
@@ -1481,7 +1481,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
 
                 if weeklyRecord.satShift == nil
                 {
-                    weeklyRecord.satShift = createShiftEntry(workDate: addDays(to: weeklyRecord.WEDate, days: -1))
+                    weeklyRecord.satShift = createShiftEntry(workDate: weeklyRecord.WEDate.add(.day, amount: -1))
                     btnRateSat.isHidden = false
                     btnPersonSat.isHidden = false
                 }

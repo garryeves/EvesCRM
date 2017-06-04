@@ -647,7 +647,7 @@ class shift: NSObject
     {
         get
         {
-            return formatDateToString(myWorkDate)
+            return myWorkDate.formatDateToString
         }
     }
     
@@ -655,7 +655,7 @@ class shift: NSObject
     {
         get
         {
-            return formatDateToShortString(myWorkDate)
+            return myWorkDate.formatDateToShortString
         }
     }
     
@@ -777,11 +777,11 @@ class shift: NSObject
                 
                 let modifiedEndTime = Calendar.current.date(byAdding: .day, value: 1, to: endTime)!
                 
-                return dateDifferenceHours(startTime, to: modifiedEndTime)
+                return startTime.dateDifferenceHours(to: modifiedEndTime)
             }
             else
             {
-                return dateDifferenceHours(startTime, to: endTime)
+                return startTime.dateDifferenceHours(to: endTime)
             }
         }
     }
@@ -798,11 +798,11 @@ class shift: NSObject
                 
                 let modifiedEndTime = Calendar.current.date(byAdding: .day, value: 1, to: endTime)!
 
-                tempNum = dateDifferenceMinutes(startTime, to: modifiedEndTime)
+                tempNum = startTime.dateDifferenceMinutes(to: modifiedEndTime)
             }
             else
             {
-                tempNum = dateDifferenceMinutes(startTime, to: endTime)
+                tempNum = startTime.dateDifferenceMinutes(to: endTime)
             }
     
             if tempNum > 0 && tempNum < 16

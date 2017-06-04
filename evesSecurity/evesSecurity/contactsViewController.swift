@@ -21,13 +21,16 @@ class contactsViewController: UIViewController, MyPickerDelegate, UIPopoverPrese
     var workingProject: project!
     
     private var displayList: [String] = Array()
-    private var workingContact: contactItem!
+    var workingContact: contactItem!
     
     override func viewDidLoad()
     {
         if workingPerson.contacts.count > 0
         {
-            workingContact = workingPerson.contacts[0]
+            if workingContact == nil
+            {
+                workingContact = workingPerson.contacts[0]
+            }
             displayItem()
         }
         else

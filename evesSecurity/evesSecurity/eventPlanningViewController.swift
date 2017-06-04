@@ -185,7 +185,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
             }
             else
             {
-                workDay = addDays(to: currentEvent.projectStartDate, days: myItem.dateModifier)
+                workDay = currentEvent.projectStartDate.add(.day, amount: myItem.dateModifier)
             }
             
             if recordCount == roles.count - 1
@@ -212,7 +212,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
         
         for myItem in eventDays
         {
-            displayList.append(formatDateToString(myItem))
+            displayList.append(myItem.formatDateToString)
         }
         
         let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
@@ -298,10 +298,11 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
     
     @IBAction func btnShare(_ sender: UIBarButtonItem)
     {
-        let tempReport = report()
-        
         let titleString = "\(currentUser.currentTeam!.name) Event Plan for \(currentEvent.projectName)"
-        tempReport.name = titleString
+        
+        let tempReport = report(name: reportEventPlan)
+        
+        tempReport.subject = titleString
         
         let headerLine = reportLine()
         headerLine.column1 = "Name"
@@ -346,11 +347,10 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
 
                 tempReport.append(newTimeLine)
             }
+        
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [tempReport], applicationActivities: nil)
             
-            tempReport.createPDF()
-            
-            let activityViewController: UIActivityViewController = createActivityController(tempReport.PDF!, subject: titleString)
-            
+            activityViewController.excludedActivityTypes = shareExclutionArray
             activityViewController.popoverPresentationController!.sourceView = btnAddRole
             
             present(activityViewController, animated:true, completion:nil)
@@ -445,7 +445,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
     
     func createShiftEntry(teamID: Int, projectID: Int, shiftDescription: String, workDay: Date, startTime: Date, endTime: Date, saveToCloud: Bool = true)
     {
-        let WEDate = getWeekEndingDate(workDay)
+        let WEDate = workDay.getWeekEndingDate
         
         let shiftLineID = myDatabaseConnection.getNextID("shiftLineID", saveToCloud: saveToCloud)
         let newShift = shift(projectID: projectID, workDate: workDay, weekEndDate: WEDate, teamID: teamID, shiftLineID: shiftLineID, type: eventShiftType, saveToCloud: saveToCloud)
@@ -538,12 +538,12 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
             newRoleDate = currentEvent.projectStartDate
             
             eventDays.removeAll()
-            eventDays.append(addDays(to: currentEvent.projectStartDate, days: -2))
-            eventDays.append(addDays(to: currentEvent.projectStartDate, days: -1))
+            eventDays.append(currentEvent.projectStartDate.add(.day, amount: -2))
+            eventDays.append(currentEvent.projectStartDate.add(.day, amount: -1))
             eventDays.append(currentEvent.projectStartDate)
-            eventDays.append(addDays(to: currentEvent.projectStartDate, days: 1))
-            eventDays.append(addDays(to: currentEvent.projectStartDate, days: 2))
-            btnDate.setTitle(formatDateToString(currentEvent.projectStartDate), for: .normal)
+            eventDays.append(currentEvent.projectStartDate.add(.day, amount: 1))
+            eventDays.append(currentEvent.projectStartDate.add(.day, amount: 2))
+            btnDate.setTitle(currentEvent.projectStartDate.formatDateToString, for: .normal)
 
             tblRoles.reloadData()
         }

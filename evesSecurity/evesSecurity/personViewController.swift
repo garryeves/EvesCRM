@@ -29,6 +29,8 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
     @IBOutlet weak var btnBack: UIBarButtonItem!
     @IBOutlet weak var btnSave: UIBarButtonItem!
     @IBOutlet weak var btnAdd: UIBarButtonItem!
+    @IBOutlet weak var tblContacts: UITableView!
+    @IBOutlet weak var tblAddresses: UITableView!
     
     var communicationDelegate: myCommunicationDelegate?
     var clientID: Int!
@@ -80,6 +82,26 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
             
             case tblAddInfo:
                 return addInfoRecords.personAdditionalInfos.count
+            
+            case tblContacts:
+                if selectedPerson == nil
+                {
+                    return 0
+                }
+                else
+                {
+                    return selectedPerson.contacts.count
+                }
+                
+            case tblAddresses:
+                if selectedPerson == nil
+                {
+                    return 0
+                }
+                else
+                {
+                    return selectedPerson.addresses.count
+                }
             
             default:
                 return 0
@@ -168,7 +190,18 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
                     cell.parentViewController = self
                 }
                 return cell
-                
+            
+            case tblContacts:
+                let cell = tableView.dequeueReusableCell(withIdentifier:"cellContact", for: indexPath) as! contactDetailsItem
+                cell.lblType.text = selectedPerson.contacts[indexPath.row].contactType
+                cell.lblDetail.text = selectedPerson.contacts[indexPath.row].contactValue
+                return cell
+            
+            case tblAddresses:
+                let cell = tableView.dequeueReusableCell(withIdentifier:"cellAddress", for: indexPath) as! contactDetailsItem
+                cell.lblType.text = selectedPerson.addresses[indexPath.row].addressType
+                cell.lblDetail.text = selectedPerson.addresses[indexPath.row].addressLine1
+                return cell
             
             default:
                 return UITableViewCell()
@@ -186,7 +219,37 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
             
             case tblAddInfo:
                 let _ = 1
+            
+            case tblContacts:
+                let contactsView = personStoryboard.instantiateViewController(withIdentifier: "contactsForm") as! contactsViewController
+                contactsView.modalPresentationStyle = .popover
                 
+                let popover = contactsView.popoverPresentationController!
+                popover.delegate = self
+                popover.sourceView = btnContacts
+                popover.sourceRect = btnContacts.bounds
+                popover.permittedArrowDirections = .any
+                
+                contactsView.workingPerson = selectedPerson
+                contactsView.preferredContentSize = CGSize(width: 700,height: 120)
+                
+                self.present(contactsView, animated: true, completion: nil)
+            
+            case tblAddresses:
+                let addressView = personStoryboard.instantiateViewController(withIdentifier: "addressView") as! addressesViewController
+                addressView.modalPresentationStyle = .popover
+                
+                let popover = addressView.popoverPresentationController!
+                popover.delegate = self
+                popover.sourceView = btnAddresses
+                popover.sourceRect = btnAddresses.bounds
+                popover.permittedArrowDirections = .any
+                
+                addressView.workingPerson = selectedPerson
+                addressView.preferredContentSize = CGSize(width: 700,height: 300)
+                
+                self.present(addressView, animated: true, completion: nil)
+            
             default:
                 let _ = 1
         }
@@ -474,6 +537,8 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         txtNotes.isHidden = true
         tblAddInfo.isHidden = true
         btnImport.isHidden = false
+        tblContacts.isHidden = true
+        tblAddresses.isHidden = true
     }
     
     func showFields()
@@ -491,6 +556,8 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         txtNotes.isHidden = false
         tblAddInfo.isHidden = false
         btnImport.isHidden = true
+        tblContacts.isHidden = false
+        tblAddresses.isHidden = false
     }
     
     func keyboardWillShow(_ notification: Notification)
@@ -562,6 +629,8 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
             btnContacts.setTitle("Contact Details (\(selectedPerson.contacts.count))", for: .normal)
 
             tblAddInfo.reloadData()
+            tblAddresses.reloadData()
+            tblContacts.reloadData()
         }
     }
     
@@ -666,4 +735,15 @@ class personAddInfoListItem: UITableViewCell, MyPickerDelegate, UIPopoverPresent
     }
 }
 
+class contactDetailsItem: UITableViewCell
+{
+    @IBOutlet weak var lblType: UILabel!
+    @IBOutlet weak var lblDetail: UILabel!
+    
+    override func layoutSubviews()
+    {
+        contentView.frame = bounds
+        super.layoutSubviews()
+    }
+}
 

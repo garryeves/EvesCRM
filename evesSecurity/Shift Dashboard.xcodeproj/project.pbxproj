@@ -45,6 +45,7 @@
 		34968CDE1ECAC68D0009798B /* person.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34968CDD1ECAC68D0009798B /* person.storyboard */; };
 		34968CE01ECACA350009798B /* personViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34968CDF1ECACA350009798B /* personViewController.swift */; };
 		3499EDF41EDE8B720027CE5C /* monthlyRosterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3499EDF31EDE8B720027CE5C /* monthlyRosterViewController.swift */; };
+		34B01DCB1EE3B89200B836C8 /* extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B01DCA1EE3B89200B836C8 /* extensions.swift */; };
 		34B35A7F1ECE6D0A00B4FFD7 /* Clients.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34B35A7E1ECE6D0A00B4FFD7 /* Clients.storyboard */; };
 		34B35A811ECE77A300B4FFD7 /* clientMaintenanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34B35A801ECE77A300B4FFD7 /* clientMaintenanceViewController.swift */; };
 		34B35A831ECEC2D600B4FFD7 /* Projects.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 34B35A821ECEC2D600B4FFD7 /* Projects.storyboard */; };
@@ -141,6 +142,7 @@
 		34968CDD1ECAC68D0009798B /* person.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = person.storyboard; sourceTree = "<group>"; };
 		34968CDF1ECACA350009798B /* personViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = personViewController.swift; sourceTree = "<group>"; };
 		3499EDF31EDE8B720027CE5C /* monthlyRosterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = monthlyRosterViewController.swift; sourceTree = "<group>"; };
+		34B01DCA1EE3B89200B836C8 /* extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = extensions.swift; sourceTree = "<group>"; };
 		34B35A7E1ECE6D0A00B4FFD7 /* Clients.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Clients.storyboard; sourceTree = "<group>"; };
 		34B35A801ECE77A300B4FFD7 /* clientMaintenanceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = clientMaintenanceViewController.swift; sourceTree = "<group>"; };
 		34B35A821ECEC2D600B4FFD7 /* Projects.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Projects.storyboard; sourceTree = "<group>"; };
@@ -294,6 +296,7 @@
 				3413238A1EC40A1D00BBDE1E /* dropdownsClass.swift */,
 				343757D71ED4070600A9D313 /* eventTemplateHeadClass.swift */,
 				343757D51ED3FA3A00A9D313 /* eventTemplateClass.swift */,
+				34B01DCA1EE3B89200B836C8 /* extensions.swift */,
 				34D797941ED7BEB90045DFD9 /* IOSCalendar.swift */,
 				34CEE97D1EC2C37E00F85A11 /* notificationDefinitions.swift */,
 				341323821EC3EA9700BBDE1E /* personClass.swift */,
@@ -592,6 +595,7 @@
 				34050F6E1EC82C5500CC7CBE /* pickerViewController.swift in Sources */,
 				34CEEA391EC2EB5E00F85A11 /* addressClass.swift in Sources */,
 				343757D21ED3F26300A9D313 /* eventPlanningViewController.swift in Sources */,
+				34B01DCB1EE3B89200B836C8 /* extensions.swift in Sources */,
 				34B35A811ECE77A300B4FFD7 /* clientMaintenanceViewController.swift in Sources */,
 				349653011EC1E5B800210A46 /* ViewController.swift in Sources */,
 				347BCEC21EC563F0006B95BA /* orgEditViewController.swift in Sources */,

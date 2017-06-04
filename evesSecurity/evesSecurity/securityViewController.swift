@@ -140,7 +140,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
             case tblData1:
                 for myItem in reportList.reports
                 {
-                    if myItem.name == btnReport.currentTitle!
+                    if myItem.reportName == btnReport.currentTitle!
                     {
                         return myItem.count
                     }
@@ -164,7 +164,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                 
                 for myItem in reportList.reports
                 {
-                    if myItem.name == btnReport.currentTitle!
+                    if myItem.subject == btnReport.currentTitle!
                     {
                         let reportEntry = myItem.lines[indexPath.row]
                         buildReportCell(label: cell.lbl1, text: reportEntry.column1, width: CGFloat(myItem.columnWidth1), constraint: cell.constraintWidth1)
@@ -208,11 +208,11 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
             case tblData1:
                 for reportEntry in reportList.reports
                 {
-                    if reportEntry.name == btnReport.currentTitle!
+                    if reportEntry.subject == btnReport.currentTitle!
                     {
-                        switch reportEntry.name
+                        switch reportEntry.reportName
                         {
-                            case "Contract for Month":  // Contract for month
+                            case reportContractForMonth:  // Contract for month
                                 let contractEditViewControl = projectsStoryboard.instantiateViewController(withIdentifier: "contractMaintenance") as! contractMaintenanceViewController
                                 contractEditViewControl.communicationDelegate = self
                                 
@@ -222,7 +222,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                                 //contractEditViewControl.workingContract = contractList.projects[indexPath.row]
                                 self.present(contractEditViewControl, animated: true, completion: nil)
                                 
-                            case "Wages for Month":  // Wage per person for month
+                            case reportWagesForMonth:  // Wage per person for month
                                 let rosterViewControl = shiftsStoryboard.instantiateViewController(withIdentifier: "monthlyRoster") as! monthlyRosterViewController
                                 rosterViewControl.communicationDelegate = self
                                 
@@ -233,14 +233,14 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                                 rosterViewControl.year = btnYear.currentTitle!
                                 self.present(rosterViewControl, animated: true, completion: nil)
                                 
-                            case "Contract for Year":
+                            case reportContractForYear:
                                 let _ = 1
                                 
-                            case "Annual Report":
+                            case reportAnnualReport:
                                 let _ = 1
                                 
                             default:
-                                print("unknow entry myPickerDidFinish - selectedItem - \(reportEntry.name)")
+                                print("unknow entry myPickerDidFinish - selectedItem - \(reportEntry.reportName)")
                         }
 
                        
@@ -303,18 +303,15 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     {
         for myItem in reportList.reports
         {
-            if myItem.name == btnReport.currentTitle!
+            if myItem.subject == btnReport.currentTitle!
             {
-                myItem.createPDF()
+                let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [myItem], applicationActivities: nil)
                 
-                if myItem.PDF != nil
-                {
-                    let activityViewController: UIActivityViewController = createActivityController(myItem.PDF!, subject: myItem.subject)
-                    
-                    activityViewController.popoverPresentationController!.sourceView = self.view
-                    
-                    present(activityViewController, animated:true, completion:nil)
-                }
+                activityViewController.excludedActivityTypes = shareExclutionArray
+                
+                activityViewController.popoverPresentationController!.sourceView = self.view
+                
+                present(activityViewController, animated:true, completion:nil)
                 break
             }
         }
@@ -361,7 +358,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         
         for myItem in reportList.reports
         {
-            displayList.append(myItem.name)
+            displayList.append(myItem.subject)
         }
         
         let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
@@ -653,7 +650,8 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     {
         reportList.removeAll()
     
-        buildReportLine(name: "Contract for Month",
+        buildReportLine(name: reportContractForMonth,
+                        subject: reportContractForMonth,
                         text1: "Client", width1: 200,
                         text2: "Contract", width2: 200,
                         text3: "Hours", width3: 100,
@@ -663,22 +661,24 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                         text7: "GP%", width7: 50
                         )
 
-        buildReportLine(name: "Wages for Month",
+        buildReportLine(name: reportWagesForMonth,
+                        subject: reportWagesForMonth,
                         text1: "Name", width1: 200,
                         text2: "Hours", width2: 100,
                         text3: "Pay", width3: 100
                         )
 
-        buildReportLine(name: "Contract for Year")
+        buildReportLine(name: reportContractForYear,
+                        subject: reportContractForYear)
 
-        buildReportLine(name: "Annual Report")
+        buildReportLine(name: reportAnnualReport, subject: reportAnnualReport)
 
     }
     
-    func buildReportLine(name: String, text1: String = "", width1: Int = 0, text2: String = "", width2: Int = 0, text3: String = "", width3: Int = 0, text4: String = "", width4: Int = 0, text5: String = "", width5: Int = 0, text6: String = "", width6: Int = 0, text7: String = "", width7: Int = 0, text8: String = "", width8: Int = 0, text9: String = "", width9: Int = 0, text10: String = "", width10: Int = 0, text11: String = "", width11: Int = 0, text12: String = "", width12: Int = 0, text13: String = "", width13: Int = 0, text14: String = "", width14: Int = 0)
+    func buildReportLine(name: String, subject: String, text1: String = "", width1: Int = 0, text2: String = "", width2: Int = 0, text3: String = "", width3: Int = 0, text4: String = "", width4: Int = 0, text5: String = "", width5: Int = 0, text6: String = "", width6: Int = 0, text7: String = "", width7: Int = 0, text8: String = "", width8: Int = 0, text9: String = "", width9: Int = 0, text10: String = "", width10: Int = 0, text11: String = "", width11: Int = 0, text12: String = "", width12: Int = 0, text13: String = "", width13: Int = 0, text14: String = "", width14: Int = 0)
     {
-        let newReport = report()
-        newReport.name = name
+        let newReport = report(name: name)
+        newReport.subject = subject
         newReport.columnWidth1 = width1
         newReport.columnWidth2 = width2
         newReport.columnWidth3 = width3
@@ -729,7 +729,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         
         if source == "report"
         {
-            btnReport.setTitle(reportList.reports[workingItem].name, for: .normal)
+            btnReport.setTitle(reportList.reports[workingItem].subject, for: .normal)
             
             switch workingItem
             {
@@ -820,7 +820,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         
         for myItem in reportList.reports
         {
-            if myItem.name == btnReport.currentTitle!
+            if myItem.subject == btnReport.currentTitle!
             {
                 buildReport(myItem)
                 break
@@ -863,9 +863,9 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         reportEntry.removeAll()
         // Lets process through the report
         
-        switch reportEntry.name
+        switch reportEntry.reportName
         {
-            case "Contract for Month":  // Contract for month
+            case reportContractForMonth:  // Contract for month
                 contractList = projects(teamID: currentUser.currentTeam!.teamID, includeEvents: true)
                 
                 contractList.loadFinancials(month: btnDropdown.currentTitle!, year: btnYear.currentTitle!)
@@ -892,11 +892,11 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                         
                         newReportLine.column1 = clientName
                         newReportLine.column2 = myItem.projectName
-                        newReportLine.column3 = formatCurrency(myItem.financials[0].expense)
-                        newReportLine.column4 = formatHours(myItem.financials[0].hours)
-                        newReportLine.column5 = formatCurrency(myItem.financials[0].income)
-                        newReportLine.column6 = formatCurrency(profit)
-                        newReportLine.column7 = formatPercent(gp)
+                        newReportLine.column3 = myItem.financials[0].expense.formatCurrency
+                        newReportLine.column4 = myItem.financials[0].hours.formatHours
+                        newReportLine.column5 = myItem.financials[0].income.formatCurrency
+                        newReportLine.column6 = profit.formatCurrency
+                        newReportLine.column7 = gp.formatPercent
                         newReportLine.sourceObject = myItem
                         
                         reportEntry.append(newReportLine)
@@ -904,7 +904,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                 }
 
                 
-            case "Wages for Month":  // Wage per person for month
+            case reportWagesForMonth:  // Wage per person for month
 
                 for myItem in people(teamID: currentUser.currentTeam!.teamID).people
                 {
@@ -915,8 +915,8 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                         let newReportLine = reportLine()
                         
                         newReportLine.column1 = myItem.name
-                        newReportLine.column2 = formatHours(monthReport.hours)
-                        newReportLine.column3 = formatCurrency(monthReport.wage)
+                        newReportLine.column2 = monthReport.hours.formatHours
+                        newReportLine.column3 = monthReport.wage.formatCurrency
 
                         newReportLine.sourceObject = myItem
                         
@@ -924,18 +924,18 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                     }
                 }
                 
-            case "Contract for Year":
+            case reportContractForYear:
                 
                 tblData1.isHidden = false
                 tblData1.reloadData()
                 
-            case "Annual Report":
+            case reportAnnualReport:
                 
                 tblData1.isHidden = false
                 tblData1.reloadData()
                 
             default:
-                print("unknow entry myPickerDidFinish - selectedItem - \(reportEntry.name)")
+                print("unknow entry myPickerDidFinish - selectedItem - \(reportEntry.reportName)")
         }
 
         tblData1.isHidden = false

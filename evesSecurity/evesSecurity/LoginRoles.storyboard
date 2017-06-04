@@ -322,6 +322,7 @@ Note, you will only have 24 hours from the code being created to enter it.  If y
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="bottomContraint" destination="H1p-Ix-kEv" id="3bC-2P-K1l"/>
                         <outlet property="btnBack" destination="EJE-vT-JNf" id="cSn-Ov-QGA"/>
                         <outlet property="btnSave" destination="SZX-KA-5ci" id="5F8-KL-l6E"/>
                         <outlet property="btnStatus" destination="Ewj-fb-Z9O" id="Fix-Ge-ZhB"/>

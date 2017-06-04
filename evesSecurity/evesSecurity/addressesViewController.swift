@@ -39,13 +39,16 @@ class addressesViewController: UIViewController, MyPickerDelegate, UIPopoverPres
     var workingProject: project!
     
     private var displayList: [String] = Array()
-    private var workingAddress: address!
+    var workingAddress: address!
     
     override func viewDidLoad()
     {
         if workingPerson.addresses.count > 0
         {
-            workingAddress = workingPerson.addresses[0]
+            if workingAddress == nil
+            {
+                workingAddress = workingPerson.addresses[0]
+            }
             displayItem()
         }
         else

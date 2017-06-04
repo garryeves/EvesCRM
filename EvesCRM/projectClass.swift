@@ -821,7 +821,7 @@ class project: NSObject // 10k level
             
             if myProjectStartDate == getDefaultDate() as Date && myProjectEndDate == getDefaultDate() as Date
             {  // No dates have set, so we set the start date
-                tempStartDate = calculateNewDate(Date(), dateBase:myRepeatBase, interval: Int16(myRepeatInterval), period: myRepeatType)
+                tempStartDate = Date().calculateNewDate(dateBase:myRepeatBase, interval: Int16(myRepeatInterval), period: myRepeatType)
             }
             else
             { // A date has been set in at least one of the fields, so we use that as the date to set
@@ -841,7 +841,7 @@ class project: NSObject // 10k level
                 
                 if myProjectStartDate != getDefaultDate() as Date
                 {
-                    tempStartDate = calculateNewDate(Date(), dateBase:myRepeatBase, interval: Int16(myRepeatInterval), period: myRepeatType)
+                    tempStartDate = Date().calculateNewDate(dateBase:myRepeatBase, interval: Int16(myRepeatInterval), period: myRepeatType)
                 }
                 
                 if myProjectEndDate != getDefaultDate() as Date
@@ -853,7 +853,7 @@ class project: NSObject // 10k level
                         value: daysToAdd,
                         to: Date())!
                     
-                    tempEndDate = calculateNewDate(tempDate, dateBase:myRepeatBase, interval: Int16(myRepeatInterval), period: myRepeatType)
+                    tempEndDate = tempDate.calculateNewDate(dateBase:myRepeatBase, interval: Int16(myRepeatInterval), period: myRepeatType)
                 }
             }
             

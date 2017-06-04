@@ -9,6 +9,30 @@
 import Foundation
 import UIKit
 
+let reportMonthlyRoster = "reportMonthlyRoster"
+let reportWeeklyRoster = "reportWeeklyRoster"
+let reportContractForMonth = "Contract for Month"
+let reportWagesForMonth = "Wages for Month"
+let reportContractForYear = "Contract for Year"
+let reportAnnualReport = "Annual Report"
+let reportEventPlan = "Event Plan"
+let shareExclutionArray = [ UIActivityType.addToReadingList,
+                            //UIActivityType.airDrop,
+                            UIActivityType.assignToContact,
+                            //        UIActivityType.CopyToPasteboard,
+                            //        UIActivityType.message,
+                            //        UIActivityType.Mail,
+                            UIActivityType.openInIBooks,
+                            UIActivityType.postToFlickr,
+                            UIActivityType.postToTwitter,
+                            //.postToFacebook,
+                            UIActivityType.postToTencentWeibo,
+                            UIActivityType.postToVimeo,
+                            UIActivityType.postToWeibo,
+                            //        Print,
+                            UIActivityType.saveToCameraRoll
+                            ]
+
 class reports: NSObject
 {
     fileprivate var myReports: [report] = Array()
@@ -32,7 +56,7 @@ class reports: NSObject
     }
 }
 
-class report: NSObject
+class report: NSObject, UIActivityItemSource
 {
     fileprivate var myColumnWidth1: Int = 0
     fileprivate var myColumnWidth2: Int = 0
@@ -53,11 +77,12 @@ class report: NSObject
     fileprivate var myHeader: reportLine!
     fileprivate var myLines: [reportLine] = Array()
     fileprivate var myPdfData: NSMutableData!
+    fileprivate var myDisplayString: String = ""
     fileprivate var mySubject: String = ""
     fileprivate let paperSizePortrait = CGRect(x:0.0, y:0.0, width:595.276, height:841.89)
     fileprivate let paperSizeLandscape = CGRect(x:0.0, y:0.0, width:841.89, height:595.276)
-    fileprivate var paperSize: CGRect!
-    fileprivate var myPaperOrientation: String = ""
+    fileprivate var paperSize = CGRect(x:0.0, y:0.0, width:595.276, height:841.89)
+    fileprivate var myPaperOrientation: String = "Portrait"
     
     var columnWidth1: Int
     {
@@ -239,7 +264,7 @@ class report: NSObject
         }
     }
     
-    var name: String
+    var reportName: String
     {
         get
         {
@@ -291,20 +316,26 @@ class report: NSObject
         }
     }
     
-    var PDF: NSMutableData?
-    {
-        get
-        {
-            return myPdfData
-        }
-    }
+//    var PDF: NSMutableData?
+//    {
+//        get
+//        {
+//            return myPdfData
+//        }
+//    }
+//    
+//    var displayString: String
+//    {
+//        get
+//        {
+//            return myDisplayString
+//        }
+//    }
     
-    override init()
+    init(name: String)
     {
-        super.init()
-        
-        paperSize = paperSizePortrait
-        myPaperOrientation = "Portrait"
+        myReportName = name
+     //   super.init(placeholderItem: <#T##Any#>)
     }
     
     func removeAll()
@@ -329,7 +360,7 @@ class report: NSObject
         myPaperOrientation = "Landscape"
     }
     
-    func createPDF()
+    private func createPDF()
     {
         var topSide: Int = 10
         
@@ -388,6 +419,60 @@ class report: NSObject
         UIGraphicsEndPDFContext()
     }
     
+    private func createDisplayString()
+    {
+        myDisplayString = mySubject
+        myDisplayString += "\n\n"
+        
+        if myHeader != nil
+        {
+            myDisplayString += displayLine(myHeader)
+            myDisplayString += "\n\n"
+        }
+        
+        for myEntry in myLines
+        {
+            myDisplayString += displayLine(myEntry)
+            myDisplayString += "\n"
+        }
+    }
+    
+    private func displayLine(_ sourceLine: reportLine, delimiter: String = " ") -> String
+    {
+        var returnString: String = ""
+                
+        returnString += processStringCell(text: sourceLine.column1, width: myColumnWidth1, delimiter: delimiter)
+        returnString += processStringCell(text: sourceLine.column2, width: myColumnWidth2, delimiter: delimiter)
+        returnString += processStringCell(text: sourceLine.column3, width: myColumnWidth3, delimiter: delimiter)
+        returnString += processStringCell(text: sourceLine.column4, width: myColumnWidth4, delimiter: delimiter)
+        returnString += processStringCell(text: sourceLine.column5, width: myColumnWidth5, delimiter: delimiter)
+        returnString += processStringCell(text: sourceLine.column6, width: myColumnWidth6, delimiter: delimiter)
+        returnString += processStringCell(text: sourceLine.column7, width: myColumnWidth7, delimiter: delimiter)
+        returnString += processStringCell(text: sourceLine.column8, width: myColumnWidth8, delimiter: delimiter)
+        returnString += processStringCell(text: sourceLine.column9, width: myColumnWidth9, delimiter: delimiter)
+        returnString += processStringCell(text: sourceLine.column10, width: myColumnWidth10, delimiter: delimiter)
+        returnString += processStringCell(text: sourceLine.column11, width: myColumnWidth11, delimiter: delimiter)
+        returnString += processStringCell(text: sourceLine.column12, width: myColumnWidth12, delimiter: delimiter)
+        returnString += processStringCell(text: sourceLine.column13, width: myColumnWidth13, delimiter: delimiter)
+        returnString += processStringCell(text: sourceLine.column14, width: myColumnWidth14, delimiter: "")
+        returnString += "\n"
+        
+        return returnString
+    }
+    
+    private func processStringCell(text: String, width: Int, delimiter: String) -> String
+    {
+        var returnString: String = ""
+        
+        if width > 0
+        {
+            returnString = "\(text)"
+            returnString += "\(delimiter)"
+        }
+        
+        return returnString
+    }
+    
     private func reportHeader(_ top: Int, height: Int)
     {
         let titleParagraphStyle = NSMutableParagraphStyle()
@@ -405,7 +490,7 @@ class report: NSObject
             width: Int(paperSize.width),
             height: height)
         
-        myReportName.draw(in: headerRect, withAttributes: titleFontAttributes)
+        mySubject.draw(in: headerRect, withAttributes: titleFontAttributes)
     }
     
     private func pageHeader(_ top: Int)
@@ -542,6 +627,49 @@ class report: NSObject
         title.draw(in: headerRect, withAttributes: dataFontAttributes)
     }
 
+  
+    func activityViewControllerPlaceholderItem(_ activityViewController: UIActivityViewController) -> Any
+    {
+        return ""
+    }
+    
+    func activityViewController(_ activityViewController: UIActivityViewController, subjectForActivityType activityType: UIActivityType?) -> String
+    {
+        return mySubject
+    }
+    
+    func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivityType) -> Any?
+    {
+        switch activityType
+        {
+            case UIActivityType.addToReadingList,
+                 UIActivityType.airDrop,
+                 UIActivityType.assignToContact,
+                 UIActivityType.mail,
+                 UIActivityType.openInIBooks,
+                 UIActivityType.postToFlickr,
+                 UIActivityType.postToVimeo,
+                 UIActivityType.print,
+                 UIActivityType.saveToCameraRoll:
+                
+                        createPDF()
+                        return myPdfData
+                
+            case UIActivityType.copyToPasteboard,
+                 UIActivityType.message,
+                 UIActivityType.postToFacebook,
+                 UIActivityType.postToTencentWeibo,
+                 UIActivityType.postToTwitter:
+                
+                        createDisplayString()
+                        return myDisplayString
+                
+            default:
+                createPDF()
+                return myPdfData
+            
+        }
+    }  
 }
 
 class reportLine: NSObject

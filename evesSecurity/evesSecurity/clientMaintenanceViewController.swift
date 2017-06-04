@@ -119,8 +119,8 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
                 let cell = tableView.dequeueReusableCell(withIdentifier:"cellRates", for: indexPath) as! ratesListItem
                 
                 cell.lblName.text = ratesList.rates[indexPath.row].rateName
-                cell.lblClient.text = formatCurrency(ratesList.rates[indexPath.row].chargeAmount)
-                cell.lblStaff.text = formatCurrency(ratesList.rates[indexPath.row].rateAmount)
+                cell.lblClient.text = ratesList.rates[indexPath.row].chargeAmount.formatCurrency
+                cell.lblStaff.text = ratesList.rates[indexPath.row].rateAmount.formatCurrency
                 cell.lblStart.text = ratesList.rates[indexPath.row].displayStartDate
                 
                 // Calculate GP%

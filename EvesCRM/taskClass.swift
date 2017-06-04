@@ -958,7 +958,7 @@ class task: NSObject
             
             if myStartDate == getDefaultDate() as Date && myDueDate == getDefaultDate() as Date
             {  // No dates have set, so we set the start date
-                tempStartDate = calculateNewDate(Date(), dateBase:myRepeatBase, interval: Int16(myRepeatInterval), period: myRepeatType)
+                tempStartDate = Date().calculateNewDate(dateBase:myRepeatBase, interval: Int16(myRepeatInterval), period: myRepeatType)
             }
             else
             { // A date has been set in at least one of the fields, so we use that as the date to set
@@ -985,11 +985,11 @@ class task: NSObject
                 {
                     if myRepeatBase == "Start Date"
                     {
-                        tempStartDate = calculateNewDate(myStartDate, dateBase:myRepeatBase, interval: Int16(myRepeatInterval), period: myRepeatType)
+                        tempStartDate = myStartDate.calculateNewDate(dateBase:myRepeatBase, interval: Int16(myRepeatInterval), period: myRepeatType)
                     }
                     else
                     {
-                        tempStartDate = calculateNewDate(todayDate, dateBase:myRepeatBase, interval: Int16(myRepeatInterval), period: myRepeatType)
+                        tempStartDate = todayDate.calculateNewDate(dateBase:myRepeatBase, interval: Int16(myRepeatInterval), period: myRepeatType)
                     }
                 }
                 
@@ -1002,7 +1002,7 @@ class task: NSObject
                         value: daysToAdd,
                         to: todayDate)!
                     
-                    tempDueDate = calculateNewDate(tempDate, dateBase:myRepeatBase, interval: Int16(myRepeatInterval), period: myRepeatType)
+                    tempDueDate = tempDate.calculateNewDate(dateBase:myRepeatBase, interval: Int16(myRepeatInterval), period: myRepeatType)
                 }
             }
             

@@ -30,7 +30,7 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
     fileprivate var peopleList: people!
     fileprivate var displayList: [String] = Array()
     fileprivate var monthList: [String] = Array()
-    
+    fileprivate var workingReport: report!
     
     override func viewDidLoad()
     {
@@ -87,13 +87,13 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
                 }
                 
             case tblRoster:
-                if selectedPerson == nil
+                if workingReport == nil
                 {
                     return 0
                 }
                 else
                 {
-                    return selectedPerson.shiftArray.count
+                    return workingReport.lines.count
                 }
             
             case tblPerson:
@@ -128,12 +128,10 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
                 
                 let cell = tableView.dequeueReusableCell(withIdentifier:"rosterCell", for: indexPath) as! rosterDisplayItem
                 
-                cell.lblDate.text = selectedPerson.shiftArray[indexPath.row].workDateString
-                cell.lblFrom.text = selectedPerson.shiftArray[indexPath.row].startTimeString
-                cell.lblTo.text = selectedPerson.shiftArray[indexPath.row].endTimeString
-                
-                let tempProject = project(projectID: selectedPerson.shiftArray[indexPath.row].projectID)
-                cell.lblContract.text = tempProject.projectName
+                cell.lblDate.text = workingReport.lines[indexPath.row].column1
+                cell.lblFrom.text = workingReport.lines[indexPath.row].column2
+                cell.lblTo.text = workingReport.lines[indexPath.row].column3
+                cell.lblContract.text = workingReport.lines[indexPath.row].column4
                 
                 return cell
             
@@ -195,7 +193,6 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
         
         self.present(pickerView, animated: true, completion: nil)
     }
-        
     
     @IBAction func btnYear(_ sender: UIButton)
     {
@@ -223,25 +220,51 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
     
     @IBAction func btnShare(_ sender: UIBarButtonItem)
     {
-        var messageString: String = ""
-        
         if selectedPerson != nil
         {
-            let titleString = "Your shifts for \(currentUser.currentTeam!.name) for the month of \(btnMonth.currentTitle!)"
-            messageString +=  "Your shifts for \(currentUser.currentTeam!.name) for the month of \(btnMonth.currentTitle!)\n\n"
+            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [workingReport], applicationActivities: nil)
             
-            for myItem in selectedPerson.shiftArray
-            {
-                let tempProject = project(projectID: myItem.projectID)
-                
-                messageString += "\(myItem.workDateString) \(myItem.startTimeString) - \(myItem.endTimeString) at \(tempProject.projectName) \n\n"
-            }
-            
-            let activityViewController: UIActivityViewController = createActivityController(messageString, subject: titleString)
+            activityViewController.excludedActivityTypes = shareExclutionArray
             
             activityViewController.popoverPresentationController!.sourceView = btnMonth
             
             present(activityViewController, animated:true, completion:nil)
+        }
+    }
+    
+    func buildReport()
+    {
+        workingReport = report(name: reportMonthlyRoster)
+        workingReport.subject = "Shifts for \(selectedPerson.name) for the month of \(btnMonth.currentTitle!)"
+        
+        workingReport.columnWidth1 = 100
+        workingReport.columnWidth2 = 50
+        workingReport.columnWidth3 = 50
+        workingReport.columnWidth4 = 250
+        
+        let headerLine = reportLine()
+        headerLine.column1 = "Date"
+        headerLine.column2 = "Start"
+        headerLine.column3 = "End"
+        headerLine.column4 = "Where"
+        
+        workingReport.header = headerLine
+        
+        if selectedPerson != nil
+        {
+            for myShift in selectedPerson.shiftArray
+            {
+                let workingLine = reportLine()
+                
+                workingLine.column1 = myShift.workDateString
+                workingLine.column2 = myShift.startTimeString
+                workingLine.column3 = myShift.endTimeString
+                let tempProject = project(projectID: myShift.projectID)
+                
+                workingLine.column4 = tempProject.projectName
+                
+                workingReport.append(workingLine)
+            }
         }
     }
     
@@ -317,6 +340,7 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
             dateFormatter.dateFormat = "YYYY"
             let workingYear = dateFormatter.string(from: Date())
             selectedPerson.loadShifts(month: btnMonth.currentTitle!, year: workingYear)
+            buildReport()
             tblRoster.reloadData()
         }
     }
