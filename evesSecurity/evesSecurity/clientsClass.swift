@@ -135,6 +135,11 @@ class client: NSObject
         }
     }
     
+    var projectList: [project]
+    {
+        return projects(clientID: myClientID, type: "").projects
+    }
+    
     init(teamID: Int)
     {
         super.init()

@@ -222,9 +222,7 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
     {
         if selectedPerson != nil
         {
-            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [workingReport], applicationActivities: nil)
-            
-            activityViewController.excludedActivityTypes = shareExclutionArray
+            let activityViewController = workingReport.activityController
             
             activityViewController.popoverPresentationController!.sourceView = btnMonth
             
@@ -237,9 +235,9 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
         workingReport = report(name: reportMonthlyRoster)
         workingReport.subject = "Shifts for \(selectedPerson.name) for the month of \(btnMonth.currentTitle!)"
         
-        workingReport.columnWidth1 = 100
-        workingReport.columnWidth2 = 50
-        workingReport.columnWidth3 = 50
+        workingReport.columnWidth1 = 180
+        workingReport.columnWidth2 = 100
+        workingReport.columnWidth3 = 100
         workingReport.columnWidth4 = 250
         
         let headerLine = reportLine()

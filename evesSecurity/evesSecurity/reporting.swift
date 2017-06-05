@@ -13,9 +13,9 @@ let reportMonthlyRoster = "reportMonthlyRoster"
 let reportWeeklyRoster = "reportWeeklyRoster"
 let reportContractForMonth = "Contract for Month"
 let reportWagesForMonth = "Wages for Month"
-let reportContractForYear = "Contract for Year"
-let reportAnnualReport = "Annual Report"
+let reportContractForYear = "Contract Profit for Year"
 let reportEventPlan = "Event Plan"
+
 let shareExclutionArray = [ UIActivityType.addToReadingList,
                             //UIActivityType.airDrop,
                             UIActivityType.assignToContact,
@@ -25,7 +25,7 @@ let shareExclutionArray = [ UIActivityType.addToReadingList,
                             UIActivityType.openInIBooks,
                             UIActivityType.postToFlickr,
                             UIActivityType.postToTwitter,
-                            //.postToFacebook,
+                            UIActivityType.postToFacebook,
                             UIActivityType.postToTencentWeibo,
                             UIActivityType.postToVimeo,
                             UIActivityType.postToWeibo,
@@ -56,7 +56,7 @@ class reports: NSObject
     }
 }
 
-class report: NSObject, UIActivityItemSource
+class report: NSObject
 {
     fileprivate var myColumnWidth1: Int = 0
     fileprivate var myColumnWidth2: Int = 0
@@ -83,6 +83,8 @@ class report: NSObject, UIActivityItemSource
     fileprivate let paperSizeLandscape = CGRect(x:0.0, y:0.0, width:841.89, height:595.276)
     fileprivate var paperSize = CGRect(x:0.0, y:0.0, width:595.276, height:841.89)
     fileprivate var myPaperOrientation: String = "Portrait"
+    fileprivate var disvisor: Double = 2
+    fileprivate var leftSide: Int = 50
     
     var columnWidth1: Int
     {
@@ -316,26 +318,46 @@ class report: NSObject, UIActivityItemSource
         }
     }
     
-//    var PDF: NSMutableData?
-//    {
-//        get
-//        {
-//            return myPdfData
-//        }
-//    }
-//    
-//    var displayString: String
-//    {
-//        get
-//        {
-//            return myDisplayString
-//        }
-//    }
+    var activityController: UIActivityViewController
+    {
+        createPDF()
+        createDisplayString()
+        
+        let printController = UIPrintInteractionController.shared
+        // 2
+        let printInfo = UIPrintInfo(dictionary:nil)
+        printInfo.outputType = .general
+        printInfo.jobName = mySubject
+        printController.printInfo = printInfo
+//        printController.printingItem = myPdfData
+        
+        //let activityItems: [Any] = [printController, self, myPdfData]
+        
+        let sharingItem = reportShareSource(displayString: myDisplayString, PDFData: myPdfData)
+
+        
+        //let activityItems: [Any] = [printController, sharingItem]
+        
+    //    let activityItems: [Any] = [printController, myPdfData, sharingItem]
+        
+   let activityItems: [Any] = [sharingItem]
+       
+        
+      //  let activityItems: [Any] = [myPdfData, myDisplayString]
+        
+        
+        
+        let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
+        
+        activityViewController.setValue(mySubject, forKey: "Subject")
+        activityViewController.excludedActivityTypes = shareExclutionArray
+        
+        return activityViewController
+    }
     
     init(name: String)
     {
         myReportName = name
-     //   super.init(placeholderItem: <#T##Any#>)
     }
     
     func removeAll()
@@ -352,17 +374,19 @@ class report: NSObject, UIActivityItemSource
     {
         paperSize = paperSizePortrait
         myPaperOrientation = "Portrait"
+        disvisor = 2
     }
     
     func landscape()
     {
         paperSize = paperSizeLandscape
         myPaperOrientation = "Landscape"
+        disvisor = 1.5
     }
     
     private func createPDF()
     {
-        var topSide: Int = 10
+        var topSide: Int = 50
         
         myPdfData = NSMutableData()
         
@@ -371,7 +395,7 @@ class report: NSObject, UIActivityItemSource
         
         // report header
         
-        if myReportName != ""
+        if mySubject != ""
         {
             reportHeader(topSide, height: 40)
         }
@@ -387,14 +411,13 @@ class report: NSObject, UIActivityItemSource
         {
             topSide += 5 + myRowHeight
             
-            if CGFloat(topSide) >= paperSize.height
+            if CGFloat(topSide) >= paperSize.height - 50  // We use the extra number to ensure that there is bottom margin
             {
                 UIGraphicsBeginPDFPageWithInfo(paperSize, nil)
                 if myHeader != nil
                 {
-                    pageHeader(10)
-                    
-                    topSide = 10
+                    topSide = 50
+                    pageHeader(topSide)
                 }
                 
                 topSide += 5 + myRowHeight
@@ -403,8 +426,8 @@ class report: NSObject, UIActivityItemSource
             if myItem.drawLine
             {
                 let trianglePath = UIBezierPath()
-                trianglePath.move(to: CGPoint(x: 10, y: topSide))
-                trianglePath.addLine(to: CGPoint(x: paperSize.width - 10, y: CGFloat(topSide)))
+                trianglePath.move(to: CGPoint(x: 50, y: topSide))
+                trianglePath.addLine(to: CGPoint(x: paperSize.width - 50, y: CGFloat(topSide)))
                 
                 myItem.lineColour.setStroke()
                 trianglePath.stroke()                
@@ -495,100 +518,48 @@ class report: NSObject, UIActivityItemSource
     
     private func pageHeader(_ top: Int)
     {
-        var leftSide: Int = 10
-        
+        leftSide = 50
+
         writePDFHeaderEntry(title: myHeader.column1, x: leftSide, y: top, width: myColumnWidth1, height: 20)
-        leftSide += 5 + myColumnWidth1
-        
         writePDFHeaderEntry(title: myHeader.column2, x: leftSide, y: top, width: myColumnWidth2, height: 20)
-        leftSide += 5 + myColumnWidth2
-        
         writePDFHeaderEntry(title: myHeader.column3, x: leftSide, y: top, width: myColumnWidth3, height: 20)
-        leftSide += 5 + myColumnWidth3
-        
         writePDFHeaderEntry(title: myHeader.column4, x: leftSide, y: top, width: myColumnWidth4, height: 20)
-        leftSide += 5 + myColumnWidth4
-        
         writePDFHeaderEntry(title: myHeader.column5, x: leftSide, y: top, width: myColumnWidth5, height: 20)
-        leftSide += 5 + myColumnWidth5
-        
         writePDFHeaderEntry(title: myHeader.column6, x: leftSide, y: top, width: myColumnWidth6, height: 20)
-        leftSide += 5 + myColumnWidth6
-        
         writePDFHeaderEntry(title: myHeader.column7, x: leftSide, y: top, width: myColumnWidth7, height: 20)
-        leftSide += 5 + myColumnWidth7
-        
         writePDFHeaderEntry(title: myHeader.column8, x: leftSide, y: top, width: myColumnWidth8, height: 20)
-        leftSide += 5 + myColumnWidth8
-        
         writePDFHeaderEntry(title: myHeader.column9, x: leftSide, y: top, width: myColumnWidth9, height: 20)
-        leftSide += 5 + myColumnWidth9
-        
         writePDFHeaderEntry(title: myHeader.column10, x: leftSide, y: top, width: myColumnWidth10, height: 20)
-        leftSide += 5 + myColumnWidth10
-        
         writePDFHeaderEntry(title: myHeader.column11, x: leftSide, y: top, width: myColumnWidth11, height: 20)
-        leftSide += 5 + myColumnWidth11
-        
         writePDFHeaderEntry(title: myHeader.column12, x: leftSide, y: top, width: myColumnWidth12, height: 20)
-        leftSide += 5 + myColumnWidth12
-        
         writePDFHeaderEntry(title: myHeader.column13, x: leftSide, y: top, width: myColumnWidth13, height: 20)
-        leftSide += 5 + myColumnWidth13
-        
         writePDFHeaderEntry(title: myHeader.column14, x: leftSide, y: top, width: myColumnWidth14, height: 20)
-        leftSide += 5 + myColumnWidth14
     }
     
     private func lineEntry(_ line: reportLine, top: Int)
     {
-        var leftSide: Int = 10
+        leftSide = 50
         
         writePDFEntry(title: line.column1, x: leftSide, y: top, width: myColumnWidth1, height: myRowHeight)
-        leftSide += 5 + myColumnWidth1
-        
         writePDFEntry(title: line.column2, x: leftSide, y: top, width: myColumnWidth2, height: myRowHeight)
-        leftSide += 5 + myColumnWidth2
-        
         writePDFEntry(title: line.column3, x: leftSide, y: top, width: myColumnWidth3, height: myRowHeight)
-        leftSide += 5 + myColumnWidth3
-        
         writePDFEntry(title: line.column4, x: leftSide, y: top, width: myColumnWidth4, height: myRowHeight)
-        leftSide += 5 + myColumnWidth4
-        
         writePDFEntry(title: line.column5, x: leftSide, y: top, width: myColumnWidth5, height: myRowHeight)
-        leftSide += 5 + myColumnWidth5
-        
         writePDFEntry(title: line.column6, x: leftSide, y: top, width: myColumnWidth6, height: myRowHeight)
-        leftSide += 5 + myColumnWidth6
-        
         writePDFEntry(title: line.column7, x: leftSide, y: top, width: myColumnWidth7, height: myRowHeight)
-        leftSide += 5 + myColumnWidth7
-        
         writePDFEntry(title: line.column8, x: leftSide, y: top, width: myColumnWidth8, height: myRowHeight)
-        leftSide += 5 + myColumnWidth8
-        
         writePDFEntry(title: line.column9, x: leftSide, y: top, width: myColumnWidth9, height: myRowHeight)
-        leftSide += 5 + myColumnWidth9
-        
         writePDFEntry(title: line.column10, x: leftSide, y: top, width: myColumnWidth10, height: myRowHeight)
-        leftSide += 5 + myColumnWidth10
-        
         writePDFEntry(title: line.column11, x: leftSide, y: top, width: myColumnWidth11, height: myRowHeight)
-        leftSide += 5 + myColumnWidth11
-        
         writePDFHeaderEntry(title: line.column12, x: leftSide, y: top, width: myColumnWidth12, height: myRowHeight)
-        leftSide += 5 + myColumnWidth12
-        
         writePDFHeaderEntry(title: line.column13, x: leftSide, y: top, width: myColumnWidth13, height: myRowHeight)
-        leftSide += 5 + myColumnWidth13
-        
         writePDFHeaderEntry(title: line.column14, x: leftSide, y: top, width: myColumnWidth14, height: myRowHeight)
-        leftSide += 5 + myColumnWidth14
     }
     
     private func writePDFHeaderEntry(title: String, x: Int, y: Int, width: Int, height: Int)
     {
+        let displayWidth = Double(width)/disvisor
+        
         let titleParagraphStyle = NSMutableParagraphStyle()
         titleParagraphStyle.alignment = .left
         
@@ -601,14 +572,18 @@ class report: NSObject, UIActivityItemSource
         let headerRect = CGRect(
             x: x,
             y: y,
-            width: width,
+            width: Int(displayWidth),
             height: height)
         
         title.draw(in: headerRect, withAttributes: titleFontAttributes)
+        
+        leftSide += 5 + Int(displayWidth)
     }
     
     private func writePDFEntry(title: String, x: Int, y: Int, width: Int, height: Int)
     {
+        let displayWidth = Double(width)/disvisor
+        
         let titleParagraphStyle = NSMutableParagraphStyle()
         titleParagraphStyle.alignment = .left
         
@@ -621,26 +596,30 @@ class report: NSObject, UIActivityItemSource
         let headerRect = CGRect(
             x: x,
             y: y,
-            width: width,
+            width: Int(displayWidth),
             height: height)
         
         title.draw(in: headerRect, withAttributes: dataFontAttributes)
+        
+        leftSide += 5 + Int(displayWidth)
     }
+}
 
-  
-    func activityViewControllerPlaceholderItem(_ activityViewController: UIActivityViewController) -> Any
+class reportShareSource: UIActivityItemProvider
+{
+    fileprivate var myPDFData: NSMutableData!
+    fileprivate var myDisplayString: String = ""
+    
+    init(displayString: String, PDFData: NSMutableData)
     {
-        return ""
+        super.init(placeholderItem: PDFData)
+        myPDFData = PDFData
+        myDisplayString = displayString
     }
     
-    func activityViewController(_ activityViewController: UIActivityViewController, subjectForActivityType activityType: UIActivityType?) -> String
+    override var item: Any
     {
-        return mySubject
-    }
-    
-    func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivityType) -> Any?
-    {
-        switch activityType
+        switch activityType!
         {
             case UIActivityType.addToReadingList,
                  UIActivityType.airDrop,
@@ -651,26 +630,21 @@ class report: NSObject, UIActivityItemSource
                  UIActivityType.postToVimeo,
                  UIActivityType.print,
                  UIActivityType.saveToCameraRoll:
-                
-                        createPDF()
-                        return myPdfData
-                
+                return myPDFData
+
             case UIActivityType.copyToPasteboard,
                  UIActivityType.message,
                  UIActivityType.postToFacebook,
                  UIActivityType.postToTencentWeibo,
                  UIActivityType.postToTwitter:
-                
-                        createDisplayString()
-                        return myDisplayString
+                return myDisplayString
                 
             default:
-                createPDF()
-                return myPdfData
-            
+                return myPDFData
         }
-    }  
+    }
 }
+
 
 class reportLine: NSObject
 {

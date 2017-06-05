@@ -346,7 +346,21 @@ class shifts: NSObject
                     
                     if $0.workDate == $1.workDate
                     {
-                        return $0.shiftDescription < $1.shiftDescription
+                        if $0.shiftDescription == $1.shiftDescription
+                        {
+                            if $0.startTimeString == $1.startTimeString
+                            {
+                                return $0.personName < $1.personName
+                            }
+                            else
+                            {
+                                return $0.startTimeString < $1.startTimeString
+                            }
+                        }
+                        else
+                        {
+                            return $0.shiftDescription < $1.shiftDescription
+                        }
                     }
                     else
                     {

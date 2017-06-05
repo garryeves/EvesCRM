@@ -115,6 +115,21 @@ extension Double
         let result = formatter.string(from: self as NSNumber);
         return result!;
     }
+    
+    var formatCurrencyNoDecimal: String
+    {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.maximumFractionDigits = 0;
+        formatter.locale = Locale(identifier: Locale.current.identifier)
+        let result = formatter.string(from: self as NSNumber);
+        return result!;
+    }
+    
+    var formatIntString: String
+    {
+        return "\(Int(self))"
+    }
 }
 
 extension Date

@@ -276,19 +276,19 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
         headerLine.column1 = "Name"
         tempReport.columnWidth1 = 150
         headerLine.column2 = "Mon"
-        tempReport.columnWidth2 = 80
+        tempReport.columnWidth2 = 135
         headerLine.column3 = "Tue"
-        tempReport.columnWidth3 = 80
+        tempReport.columnWidth3 = 135
         headerLine.column4 = "Wed"
-        tempReport.columnWidth4 = 80
+        tempReport.columnWidth4 = 135
         headerLine.column5 = "Thu"
-        tempReport.columnWidth5 = 80
+        tempReport.columnWidth5 = 135
         headerLine.column6 = "Fri"
-        tempReport.columnWidth6 = 80
+        tempReport.columnWidth6 = 135
         headerLine.column7 = "Sat"
-        tempReport.columnWidth7 = 80
+        tempReport.columnWidth7 = 135
         headerLine.column8 = "Sun"
-        tempReport.columnWidth8 = 80
+        tempReport.columnWidth8 = 135
 
         tempReport.header = headerLine
         tempReport.landscape()
@@ -396,9 +396,7 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
                 tempReport.append(newPersonLine)
             }
         
-            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [tempReport], applicationActivities: nil)
-            
-            activityViewController.excludedActivityTypes = shareExclutionArray
+            let activityViewController = tempReport.activityController
             
             activityViewController.popoverPresentationController!.sourceView = btnCreateShift
             

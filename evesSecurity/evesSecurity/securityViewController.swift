@@ -88,16 +88,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
             currentReportID = readDefaultInt("reportID")
         }
 
-        if readDefaultInt("reportMonth") >= 0
-        {
-            let tempInt = readDefaultInt("reportMonth")
-            let tempString = "\(tempInt)"
-            btnDropdown.setTitle(tempString, for: .normal)
-        }
-        else
-        {
-            btnDropdown.setTitle("Select", for: .normal)
-        }
+        btnDropdown.setTitle("Select", for: .normal)
         
         if readDefaultInt("reportYear") >= 0
         {
@@ -167,20 +158,20 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                     if myItem.subject == btnReport.currentTitle!
                     {
                         let reportEntry = myItem.lines[indexPath.row]
-                        buildReportCell(label: cell.lbl1, text: reportEntry.column1, width: CGFloat(myItem.columnWidth1), constraint: cell.constraintWidth1)
-                        buildReportCell(label: cell.lbl2, text: reportEntry.column2, width: CGFloat(myItem.columnWidth2), constraint: cell.constraintWidth2)
-                        buildReportCell(label: cell.lbl3, text: reportEntry.column3, width: CGFloat(myItem.columnWidth3), constraint: cell.constraintWidth3)
-                        buildReportCell(label: cell.lbl4, text: reportEntry.column4, width: CGFloat(myItem.columnWidth4), constraint: cell.constraintWidth4)
-                        buildReportCell(label: cell.lbl5, text: reportEntry.column5, width: CGFloat(myItem.columnWidth5), constraint: cell.constraintWidth5)
-                        buildReportCell(label: cell.lbl6, text: reportEntry.column6, width: CGFloat(myItem.columnWidth6), constraint: cell.constraintWidth6)
-                        buildReportCell(label: cell.lbl7, text: reportEntry.column7, width: CGFloat(myItem.columnWidth7), constraint: cell.constraintWidth7)
-                        buildReportCell(label: cell.lbl8, text: reportEntry.column8, width: CGFloat(myItem.columnWidth8), constraint: cell.constraintWidth8)
-                        buildReportCell(label: cell.lbl9, text: reportEntry.column9, width: CGFloat(myItem.columnWidth9), constraint: cell.constraintWidth9)
-                        buildReportCell(label: cell.lbl10, text: reportEntry.column10, width: CGFloat(myItem.columnWidth10), constraint: cell.constraintWidth10)
-                        buildReportCell(label: cell.lbl11, text: reportEntry.column11, width: CGFloat(myItem.columnWidth11), constraint: cell.constraintWidth11)
-                        buildReportCell(label: cell.lbl12, text: reportEntry.column12, width: CGFloat(myItem.columnWidth12), constraint: cell.constraintWidth12)
-                        buildReportCell(label: cell.lbl13, text: reportEntry.column13, width: CGFloat(myItem.columnWidth13), constraint: cell.constraintWidth13)
-                        buildReportCell(label: cell.lbl14, text: reportEntry.column14, width: CGFloat(myItem.columnWidth14), constraint: cell.constraintWidth14)
+                        buildReportCell(label: cell.lbl1, text: reportEntry.column1, width: CGFloat(myItem.columnWidth1), constraint: cell.constraintWidth1, drawLine: reportEntry.drawLine)
+                        buildReportCell(label: cell.lbl2, text: reportEntry.column2, width: CGFloat(myItem.columnWidth2), constraint: cell.constraintWidth2, drawLine: reportEntry.drawLine)
+                        buildReportCell(label: cell.lbl3, text: reportEntry.column3, width: CGFloat(myItem.columnWidth3), constraint: cell.constraintWidth3, drawLine: reportEntry.drawLine)
+                        buildReportCell(label: cell.lbl4, text: reportEntry.column4, width: CGFloat(myItem.columnWidth4), constraint: cell.constraintWidth4, drawLine: reportEntry.drawLine)
+                        buildReportCell(label: cell.lbl5, text: reportEntry.column5, width: CGFloat(myItem.columnWidth5), constraint: cell.constraintWidth5, drawLine: reportEntry.drawLine)
+                        buildReportCell(label: cell.lbl6, text: reportEntry.column6, width: CGFloat(myItem.columnWidth6), constraint: cell.constraintWidth6, drawLine: reportEntry.drawLine)
+                        buildReportCell(label: cell.lbl7, text: reportEntry.column7, width: CGFloat(myItem.columnWidth7), constraint: cell.constraintWidth7, drawLine: reportEntry.drawLine)
+                        buildReportCell(label: cell.lbl8, text: reportEntry.column8, width: CGFloat(myItem.columnWidth8), constraint: cell.constraintWidth8, drawLine: reportEntry.drawLine)
+                        buildReportCell(label: cell.lbl9, text: reportEntry.column9, width: CGFloat(myItem.columnWidth9), constraint: cell.constraintWidth9, drawLine: reportEntry.drawLine)
+                        buildReportCell(label: cell.lbl10, text: reportEntry.column10, width: CGFloat(myItem.columnWidth10), constraint: cell.constraintWidth10, drawLine: reportEntry.drawLine)
+                        buildReportCell(label: cell.lbl11, text: reportEntry.column11, width: CGFloat(myItem.columnWidth11), constraint: cell.constraintWidth11, drawLine: reportEntry.drawLine)
+                        buildReportCell(label: cell.lbl12, text: reportEntry.column12, width: CGFloat(myItem.columnWidth12), constraint: cell.constraintWidth12, drawLine: reportEntry.drawLine)
+                        buildReportCell(label: cell.lbl13, text: reportEntry.column13, width: CGFloat(myItem.columnWidth13), constraint: cell.constraintWidth13, drawLine: reportEntry.drawLine)
+                        buildReportCell(label: cell.lbl14, text: reportEntry.column14, width: CGFloat(myItem.columnWidth14), constraint: cell.constraintWidth14, drawLine: reportEntry.drawLine)
                         
                         break
                     }
@@ -234,9 +225,6 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                                 self.present(rosterViewControl, animated: true, completion: nil)
                                 
                             case reportContractForYear:
-                                let _ = 1
-                                
-                            case reportAnnualReport:
                                 let _ = 1
                                 
                             default:
@@ -305,9 +293,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         {
             if myItem.subject == btnReport.currentTitle!
             {
-                let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [myItem], applicationActivities: nil)
-                
-                activityViewController.excludedActivityTypes = shareExclutionArray
+                let activityViewController = myItem.activityController
                 
                 activityViewController.popoverPresentationController!.sourceView = self.view
                 
@@ -652,27 +638,40 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     
         buildReportLine(name: reportContractForMonth,
                         subject: reportContractForMonth,
-                        text1: "Client", width1: 200,
-                        text2: "Contract", width2: 200,
+                        text1: "Client", width1: 240,
+                        text2: "Contract", width2: 240,
                         text3: "Hours", width3: 100,
-                        text4: "Cost", width4: 100,
-                        text5: "Income", width5: 100,
-                        text6: "Profit", width6: 100,
+                        text4: "Cost", width4: 120,
+                        text5: "Income", width5: 120,
+                        text6: "Profit", width6: 120,
                         text7: "GP%", width7: 50
                         )
 
         buildReportLine(name: reportWagesForMonth,
                         subject: reportWagesForMonth,
-                        text1: "Name", width1: 200,
+                        text1: "Name", width1: 240,
                         text2: "Hours", width2: 100,
-                        text3: "Pay", width3: 100
+                        text3: "Pay", width3: 120
                         )
 
         buildReportLine(name: reportContractForYear,
-                        subject: reportContractForYear)
+                        subject: reportContractForYear,
+                        text1: "", width1: 200,
+                        text2: "Jan", width2: 60,
+                        text3: "Feb", width3: 60,
+                        text4: "Mar", width4: 60,
+                        text5: "Apr", width5: 60,
+                        text6: "May", width6: 60,
+                        text7: "Jun", width7: 60,
+                        text8: "July", width8: 60,
+                        text9: "Aug", width9: 60,
+                        text10: "Sep", width10: 60,
+                        text11: "Oct", width11: 60,
+                        text12: "Nov", width12: 60,
+                        text13: "Dec", width13: 60,
+                        text14: "Total", width14: 60
 
-        buildReportLine(name: reportAnnualReport, subject: reportAnnualReport)
-
+        )
     }
     
     func buildReportLine(name: String, subject: String, text1: String = "", width1: Int = 0, text2: String = "", width2: Int = 0, text3: String = "", width3: Int = 0, text4: String = "", width4: Int = 0, text5: String = "", width5: Int = 0, text6: String = "", width6: Int = 0, text7: String = "", width7: Int = 0, text8: String = "", width8: Int = 0, text9: String = "", width9: Int = 0, text10: String = "", width10: Int = 0, text11: String = "", width11: Int = 0, text12: String = "", width12: Int = 0, text13: String = "", width13: Int = 0, text14: String = "", width14: Int = 0)
@@ -777,12 +776,10 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                         tblData1.isHidden = false
                     }
                     
-                    lblDropdown.isHidden = false
-                    btnDropdown.isHidden = false
+                    lblDropdown.isHidden = true
+                    btnDropdown.isHidden = true
                     lblYear.isHidden = false
                     btnYear.isHidden = false
-                    btnDropdown.setTitle("Select", for: .normal)
-                    lblDropdown.text = "Year:"
                 
                 case 3:
                     tblData1.isHidden = true
@@ -804,12 +801,12 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         {
             btnDropdown.setTitle(displayList[workingItem], for: .normal)
             
-            writeDefaultString("reportMonth", value: displayList[workingItem])
+            writeDefaultInt("reportMonth", value: workingItem)
         }
         else if source == "year"
         {
             btnYear.setTitle(displayList[workingItem], for: .normal)
-            writeDefaultString("reportYear", value: displayList[workingItem])
+            writeDefaultInt("reportYear", value: Int(displayList[workingItem])!)
         }
         else
         {
@@ -828,7 +825,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         }
     }
     
-    func buildReportCell(label: UILabel, text: String, width: CGFloat, constraint: NSLayoutConstraint)
+    func buildReportCell(label: UILabel, text: String, width: CGFloat, constraint: NSLayoutConstraint, drawLine: Bool)
     {
         if width == 0.0
         {
@@ -837,103 +834,440 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         else
         {
             label.isHidden = false
+            
+            if drawLine
+            {
+                label.text = ""
+                
+                let lineView = UIView(frame: CGRect(x: CGFloat(0), y: CGFloat(12), width: CGFloat(label.bounds.size.width), height: CGFloat(1)))
+                lineView.backgroundColor = UIColor.black
+                lineView.autoresizingMask = UIViewAutoresizing(rawValue: 0x3f)
+                label.addSubview(lineView)
+            }
+            else
+            {
+                label.text = text
+            }
+
         }
         constraint.constant = width
-        
-        label.text = text
     }
     
     func buildReport(_ reportEntry: report)
     {
-        buildReportCell(label: lbl1, text: reportEntry.header.column1, width: CGFloat(reportEntry.columnWidth1), constraint: constraintWidth1)
-        buildReportCell(label: lbl2, text: reportEntry.header.column2, width: CGFloat(reportEntry.columnWidth2), constraint: constraintWidth2)
-        buildReportCell(label: lbl3, text: reportEntry.header.column3, width: CGFloat(reportEntry.columnWidth3), constraint: constraintWidth3)
-        buildReportCell(label: lbl4, text: reportEntry.header.column4, width: CGFloat(reportEntry.columnWidth4), constraint: constraintWidth4)
-        buildReportCell(label: lbl5, text: reportEntry.header.column5, width: CGFloat(reportEntry.columnWidth5), constraint: constraintWidth5)
-        buildReportCell(label: lbl6, text: reportEntry.header.column6, width: CGFloat(reportEntry.columnWidth6), constraint: constraintWidth6)
-        buildReportCell(label: lbl7, text: reportEntry.header.column7, width: CGFloat(reportEntry.columnWidth7), constraint: constraintWidth7)
-        buildReportCell(label: lbl8, text: reportEntry.header.column8, width: CGFloat(reportEntry.columnWidth8), constraint: constraintWidth8)
-        buildReportCell(label: lbl9, text: reportEntry.header.column9, width: CGFloat(reportEntry.columnWidth9), constraint: constraintWidth9)
-        buildReportCell(label: lbl10, text: reportEntry.header.column10, width: CGFloat(reportEntry.columnWidth10), constraint: constraintWidth10)
-        buildReportCell(label: lbl11, text: reportEntry.header.column11, width: CGFloat(reportEntry.columnWidth11), constraint: constraintWidth11)
-        buildReportCell(label: lbl12, text: reportEntry.header.column12, width: CGFloat(reportEntry.columnWidth12), constraint: constraintWidth12)
-        buildReportCell(label: lbl13, text: reportEntry.header.column13, width: CGFloat(reportEntry.columnWidth13), constraint: constraintWidth13)
-        buildReportCell(label: lbl14, text: reportEntry.header.column14, width: CGFloat(reportEntry.columnWidth14), constraint: constraintWidth14)
+        buildReportCell(label: lbl1, text: reportEntry.header.column1, width: CGFloat(reportEntry.columnWidth1), constraint: constraintWidth1, drawLine: false)
+        buildReportCell(label: lbl2, text: reportEntry.header.column2, width: CGFloat(reportEntry.columnWidth2), constraint: constraintWidth2, drawLine: false)
+        buildReportCell(label: lbl3, text: reportEntry.header.column3, width: CGFloat(reportEntry.columnWidth3), constraint: constraintWidth3, drawLine: false)
+        buildReportCell(label: lbl4, text: reportEntry.header.column4, width: CGFloat(reportEntry.columnWidth4), constraint: constraintWidth4, drawLine: false)
+        buildReportCell(label: lbl5, text: reportEntry.header.column5, width: CGFloat(reportEntry.columnWidth5), constraint: constraintWidth5, drawLine: false)
+        buildReportCell(label: lbl6, text: reportEntry.header.column6, width: CGFloat(reportEntry.columnWidth6), constraint: constraintWidth6, drawLine: false)
+        buildReportCell(label: lbl7, text: reportEntry.header.column7, width: CGFloat(reportEntry.columnWidth7), constraint: constraintWidth7, drawLine: false)
+        buildReportCell(label: lbl8, text: reportEntry.header.column8, width: CGFloat(reportEntry.columnWidth8), constraint: constraintWidth8, drawLine: false)
+        buildReportCell(label: lbl9, text: reportEntry.header.column9, width: CGFloat(reportEntry.columnWidth9), constraint: constraintWidth9, drawLine: false)
+        buildReportCell(label: lbl10, text: reportEntry.header.column10, width: CGFloat(reportEntry.columnWidth10), constraint: constraintWidth10, drawLine: false)
+        buildReportCell(label: lbl11, text: reportEntry.header.column11, width: CGFloat(reportEntry.columnWidth11), constraint: constraintWidth11, drawLine: false)
+        buildReportCell(label: lbl12, text: reportEntry.header.column12, width: CGFloat(reportEntry.columnWidth12), constraint: constraintWidth12, drawLine: false)
+        buildReportCell(label: lbl13, text: reportEntry.header.column13, width: CGFloat(reportEntry.columnWidth13), constraint: constraintWidth13, drawLine: false)
+        buildReportCell(label: lbl14, text: reportEntry.header.column14, width: CGFloat(reportEntry.columnWidth14), constraint: constraintWidth14, drawLine: false)
     
+        updateViewConstraints()
+        
         reportEntry.removeAll()
         // Lets process through the report
         
         switch reportEntry.reportName
         {
             case reportContractForMonth:  // Contract for month
-                contractList = projects(teamID: currentUser.currentTeam!.teamID, includeEvents: true)
-                
-                contractList.loadFinancials(month: btnDropdown.currentTitle!, year: btnYear.currentTitle!)
-                
-                var lastClientID: Int = -1
-                
-                for myItem in contractList.projects
+                if btnDropdown.currentTitle! != "Select"
                 {
-                    let profit = myItem.financials[0].income - myItem.financials[0].expense
+                    contractList = projects(teamID: currentUser.currentTeam!.teamID, includeEvents: true)
                     
-                    let gp = (profit/myItem.financials[0].income)  * 100
+                    contractList.loadFinancials(month: btnDropdown.currentTitle!, year: btnYear.currentTitle!)
                     
-                    if myItem.financials[0].income != 0 || myItem.financials[0].expense != 0
+                    var lastClientID: Int = -1
+                    
+                    for myItem in contractList.projects
                     {
+                        let profit = myItem.financials[0].income - myItem.financials[0].expense
+                        
+                        let gp = (profit/myItem.financials[0].income)  * 100
+                        
+                        if myItem.financials[0].income != 0 || myItem.financials[0].expense != 0
+                        {
+                            let newReportLine = reportLine()
+                            
+                            var clientName: String = ""
+                            if myItem.clientID != lastClientID
+                            {
+                                let tempClient = client(clientID: myItem.clientID)
+                                clientName = tempClient.name
+                                lastClientID = myItem.clientID
+                            }
+                            
+                            newReportLine.column1 = clientName
+                            newReportLine.column2 = myItem.projectName
+                            newReportLine.column3 = myItem.financials[0].hours.formatHours
+                            newReportLine.column4 = myItem.financials[0].expense.formatCurrency
+                            newReportLine.column5 = myItem.financials[0].income.formatCurrency
+                            newReportLine.column6 = profit.formatCurrency
+                            newReportLine.column7 = gp.formatPercent
+                            newReportLine.sourceObject = myItem
+                            
+                            reportEntry.append(newReportLine)
+                        }
+                    }
+                }
+
+            case reportWagesForMonth:  // Wage per person for month
+                if btnDropdown.currentTitle! != "Select"
+                {
+                    for myItem in people(teamID: currentUser.currentTeam!.teamID).people
+                    {
+                        let monthReport = myItem.getFinancials(month: btnDropdown.currentTitle!, year: btnYear.currentTitle!)
+                        
+                        if monthReport.hours != 0
+                        {
+                            let newReportLine = reportLine()
+                            
+                            newReportLine.column1 = myItem.name
+                            newReportLine.column2 = monthReport.hours.formatHours
+                            newReportLine.column3 = monthReport.wage.formatCurrency
+
+                            newReportLine.sourceObject = myItem
+                            
+                            reportEntry.append(newReportLine)
+                        }
+                    }
+                }
+            
+            case reportContractForYear:
+                reportEntry.landscape()
+                
+                var janTotalAmount: Double = 0.0
+                var febTotalAmount: Double = 0.0
+                var marTotalAmount: Double = 0.0
+                var aprTotalAmount: Double = 0.0
+                var mayTotalAmount: Double = 0.0
+                var junTotalAmount: Double = 0.0
+                var julTotalAmount: Double = 0.0
+                var augTotalAmount: Double = 0.0
+                var sepTotalAmount: Double = 0.0
+                var octTotalAmount: Double = 0.0
+                var novTotalAmount: Double = 0.0
+                var decTotalAmount: Double = 0.0
+                
+                for myClient in clients(teamID: currentUser.currentTeam!.teamID).clients
+                {
+                    var janClientAmount: Double = 0.0
+                    var febClientAmount: Double = 0.0
+                    var marClientAmount: Double = 0.0
+                    var aprClientAmount: Double = 0.0
+                    var mayClientAmount: Double = 0.0
+                    var junClientAmount: Double = 0.0
+                    var julClientAmount: Double = 0.0
+                    var augClientAmount: Double = 0.0
+                    var sepClientAmount: Double = 0.0
+                    var octClientAmount: Double = 0.0
+                    var novClientAmount: Double = 0.0
+                    var decClientAmount: Double = 0.0
+                    
+                    for myProject in myClient.projectList
+                    {
+                        myProject.loadFinancials(month: "January", year: btnYear.currentTitle!)
+                        let janAmount = myProject.financials[0].income - myProject.financials[0].expense
+
+                        myProject.loadFinancials(month: "February", year: btnYear.currentTitle!)
+                        let febAmount = myProject.financials[0].income - myProject.financials[0].expense
+
+                        myProject.loadFinancials(month: "March", year: btnYear.currentTitle!)
+                        let marAmount = myProject.financials[0].income - myProject.financials[0].expense
+
+                        myProject.loadFinancials(month: "April", year: btnYear.currentTitle!)
+                        let aprAmount = myProject.financials[0].income - myProject.financials[0].expense
+
+                        myProject.loadFinancials(month: "May", year: btnYear.currentTitle!)
+                        let mayAmount = myProject.financials[0].income - myProject.financials[0].expense
+
+                        myProject.loadFinancials(month: "June", year: btnYear.currentTitle!)
+                        let junAmount = myProject.financials[0].income - myProject.financials[0].expense
+
+                        myProject.loadFinancials(month: "July", year: btnYear.currentTitle!)
+                        let julAmount = myProject.financials[0].income - myProject.financials[0].expense
+
+                        myProject.loadFinancials(month: "August", year: btnYear.currentTitle!)
+                        let augAmount = myProject.financials[0].income - myProject.financials[0].expense
+
+                        myProject.loadFinancials(month: "September", year: btnYear.currentTitle!)
+                        let sepAmount = myProject.financials[0].income - myProject.financials[0].expense
+
+                        myProject.loadFinancials(month: "October", year: btnYear.currentTitle!)
+                        let octAmount = myProject.financials[0].income - myProject.financials[0].expense
+                        
+                        myProject.loadFinancials(month: "November", year: btnYear.currentTitle!)
+                        let novAmount = myProject.financials[0].income - myProject.financials[0].expense
+                        
+                        myProject.loadFinancials(month: "December", year: btnYear.currentTitle!)
+                        let decAmount = myProject.financials[0].income - myProject.financials[0].expense
+                        
                         let newReportLine = reportLine()
                         
-                        var clientName: String = ""
-                        if myItem.clientID != lastClientID
+                        let totAmount = janAmount + febAmount + marAmount + aprAmount + mayAmount + junAmount + julAmount + augAmount + sepAmount + octAmount + novAmount + decAmount
+
+                        newReportLine.column1 = myProject.projectName
+                        
+                        if janAmount != 0.0
                         {
-                            let tempClient = client(clientID: myItem.clientID)
-                            clientName = tempClient.name
-                            lastClientID = myItem.clientID
+                            newReportLine.column2 = janAmount.formatIntString
                         }
                         
-                        newReportLine.column1 = clientName
-                        newReportLine.column2 = myItem.projectName
-                        newReportLine.column3 = myItem.financials[0].expense.formatCurrency
-                        newReportLine.column4 = myItem.financials[0].hours.formatHours
-                        newReportLine.column5 = myItem.financials[0].income.formatCurrency
-                        newReportLine.column6 = profit.formatCurrency
-                        newReportLine.column7 = gp.formatPercent
-                        newReportLine.sourceObject = myItem
+                        if febAmount != 0.0
+                        {
+                            newReportLine.column3 = febAmount.formatIntString
+                        }
                         
+                        if marAmount != 0.0
+                        {
+                            newReportLine.column4 = marAmount.formatIntString
+                        }
+                        
+                        if aprAmount != 0.0
+                        {
+                            newReportLine.column5 = aprAmount.formatIntString
+                        }
+                        
+                        if mayAmount != 0.0
+                        {
+                            newReportLine.column6 = mayAmount.formatIntString
+                        }
+                        
+                        if junAmount != 0.0
+                        {
+                            newReportLine.column7 = junAmount.formatIntString
+                        }
+                        
+                        if julAmount != 0.0
+                        {
+                            newReportLine.column8 = julAmount.formatIntString
+                        }
+                        
+                        if augAmount != 0.0
+                        {
+                            newReportLine.column9 = augAmount.formatIntString
+                        }
+                        
+                        if sepAmount != 0.0
+                        {
+                            newReportLine.column10 = sepAmount.formatIntString
+                        }
+                        
+                        if octAmount != 0.0
+                        {
+                            newReportLine.column11 = octAmount.formatIntString
+                        }
+                        
+                        if novAmount != 0.0
+                        {
+                            newReportLine.column12 = novAmount.formatIntString
+                        }
+                        
+                        if decAmount != 0.0
+                        {
+                            newReportLine.column13 = decAmount.formatIntString
+                        }
+                        
+                        if totAmount != 0.0
+                        {
+                            newReportLine.column14 = totAmount.formatIntString
+                        }
+                        
+                        newReportLine.sourceObject = myProject
+
                         reportEntry.append(newReportLine)
+                        
+                        janClientAmount += janAmount
+                        febClientAmount += febAmount
+                        marClientAmount += marAmount
+                        aprClientAmount += aprAmount
+                        mayClientAmount += mayAmount
+                        junClientAmount += junAmount
+                        julClientAmount += julAmount
+                        augClientAmount += augAmount
+                        sepClientAmount += sepAmount
+                        octClientAmount += octAmount
+                        novClientAmount += novAmount
+                        decClientAmount += decAmount
+                        
+                        janTotalAmount += janAmount
+                        febTotalAmount += febAmount
+                        marTotalAmount += marAmount
+                        aprTotalAmount += aprAmount
+                        mayTotalAmount += mayAmount
+                        junTotalAmount += junAmount
+                        julTotalAmount += julAmount
+                        augTotalAmount += augAmount
+                        sepTotalAmount += sepAmount
+                        octTotalAmount += octAmount
+                        novTotalAmount += novAmount
+                        decTotalAmount += decAmount
                     }
-                }
-
-                
-            case reportWagesForMonth:  // Wage per person for month
-
-                for myItem in people(teamID: currentUser.currentTeam!.teamID).people
-                {
-                    let monthReport = myItem.getFinancials(month: btnDropdown.currentTitle!, year: btnYear.currentTitle!)
                     
-                    if monthReport.hours != 0
+                    let drawLine = reportLine()
+                    drawLine.drawLine = true
+                    reportEntry.append(drawLine)
+                    
+                    let newReportLine = reportLine()
+                    
+                    let totClientAmount = janClientAmount + febClientAmount + marClientAmount + aprClientAmount + mayClientAmount + junClientAmount + julClientAmount + augClientAmount + sepClientAmount + octClientAmount + novClientAmount + decClientAmount
+                    
+                    newReportLine.column1 = myClient.name
+                    
+                    if janClientAmount != 0.0
                     {
-                        let newReportLine = reportLine()
-                        
-                        newReportLine.column1 = myItem.name
-                        newReportLine.column2 = monthReport.hours.formatHours
-                        newReportLine.column3 = monthReport.wage.formatCurrency
-
-                        newReportLine.sourceObject = myItem
-                        
-                        reportEntry.append(newReportLine)
+                        newReportLine.column2 = janClientAmount.formatIntString
                     }
+                    
+                    if febClientAmount != 0.0
+                    {
+                        newReportLine.column3 = febClientAmount.formatIntString
+                    }
+                    
+                    if marClientAmount != 0.0
+                    {
+                        newReportLine.column4 = marClientAmount.formatIntString
+                    }
+                    
+                    if aprClientAmount != 0.0
+                    {
+                        newReportLine.column5 = aprClientAmount.formatIntString
+                    }
+                    
+                    if mayClientAmount != 0.0
+                    {
+                        newReportLine.column6 = mayClientAmount.formatIntString
+                    }
+                    
+                    if junClientAmount != 0.0
+                    {
+                        newReportLine.column7 = junClientAmount.formatIntString
+                    }
+                    
+                    if julClientAmount != 0.0
+                    {
+                        newReportLine.column8 = julClientAmount.formatIntString
+                    }
+                    
+                    if augClientAmount != 0.0
+                    {
+                        newReportLine.column9 = augClientAmount.formatIntString
+                    }
+                    
+                    if sepClientAmount != 0.0
+                    {
+                        newReportLine.column10 = sepClientAmount.formatIntString
+                    }
+                    
+                    if octClientAmount != 0.0
+                    {
+                        newReportLine.column11 = octClientAmount.formatIntString
+                    }
+                    
+                    if novClientAmount != 0.0
+                    {
+                        newReportLine.column12 = novClientAmount.formatIntString
+                    }
+                    
+                    if decClientAmount != 0.0
+                    {
+                        newReportLine.column13 = decClientAmount.formatIntString
+                    }
+                    
+                    if totClientAmount != 0.0
+                    {
+                        newReportLine.column14 = totClientAmount.formatIntString
+                    }
+                    
+                    newReportLine.sourceObject = myClient
+                    
+                    reportEntry.append(newReportLine)
+
+                    let drawLine2 = reportLine()
+                    drawLine2.drawLine = true
+                    reportEntry.append(drawLine2)
                 }
                 
-            case reportContractForYear:
+                let newReportLine = reportLine()
                 
-                tblData1.isHidden = false
-                tblData1.reloadData()
+                let totTotalAmount = janTotalAmount + febTotalAmount + marTotalAmount + aprTotalAmount + mayTotalAmount + junTotalAmount + julTotalAmount + augTotalAmount + sepTotalAmount + octTotalAmount + novTotalAmount + decTotalAmount
                 
-            case reportAnnualReport:
+                newReportLine.column1 = "Total"
                 
-                tblData1.isHidden = false
-                tblData1.reloadData()
+                if janTotalAmount != 0.0
+                {
+                    newReportLine.column2 = janTotalAmount.formatIntString
+                }
                 
+                if febTotalAmount != 0.0
+                {
+                    newReportLine.column3 = febTotalAmount.formatIntString
+                }
+                
+                if marTotalAmount != 0.0
+                {
+                    newReportLine.column4 = marTotalAmount.formatIntString
+                }
+                
+                if aprTotalAmount != 0.0
+                {
+                    newReportLine.column5 = aprTotalAmount.formatIntString
+                }
+                
+                if mayTotalAmount != 0.0
+                {
+                    newReportLine.column6 = mayTotalAmount.formatIntString
+                }
+                
+                if junTotalAmount != 0.0
+                {
+                    newReportLine.column7 = junTotalAmount.formatIntString
+                }
+                
+                if julTotalAmount != 0.0
+                {
+                    newReportLine.column8 = julTotalAmount.formatIntString
+                }
+                
+                if augTotalAmount != 0.0
+                {
+                    newReportLine.column9 = augTotalAmount.formatIntString
+                }
+                
+                if sepTotalAmount != 0.0
+                {
+                    newReportLine.column10 = sepTotalAmount.formatIntString
+                }
+                
+                if octTotalAmount != 0.0
+                {
+                    newReportLine.column11 = octTotalAmount.formatIntString
+                }
+                
+                if novTotalAmount != 0.0
+                {
+                    newReportLine.column12 = novTotalAmount.formatIntString
+                }
+                
+                if decTotalAmount != 0.0
+                {
+                    newReportLine.column13 = decTotalAmount.formatIntString
+                }
+                
+                if totTotalAmount != 0.0
+                {
+                    newReportLine.column14 = totTotalAmount.formatIntString
+                }
+                
+                reportEntry.append(newReportLine)
+
             default:
                 print("unknow entry myPickerDidFinish - selectedItem - \(reportEntry.reportName)")
         }
@@ -985,6 +1319,20 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         for myItem in currentUser.currentTeam!.reportingMonths
         {
             monthList.append(myItem)
+        }
+        
+        if readDefaultInt("reportMonth") >= 0
+        {
+            let tempInt = readDefaultInt("reportMonth")
+            
+            DispatchQueue.main.async
+            {
+                self.btnDropdown.setTitle(self.monthList[tempInt], for: .normal)
+            }
+        }
+        else
+        {
+            btnDropdown.setTitle("Select", for: .normal)
         }
     }
 }

@@ -42,6 +42,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
     fileprivate var newRoleDate: Date!
     fileprivate var peopleList: people!
     fileprivate var rateList: rates!
+    fileprivate var shiftList: [shift] = Array()
     
     override func viewDidLoad()
     {
@@ -70,21 +71,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
                 }
                 
             case tblRoles:
-                if currentEvent == nil
-                {
-                    return 0
-                }
-                else
-                {
-                    if currentEvent.staff == nil
-                    {
-                        return 0
-                    }
-                    else
-                    {
-                        return (currentEvent.staff?.shifts.count)!
-                    }
-                }
+                return shiftList.count
                 
             default:
                 return 0
@@ -106,16 +93,16 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
             case tblRoles:
                 let cell = tableView.dequeueReusableCell(withIdentifier:"cellEvent", for: indexPath) as! eventRoleItem
                 
-                cell.lblRole.text = currentEvent.staff?.shifts[indexPath.row].shiftDescription
-                cell.lblDate.text = currentEvent.staff?.shifts[indexPath.row].workDateShortString
-                cell.btnRate.setTitle(currentEvent.staff?.shifts[indexPath.row].rateDescription, for: .normal)
-                cell.btnPerson.setTitle(currentEvent.staff?.shifts[indexPath.row].personName, for: .normal)
-                cell.btnStart.setTitle(currentEvent.staff?.shifts[indexPath.row].startTimeString, for: .normal)
-                cell.btnEnd.setTitle(currentEvent.staff?.shifts[indexPath.row].endTimeString, for: .normal)
+                cell.lblRole.text = shiftList[indexPath.row].shiftDescription
+                cell.lblDate.text = shiftList[indexPath.row].workDateShortString
+                cell.btnRate.setTitle(shiftList[indexPath.row].rateDescription, for: .normal)
+                cell.btnPerson.setTitle(shiftList[indexPath.row].personName, for: .normal)
+                cell.btnStart.setTitle(shiftList[indexPath.row].startTimeString, for: .normal)
+                cell.btnEnd.setTitle(shiftList[indexPath.row].endTimeString, for: .normal)
                 
                 cell.mainView = self
                 cell.sourceView = cell
-                cell.shiftRecord = currentEvent.staff?.shifts[indexPath.row]
+                cell.shiftRecord = shiftList[indexPath.row]
                 cell.peopleList = peopleList
                 cell.rateList = rateList
                 
@@ -149,7 +136,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
         {
             if editingStyle == .delete
             {
-                currentEvent.staff?.shifts[indexPath.row].delete()
+                shiftList[indexPath.row].delete()
          
                 tblRoles.reloadData()
             }
@@ -306,26 +293,53 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
         
         let headerLine = reportLine()
         headerLine.column1 = "Name"
-        tempReport.columnWidth1 = 150
+        tempReport.columnWidth1 = 240
         headerLine.column2 = "Date"
-        tempReport.columnWidth2 = 80
+        tempReport.columnWidth2 = 120
         headerLine.column3 = "Start"
-        tempReport.columnWidth3 = 50
+        tempReport.columnWidth3 = 70
         headerLine.column4 = "End"
-        tempReport.columnWidth4 = 50
+        tempReport.columnWidth4 = 70
         headerLine.column5 = "Role"
-        tempReport.columnWidth5 = 150
+        tempReport.columnWidth5 = 200
         
         tempReport.header = headerLine
         
         var currentDate: String = ""
         var firstTime: Bool = true
+        var currentShiftDescription: String = ""
+        var currentStartTime: String = ""
         
-        if currentEvent.staff != nil
+        for myShift in shiftList
         {
-            for myShift in currentEvent.staff!.shifts
+            if myShift.workDateString != currentDate
             {
-                if myShift.workDateString != currentDate
+                if !firstTime
+                {
+                    let drawLine = reportLine()
+                    drawLine.drawLine = true
+                    tempReport.append(drawLine)
+                }
+        
+                currentDate = myShift.workDateString
+                currentShiftDescription = myShift.shiftDescription
+                currentStartTime = myShift.startTimeString
+            }
+            
+            if myShift.shiftDescription != currentShiftDescription
+            {
+                if !firstTime
+                {
+                    let drawLine = reportLine()
+                    drawLine.drawLine = true
+                    tempReport.append(drawLine)
+                }
+                currentShiftDescription = myShift.shiftDescription
+                currentStartTime = myShift.startTimeString
+            }
+            else
+            {
+                if myShift.startTimeString != currentStartTime
                 {
                     if !firstTime
                     {
@@ -333,28 +347,27 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
                         drawLine.drawLine = true
                         tempReport.append(drawLine)
                     }
-                    firstTime = false
-                    currentDate = myShift.workDateString
+                    currentStartTime = myShift.startTimeString
                 }
-                
-                let newTimeLine = reportLine()
-                
-                newTimeLine.column1 = myShift.personName
-                newTimeLine.column2 = myShift.workDateString
-                newTimeLine.column3 = myShift.startTimeString
-                newTimeLine.column4 = myShift.endTimeString
-                newTimeLine.column5 = myShift.shiftDescription
-
-                tempReport.append(newTimeLine)
             }
-        
-            let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: [tempReport], applicationActivities: nil)
             
-            activityViewController.excludedActivityTypes = shareExclutionArray
-            activityViewController.popoverPresentationController!.sourceView = btnAddRole
+            firstTime = false
+            let newTimeLine = reportLine()
             
-            present(activityViewController, animated:true, completion:nil)
+            newTimeLine.column1 = myShift.personName
+            newTimeLine.column2 = myShift.workDateString
+            newTimeLine.column3 = myShift.startTimeString
+            newTimeLine.column4 = myShift.endTimeString
+            newTimeLine.column5 = myShift.shiftDescription
+
+            tempReport.append(newTimeLine)
         }
+    
+        let activityViewController = tempReport.activityController
+        
+        activityViewController.popoverPresentationController!.sourceView = btnAddRole
+        
+        present(activityViewController, animated:true, completion:nil)
     }
     
     func myPickerDidFinish(_ source: String, selectedItem:Int)
@@ -524,8 +537,9 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
         if currentEvent != nil
         {
             rateList = rates(clientID: currentEvent.clientID)
+            shiftList = currentEvent.staff!.shifts
             
-            if currentEvent.staff?.shifts.count == 0
+            if shiftList.count == 0
             {
                 hideFields()
             }
