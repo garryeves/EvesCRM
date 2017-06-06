@@ -15,7 +15,6 @@
 		341323831EC3EA9700BBDE1E /* personClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341323821EC3EA9700BBDE1E /* personClass.swift */; };
 		3413238B1EC40A1D00BBDE1E /* dropdownsClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3413238A1EC40A1D00BBDE1E /* dropdownsClass.swift */; };
 		3413238F1EC42F1F00BBDE1E /* ratesClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3413238E1EC42F1F00BBDE1E /* ratesClass.swift */; };
-		341323911EC4369700BBDE1E /* reportingMonthClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341323901EC4369700BBDE1E /* reportingMonthClass.swift */; };
 		341323941EC43C3500BBDE1E /* shiftsClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341323931EC43C3500BBDE1E /* shiftsClass.swift */; };
 		3413239A1EC4530300BBDE1E /* UsersClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341323991EC4530300BBDE1E /* UsersClass.swift */; };
 		343757D21ED3F26300A9D313 /* eventPlanningViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 343757D11ED3F26300A9D313 /* eventPlanningViewController.swift */; };
@@ -105,7 +104,6 @@
 		341323821EC3EA9700BBDE1E /* personClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = personClass.swift; sourceTree = "<group>"; };
 		3413238A1EC40A1D00BBDE1E /* dropdownsClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = dropdownsClass.swift; sourceTree = "<group>"; };
 		3413238E1EC42F1F00BBDE1E /* ratesClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ratesClass.swift; sourceTree = "<group>"; };
-		341323901EC4369700BBDE1E /* reportingMonthClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = reportingMonthClass.swift; sourceTree = "<group>"; };
 		341323931EC43C3500BBDE1E /* shiftsClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = shiftsClass.swift; sourceTree = "<group>"; };
 		341323991EC4530300BBDE1E /* UsersClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UsersClass.swift; sourceTree = "<group>"; };
 		343757D11ED3F26300A9D313 /* eventPlanningViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = eventPlanningViewController.swift; sourceTree = "<group>"; };
@@ -305,7 +303,6 @@
 				34CEE9D31EC2C71C00F85A11 /* projectClass.swift */,
 				3413238E1EC42F1F00BBDE1E /* ratesClass.swift */,
 				34EFB4181EE2454800772C8C /* reporting.swift */,
-				341323901EC4369700BBDE1E /* reportingMonthClass.swift */,
 				341323931EC43C3500BBDE1E /* shiftsClass.swift */,
 				34CEE9A91EC2C61500F85A11 /* taskClass.swift */,
 				34CEE9DB1EC2C79600F85A11 /* taskUpdatesClass.swift */,
@@ -615,7 +612,6 @@
 				344BF82C1EC954C70066CD35 /* settingViewController.swift in Sources */,
 				34E07BBA1ECAF02A007711A6 /* addressesViewController.swift in Sources */,
 				34CEE9EA1EC2C81800F85A11 /* EvesCRMSharedFiles.swift in Sources */,
-				341323911EC4369700BBDE1E /* reportingMonthClass.swift in Sources */,
 				34B43A701ECC0A7500BBE4D1 /* contactsViewController.swift in Sources */,
 				34CEE96E1EC2BE4000F85A11 /* DBSync.swift in Sources */,
 				343757D41ED3F27E00A9D313 /* eventTemplateVoewController.swift in Sources */,

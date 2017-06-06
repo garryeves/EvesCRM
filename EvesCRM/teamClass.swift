@@ -799,38 +799,6 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceTeam(_ teamID: Int, name: String, status: String, note: String, type: String, predecessor: Int, externalID: String, taxNumber: String, companyRegNumber: String, nextInvoiceNumber: Int, logo: NSData, subscriptionDate: Date, subscriptionLevel: Int, updateTime: Date =  Date(), updateType: String = "CODE")
-    {
-        let myTeam = Team(context: persistentContainer.viewContext)
-        myTeam.teamID = Int64(teamID)
-        myTeam.name = name
-        myTeam.status = status
-        myTeam.note = note
-        myTeam.type = type
-        myTeam.predecessor = Int64(predecessor)
-        myTeam.externalID = externalID
-        myTeam.taxNumber = taxNumber
-        myTeam.companyRegNumber = companyRegNumber
-        myTeam.nextInvoiceNumber = Int64(nextInvoiceNumber)
-        myTeam.logo = logo
-        myTeam.subscriptionDate = subscriptionDate as NSDate
-        myTeam.subscriptionLevel = Int64(subscriptionLevel)
-
-        if updateType == "CODE"
-        {
-            myTeam.updateTime =  NSDate()
-            myTeam.updateType = "Add"
-        }
-        else
-        {
-            myTeam.updateTime = updateTime as NSDate
-            myTeam.updateType = updateType
-        }
-        
-        saveContext()
-        self.refreshObject(myTeam)
-    }
-    
     func saveTeamLogo(teamID: Int, logo: NSData)
     {
         var myTeam: Team!
@@ -1118,34 +1086,12 @@ extension CloudKitInteraction
         let query: CKQuery = CKQuery(recordType: "Team", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
-        while waitFlag
-        {
-            usleep(self.sleepTime)
-        }
-        
-        waitFlag = true
-        
         operation.recordFetchedBlock = { (record) in
-            while self.recordCount > 0
-            {
-                usleep(self.sleepTime)
-            }
-            
-            self.recordCount += 1
-
-                self.updateTeamRecord(record)
-            self.recordCount -= 1
-
-//                usleep(self.sleepTime)
-            }
+            self.updateTeamRecord(record)
+        }
         let operationQueue = OperationQueue()
         
         executePublicQueryOperation(targetTable: "Team", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
     
     func deleteTeam()
@@ -1394,11 +1340,19 @@ extension CloudKitInteraction
             logo = NSData(contentsOf: asset.fileURL)
         }
         
+        while self.recordCount > 0
+        {
+            usleep(self.sleepTime)
+        }
+        
+        self.recordCount += 1
+        
         myDatabaseConnection.saveTeam(teamID, name: name, status: status, note: note, type: type, predecessor: predecessor, externalID: externalID, taxNumber: taxNumber, companyRegNumber: companyRegNumber, nextInvoiceNumber: nextInvoiceNumber, subscriptionDate: subscriptionDate, subscriptionLevel: subscriptionLevel, updateTime: updateTime, updateType: updateType)
         
         if logo != nil
         {
             myDatabaseConnection.saveTeamLogo(teamID: teamID, logo: logo)
         }
+        self.recordCount -= 1
     }
 }

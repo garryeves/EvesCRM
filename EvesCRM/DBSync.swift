@@ -18,6 +18,9 @@ class DBSync: NSObject
 //    let defaultsName = "76YDDNPU7W.group.com.garryeves.EvesCRM"
     var refreshRunning: Bool = false
     var firstRun: Bool = true
+    var syncTime: UInt32 = 2
+    var syncTotal: Int = 20
+    var syncProgress: Int = 0
     
     func startTimer()
     {
@@ -40,34 +43,11 @@ class DBSync: NSObject
             let myReachability = Reachability()
             if myReachability.isConnectedToNetwork()
             {
-                if myDatabaseConnection.getTeamsCount() == 0
-                {  // Nothing in teams table so lets do a full sync
-                    notificationCenter.addObserver(self, selector: #selector(self.DBReplaceDone), name: NotificationDBReplaceDone, object: nil)
-                    replaceWithCloudKit()
-                    
-                    usleep(500)
-                    setLastSyncDates(syncDate: Date())
-                    
-                    notificationCenter.post(name: NotificationDBReplaceDone, object: nil)
-                }
-                else
-                {
-                    let syncDate = Date()
+                performSync()
 
-                    syncToCloudKit(teamID: currentUser.currentTeam!.teamID)
-                    syncFromCloudKit(teamID: currentUser.currentTeam!.teamID)
-                    setLastSyncDates(syncDate: syncDate)
-                    notificationCenter.post(name: NotificationDBSyncCompleted, object: nil)
-                    myDatabaseConnection.clearDeletedItems()
-                    myDatabaseConnection.clearSyncedItems()
-
-//                    if firstRun
-//                    {
-//                        myCloudDB.setupSubscriptions()
-//                        firstRun = false
-//                    }
-                    
-                }
+                notificationCenter.post(name: NotificationDBSyncCompleted, object: nil)
+                myDatabaseConnection.clearDeletedItems()
+                myDatabaseConnection.clearSyncedItems()
             }
         }
     }

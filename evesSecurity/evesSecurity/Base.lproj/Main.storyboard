@@ -22,22 +22,43 @@
                         <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Please wait.  Loading and validating user" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HwO-xq-Jxj">
-                                <rect key="frame" x="230" y="502" width="309" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Please wait.  Validating User and Loading Data" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HwO-xq-Jxj">
+                                <rect key="frame" x="207" y="502" width="354" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="This will take a few minutes" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="J1C-4Q-lRJ">
+                                <rect key="frame" x="280" y="573" width="209" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="BYO-Qe-QVk">
+                                <rect key="frame" x="279.5" y="644" width="209" height="20"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="20" id="BJi-au-ttb"/>
+                                </constraints>
+                            </progressView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="HwO-xq-Jxj" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="5Fe-ud-nUI"/>
+                            <constraint firstItem="J1C-4Q-lRJ" firstAttribute="top" secondItem="HwO-xq-Jxj" secondAttribute="bottom" constant="50" id="7xt-MA-FKG"/>
+                            <constraint firstItem="BYO-Qe-QVk" firstAttribute="width" secondItem="J1C-4Q-lRJ" secondAttribute="width" id="ArJ-0J-9y3"/>
+                            <constraint firstItem="BYO-Qe-QVk" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Ld7-pX-8pB"/>
+                            <constraint firstItem="BYO-Qe-QVk" firstAttribute="top" secondItem="J1C-4Q-lRJ" secondAttribute="bottom" constant="50" id="Lpd-np-gFo"/>
+                            <constraint firstItem="J1C-4Q-lRJ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="lAB-nM-WSO"/>
                             <constraint firstItem="HwO-xq-Jxj" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="tY6-LC-gEM"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="progressbar" destination="BYO-Qe-QVk" id="gmf-hT-nVQ"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="140.625" y="85.546875"/>
         </scene>
         <!--Main View-->
         <scene sceneID="Pa9-qB-ehO">

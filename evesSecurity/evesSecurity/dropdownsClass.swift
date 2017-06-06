@@ -123,30 +123,8 @@ extension coreDatabase
         }
 
         saveContext()
-    }
-    
-    func replaceDropdowns(_ dropdownType: String,
-                          dropdownValue: String,
-                          teamID: Int,
-                        updateTime: Date =  Date(), updateType: String = "CODE")
-    {
-        let myItem = Dropdowns(context: objectContext)
-        myItem.dropDownType = dropdownType
-        myItem.dropDownValue = dropdownValue
-        myItem.teamID = Int64(teamID)
-        
-        if updateType == "CODE"
-        {
-            myItem.updateTime =  NSDate()
-            myItem.updateType = "Add"
-        }
-        else
-        {
-            myItem.updateTime = updateTime as NSDate
-            myItem.updateType = updateType
-        }
-        
-        saveContext()
+
+        self.recordsProcessed += 1
     }
     
     func deleteDropdowns(_ dropdownType: String, dropdownValue: String, teamID: Int)
@@ -369,35 +347,13 @@ extension CloudKitInteraction
         let query: CKQuery = CKQuery(recordType: "Dropdowns", predicate: predicate)
         
         let operation = CKQueryOperation(query: query)
-
-        while waitFlag
-        {
-            usleep(self.sleepTime)
-        }
-        
-        waitFlag = true
         
         operation.recordFetchedBlock = { (record) in
-            while self.recordCount > 0
-            {
-                usleep(self.sleepTime)
-            }
-            
-            self.recordCount += 1
-            
             self.updateDropdownsRecord(record)
-            self.recordCount -= 1
-            
-//            usleep(self.sleepTime)
         }
         let operationQueue = OperationQueue()
         
         executePublicQueryOperation(targetTable: "Dropdowns", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
     
     func deleteDropdowns(dropdownType: String, dropdownName: String)
@@ -417,55 +373,6 @@ extension CloudKitInteraction
         })
         
         sem.wait()
-    }
-    
-    func replaceDropdownsInCoreData()
-    {
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
-        let query: CKQuery = CKQuery(recordType: "Dropdowns", predicate: predicate)
-        let operation = CKQueryOperation(query: query)
-        
-        waitFlag = true
-        
-        operation.recordFetchedBlock = { (record) in
-
-            let dropdownType = record.object(forKey: "dropDownType") as! String
-            let dropDownValue = record.object(forKey: "dropDownValue") as! String
-            
-            var updateTime = Date()
-            if record.object(forKey: "updateTime") != nil
-            {
-                updateTime = record.object(forKey: "updateTime") as! Date
-            }
-            
-            var updateType: String = ""
-            if record.object(forKey: "updateType") != nil
-            {
-                updateType = record.object(forKey: "updateType") as! String
-            }
-            
-            var teamID: Int = 0
-            if record.object(forKey: "teamID") != nil
-            {
-                teamID = record.object(forKey: "teamID") as! Int
-            }
-            
-            myDatabaseConnection.replaceDropdowns(dropdownType,
-                                                dropdownValue: dropDownValue,
-                                                teamID: teamID
-                                                , updateTime: updateTime, updateType: updateType)
-            
-            usleep(self.sleepTime)
-        }
-        
-        let operationQueue = OperationQueue()
-        
-        executePublicQueryOperation(targetTable: "Dropdowns", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
     
     func saveDropdownsRecordToCloudKit(_ sourceRecord: Dropdowns, teamID: Int)
@@ -570,10 +477,20 @@ extension CloudKitInteraction
             teamID = sourceRecord.object(forKey: "teamID") as! Int
         }
         
+        myDatabaseConnection.recordsToChange += 1
+        
+        while self.recordCount > 0
+        {
+            usleep(self.sleepTime)
+        }
+
+        self.recordCount += 1
+        
         myDatabaseConnection.saveDropdowns(dropdownType,
                                          dropdownValue: dropDownValue,
                                          teamID: teamID
                                          , updateTime: updateTime, updateType: updateType)
+        self.recordCount -= 1
     }
 }
 

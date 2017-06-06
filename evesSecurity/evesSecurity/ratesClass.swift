@@ -288,38 +288,8 @@ extension coreDatabase
         }
         
         saveContext()
-    }
-    
-    func replaceRates(_ rateID: Int,
-                      clientID: Int,
-                      rateName: String,
-                      rateAmount: Double,
-                      chargeAmount: Double,
-                      startDate: Date,
-                      teamID: Int,
-                        updateTime: Date =  Date(), updateType: String = "CODE")
-    {
-        let myItem = Rates(context: objectContext)
-        myItem.rateID = Int64(rateID)
-        myItem.clientID = Int64(clientID)
-        myItem.rateName = rateName
-        myItem.rateAmount = rateAmount
-        myItem.chargeAmount = chargeAmount
-        myItem.startDate = startDate as NSDate
-        myItem.teamID = Int64(teamID)
-        
-        if updateType == "CODE"
-        {
-            myItem.updateTime =  NSDate()
-            myItem.updateType = "Add"
-        }
-        else
-        {
-            myItem.updateTime = updateTime as NSDate
-            myItem.updateType = updateType
-        }
-        
-        saveContext()
+
+        self.recordsProcessed += 1
     }
     
     func deleteRates(_ rateID: Int)
@@ -514,35 +484,13 @@ extension CloudKitInteraction
         let query: CKQuery = CKQuery(recordType: "Rates", predicate: predicate)
         
         let operation = CKQueryOperation(query: query)
-        
-        while waitFlag
-        {
-            usleep(self.sleepTime)
-        }
-        
-        waitFlag = true
-        
+
         operation.recordFetchedBlock = { (record) in
-            while self.recordCount > 0
-            {
-                usleep(self.sleepTime)
-            }
-            
-            self.recordCount += 1
-            
             self.updateRatesRecord(record)
-            self.recordCount -= 1
-            
-//            usleep(self.sleepTime)
         }
         let operationQueue = OperationQueue()
         
         executePublicQueryOperation(targetTable: "Rates", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
     
     func deleteRates(rateID: Int)
@@ -562,87 +510,6 @@ extension CloudKitInteraction
         })
         
         sem.wait()
-    }
-
-    func replaceRatesInCoreData()
-    {
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
-        let query: CKQuery = CKQuery(recordType: "Rates", predicate: predicate)
-        let operation = CKQueryOperation(query: query)
-        
-        waitFlag = true
-        
-        operation.recordFetchedBlock = { (record) in
-            let rateName = record.object(forKey: "rateName") as! String
-            
-            var rateID: Int = 0
-            if record.object(forKey: "rateID") != nil
-            {
-                rateID = record.object(forKey: "rateID") as! Int
-            }
-            
-            var clientID: Int = 0
-            if record.object(forKey: "clientID") != nil
-            {
-                clientID = record.object(forKey: "clientID") as! Int
-            }
-            
-            var rateAmount: Double = 0.0
-            if record.object(forKey: "rateAmount") != nil
-            {
-                rateAmount = record.object(forKey: "rateAmount") as! Double
-            }
-            
-            var chargeAmount: Double = 0.0
-            if record.object(forKey: "chargeAmount") != nil
-            {
-                chargeAmount = record.object(forKey: "chargeAmount") as! Double
-            }
-            
-            var startDate: Date = getDefaultDate()
-            if record.object(forKey: "startDate") != nil
-            {
-                startDate = record.object(forKey: "startDate") as! Date
-            }
-            
-            var teamID: Int = 0
-            if record.object(forKey: "teamID") != nil
-            {
-                teamID = record.object(forKey: "teamID") as! Int
-            }
-            
-            var updateTime = Date()
-            if record.object(forKey: "updateTime") != nil
-            {
-                updateTime = record.object(forKey: "updateTime") as! Date
-            }
-            
-            var updateType: String = ""
-            if record.object(forKey: "updateType") != nil
-            {
-                updateType = record.object(forKey: "updateType") as! String
-            }
-            
-            myDatabaseConnection.replaceRates(rateID,
-                                                clientID: clientID,
-                                                rateName: rateName,
-                                                rateAmount: rateAmount,
-                                                chargeAmount: chargeAmount,
-                                                startDate: startDate,
-                                                teamID: teamID
-                                                , updateTime: updateTime, updateType: updateType)
-            
-            usleep(self.sleepTime)
-        }
-        
-        let operationQueue = OperationQueue()
-        
-        executePublicQueryOperation(targetTable: "Rates", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
 
     func saveRatesRecordToCloudKit(_ sourceRecord: Rates, teamID: Int)
@@ -782,6 +649,15 @@ extension CloudKitInteraction
             teamID = sourceRecord.object(forKey: "teamID") as! Int
         }
         
+        myDatabaseConnection.recordsToChange += 1
+        
+        while self.recordCount > 0
+        {
+            usleep(self.sleepTime)
+        }
+        
+        self.recordCount += 1
+        
         myDatabaseConnection.saveRates(rateID,
                                          clientID: clientID,
                                          rateName: rateName,
@@ -790,6 +666,7 @@ extension CloudKitInteraction
                                          startDate: startDate,
                                          teamID: teamID
                                          , updateTime: updateTime, updateType: updateType)
+        self.recordCount -= 1
     }
 }
 

@@ -1377,61 +1377,8 @@ extension coreDatabase
         }
         
         saveContext()
-    }
-    
-    func replaceShifts(_ shiftID: Int,
-                       projectID: Int,
-                       personID: Int,
-                       workDate: Date,
-                       shiftDescription: String,
-                       startTime: Date,
-                       endTime: Date,
-                       teamID: Int,
-                       weekEndDate: Date,
-                       status: String,
-                       shiftLineID: Int,
-                       rateID: Int,
-                       type: String,
-                       clientInvoiceNumber: Int,
-                       personInvoiceNumber: Int,
-                        updateTime: Date =  Date(), updateType: String = "CODE")
-    {
-        // get the current calendar
-        let calendar = Calendar.current
-        // get the start of the day of the selected date
-        let adjustedWorkDate = calendar.startOfDay(for: workDate)
-        // get the start of the day of the selected date
-        let adjustedWEDate = calendar.startOfDay(for: weekEndDate)
-        
-        let myItem = Shifts(context: objectContext)
-        myItem.shiftID = Int64(shiftID)
-        myItem.projectID = Int64(projectID)
-        myItem.personID = Int64(personID)
-        myItem.workDate = adjustedWorkDate as NSDate
-        myItem.shiftDescription = shiftDescription
-        myItem.startTime = startTime as NSDate
-        myItem.endTime = endTime as NSDate
-        myItem.teamID = Int64(teamID)
-        myItem.weekEndDate = adjustedWEDate as NSDate
-        myItem.status = status
-        myItem.shiftLineID = Int64(shiftLineID)
-        myItem.rateID = Int64(rateID)
-        myItem.type = type
-        myItem.clientInvoiceNumber = Int64(clientInvoiceNumber)
-        myItem.personInvoiceNumber = Int64(personInvoiceNumber)
 
-        if updateType == "CODE"
-        {
-            myItem.updateTime =  NSDate()
-            myItem.updateType = "Add"
-        }
-        else
-        {
-            myItem.updateTime = updateTime as NSDate
-            myItem.updateType = updateType
-        }
-        
-        saveContext()
+        self.recordsProcessed += 1
     }
     
     func deleteShifts(_ shiftID: Int)
@@ -2010,35 +1957,13 @@ extension CloudKitInteraction
         let query: CKQuery = CKQuery(recordType: "Shifts", predicate: predicate)
         
         let operation = CKQueryOperation(query: query)
-        
-        while waitFlag
-        {
-            usleep(self.sleepTime)
-        }
-        
-        waitFlag = true
-        
+               
         operation.recordFetchedBlock = { (record) in
-            while self.recordCount > 0
-            {
-                usleep(self.sleepTime)
-            }
-            
-            self.recordCount += 1
-            
             self.updateShiftsRecord(record)
-            self.recordCount -= 1
-            
-//            usleep(self.sleepTime)
         }
         let operationQueue = OperationQueue()
         
         executePublicQueryOperation(targetTable: "Shifts", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
     
     func deleteShifts(shiftID: Int)
@@ -2058,133 +1983,6 @@ extension CloudKitInteraction
         })
         
         sem.wait()
-    }
-    
-    func replaceShiftsInCoreData()
-    {
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
-        let query: CKQuery = CKQuery(recordType: "Shifts", predicate: predicate)
-        let operation = CKQueryOperation(query: query)
-        
-        waitFlag = true
-        
-        operation.recordFetchedBlock = { (record) in
-            let shiftDescription = record.object(forKey: "shiftDescription") as! String
-            let status = record.object(forKey: "status") as! String
-            let type = record.object(forKey: "type") as! String
-            
-            var shiftID: Int = 0
-            if record.object(forKey: "shiftID") != nil
-            {
-                shiftID = record.object(forKey: "shiftID") as! Int
-            }
-
-            var rateID: Int = 0
-            if record.object(forKey: "rateID") != nil
-            {
-                rateID = record.object(forKey: "rateID") as! Int
-            }
-            
-            var shiftLineID: Int = 0
-            if record.object(forKey: "shiftLineID") != nil
-            {
-                shiftLineID = record.object(forKey: "shiftLineID") as! Int
-            }
-            
-            var projectID: Int = 0
-            if record.object(forKey: "projectID") != nil
-            {
-                projectID = record.object(forKey: "projectID") as! Int
-            }
-
-            var personID: Int = 0
-            if record.object(forKey: "personID") != nil
-            {
-                personID = record.object(forKey: "personID") as! Int
-            }
-            
-            var workDate = Date()
-            if record.object(forKey: "workDate") != nil
-            {
-                workDate = record.object(forKey: "workDate") as! Date
-            }
-            
-            var startTime = Date()
-            if record.object(forKey: "startTime") != nil
-            {
-                startTime = record.object(forKey: "startTime") as! Date
-            }
-            
-            var endTime = Date()
-            if record.object(forKey: "endTime") != nil
-            {
-                endTime = record.object(forKey: "endTime") as! Date
-            }
-            
-            var weekEndDate = Date()
-            if record.object(forKey: "weekEndDate") != nil
-            {
-                weekEndDate = record.object(forKey: "weekEndDate") as! Date
-            }
-            
-            var teamID: Int = 0
-            if record.object(forKey: "teamID") != nil
-            {
-                teamID = record.object(forKey: "teamID") as! Int
-            }
-
-            var clientInvoiceNumber: Int = 0
-            if record.object(forKey: "clientInvoiceNumber") != nil
-            {
-                clientInvoiceNumber = record.object(forKey: "clientInvoiceNumber") as! Int
-            }
-
-            var personInvoiceNumber: Int = 0
-            if record.object(forKey: "personInvoiceNumber") != nil
-            {
-                personInvoiceNumber = record.object(forKey: "personInvoiceNumber") as! Int
-            }
-
-            var updateTime = Date()
-            if record.object(forKey: "updateTime") != nil
-            {
-                updateTime = record.object(forKey: "updateTime") as! Date
-            }
-            
-            var updateType: String = ""
-            if record.object(forKey: "updateType") != nil
-            {
-                updateType = record.object(forKey: "updateType") as! String
-            }
-            
-            myDatabaseConnection.replaceShifts(shiftID,
-                                               projectID: projectID,
-                                               personID: personID,
-                                               workDate: workDate,
-                                               shiftDescription: shiftDescription,
-                                               startTime: startTime,
-                                               endTime: endTime,
-                                               teamID: teamID,
-                                               weekEndDate: weekEndDate,
-                                               status: status,
-                                               shiftLineID: shiftLineID,
-                                               rateID: rateID,
-                                               type: type,
-                                               clientInvoiceNumber: clientInvoiceNumber,
-                                               personInvoiceNumber: personInvoiceNumber
-                                                , updateTime: updateTime, updateType: updateType)
-            
-            usleep(self.sleepTime)
-        }
-        
-        let operationQueue = OperationQueue()
-        
-        executePublicQueryOperation(targetTable: "Shifts", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
     
     func saveShiftsRecordToCloudKit(_ sourceRecord: Shifts, teamID: Int)
@@ -2375,6 +2173,14 @@ extension CloudKitInteraction
             personInvoiceNumber = sourceRecord.object(forKey: "personInvoiceNumber") as! Int
         }
 
+        myDatabaseConnection.recordsToChange += 1
+        
+        while self.recordCount > 0
+        {
+            usleep(self.sleepTime)
+        }
+        
+        self.recordCount += 1
         
         myDatabaseConnection.saveShifts(shiftID,
                                         projectID: projectID,
@@ -2392,6 +2198,8 @@ extension CloudKitInteraction
                                         clientInvoiceNumber: clientInvoiceNumber,
                                         personInvoiceNumber: personInvoiceNumber
                                          , updateTime: updateTime, updateType: updateType)
+        self.recordCount -= 1
+
     }
 }
 

@@ -1091,42 +1091,8 @@ extension coreDatabase
         }
         
         saveContext()
-    }
-    
-    func replaceTask(_ taskID: Int, title: String, details: String, dueDate: Date, startDate: Date, status: String, priority: String, energyLevel: String, estimatedTime: Int, estimatedTimeType: String, projectID: Int, completionDate: Date, repeatInterval: Int, repeatType: String, repeatBase: String, flagged: Bool, urgency: String, teamID: Int, updateTime: Date =  Date(), updateType: String = "CODE")
-    {
-        let myTask = Task(context: objectContext)
-        myTask.taskID = Int64(taskID)
-        myTask.title = title
-        myTask.details = details
-        myTask.dueDate = dueDate as NSDate
-        myTask.startDate = startDate as NSDate
-        myTask.status = status
-        myTask.priority = priority
-        myTask.energyLevel = energyLevel
-        myTask.estimatedTime = Int64(estimatedTime)
-        myTask.estimatedTimeType = estimatedTimeType
-        myTask.projectID = Int64(projectID)
-        myTask.completionDate = completionDate as NSDate
-        myTask.repeatInterval = Int64(repeatInterval)
-        myTask.repeatType = repeatType
-        myTask.repeatBase = repeatBase
-        myTask.flagged = flagged as NSNumber
-        myTask.urgency = urgency
-        myTask.teamID = Int64(teamID)
-        
-        if updateType == "CODE"
-        {
-            myTask.updateTime =  NSDate()
-            myTask.updateType = "Add"
-        }
-        else
-        {
-            myTask.updateTime = updateTime as NSDate
-            myTask.updateType = updateType
-        }
-        
-        saveContext()
+
+        self.recordsProcessed += 1
     }
     
     func deleteTask(_ taskID: Int)
@@ -1559,24 +1525,12 @@ extension CloudKitInteraction
         let query: CKQuery = CKQuery(recordType: "Task", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
-        waitFlag = true
-        
         operation.recordFetchedBlock = { (record) in
-            self.recordCount += 1
-
             self.updateTaskRecord(record)
-            self.recordCount -= 1
-
-            usleep(self.sleepTime)
         }
         let operationQueue = OperationQueue()
         
         executePublicQueryOperation(targetTable: "Task", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
 
     func deleteTask(teamID: Int)
@@ -1595,60 +1549,6 @@ extension CloudKitInteraction
             sem.signal()
         })
         sem.wait()
-    }
-
-    func replaceTaskInCoreData(teamID: Int)
-    {
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
-        let query: CKQuery = CKQuery(recordType: "Task", predicate: predicate)
-        
-        let operation = CKQueryOperation(query: query)
-        
-        waitFlag = true
-        
-        operation.recordFetchedBlock = { (record) in
-            let taskID = record.object(forKey: "taskID") as! Int
-
-            var updateTime = Date()
-            if record.object(forKey: "updateTime") != nil
-            {
-                updateTime = record.object(forKey: "updateTime") as! Date
-            }
-            var updateType: String = ""
-            if record.object(forKey: "updateType") != nil
-            {
-                updateType = record.object(forKey: "updateType") as! String
-            }
-            let completionDate = record.object(forKey: "completionDate") as! Date
-            let details = record.object(forKey: "details") as! String
-            let dueDate = record.object(forKey: "dueDate") as! Date
-            let energyLevel = record.object(forKey: "energyLevel") as! String
-            let estimatedTime = record.object(forKey: "estimatedTime") as! Int
-            let estimatedTimeType = record.object(forKey: "estimatedTimeType") as! String
-            let flagged = record.object(forKey: "flagged") as! Bool
-            let priority = record.object(forKey: "priority") as! String
-            let repeatBase = record.object(forKey: "repeatBase") as! String
-            let repeatInterval = record.object(forKey: "repeatInterval") as! Int
-            let repeatType = record.object(forKey: "repeatType") as! String
-            let startDate = record.object(forKey: "startDate") as! Date
-            let status = record.object(forKey: "status") as! String
-            let teamID = record.object(forKey: "teamID") as! Int
-            let title = record.object(forKey: "title") as! String
-            let urgency = record.object(forKey: "urgency") as! String
-            let projectID = record.object(forKey: "projectID") as! Int
-            
-            myDatabaseConnection.replaceTask(taskID, title: title, details: details, dueDate: dueDate, startDate: startDate, status: status, priority: priority, energyLevel: energyLevel, estimatedTime: estimatedTime, estimatedTimeType: estimatedTimeType, projectID: projectID, completionDate: completionDate, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, flagged: flagged, urgency: urgency, teamID: teamID, updateTime: updateTime, updateType: updateType)
-            usleep(self.sleepTime)
-        }
-        
-        let operationQueue = OperationQueue()
-        
-        executePublicQueryOperation(targetTable: "Task", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
 
     func saveTaskRecordToCloudKit(_ sourceRecord: Task, teamID: Int)
@@ -1788,7 +1688,17 @@ extension CloudKitInteraction
         let urgency = sourceRecord.object(forKey: "urgency") as! String
         let projectID = sourceRecord.object(forKey: "projectID") as! Int
         
+        myDatabaseConnection.recordsToChange += 1
+        
+        while self.recordCount > 0
+        {
+            usleep(self.sleepTime)
+        }
+        
+        self.recordCount += 1
+        
         myDatabaseConnection.saveTask(taskID, title: title, details: details, dueDate: dueDate, startDate: startDate, status: status, priority: priority, energyLevel: energyLevel, estimatedTime: estimatedTime, estimatedTimeType: estimatedTimeType, projectID: projectID, completionDate: completionDate, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, flagged: flagged, urgency: urgency, teamID: teamID, updateTime: updateTime, updateType: updateType)
+        self.recordCount -= 1
     }
 }
 

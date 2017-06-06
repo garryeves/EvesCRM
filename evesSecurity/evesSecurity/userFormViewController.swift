@@ -30,6 +30,7 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
     
     override func viewDidLoad()
     {
+        hideFields()
         if !initialUser
         {
             if workingUser == nil
@@ -48,14 +49,16 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
                 tblUsers.isHidden = true
                 populateForm()
             }
+            else
+            {
+                tblUsers.isHidden = false
+            }
         }
         else
         {
             // Not connected to Internet
 
         }
-        
-        hideFields()
     }
     
     override func viewDidAppear(_ animated: Bool)
@@ -87,7 +90,14 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int
     {
-        return userList.users.count
+        if userList == nil
+        {
+            return 0
+        }
+        else
+        {
+            return userList.users.count
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell
@@ -148,7 +158,7 @@ class userFormViewController: UIViewController, UIPopoverPresentationControllerD
     {
         workingUser.addInitialUserRoles()
         
-        currentUser.syncDatabase()
+        myDBSync.sync()
         
         DispatchQueue.main.async
         {

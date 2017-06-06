@@ -1406,62 +1406,8 @@ extension coreDatabase
         }
         
         saveContext()
-    }
-    
-    func replaceProject(_ projectID: Int, projectEndDate: Date, projectName: String, projectStartDate: Date, projectStatus: String, reviewFrequency: Int, lastReviewDate: Date, GTDItemID: Int, repeatInterval: Int, repeatType: String, repeatBase: String, teamID: Int, clientID: Int, note: String, reviewPeriod: String, predecessor: Int, clientDept: String, invoicingFrequency: String, invoicingDay: Int, daysToPay: Int, type: String, updateTime: Date =  Date(), updateType: String = "CODE")
-    {
-        
-        let myProject = Projects(context: objectContext)
-        myProject.projectID = Int64(projectID)
-        myProject.projectEndDate = projectEndDate as NSDate
-        myProject.projectName = projectName
-        myProject.projectStartDate = projectStartDate as NSDate
-        myProject.projectStatus = projectStatus
-        myProject.reviewFrequency = Int64(reviewFrequency)
-        myProject.lastReviewDate = lastReviewDate as NSDate
-        myProject.areaID = Int64(GTDItemID)
-        myProject.repeatInterval = Int64(repeatInterval)
-        myProject.repeatType = repeatType
-        myProject.repeatBase = repeatBase
-        myProject.teamID = Int64(teamID)
-        myProject.clientID = Int64(clientID)
-        myProject.note = note
-        myProject.reviewPeriod = reviewPeriod
-        myProject.predecessor = Int64(predecessor)
-        myProject.clientDept = clientDept
-        myProject.invoicingFrequency = invoicingFrequency
-        myProject.invoicingDay = Int64(invoicingDay)
-        myProject.daysToPay = Int64(daysToPay)
-        myProject.type = type
-        
-        if updateType == "CODE"
-        {
-            myProject.updateTime =  NSDate()
-            myProject.updateType = "Add"
-        }
-        else
-        {
-            myProject.updateTime = updateTime as NSDate
-            myProject.updateType = updateType
-        }
-        
-        saveContext()
-    }
-    
-    func deleteProject(_ projectID: Int, teamID: Int)
-    {
-        var myProject: Projects!
-        
-        let myProjects = getProjectDetails(projectID)
-        
-        if myProjects.count > 0
-        { // Update
-            myProject = myProjects[0]
-            myProject.updateTime =  NSDate()
-            myProject.updateType = "Delete"
-        }
-        
-        saveContext()
+
+        self.recordsProcessed += 1
     }
     
     func resetProjectRecords()
@@ -1652,40 +1598,18 @@ extension CloudKitInteraction
         }
     }
 
-    func updateProjectsInCoreData(teamID: Int)
+    func updateProjectsInCoreData()
     {
         let predicate: NSPredicate = NSPredicate(format: "(updateTime >= %@) AND \(buildTeamList(currentUser.userID))", myDatabaseConnection.getSyncDateForTable(tableName: "Projects") as CVarArg)
         let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
-        while waitFlag
-        {
-            usleep(self.sleepTime)
-        }
-        
-        waitFlag = true
-        
         operation.recordFetchedBlock = { (record) in
-            while self.recordCount > 0
-            {
-                usleep(self.sleepTime)
-            }
-            
-            self.recordCount += 1
-
             self.updateProjectsRecord(record)
-            self.recordCount -= 1
-
-//            usleep(self.sleepTime)
         }
         let operationQueue = OperationQueue()
         
         executePublicQueryOperation(targetTable: "Projects", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
 
     func deleteProjects(teamID: Int)
@@ -1704,77 +1628,6 @@ extension CloudKitInteraction
             sem.signal()
         })
         sem.wait()
-    }
-
-    func replaceProjectsInCoreData()
-    {
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
-        let query: CKQuery = CKQuery(recordType: "Projects", predicate: predicate)
-        let operation = CKQueryOperation(query: query)
-        
-        waitFlag = true
-        
-        operation.recordFetchedBlock = { (record) in
-            let projectID = record.object(forKey: "projectID") as! Int
-            var updateTime = Date()
-            if record.object(forKey: "updateTime") != nil
-            {
-                updateTime = record.object(forKey: "updateTime") as! Date
-            }
-            var updateType: String = ""
-            if record.object(forKey: "updateType") != nil
-            {
-                updateType = record.object(forKey: "updateType") as! String
-            }
-            let areaID = record.object(forKey: "areaID") as! Int
-            let lastReviewDate = record.object(forKey: "lastReviewDate") as! Date
-            let projectEndDate = record.object(forKey: "projectEndDate") as! Date
-            let projectName = record.object(forKey: "projectName") as! String
-            let projectStartDate = record.object(forKey: "projectStartDate") as! Date
-            let projectStatus = record.object(forKey: "projectStatus") as! String
-            let repeatBase = record.object(forKey: "repeatBase") as! String
-            let repeatInterval = record.object(forKey: "repeatInterval") as! Int
-            let repeatType = record.object(forKey: "repeatType") as! String
-            let reviewFrequency = record.object(forKey: "reviewFrequency") as! Int
-            let teamID = record.object(forKey: "teamID") as! Int
-            let note = record.object(forKey: "note") as! String
-            let reviewPeriod = record.object(forKey: "reviewPeriod") as! String
-            let predecessor = record.object(forKey: "predecessor") as! Int
-            let type = record.object(forKey: "type") as! String
-            
-            var clientID: Int = 0
-            
-            if record.object(forKey: "clientID") != nil
-            {
-                clientID = record.object(forKey: "clientID") as! Int
-            }
-            
-            let clientDept = record.object(forKey: "clientDept") as! String
-            let invoicingFrequency = record.object(forKey: "invoicingFrequency") as! String
-            
-            var invoicingDay: Int = 0
-            if record.object(forKey: "invoicingDay") != nil
-            {
-                invoicingDay = record.object(forKey: "invoicingDay") as! Int
-            }
-            var daysToPay: Int = 0
-            if record.object(forKey: "daysToPay") != nil
-            {
-                daysToPay = record.object(forKey: "daysToPay") as! Int
-            }
-
-            myDatabaseConnection.replaceProject(projectID, projectEndDate: projectEndDate, projectName: projectName, projectStartDate: projectStartDate, projectStatus: projectStatus, reviewFrequency: reviewFrequency, lastReviewDate: lastReviewDate, GTDItemID: areaID, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, teamID: teamID, clientID: clientID, note: note, reviewPeriod: reviewPeriod, predecessor: predecessor, clientDept: clientDept, invoicingFrequency: invoicingFrequency, invoicingDay: invoicingDay, daysToPay:daysToPay, type: type, updateTime: updateTime, updateType: updateType)
-
-            usleep(self.sleepTime)
-        }
-        let operationQueue = OperationQueue()
-        
-        executePublicQueryOperation(targetTable: "Projects", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
 
     func saveProjectsRecordToCloudKit(_ sourceRecord: Projects, teamID: Int)
@@ -1939,6 +1792,16 @@ extension CloudKitInteraction
             daysToPay = sourceRecord.object(forKey: "daysToPay") as! Int
         }
         
+        myDatabaseConnection.recordsToChange += 1
+        
+        while self.recordCount > 0
+        {
+            usleep(self.sleepTime)
+        }
+        
+        self.recordCount += 1
+        
         myDatabaseConnection.saveProject(projectID, projectEndDate: projectEndDate, projectName: projectName, projectStartDate: projectStartDate, projectStatus: projectStatus, reviewFrequency: reviewFrequency, lastReviewDate: lastReviewDate, GTDItemID: areaID, repeatInterval: repeatInterval, repeatType: repeatType, repeatBase: repeatBase, teamID: teamID, clientID: clientID, note: note, reviewPeriod: reviewPeriod, predecessor: predecessor, clientDept: clientDept, invoicingFrequency: invoicingFrequency, invoicingDay: invoicingDay, daysToPay:daysToPay, type: type, updateTime: updateTime, updateType: updateType)
+        self.recordCount -= 1
     }
 }

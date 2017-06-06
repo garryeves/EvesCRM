@@ -10,11 +10,19 @@ import UIKit
 
 class ViewController: UIViewController, myCommunicationDelegate
 {
+    @IBOutlet weak var progressbar: UIProgressView!
+    
     override func viewDidLoad()
     {
         myDatabaseConnection = coreDatabase()
         myCloudDB = CloudKitInteraction()
 
+        progressbar.progress = 0.0
+        progressbar.progressViewStyle = .bar
+        
+        progressbar.layer.borderWidth = 2
+        progressbar.layer.borderColor = UIColor.black.cgColor
+        
         
 //myDatabaseConnection.quickFixProjects()
 //myDatabaseConnection.quickFixPerson()
@@ -76,7 +84,7 @@ class ViewController: UIViewController, myCommunicationDelegate
     func userLoaded()
     {
         notificationCenter.removeObserver(NotificationUserLoaded)
-        loadMainScreen()
+        callLoadMainScreen()
     }
     
     func showPasswordScreen()
@@ -88,45 +96,41 @@ class ViewController: UIViewController, myCommunicationDelegate
     
     func callLoadMainScreen()
     {
-        Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.loadMainScreen), userInfo: nil, repeats: false)
+        DispatchQueue.main.async
+        {
+            Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.loadMainScreen), userInfo: nil, repeats: false)
+        }
     }
     
     func loadMainScreen()
     {
-//garry
-//let myItem = userTeamItem(userID: currentUser.userID, teamID: currentUser.currentTeam!.teamID)
-//
-//myItem.save()
+        myDatabaseConnection.recordsProcessed = 0
         
-//myDatabaseConnection.deleteDropdowns("Stages")
-//myDatabaseConnection.deleteDropdowns("Project")
-//myDatabaseConnection.deleteDropdowns("Event")
-//myDatabaseConnection.deleteDropdowns("Regular")
-//myDatabaseConnection.deleteDropdowns("Sales")
-//myDatabaseConnection.deleteDropdowns("ShiftType")
-//myDatabaseConnection.deleteDropdowns("ProjectType")
-//        
-//currentUser.currentTeam!.populateShiftTypeDropDown()
-//currentUser.currentTeam!.populateProjectStageDropDown()
-//currentUser.currentTeam!.populateProjectTypeDropDown()
-    
-//let tempCal = Calendar.current
-//let syncDate = tempCal.date(byAdding: .day, value:-1, to: Date())
-//
-//myDatabaseConnection.setSyncDateforTable(tableName: "PersonAdditionalInfo", syncDate: syncDate!, updateCloud: true)
-//myDatabaseConnection.setSyncDateforTable(tableName: "PersonAddInfoEntry", syncDate: syncDate!, updateCloud: true)
-        
-        
-        
-        
-
-        currentUser.syncDatabase()
-        
-        DispatchQueue.main.async
+        DispatchQueue.global().async
         {
-            let mainViewControl = self.storyboard?.instantiateViewController(withIdentifier: "mainScreen") as! securityViewController
-            mainViewControl.communicationDelegate = self
-            self.present(mainViewControl, animated: true, completion: nil)
+            myDBSync.sync()
+        }
+        
+        Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(self.progressBarStatus), userInfo: nil, repeats: false)
+    }
+    
+    func progressBarStatus()
+    {
+        if myDBSync.syncProgress < myDBSync.syncTotal
+        {
+            progressbar.progress = Float(myDBSync.syncProgress) / Float(myDBSync.syncTotal)
+            Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(self.progressBarStatus), userInfo: nil, repeats: false)
+        }
+        else
+        {
+            sleep(3)
+            
+            DispatchQueue.main.async
+            {
+                let mainViewControl = self.storyboard?.instantiateViewController(withIdentifier: "mainScreen") as! securityViewController
+                mainViewControl.communicationDelegate = self
+                self.present(mainViewControl, animated: true, completion: nil)
+            }
         }
     }
     

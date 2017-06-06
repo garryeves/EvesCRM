@@ -203,34 +203,8 @@ extension coreDatabase
         }
         
         saveContext()
-    }
-    
-    func replaceUserRoles(_ roleID: Int,
-                          userID: Int,
-                          teamID: Int,
-                          roleType: String,
-                          accessLevel: String,
-                        updateTime: Date =  Date(), updateType: String = "CODE")
-    {
-        let myItem = UserRoles(context: objectContext)
-        myItem.roleID = Int64(roleID)
-        myItem.userID = Int64(userID)
-        myItem.roleType = roleType
-        myItem.accessLevel = accessLevel
-        myItem.teamID = Int64(teamID)
-        
-        if updateType == "CODE"
-        {
-            myItem.updateTime =  NSDate()
-            myItem.updateType = "Add"
-        }
-        else
-        {
-            myItem.updateTime = updateTime as NSDate
-            myItem.updateType = updateType
-        }
-        
-        saveContext()
+
+        self.recordsProcessed += 1
     }
     
     func deleteUserRoles(_ roleID: Int)
@@ -426,34 +400,12 @@ extension CloudKitInteraction
         
         let operation = CKQueryOperation(query: query)
         
-        while waitFlag
-        {
-            usleep(self.sleepTime)
-        }
-        
-        waitFlag = true
-        
         operation.recordFetchedBlock = { (record) in
-            while self.recordCount > 0
-            {
-                usleep(self.sleepTime)
-            }
-            
-            self.recordCount += 1
-            
             self.updateUserRolesRecord(record)
-            self.recordCount -= 1
-            
-//            usleep(self.sleepTime)
         }
         let operationQueue = OperationQueue()
         
         executePublicQueryOperation(targetTable: "UserRoles", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
     
     func deleteUserRoles(roleID: Int)
@@ -473,69 +425,6 @@ extension CloudKitInteraction
         })
         
         sem.wait()
-    }
-    
-    func replaceUserRolesInCoreData()
-    {
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
-        let query: CKQuery = CKQuery(recordType: "UserRoles", predicate: predicate)
-        let operation = CKQueryOperation(query: query)
-        
-        waitFlag = true
-        
-        operation.recordFetchedBlock = { (record) in
-            var roleID: Int = 0
-            if record.object(forKey: "roleID") != nil
-            {
-                roleID = record.object(forKey: "roleID") as! Int
-            }
-            
-            var userID: Int = 0
-            if record.object(forKey: "userID") != nil
-            {
-                userID = record.object(forKey: "userID") as! Int
-            }
-            
-            let roleType = record.object(forKey: "roleType") as! String
-            
-            let accessLevel = record.object(forKey: "accessLevel") as! String
-            
-            var teamID: Int = 0
-            if record.object(forKey: "teamID") != nil
-            {
-                teamID = record.object(forKey: "teamID") as! Int
-            }
-            
-            var updateTime = Date()
-            if record.object(forKey: "updateTime") != nil
-            {
-                updateTime = record.object(forKey: "updateTime") as! Date
-            }
-            
-            var updateType: String = ""
-            if record.object(forKey: "updateType") != nil
-            {
-                updateType = record.object(forKey: "updateType") as! String
-            }
-            
-            myDatabaseConnection.replaceUserRoles(roleID,
-                                                  userID: userID,
-                                                  teamID: teamID,
-                                                  roleType: roleType,
-                                                  accessLevel: accessLevel
-                                                , updateTime: updateTime, updateType: updateType)
-            
-            usleep(self.sleepTime)
-        }
-        
-        let operationQueue = OperationQueue()
-        
-        executePublicQueryOperation(targetTable: "UserRoles", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
     
     func saveUserRolesRecordToCloudKit(_ sourceRecord: UserRoles, teamID: Int)
@@ -654,11 +543,21 @@ extension CloudKitInteraction
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
         
+        myDatabaseConnection.recordsToChange += 1
+        
+        while self.recordCount > 0
+        {
+            usleep(self.sleepTime)
+        }
+        
+        self.recordCount += 1
+        
         myDatabaseConnection.saveUserRoles(roleID,
                                            userID: userID,
                                            teamID: teamID,
                                            roleType: roleType,
                                            accessLevel: accessLevel
                                          , updateTime: updateTime, updateType: updateType)
+        self.recordCount -= 1
     }
 }

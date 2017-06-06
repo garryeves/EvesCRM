@@ -182,32 +182,8 @@ extension coreDatabase
         }
         
         saveContext()
-    }
-    
-    func replacePersonAdditionalInfo(_ addInfoID: Int,
-                        addInfoName: String,
-                        addInfoType: String,
-                        teamID: Int,
-                        updateTime: Date =  Date(), updateType: String = "CODE")
-    {
-        let myItem = PersonAdditionalInfo(context: objectContext)
-        myItem.addInfoID = Int64(addInfoID)
-        myItem.addInfoName = addInfoName
-        myItem.addInfoType = addInfoType
-        myItem.teamID = Int64(teamID)
-        
-        if updateType == "CODE"
-        {
-            myItem.updateTime =  NSDate()
-            myItem.updateType = "Add"
-        }
-        else
-        {
-            myItem.updateTime = updateTime as NSDate
-            myItem.updateType = updateType
-        }
-        
-        saveContext()
+
+        self.recordsProcessed += 1
     }
     
     func deletePersonAdditionalInfo(_ addInfoID: Int)
@@ -402,36 +378,13 @@ extension CloudKitInteraction
         let query: CKQuery = CKQuery(recordType: "PersonAdditionalInfo", predicate: predicate)
         
         let operation = CKQueryOperation(query: query)
-        
-        while waitFlag
-        {
-            usleep(self.sleepTime)
-        }
-        
-        waitFlag = true
 
         operation.recordFetchedBlock = { (record) in
-            
-            while self.recordCount > 0
-            {
-                usleep(self.sleepTime)
-            }
-
-            
-            self.recordCount += 1
             self.updatePersonAdditionalInfoRecord(record)
-            self.recordCount -= 1
-            
-//            usleep(self.sleepTime)
         }
         let operationQueue = OperationQueue()
         
         executePublicQueryOperation(targetTable: "PersonAdditionalInfo", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
     
     func deletePersonAdditionalInfo(addInfoID: Int)
@@ -451,61 +404,6 @@ extension CloudKitInteraction
         })
         
         sem.wait()
-    }
-    
-    func replacePersonAdditionalInfoInCoreData()
-    {
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
-        let query: CKQuery = CKQuery(recordType: "PersonAdditionalInfo", predicate: predicate)
-        let operation = CKQueryOperation(query: query)
-        
-        waitFlag = true
-
-        operation.recordFetchedBlock = { (record) in
-            let addInfoName = record.object(forKey: "addInfoName") as! String
-            let addInfoType = record.object(forKey: "addInfoType") as! String
-            
-            var addInfoID: Int = 0
-            if record.object(forKey: "addInfoID") != nil
-            {
-                addInfoID = record.object(forKey: "addInfoID") as! Int
-            }
-            
-            var updateTime = Date()
-            if record.object(forKey: "updateTime") != nil
-            {
-                updateTime = record.object(forKey: "updateTime") as! Date
-            }
-            
-            var updateType: String = ""
-            if record.object(forKey: "updateType") != nil
-            {
-                updateType = record.object(forKey: "updateType") as! String
-            }
-            
-            var teamID: Int = 0
-            if record.object(forKey: "teamID") != nil
-            {
-                teamID = record.object(forKey: "teamID") as! Int
-            }
-            
-            myDatabaseConnection.replacePersonAdditionalInfo(addInfoID,
-                                                addInfoName: addInfoName,
-                                                addInfoType: addInfoType,
-                                                teamID: teamID
-                                                , updateTime: updateTime, updateType: updateType)
-            
-            usleep(self.sleepTime)
-        }
-        
-        let operationQueue = OperationQueue()
-        
-        executePublicQueryOperation(targetTable: "PersonAdditionalInfo", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
     
     func savePersonAdditionalInfoRecordToCloudKit(_ sourceRecord: PersonAdditionalInfo, teamID: Int)
@@ -617,11 +515,21 @@ extension CloudKitInteraction
             teamID = sourceRecord.object(forKey: "teamID") as! Int
         }
         
+        myDatabaseConnection.recordsToChange += 1
+        
+        while self.recordCount > 0
+        {
+            usleep(self.sleepTime)
+        }
+        
+        self.recordCount += 1
+        
         myDatabaseConnection.savePersonAdditionalInfo(addInfoID,
                                          addInfoName: addInfoName,
                                          addInfoType: addInfoType,
                                          teamID: teamID
                                          , updateTime: updateTime, updateType: updateType)
+        self.recordCount -= 1
     }
     
 }

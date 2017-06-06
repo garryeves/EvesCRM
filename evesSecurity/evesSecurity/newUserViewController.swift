@@ -112,7 +112,6 @@ class newInstanceViewController: UIViewController, UIPopoverPresentationControll
     {
         notificationCenter.removeObserver(NotificationValidateUser)
         
-    
         if myCloudDB.retrieveUserList().count > 0
         {
             currentUser = userItem(userID: myCloudDB.retrieveUserList()[0].userID)
@@ -130,7 +129,7 @@ class newInstanceViewController: UIViewController, UIPopoverPresentationControll
             
             currentUser.addInitialUserRoles()
             
-            communicationDelegate!.loadMainScreen!()
+            communicationDelegate!.callLoadMainScreen!()
             self.dismiss(animated: true, completion: nil)
         }
         else

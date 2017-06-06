@@ -95,13 +95,6 @@ extension coreDatabase
         // first check to see if decode exists, if not we create
         var myDecode: Decodes!
         
-        while self.coreDataRecordCount > 0
-        {
-            usleep(self.sleepTime)
-        }
-        
-        self.coreDataRecordCount += 1
-        
         if getDecodeValue(codeKey) == ""
         { // Add
             myDecode = Decodes(context: objectContext)
@@ -161,8 +154,6 @@ extension coreDatabase
         
         saveContext()
 
-        self.coreDataRecordCount -= 1
-        
         if updateCloud
         {
             DispatchQueue.global(qos: .background).async
@@ -170,29 +161,6 @@ extension coreDatabase
                 myCloudDB.saveDecodesToCloudKit()
             }
         }
-    }
-
-    func replaceDecodeValue(_ codeKey: String, codeValue: String, codeType: String, decode_privacy: String, updateTime: Date =  Date(), updateType: String = "CODE")
-    {
-        let myDecode = Decodes(context: objectContext)
-        
-        myDecode.decode_name = codeKey
-        myDecode.decode_value = codeValue
-        myDecode.decodeType = codeType
-        myDecode.decode_privacy = decode_privacy
-        
-        if updateType == "CODE"
-        {
-            myDecode.updateTime =  NSDate()
-            myDecode.updateType = "Add"
-        }
-        else
-        {
-            myDecode.updateTime = updateTime as NSDate
-            myDecode.updateType = updateType
-        }
-        
-        saveContext()
     }
 
     func clearDeletedDecodes(predicate: NSPredicate)
@@ -435,6 +403,7 @@ extension coreDatabase
         myDateFormatter.timeStyle = .full
         
         let dateString = myDateFormatter.string(from: syncDate)
+        
         myDatabaseConnection.updateDecodeValue(myDBSync.getSyncString(tableName), codeValue: dateString, codeType: "hidden", decode_privacy: "Private", updateCloud: updateCloud)
     }
     
@@ -490,34 +459,28 @@ extension CloudKitInteraction
 
         let query: CKQuery = CKQuery(recordType: "Decodes", predicate: predicate)
         let operation = CKQueryOperation(query: query)
-
-        while waitFlag
-        {
-            usleep(self.sleepTime)
-        }
-        
-        waitFlag = true
+//
+//        while waitFlag
+//        {
+//            usleep(self.sleepTime)
+//        }
+//        
+//        waitFlag = true
         
         operation.recordFetchedBlock = { (record) in
-            while self.recordCount > 0
-            {
-                usleep(self.sleepTime)
-            }
-            
-            self.recordCount += 1
+//            while self.recordCount > 0
+//            {
+//                usleep(self.sleepTime)
+//            }
+//            
+//            self.recordCount += 1
             self.updateDecodeRecord(record)
-            self.recordCount -= 1
-//            usleep(self.sleepTime)
+//            self.recordCount -= 1
         }
         
         let operationQueue = OperationQueue()
         
         executePublicQueryOperation(targetTable: "Decodes", queryOperation: operation, onOperationQueue: operationQueue)
-
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
     
     func updateDecodesInCoreData()
@@ -543,17 +506,11 @@ extension CloudKitInteraction
 //            self.recordCount += 1
 //            self.updateDecodeRecord(record)
 //            self.recordCount -= 1
-//         //   usleep(self.sleepTime)
 //        }
 //        
 //        let operationQueue = OperationQueue()
 //        
 //        executeQueryOperation(queryOperation: operation, onOperationQueue: operationQueue)
-//        
-//        while waitFlag
-//        {
-//            sleep(UInt32(0.5))
-//        }
     }
 
 //    func deletePublicDecodes()
@@ -592,50 +549,6 @@ extension CloudKitInteraction
         })
         
         sem.wait()
-    }
-    
-    func replacePublicDecodesInCoreData(teamID: Int)
-    {
-        let predicate: NSPredicate = NSPredicate(value: true)
-        let query: CKQuery = CKQuery(recordType: "Decodes", predicate: predicate)
-        let operation = CKQueryOperation(query: query)
-        
-        waitFlag = true
-        
-        operation.recordFetchedBlock = { (record) in
-            self.updateDecodeRecord(record)
-            usleep(self.sleepTime)
-        }
-        let operationQueue = OperationQueue()
-        
-        executePublicQueryOperation(targetTable: "Decodes", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
-    }
-    
-    func replaceDecodesInCoreData()
-    {
-        let predicate: NSPredicate = NSPredicate(value: true)
-        let query: CKQuery = CKQuery(recordType: "Decodes", predicate: predicate)
-        let operation = CKQueryOperation(query: query)
-        
-        waitFlag = true
-        
-        operation.recordFetchedBlock = { (record) in
-            self.updateDecodeRecord(record)
-            usleep(self.sleepTime)
-        }
-        let operationQueue = OperationQueue()
-        
-        executePublicQueryOperation(targetTable: "Decodes", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
     
     func savePublicDecodesRecordToCloudKit(_ sourceRecord: Decodes)
@@ -1002,7 +915,16 @@ extension CloudKitInteraction
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
         
+        while self.recordCount > 0
+        {
+            usleep(self.sleepTime)
+        }
+        
+        self.recordCount += 1
+
         myDatabaseConnection.updateDecodeValue(decodeName, codeValue: decodeValue, codeType: decodeType, decode_privacy: decode_privacy, updateCloud: false, updateTime: updateTime, updateType: updateType)
+        
+        self.recordCount -= 1
     }
 
 }

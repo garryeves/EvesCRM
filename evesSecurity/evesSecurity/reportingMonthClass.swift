@@ -174,32 +174,6 @@ extension coreDatabase
         saveContext()
     }
     
-    func replaceReportingMonth(_ monthStartDate: Date,
-                               monthName: String,
-                               yearName: String,
-                               teamID: Int,
-                        updateTime: Date =  Date(), updateType: String = "CODE")
-    {
-        let myItem = ReportingMonth(context: objectContext)
-        myItem.monthStartDate = monthStartDate as NSDate
-        myItem.monthName = monthName
-        myItem.yearName = yearName
-        myItem.teamID = Int64(teamID)
-
-        if updateType == "CODE"
-        {
-            myItem.updateTime =  NSDate()
-            myItem.updateType = "Add"
-        }
-        else
-        {
-            myItem.updateTime = updateTime as NSDate
-            myItem.updateType = updateType
-        }
-        
-        saveContext()
-    }
-    
     func deleteReportingMonth(_ monthStartDate: Date, teamID: Int)
     {
         let myReturn = getReportingMonthDetails(monthStartDate, teamID: teamID)
@@ -443,61 +417,6 @@ extension CloudKitInteraction
         })
         
         sem.wait()
-    }
-    
-    func replaceReportingMonthInCoreData()
-    {
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
-        let query: CKQuery = CKQuery(recordType: "ReportingMonth", predicate: predicate)
-        let operation = CKQueryOperation(query: query)
-        
-        waitFlag = true
-        
-        operation.recordFetchedBlock = { (record) in
-            let monthName = record.object(forKey: "monthName") as! String
-            let yearName = record.object(forKey: "yearName") as! String
-            
-            var monthStartDate = Date()
-            if record.object(forKey: "monthStartDate") != nil
-            {
-                monthStartDate = record.object(forKey: "monthStartDate") as! Date
-            }
-            
-            var teamID: Int = 0
-            if record.object(forKey: "teamID") != nil
-            {
-                teamID = record.object(forKey: "teamID") as! Int
-            }
-            
-            var updateTime = Date()
-            if record.object(forKey: "updateTime") != nil
-            {
-                updateTime = record.object(forKey: "updateTime") as! Date
-            }
-            
-            var updateType: String = ""
-            if record.object(forKey: "updateType") != nil
-            {
-                updateType = record.object(forKey: "updateType") as! String
-            }
-            
-            myDatabaseConnection.replaceReportingMonth(monthStartDate,
-                                                monthName: monthName,
-                                                yearName: yearName,
-                                                teamID: teamID
-                                                , updateTime: updateTime, updateType: updateType)
-            
-            usleep(self.sleepTime)
-        }
-        
-        let operationQueue = OperationQueue()
-        
-        executePublicQueryOperation(targetTable: "ReportingMonth", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
     
     func saveReportingMonthRecordToCloudKit(_ sourceRecord: ReportingMonth, teamID: Int)

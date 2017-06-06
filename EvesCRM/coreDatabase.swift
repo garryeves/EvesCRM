@@ -47,6 +47,9 @@ class coreDatabase: NSObject
     
     var coreDataRecordCount: Int = 0
     let sleepTime: useconds_t = useconds_t(20000)
+    let concurrencyLimit = 0
+    var recordsToChange: Int = 0
+    var recordsProcessed: Int = 0
     
     override init()
     {
@@ -56,6 +59,13 @@ class coreDatabase: NSObject
     
     func saveContext()
     {
+        while coreDataRecordCount > concurrencyLimit
+        {
+            usleep(sleepTime)
+        }
+        
+        self.coreDataRecordCount += 1
+       
         if objectContext.hasChanges
         {
             do
@@ -70,6 +80,7 @@ class coreDatabase: NSObject
                 fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
             }
         }
+        coreDataRecordCount -= 1
     }
     
     func refreshObject(_ objectID: NSManagedObject)

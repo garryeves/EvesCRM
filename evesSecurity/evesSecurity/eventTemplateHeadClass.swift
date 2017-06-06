@@ -184,30 +184,8 @@ extension coreDatabase
         }
         
         saveContext()
-    }
-    
-    func replaceEventTemplateHead(_ templateID: Int,
-                           templateName: String,
-                              teamID: Int,
-                              updateTime: Date =  Date(), updateType: String = "CODE")
-    {
-        let myItem = EventTemplateHead(context: objectContext)
-        myItem.eventID = Int64(templateID)
-        myItem.eventName = templateName
-        myItem.teamID = Int64(teamID)
-        
-        if updateType == "CODE"
-        {
-            myItem.updateTime =  NSDate()
-            myItem.updateType = "Add"
-        }
-        else
-        {
-            myItem.updateTime = updateTime as NSDate
-            myItem.updateType = updateType
-        }
-        
-        saveContext()
+
+        self.recordsProcessed += 1
     }
     
     func deleteEventTemplateHead(_ templateID: Int)
@@ -404,34 +382,12 @@ extension CloudKitInteraction
         
         let operation = CKQueryOperation(query: query)
         
-        while waitFlag
-        {
-            usleep(self.sleepTime)
-        }
-        
-        waitFlag = true
-        
         operation.recordFetchedBlock = { (record) in
-            while self.recordCount > 0
-            {
-                usleep(self.sleepTime)
-            }
-            
-            self.recordCount += 1
-            
             self.updateEventTemplateHeadRecord(record)
-            self.recordCount -= 1
-            
-//            usleep(self.sleepTime)
         }
         let operationQueue = OperationQueue()
         
         executePublicQueryOperation(targetTable: "EventTemplateHead", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
     
     func deleteEventTemplateHead(eventID: Int)
@@ -451,60 +407,6 @@ extension CloudKitInteraction
         })
         
         sem.wait()
-    }
-    
-    func replaceEventTemplateHeadInCoreData()
-    {
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
-        let query: CKQuery = CKQuery(recordType: "EventTemplateHead", predicate: predicate)
-        let operation = CKQueryOperation(query: query)
-        
-        waitFlag = true
-        
-        operation.recordFetchedBlock = { (record) in
-            
-            let eventName = record.object(forKey: "eventName") as! String
-            
-            var eventID: Int = 0
-            if record.object(forKey: "eventID") != nil
-            {
-                eventID = record.object(forKey: "eventID") as! Int
-            }
-            
-            var updateTime = Date()
-            if record.object(forKey: "updateTime") != nil
-            {
-                updateTime = record.object(forKey: "updateTime") as! Date
-            }
-            
-            var updateType: String = ""
-            if record.object(forKey: "updateType") != nil
-            {
-                updateType = record.object(forKey: "updateType") as! String
-            }
-            
-            var teamID: Int = 0
-            if record.object(forKey: "teamID") != nil
-            {
-                teamID = record.object(forKey: "teamID") as! Int
-            }
-            
-            myDatabaseConnection.replaceEventTemplateHead(eventID,
-                                                      templateName: eventName,
-                                                      teamID: teamID
-                , updateTime: updateTime, updateType: updateType)
-            
-            usleep(self.sleepTime)
-        }
-        
-        let operationQueue = OperationQueue()
-        
-        executePublicQueryOperation(targetTable: "EventTemplateHead", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
     
     func saveEventTemplateHeadRecordToCloudKit(_ sourceRecord: EventTemplateHead, teamID: Int)
@@ -614,10 +516,20 @@ extension CloudKitInteraction
             teamID = sourceRecord.object(forKey: "teamID") as! Int
         }
         
+        myDatabaseConnection.recordsToChange += 1
+        
+        while self.recordCount > 0
+        {
+            usleep(self.sleepTime)
+        }
+        
+        self.recordCount += 1
+        
         myDatabaseConnection.saveEventTemplateHead(eventID,
                                                templateName: eventName,
                                                teamID: teamID
             , updateTime: updateTime, updateType: updateType)
+        self.recordCount -= 1
     }
 }
 

@@ -312,38 +312,10 @@ extension coreDatabase
         }
         
         saveContext()
+
+        self.recordsProcessed += 1
     }
-    
-    func replaceContact(_ personID: Int,
-                        contactType: String,
-                        contactValue: String,
-                        teamID: Int,
-                        clientID: Int,
-                        projectID: Int,
-                        updateTime: Date =  Date(), updateType: String = "CODE")
-    {
-        let myItem = Contacts(context: objectContext)
-        myItem.personID = Int64(personID)
-        myItem.contactType = contactType
-        myItem.contactValue = contactValue
-        myItem.teamID = Int64(teamID)
-        myItem.clientID = Int64(clientID)
-        myItem.projectID = Int64(projectID)
         
-        if updateType == "CODE"
-        {
-            myItem.updateTime =  NSDate()
-            myItem.updateType = "Add"
-        }
-        else
-        {
-            myItem.updateTime = updateTime as NSDate
-            myItem.updateType = updateType
-        }
-        
-        saveContext()
-    }
-    
     func deleteContactForPerson(_ personID: Int, contactType: String)
     {
         let myReturn = getContactDetailsForPerson(personID, contactType: contactType)
@@ -660,35 +632,13 @@ extension CloudKitInteraction
         let query: CKQuery = CKQuery(recordType: "Contacts", predicate: predicate)
         
         let operation = CKQueryOperation(query: query)
-        
-        while waitFlag
-        {
-            usleep(self.sleepTime)
-        }
-        
-        waitFlag = true
-        
+
         operation.recordFetchedBlock = { (record) in
-            while self.recordCount > 0
-            {
-                usleep(self.sleepTime)
-            }
-            
-            self.recordCount += 1
-            
             self.updateContactRecord(record)
-            self.recordCount -= 1
-            
-//            usleep(self.sleepTime)
         }
         let operationQueue = OperationQueue()
         
         executePublicQueryOperation(targetTable: "Contacts", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
     
     func deleteContact(personID: Int, clientID: Int, projectID: Int)
@@ -708,75 +658,6 @@ extension CloudKitInteraction
         })
         
         sem.wait()
-    }
-    
-    func replaceContactInCoreData()
-    {
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
-        let query: CKQuery = CKQuery(recordType: "Contacts", predicate: predicate)
-        let operation = CKQueryOperation(query: query)
-        
-        waitFlag = true
-        
-        operation.recordFetchedBlock = { (record) in
-            let contactType = record.object(forKey: "contactType") as! String
-            let contactValue = record.object(forKey: "contactValue") as! String
-            
-            var personID: Int = 0
-            if record.object(forKey: "personID") != nil
-            {
-                personID = record.object(forKey: "personID") as! Int
-            }
-            
-            var updateTime = Date()
-            if record.object(forKey: "updateTime") != nil
-            {
-                updateTime = record.object(forKey: "updateTime") as! Date
-            }
-            
-            var updateType: String = ""
-            if record.object(forKey: "updateType") != nil
-            {
-                updateType = record.object(forKey: "updateType") as! String
-            }
-            
-            var teamID: Int = 0
-            if record.object(forKey: "teamID") != nil
-            {
-                teamID = record.object(forKey: "teamID") as! Int
-            }
-            
-            var clientID: Int = 0
-            if record.object(forKey: "clientID") != nil
-            {
-                clientID = record.object(forKey: "clientID") as! Int
-            }
-            
-            var projectID: Int = 0
-            if record.object(forKey: "projectID") != nil
-            {
-                projectID = record.object(forKey: "projectID") as! Int
-            }
-            
-            myDatabaseConnection.replaceContact(personID,
-                                                contactType: contactType,
-                                                contactValue: contactValue,
-                                                teamID: teamID,
-                                                clientID: clientID,
-                                                projectID:  projectID
-                , updateTime: updateTime, updateType: updateType)
-            
-            usleep(self.sleepTime)
-        }
-        
-        let operationQueue = OperationQueue()
-        
-        executePublicQueryOperation(targetTable: "Contacts", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
     
     func saveContactRecordToCloudKit(_ sourceRecord: Contacts, teamID: Int)
@@ -904,6 +785,14 @@ extension CloudKitInteraction
             projectID = sourceRecord.object(forKey: "projectID") as! Int
         }
         
+        myDatabaseConnection.recordsToChange += 1
+        
+        while self.recordCount > 0
+        {
+            usleep(self.sleepTime)
+        }
+        self.recordCount += 1
+        
         myDatabaseConnection.saveContact(personID,
                                          contactType: contactType,
                                          contactValue: contactValue,
@@ -911,5 +800,6 @@ extension CloudKitInteraction
                                          clientID: clientID,
                                          projectID: projectID
             , updateTime: updateTime, updateType: updateType)
+        self.recordCount -= 1
     }
 }

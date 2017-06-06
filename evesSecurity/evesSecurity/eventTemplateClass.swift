@@ -224,38 +224,8 @@ extension coreDatabase
         }
         
         saveContext()
-    }
-    
-    func replaceEventTemplate(_ eventID: Int,
-                          role: String,
-                          numRequired: Int,
-                          dateModifier: Int,
-                          startTime: Date,
-                          endTime: Date,
-                          teamID: Int,
-                          updateTime: Date =  Date(), updateType: String = "CODE")
-    {
-        let myItem = EventTemplate(context: objectContext)
-        myItem.eventID = Int64(eventID)
-        myItem.role = role
-        myItem.numRequired = Int64(numRequired)
-        myItem.dateModifier = Int64(dateModifier)
-        myItem.startTime = startTime as NSDate
-        myItem.endTime = endTime as NSDate
-        myItem.teamID = Int64(teamID)
-        
-        if updateType == "CODE"
-        {
-            myItem.updateTime =  NSDate()
-            myItem.updateType = "Add"
-        }
-        else
-        {
-            myItem.updateTime = updateTime as NSDate
-            myItem.updateType = updateType
-        }
-        
-        saveContext()
+
+        self.recordsProcessed += 1
     }
     
     func deleteEventTemplate(_ eventID: Int,
@@ -487,35 +457,13 @@ extension CloudKitInteraction
         let query: CKQuery = CKQuery(recordType: "EventTemplate", predicate: predicate)
         
         let operation = CKQueryOperation(query: query)
-        
-        while waitFlag
-        {
-            usleep(self.sleepTime)
-        }
-        
-        waitFlag = true
-        
+
         operation.recordFetchedBlock = { (record) in
-            while self.recordCount > 0
-            {
-                usleep(self.sleepTime)
-            }
-            
-            self.recordCount += 1
-            
             self.updateEventTemplateRecord(record)
-            self.recordCount -= 1
-            
-//            usleep(self.sleepTime)
         }
         let operationQueue = OperationQueue()
         
         executePublicQueryOperation(targetTable: "EventTemplate", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
     
     func deleteEventTemplate(eventID: Int,
@@ -539,88 +487,6 @@ extension CloudKitInteraction
         })
         
         sem.wait()
-    }
-    
-    func replaceEventTemplateInCoreData()
-    {
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
-        let query: CKQuery = CKQuery(recordType: "EventTemplate", predicate: predicate)
-        let operation = CKQueryOperation(query: query)
-        
-        waitFlag = true
-        
-        operation.recordFetchedBlock = { (record) in
-            
-            let role = record.object(forKey: "role") as! String
-            
-            var eventID: Int = 0
-            if record.object(forKey: "eventID") != nil
-            {
-                eventID = record.object(forKey: "eventID") as! Int
-            }
-
-            var numRequired: Int = 0
-            if record.object(forKey: "numRequired") != nil
-            {
-                numRequired = record.object(forKey: "numRequired") as! Int
-            }
-
-            var dateModifier: Int = 0
-            if record.object(forKey: "dateModifier") != nil
-            {
-                dateModifier = record.object(forKey: "dateModifier") as! Int
-            }
-
-            var startTime = Date()
-            if record.object(forKey: "startTime") != nil
-            {
-                startTime = record.object(forKey: "startTime") as! Date
-            }
-            
-            var endTime = Date()
-            if record.object(forKey: "endTime") != nil
-            {
-                endTime = record.object(forKey: "endTime") as! Date
-            }
-            
-            var updateTime = Date()
-            if record.object(forKey: "updateTime") != nil
-            {
-                updateTime = record.object(forKey: "updateTime") as! Date
-            }
-            
-            var updateType: String = ""
-            if record.object(forKey: "updateType") != nil
-            {
-                updateType = record.object(forKey: "updateType") as! String
-            }
-            
-            var teamID: Int = 0
-            if record.object(forKey: "teamID") != nil
-            {
-                teamID = record.object(forKey: "teamID") as! Int
-            }
-            
-            myDatabaseConnection.replaceEventTemplate(eventID,
-                                                      role: role,
-                                                      numRequired: numRequired,
-                                                      dateModifier: dateModifier,
-                                                      startTime: startTime,
-                                                      endTime: endTime,
-                                                      teamID: teamID
-                , updateTime: updateTime, updateType: updateType)
-            
-            usleep(self.sleepTime)
-        }
-        
-        let operationQueue = OperationQueue()
-        
-        executePublicQueryOperation(targetTable: "EventTemplate", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
     
     func saveEventTemplateRecordToCloudKit(_ sourceRecord: EventTemplate, teamID: Int)
@@ -758,6 +624,15 @@ extension CloudKitInteraction
             teamID = sourceRecord.object(forKey: "teamID") as! Int
         }
         
+        myDatabaseConnection.recordsToChange += 1
+        
+        while self.recordCount > 0
+        {
+            usleep(self.sleepTime)
+        }
+        
+        self.recordCount += 1
+        
         myDatabaseConnection.saveEventTemplate(eventID,
                                                role: role,
                                                numRequired: numRequired,
@@ -766,6 +641,7 @@ extension CloudKitInteraction
                                                endTime: endTime,
                                                teamID: teamID
             , updateTime: updateTime, updateType: updateType)
+        self.recordCount -= 1
     }
 }
 

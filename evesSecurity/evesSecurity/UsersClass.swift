@@ -360,11 +360,6 @@ class userItem: NSObject
         return retString
     }
     
-    func syncDatabase()
-    {
-        myDBSync.sync()
-    }
-    
     func addInitialUserRoles()
     {
         var recordCount: Int = 0

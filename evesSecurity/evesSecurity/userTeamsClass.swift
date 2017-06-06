@@ -135,6 +135,8 @@ extension coreDatabase
         }
         
         saveContext()
+        
+        self.recordsProcessed += 1
     }
     
     func deleteUserTeam(_ userID: Int,
@@ -378,11 +380,6 @@ extension CloudKitInteraction
         let operationQueue = OperationQueue()
         
         executePublicQueryOperation(targetTable: "UserTeams", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
     
     func deleteUserTeams(userID: Int)
@@ -420,8 +417,6 @@ extension CloudKitInteraction
         let query: CKQuery = CKQuery(recordType: "UserTeams", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
-        waitFlag = true
-        
         operation.recordFetchedBlock = { (record) in
             var userID: Int = 0
             if record.object(forKey: "userID") != nil
@@ -447,21 +442,22 @@ extension CloudKitInteraction
                 updateType = record.object(forKey: "updateType") as! String
             }
             
+            while self.recordCount > 0
+            {
+                usleep(self.sleepTime)
+            }
+            
+            self.recordCount += 1
+            
             myDatabaseConnection.replaceUserTeam(userID,
                                                 teamID: teamID
                                                 , updateTime: updateTime, updateType: updateType)
-            
-            usleep(self.sleepTime)
+            self.recordCount -= 1
         }
         
         let operationQueue = OperationQueue()
         
         executePublicQueryOperation(targetTable: "UserTeams", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
     
     func saveUserTeamsRecordToCloudKit(_ sourceRecord: UserTeams)
@@ -541,9 +537,17 @@ extension CloudKitInteraction
             updateType = sourceRecord.object(forKey: "updateType") as! String
         }
         
+        while self.recordCount > 0
+        {
+            usleep(self.sleepTime)
+        }
+        
+        self.recordCount += 1
+        
         myDatabaseConnection.saveUserTeam(userID,
                                          teamID: teamID
                                          , updateTime: updateTime, updateType: updateType)
+        self.recordCount -= 1
     }
 }
 

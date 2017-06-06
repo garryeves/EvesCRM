@@ -387,48 +387,8 @@ extension coreDatabase
         }
         
         saveContext()
-    }
-    
-    func replaceAddress(_ addressID: Int,
-                        addressLine1: String,
-                        addressLine2: String,
-                        city: String,
-                        clientID: Int,
-                        country: String,
-                        personID: Int,
-                        postcode: String,
-                        projectID: Int,
-                        state: String,
-                        addressType: String,
-                        teamID: Int,
-                        updateTime: Date =  Date(), updateType: String = "CODE")
-    {
-        let myItem = Addresses(context: objectContext)
-        myItem.addressID = Int64(addressID)
-        myItem.addressLine1 = addressLine1
-        myItem.addressLine2 = addressLine2
-        myItem.city = city
-        myItem.clientID = Int64(clientID)
-        myItem.country = country
-        myItem.personID = Int64(personID)
-        myItem.postcode = postcode
-        myItem.projectID = Int64(projectID)
-        myItem.state = state
-        myItem.addressType = addressType
-        myItem.teamID = Int64(teamID)
-        
-        if updateType == "CODE"
-        {
-            myItem.updateTime =  NSDate()
-            myItem.updateType = "Add"
-        }
-        else
-        {
-            myItem.updateTime = updateTime as NSDate
-            myItem.updateType = updateType
-        }
-        
-        saveContext()
+
+        self.recordsProcessed += 1
     }
     
     func deleteAddress(_ addressID: Int)
@@ -672,34 +632,12 @@ extension CloudKitInteraction
         
         let operation = CKQueryOperation(query: query)
         
-        while waitFlag
-        {
-            usleep(self.sleepTime)
-        }
-        
-        waitFlag = true
-        
         operation.recordFetchedBlock = { (record) in
-            while self.recordCount > 0
-            {
-                usleep(self.sleepTime)
-            }
-            
-            self.recordCount += 1
-            
             self.updateAddressRecord(record)
-            self.recordCount -= 1
-            
-//            usleep(self.sleepTime)
         }
         let operationQueue = OperationQueue()
         
         executePublicQueryOperation(targetTable: "Addresses", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
     
     func deleteAddress(addressID: Int)
@@ -719,92 +657,6 @@ extension CloudKitInteraction
         })
         
         sem.wait()
-    }
-    
-    func replaceAddressInCoreData()
-    {
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
-        let query: CKQuery = CKQuery(recordType: "Addresses", predicate: predicate)
-        let operation = CKQueryOperation(query: query)
-        
-        waitFlag = true
-        
-        operation.recordFetchedBlock = { (record) in
-            let addressLine1 = record.object(forKey: "addressLine1") as! String
-            let addressLine2 = record.object(forKey: "addressLine2") as! String
-            let city = record.object(forKey: "city") as! String
-            let country = record.object(forKey: "country") as! String
-            let postcode = record.object(forKey: "postcode") as! String
-            let state = record.object(forKey: "state") as! String
-            let addressType = record.object(forKey: "addressType") as! String
-            
-            var addressID: Int = 0
-            if record.object(forKey: "addressID") != nil
-            {
-                addressID = record.object(forKey: "addressID") as! Int
-            }
-
-            var clientID: Int = 0
-            if record.object(forKey: "clientID") != nil
-            {
-                clientID = record.object(forKey: "clientID") as! Int
-            }
-
-            var teamID: Int = 0
-            if record.object(forKey: "teamID") != nil
-            {
-                teamID = record.object(forKey: "teamID") as! Int
-            }
-            
-            var personID: Int = 0
-            if record.object(forKey: "personID") != nil
-            {
-                personID = record.object(forKey: "personID") as! Int
-            }
-            
-            var projectID: Int = 0
-            if record.object(forKey: "projectID") != nil
-            {
-                projectID = record.object(forKey: "projectID") as! Int
-            }
-
-            var updateTime = Date()
-            if record.object(forKey: "updateTime") != nil
-            {
-                updateTime = record.object(forKey: "updateTime") as! Date
-            }
-            
-            var updateType: String = ""
-            if record.object(forKey: "updateType") != nil
-            {
-                updateType = record.object(forKey: "updateType") as! String
-            }
-            
-            myDatabaseConnection.replaceAddress(addressID,
-                                                addressLine1: addressLine1,
-                                                addressLine2: addressLine2,
-                                                city: city,
-                                                clientID: clientID,
-                                                country: country,
-                                                personID: personID,
-                                                postcode: postcode,
-                                                projectID: projectID,
-                                                state: state,
-                                                addressType: addressType,
-                                                teamID: teamID
-                            , updateTime: updateTime, updateType: updateType)
-            
-            usleep(self.sleepTime)
-        }
-        
-        let operationQueue = OperationQueue()
-        
-        executePublicQueryOperation(targetTable: "Addresses", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
     
     func saveAddressRecordToCloudKit(_ sourceRecord: Addresses, teamID: Int)
@@ -955,6 +807,15 @@ extension CloudKitInteraction
             teamID = sourceRecord.object(forKey: "teamID") as! Int
         }
         
+        myDatabaseConnection.recordsToChange += 1
+        
+        while self.recordCount > 0
+        {
+            usleep(self.sleepTime)
+        }
+        
+        self.recordCount += 1
+        
         myDatabaseConnection.saveAddress(addressID,
                                          addressLine1: addressLine1,
                                          addressLine2: addressLine2,
@@ -968,5 +829,6 @@ extension CloudKitInteraction
                                          addressType: addressType,
                                          teamID: teamID
                 , updateTime: updateTime, updateType: updateType)
+        self.recordCount -= 1
     }
 }

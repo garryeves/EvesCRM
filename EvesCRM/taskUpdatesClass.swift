@@ -144,30 +144,7 @@ extension coreDatabase
             
             saveContext()
         }
-    }
-    
-    func replaceTaskUpdate(_ taskID: Int, details: String, source: String, teamID: Int = currentUser.currentTeam!.teamID, updateDate: Date =  Date(), updateTime: Date =  Date(), updateType: String = "CODE")
-    {
-        
-        let myTaskUpdate = TaskUpdates(context: objectContext)
-        myTaskUpdate.taskID = Int64(taskID)
-        myTaskUpdate.updateDate = updateDate as NSDate
-        myTaskUpdate.details = details
-        myTaskUpdate.source = source
-        myTaskUpdate.teamID = Int64(teamID)
-
-        if updateType == "CODE"
-        {
-            myTaskUpdate.updateTime =  NSDate()
-            myTaskUpdate.updateType = "Add"
-        }
-        else
-        {
-            myTaskUpdate.updateTime = updateTime as NSDate
-            myTaskUpdate.updateType = updateType
-        }
-        
-        saveContext()
+        self.recordsProcessed += 1
     }
     
     func getTaskUpdate(_ taskID: Int, updateDate: NSDate)->[TaskUpdates]
@@ -355,24 +332,12 @@ extension CloudKitInteraction
         let query: CKQuery = CKQuery(recordType: "TaskUpdates", predicate: predicate)
         let operation = CKQueryOperation(query: query)
         
-        waitFlag = true
-        
         operation.recordFetchedBlock = { (record) in
-            self.recordCount += 1
-
-                self.updateTaskUpdatesRecord(record)
-            self.recordCount -= 1
-
-                usleep(self.sleepTime)
+            self.updateTaskUpdatesRecord(record)
             }
         let operationQueue = OperationQueue()
         
         executePublicQueryOperation(targetTable: "TaskUpdates", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
 
     func deleteTaskUpdates(teamID: Int)
@@ -391,49 +356,6 @@ extension CloudKitInteraction
             sem.signal()
         })
         sem.wait()
-    }
-
-    func replaceTaskUpdatesInCoreData(teamID: Int)
-    {
-        let predicate: NSPredicate = NSPredicate(format: "\(buildTeamList(currentUser.userID))")
-        let query: CKQuery = CKQuery(recordType: "TaskUpdates", predicate: predicate)
-        let operation = CKQueryOperation(query: query)
-        
-        waitFlag = true
-        
-        operation.recordFetchedBlock = { (record) in
-            let taskID = record.object(forKey: "taskID") as! Int
-            let updateDate = record.object(forKey: "updateDate") as! Date
-            var updateTime = Date()
-            if record.object(forKey: "updateTime") != nil
-            {
-                updateTime = record.object(forKey: "updateTime") as! Date
-            }
-            var updateType: String = ""
-            if record.object(forKey: "updateType") != nil
-            {
-                updateType = record.object(forKey: "updateType") as! String
-            }
-            let details = record.object(forKey: "details") as! String
-            let source = record.object(forKey: "source") as! String
-            
-            var teamID: Int = 0
-            if record.object(forKey: "teamID") != nil
-            {
-                teamID = record.object(forKey: "teamID") as! Int
-            }
-            
-            myDatabaseConnection.replaceTaskUpdate(taskID, details: details, source: source, teamID: teamID, updateDate: updateDate, updateTime: updateTime, updateType: updateType)
-            usleep(self.sleepTime)
-        }
-        let operationQueue = OperationQueue()
-        
-        executePublicQueryOperation(targetTable: "TaskUpdates", queryOperation: operation, onOperationQueue: operationQueue)
-        
-        while waitFlag
-        {
-            sleep(UInt32(0.5))
-        }
     }
 
     func saveTaskUpdatesRecordToCloudKit(_ sourceRecord: TaskUpdates, teamID: Int)
@@ -535,6 +457,15 @@ extension CloudKitInteraction
             teamID = sourceRecord.object(forKey: "teamID") as! Int
         }
         
+        myDatabaseConnection.recordsToChange += 1
+        
+        while self.recordCount > 0
+        {
+            usleep(self.sleepTime)
+        }
+        
+        self.recordCount += 1
         myDatabaseConnection.saveTaskUpdate(taskID, details: details, source: source, teamID: teamID, updateDate: updateDate, updateTime: updateTime, updateType: updateType)
+        self.recordCount -= 1
     }
 }

@@ -82,171 +82,264 @@ extension CloudKitInteraction
 
 extension DBSync
 {
-    func syncToCloudKit(teamID: Int)
+    func performSync()
     {
-        progressMessage("syncToCloudKit Team")
-        myCloudDB.saveTeamToCloudKit()
+        syncTotal = 16
+        syncProgress = 0
+        
+        let syncDate = Date()
 
-        progressMessage("syncToCloudKit Decode")
-        myCloudDB.saveDecodesToCloudKit()
-        
-        progressMessage("syncToCloudKit Addresses")
-        myCloudDB.saveAddressToCloudKit()
-        
-        progressMessage("syncToCloudKit Clients")
-        myCloudDB.saveClientToCloudKit(teamID: teamID)
-        
-        progressMessage("syncToCloudKit Contacts")
-        myCloudDB.saveContactToCloudKit()
-        
-        progressMessage("syncToCloudKit Dropdowns")
-        myCloudDB.saveDropdownsToCloudKit()
-        
-        progressMessage("syncToCloudKit Person")
-        myCloudDB.savePersonToCloudKit()
-        
-        progressMessage("syncToCloudKit PersonAdditionalInfo")
-        myCloudDB.savePersonAdditionalInfoToCloudKit()
-        
-        progressMessage("syncToCloudKit PersonAdditionalItem")
-        myCloudDB.savePersonAddInfoEntryToCloudKit()
-        
-        progressMessage("syncToCloudKit Projects")
-        myCloudDB.saveProjectsToCloudKit()
-        
-        progressMessage("syncToCloudKit Rates")
-        myCloudDB.saveRatesToCloudKit()
-        
-        progressMessage("syncToCloudKit ReportingMonth")
-        myCloudDB.saveReportingMonthToCloudKit()
-        
-        progressMessage("syncToCloudKit Shifts")
-        myCloudDB.saveShiftsToCloudKit()
-        
-        progressMessage("syncToCloudKit UserRoles")
-        myCloudDB.saveUserRolesToCloudKit()
-        
-        progressMessage("syncToCloudKit saveEventTemplateToCloudKit")
-        myCloudDB.saveEventTemplateToCloudKit()
-        
-        progressMessage("syncToCloudKit saveEventTemplateHeadToCloudKit")
-        myCloudDB.saveEventTemplateHeadToCloudKit()
-        
-        progressMessage("syncToCloudKit saveUserTeamsToCloudKit")
-        myCloudDB.saveUserTeamsToCloudKit()
-        
-        notificationCenter.post(name: NotificationCloudSyncFinished, object: nil)
-    }
-    
-    func syncFromCloudKit(teamID: Int)
-    {
-        progressMessage("syncFromCloudKit Team")
+        myCloudDB.saveTeamToCloudKit()
         myCloudDB.updateTeamInCoreData()
+        myDatabaseConnection.setSyncDateforTable(tableName: "Team", syncDate: syncDate, updateCloud: false)
+
+        syncProgress += 1
         
-        progressMessage("updateDecodesInCoreData Decode")
+        sleep(syncTime)
+        
+        if myDatabaseConnection.recordsProcessed < myDatabaseConnection.recordsToChange
+        {
+            sleep(1)
+        }
+        
+        myCloudDB.saveDecodesToCloudKit()
         myCloudDB.updateDecodesInCoreData()
+        myDatabaseConnection.setSyncDateforTable(tableName: "Decode", syncDate: syncDate, updateCloud: false)
         
-        progressMessage("updateAddressInCoreData Addresses")
+        syncProgress += 1
+        
+        sleep(syncTime)
+        
+        if myDatabaseConnection.recordsProcessed < myDatabaseConnection.recordsToChange
+        {
+            sleep(1)
+        }
+        
+        myCloudDB.saveAddressToCloudKit()
         myCloudDB.updateAddressInCoreData()
+        myDatabaseConnection.setSyncDateforTable(tableName: "Addresses", syncDate: syncDate, updateCloud: false)
         
-        progressMessage("updateClientInCoreData Clients")
+        syncProgress += 1
+        sleep(syncTime)
+        
+        if myDatabaseConnection.recordsProcessed < myDatabaseConnection.recordsToChange
+        {
+            sleep(1)
+        }
+        
+        myCloudDB.saveClientToCloudKit()
         myCloudDB.updateClientInCoreData()
+        myDatabaseConnection.setSyncDateforTable(tableName: "Clients", syncDate: syncDate, updateCloud: false)
         
-        progressMessage("updateContactInCoreData Contacts")
+        syncProgress += 1
+        sleep(syncTime)
+        
+        if myDatabaseConnection.recordsProcessed < myDatabaseConnection.recordsToChange
+        {
+            sleep(1)
+        }
+        
+        myCloudDB.saveContactToCloudKit()
         myCloudDB.updateContactInCoreData()
+        myDatabaseConnection.setSyncDateforTable(tableName: "Contacts", syncDate: syncDate, updateCloud: false)
         
-        progressMessage("updateDropdownsInCoreData Dropdowns")
+        syncProgress += 1
+        sleep(syncTime)
+        
+        if myDatabaseConnection.recordsProcessed < myDatabaseConnection.recordsToChange
+        {
+            sleep(1)
+        }
+        
+        myCloudDB.saveDropdownsToCloudKit()
         myCloudDB.updateDropdownsInCoreData()
+        myDatabaseConnection.setSyncDateforTable(tableName: "Dropdowns", syncDate: syncDate, updateCloud: false)
         
-        progressMessage("updatePersonInCoreData Person")
+        syncProgress += 1
+        sleep(syncTime)
+        
+        if myDatabaseConnection.recordsProcessed < myDatabaseConnection.recordsToChange
+        {
+            sleep(1)
+        }
+        
+        myCloudDB.savePersonToCloudKit()
         myCloudDB.updatePersonInCoreData()
+        myDatabaseConnection.setSyncDateforTable(tableName: "Person", syncDate: syncDate, updateCloud: false)
         
-        progressMessage("updatePersonAdditionalInfoInCoreData PersonAdditionalInfo")
+        syncProgress += 1
+        sleep(syncTime)
+        
+        if myDatabaseConnection.recordsProcessed < myDatabaseConnection.recordsToChange
+        {
+            sleep(1)
+        }
+        
+        myCloudDB.savePersonAdditionalInfoToCloudKit()
         myCloudDB.updatePersonAdditionalInfoInCoreData()
+        myDatabaseConnection.setSyncDateforTable(tableName: "PersonAdditionalInfo", syncDate: syncDate, updateCloud: false)
         
-        progressMessage("updatePersonAddInfoEntryInCoreData PersonAdditionalItem")
+        syncProgress += 1
+        sleep(syncTime)
+        
+        if myDatabaseConnection.recordsProcessed < myDatabaseConnection.recordsToChange
+        {
+            sleep(1)
+        }
+        
+        myCloudDB.savePersonAddInfoEntryToCloudKit()
         myCloudDB.updatePersonAddInfoEntryInCoreData()
+        myDatabaseConnection.setSyncDateforTable(tableName: "PersonAddInfoEntry", syncDate: syncDate, updateCloud: false)
         
-        progressMessage("updateProjectsInCoreData Projects")
-        myCloudDB.updateProjectsInCoreData(teamID: teamID)
+        syncProgress += 1
+        sleep(syncTime)
         
-        progressMessage("updateRatesInCoreData Rates")
+        if myDatabaseConnection.recordsProcessed < myDatabaseConnection.recordsToChange
+        {
+            sleep(1)
+        }
+        
+        myCloudDB.saveProjectsToCloudKit()
+        myCloudDB.updateProjectsInCoreData()
+        myDatabaseConnection.setSyncDateforTable(tableName: "Projects", syncDate: syncDate, updateCloud: false)
+        
+        syncProgress += 1
+        sleep(syncTime)
+        
+        if myDatabaseConnection.recordsProcessed < myDatabaseConnection.recordsToChange
+        {
+            sleep(1)
+        }
+        
+        myCloudDB.saveRatesToCloudKit()
         myCloudDB.updateRatesInCoreData()
+        myDatabaseConnection.setSyncDateforTable(tableName: "Rates", syncDate: syncDate, updateCloud: false)
         
-        progressMessage("updateReportingMonthInCoreData ReportingMonth")
-        myCloudDB.updateReportingMonthInCoreData()
+        syncProgress += 1
+        sleep(syncTime)
         
-        progressMessage("updateShiftsInCoreData Shifts")
+        if myDatabaseConnection.recordsProcessed < myDatabaseConnection.recordsToChange
+        {
+            sleep(1)
+        }
+        
+        myCloudDB.saveShiftsToCloudKit()
         myCloudDB.updateShiftsInCoreData()
+        myDatabaseConnection.setSyncDateforTable(tableName: "Shifts", syncDate: syncDate, updateCloud: false)
         
-        progressMessage("updateUserRolesInCoreData UserRoles")
+        syncProgress += 1
+        sleep(syncTime)
+        
+        if myDatabaseConnection.recordsProcessed < myDatabaseConnection.recordsToChange
+        {
+            sleep(1)
+        }
+        
+        myCloudDB.saveUserRolesToCloudKit()
         myCloudDB.updateUserRolesInCoreData()
+        myDatabaseConnection.setSyncDateforTable(tableName: "UserRoles", syncDate: syncDate, updateCloud: false)
         
-        progressMessage("updateContractShiftsInCoreData updateEventTemplateInCoreData")
+        syncProgress += 1
+        sleep(syncTime)
+        
+        if myDatabaseConnection.recordsProcessed < myDatabaseConnection.recordsToChange
+        {
+            sleep(1)
+        }
+        
+        myCloudDB.saveEventTemplateToCloudKit()
         myCloudDB.updateEventTemplateInCoreData()
+        myDatabaseConnection.setSyncDateforTable(tableName: "EventTemplate", syncDate: syncDate, updateCloud: false)
         
-        progressMessage("updateContractShiftsInCoreData updateEventTemplateHeadInCoreData")
+        syncProgress += 1
+        sleep(syncTime)
+        
+        if myDatabaseConnection.recordsProcessed < myDatabaseConnection.recordsToChange
+        {
+            sleep(1)
+        }
+        
+        myCloudDB.saveEventTemplateHeadToCloudKit()
         myCloudDB.updateEventTemplateHeadInCoreData()
+        myDatabaseConnection.setSyncDateforTable(tableName: "EventTemplateHead", syncDate: syncDate, updateCloud: false)
         
-        progressMessage("updateContractShiftsInCoreData updateUserTeamsInCoreData")
+        syncProgress += 1
+        sleep(syncTime)
+        
+        if myDatabaseConnection.recordsProcessed < myDatabaseConnection.recordsToChange
+        {
+            sleep(1)
+        }
+        
+        myCloudDB.saveUserTeamsToCloudKit()
         myCloudDB.updateUserTeamsInCoreData()
+        myDatabaseConnection.setSyncDateforTable(tableName: "UserTeams", syncDate: syncDate, updateCloud: true)
+
+        sleep(syncTime)
         
+        if myDatabaseConnection.recordsProcessed < myDatabaseConnection.recordsToChange
+        {
+            sleep(1)
+        }
+        
+        syncProgress += 1
         notificationCenter.post(name: NotificationCloudSyncFinished, object: nil)
     }
     
     func replaceWithCloudKit()
     {
-        progressMessage("replaceWithCloudKit Team")
-        myCloudDB.replaceTeamInCoreData()
-        
-        progressMessage("replaceContractShiftsInCoreData replaceUserTeamsInCoreData")
-        myCloudDB.replaceUserTeamsInCoreData()
-        
-        progressMessage("replaceDecodesInCoreData Decode")
-        myCloudDB.replaceDecodesInCoreData()
-        
-        progressMessage("replaceAddressInCoreData Addresses")
-        myCloudDB.replaceAddressInCoreData()
-        
-        progressMessage("replaceClientInCoreData Clients")
-        myCloudDB.replaceClientInCoreData()
-        
-        progressMessage("replaceContactInCoreData Contacts")
-        myCloudDB.replaceContactInCoreData()
-        
-        progressMessage("replaceDropdownsInCoreData Dropdowns")
-        myCloudDB.replaceDropdownsInCoreData()
-        
-        progressMessage("replacePersonInCoreData Person")
-        myCloudDB.replacePersonInCoreData()
-        
-        progressMessage("replacePersonAdditionalInfoInCoreData PersonAdditionalInfo")
-        myCloudDB.replacePersonAdditionalInfoInCoreData()
-        
-        progressMessage("replacePersonAddInfoEntryInCoreData PersonAdditionalItem")
-        myCloudDB.replacePersonAddInfoEntryInCoreData()
-        
-        progressMessage("replaceProjectsInCoreData Projects")
-        myCloudDB.replaceProjectsInCoreData()
-        
-        progressMessage("replaceRatesInCoreData Rates")
-        myCloudDB.replaceRatesInCoreData()
-        
-        progressMessage("replaceReportingMonthInCoreData ReportingMonth")
-        myCloudDB.replaceReportingMonthInCoreData()
-        
-        progressMessage("replaceShiftsInCoreData Shifts")
-        myCloudDB.replaceShiftsInCoreData()
-        
-        progressMessage("replaceUserRolesInCoreData UserRoles")
-        myCloudDB.replaceUserRolesInCoreData()
-        
-        progressMessage("replaceContractShiftsInCoreData replaceEventTemplateInCoreData")
-        myCloudDB.replaceEventTemplateInCoreData()
-        
-        progressMessage("replaceContractShiftsInCoreData replaceEventTemplateHeadInCoreData")
-        myCloudDB.replaceEventTemplateHeadInCoreData()
-        
+print("Gre called - replaceWithCloudKit")
+//        progressMessage("replaceWithCloudKit Team")
+//        myCloudDB.replaceTeamInCoreData()
+//        
+//        progressMessage("replaceContractShiftsInCoreData replaceUserTeamsInCoreData")
+//        myCloudDB.replaceUserTeamsInCoreData()
+//        
+//        progressMessage("replaceDecodesInCoreData Decode")
+//        myCloudDB.replaceDecodesInCoreData()
+//        
+//        progressMessage("replaceAddressInCoreData Addresses")
+//        myCloudDB.replaceAddressInCoreData()
+//        
+//        progressMessage("replaceClientInCoreData Clients")
+//        myCloudDB.replaceClientInCoreData()
+//        
+//        progressMessage("replaceContactInCoreData Contacts")
+//        myCloudDB.replaceContactInCoreData()
+//        
+//        progressMessage("replaceDropdownsInCoreData Dropdowns")
+//        myCloudDB.replaceDropdownsInCoreData()
+//        
+//        progressMessage("replacePersonInCoreData Person")
+//        myCloudDB.replacePersonInCoreData()
+//        
+//        progressMessage("replacePersonAdditionalInfoInCoreData PersonAdditionalInfo")
+//        myCloudDB.replacePersonAdditionalInfoInCoreData()
+//        
+//        progressMessage("replacePersonAddInfoEntryInCoreData PersonAdditionalItem")
+//        myCloudDB.replacePersonAddInfoEntryInCoreData()
+//        
+//        progressMessage("replaceProjectsInCoreData Projects")
+//        myCloudDB.replaceProjectsInCoreData()
+//        
+//        progressMessage("replaceRatesInCoreData Rates")
+//        myCloudDB.replaceRatesInCoreData()
+//        
+//        progressMessage("replaceReportingMonthInCoreData ReportingMonth")
+//        myCloudDB.replaceReportingMonthInCoreData()
+//        
+//        progressMessage("replaceShiftsInCoreData Shifts")
+//        myCloudDB.replaceShiftsInCoreData()
+//        
+//        progressMessage("replaceUserRolesInCoreData UserRoles")
+//        myCloudDB.replaceUserRolesInCoreData()
+//        
+//        progressMessage("replaceContractShiftsInCoreData replaceEventTemplateInCoreData")
+//        myCloudDB.replaceEventTemplateInCoreData()
+//        
+//        progressMessage("replaceContractShiftsInCoreData replaceEventTemplateHeadInCoreData")
+//        myCloudDB.replaceEventTemplateHeadInCoreData()
+//        
         notificationCenter.post(name: NotificationCloudSyncFinished, object: nil)
     }
     
@@ -306,60 +399,6 @@ extension DBSync
         
     }
     
-    func setLastSyncDates(syncDate: Date)
-    {
-        progressMessage("setLastSyncDates Team")
-        myDatabaseConnection.setSyncDateforTable(tableName: "Team", syncDate: syncDate, updateCloud: false)
-        usleep(500)
-        progressMessage("setLastSyncDates Decode")
-        myDatabaseConnection.setSyncDateforTable(tableName: "Decode", syncDate: syncDate, updateCloud: false)
-        usleep(500)
-        progressMessage("setLastSyncDates Addresses")
-        myDatabaseConnection.setSyncDateforTable(tableName: "Addresses", syncDate: syncDate, updateCloud: false)
-        usleep(500)
-        progressMessage("setLastSyncDates Clients")
-        myDatabaseConnection.setSyncDateforTable(tableName: "Clients", syncDate: syncDate, updateCloud: false)
-        usleep(500)
-        progressMessage("setLastSyncDates Contacts")
-        myDatabaseConnection.setSyncDateforTable(tableName: "Contacts", syncDate: syncDate, updateCloud: false)
-        usleep(500)
-        progressMessage("setLastSyncDates Dropdowns")
-        myDatabaseConnection.setSyncDateforTable(tableName: "Dropdowns", syncDate: syncDate, updateCloud: false)
-        usleep(500)
-        progressMessage("setLastSyncDates Person")
-        myDatabaseConnection.setSyncDateforTable(tableName: "Person", syncDate: syncDate, updateCloud: false)
-        usleep(500)
-        progressMessage("setLastSyncDates PersonAdditionalInfo")
-        myDatabaseConnection.setSyncDateforTable(tableName: "PersonAdditionalInfo", syncDate: syncDate, updateCloud: false)
-        usleep(500)
-        progressMessage("setLastSyncDates PersonAdditionalItem")
-        myDatabaseConnection.setSyncDateforTable(tableName: "PersonAddInfoEntry", syncDate: syncDate, updateCloud: false)
-        usleep(500)
-        progressMessage("setLastSyncDates Projects")
-        myDatabaseConnection.setSyncDateforTable(tableName: "Projects", syncDate: syncDate, updateCloud: false)
-        usleep(500)
-        progressMessage("setLastSyncDates Rates")
-        myDatabaseConnection.setSyncDateforTable(tableName: "Rates", syncDate: syncDate, updateCloud: false)
-        usleep(500)
-        progressMessage("setLastSyncDates ReportingMonth")
-        myDatabaseConnection.setSyncDateforTable(tableName: "ReportingMonth", syncDate: syncDate, updateCloud: false)
-        usleep(500)
-        progressMessage("setLastSyncDates Shifts")
-        myDatabaseConnection.setSyncDateforTable(tableName: "Shifts", syncDate: syncDate, updateCloud: false)
-        usleep(500)
-        progressMessage("setLastSyncDates UserRoles")
-        myDatabaseConnection.setSyncDateforTable(tableName: "UserRoles", syncDate: syncDate, updateCloud: false)
-        usleep(500)
-        progressMessage("setLastSyncDates ContractShifts")
-        myDatabaseConnection.setSyncDateforTable(tableName: "EventTemplate", syncDate: syncDate, updateCloud: false)
-        usleep(500)
-        progressMessage("setLastSyncDates ContractShifts")
-        myDatabaseConnection.setSyncDateforTable(tableName: "EventTemplateHead", syncDate: syncDate, updateCloud: false)
-        usleep(500)
-        progressMessage("setLastSyncDates UserTeams")
-        myDatabaseConnection.setSyncDateforTable(tableName: "UserTeams", syncDate: syncDate, updateCloud: true)
-        usleep(500)
-    }
 }
 
 
