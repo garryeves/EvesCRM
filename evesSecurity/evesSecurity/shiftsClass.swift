@@ -137,6 +137,41 @@ class shifts: NSObject
         sortArray()
     }
     
+    init(projectID: Int, startDate: Date, endDate: Date)
+    {
+        super.init()
+        
+        myWeeklyShifts.removeAll()
+        
+        for myItem in myDatabaseConnection.getShifts(projectID: projectID, searchFrom: startDate, searchTo: endDate)
+        {
+            let myObject = shift(shiftID: Int(myItem.shiftID),
+                                 projectID: Int(myItem.projectID),
+                                 personID: Int(myItem.personID),
+                                 workDate: myItem.workDate! as Date,
+                                 shiftDescription: myItem.shiftDescription!,
+                                 startTime: myItem.startTime! as Date,
+                                 endTime: myItem.endTime! as Date,
+                                 teamID: Int(myItem.teamID),
+                                 weekEndDate: myItem.weekEndDate! as Date,
+                                 status: myItem.status!,
+                                 shiftLineID: Int(myItem.shiftLineID),
+                                 rateID: Int(myItem.rateID),
+                                 type: myItem.type!,
+                                 clientInvoiceNumber: Int(myItem.clientInvoiceNumber),
+                                 personInvoiceNumber: Int(myItem.personInvoiceNumber)
+            )
+            myShifts.append(myObject)
+        }
+        
+        if myShifts.count > 0
+        {
+            createWeeklyArray()
+        }
+        
+        sortArray()
+    }
+    
     init(projectID: Int, month: String, year: String)
     {
         super.init()
@@ -1107,6 +1142,17 @@ extension projects
             workingProject.loadFinancials(month: month, year: year)
         }
     }
+    func loadFinancials(startDate: Date, endDate: Date)
+    {
+        // Need to get the
+        
+        // get the projects for the team
+        
+        for workingProject in projects
+        {
+            workingProject.loadFinancials(startDate: startDate, endDate: endDate)
+        }
+    }
 }
 
 extension project
@@ -1130,6 +1176,17 @@ print("GRE - Do project loadFinancials for all")
             financeArray.append(processMonth(shiftArray: shiftArray, month: month, year: year))
         }
 
+        financials = financeArray
+    }
+    
+    func loadFinancials(startDate: Date, endDate: Date)
+    {
+        var financeArray: [monthlyFinancialsStruct] = Array()
+
+        let shiftArray = shifts(projectID: projectID, startDate: startDate, endDate: endDate)
+            
+        financeArray.append(processMonth(shiftArray: shiftArray, month: "", year: ""))
+        
         financials = financeArray
     }
     
@@ -1619,6 +1676,43 @@ extension coreDatabase
         }
     }
     
+    func getShifts(projectID: Int, searchFrom: Date, searchTo: Date, type: String = "")->[Shifts]
+    {
+        let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate = NSPredicate()
+        
+        if type == ""
+        {
+            predicate = NSPredicate(format: "(projectID == \(projectID)) AND (workDate >= %@) AND (workDate < %@) AND (updateType != \"Delete\")", searchFrom as CVarArg, searchTo as CVarArg)
+        }
+        else
+        {
+            predicate = NSPredicate(format: "(projectID == \(projectID)) AND (workDate >= %@) AND (workDate < %@) AND (type == \"\(type)\") AND (updateType != \"Delete\")", searchFrom as CVarArg, searchTo as CVarArg)
+        }
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        let sortDescriptor = NSSortDescriptor(key: "workDate", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+
     func getShifts(projectID: Int, searchFrom: Date, searchTo: Date, teamID: Int, type: String)->[Shifts]
     {
         let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")

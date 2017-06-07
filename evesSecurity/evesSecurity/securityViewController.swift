@@ -62,6 +62,8 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     @IBOutlet weak var btnMonthlyRoster: UIButton!
     @IBOutlet weak var lblYear: UILabel!
     @IBOutlet weak var btnYear: UIButton!
+    @IBOutlet weak var btnSelect1: UIButton!
+    @IBOutlet weak var btnSelect2: UIButton!
     
     fileprivate var contractList: projects!
     fileprivate var alertList: [alertStruct] = Array()
@@ -72,6 +74,8 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     
     fileprivate var currentReportID: Int = 0
     fileprivate var reportString: String = ""
+    fileprivate var reportDate1: Date = Date()
+    fileprivate var reportDate2: Date = Date()
     
     var communicationDelegate: myCommunicationDelegate?
     
@@ -80,6 +84,9 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
  //       btnSettings.setTitle(NSString(string: "\u{2699}") as String, for: UIControlState())
         
         btnSettings.title = NSString(string: "\u{2699}") as String
+        
+        btnSelect1.setTitle("Select", for: .normal)
+        btnSelect2.setTitle("Select", for: .normal)
         
         btnPeople.setTitle("Maintain People", for: .normal)
 
@@ -155,8 +162,23 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                 
                 for myItem in reportList.reports
                 {
-                    if myItem.subject == btnReport.currentTitle!
+                    if myItem.reportName == btnReport.currentTitle!
                     {
+                        resetWidth(constraint: cell.constraintWidth1)
+                        resetWidth(constraint: cell.constraintWidth2)
+                        resetWidth(constraint: cell.constraintWidth3)
+                        resetWidth(constraint: cell.constraintWidth4)
+                        resetWidth(constraint: cell.constraintWidth5)
+                        resetWidth(constraint: cell.constraintWidth6)
+                        resetWidth(constraint: cell.constraintWidth7)
+                        resetWidth(constraint: cell.constraintWidth8)
+                        resetWidth(constraint: cell.constraintWidth9)
+                        resetWidth(constraint: cell.constraintWidth10)
+                        resetWidth(constraint: cell.constraintWidth11)
+                        resetWidth(constraint: cell.constraintWidth12)
+                        resetWidth(constraint: cell.constraintWidth13)
+                        resetWidth(constraint: cell.constraintWidth14)
+                        
                         let reportEntry = myItem.lines[indexPath.row]
                         buildReportCell(label: cell.lbl1, text: reportEntry.column1, width: CGFloat(myItem.columnWidth1), constraint: cell.constraintWidth1, drawLine: reportEntry.drawLine)
                         buildReportCell(label: cell.lbl2, text: reportEntry.column2, width: CGFloat(myItem.columnWidth2), constraint: cell.constraintWidth2, drawLine: reportEntry.drawLine)
@@ -199,7 +221,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
             case tblData1:
                 for reportEntry in reportList.reports
                 {
-                    if reportEntry.subject == btnReport.currentTitle!
+                    if reportEntry.reportName == btnReport.currentTitle!
                     {
                         switch reportEntry.reportName
                         {
@@ -210,7 +232,6 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                                 let tempObject = reportEntry.lines[indexPath.row].sourceObject as! project
                                 contractEditViewControl.workingContract = tempObject
                                 
-                                //contractEditViewControl.workingContract = contractList.projects[indexPath.row]
                                 self.present(contractEditViewControl, animated: true, completion: nil)
                                 
                             case reportWagesForMonth:  // Wage per person for month
@@ -226,7 +247,16 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                                 
                             case reportContractForYear:
                                 let _ = 1
+                            
+                            case reportContractDates:
+                                let contractEditViewControl = projectsStoryboard.instantiateViewController(withIdentifier: "contractMaintenance") as! contractMaintenanceViewController
+                                contractEditViewControl.communicationDelegate = self
                                 
+                                let tempObject = reportEntry.lines[indexPath.row].sourceObject as! project
+                                contractEditViewControl.workingContract = tempObject
+                                
+                                self.present(contractEditViewControl, animated: true, completion: nil)
+                            
                             default:
                                 print("unknow entry myPickerDidFinish - selectedItem - \(reportEntry.reportName)")
                         }
@@ -291,7 +321,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     {
         for myItem in reportList.reports
         {
-            if myItem.subject == btnReport.currentTitle!
+            if myItem.reportName == btnReport.currentTitle!
             {
                 let activityViewController = myItem.activityController
                 
@@ -344,7 +374,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         
         for myItem in reportList.reports
         {
-            displayList.append(myItem.subject)
+            displayList.append(myItem.reportName)
         }
         
         let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
@@ -441,6 +471,68 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         pickerView.preferredContentSize = CGSize(width: 400,height: 400)
         
         self.present(pickerView, animated: true, completion: nil)
+    }
+    
+    @IBAction func btnSelect(_ sender: UIButton)
+    {
+        var source: String = ""
+        var tempDate: Date = Date()
+        
+        if sender == btnSelect1
+        {
+            source = "btnSelect1"
+            tempDate = reportDate1
+        }
+        else if sender == btnSelect2
+        {
+            source = "btnSelect2"
+            tempDate = reportDate2
+        }
+        
+        if btnReport.currentTitle! == reportContractDates
+        {
+            let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "datePicker") as! dateTimePickerView
+            pickerView.modalPresentationStyle = .popover
+            //      pickerView.isModalInPopover = true
+            
+            let popover = pickerView.popoverPresentationController!
+            popover.delegate = self
+            popover.sourceView = sender
+            popover.sourceRect = sender.bounds
+            popover.permittedArrowDirections = .any
+            
+            pickerView.source = source
+            pickerView.delegate = self
+            pickerView.currentDate = tempDate
+            
+            pickerView.showTimes = false
+            
+            pickerView.preferredContentSize = CGSize(width: 400,height: 400)
+            
+            self.present(pickerView, animated: true, completion: nil)
+        }
+    }
+    
+    func myPickerDidFinish(_ source: String, selectedDate:Date)
+    {
+        let dateStringFormatter = DateFormatter()
+        dateStringFormatter.dateFormat = "dd MMM YY"
+        
+        switch source
+        {
+            case "btnSelect1":
+                reportDate1 = selectedDate
+                btnSelect1.setTitle(dateStringFormatter.string(from: selectedDate), for: .normal)
+                runReport()
+            
+            case "btnSelect2":
+                reportDate2 = selectedDate
+                btnSelect2.setTitle(dateStringFormatter.string(from: selectedDate), for: .normal)
+                runReport()
+            
+            default:
+                print("myPickerDidFinish: selectedDate - got default \(source)")
+        }
     }
     
     func refreshScreen()
@@ -639,11 +731,11 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         buildReportLine(name: reportContractForMonth,
                         subject: reportContractForMonth,
                         text1: "Client", width1: 240,
-                        text2: "Contract", width2: 240,
-                        text3: "Hours", width3: 100,
-                        text4: "Cost", width4: 120,
-                        text5: "Income", width5: 120,
-                        text6: "Profit", width6: 120,
+                        text2: "Contract", width2: 200,
+                        text3: "Hours", width3: 80,
+                        text4: "Cost", width4: 100,
+                        text5: "Income", width5: 100,
+                        text6: "Profit", width6: 100,
                         text7: "GP%", width7: 50
                         )
 
@@ -656,22 +748,30 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
 
         buildReportLine(name: reportContractForYear,
                         subject: reportContractForYear,
-                        text1: "", width1: 200,
-                        text2: "Jan", width2: 60,
-                        text3: "Feb", width3: 60,
-                        text4: "Mar", width4: 60,
-                        text5: "Apr", width5: 60,
-                        text6: "May", width6: 60,
-                        text7: "Jun", width7: 60,
-                        text8: "July", width8: 60,
-                        text9: "Aug", width9: 60,
-                        text10: "Sep", width10: 60,
-                        text11: "Oct", width11: 60,
-                        text12: "Nov", width12: 60,
-                        text13: "Dec", width13: 60,
-                        text14: "Total", width14: 60
-
-        )
+                        text1: "", width1: 175,
+                        text2: "Jan", width2: 55,
+                        text3: "Feb", width3: 55,
+                        text4: "Mar", width4: 55,
+                        text5: "Apr", width5: 55,
+                        text6: "May", width6: 55,
+                        text7: "Jun", width7: 55,
+                        text8: "July", width8: 55,
+                        text9: "Aug", width9: 55,
+                        text10: "Sep", width10: 55,
+                        text11: "Oct", width11: 55,
+                        text12: "Nov", width12: 55,
+                        text13: "Dec", width13: 55,
+                        text14: "Total", width14: 55)
+            
+        buildReportLine(name: reportContractDates,
+                        subject: reportContractDates,
+                        text1: "Client", width1: 240,
+                        text2: "Contract", width2: 220,
+                        text3: "Hours", width3: 80,
+                        text4: "Cost", width4: 100,
+                        text5: "Income", width5: 100,
+                        text6: "Profit", width6: 100,
+                        text7: "GP%", width7: 50)
     }
     
     func buildReportLine(name: String, subject: String, text1: String = "", width1: Int = 0, text2: String = "", width2: Int = 0, text3: String = "", width3: Int = 0, text4: String = "", width4: Int = 0, text5: String = "", width5: Int = 0, text6: String = "", width6: Int = 0, text7: String = "", width7: Int = 0, text8: String = "", width8: Int = 0, text9: String = "", width9: Int = 0, text10: String = "", width10: Int = 0, text11: String = "", width11: Int = 0, text12: String = "", width12: Int = 0, text13: String = "", width13: Int = 0, text14: String = "", width14: Int = 0)
@@ -728,11 +828,13 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         
         if source == "report"
         {
-            btnReport.setTitle(reportList.reports[workingItem].subject, for: .normal)
+            btnReport.setTitle(reportList.reports[workingItem].reportName, for: .normal)
             
             switch workingItem
             {
                 case 0:
+                    lblDropdown.text = "Month"
+                    lblYear.text = "Year"
                     if btnDropdown.currentTitle == "Select"
                     {
                         tblData1.isHidden = true
@@ -744,12 +846,16 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                     
                     lblDropdown.isHidden = false
                     btnDropdown.isHidden = false
+                    btnSelect1.isHidden = true
+                    btnSelect2.isHidden = true
                     lblYear.isHidden = false
                     btnYear.isHidden = false
                     
                     populateDropdowns()
                 
                 case 1:
+                    lblDropdown.text = "Month"
+                    lblYear.text = "Year"
                     if btnDropdown.currentTitle == "Select"
                     {
                         tblData1.isHidden = true
@@ -761,12 +867,16 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                     
                     lblDropdown.isHidden = false
                     btnDropdown.isHidden = false
+                    btnSelect1.isHidden = true
+                    btnSelect2.isHidden = true
                     lblYear.isHidden = false
                     btnYear.isHidden = false
                     
                     populateDropdowns()
                 
                 case 2:
+                    lblDropdown.text = "Month"
+                    lblYear.text = "Year"
                     if btnDropdown.currentTitle == "Select"
                     {
                         tblData1.isHidden = true
@@ -778,15 +888,21 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                     
                     lblDropdown.isHidden = true
                     btnDropdown.isHidden = true
+                    btnSelect1.isHidden = true
+                    btnSelect2.isHidden = true
                     lblYear.isHidden = false
                     btnYear.isHidden = false
                 
                 case 3:
+                    lblDropdown.isHidden = false
+                    lblDropdown.text = "Start Date"
+                    lblYear.isHidden = false
+                    lblYear.text = "End Date"
                     tblData1.isHidden = true
-                    lblDropdown.isHidden = true
                     btnDropdown.isHidden = true
-                    lblYear.isHidden = true
                     btnYear.isHidden = true
+                    btnSelect1.isHidden = false
+                    btnSelect2.isHidden = false
                 
                 default:
                     print("unknow entry myPickerDidFinish - selectedItem - \(selectedItem)")
@@ -801,7 +917,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         {
             btnDropdown.setTitle(displayList[workingItem], for: .normal)
             
-            writeDefaultInt("reportMonth", value: workingItem)
+            writeDefaultString("reportMonth", value: displayList[workingItem])
         }
         else if source == "year"
         {
@@ -815,9 +931,14 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         
         // see if we can run the report, and if so do it
         
+        runReport()
+    }
+    
+    func runReport()
+    {
         for myItem in reportList.reports
         {
-            if myItem.subject == btnReport.currentTitle!
+            if myItem.reportName == btnReport.currentTitle!
             {
                 buildReport(myItem)
                 break
@@ -835,11 +956,16 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         {
             label.isHidden = false
             
+            for mySubView in label.subviews
+            {
+                mySubView.removeFromSuperview()
+            }
+            
             if drawLine
             {
                 label.text = ""
                 
-                let lineView = UIView(frame: CGRect(x: CGFloat(0), y: CGFloat(12), width: CGFloat(label.bounds.size.width), height: CGFloat(1)))
+                let lineView = UIView(frame: CGRect(x: CGFloat(0), y: CGFloat(12), width: width, height: CGFloat(1)))
                 lineView.backgroundColor = UIColor.black
                 lineView.autoresizingMask = UIViewAutoresizing(rawValue: 0x3f)
                 label.addSubview(lineView)
@@ -853,8 +979,28 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         constraint.constant = width
     }
     
+    func resetWidth(constraint: NSLayoutConstraint)
+    {
+        constraint.constant = 0.0
+    }
+    
     func buildReport(_ reportEntry: report)
     {
+        resetWidth(constraint: constraintWidth1)
+        resetWidth(constraint: constraintWidth2)
+        resetWidth(constraint: constraintWidth3)
+        resetWidth(constraint: constraintWidth4)
+        resetWidth(constraint: constraintWidth5)
+        resetWidth(constraint: constraintWidth6)
+        resetWidth(constraint: constraintWidth7)
+        resetWidth(constraint: constraintWidth8)
+        resetWidth(constraint: constraintWidth9)
+        resetWidth(constraint: constraintWidth10)
+        resetWidth(constraint: constraintWidth11)
+        resetWidth(constraint: constraintWidth12)
+        resetWidth(constraint: constraintWidth13)
+        resetWidth(constraint: constraintWidth14)
+        
         buildReportCell(label: lbl1, text: reportEntry.header.column1, width: CGFloat(reportEntry.columnWidth1), constraint: constraintWidth1, drawLine: false)
         buildReportCell(label: lbl2, text: reportEntry.header.column2, width: CGFloat(reportEntry.columnWidth2), constraint: constraintWidth2, drawLine: false)
         buildReportCell(label: lbl3, text: reportEntry.header.column3, width: CGFloat(reportEntry.columnWidth3), constraint: constraintWidth3, drawLine: false)
@@ -871,7 +1017,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         buildReportCell(label: lbl14, text: reportEntry.header.column14, width: CGFloat(reportEntry.columnWidth14), constraint: constraintWidth14, drawLine: false)
     
         updateViewConstraints()
-        
+       
         reportEntry.removeAll()
         // Lets process through the report
         
@@ -1268,6 +1414,49 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                 
                 reportEntry.append(newReportLine)
 
+        case reportContractDates:
+            if btnSelect1.currentTitle! != "Select" && btnSelect2.currentTitle! != "Select"
+            {
+                reportEntry.subject = "Contracts between \(btnSelect1.currentTitle!) - \(btnSelect2.currentTitle!)"
+                contractList = projects(teamID: currentUser.currentTeam!.teamID, includeEvents: true)
+                
+                contractList.loadFinancials(startDate: reportDate1, endDate: reportDate2)
+                
+                var lastClientID: Int = -1
+                
+                for myItem in contractList.projects
+                {
+                    let profit = myItem.financials[0].income - myItem.financials[0].expense
+                    
+                    let gp = (profit/myItem.financials[0].income)  * 100
+                    
+                    if myItem.financials[0].income != 0 || myItem.financials[0].expense != 0
+                    {
+                        let newReportLine = reportLine()
+                        
+                        var clientName: String = ""
+                        if myItem.clientID != lastClientID
+                        {
+                            let tempClient = client(clientID: myItem.clientID)
+                            clientName = tempClient.name
+                            lastClientID = myItem.clientID
+                        }
+                        
+                        newReportLine.column1 = clientName
+                        newReportLine.column2 = myItem.projectName
+                        newReportLine.column3 = myItem.financials[0].hours.formatHours
+                        newReportLine.column4 = myItem.financials[0].expense.formatCurrency
+                        newReportLine.column5 = myItem.financials[0].income.formatCurrency
+                        newReportLine.column6 = profit.formatCurrency
+                        newReportLine.column7 = gp.formatPercent
+                        newReportLine.sourceObject = myItem
+                        
+                        reportEntry.append(newReportLine)
+                    }
+                }
+            //    tblData1.reloadData()
+            }
+
             default:
                 print("unknow entry myPickerDidFinish - selectedItem - \(reportEntry.reportName)")
         }
@@ -1295,10 +1484,11 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                 {
                     btnDropdown.setTitle("Select", for: .normal)
                 }
-                
-                if readDefaultString("reportYear") != ""
+
+                if readDefaultInt("reportYear") >= 0
                 {
-                    btnYear.setTitle(readDefaultString("reportYear"), for: .normal)
+                    let tempInt = readDefaultInt("reportYear")
+                    btnYear.setTitle("\(tempInt)", for: .normal)
                 }
                 else
                 {
@@ -1306,9 +1496,23 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                     dateFormatter.dateFormat = "YYYY"
                     btnYear.setTitle(dateFormatter.string(from: Date()), for: .normal)
                 }
+            
+            case 2:
+                if readDefaultInt("reportYear") >= 0
+                {
+                    let tempInt = readDefaultInt("reportYear")
+                    btnYear.setTitle("\(tempInt)", for: .normal)
+                }
+                else
+                {
+                    let dateFormatter = DateFormatter()
+                    dateFormatter.dateFormat = "YYYY"
+                    btnYear.setTitle(dateFormatter.string(from: Date()), for: .normal)
+                }
+            
 
             default:
-                print("populateDropdowns fot default : btnReport.currentTitle!")
+                print("populateDropdowns got default : \(currentReportID)")
         }
     }
     
@@ -1321,18 +1525,19 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
             monthList.append(myItem)
         }
         
-        if readDefaultInt("reportMonth") >= 0
+        if readDefaultString("reportMonth") != ""
         {
-            let tempInt = readDefaultInt("reportMonth")
-            
             DispatchQueue.main.async
             {
-                self.btnDropdown.setTitle(self.monthList[tempInt], for: .normal)
+                self.btnDropdown.setTitle(readDefaultString("reportMonth"), for: .normal)
             }
         }
         else
         {
-            btnDropdown.setTitle("Select", for: .normal)
+            DispatchQueue.main.async
+            {
+                self.btnDropdown.setTitle("Select", for: .normal)
+            }
         }
     }
 }

@@ -9,14 +9,46 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "evesSecurity/reporting.swift"
-            timestampString = "518337733.39439"
+            filePath = "../EvesCRM/decodesClass.swift"
+            timestampString = "518509239.403498"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "622"
-            endingLineNumber = "622"
-            landmarkName = "item"
-            landmarkType = "24">
+            startingLineNumber = "719"
+            endingLineNumber = "719"
+            landmarkName = "savePublicDecodesRecordToCloudKit(_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Shift_Dashboard.CloudKitInteraction.(savePublicDecodesRecordToCloudKit (Shift_Dashboard.Decodes) -&gt; ()).(closure #1)"
+                  moduleName = "Shift Dashboard"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/garryeves/Documents/xcode/EvesCRM/EvesCRM/decodesClass.swift"
+                  timestampString = "518508795.463947"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "719"
+                  endingLineNumber = "719"
+                  offsetFromSymbolStart = "18784">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Shift_Dashboard.CloudKitInteraction.(savePublicDecodesRecordToCloudKit (Shift_Dashboard.Decodes) -&gt; ()).(closure #1).(closure #1)"
+                  moduleName = "Shift Dashboard"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/garryeves/Documents/xcode/EvesCRM/EvesCRM/decodesClass.swift"
+                  timestampString = "518508795.467121"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "720"
+                  endingLineNumber = "720"
+                  offsetFromSymbolStart = "32">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -25,29 +57,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "evesSecurity/reporting.swift"
-            timestampString = "518337733.39439"
+            filePath = "../EvesCRM/decodesClass.swift"
+            timestampString = "518509239.403498"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "621"
-            endingLineNumber = "621"
-            landmarkName = "item"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../EvesCRM/coreDatabase.swift"
-            timestampString = "518412149.891117"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "64"
-            endingLineNumber = "64"
-            landmarkName = "saveContext()"
+            startingLineNumber = "720"
+            endingLineNumber = "720"
+            landmarkName = "savePublicDecodesRecordToCloudKit(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -57,13 +73,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "../EvesCRM/coreDatabase.swift"
-            timestampString = "518412149.891117"
+            filePath = "../EvesCRM/decodesClass.swift"
+            timestampString = "518509239.403498"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "67"
-            endingLineNumber = "67"
-            landmarkName = "saveContext()"
+            startingLineNumber = "722"
+            endingLineNumber = "722"
+            landmarkName = "savePublicDecodesRecordToCloudKit(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -73,13 +89,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "evesSecurity/ViewController.swift"
-            timestampString = "518422044.996232"
+            filePath = "../EvesCRM/decodesClass.swift"
+            timestampString = "518509239.403498"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "111"
-            endingLineNumber = "111"
-            landmarkName = "loadMainScreen()"
+            startingLineNumber = "726"
+            endingLineNumber = "726"
+            landmarkName = "savePublicDecodesRecordToCloudKit(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -89,13 +105,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "evesSecurity/ViewController.swift"
-            timestampString = "518422044.996232"
+            filePath = "evesSecurity/eventPlanningViewController.swift"
+            timestampString = "518509564.275758"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "101"
-            endingLineNumber = "101"
-            landmarkName = "callLoadMainScreen()"
+            startingLineNumber = "470"
+            endingLineNumber = "470"
+            landmarkName = "createShiftEntry(teamID:projectID:shiftDescription:workDay:startTime:endTime:saveToCloud:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -105,13 +121,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "evesSecurity/userFormViewController.swift"
-            timestampString = "518423470.664715"
+            filePath = "evesSecurity/eventPlanningViewController.swift"
+            timestampString = "518509564.275758"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "47"
-            endingLineNumber = "47"
-            landmarkName = "viewDidLoad()"
+            startingLineNumber = "471"
+            endingLineNumber = "471"
+            landmarkName = "createShiftEntry(teamID:projectID:shiftDescription:workDay:startTime:endTime:saveToCloud:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -121,13 +137,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "evesSecurity/userFormViewController.swift"
-            timestampString = "518423480.699798"
+            filePath = "evesSecurity/eventPlanningViewController.swift"
+            timestampString = "518509564.275758"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "54"
-            endingLineNumber = "54"
-            landmarkName = "viewDidLoad()"
+            startingLineNumber = "285"
+            endingLineNumber = "285"
+            landmarkName = "btnAddRole(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -137,29 +153,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "evesSecurity/userFormViewController.swift"
-            timestampString = "518423482.306748"
+            filePath = "evesSecurity/eventPlanningViewController.swift"
+            timestampString = "518509564.275758"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "49"
-            endingLineNumber = "49"
-            landmarkName = "viewDidLoad()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "evesSecurity/newUserViewController.swift"
-            timestampString = "518423960.471038"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "107"
-            endingLineNumber = "107"
-            landmarkName = "btnExisting(_:)"
+            startingLineNumber = "542"
+            endingLineNumber = "542"
+            landmarkName = "refreshScreen()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

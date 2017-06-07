@@ -315,11 +315,11 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6z0-km-TTc" userLabel="btnReport">
-                                <rect key="frame" x="40" y="325" width="250" height="30"/>
+                                <rect key="frame" x="40" y="325" width="170" height="30"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="250" id="Sfu-LT-DPZ"/>
+                                    <constraint firstAttribute="width" constant="170" id="Sfu-LT-DPZ"/>
                                 </constraints>
-                                <state key="normal" title="Contract Report"/>
+                                <state key="normal" title="Contract between Dates"/>
                                 <connections>
                                     <action selector="btnReport:" destination="c4c-EF-mMl" eventType="touchUpInside" id="r8p-Ja-NES"/>
                                 </connections>
@@ -381,21 +381,21 @@
                                     <outlet property="delegate" destination="c4c-EF-mMl" id="AZI-u5-dVU"/>
                                 </connections>
                             </tableView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Month:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xs8-wA-yO4" userLabel="lblDropdown">
-                                <rect key="frame" x="310" y="330" width="60" height="21"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Start Date:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xs8-wA-yO4" userLabel="lblDropdown">
+                                <rect key="frame" x="230" y="330" width="85" height="21"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="60" id="arG-Wn-AbW"/>
+                                    <constraint firstAttribute="width" constant="85" id="arG-Wn-AbW"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3Lj-Ie-ymk" userLabel="btnDropdown">
-                                <rect key="frame" x="375" y="325" width="100" height="30"/>
+                                <rect key="frame" x="320" y="325" width="100" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="100" id="JLI-9f-4DX"/>
                                 </constraints>
-                                <state key="normal" title="Button"/>
+                                <state key="normal" title="Month"/>
                                 <connections>
                                     <action selector="btnDropdown:" destination="c4c-EF-mMl" eventType="touchUpInside" id="WxZ-Y1-WeM"/>
                                 </connections>
@@ -481,19 +481,19 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tYP-Je-Y7W" userLabel="btnYear">
-                                <rect key="frame" x="519" y="325" width="40" height="30"/>
+                                <rect key="frame" x="515" y="325" width="40" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="40" id="NTG-7G-DAc"/>
                                 </constraints>
-                                <state key="normal" title="Button"/>
+                                <state key="normal" title="Year"/>
                                 <connections>
                                     <action selector="btnYear:" destination="c4c-EF-mMl" eventType="touchUpInside" id="f8P-Mf-Q2O"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Year" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hqb-S8-rt9" userLabel="lblYear">
-                                <rect key="frame" x="480" y="330" width="34" height="21"/>
+                                <rect key="frame" x="425" y="330" width="85" height="21"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="34" id="Cd6-K7-vhT"/>
+                                    <constraint firstAttribute="width" constant="85" id="Cd6-K7-vhT"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
@@ -589,11 +589,32 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0bg-Jk-c29" userLabel="btnSelect1">
+                                <rect key="frame" x="320" y="325" width="100" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="100" id="46M-gs-JGK"/>
+                                </constraints>
+                                <state key="normal" title="select1"/>
+                                <connections>
+                                    <action selector="btnSelect:" destination="c4c-EF-mMl" eventType="touchUpInside" id="XvD-z4-4v5"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nXL-d8-fJS" userLabel="btnSelect2">
+                                <rect key="frame" x="515" y="325" width="100" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="100" id="B1P-Ek-eXo"/>
+                                </constraints>
+                                <state key="normal" title="select2"/>
+                                <connections>
+                                    <action selector="btnSelect:" destination="c4c-EF-mMl" eventType="touchUpInside" id="FHa-wk-Z9C"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="6z0-km-TTc" firstAttribute="leading" secondItem="vpA-Se-cFr" secondAttribute="leadingMargin" constant="20" id="07M-4H-pE0"/>
                             <constraint firstItem="WRk-S3-8qb" firstAttribute="top" secondItem="6z0-km-TTc" secondAttribute="bottom" constant="5" id="166-Oy-bID"/>
+                            <constraint firstItem="nXL-d8-fJS" firstAttribute="top" secondItem="zi3-eS-mbR" secondAttribute="bottom" constant="20" id="1mz-Ik-KdD"/>
                             <constraint firstItem="aCK-yU-3CZ" firstAttribute="top" secondItem="6z0-km-TTc" secondAttribute="bottom" constant="5" id="3Q2-P4-bQS"/>
                             <constraint firstItem="jV0-KH-5Fo" firstAttribute="top" secondItem="6z0-km-TTc" secondAttribute="bottom" constant="5" id="5VX-nd-4NR"/>
                             <constraint firstItem="zi3-eS-mbR" firstAttribute="leading" secondItem="vpA-Se-cFr" secondAttribute="leadingMargin" id="72g-Ap-5Oc"/>
@@ -612,6 +633,7 @@
                             <constraint firstItem="dyG-WE-EZ2" firstAttribute="leading" secondItem="vpA-Se-cFr" secondAttribute="leadingMargin" id="KDq-vO-rlC"/>
                             <constraint firstItem="WEN-ck-eYn" firstAttribute="top" secondItem="6z0-km-TTc" secondAttribute="bottom" constant="5" id="LWH-oy-r0B"/>
                             <constraint firstItem="fZQ-va-1E9" firstAttribute="centerX" secondItem="vpA-Se-cFr" secondAttribute="centerX" id="M98-C3-ryv"/>
+                            <constraint firstItem="0bg-Jk-c29" firstAttribute="leading" secondItem="Xs8-wA-yO4" secondAttribute="trailing" constant="5" id="Mh5-9E-e4R"/>
                             <constraint firstItem="0PA-uV-Yzz" firstAttribute="top" secondItem="6z0-km-TTc" secondAttribute="bottom" constant="5" id="N8h-BU-wV5"/>
                             <constraint firstItem="tEQ-Uf-H1F" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="WP8-oZ-twa" secondAttribute="trailing" constant="30" id="Oa7-xJ-Bcx"/>
                             <constraint firstItem="OYW-b4-RXG" firstAttribute="leading" secondItem="HBx-PR-qsg" secondAttribute="trailing" constant="5" id="QNN-PV-NKI"/>
@@ -621,6 +643,7 @@
                             <constraint firstItem="LOn-au-bgS" firstAttribute="top" secondItem="yqt-jc-Ra1" secondAttribute="bottom" constant="20" id="TjL-5k-Gtq"/>
                             <constraint firstItem="3Lj-Ie-ymk" firstAttribute="top" secondItem="zi3-eS-mbR" secondAttribute="bottom" constant="20" id="Tyz-8l-MzF"/>
                             <constraint firstItem="Dwv-V3-ann" firstAttribute="leading" secondItem="vpA-Se-cFr" secondAttribute="leadingMargin" constant="10" id="UtT-fz-R3S"/>
+                            <constraint firstItem="nXL-d8-fJS" firstAttribute="leading" secondItem="Hqb-S8-rt9" secondAttribute="trailing" constant="5" id="WJF-2Z-O99"/>
                             <constraint firstItem="WP8-oZ-twa" firstAttribute="leading" secondItem="juK-oK-HaW" secondAttribute="trailing" constant="30" id="WZF-vh-IWr"/>
                             <constraint firstItem="0PA-uV-Yzz" firstAttribute="leading" secondItem="OYW-b4-RXG" secondAttribute="trailing" constant="5" id="Wbx-mL-19Y"/>
                             <constraint firstItem="IEg-yf-Uk2" firstAttribute="top" secondItem="6z0-km-TTc" secondAttribute="bottom" constant="5" id="X2V-MR-COk"/>
@@ -633,6 +656,7 @@
                             <constraint firstItem="juK-oK-HaW" firstAttribute="top" secondItem="yqt-jc-Ra1" secondAttribute="bottom" constant="20" id="bUF-Az-zTz"/>
                             <constraint firstItem="2BE-zv-LkU" firstAttribute="top" secondItem="6z0-km-TTc" secondAttribute="bottom" constant="5" id="dwA-ci-aAq"/>
                             <constraint firstItem="OYW-b4-RXG" firstAttribute="top" secondItem="6z0-km-TTc" secondAttribute="bottom" constant="5" id="eGt-Jk-MD9"/>
+                            <constraint firstItem="7mL-tY-bsm" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="nXL-d8-fJS" secondAttribute="trailing" constant="5" id="hC8-o7-1Dp"/>
                             <constraint firstItem="Xs8-wA-yO4" firstAttribute="top" secondItem="zi3-eS-mbR" secondAttribute="bottom" constant="25" id="hl2-Ve-C8j"/>
                             <constraint firstItem="6z0-km-TTc" firstAttribute="top" secondItem="zi3-eS-mbR" secondAttribute="bottom" constant="20" id="idX-Xo-CJU"/>
                             <constraint firstAttribute="trailingMargin" secondItem="dyG-WE-EZ2" secondAttribute="trailing" id="jDI-bG-pg4"/>
@@ -657,6 +681,7 @@
                             <constraint firstItem="WEN-ck-eYn" firstAttribute="leading" secondItem="0PA-uV-Yzz" secondAttribute="trailing" constant="5" id="vWB-Ku-tfN"/>
                             <constraint firstItem="jV0-KH-5Fo" firstAttribute="leading" secondItem="zcN-sY-Y9z" secondAttribute="trailing" constant="5" id="x0g-yb-faC"/>
                             <constraint firstItem="juK-oK-HaW" firstAttribute="leading" secondItem="2La-Sl-VgX" secondAttribute="trailing" constant="30" id="yTF-lJ-paO"/>
+                            <constraint firstItem="0bg-Jk-c29" firstAttribute="top" secondItem="zi3-eS-mbR" secondAttribute="bottom" constant="20" id="zK5-fX-JFr"/>
                         </constraints>
                     </view>
                     <connections>
@@ -668,6 +693,8 @@
                         <outlet property="btnPeople" destination="tEQ-Uf-H1F" id="Uga-IH-FdZ"/>
                         <outlet property="btnReport" destination="6z0-km-TTc" id="oh7-7h-I6h"/>
                         <outlet property="btnRoster" destination="LOn-au-bgS" id="Cmh-26-HXM"/>
+                        <outlet property="btnSelect1" destination="0bg-Jk-c29" id="odI-R9-dNO"/>
+                        <outlet property="btnSelect2" destination="nXL-d8-fJS" id="Xvc-lp-91w"/>
                         <outlet property="btnSettings" destination="AX4-8r-GCV" id="TCv-UD-cUq"/>
                         <outlet property="btnShare" destination="nGS-Bh-jN2" id="YiN-aY-vIK"/>
                         <outlet property="btnYear" destination="tYP-Je-Y7W" id="OJR-kR-OAm"/>

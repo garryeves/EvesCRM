@@ -111,6 +111,43 @@ class projects: NSObject
         }
     }
     
+    init(teamID: Int, startDate: Date, endDate: Date)
+    {
+        super.init()
+
+        let returnArray = myDatabaseConnection.getProjects(teamID: teamID, startDate: startDate, endDate: endDate)
+
+        for myItem in returnArray
+        {
+            let myObject = project(projectID: Int(myItem.projectID),
+                                   projectEndDate: myItem.projectEndDate! as Date,
+                                   projectName: myItem.projectName!,
+                                   projectStartDate: myItem.projectStartDate! as Date,
+                                   projectStatus: myItem.projectStatus!,
+                                   reviewFrequency: Int(myItem.reviewFrequency),
+                                   lastReviewDate: myItem.lastReviewDate! as Date,
+                                   GTDItemID: Int(myItem.areaID),
+                                   repeatInterval: Int(myItem.repeatInterval),
+                                   repeatType: myItem.repeatType!,
+                                   repeatBase: myItem.repeatBase!,
+                                   teamID: Int(myItem.teamID),
+                                   clientID: Int(myItem.clientID),
+                                   note: myItem.note!,
+                                   reviewPeriod: myItem.reviewPeriod!,
+                                   predecessor: Int(myItem.predecessor),
+                                   clientDept: myItem.clientDept!,
+                                   invoicingFrequency: myItem.invoicingFrequency!,
+                                   invoicingDay: Int(myItem.invoicingDay),
+                                   daysToPay: Int(myItem.daysToPay),
+                                   type: myItem.type!)
+            
+            
+            myProjects.append(myObject)
+        }
+        
+        sortArrayByClient()
+    }
+
     init(query: String, teamID: Int)
     {
         super.init()
@@ -1184,6 +1221,31 @@ extension coreDatabase
             predicate = NSPredicate(format: "(type == \"\(type)\") AND (projectStatus != \"Archived\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (clientID == \(clientID))")
         }
             // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func getProjects(teamID: Int, startDate: Date, endDate: Date) -> [Projects]
+    {
+        let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        let predicate = NSPredicate(format: "(projectStatus != \"Archived\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (projectStartDate >= %@) AND (projectEndDate <= %@)", startDate as CVarArg, endDate as CVarArg)
+        
+        // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
         
         // Execute the fetch request, and cast the results to an array of LogItem objects

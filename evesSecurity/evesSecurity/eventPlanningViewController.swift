@@ -188,6 +188,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
             recordCount += 1
         }
         
+        sleep(2)
         refreshScreen()
         
         showFields()
@@ -280,6 +281,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
     {
         createShiftEntry(teamID: currentUser.currentTeam!.teamID, projectID: currentEvent.projectID, shiftDescription: btnSelect.currentTitle!, workDay: newRoleDate, startTime: getDefaultDate(), endTime: getDefaultDate())
         
+        sleep(2)
         refreshScreen()
     }
     
@@ -460,12 +462,12 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
     {
         let WEDate = workDay.getWeekEndingDate
         
-        let shiftLineID = myDatabaseConnection.getNextID("shiftLineID", saveToCloud: saveToCloud)
+        let shiftLineID = myDatabaseConnection.getNextID("shiftLineID", saveToCloud: false)
         let newShift = shift(projectID: projectID, workDate: workDay, weekEndDate: WEDate, teamID: teamID, shiftLineID: shiftLineID, type: eventShiftType, saveToCloud: saveToCloud)
         newShift.shiftDescription = shiftDescription
         newShift.startTime = startTime
         newShift.endTime = endTime
-        newShift.save()        
+        newShift.save()
     }
     
     func hideFields()

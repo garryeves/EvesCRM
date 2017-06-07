@@ -15,6 +15,7 @@ let reportContractForMonth = "Contract for Month"
 let reportWagesForMonth = "Wages for Month"
 let reportContractForYear = "Contract Profit for Year"
 let reportEventPlan = "Event Plan"
+let reportContractDates = "Contract between Dates"
 
 let shareExclutionArray = [ UIActivityType.addToReadingList,
                             //UIActivityType.airDrop,
