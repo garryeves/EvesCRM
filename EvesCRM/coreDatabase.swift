@@ -50,6 +50,7 @@ class coreDatabase: NSObject
     let concurrencyLimit = 0
     var recordsToChange: Int = 0
     var recordsProcessed: Int = 0
+    var localWorkingCount: Int = 0
     
     override init()
     {

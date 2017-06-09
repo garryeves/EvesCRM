@@ -22,6 +22,7 @@ class dateTimePickerView: UIViewController
     var minutesInterval: Int = 1
     var minimumDate: Date!
     var maximumDate: Date!
+    var display24Hour: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,6 +65,11 @@ class dateTimePickerView: UIViewController
         else
         {
             datePicker.date = Date()
+        }
+        
+        if display24Hour
+        {
+            datePicker.locale = Locale(identifier: "en_GB")
         }
         
    //     btnSelect.isEnabled = false

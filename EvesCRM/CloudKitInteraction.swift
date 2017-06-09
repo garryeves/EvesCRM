@@ -63,6 +63,8 @@ class CloudKitInteraction
     var recordsInTable: Int = 0
     var returnUserEntry: returnUser!
     
+    var workingCount: Int = 0
+    
     fileprivate let secretKey = "djskfPnmjYUPFEUingljmyzdls"
 
     init()
@@ -184,7 +186,8 @@ class CloudKitInteraction
                 sleep(UInt32(0.5))
             }
             self.waitFlag = false
-
+//print("Calling sleep pause ")
+//sleep(3)
             if notification != Notification.Name("Dummy")
             {
                 notificationCenter.post(name: notification, object: nil)

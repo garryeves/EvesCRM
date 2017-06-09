@@ -81,8 +81,6 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     
     override func viewDidLoad()
     {
- //       btnSettings.setTitle(NSString(string: "\u{2699}") as String, for: UIControlState())
-        
         btnSettings.title = NSString(string: "\u{2699}") as String
         
         btnSelect1.setTitle("Select", for: .normal)
@@ -124,6 +122,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         }
         
         btnMaintainReports.isHidden = true
+        
     }
     
     override func didReceiveMemoryWarning() {
@@ -333,7 +332,6 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         }
     }
     
- 
     @IBAction func btnPeople(_ sender: UIButton)
     {
         let peopleEditViewControl = personStoryboard.instantiateViewController(withIdentifier: "personForm") as! personViewController

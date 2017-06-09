@@ -237,6 +237,7 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
             newShift.shiftDescription = myItem.shiftDescription
             newShift.startTime = myItem.startTime
             newShift.endTime = myItem.endTime
+            newShift.rateID = myItem.rateID
             newShift.save()
         }
         
@@ -446,7 +447,7 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
         
         peopleList = people(teamID: currentUser.currentTeam!.teamID)
         shiftList = shifts(teamID: currentUser.currentTeam!.teamID, WEDate: currentWeekEndingDate, type: shiftShiftType).weeklyShifts
- 
+        
         if shiftList.count == 0
         {
             lblWETitle.isHidden = true
@@ -831,6 +832,7 @@ class shiftListItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
         pickerView.showTimes = true
         pickerView.showDates = false
         pickerView.minutesInterval = 5
+        pickerView.display24Hour = true
         
         pickerView.preferredContentSize = CGSize(width: 400,height: 400)
         

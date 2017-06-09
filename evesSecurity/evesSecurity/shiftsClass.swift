@@ -67,6 +67,41 @@ class shifts: NSObject
         sortArray()
     }
     
+    init(teamID: Int)
+    {
+        super.init()
+        
+        myWeeklyShifts.removeAll()
+        
+        for myItem in myDatabaseConnection.getShifts(teamID: teamID)
+        {
+            let myObject = shift(shiftID: Int(myItem.shiftID),
+                                 projectID: Int(myItem.projectID),
+                                 personID: Int(myItem.personID),
+                                 workDate: myItem.workDate! as Date,
+                                 shiftDescription: myItem.shiftDescription!,
+                                 startTime: myItem.startTime! as Date,
+                                 endTime: myItem.endTime! as Date,
+                                 teamID: Int(myItem.teamID),
+                                 weekEndDate: myItem.weekEndDate! as Date,
+                                 status: myItem.status!,
+                                 shiftLineID: Int(myItem.shiftLineID),
+                                 rateID: Int(myItem.rateID),
+                                 type: myItem.type!,
+                                 clientInvoiceNumber: Int(myItem.clientInvoiceNumber),
+                                 personInvoiceNumber: Int(myItem.personInvoiceNumber)
+            )
+            myShifts.append(myObject)
+        }
+        
+        if myShifts.count > 0
+        {
+            createWeeklyArray()
+        }
+        
+        sortArray()
+    }
+    
     init(teamID: Int, WEDate: Date, includeEvents: Bool = false)
     {
         super.init()
@@ -1202,11 +1237,6 @@ print("GRE - Do project loadFinancials for all")
             expenditure += myItem.expense
             hours += Double(myItem.numHours)
             hours += myItem.numMins
-            
-//            print("GRE - date = \(myItem.workDate) - start \(myItem.startTimeString) End - \(myItem.endTimeString) hours \(myItem.numHours):\(myItem.numMins)")
-//            print("")
-//            print("GRE - expense \(myItem.expense)    income \(myItem.income)")
-//            print("")
         }
         
         return monthlyFinancialsStruct(
@@ -1367,24 +1397,29 @@ extension coreDatabase
         // get the current calendar
         let calendar = Calendar.current
         // get the start of the day of the selected date
-        let adjustedWorkDate = calendar.startOfDay(for: workDate)
+        let adjustedWorkDate = calendar.startOfDay(for: workDate) as NSDate
         // get the start of the day of the selected date
-        let adjustedWEDate = calendar.startOfDay(for: weekEndDate)
+        let adjustedWEDate = calendar.startOfDay(for: weekEndDate) as NSDate
         
         let myReturn = getShiftDetails(shiftID)
         
+        self.localWorkingCount += 1
+        
         if myReturn.count == 0
         { // Add
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "E dd MMM"
+            
             myItem = Shifts(context: objectContext)
             myItem.shiftID = Int64(shiftID)
             myItem.projectID = Int64(projectID)
             myItem.personID = Int64(personID)
-            myItem.workDate = adjustedWorkDate as NSDate
+            myItem.workDate = adjustedWorkDate
             myItem.shiftDescription = shiftDescription
             myItem.startTime = startTime as NSDate
             myItem.endTime = endTime as NSDate
             myItem.teamID = Int64(teamID)
-            myItem.weekEndDate = adjustedWEDate as NSDate
+            myItem.weekEndDate = adjustedWEDate
             myItem.status = status
             myItem.shiftLineID = Int64(shiftLineID)
             myItem.rateID = Int64(rateID)
@@ -1407,6 +1442,9 @@ extension coreDatabase
         else
         {
             myItem = myReturn[0]
+            myItem.weekEndDate = adjustedWEDate
+            myItem.workDate = adjustedWorkDate
+            myItem.projectID = Int64(projectID)
             myItem.personID = Int64(personID)
             myItem.shiftDescription = shiftDescription
             myItem.startTime = startTime as NSDate
@@ -1442,9 +1480,8 @@ extension coreDatabase
     {
         let myReturn = getShiftDetails(shiftID)
         
-        if myReturn.count > 0
+        for myItem in myReturn
         {
-            let myItem = myReturn[0]
             myItem.updateTime =  NSDate()
             myItem.updateType = "Delete"
         }
@@ -1493,6 +1530,11 @@ extension coreDatabase
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         let predicate = NSPredicate(format: "(weekEndDate >= %@) AND (weekEndDate <= %@) AND (teamID == \(teamID)) AND (type == \"\(type)\") AND (updateType != \"Delete\")", startDate as CVarArg, endDate as CVarArg)
+        
+        
+//        let predicate = NSPredicate(format: "(weekEndDate >= %@) AND (weekEndDate <= %@) AND (teamID == \(teamID)) AND (type == \"\(type)\")", startDate as CVarArg, endDate as CVarArg)
+        
+        
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1878,7 +1920,7 @@ extension coreDatabase
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(shiftID == \(shiftID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(shiftID == \(shiftID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -2051,17 +2093,142 @@ extension CloudKitInteraction
         let query: CKQuery = CKQuery(recordType: "Shifts", predicate: predicate)
         
         let operation = CKQueryOperation(query: query)
-               
+        
+        self.workingCount = 0
+        myDatabaseConnection.localWorkingCount = 0
+        
         operation.recordFetchedBlock = { (record) in
             self.updateShiftsRecord(record)
         }
         let operationQueue = OperationQueue()
         
         executePublicQueryOperation(targetTable: "Shifts", queryOperation: operation, onOperationQueue: operationQueue)
+        
+    }
+    
+    func updateShiftsRecord(_ sourceRecord: CKRecord)
+    {
+        self.workingCount += 1
+        
+        let shiftDescription = sourceRecord.object(forKey: "shiftDescription") as! String
+        let status = sourceRecord.object(forKey: "status") as! String
+        let type = sourceRecord.object(forKey: "type") as! String
+        
+        var shiftID: Int = 0
+        if sourceRecord.object(forKey: "shiftID") != nil
+        {
+            shiftID = sourceRecord.object(forKey: "shiftID") as! Int
+        }
+        
+        var rateID: Int = 0
+        if sourceRecord.object(forKey: "rateID") != nil
+        {
+            rateID = sourceRecord.object(forKey: "rateID") as! Int
+        }
+        
+        var shiftLineID: Int = 0
+        if sourceRecord.object(forKey: "shiftLineID") != nil
+        {
+            shiftLineID = sourceRecord.object(forKey: "shiftLineID") as! Int
+        }
+        
+        var projectID: Int = 0
+        if sourceRecord.object(forKey: "projectID") != nil
+        {
+            projectID = sourceRecord.object(forKey: "projectID") as! Int
+        }
+        
+        var personID: Int = 0
+        if sourceRecord.object(forKey: "personID") != nil
+        {
+            personID = sourceRecord.object(forKey: "personID") as! Int
+        }
+        
+        var workDate = Date()
+        if sourceRecord.object(forKey: "workDate") != nil
+        {
+            workDate = sourceRecord.object(forKey: "workDate") as! Date
+        }
+        
+        var startTime = Date()
+        if sourceRecord.object(forKey: "startTime") != nil
+        {
+            startTime = sourceRecord.object(forKey: "startTime") as! Date
+        }
+        
+        var endTime = Date()
+        if sourceRecord.object(forKey: "endTime") != nil
+        {
+            endTime = sourceRecord.object(forKey: "endTime") as! Date
+        }
+        
+        var weekEndDate = Date()
+        if sourceRecord.object(forKey: "weekEndDate") != nil
+        {
+            weekEndDate = sourceRecord.object(forKey: "weekEndDate") as! Date
+        }
+        
+        var updateTime = Date()
+        if sourceRecord.object(forKey: "updateTime") != nil
+        {
+            updateTime = sourceRecord.object(forKey: "updateTime") as! Date
+        }
+        
+        var updateType: String = ""
+        if sourceRecord.object(forKey: "updateType") != nil
+        {
+            updateType = sourceRecord.object(forKey: "updateType") as! String
+        }
+        
+        var teamID: Int = 0
+        if sourceRecord.object(forKey: "teamID") != nil
+        {
+            teamID = sourceRecord.object(forKey: "teamID") as! Int
+        }
+        
+        var clientInvoiceNumber: Int = 0
+        if sourceRecord.object(forKey: "clientInvoiceNumber") != nil
+        {
+            clientInvoiceNumber = sourceRecord.object(forKey: "clientInvoiceNumber") as! Int
+        }
+        
+        var personInvoiceNumber: Int = 0
+        if sourceRecord.object(forKey: "personInvoiceNumber") != nil
+        {
+            personInvoiceNumber = sourceRecord.object(forKey: "personInvoiceNumber") as! Int
+        }
+        
+        myDatabaseConnection.recordsToChange += 1
+        
+        while self.recordCount > 0
+        {
+            usleep(self.sleepTime)
+        }
+        
+        self.recordCount += 1
+        
+        myDatabaseConnection.saveShifts(shiftID,
+                                        projectID: projectID,
+                                        personID: personID,
+                                        workDate: workDate,
+                                        shiftDescription: shiftDescription,
+                                        startTime: startTime,
+                                        endTime: endTime,
+                                        teamID: teamID,
+                                        weekEndDate: weekEndDate,
+                                        status: status,
+                                        shiftLineID: shiftLineID,
+                                        rateID: rateID,
+                                        type: type,
+                                        clientInvoiceNumber: clientInvoiceNumber,
+                                        personInvoiceNumber: personInvoiceNumber
+            , updateTime: updateTime, updateType: updateType)
+        self.recordCount -= 1
     }
     
     func deleteShifts(shiftID: Int)
     {
+print("Called deleteShifts")
         let sem = DispatchSemaphore(value: 0);
         
         var myRecordList: [CKRecordID] = Array()
@@ -2175,125 +2342,6 @@ extension CloudKitInteraction
             sem.signal()
         })
         sem.wait()
-    }
-
-    func updateShiftsRecord(_ sourceRecord: CKRecord)
-    {
-        let shiftDescription = sourceRecord.object(forKey: "shiftDescription") as! String
-        let status = sourceRecord.object(forKey: "status") as! String
-        let type = sourceRecord.object(forKey: "type") as! String
-
-        var shiftID: Int = 0
-        if sourceRecord.object(forKey: "shiftID") != nil
-        {
-            shiftID = sourceRecord.object(forKey: "shiftID") as! Int
-        }
-        
-        var rateID: Int = 0
-        if sourceRecord.object(forKey: "rateID") != nil
-        {
-            rateID = sourceRecord.object(forKey: "rateID") as! Int
-        }
-        
-        var shiftLineID: Int = 0
-        if sourceRecord.object(forKey: "shiftLineID") != nil
-        {
-            shiftLineID = sourceRecord.object(forKey: "shiftLineID") as! Int
-        }
-        
-        var projectID: Int = 0
-        if sourceRecord.object(forKey: "projectID") != nil
-        {
-            projectID = sourceRecord.object(forKey: "projectID") as! Int
-        }
-        
-        var personID: Int = 0
-        if sourceRecord.object(forKey: "personID") != nil
-        {
-            personID = sourceRecord.object(forKey: "personID") as! Int
-        }
-        
-        var workDate = Date()
-        if sourceRecord.object(forKey: "workDate") != nil
-        {
-            workDate = sourceRecord.object(forKey: "workDate") as! Date
-        }
-        
-        var startTime = Date()
-        if sourceRecord.object(forKey: "startTime") != nil
-        {
-            startTime = sourceRecord.object(forKey: "startTime") as! Date
-        }
-        
-        var endTime = Date()
-        if sourceRecord.object(forKey: "endTime") != nil
-        {
-            endTime = sourceRecord.object(forKey: "endTime") as! Date
-        }
-
-        var weekEndDate = Date()
-        if sourceRecord.object(forKey: "weekEndDate") != nil
-        {
-            weekEndDate = sourceRecord.object(forKey: "weekEndDate") as! Date
-        }
-        
-        var updateTime = Date()
-        if sourceRecord.object(forKey: "updateTime") != nil
-        {
-            updateTime = sourceRecord.object(forKey: "updateTime") as! Date
-        }
-        
-        var updateType: String = ""
-        if sourceRecord.object(forKey: "updateType") != nil
-        {
-            updateType = sourceRecord.object(forKey: "updateType") as! String
-        }
-        
-        var teamID: Int = 0
-        if sourceRecord.object(forKey: "teamID") != nil
-        {
-            teamID = sourceRecord.object(forKey: "teamID") as! Int
-        }
-        
-        var clientInvoiceNumber: Int = 0
-        if sourceRecord.object(forKey: "clientInvoiceNumber") != nil
-        {
-            clientInvoiceNumber = sourceRecord.object(forKey: "clientInvoiceNumber") as! Int
-        }
-        
-        var personInvoiceNumber: Int = 0
-        if sourceRecord.object(forKey: "personInvoiceNumber") != nil
-        {
-            personInvoiceNumber = sourceRecord.object(forKey: "personInvoiceNumber") as! Int
-        }
-
-        myDatabaseConnection.recordsToChange += 1
-        
-        while self.recordCount > 0
-        {
-            usleep(self.sleepTime)
-        }
-        
-        self.recordCount += 1
-        
-        myDatabaseConnection.saveShifts(shiftID,
-                                        projectID: projectID,
-                                        personID: personID,
-                                        workDate: workDate,
-                                        shiftDescription: shiftDescription,
-                                        startTime: startTime,
-                                        endTime: endTime,
-                                        teamID: teamID,
-                                        weekEndDate: weekEndDate,
-                                        status: status,
-                                        shiftLineID: shiftLineID,
-                                        rateID: rateID,
-                                        type: type,
-                                        clientInvoiceNumber: clientInvoiceNumber,
-                                        personInvoiceNumber: personInvoiceNumber
-                                         , updateTime: updateTime, updateType: updateType)
-        self.recordCount -= 1
-
     }
 }
 

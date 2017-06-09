@@ -22,6 +22,7 @@ class newInstanceViewController: UIViewController, UIPopoverPresentationControll
     var communicationDelegate: myCommunicationDelegate?
     
     private var keyboardDisplayed: Bool = false
+    private var originalTextHeight: CGFloat = 0.0
     
     override func viewDidLoad()
     {
@@ -103,7 +104,6 @@ class newInstanceViewController: UIViewController, UIPopoverPresentationControll
 
             notificationCenter.addObserver(self, selector: #selector(self.userValidated), name: NotificationValidateUser, object: nil)
             
-            
             myCloudDB.validateUser(email: txtEmail.text!, passPhrase: txtCode.text!)
         }
     }
@@ -117,11 +117,14 @@ class newInstanceViewController: UIViewController, UIPopoverPresentationControll
             currentUser = userItem(userID: myCloudDB.retrieveUserList()[0].userID)
             writeDefaultInt(userDefaultName, value: currentUser.userID)
             
-            
             myCloudDB.replaceUserTeamsInCoreData()
             
             sleep(2)
             myCloudDB.replaceTeamInCoreData()
+            
+            sleep(2)
+            
+            myCloudDB.updatePublicDecodesInCoreData()
             
             sleep(2)
             
@@ -176,7 +179,12 @@ class newInstanceViewController: UIViewController, UIPopoverPresentationControll
         {
             if !keyboardDisplayed
             {
-                newTextHeightConstraint.constant = newTextHeightConstraint.constant - 100
+                if originalTextHeight == 0.0
+                {
+                    originalTextHeight = newTextHeightConstraint.constant
+                }
+                newTextHeightConstraint.constant = 0
+                
                 newButtonVerticalConstraint.constant = newButtonVerticalConstraint.constant - 100
                 newTextVerticalConstraint.constant = newTextVerticalConstraint.constant - 100
                 ExistingHeightConstraint.constant = 0
@@ -194,7 +202,7 @@ class newInstanceViewController: UIViewController, UIPopoverPresentationControll
         
         if deviceIdiom == .pad
         {
-            newTextHeightConstraint.constant = newTextHeightConstraint.constant + 100
+            newTextHeightConstraint.constant = originalTextHeight
             newButtonVerticalConstraint.constant = newButtonVerticalConstraint.constant + 100
             newTextVerticalConstraint.constant = newTextVerticalConstraint.constant + 100
             ExistingHeightConstraint.constant = 150
