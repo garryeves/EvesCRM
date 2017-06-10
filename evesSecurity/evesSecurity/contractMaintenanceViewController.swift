@@ -8,7 +8,7 @@
 
 import UIKit
 
-class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopoverPresentationControllerDelegate, myCommunicationDelegate
+class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopoverPresentationControllerDelegate, myCommunicationDelegate, UITextViewDelegate
 {
     @IBOutlet weak var txtName: UITextField!
     @IBOutlet weak var txtNote: UITextView!
@@ -22,7 +22,6 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
     @IBOutlet weak var btnInvoicingFrequency: UIButton!
     @IBOutlet weak var btnType: UIButton!
     @IBOutlet weak var btnBack: UIBarButtonItem!
-    @IBOutlet weak var btnSave: UIBarButtonItem!
     
     var communicationDelegate: myCommunicationDelegate?
     var workingContract: project!
@@ -35,7 +34,7 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
         txtNote.layer.borderWidth = 0.5
         txtNote.layer.cornerRadius = 5.0
         txtNote.layer.masksToBounds = true
-        
+        txtNote.delegate = self
         refreshScreen()
     }
     
@@ -44,41 +43,110 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
         // Dispose of any resources that can be recreated.
     }
     
-    @IBAction func btnSave(_ sender: UIBarButtonItem)
+    
+    @IBAction func txtName(_ sender: UITextField)
     {
-        if txtName.text == ""
+        if txtName.text! != ""
         {
-            let alert = UIAlertController(title: "Contract Maintenance", message: "You must provide a contract name", preferredStyle: .actionSheet)
-            
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
-                                          handler: { (action: UIAlertAction) -> () in
-                                            self.dismiss(animated: true, completion: nil)
-            }))
-            
-            alert.isModalInPopover = true
-            let popover = alert.popoverPresentationController
-            popover!.delegate = self
-            popover!.sourceView = self.view
-            popover!.sourceRect = CGRect(x: (self.view.bounds.width / 2) - 850,y: (self.view.bounds.height / 2) - 350,width: 700 ,height: 700)
-            
-            self.present(alert, animated: false, completion: nil)
+            workingContract.projectName = txtName.text!
+        }
+    }
+    
+    @IBAction func txtDept(_ sender: UITextField)
+    {
+        workingContract.clientDept = txtDept.text!
+    }
+    
+    @IBAction func txtInvoicingDay(_ sender: UITextField)
+    {
+        if txtInvoicingDay.text! != ""
+        {
+            if txtInvoicingDay.text!.isNumber
+            {
+                workingContract.invoicingDay = Int(txtInvoicingDay.text!)!
+            }
         }
         else
         {
-            workingContract.projectName = txtName.text!
+           workingContract.invoicingDay = 0
+        }
+    }
+    
+    @IBAction func txtDaysToPay(_ sender: UITextField)
+    {
+        if txtDaysToPay.text! != ""
+        {
+            if txtDaysToPay.text!.isNumber
+            {
+                workingContract.daysToPay = Int(txtDaysToPay.text!)!
+            }
+        }
+        else
+        {
+            workingContract.daysToPay = 0
+        }
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView)
+    {
+        if textView == txtNote
+        {
             workingContract.note = txtNote.text!
-            workingContract.clientDept = txtDept.text!
-            workingContract.invoicingDay = Int(txtInvoicingDay.text!)!
-            workingContract.daysToPay = Int(txtDaysToPay.text!)!
-            
-            workingContract.save()
         }
     }
     
     @IBAction func btnBack(_ sender: UIBarButtonItem)
     {
-        communicationDelegate?.refreshScreen!()
+        if txtName.isFirstResponder
+        {
+            if txtName.text! != ""
+            {
+                workingContract.projectName = txtName.text!
+            }
+        }
+        
+        if txtDept.isFirstResponder
+        {
+            workingContract.clientDept = txtDept.text!
+        }
+        
+        if txtInvoicingDay.isFirstResponder
+        {
+            if txtInvoicingDay.text! != ""
+            {
+                if txtInvoicingDay.text!.isNumber
+                {
+                    workingContract.invoicingDay = Int(txtInvoicingDay.text!)!
+                }
+            }
+            else
+            {
+                workingContract.invoicingDay = 0
+            }
+        }
+        
+        if txtName.isFirstResponder
+        {
+            if txtDaysToPay.text! != ""
+            {
+                if txtDaysToPay.text!.isNumber
+                {
+                    workingContract.daysToPay = Int(txtDaysToPay.text!)!
+                }
+            }
+            else
+            {
+                workingContract.daysToPay = 0
+            }
+        }
+        
+        if txtNote.isFirstResponder
+        {
+            workingContract.note = txtNote.text!
+        }
+        
         self.dismiss(animated: true, completion: nil)
+        communicationDelegate?.refreshScreen!()
     }
     
     @IBAction func btnStatus(_ sender: UIButton)

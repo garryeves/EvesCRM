@@ -75,6 +75,7 @@ class eventTemplate: NSObject
         set
         {
             myNumRequired = newValue
+            save()
         }
     }
     
@@ -92,6 +93,11 @@ class eventTemplate: NSObject
         {
             return myStartTime
         }
+        set
+        {
+            myStartTime = newValue
+            save()
+        }
     }
     
     var endTime: Date
@@ -99,6 +105,11 @@ class eventTemplate: NSObject
         get
         {
             return myEndTime
+        }
+        set
+        {
+            myEndTime = newValue
+            save()
         }
     }
     
@@ -259,7 +270,7 @@ extension coreDatabase
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "eventID == \(eventID)")
+        let predicate = NSPredicate(format: "eventID == \(eventID) AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

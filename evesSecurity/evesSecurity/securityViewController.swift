@@ -123,6 +123,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         
         btnMaintainReports.isHidden = true
         
+        Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.buildReportList), userInfo: nil, repeats: false)
     }
     
     override func didReceiveMemoryWarning() {
@@ -179,20 +180,20 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
                         resetWidth(constraint: cell.constraintWidth14)
                         
                         let reportEntry = myItem.lines[indexPath.row]
-                        buildReportCell(label: cell.lbl1, text: reportEntry.column1, width: CGFloat(myItem.columnWidth1), constraint: cell.constraintWidth1, drawLine: reportEntry.drawLine)
-                        buildReportCell(label: cell.lbl2, text: reportEntry.column2, width: CGFloat(myItem.columnWidth2), constraint: cell.constraintWidth2, drawLine: reportEntry.drawLine)
-                        buildReportCell(label: cell.lbl3, text: reportEntry.column3, width: CGFloat(myItem.columnWidth3), constraint: cell.constraintWidth3, drawLine: reportEntry.drawLine)
-                        buildReportCell(label: cell.lbl4, text: reportEntry.column4, width: CGFloat(myItem.columnWidth4), constraint: cell.constraintWidth4, drawLine: reportEntry.drawLine)
-                        buildReportCell(label: cell.lbl5, text: reportEntry.column5, width: CGFloat(myItem.columnWidth5), constraint: cell.constraintWidth5, drawLine: reportEntry.drawLine)
-                        buildReportCell(label: cell.lbl6, text: reportEntry.column6, width: CGFloat(myItem.columnWidth6), constraint: cell.constraintWidth6, drawLine: reportEntry.drawLine)
-                        buildReportCell(label: cell.lbl7, text: reportEntry.column7, width: CGFloat(myItem.columnWidth7), constraint: cell.constraintWidth7, drawLine: reportEntry.drawLine)
-                        buildReportCell(label: cell.lbl8, text: reportEntry.column8, width: CGFloat(myItem.columnWidth8), constraint: cell.constraintWidth8, drawLine: reportEntry.drawLine)
-                        buildReportCell(label: cell.lbl9, text: reportEntry.column9, width: CGFloat(myItem.columnWidth9), constraint: cell.constraintWidth9, drawLine: reportEntry.drawLine)
-                        buildReportCell(label: cell.lbl10, text: reportEntry.column10, width: CGFloat(myItem.columnWidth10), constraint: cell.constraintWidth10, drawLine: reportEntry.drawLine)
-                        buildReportCell(label: cell.lbl11, text: reportEntry.column11, width: CGFloat(myItem.columnWidth11), constraint: cell.constraintWidth11, drawLine: reportEntry.drawLine)
-                        buildReportCell(label: cell.lbl12, text: reportEntry.column12, width: CGFloat(myItem.columnWidth12), constraint: cell.constraintWidth12, drawLine: reportEntry.drawLine)
-                        buildReportCell(label: cell.lbl13, text: reportEntry.column13, width: CGFloat(myItem.columnWidth13), constraint: cell.constraintWidth13, drawLine: reportEntry.drawLine)
-                        buildReportCell(label: cell.lbl14, text: reportEntry.column14, width: CGFloat(myItem.columnWidth14), constraint: cell.constraintWidth14, drawLine: reportEntry.drawLine)
+                        buildReportCell(label: cell.lbl1, text: reportEntry.column1, width: myItem.columnWidth1, constraint: cell.constraintWidth1, drawLine: reportEntry.drawLine)
+                        buildReportCell(label: cell.lbl2, text: reportEntry.column2, width: myItem.columnWidth2, constraint: cell.constraintWidth2, drawLine: reportEntry.drawLine)
+                        buildReportCell(label: cell.lbl3, text: reportEntry.column3, width: myItem.columnWidth3, constraint: cell.constraintWidth3, drawLine: reportEntry.drawLine)
+                        buildReportCell(label: cell.lbl4, text: reportEntry.column4, width: myItem.columnWidth4, constraint: cell.constraintWidth4, drawLine: reportEntry.drawLine)
+                        buildReportCell(label: cell.lbl5, text: reportEntry.column5, width: myItem.columnWidth5, constraint: cell.constraintWidth5, drawLine: reportEntry.drawLine)
+                        buildReportCell(label: cell.lbl6, text: reportEntry.column6, width: myItem.columnWidth6, constraint: cell.constraintWidth6, drawLine: reportEntry.drawLine)
+                        buildReportCell(label: cell.lbl7, text: reportEntry.column7, width: myItem.columnWidth7, constraint: cell.constraintWidth7, drawLine: reportEntry.drawLine)
+                        buildReportCell(label: cell.lbl8, text: reportEntry.column8, width: myItem.columnWidth8, constraint: cell.constraintWidth8, drawLine: reportEntry.drawLine)
+                        buildReportCell(label: cell.lbl9, text: reportEntry.column9, width: myItem.columnWidth9, constraint: cell.constraintWidth9, drawLine: reportEntry.drawLine)
+                        buildReportCell(label: cell.lbl10, text: reportEntry.column10, width: myItem.columnWidth10, constraint: cell.constraintWidth10, drawLine: reportEntry.drawLine)
+                        buildReportCell(label: cell.lbl11, text: reportEntry.column11, width: myItem.columnWidth11, constraint: cell.constraintWidth11, drawLine: reportEntry.drawLine)
+                        buildReportCell(label: cell.lbl12, text: reportEntry.column12, width: myItem.columnWidth12, constraint: cell.constraintWidth12, drawLine: reportEntry.drawLine)
+                        buildReportCell(label: cell.lbl13, text: reportEntry.column13, width: myItem.columnWidth13, constraint: cell.constraintWidth13, drawLine: reportEntry.drawLine)
+                        buildReportCell(label: cell.lbl14, text: reportEntry.column14, width: myItem.columnWidth14, constraint: cell.constraintWidth14, drawLine: reportEntry.drawLine)
                         
                         break
                     }
@@ -552,9 +553,10 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         
         tblAlerts.reloadData()
         
-        buildReportList()
-        
-        myPickerDidFinish("report", selectedItem: currentReportID)
+        if reportList.reports.count > 0
+        {
+            myPickerDidFinish("report", selectedItem: currentReportID)
+        }
     }
     
     func buildAlerts()
@@ -728,53 +730,57 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     
         buildReportLine(name: reportContractForMonth,
                         subject: reportContractForMonth,
-                        text1: "Client", width1: 240,
-                        text2: "Contract", width2: 200,
-                        text3: "Hours", width3: 80,
-                        text4: "Cost", width4: 100,
-                        text5: "Income", width5: 100,
-                        text6: "Profit", width6: 100,
-                        text7: "GP%", width7: 50
+                        text1: "Client", width1: 26.9,
+                        text2: "Contract", width2: 24.7,
+                        text3: "Hours", width3: 8.9,
+                        text4: "Cost", width4: 11.2,
+                        text5: "Income", width5: 11.2,
+                        text6: "Profit", width6: 11.2,
+                        text7: "GP%", width7: 5.6
                         )
 
         buildReportLine(name: reportWagesForMonth,
                         subject: reportWagesForMonth,
-                        text1: "Name", width1: 240,
-                        text2: "Hours", width2: 100,
-                        text3: "Pay", width3: 120
+                        text1: "Name", width1: 26.9,
+                        text2: "Hours", width2: 11.2,
+                        text3: "Pay", width3: 13.4
                         )
 
         buildReportLine(name: reportContractForYear,
                         subject: reportContractForYear,
-                        text1: "", width1: 175,
-                        text2: "Jan", width2: 55,
-                        text3: "Feb", width3: 55,
-                        text4: "Mar", width4: 55,
-                        text5: "Apr", width5: 55,
-                        text6: "May", width6: 55,
-                        text7: "Jun", width7: 55,
-                        text8: "July", width8: 55,
-                        text9: "Aug", width9: 55,
-                        text10: "Sep", width10: 55,
-                        text11: "Oct", width11: 55,
-                        text12: "Nov", width12: 55,
-                        text13: "Dec", width13: 55,
-                        text14: "Total", width14: 55)
+                        text1: "", width1: 18.0,
+                        text2: "Jan", width2: 6.0,
+                        text3: "Feb", width3: 6.0,
+                        text4: "Mar", width4: 6.0,
+                        text5: "Apr", width5: 6.0,
+                        text6: "May", width6: 6.0,
+                        text7: "Jun", width7: 6.0,
+                        text8: "July", width8: 6.0,
+                        text9: "Aug", width9: 6.0,
+                        text10: "Sep", width10: 6.0,
+                        text11: "Oct", width11: 6.0,
+                        text12: "Nov", width12: 6.0,
+                        text13: "Dec", width13: 6.0,
+                        text14: "Total", width14: 6.0)
             
         buildReportLine(name: reportContractDates,
                         subject: reportContractDates,
-                        text1: "Client", width1: 240,
-                        text2: "Contract", width2: 220,
-                        text3: "Hours", width3: 80,
-                        text4: "Cost", width4: 100,
-                        text5: "Income", width5: 100,
-                        text6: "Profit", width6: 100,
-                        text7: "GP%", width7: 50)
+                        text1: "Client", width1: 26.9,
+                        text2: "Contract", width2: 24.7,
+                        text3: "Hours", width3: 8.9,
+                        text4: "Cost", width4: 11.2,
+                        text5: "Income", width5: 11.2,
+                        text6: "Profit", width6: 11.2,
+                        text7: "GP%", width7: 8.9)
+        
+        myPickerDidFinish("report", selectedItem: currentReportID)
     }
     
-    func buildReportLine(name: String, subject: String, text1: String = "", width1: Int = 0, text2: String = "", width2: Int = 0, text3: String = "", width3: Int = 0, text4: String = "", width4: Int = 0, text5: String = "", width5: Int = 0, text6: String = "", width6: Int = 0, text7: String = "", width7: Int = 0, text8: String = "", width8: Int = 0, text9: String = "", width9: Int = 0, text10: String = "", width10: Int = 0, text11: String = "", width11: Int = 0, text12: String = "", width12: Int = 0, text13: String = "", width13: Int = 0, text14: String = "", width14: Int = 0)
+    func buildReportLine(name: String, subject: String, text1: String = "", width1: CGFloat = 0, text2: String = "", width2: CGFloat = 0, text3: String = "", width3: CGFloat = 0, text4: String = "", width4: CGFloat = 0, text5: String = "", width5: CGFloat = 0, text6: String = "", width6: CGFloat = 0, text7: String = "", width7: CGFloat = 0, text8: String = "", width8: CGFloat = 0, text9: String = "", width9: CGFloat = 0, text10: String = "", width10: CGFloat = 0, text11: String = "", width11: CGFloat = 0, text12: String = "", width12: CGFloat = 0, text13: String = "", width13: CGFloat = 0, text14: String = "", width14: CGFloat = 0)
     {
         let newReport = report(name: name)
+        newReport.displayWidth = tblData1.bounds.width
+            
         newReport.subject = subject
         newReport.columnWidth1 = width1
         newReport.columnWidth2 = width2

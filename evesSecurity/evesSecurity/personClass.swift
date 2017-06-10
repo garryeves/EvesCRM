@@ -153,6 +153,7 @@ class person: NSObject
         set
         {
             myClientID = newValue
+            save()
         }
     }
     
@@ -165,6 +166,7 @@ class person: NSObject
         set
         {
             myProjectID = newValue
+            save()
         }
     }
     
@@ -177,6 +179,7 @@ class person: NSObject
         set
         {
             myName = newValue
+            save()
         }
     }
     
@@ -196,6 +199,7 @@ class person: NSObject
         set
         {
             myGender = newValue
+            save()
         }
     }
     
@@ -208,6 +212,7 @@ class person: NSObject
         set
         {
             myNote = newValue
+            save()
         }
     }
     
@@ -220,6 +225,7 @@ class person: NSObject
         set
         {
             myDob = newValue
+            save()
         }
     }
     
@@ -295,6 +301,7 @@ class person: NSObject
         set
         {
             myCanRoster = newValue
+            save()
         }
     }
     
@@ -521,7 +528,7 @@ extension coreDatabase
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(personID == \(personID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(personID == \(personID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

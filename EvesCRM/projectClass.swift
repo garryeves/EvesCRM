@@ -315,6 +315,7 @@ class project: NSObject // 10k level
         set
         {
             myProjectEndDate = newValue
+            save()
         }
     }
     
@@ -328,6 +329,7 @@ class project: NSObject // 10k level
         set
         {
             myType = newValue
+            save()
         }
     }
     
@@ -370,6 +372,7 @@ class project: NSObject // 10k level
         set
         {
             myProjectName = newValue
+            save()
         }
     }
     
@@ -382,6 +385,7 @@ class project: NSObject // 10k level
         set
         {
             myProjectStartDate = newValue
+            save()
         }
     }
     
@@ -437,6 +441,7 @@ class project: NSObject // 10k level
             {
                 checkForRepeat()
             }
+            save()
         }
     }
     
@@ -449,6 +454,7 @@ class project: NSObject // 10k level
         set
         {
             myReviewFrequency = newValue
+            save()
         }
     }
     
@@ -461,6 +467,7 @@ class project: NSObject // 10k level
         set
         {
             myLastReviewDate = newValue
+            save()
         }
     }
     
@@ -495,6 +502,7 @@ class project: NSObject // 10k level
         set
         {
             myReviewPeriod = newValue
+            save()
         }
     }
     
@@ -507,6 +515,7 @@ class project: NSObject // 10k level
         set
         {
             myGTDItemID = newValue
+            save()
         }
     }
     
@@ -519,6 +528,7 @@ class project: NSObject // 10k level
         set
         {
             myRepeatInterval = newValue
+            save()
         }
     }
     
@@ -531,6 +541,7 @@ class project: NSObject // 10k level
         set
         {
             myRepeatType = newValue
+            save()
         }
     }
     
@@ -543,6 +554,7 @@ class project: NSObject // 10k level
         set
         {
             myRepeatBase = newValue
+            save()
         }
     }
     
@@ -555,6 +567,7 @@ class project: NSObject // 10k level
         set
         {
             myTeamID = newValue
+            save()
         }
     }
     
@@ -567,6 +580,7 @@ class project: NSObject // 10k level
         set
         {
             myNote = newValue
+            save()
         }
     }
     
@@ -579,6 +593,7 @@ class project: NSObject // 10k level
         set
         {
             myPredecessor = newValue
+            save()
         }
     }
     
@@ -591,6 +606,7 @@ class project: NSObject // 10k level
         set
         {
             myClientID = newValue
+            save()
         }
     }
     
@@ -603,6 +619,7 @@ class project: NSObject // 10k level
         set
         {
             myClientDept = newValue
+            save()
         }
     }
     
@@ -615,6 +632,7 @@ class project: NSObject // 10k level
         set
         {
             myInvoicingFrequency = newValue
+            save()
         }
     }
     
@@ -627,6 +645,7 @@ class project: NSObject // 10k level
         set
         {
             myInvoicingDay = newValue
+            save()
         }
     }
     
@@ -639,6 +658,7 @@ class project: NSObject // 10k level
         set
         {
             myDaysToPay = newValue
+            save()
         }
     }
     
@@ -659,6 +679,7 @@ class project: NSObject // 10k level
         set
         {
             myFinancials = newValue
+            save()
         }
     }
     

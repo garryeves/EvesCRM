@@ -275,21 +275,21 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
 
         let headerLine = reportLine()
         headerLine.column1 = "Name"
-        tempReport.columnWidth1 = 150
+        tempReport.columnWidth1 = 16.8
         headerLine.column2 = "Mon"
-        tempReport.columnWidth2 = 135
+        tempReport.columnWidth2 = 11.8
         headerLine.column3 = "Tue"
-        tempReport.columnWidth3 = 135
+        tempReport.columnWidth3 = 11.8
         headerLine.column4 = "Wed"
-        tempReport.columnWidth4 = 135
+        tempReport.columnWidth4 = 11.8
         headerLine.column5 = "Thu"
-        tempReport.columnWidth5 = 135
+        tempReport.columnWidth5 = 11.8
         headerLine.column6 = "Fri"
-        tempReport.columnWidth6 = 135
+        tempReport.columnWidth6 = 11.8
         headerLine.column7 = "Sat"
-        tempReport.columnWidth7 = 135
+        tempReport.columnWidth7 = 11.8
         headerLine.column8 = "Sun"
-        tempReport.columnWidth8 = 135
+        tempReport.columnWidth8 = 11.8
 
         tempReport.header = headerLine
         tempReport.landscape()

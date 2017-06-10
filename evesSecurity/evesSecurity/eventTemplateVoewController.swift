@@ -34,8 +34,13 @@ class eventTemplateVoewController: UIViewController, UITableViewDataSource, UITa
     @IBOutlet weak var lblStart: UILabel!
     @IBOutlet weak var lblEnd: UILabel!
     @IBOutlet weak var btnBack: UIBarButtonItem!
-    @IBOutlet weak var btnSave: UIBarButtonItem!
     @IBOutlet weak var btnNewTemplates: UIBarButtonItem!
+    
+    @IBOutlet weak var lblTblRole: UILabel!
+    @IBOutlet weak var lblNum: UILabel!
+    @IBOutlet weak var lblDay: UILabel!
+    @IBOutlet weak var lblTblStart: UILabel!
+    @IBOutlet weak var lblTblEnd: UILabel!
     
     var communicationDelegate: myCommunicationDelegate?
 
@@ -108,9 +113,9 @@ class eventTemplateVoewController: UIViewController, UITableViewDataSource, UITa
                 let cell = tableView.dequeueReusableCell(withIdentifier:"roleCell", for: indexPath) as! templateRoleItem
                 
                 cell.lblRole.text = currentTemplate.roles!.roles![indexPath.row].role
-                cell.lblNumRequired.text = "\(currentTemplate.roles!.roles![indexPath.row].numRequired)"
-                displayTime(cell.lblEndTime, workingTime: currentTemplate.roles!.roles![indexPath.row].endTime)
-                displayTime(cell.lblStartTime, workingTime: currentTemplate.roles!.roles![indexPath.row].startTime)
+                cell.txtNum.text = "\(currentTemplate.roles!.roles![indexPath.row].numRequired)"
+                displayTime(cell.btnStart, workingTime: currentTemplate.roles!.roles![indexPath.row].endTime)
+                displayTime(cell.btnEnd, workingTime: currentTemplate.roles!.roles![indexPath.row].startTime)
 
                 for myItem in eventDayArray
                 {
@@ -120,6 +125,10 @@ class eventTemplateVoewController: UIViewController, UITableViewDataSource, UITa
                     }
                 }
 
+                cell.mainView = self
+                cell.sourceView = cell
+                cell.templateRoleItem = currentTemplate.roles!.roles![indexPath.row]
+                
                 return cell
             
             default:
@@ -146,28 +155,20 @@ class eventTemplateVoewController: UIViewController, UITableViewDataSource, UITa
         }
     }
 
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView?
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath)
     {
-        if tableView == tblRoles
+        if editingStyle == .delete
         {
-            let headerView = tableView.dequeueReusableCell(withIdentifier: "cellHeader") as! templateRoleItem
-            return headerView
-        }
-        else
-        {
-            return nil
-        }
-    }
-    
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat
-    {
-        if tableView == tblRoles
-        {
-            return 30
-        }
-        else
-        {
-            return 0
+            if tableView == tblRoles
+            {
+                currentTemplate.roles!.roles![indexPath.row].delete()
+            }
+            else if tableView == tblTemplates
+            {
+                templates.templates[indexPath.row].delete()
+            }
+        
+            refreshScreen()
         }
     }
     
@@ -177,32 +178,11 @@ class eventTemplateVoewController: UIViewController, UITableViewDataSource, UITa
         self.dismiss(animated: true, completion: nil)
     }
     
-    @IBAction func btnSave(_ sender: UIBarButtonItem)
+    @IBAction func txtName(_ sender: UITextField)
     {
-        if txtName.text == ""
-        {
-            let alert = UIAlertController(title: "Template Maintenance", message: "You must provide a template name", preferredStyle: .actionSheet)
-            
-            alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
-                                          handler: { (action: UIAlertAction) -> () in
-                                            self.dismiss(animated: true, completion: nil)
-            }))
-            
-            alert.isModalInPopover = true
-            let popover = alert.popoverPresentationController
-            popover!.delegate = self
-            popover!.sourceView = self.view
-            popover!.sourceRect = CGRect(x: (self.view.bounds.width / 2) - 850,y: (self.view.bounds.height / 2) - 350,width: 700 ,height: 700)
-            
-            self.present(alert, animated: false, completion: nil)
-        }
-        else
+        if sender.text != ""
         {
             currentTemplate.templateName = txtName.text!
-            
-            currentTemplate.save()
-            
-            refreshScreen()
         }
     }
     
@@ -265,7 +245,6 @@ class eventTemplateVoewController: UIViewController, UITableViewDataSource, UITa
     @IBAction func btnNewtemplates(_ sender: UIBarButtonItem)
     {
         currentTemplate = eventTemplateHead(teamID: currentUser.currentTeam!.teamID)
-        btnSave.isEnabled = true
         txtName.isHidden = false
         lblTemplateName.isHidden = false
         btnRole.setTitle("Select", for: .normal)
@@ -359,6 +338,7 @@ class eventTemplateVoewController: UIViewController, UITableViewDataSource, UITa
 
         pickerView.showDates = false
         pickerView.showTimes = true
+        pickerView.display24Hour = true
 
         pickerView.preferredContentSize = CGSize(width: 400,height: 400)
         
@@ -382,6 +362,7 @@ class eventTemplateVoewController: UIViewController, UITableViewDataSource, UITa
         pickerView.currentDate = getDefaultDate()
         pickerView.showDates = false
         pickerView.showTimes = true
+        pickerView.display24Hour = true
         
         pickerView.preferredContentSize = CGSize(width: 400,height: 400)
         
@@ -481,6 +462,11 @@ class eventTemplateVoewController: UIViewController, UITableViewDataSource, UITa
     func hideFields()
     {
         tblRoles.isHidden = true
+        lblTblRole.isHidden = true
+        lblNum.isHidden = true
+        lblDay.isHidden = true
+        lblTblStart.isHidden = true
+        lblTblEnd.isHidden = true
         txtNumRequired.isHidden = true
         txtName.isHidden = true
         btnOn.isHidden = true
@@ -494,12 +480,16 @@ class eventTemplateVoewController: UIViewController, UITableViewDataSource, UITa
         lblOn.isHidden = true
         lblStart.isHidden = true
         lblEnd.isHidden = true
-        btnSave.isEnabled = false
     }
     
     func showFields()
     {
         tblRoles.isHidden = false
+        lblTblRole.isHidden = false
+        lblNum.isHidden = false
+        lblDay.isHidden = false
+        lblTblStart.isHidden = false
+        lblTblEnd.isHidden = false
         txtNumRequired.isHidden = false
         btnOn.isHidden = false
         btnRole.isHidden = false
@@ -511,7 +501,6 @@ class eventTemplateVoewController: UIViewController, UITableViewDataSource, UITa
         lblOn.isHidden = false
         lblStart.isHidden = false
         lblEnd.isHidden = false
-        btnSave.isEnabled = true
         txtName.isHidden = false
     }
     
@@ -547,18 +536,93 @@ class templateListItem: UITableViewCell
     }
 }
 
-class templateRoleItem: UITableViewCell
+class templateRoleItem: UITableViewCell, UIPopoverPresentationControllerDelegate, MyPickerDelegate
 {
     @IBOutlet weak var lblRole: UILabel!
-    @IBOutlet weak var lblNumRequired: UILabel!
+    @IBOutlet weak var txtNum: UITextField!
+    @IBOutlet weak var btnStart: UIButton!
+    @IBOutlet weak var btnEnd: UIButton!
     @IBOutlet weak var lblDay: UILabel!
-    @IBOutlet weak var lblStartTime: UILabel!
-    @IBOutlet weak var lblEndTime: UILabel!
+
+    var templateRoleItem: eventTemplate!
+    var sourceView: templateRoleItem!
+    var mainView: eventTemplateVoewController!
     
     override func layoutSubviews()
     {
         contentView.frame = bounds
         super.layoutSubviews()
+    }
+    
+    @IBAction func txtNum(_ sender: UITextField)
+    {
+        if sender.text != ""
+        {
+            if sender.text!.isNumber
+            {
+                templateRoleItem.numRequired = Int(sender.text!)!
+            }
+        }
+        
+        sender.text = "\(templateRoleItem.numRequired)"
+    }
+    
+    @IBAction func btnStart(_ sender: UIButton)
+    {
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "datePicker") as! dateTimePickerView
+        pickerView.modalPresentationStyle = .popover
+        //      pickerView.isModalInPopover = true
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = sourceView
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        if sender == btnStart
+        {
+            pickerView.source = "startTime"
+            pickerView.currentDate = templateRoleItem.startTime
+        }
+        else
+        {
+            pickerView.source = "endTime"
+            pickerView.currentDate = templateRoleItem.endTime
+        }
+        
+        pickerView.delegate = sourceView
+        pickerView.showTimes = true
+        pickerView.showDates = false
+        pickerView.minutesInterval = 5
+        pickerView.display24Hour = true
+        
+        pickerView.preferredContentSize = CGSize(width: 400,height: 400)
+        
+        mainView.present(pickerView, animated: true, completion: nil)
+    }
+    
+    func myPickerDidFinish(_ source: String, selectedDate:Date)
+    {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm"
+        
+        switch source
+        {
+            case "startTime":
+                btnStart.setTitle(dateFormatter.string(from: selectedDate), for: .normal)
+                
+                templateRoleItem.startTime = selectedDate
+                templateRoleItem.save()
+                
+            case "endTime":
+                btnEnd.setTitle(dateFormatter.string(from: selectedDate), for: .normal)
+                
+                templateRoleItem.endTime = selectedDate
+                templateRoleItem.save()
+                
+            default:
+                print("eventRoleTemplateItem myPickerDidFinish-Date got unexpected entry \(source)")
+        }
     }
 }
 

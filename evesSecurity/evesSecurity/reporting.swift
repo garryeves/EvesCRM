@@ -59,20 +59,20 @@ class reports: NSObject
 
 class report: NSObject
 {
-    fileprivate var myColumnWidth1: Int = 0
-    fileprivate var myColumnWidth2: Int = 0
-    fileprivate var myColumnWidth3: Int = 0
-    fileprivate var myColumnWidth4: Int = 0
-    fileprivate var myColumnWidth5: Int = 0
-    fileprivate var myColumnWidth6: Int = 0
-    fileprivate var myColumnWidth7: Int = 0
-    fileprivate var myColumnWidth8: Int = 0
-    fileprivate var myColumnWidth9: Int = 0
-    fileprivate var myColumnWidth10: Int = 0
-    fileprivate var myColumnWidth11: Int = 0
-    fileprivate var myColumnWidth12: Int = 0
-    fileprivate var myColumnWidth13: Int = 0
-    fileprivate var myColumnWidth14: Int = 0
+    fileprivate var myColumnWidth1: CGFloat = 0.0
+    fileprivate var myColumnWidth2: CGFloat = 0.0
+    fileprivate var myColumnWidth3: CGFloat = 0.0
+    fileprivate var myColumnWidth4: CGFloat = 0.0
+    fileprivate var myColumnWidth5: CGFloat = 0.0
+    fileprivate var myColumnWidth6: CGFloat = 0.0
+    fileprivate var myColumnWidth7: CGFloat = 0.0
+    fileprivate var myColumnWidth8: CGFloat = 0.0
+    fileprivate var myColumnWidth9: CGFloat = 0.0
+    fileprivate var myColumnWidth10: CGFloat = 0.0
+    fileprivate var myColumnWidth11: CGFloat = 0.0
+    fileprivate var myColumnWidth12: CGFloat = 0.0
+    fileprivate var myColumnWidth13: CGFloat = 0.0
+    fileprivate var myColumnWidth14: CGFloat = 0.0
     fileprivate var myRowHeight: Int = 12
     fileprivate var myReportName: String = ""
     fileprivate var myHeader: reportLine!
@@ -85,13 +85,21 @@ class report: NSObject
     fileprivate var paperSize = CGRect(x:0.0, y:0.0, width:595.276, height:841.89)
     fileprivate var myPaperOrientation: String = "Portrait"
     fileprivate var disvisor: Double = 2
-    fileprivate var leftSide: Int = 50
+    fileprivate var leftSide: CGFloat = 50
+    fileprivate var myDisplayWidth: CGFloat = 0.0
     
-    var columnWidth1: Int
+    var columnWidth1: CGFloat
     {
         get
         {
-            return myColumnWidth1
+            if myColumnWidth1 == 0.0
+            {
+                return 0.0
+            }
+            else
+            {
+                return myDisplayWidth * (myColumnWidth1 / 100)
+            }
         }
         set
         {
@@ -99,11 +107,18 @@ class report: NSObject
         }
     }
     
-    var columnWidth2: Int
+    var columnWidth2: CGFloat
     {
         get
         {
-            return myColumnWidth2
+            if myColumnWidth2 == 0.0
+            {
+                return 0.0
+            }
+            else
+            {
+                return myDisplayWidth * (myColumnWidth2 / 100)
+            }
         }
         set
         {
@@ -111,11 +126,18 @@ class report: NSObject
         }
     }
     
-    var columnWidth3: Int
+    var columnWidth3: CGFloat
     {
         get
         {
-            return myColumnWidth3
+            if myColumnWidth3 == 0.0
+            {
+                return 0.0
+            }
+            else
+            {
+                return myDisplayWidth * (myColumnWidth3 / 100)
+            }
         }
         set
         {
@@ -123,11 +145,18 @@ class report: NSObject
         }
     }
     
-    var columnWidth4: Int
+    var columnWidth4: CGFloat
     {
         get
         {
-            return myColumnWidth4
+            if myColumnWidth4 == 0.0
+            {
+                return 0.0
+            }
+            else
+            {
+                return myDisplayWidth * (myColumnWidth4 / 100)
+            }
         }
         set
         {
@@ -135,11 +164,18 @@ class report: NSObject
         }
     }
     
-    var columnWidth5: Int
+    var columnWidth5: CGFloat
     {
         get
         {
-            return myColumnWidth5
+            if myColumnWidth5 == 0.0
+            {
+                return 0.0
+            }
+            else
+            {
+                return myDisplayWidth * (myColumnWidth5 / 100)
+            }
         }
         set
         {
@@ -147,11 +183,18 @@ class report: NSObject
         }
     }
     
-    var columnWidth6: Int
+    var columnWidth6: CGFloat
     {
         get
         {
-            return myColumnWidth6
+            if myColumnWidth6 == 0.0
+            {
+                return 0.0
+            }
+            else
+            {
+                return myDisplayWidth * (myColumnWidth6 / 100)
+            }
         }
         set
         {
@@ -159,11 +202,18 @@ class report: NSObject
         }
     }
     
-    var columnWidth7: Int
+    var columnWidth7: CGFloat
     {
         get
         {
-            return myColumnWidth7
+            if myColumnWidth7 == 0.0
+            {
+                return 0.0
+            }
+            else
+            {
+                return myDisplayWidth * (myColumnWidth7 / 100)
+            }
         }
         set
         {
@@ -171,11 +221,18 @@ class report: NSObject
         }
     }
     
-    var columnWidth8: Int
+    var columnWidth8: CGFloat
     {
         get
         {
-            return myColumnWidth8
+            if myColumnWidth8 == 0.0
+            {
+                return 0.0
+            }
+            else
+            {
+                return myDisplayWidth * (myColumnWidth8 / 100)
+            }
         }
         set
         {
@@ -183,11 +240,18 @@ class report: NSObject
         }
     }
     
-    var columnWidth9: Int
+    var columnWidth9: CGFloat
     {
         get
         {
-            return myColumnWidth9
+            if myColumnWidth9 == 0.0
+            {
+                return 0.0
+            }
+            else
+            {
+                return myDisplayWidth * (myColumnWidth9 / 100)
+            }
         }
         set
         {
@@ -195,11 +259,18 @@ class report: NSObject
         }
     }
     
-    var columnWidth10: Int
+    var columnWidth10: CGFloat
     {
         get
         {
-            return myColumnWidth10
+            if myColumnWidth10 == 0.0
+            {
+                return 0.0
+            }
+            else
+            {
+                return myDisplayWidth * (myColumnWidth10 / 100)
+            }
         }
         set
         {
@@ -207,11 +278,18 @@ class report: NSObject
         }
     }
     
-    var columnWidth11: Int
+    var columnWidth11: CGFloat
     {
         get
         {
-            return myColumnWidth11
+            if myColumnWidth11 == 0.0
+            {
+                return 0.0
+            }
+            else
+            {
+                return myDisplayWidth * (myColumnWidth11 / 100)
+            }
         }
         set
         {
@@ -219,11 +297,18 @@ class report: NSObject
         }
     }
     
-    var columnWidth12: Int
+    var columnWidth12: CGFloat
     {
         get
         {
-            return myColumnWidth12
+            if myColumnWidth12 == 0.0
+            {
+                return 0.0
+            }
+            else
+            {
+                return myDisplayWidth * (myColumnWidth12 / 100)
+            }
         }
         set
         {
@@ -231,11 +316,18 @@ class report: NSObject
         }
     }
     
-    var columnWidth13: Int
+    var columnWidth13: CGFloat
     {
         get
         {
-            return myColumnWidth13
+            if myColumnWidth13 == 0.0
+            {
+                return 0.0
+            }
+            else
+            {
+                return myDisplayWidth * (myColumnWidth13 / 100)
+            }
         }
         set
         {
@@ -243,11 +335,18 @@ class report: NSObject
         }
     }
     
-    var columnWidth14: Int
+    var columnWidth14: CGFloat
     {
         get
         {
-            return myColumnWidth14
+            if myColumnWidth14 == 0.0
+            {
+                return 0.0
+            }
+            else
+            {
+                return myDisplayWidth * (myColumnWidth14 / 100)
+            }
         }
         set
         {
@@ -330,23 +429,10 @@ class report: NSObject
         printInfo.outputType = .general
         printInfo.jobName = mySubject
         printController.printInfo = printInfo
-//        printController.printingItem = myPdfData
-        
-        //let activityItems: [Any] = [printController, self, myPdfData]
         
         let sharingItem = reportShareSource(displayString: myDisplayString, PDFData: myPdfData)
-
         
-        //let activityItems: [Any] = [printController, sharingItem]
-        
-    //    let activityItems: [Any] = [printController, myPdfData, sharingItem]
-        
-   let activityItems: [Any] = [sharingItem]
-       
-        
-      //  let activityItems: [Any] = [myPdfData, myDisplayString]
-        
-        
+        let activityItems: [Any] = [sharingItem]
         
         let activityViewController: UIActivityViewController = UIActivityViewController(activityItems: activityItems, applicationActivities: nil)
         
@@ -354,6 +440,18 @@ class report: NSObject
         activityViewController.excludedActivityTypes = shareExclutionArray
         
         return activityViewController
+    }
+    
+    var displayWidth: CGFloat
+    {
+        get
+        {
+            return myDisplayWidth
+        }
+        set
+        {
+            myDisplayWidth = newValue
+        }
     }
     
     init(name: String)
@@ -484,7 +582,7 @@ class report: NSObject
         return returnString
     }
     
-    private func processStringCell(text: String, width: Int, delimiter: String) -> String
+    private func processStringCell(text: String, width: CGFloat, delimiter: String) -> String
     {
         var returnString: String = ""
         
@@ -521,45 +619,46 @@ class report: NSObject
     {
         leftSide = 50
 
-        writePDFHeaderEntry(title: myHeader.column1, x: leftSide, y: top, width: myColumnWidth1, height: 20)
-        writePDFHeaderEntry(title: myHeader.column2, x: leftSide, y: top, width: myColumnWidth2, height: 20)
-        writePDFHeaderEntry(title: myHeader.column3, x: leftSide, y: top, width: myColumnWidth3, height: 20)
-        writePDFHeaderEntry(title: myHeader.column4, x: leftSide, y: top, width: myColumnWidth4, height: 20)
-        writePDFHeaderEntry(title: myHeader.column5, x: leftSide, y: top, width: myColumnWidth5, height: 20)
-        writePDFHeaderEntry(title: myHeader.column6, x: leftSide, y: top, width: myColumnWidth6, height: 20)
-        writePDFHeaderEntry(title: myHeader.column7, x: leftSide, y: top, width: myColumnWidth7, height: 20)
-        writePDFHeaderEntry(title: myHeader.column8, x: leftSide, y: top, width: myColumnWidth8, height: 20)
-        writePDFHeaderEntry(title: myHeader.column9, x: leftSide, y: top, width: myColumnWidth9, height: 20)
-        writePDFHeaderEntry(title: myHeader.column10, x: leftSide, y: top, width: myColumnWidth10, height: 20)
-        writePDFHeaderEntry(title: myHeader.column11, x: leftSide, y: top, width: myColumnWidth11, height: 20)
-        writePDFHeaderEntry(title: myHeader.column12, x: leftSide, y: top, width: myColumnWidth12, height: 20)
-        writePDFHeaderEntry(title: myHeader.column13, x: leftSide, y: top, width: myColumnWidth13, height: 20)
-        writePDFHeaderEntry(title: myHeader.column14, x: leftSide, y: top, width: myColumnWidth14, height: 20)
+        writePDFHeaderEntry(title: myHeader.column1, x: Int(leftSide), y: top, width: myColumnWidth1, height: 20)
+        writePDFHeaderEntry(title: myHeader.column2, x: Int(leftSide), y: top, width: myColumnWidth2, height: 20)
+        writePDFHeaderEntry(title: myHeader.column3, x: Int(leftSide), y: top, width: myColumnWidth3, height: 20)
+        writePDFHeaderEntry(title: myHeader.column4, x: Int(leftSide), y: top, width: myColumnWidth4, height: 20)
+        writePDFHeaderEntry(title: myHeader.column5, x: Int(leftSide), y: top, width: myColumnWidth5, height: 20)
+        writePDFHeaderEntry(title: myHeader.column6, x: Int(leftSide), y: top, width: myColumnWidth6, height: 20)
+        writePDFHeaderEntry(title: myHeader.column7, x: Int(leftSide), y: top, width: myColumnWidth7, height: 20)
+        writePDFHeaderEntry(title: myHeader.column8, x: Int(leftSide), y: top, width: myColumnWidth8, height: 20)
+        writePDFHeaderEntry(title: myHeader.column9, x: Int(leftSide), y: top, width: myColumnWidth9, height: 20)
+        writePDFHeaderEntry(title: myHeader.column10, x: Int(leftSide), y: top, width: myColumnWidth10, height: 20)
+        writePDFHeaderEntry(title: myHeader.column11, x: Int(leftSide), y: top, width: myColumnWidth11, height: 20)
+        writePDFHeaderEntry(title: myHeader.column12, x: Int(leftSide), y: top, width: myColumnWidth12, height: 20)
+        writePDFHeaderEntry(title: myHeader.column13, x: Int(leftSide), y: top, width: myColumnWidth13, height: 20)
+        writePDFHeaderEntry(title: myHeader.column14, x: Int(leftSide), y: top, width: myColumnWidth14, height: 20)
     }
     
     private func lineEntry(_ line: reportLine, top: Int)
     {
         leftSide = 50
         
-        writePDFEntry(title: line.column1, x: leftSide, y: top, width: myColumnWidth1, height: myRowHeight)
-        writePDFEntry(title: line.column2, x: leftSide, y: top, width: myColumnWidth2, height: myRowHeight)
-        writePDFEntry(title: line.column3, x: leftSide, y: top, width: myColumnWidth3, height: myRowHeight)
-        writePDFEntry(title: line.column4, x: leftSide, y: top, width: myColumnWidth4, height: myRowHeight)
-        writePDFEntry(title: line.column5, x: leftSide, y: top, width: myColumnWidth5, height: myRowHeight)
-        writePDFEntry(title: line.column6, x: leftSide, y: top, width: myColumnWidth6, height: myRowHeight)
-        writePDFEntry(title: line.column7, x: leftSide, y: top, width: myColumnWidth7, height: myRowHeight)
-        writePDFEntry(title: line.column8, x: leftSide, y: top, width: myColumnWidth8, height: myRowHeight)
-        writePDFEntry(title: line.column9, x: leftSide, y: top, width: myColumnWidth9, height: myRowHeight)
-        writePDFEntry(title: line.column10, x: leftSide, y: top, width: myColumnWidth10, height: myRowHeight)
-        writePDFEntry(title: line.column11, x: leftSide, y: top, width: myColumnWidth11, height: myRowHeight)
-        writePDFHeaderEntry(title: line.column12, x: leftSide, y: top, width: myColumnWidth12, height: myRowHeight)
-        writePDFHeaderEntry(title: line.column13, x: leftSide, y: top, width: myColumnWidth13, height: myRowHeight)
-        writePDFHeaderEntry(title: line.column14, x: leftSide, y: top, width: myColumnWidth14, height: myRowHeight)
+        writePDFEntry(title: line.column1, x: Int(leftSide), y: top, width: myColumnWidth1, height: myRowHeight)
+        writePDFEntry(title: line.column2, x: Int(leftSide), y: top, width: myColumnWidth2, height: myRowHeight)
+        writePDFEntry(title: line.column3, x: Int(leftSide), y: top, width: myColumnWidth3, height: myRowHeight)
+        writePDFEntry(title: line.column4, x: Int(leftSide), y: top, width: myColumnWidth4, height: myRowHeight)
+        writePDFEntry(title: line.column5, x: Int(leftSide), y: top, width: myColumnWidth5, height: myRowHeight)
+        writePDFEntry(title: line.column6, x: Int(leftSide), y: top, width: myColumnWidth6, height: myRowHeight)
+        writePDFEntry(title: line.column7, x: Int(leftSide), y: top, width: myColumnWidth7, height: myRowHeight)
+        writePDFEntry(title: line.column8, x: Int(leftSide), y: top, width: myColumnWidth8, height: myRowHeight)
+        writePDFEntry(title: line.column9, x: Int(leftSide), y: top, width: myColumnWidth9, height: myRowHeight)
+        writePDFEntry(title: line.column10, x: Int(leftSide), y: top, width: myColumnWidth10, height: myRowHeight)
+        writePDFEntry(title: line.column11, x: Int(leftSide), y: top, width: myColumnWidth11, height: myRowHeight)
+        writePDFEntry(title: line.column12, x: Int(leftSide), y: top, width: myColumnWidth12, height: myRowHeight)
+        writePDFEntry(title: line.column13, x: Int(leftSide), y: top, width: myColumnWidth13, height: myRowHeight)
+        writePDFEntry(title: line.column14, x: Int(leftSide), y: top, width: myColumnWidth14, height: myRowHeight)
     }
     
-    private func writePDFHeaderEntry(title: String, x: Int, y: Int, width: Int, height: Int)
+    private func writePDFHeaderEntry(title: String, x: Int, y: Int, width: CGFloat, height: Int)
     {
-        let displayWidth = Double(width)/disvisor
+//        let displayWidth = Double(width)/disvisor
+       let displayWidth = (paperSize.width - 150) * (width / 100)
         
         let titleParagraphStyle = NSMutableParagraphStyle()
         titleParagraphStyle.alignment = .left
@@ -578,12 +677,13 @@ class report: NSObject
         
         title.draw(in: headerRect, withAttributes: titleFontAttributes)
         
-        leftSide += 5 + Int(displayWidth)
+        leftSide += 5.0 + displayWidth
     }
     
-    private func writePDFEntry(title: String, x: Int, y: Int, width: Int, height: Int)
+    private func writePDFEntry(title: String, x: Int, y: Int, width: CGFloat, height: Int)
     {
-        let displayWidth = Double(width)/disvisor
+//        let displayWidth = Double(width)/disvisor
+        let displayWidth = (paperSize.width - 150) * (width / 100)
         
         let titleParagraphStyle = NSMutableParagraphStyle()
         titleParagraphStyle.alignment = .left
@@ -602,7 +702,7 @@ class report: NSObject
         
         title.draw(in: headerRect, withAttributes: dataFontAttributes)
         
-        leftSide += 5 + Int(displayWidth)
+        leftSide += 5.0 + displayWidth
     }
 }
 

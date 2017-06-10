@@ -30,6 +30,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
     @IBOutlet weak var lblEndHead: UILabel!
     @IBOutlet weak var btnBack: UIBarButtonItem!
     @IBOutlet weak var btnShare: UIBarButtonItem!
+    @IBOutlet weak var btnStatus: UIButton!
     
     var communicationDelegate: myCommunicationDelegate?
     
@@ -47,7 +48,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
     override func viewDidLoad()
     {
         peopleList = people(teamID: currentUser.currentTeam!.teamID)
-        hideAllFields()
+        btnStatus.setTitle("Select", for: .normal)
         refreshScreen()
     }
     
@@ -137,8 +138,8 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
             if editingStyle == .delete
             {
                 shiftList[indexPath.row].delete()
-         
-                tblRoles.reloadData()
+                
+                refreshScreen()
             }
         }
     }
@@ -161,8 +162,6 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
         currentTemplate.loadRoles()
         let roles = currentTemplate.roles!.roles!
         
-        var recordCount: Int = 0
-        
         for myItem in roles
         {
             let workDay: Date!
@@ -175,20 +174,17 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
                 workDay = currentEvent.projectStartDate.add(.day, amount: myItem.dateModifier)
             }
             
-            if recordCount == roles.count - 1
-            {
-                // Save the decode on the last run
-                createShiftEntry(teamID: currentUser.currentTeam!.teamID, projectID: currentEvent.projectID, shiftDescription: myItem.role, workDay: workDay, startTime: myItem.startTime, endTime: myItem.endTime)
-            }
-            else
+            var roleCount: Int = 0
+            
+            while roleCount < myItem.numRequired
             {
                 createShiftEntry(teamID: currentUser.currentTeam!.teamID, projectID: currentEvent.projectID, shiftDescription: myItem.role, workDay: workDay, startTime: myItem.startTime, endTime: myItem.endTime, saveToCloud: false)
+                roleCount += 1
             }
             
-            recordCount += 1
+            myDatabaseConnection.saveDecodeToCloud()
         }
         
-        sleep(2)
         refreshScreen()
         
         showFields()
@@ -290,20 +286,20 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
         let titleString = "\(currentUser.currentTeam!.name) Event Plan for \(currentEvent.projectName)"
         
         let tempReport = report(name: reportEventPlan)
-        
+
         tempReport.subject = titleString
         
         let headerLine = reportLine()
         headerLine.column1 = "Name"
-        tempReport.columnWidth1 = 240
+        tempReport.columnWidth1 = 26.9
         headerLine.column2 = "Date"
-        tempReport.columnWidth2 = 120
+        tempReport.columnWidth2 = 13.4
         headerLine.column3 = "Start"
-        tempReport.columnWidth3 = 70
+        tempReport.columnWidth3 = 7.8
         headerLine.column4 = "End"
-        tempReport.columnWidth4 = 70
+        tempReport.columnWidth4 = 7.8
         headerLine.column5 = "Role"
-        tempReport.columnWidth5 = 200
+        tempReport.columnWidth5 = 22
         
         tempReport.header = headerLine
         
@@ -372,10 +368,39 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
         present(activityViewController, animated:true, completion:nil)
     }
     
+    @IBAction func btnStatus(_ sender: UIButton)
+    {
+        displayList.removeAll()
+        
+        displayList.append("")
+        
+        for myItem in (currentUser.currentTeam?.getDropDown(dropDownType: eventProjectType))!
+        {
+            displayList.append(myItem)
+        }
+        
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+        pickerView.modalPresentationStyle = .popover
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        pickerView.source = "status"
+        pickerView.delegate = self
+        pickerView.pickerValues = displayList
+        pickerView.preferredContentSize = CGSize(width: 400,height: 400)
+        
+        self.present(pickerView, animated: true, completion: nil)
+    }
+    
     func myPickerDidFinish(_ source: String, selectedItem:Int)
     {
-        if source == "template"
+        switch source
         {
+        case "template":
             if selectedItem > 0
             {
                 if displayList[selectedItem] == ""
@@ -419,12 +444,10 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
                         btnCreatePlan.isHidden = true
                     }
                 }
-
+                
             }
-        }
         
-        if source == "role"
-        {
+        case "role" :
             if selectedItem > 0
             {
                 if displayList[selectedItem] == ""
@@ -443,10 +466,8 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
                 btnSelect.setTitle("Select Role", for: .normal)
                 btnAddRole.isHidden = true
             }
-        }
-        
-        if source == "workday"
-        {
+            
+        case "workday" :
             var workingItem: Int = 0
             if selectedItem > 0
             {
@@ -455,6 +476,16 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
             
             btnDate.setTitle(displayList[workingItem], for: .normal)
             newRoleDate = eventDays[workingItem]
+            
+        case "status" :
+            if selectedItem > 0
+            {
+                currentEvent.projectStatus = displayList[selectedItem]
+                btnStatus.setTitle(displayList[selectedItem], for: .normal)
+            }
+            
+        default:
+            print("eventPlanningViewController myPickerDidFinish selectedItem got default : \(source)")
         }
     }
     
@@ -489,6 +520,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
         lblDateHead.isHidden = true
         lblStarHead.isHidden = true
         lblEndHead.isHidden = true
+        btnStatus.isHidden = true
     }
     
     func showFields()
@@ -509,6 +541,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
         lblDateHead.isHidden = false
         lblStarHead.isHidden = false
         lblEndHead.isHidden = false
+        btnStatus.isHidden = false
     }
     
     func hideAllFields()
@@ -529,6 +562,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
         lblDateHead.isHidden = true
         lblStarHead.isHidden = true
         lblEndHead.isHidden = true
+        btnStatus.isHidden = true
     }
     
     func refreshScreen()
@@ -547,7 +581,22 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
             }
             else
             {
+                tblRoles.isHidden = false
                 showFields()
+            }
+            
+            lblAddToRole.isHidden = false
+            btnSelect.isHidden = false
+            lblDate.isHidden = false
+            btnDate.isHidden = false
+            
+            if btnSelect.currentTitle! != "Select"
+            {
+                btnAddRole.isHidden = false
+            }
+            else
+            {
+                btnAddRole.isHidden = true
             }
             
             lblContractName.text = currentEvent.projectName
@@ -560,8 +609,20 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
             eventDays.append(currentEvent.projectStartDate.add(.day, amount: 1))
             eventDays.append(currentEvent.projectStartDate.add(.day, amount: 2))
             btnDate.setTitle(currentEvent.projectStartDate.formatDateToString, for: .normal)
-
+            if currentEvent.projectStatus != ""
+            {
+                btnStatus.setTitle(currentEvent.projectStatus, for: .normal)
+            }
+            else
+            {
+                btnStatus.setTitle("Select", for: .normal)
+            }
+            
             tblRoles.reloadData()
+        }
+        else
+        {
+            hideAllFields()
         }
     }
 }
@@ -647,6 +708,7 @@ class eventRoleItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
         pickerView.showTimes = true
         pickerView.showDates = false
         pickerView.minutesInterval = 5
+        pickerView.display24Hour = true
         
         pickerView.preferredContentSize = CGSize(width: 400,height: 400)
         
@@ -671,6 +733,7 @@ class eventRoleItem: UITableViewCell, UIPopoverPresentationControllerDelegate, M
         pickerView.showTimes = true
         pickerView.showDates = false
         pickerView.minutesInterval = 5
+        pickerView.display24Hour = true
         
         pickerView.preferredContentSize = CGSize(width: 400,height: 400)
         

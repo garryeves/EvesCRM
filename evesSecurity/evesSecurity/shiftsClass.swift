@@ -350,6 +350,42 @@ class shifts: NSObject
         sortArray()
     }
     
+    init(personID: Int)
+    {
+        super.init()
+        
+        myWeeklyShifts.removeAll()
+        
+        for myItem in myDatabaseConnection.getShifts(personID: personID)
+        {
+            let myObject = shift(shiftID: Int(myItem.shiftID),
+                                 projectID: Int(myItem.projectID),
+                                 personID: Int(myItem.personID),
+                                 workDate: myItem.workDate! as Date,
+                                 shiftDescription: myItem.shiftDescription!,
+                                 startTime: myItem.startTime! as Date,
+                                 endTime: myItem.endTime! as Date,
+                                 teamID: Int(myItem.teamID),
+                                 weekEndDate: myItem.weekEndDate! as Date,
+                                 status: myItem.status!,
+                                 shiftLineID: Int(myItem.shiftLineID),
+                                 rateID: Int(myItem.rateID),
+                                 type: myItem.type!,
+                                 clientInvoiceNumber: Int(myItem.clientInvoiceNumber),
+                                 personInvoiceNumber: Int(myItem.personInvoiceNumber)
+                
+            )
+            myShifts.append(myObject)
+        }
+        
+        if myShifts.count > 0
+        {
+            createWeeklyArray()
+        }
+        
+        sortArray()
+    }
+
     init(query: String, teamID: Int)
     {
         super.init()
@@ -1371,6 +1407,34 @@ extension person
             return tempArray as! [shift]
         }
     }
+    
+    func loadShifts()
+    {
+        tempArray.removeAll()
+        
+        let tempShifts = shifts(personID: personID)
+        
+        var sortingArray = tempShifts.shifts
+        
+        if sortingArray.count > 0
+        {
+            sortingArray.sort
+                {
+                    // Because workdate has time it throws everything out
+                    
+                    if $0.workDate == $1.workDate
+                    {
+                        return $0.startTime > $1.startTime
+                    }
+                    else
+                    {
+                        return $0.workDate > $1.workDate
+                    }
+            }
+        }
+        
+        tempArray = sortingArray
+    }
 }
 
 extension coreDatabase
@@ -1516,6 +1580,33 @@ extension coreDatabase
         }
     }
     
+    func getShifts(personID: Int)->[Shifts]
+    {
+        let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        let predicate = NSPredicate(format: "(personID == \(personID)) AND (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        let sortDescriptor = NSSortDescriptor(key: "workDate", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+
     func getShifts(teamID: Int, WEDate: Date, type: String)->[Shifts]
     {
         let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")

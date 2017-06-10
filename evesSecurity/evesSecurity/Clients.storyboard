@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="ipad9_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -29,13 +29,6 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iET-IE-ZY9" userLabel="btnSave">
-                                <rect key="frame" x="300" y="300" width="34" height="30"/>
-                                <state key="normal" title="Save"/>
-                                <connections>
-                                    <action selector="btnSave:" destination="lPG-hE-jiD" eventType="touchUpInside" id="iQ9-dL-soq"/>
-                                </connections>
-                            </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Contact Person" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iRh-c5-6yP" userLabel="lblContact">
                                 <rect key="frame" x="300" y="119" width="119" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -65,7 +58,7 @@
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="TXd-ks-qFG" userLabel="tblContracts">
-                                <rect key="frame" x="300" y="371" width="428" height="306.5"/>
+                                <rect key="frame" x="300" y="331" width="428" height="346.5"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="cellContract" id="clc-ef-WcK" customClass="contractsSummaryItem" customModule="Shift_Dashboard" customModuleProvider="target">
@@ -107,7 +100,7 @@
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Contracts" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vNQ-mF-JM8" userLabel="lblContracts">
-                                <rect key="frame" x="460" y="340" width="76" height="21"/>
+                                <rect key="frame" x="460" y="300" width="76" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -334,9 +327,7 @@
                             <constraint firstItem="O51-qz-IHC" firstAttribute="top" secondItem="56m-mF-H73" secondAttribute="bottom" constant="5" id="13Q-gA-aut"/>
                             <constraint firstItem="27b-ht-4a8" firstAttribute="leading" secondItem="Z7H-te-wOS" secondAttribute="trailing" constant="5" id="4Hz-5B-3sj"/>
                             <constraint firstItem="56m-mF-H73" firstAttribute="top" secondItem="B10-rA-Bja" secondAttribute="bottom" constant="10" id="5LL-we-DvS"/>
-                            <constraint firstItem="vNQ-mF-JM8" firstAttribute="top" secondItem="iET-IE-ZY9" secondAttribute="bottom" constant="10" id="5RM-dG-H29"/>
                             <constraint firstItem="gZB-5U-vcP" firstAttribute="top" secondItem="pjb-2a-Kxl" secondAttribute="bottom" constant="10" id="5lx-fr-4pg"/>
-                            <constraint firstItem="iET-IE-ZY9" firstAttribute="top" secondItem="2CO-VC-hTA" secondAttribute="bottom" constant="10" id="5t5-Ze-8Bc"/>
                             <constraint firstItem="2CO-VC-hTA" firstAttribute="top" secondItem="rpr-5B-Zew" secondAttribute="bottom" constant="10" id="6lX-YB-EhV"/>
                             <constraint firstItem="B10-rA-Bja" firstAttribute="leading" secondItem="fUD-mq-a6b" secondAttribute="trailing" constant="170" id="7NU-iZ-Fvz"/>
                             <constraint firstItem="rpr-5B-Zew" firstAttribute="top" secondItem="rX8-pq-NVT" secondAttribute="bottom" constant="15" id="7Nl-VS-KW8"/>
@@ -348,10 +339,10 @@
                             <constraint firstAttribute="trailingMargin" secondItem="O51-qz-IHC" secondAttribute="trailing" constant="30" id="GLB-Ez-cOs"/>
                             <constraint firstItem="pjb-2a-Kxl" firstAttribute="leading" secondItem="IpU-sK-xGF" secondAttribute="leadingMargin" id="Gb0-lP-ZX5"/>
                             <constraint firstItem="O51-qz-IHC" firstAttribute="leading" secondItem="27b-ht-4a8" secondAttribute="trailing" constant="5" id="Ggg-eD-hZ1"/>
+                            <constraint firstItem="vNQ-mF-JM8" firstAttribute="top" secondItem="2CO-VC-hTA" secondAttribute="bottom" constant="10" id="KIe-w4-Nh3"/>
                             <constraint firstItem="vNQ-mF-JM8" firstAttribute="leading" secondItem="fUD-mq-a6b" secondAttribute="trailing" constant="170" id="KbE-dq-zRc"/>
                             <constraint firstItem="B10-rA-Bja" firstAttribute="top" secondItem="TXd-ks-qFG" secondAttribute="bottom" constant="10" id="NbR-Zp-YBd"/>
                             <constraint firstItem="LTz-MK-W8Q" firstAttribute="leading" secondItem="fUD-mq-a6b" secondAttribute="trailing" constant="20" id="Nf1-Dd-KeG"/>
-                            <constraint firstItem="iET-IE-ZY9" firstAttribute="leading" secondItem="fUD-mq-a6b" secondAttribute="trailing" constant="10" id="Nsk-AQ-1o8"/>
                             <constraint firstItem="pjb-2a-Kxl" firstAttribute="top" secondItem="a4y-E9-cVc" secondAttribute="bottom" id="OfS-o6-uKF"/>
                             <constraint firstItem="TXd-ks-qFG" firstAttribute="leading" secondItem="fUD-mq-a6b" secondAttribute="trailing" constant="10" id="Om8-Wk-JSl"/>
                             <constraint firstAttribute="trailingMargin" secondItem="rX8-pq-NVT" secondAttribute="trailing" constant="20" id="Pc1-u0-MRJ"/>

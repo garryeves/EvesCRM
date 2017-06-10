@@ -9,7 +9,7 @@
 import UIKit
 import ContactsUI
 
-class personViewController: UIViewController, UIPopoverPresentationControllerDelegate, myCommunicationDelegate, UITableViewDataSource, UITableViewDelegate, MyPickerDelegate, CNContactPickerDelegate
+class personViewController: UIViewController, UIPopoverPresentationControllerDelegate, myCommunicationDelegate, UITableViewDataSource, UITableViewDelegate, MyPickerDelegate, CNContactPickerDelegate, UITextViewDelegate
 {
     @IBOutlet weak var tblPeople: UITableView!
     @IBOutlet weak var txtName: UITextField!
@@ -27,10 +27,10 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
     @IBOutlet weak var btnImport: UIButton!
     @IBOutlet weak var bottomContraint: NSLayoutConstraint!
     @IBOutlet weak var btnBack: UIBarButtonItem!
-    @IBOutlet weak var btnSave: UIBarButtonItem!
     @IBOutlet weak var btnAdd: UIBarButtonItem!
     @IBOutlet weak var tblContacts: UITableView!
     @IBOutlet weak var tblAddresses: UITableView!
+    @IBOutlet weak var tblShifts: UITableView!
     
     var communicationDelegate: myCommunicationDelegate?
     var clientID: Int!
@@ -48,6 +48,7 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         txtNotes.layer.borderWidth = 0.5
         txtNotes.layer.cornerRadius = 5.0
         txtNotes.layer.masksToBounds = true
+        txtNotes.delegate = self
         
         addInfoRecords = personAdditionalInfos(teamID: currentUser!.currentTeam!.teamID)
         
@@ -101,6 +102,16 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
                 else
                 {
                     return selectedPerson.addresses.count
+                }
+            
+            case tblShifts:
+                if selectedPerson == nil
+                {
+                    return 0
+                }
+                else
+                {
+                    return selectedPerson.shiftArray.count
                 }
             
             default:
@@ -203,6 +214,19 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
                 cell.lblDetail.text = selectedPerson.addresses[indexPath.row].addressLine1
                 return cell
             
+            case tblShifts:
+                let cell = tableView.dequeueReusableCell(withIdentifier:"cellShift", for: indexPath) as! contactDetailsItem
+                
+                // Build the display string
+                
+                let dateString = "\(selectedPerson.shiftArray[indexPath.row].workDateString) \(selectedPerson.shiftArray[indexPath.row].startTimeString) - \(selectedPerson.shiftArray[indexPath.row].endTimeString)"
+                cell.lblType.text = dateString
+                
+                let tempProject = project(projectID: selectedPerson.shiftArray[indexPath.row].projectID)
+                cell.lblDetail.text = tempProject.projectName
+                
+            return cell
+            
             default:
                 return UITableViewCell()
         }
@@ -252,6 +276,19 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
             
             default:
                 let _ = 1
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath)
+    {
+        if editingStyle == .delete
+        {
+            if tableView == tblPeople
+            {
+                myPeople.people[indexPath.row].delete()
+            }
+            
+            refreshScreen()
         }
     }
     
@@ -335,19 +372,6 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         tblAddInfo.reloadData()
     }
     
-    @IBAction func btnSave(_ sender: UIBarButtonItem)
-    {
-        if selectedPerson != nil
-        {
-            selectedPerson.name = txtName.text!
-            selectedPerson.note = txtNotes.text
-            
-            selectedPerson.save()
-            
-            refreshScreen()
-        }
-    }
-    
     @IBAction func btnAddresses(_ sender: UIButton)
     {
         let addressView = personStoryboard.instantiateViewController(withIdentifier: "addressView") as! addressesViewController
@@ -382,8 +406,29 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         self.present(contactsView, animated: true, completion: nil)
     }
     
+    func textViewDidEndEditing(_ textView: UITextView)
+    {
+        if textView == txtNotes
+        {
+            selectedPerson.note = txtNotes.text!
+        }
+    }
+
     @IBAction func btnBack(_ sender: UIBarButtonItem)
     {
+        if txtName.isFirstResponder
+        {
+            if txtName.text != ""
+            {
+                selectedPerson.name = txtName.text!
+            }
+        }
+        
+        if txtNotes.isFirstResponder
+        {
+            selectedPerson.note = txtNotes.text!
+        }
+        
         self.dismiss(animated: true, completion: nil)
         communicationDelegate?.refreshScreen!()
     }
@@ -491,13 +536,9 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
     
     @IBAction func txtName(_ sender: UITextField)
     {
-        if sender.text == ""
+        if txtName.text != ""
         {
-            btnSave.isEnabled = false
-        }
-        else
-        {
-            btnSave.isEnabled = true
+            selectedPerson.name = txtName.text!
         }
     }
     
@@ -507,7 +548,6 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         {
             selectedPerson.gender = displayList[selectedItem]
             btnGender.setTitle(displayList[selectedItem], for: .normal)
-            btnSave.isEnabled = true
         }
     }
 
@@ -517,7 +557,6 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         {
             selectedPerson.dob = selectedDate
             btnDOB.setTitle(selectedPerson.dobText, for: .normal)
-            btnSave.isEnabled = true
         }
     }
     
@@ -529,7 +568,6 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         lblName.isHidden = true
         lblDOB.isHidden = true
         lblGener.isHidden = true
-        btnSave.isEnabled = false
         btnAddresses.isHidden = true
         btnContacts.isHidden = true
         lblAddInfo.isHidden = true
@@ -539,6 +577,7 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         btnImport.isHidden = false
         tblContacts.isHidden = true
         tblAddresses.isHidden = true
+        tblShifts.isHidden = true
     }
     
     func showFields()
@@ -558,6 +597,7 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         btnImport.isHidden = true
         tblContacts.isHidden = false
         tblAddresses.isHidden = false
+        tblShifts.isHidden = false
     }
     
     func keyboardWillShow(_ notification: Notification)
@@ -620,6 +660,7 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
             selectedPerson.loadAddresses()
             selectedPerson.loadContacts()
             selectedPerson.loadAddInfo()
+            selectedPerson.loadShifts()
             
             txtName.text = selectedPerson.name
             btnDOB.setTitle(selectedPerson.dobText, for: .normal)
@@ -631,6 +672,7 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
             tblAddInfo.reloadData()
             tblAddresses.reloadData()
             tblContacts.reloadData()
+            tblShifts.reloadData()
         }
     }
     

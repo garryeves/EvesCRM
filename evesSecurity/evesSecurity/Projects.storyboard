@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12121" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="ipad9_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -63,6 +63,9 @@
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="words"/>
+                                <connections>
+                                    <action selector="txtName:" destination="bZ1-UV-m47" eventType="editingDidEnd" id="nho-vW-COp"/>
+                                </connections>
                             </textField>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="XcT-iR-t9A" userLabel="txtNote">
                                 <rect key="frame" x="40" y="306" width="688" height="698"/>
@@ -138,6 +141,9 @@
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="words"/>
+                                <connections>
+                                    <action selector="txtDept:" destination="bZ1-UV-m47" eventType="editingDidEnd" id="B6a-sV-dv4"/>
+                                </connections>
                             </textField>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="MU7-rL-zQ2" userLabel="txtInvoicingDay">
                                 <rect key="frame" x="423" y="230" width="30" height="30"/>
@@ -147,6 +153,9 @@
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <action selector="txtInvoicingDay:" destination="bZ1-UV-m47" eventType="editingDidEnd" id="EZN-C0-iCj"/>
+                                </connections>
                             </textField>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="K4W-Wr-yN3" userLabel="txtDaysToPay">
                                 <rect key="frame" x="571" y="230" width="30" height="30"/>
@@ -156,6 +165,9 @@
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
+                                <connections>
+                                    <action selector="txtDaysToPay:" destination="bZ1-UV-m47" eventType="editingDidEnd" id="429-QN-cV9"/>
+                                </connections>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OjB-zl-Ew1" userLabel="btnInvoicingFrequency">
                                 <rect key="frame" x="146" y="230" width="150" height="30"/>
@@ -212,11 +224,6 @@
                                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="DWf-sd-Y5w" userLabel="btnBack">
                                             <connections>
                                                 <action selector="btnBack:" destination="bZ1-UV-m47" id="apw-WR-oQC"/>
-                                            </connections>
-                                        </barButtonItem>
-                                        <barButtonItem key="rightBarButtonItem" systemItem="save" id="FqL-QH-CJ5" userLabel="btnSave">
-                                            <connections>
-                                                <action selector="btnSave:" destination="bZ1-UV-m47" id="Kbc-fF-1uT"/>
                                             </connections>
                                         </barButtonItem>
                                     </navigationItem>
@@ -285,7 +292,6 @@
                         <outlet property="btnContacts" destination="aIO-5w-lsX" id="me9-nd-0eA"/>
                         <outlet property="btnEndDate" destination="PPM-Z0-rGM" id="KmX-xm-rpk"/>
                         <outlet property="btnInvoicingFrequency" destination="OjB-zl-Ew1" id="W2O-WA-5VV"/>
-                        <outlet property="btnSave" destination="FqL-QH-CJ5" id="jwA-3M-8Pl"/>
                         <outlet property="btnStartDate" destination="n1v-D3-GLK" id="grj-s6-CXN"/>
                         <outlet property="btnStatus" destination="8dj-8j-5Z5" id="tPK-ux-B5r"/>
                         <outlet property="btnType" destination="CDJ-d1-77b" id="Xwm-5H-M8m"/>

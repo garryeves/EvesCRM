@@ -156,10 +156,15 @@ extension coreDatabase
 
         if updateCloud
         {
-            DispatchQueue.global(qos: .background).async
+            saveDecodeToCloud()
+        }
+    }
+    
+    func saveDecodeToCloud()
+    {
+        DispatchQueue.global(qos: .background).async
             {
                 myCloudDB.saveDecodesToCloudKit()
-            }
         }
     }
 
@@ -282,7 +287,7 @@ extension coreDatabase
             return 0
         }
     }
-
+    
     func resetDecodes()
     {
         let fetchRequest = NSFetchRequest<Decodes>(entityName: "Decodes")

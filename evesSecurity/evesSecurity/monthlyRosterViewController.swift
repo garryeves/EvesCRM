@@ -235,10 +235,10 @@ class monthlyRosterViewController: UIViewController, UITableViewDataSource, UITa
         workingReport = report(name: reportMonthlyRoster)
         workingReport.subject = "Shifts for \(selectedPerson.name) for the month of \(btnMonth.currentTitle!)"
         
-        workingReport.columnWidth1 = 180
-        workingReport.columnWidth2 = 100
-        workingReport.columnWidth3 = 100
-        workingReport.columnWidth4 = 250
+        workingReport.columnWidth1 = 20
+        workingReport.columnWidth2 = 12
+        workingReport.columnWidth3 = 12
+        workingReport.columnWidth4 = 28
         
         let headerLine = reportLine()
         headerLine.column1 = "Date"
