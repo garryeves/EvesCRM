@@ -472,6 +472,7 @@ extension CloudKitInteraction
                         if saveError != nil
                         {
                             NSLog("Error saving record:  GRE E - \(saveError!.localizedDescription)")
+                            self.saveOK = false
                         }
                         else
                         {
@@ -502,6 +503,7 @@ extension CloudKitInteraction
                         if saveError != nil
                         {
                             NSLog("Error saving record:  GRE F - \(saveError!.localizedDescription)")
+                            self.saveOK = false
                         }
                         else
                         {

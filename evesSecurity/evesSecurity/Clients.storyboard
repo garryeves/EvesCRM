@@ -7,7 +7,6 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
-        <capability name="Navigation items with more than one left or right bar item" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -47,6 +46,9 @@
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="words"/>
+                                <connections>
+                                    <action selector="txtName:" destination="lPG-hE-jiD" eventType="editingDidEnd" id="mai-6a-0Lc"/>
+                                </connections>
                             </textField>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="2CO-VC-hTA" userLabel="txtNotes">
                                 <rect key="frame" x="300" y="190" width="428" height="100"/>
@@ -268,18 +270,11 @@
                                                 <action selector="btnBack:" destination="lPG-hE-jiD" id="Nid-vM-QTa"/>
                                             </connections>
                                         </barButtonItem>
-                                        <rightBarButtonItems>
-                                            <barButtonItem systemItem="save" id="dAP-2t-82c" userLabel="btnSave">
-                                                <connections>
-                                                    <action selector="btnSave:" destination="lPG-hE-jiD" id="jaB-Rm-sgG"/>
-                                                </connections>
-                                            </barButtonItem>
-                                            <barButtonItem title="Add Client" id="Bjz-6P-Irr" userLabel="btnAddClient">
-                                                <connections>
-                                                    <action selector="btnAddClient:" destination="lPG-hE-jiD" id="ek6-2g-S4G"/>
-                                                </connections>
-                                            </barButtonItem>
-                                        </rightBarButtonItems>
+                                        <barButtonItem key="rightBarButtonItem" title="Add Client" id="Bjz-6P-Irr" userLabel="btnAddClient">
+                                            <connections>
+                                                <action selector="btnAddClient:" destination="lPG-hE-jiD" id="ek6-2g-S4G"/>
+                                            </connections>
+                                        </barButtonItem>
                                     </navigationItem>
                                 </items>
                             </navigationBar>
@@ -379,7 +374,6 @@
                         <outlet property="btnAddContract" destination="B10-rA-Bja" id="rfp-vn-8P8"/>
                         <outlet property="btnBack" destination="2B8-yz-ceW" id="pnp-Q3-uze"/>
                         <outlet property="btnContact" destination="rX8-pq-NVT" id="mJN-Id-Xhb"/>
-                        <outlet property="btnSave" destination="dAP-2t-82c" id="ugT-N9-dbg"/>
                         <outlet property="lblClient" destination="27b-ht-4a8" id="eSc-bN-Anf"/>
                         <outlet property="lblContact" destination="iRh-c5-6yP" id="zD9-hJ-91D"/>
                         <outlet property="lblContracts" destination="vNQ-mF-JM8" id="sKn-Bi-FBa"/>

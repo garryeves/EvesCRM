@@ -536,6 +536,7 @@ extension CloudKitInteraction
                         {
                             NSLog("Error saving record: B \(saveError!.localizedDescription)")
                             print("next level = \(saveError!)")
+                            self.saveOK = false
                         }
                         else
                         {
@@ -567,6 +568,7 @@ extension CloudKitInteraction
                         if saveError != nil
                         {
                             NSLog("Error saving record: C \(saveError!.localizedDescription)")
+                            self.saveOK = false
                         }
                         else
                         {

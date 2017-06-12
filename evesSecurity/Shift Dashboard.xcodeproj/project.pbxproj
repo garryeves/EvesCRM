@@ -72,6 +72,7 @@
 		34CEEA611EC31D6C00F85A11 /* personAddInfoEntryClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CEEA601EC31D6C00F85A11 /* personAddInfoEntryClass.swift */; };
 		34D797951ED7BEB90045DFD9 /* IOSCalendar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34D797941ED7BEB90045DFD9 /* IOSCalendar.swift */; };
 		34E07BBA1ECAF02A007711A6 /* addressesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E07BB91ECAF02A007711A6 /* addressesViewController.swift */; };
+		34EEE5F21EECCDC50006B921 /* alertsClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34EEE5F11EECCDC50006B921 /* alertsClass.swift */; };
 		34EFB4191EE2454800772C8C /* reporting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34EFB4181EE2454800772C8C /* reporting.swift */; };
 		34FC32B21EC97C250053443D /* validatePasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34FC32B11EC97C250053443D /* validatePasswordViewController.swift */; };
 		D15FFF0B32F69D8B80D62D86 /* Pods_evesSecurity.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E95CAD216C9C390B237B980 /* Pods_evesSecurity.framework */; };
@@ -116,6 +117,7 @@
 		3460BE671ECFCC5C00857332 /* rateMaintenanceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = rateMaintenanceViewController.swift; sourceTree = "<group>"; };
 		3463FA9B1ED141ED00486195 /* Shifts.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Shifts.storyboard; sourceTree = "<group>"; };
 		3463FA9D1ED15B3F00486195 /* shiftMaintenanceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = shiftMaintenanceViewController.swift; sourceTree = "<group>"; };
+		3476199E1EEE38BD0028E5AC /* EvesCRM 30.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "EvesCRM 30.xcdatamodel"; sourceTree = "<group>"; };
 		347BCEBD1EC559BD006B95BA /* LoginRoles.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LoginRoles.storyboard; sourceTree = "<group>"; };
 		347BCEBF1EC55D88006B95BA /* newUserViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = newUserViewController.swift; sourceTree = "<group>"; };
 		347BCEC11EC563F0006B95BA /* orgEditViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = orgEditViewController.swift; sourceTree = "<group>"; };
@@ -196,6 +198,7 @@
 		34CEEA601EC31D6C00F85A11 /* personAddInfoEntryClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = personAddInfoEntryClass.swift; sourceTree = "<group>"; };
 		34D797941ED7BEB90045DFD9 /* IOSCalendar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IOSCalendar.swift; sourceTree = "<group>"; };
 		34E07BB91ECAF02A007711A6 /* addressesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = addressesViewController.swift; sourceTree = "<group>"; };
+		34EEE5F11EECCDC50006B921 /* alertsClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = alertsClass.swift; sourceTree = "<group>"; };
 		34EFB4181EE2454800772C8C /* reporting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = reporting.swift; sourceTree = "<group>"; };
 		34FC32B11EC97C250053443D /* validatePasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = validatePasswordViewController.swift; sourceTree = "<group>"; };
 		3E95CAD216C9C390B237B980 /* Pods_evesSecurity.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_evesSecurity.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -286,6 +289,7 @@
 			isa = PBXGroup;
 			children = (
 				349653321EC1F0DC00210A46 /* evesSecurityShared.swift */,
+				34EEE5F11EECCDC50006B921 /* alertsClass.swift */,
 				34CEEA381EC2EB5E00F85A11 /* addressClass.swift */,
 				34CEEA3E1EC303CC00F85A11 /* clientsClass.swift */,
 				34CEEA421EC30B7700F85A11 /* Contacts.swift */,
@@ -594,6 +598,7 @@
 				343757D21ED3F26300A9D313 /* eventPlanningViewController.swift in Sources */,
 				34B01DCB1EE3B89200B836C8 /* extensions.swift in Sources */,
 				34B35A811ECE77A300B4FFD7 /* clientMaintenanceViewController.swift in Sources */,
+				34EEE5F21EECCDC50006B921 /* alertsClass.swift in Sources */,
 				349653011EC1E5B800210A46 /* ViewController.swift in Sources */,
 				347BCEC21EC563F0006B95BA /* orgEditViewController.swift in Sources */,
 				341323831EC3EA9700BBDE1E /* personClass.swift in Sources */,
@@ -928,6 +933,7 @@
 		34CEE94D1EC2BD8F00F85A11 /* EvesCRM.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				3476199E1EEE38BD0028E5AC /* EvesCRM 30.xcdatamodel */,
 				34CEE9F31EC2CBE800F85A11 /* EvesCRM 29.xcdatamodel */,
 				34CEE94E1EC2BD8F00F85A11 /* EvesCRM 10.xcdatamodel */,
 				34CEE94F1EC2BD8F00F85A11 /* EvesCRM 11.xcdatamodel */,
@@ -958,7 +964,7 @@
 				34CEE9681EC2BD8F00F85A11 /* EvesCRM 9.xcdatamodel */,
 				34CEE9691EC2BD8F00F85A11 /* EvesCRM.xcdatamodel */,
 			);
-			currentVersion = 34CEE9611EC2BD8F00F85A11 /* EvesCRM 28.xcdatamodel */;
+			currentVersion = 3476199E1EEE38BD0028E5AC /* EvesCRM 30.xcdatamodel */;
 			name = EvesCRM.xcdatamodeld;
 			path = ../../EvesCRM/EvesCRM.xcdatamodeld;
 			sourceTree = "<group>";

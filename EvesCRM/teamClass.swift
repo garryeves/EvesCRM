@@ -362,6 +362,10 @@ class team: NSObject
         sleep(1)
         populateShiftTypeDropDown()
         sleep(1)
+        populateReportsDropdown()
+        sleep(1)
+        populateReports()
+        sleep(1)
 
         notificationCenter.post(name: NotificationTeamCreated, object: nil)
     }
@@ -569,6 +573,100 @@ class team: NSObject
         usleep(500)
         myDatabaseConnection.saveDropdowns("RoleType", dropdownValue: "Sales", teamID: myTeamID)
         usleep(500)
+    }
+
+    func populateReportsDropdown()
+    {
+        myDatabaseConnection.saveDropdowns("Reports", dropdownValue: "Financial", teamID: myTeamID)
+        usleep(500)
+        myDatabaseConnection.saveDropdowns("Reports", dropdownValue: "People", teamID: myTeamID)
+        usleep(500)
+    }
+    
+    func populateReports()
+    {
+        let tempReport = report(teamID: myTeamID)
+        tempReport.reportName = reportContractForMonth
+        tempReport.subject = reportContractForMonth
+        tempReport.columnTitle1 = "Client"
+        tempReport.columnTitle2 = "Contract"
+        tempReport.columnTitle3 = "Hours"
+        tempReport.columnTitle4 = "Cost"
+        tempReport.columnTitle5 = "Income"
+        tempReport.columnTitle6 = "Profit"
+        tempReport.columnTitle7 = "GP%"
+        tempReport.columnWidth1 = 26.9
+        tempReport.columnWidth2 = 24.7
+        tempReport.columnWidth3 = 8.9
+        tempReport.columnWidth4 = 11.2
+        tempReport.columnWidth5 = 11.2
+        tempReport.columnWidth6 = 11.2
+        tempReport.columnWidth7 = 5.6
+        tempReport.save()
+        
+        let tempReport2 = report(teamID: myTeamID)
+        tempReport2.reportName = reportWagesForMonth
+        tempReport2.subject = reportWagesForMonth
+        tempReport2.columnTitle1 = "Name"
+        tempReport2.columnTitle2 = "Hours"
+        tempReport2.columnTitle3 = "Pay"
+        tempReport2.columnWidth1 = 26.9
+        tempReport2.columnWidth2 = 11.2
+        tempReport2.columnWidth3 = 13.4
+        tempReport2.save()
+        
+        let tempReport3 = report(teamID: myTeamID)
+        tempReport3.reportName = reportContractForYear
+        tempReport3.subject = reportContractForYear
+        tempReport3.columnTitle1 = ""
+        tempReport3.columnTitle2 = "Jan"
+        tempReport3.columnTitle3 = "Feb"
+        tempReport3.columnTitle4 = "Mar"
+        tempReport3.columnTitle5 = "Apr"
+        tempReport3.columnTitle6 = "May"
+        tempReport3.columnTitle7 = "Jun"
+        tempReport3.columnTitle8 = "Jul"
+        tempReport3.columnTitle9 = "Aug"
+        tempReport3.columnTitle10 = "Sep"
+        tempReport3.columnTitle11 = "Oct"
+        tempReport3.columnTitle12 = "Nov"
+        tempReport3.columnTitle13 = "Dec"
+        tempReport3.columnTitle14 = "Total"
+        tempReport3.columnWidth1 = 18.0
+        tempReport3.columnWidth2 = 6.0
+        tempReport3.columnWidth3 = 6.0
+        tempReport3.columnWidth4 = 6.0
+        tempReport3.columnWidth5 = 6.0
+        tempReport3.columnWidth6 = 6.0
+        tempReport3.columnWidth7 = 6.0
+        tempReport3.columnWidth8 = 6.0
+        tempReport3.columnWidth9 = 6.0
+        tempReport3.columnWidth10 = 6.0
+        tempReport3.columnWidth11 = 6.0
+        tempReport3.columnWidth12 = 6.0
+        tempReport3.columnWidth13 = 6.0
+        tempReport3.columnWidth14 = 6.0
+        tempReport3.landscape()
+        tempReport3.save()
+        
+        let tempReport4 = report(teamID: myTeamID)
+        tempReport4.reportName = reportContractDates
+        tempReport4.subject = reportContractDates
+        tempReport4.columnTitle1 = "Client"
+        tempReport4.columnTitle2 = "Contract"
+        tempReport4.columnTitle3 = "Hours"
+        tempReport4.columnTitle4 = "Cost"
+        tempReport4.columnTitle5 = "Income"
+        tempReport4.columnTitle6 = "Profit"
+        tempReport4.columnTitle7 = "GP%"
+        tempReport4.columnWidth1 = 26.9
+        tempReport4.columnWidth2 = 24.7
+        tempReport4.columnWidth3 = 8.9
+        tempReport4.columnWidth4 = 11.2
+        tempReport4.columnWidth5 = 11.2
+        tempReport4.columnWidth6 = 11.2
+        tempReport4.columnWidth7 = 5.6
+        tempReport4.save()
     }
     
     private func populatePublicDecodes()
@@ -1060,6 +1158,7 @@ extension CloudKitInteraction
             if saveError != nil
             {
                 NSLog("Error saving record: \(saveError!.localizedDescription)")
+                self.saveOK = false
             }
             else
             {
@@ -1233,6 +1332,7 @@ extension CloudKitInteraction
                         if saveError != nil
                         {
                             NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            self.saveOK = false
                         }
                         else
                         {
@@ -1285,6 +1385,7 @@ extension CloudKitInteraction
                         if saveError != nil
                         {
                             NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            self.saveOK = false
                         }
                         else
                         {

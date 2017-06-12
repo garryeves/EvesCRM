@@ -10,6 +10,9 @@ import Foundation
 import CoreData
 import CloudKit
 
+let alertClientNoProject = "client no project"
+let alertClientNoRates = "client no rate"
+
 class clients: NSObject
 {
     fileprivate var myClients:[client] = Array()
@@ -36,7 +39,7 @@ class clients: NSObject
         
         switch query
         {
-            case "client no project":
+            case alertClientNoProject:
                 for myItem in myDatabaseConnection.getClients(teamID: teamID)
                 {
                     let myReturn = projects(clientID: Int(myItem.clientID))
@@ -47,7 +50,7 @@ class clients: NSObject
                     }
                 }
             
-            case "client no rate":
+            case alertClientNoRates:
                 for myItem in myDatabaseConnection.getClients(teamID: teamID)
                 {
                     let myReturn = rates(clientID: Int(myItem.clientID))
@@ -108,6 +111,7 @@ class client: NSObject
         set
         {
             myClientName = newValue
+            save()
         }
     }
     
@@ -120,6 +124,7 @@ class client: NSObject
         set
         {
             myClientNote = newValue
+            save()
         }
     }
     
@@ -132,6 +137,7 @@ class client: NSObject
         set
         {
             myClientContact = newValue
+            save()
         }
     }
     
@@ -190,7 +196,52 @@ class client: NSObject
     
     func delete()
     {
+        // There are a number of actions to take when deleting a client, mainly to make sure we maintain data integrity
+        
+        // Close any existing projects
+        
+        for myProject in projects(clientID: myClientID).projects
+        {
+            myProject.projectStatus = "Archived"
+        }
+        
+        // Now delete the client
+        
         myDatabaseConnection.deleteClient(myClientID)
+    }
+}
+
+extension alerts
+{
+    func clientAlerts()
+    {
+        // check for clients with no projects
+        
+        for myItem in clients(query: alertClientNoProject, teamID: currentUser.currentTeam!.teamID).clients
+        {
+            let alertEntry = alertItem()
+            
+            alertEntry.displayText = "Client has no Contracts"
+            alertEntry.name = myItem.name
+            alertEntry.source = "Client"
+            alertEntry.object = myItem
+            
+            alertList.append(alertEntry)
+        }
+        
+        // check for clients with no projects
+        
+        for myItem in clients(query: alertClientNoRates, teamID: currentUser.currentTeam!.teamID).clients
+        {
+            let alertEntry = alertItem()
+            
+            alertEntry.displayText = "Client has no Rates"
+            alertEntry.name = myItem.name
+            alertEntry.source = "Client"
+            alertEntry.object = myItem
+            
+            alertList.append(alertEntry)
+        }
     }
 }
 
@@ -275,7 +326,7 @@ extension coreDatabase
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(clientID == \(clientID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(clientID == \(clientID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -513,6 +564,7 @@ extension CloudKitInteraction
                         if saveError != nil
                         {
                             NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            self.saveOK = false
                         }
                         else
                         {
@@ -544,6 +596,7 @@ extension CloudKitInteraction
                         if saveError != nil
                         {
                             NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            self.saveOK = false
                         }
                         else
                         {

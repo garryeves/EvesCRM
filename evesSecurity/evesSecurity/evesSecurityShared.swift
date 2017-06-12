@@ -84,15 +84,23 @@ extension DBSync
 {
     func performSync()
     {
-        syncTotal = 16
+        syncTotal = 17
         syncProgress = 0
         
         let syncDate = Date()
 
+        myCloudDB.saveOK = true
+        
         myCloudDB.saveTeamToCloudKit()
         myCloudDB.updateTeamInCoreData()
-        myDatabaseConnection.setSyncDateforTable(tableName: "Team", syncDate: syncDate, updateCloud: false)
-
+        
+        if myCloudDB.saveOK
+        {
+            myDatabaseConnection.setSyncDateforTable(tableName: "Team", syncDate: syncDate, updateCloud: false)
+        }
+        
+        myCloudDB.saveOK = true
+        
         syncProgress += 1
         
         sleep(syncTime)
@@ -104,7 +112,12 @@ extension DBSync
         
         myCloudDB.saveDecodesToCloudKit()
         myCloudDB.updateDecodesInCoreData()
-        myDatabaseConnection.setSyncDateforTable(tableName: "Decode", syncDate: syncDate, updateCloud: false)
+        if myCloudDB.saveOK
+        {
+            myDatabaseConnection.setSyncDateforTable(tableName: "Decode", syncDate: syncDate, updateCloud: false)
+        }
+        
+        myCloudDB.saveOK = true
         
         syncProgress += 1
         
@@ -117,7 +130,12 @@ extension DBSync
         
         myCloudDB.saveAddressToCloudKit()
         myCloudDB.updateAddressInCoreData()
-        myDatabaseConnection.setSyncDateforTable(tableName: "Addresses", syncDate: syncDate, updateCloud: false)
+        if myCloudDB.saveOK
+        {
+            myDatabaseConnection.setSyncDateforTable(tableName: "Addresses", syncDate: syncDate, updateCloud: false)
+        }
+        
+        myCloudDB.saveOK = true
         
         syncProgress += 1
         sleep(syncTime)
@@ -129,7 +147,12 @@ extension DBSync
         
         myCloudDB.saveClientToCloudKit()
         myCloudDB.updateClientInCoreData()
-        myDatabaseConnection.setSyncDateforTable(tableName: "Clients", syncDate: syncDate, updateCloud: false)
+        if myCloudDB.saveOK
+        {
+            myDatabaseConnection.setSyncDateforTable(tableName: "Clients", syncDate: syncDate, updateCloud: false)
+        }
+        
+        myCloudDB.saveOK = true
         
         syncProgress += 1
         sleep(syncTime)
@@ -141,7 +164,12 @@ extension DBSync
         
         myCloudDB.saveContactToCloudKit()
         myCloudDB.updateContactInCoreData()
-        myDatabaseConnection.setSyncDateforTable(tableName: "Contacts", syncDate: syncDate, updateCloud: false)
+        if myCloudDB.saveOK
+        {
+            myDatabaseConnection.setSyncDateforTable(tableName: "Contacts", syncDate: syncDate, updateCloud: false)
+        }
+        
+        myCloudDB.saveOK = true
         
         syncProgress += 1
         sleep(syncTime)
@@ -153,7 +181,12 @@ extension DBSync
         
         myCloudDB.saveDropdownsToCloudKit()
         myCloudDB.updateDropdownsInCoreData()
-        myDatabaseConnection.setSyncDateforTable(tableName: "Dropdowns", syncDate: syncDate, updateCloud: false)
+        if myCloudDB.saveOK
+        {
+            myDatabaseConnection.setSyncDateforTable(tableName: "Dropdowns", syncDate: syncDate, updateCloud: false)
+        }
+        
+        myCloudDB.saveOK = true
         
         syncProgress += 1
         sleep(syncTime)
@@ -165,7 +198,12 @@ extension DBSync
         
         myCloudDB.savePersonToCloudKit()
         myCloudDB.updatePersonInCoreData()
-        myDatabaseConnection.setSyncDateforTable(tableName: "Person", syncDate: syncDate, updateCloud: false)
+        if myCloudDB.saveOK
+        {
+            myDatabaseConnection.setSyncDateforTable(tableName: "Person", syncDate: syncDate, updateCloud: false)
+        }
+        
+        myCloudDB.saveOK = true
         
         syncProgress += 1
         sleep(syncTime)
@@ -177,7 +215,12 @@ extension DBSync
         
         myCloudDB.savePersonAdditionalInfoToCloudKit()
         myCloudDB.updatePersonAdditionalInfoInCoreData()
-        myDatabaseConnection.setSyncDateforTable(tableName: "PersonAdditionalInfo", syncDate: syncDate, updateCloud: false)
+        if myCloudDB.saveOK
+        {
+            myDatabaseConnection.setSyncDateforTable(tableName: "PersonAdditionalInfo", syncDate: syncDate, updateCloud: false)
+        }
+        
+        myCloudDB.saveOK = true
         
         syncProgress += 1
         sleep(syncTime)
@@ -189,7 +232,12 @@ extension DBSync
         
         myCloudDB.savePersonAddInfoEntryToCloudKit()
         myCloudDB.updatePersonAddInfoEntryInCoreData()
-        myDatabaseConnection.setSyncDateforTable(tableName: "PersonAddInfoEntry", syncDate: syncDate, updateCloud: false)
+        if myCloudDB.saveOK
+        {
+            myDatabaseConnection.setSyncDateforTable(tableName: "PersonAddInfoEntry", syncDate: syncDate, updateCloud: false)
+        }
+        
+        myCloudDB.saveOK = true
         
         syncProgress += 1
         sleep(syncTime)
@@ -201,7 +249,12 @@ extension DBSync
         
         myCloudDB.saveProjectsToCloudKit()
         myCloudDB.updateProjectsInCoreData()
-        myDatabaseConnection.setSyncDateforTable(tableName: "Projects", syncDate: syncDate, updateCloud: false)
+        if myCloudDB.saveOK
+        {
+            myDatabaseConnection.setSyncDateforTable(tableName: "Projects", syncDate: syncDate, updateCloud: false)
+        }
+        
+        myCloudDB.saveOK = true
         
         syncProgress += 1
         sleep(syncTime)
@@ -213,7 +266,12 @@ extension DBSync
         
         myCloudDB.saveRatesToCloudKit()
         myCloudDB.updateRatesInCoreData()
-        myDatabaseConnection.setSyncDateforTable(tableName: "Rates", syncDate: syncDate, updateCloud: false)
+        if myCloudDB.saveOK
+        {
+            myDatabaseConnection.setSyncDateforTable(tableName: "Rates", syncDate: syncDate, updateCloud: false)
+        }
+        
+        myCloudDB.saveOK = true
         
         syncProgress += 1
         sleep(syncTime)
@@ -225,7 +283,12 @@ extension DBSync
         
         myCloudDB.saveShiftsToCloudKit()
         myCloudDB.updateShiftsInCoreData()
-        myDatabaseConnection.setSyncDateforTable(tableName: "Shifts", syncDate: syncDate, updateCloud: false)
+        if myCloudDB.saveOK
+        {
+            myDatabaseConnection.setSyncDateforTable(tableName: "Shifts", syncDate: syncDate, updateCloud: false)
+        }
+        
+        myCloudDB.saveOK = true
         
         syncProgress += 1
         sleep(syncTime)
@@ -237,7 +300,12 @@ extension DBSync
         
         myCloudDB.saveUserRolesToCloudKit()
         myCloudDB.updateUserRolesInCoreData()
-        myDatabaseConnection.setSyncDateforTable(tableName: "UserRoles", syncDate: syncDate, updateCloud: false)
+        if myCloudDB.saveOK
+        {
+            myDatabaseConnection.setSyncDateforTable(tableName: "UserRoles", syncDate: syncDate, updateCloud: false)
+        }
+        
+        myCloudDB.saveOK = true
         
         syncProgress += 1
         sleep(syncTime)
@@ -249,7 +317,12 @@ extension DBSync
         
         myCloudDB.saveEventTemplateToCloudKit()
         myCloudDB.updateEventTemplateInCoreData()
-        myDatabaseConnection.setSyncDateforTable(tableName: "EventTemplate", syncDate: syncDate, updateCloud: false)
+        if myCloudDB.saveOK
+        {
+            myDatabaseConnection.setSyncDateforTable(tableName: "EventTemplate", syncDate: syncDate, updateCloud: false)
+        }
+        
+        myCloudDB.saveOK = true
         
         syncProgress += 1
         sleep(syncTime)
@@ -261,7 +334,12 @@ extension DBSync
         
         myCloudDB.saveEventTemplateHeadToCloudKit()
         myCloudDB.updateEventTemplateHeadInCoreData()
-        myDatabaseConnection.setSyncDateforTable(tableName: "EventTemplateHead", syncDate: syncDate, updateCloud: false)
+        if myCloudDB.saveOK
+        {
+            myDatabaseConnection.setSyncDateforTable(tableName: "EventTemplateHead", syncDate: syncDate, updateCloud: false)
+        }
+        
+        myCloudDB.saveOK = true
         
         syncProgress += 1
         sleep(syncTime)
@@ -273,76 +351,42 @@ extension DBSync
         
         myCloudDB.saveUserTeamsToCloudKit()
         myCloudDB.updateUserTeamsInCoreData()
-        myDatabaseConnection.setSyncDateforTable(tableName: "UserTeams", syncDate: syncDate, updateCloud: true)
+        if myCloudDB.saveOK
+        {
+            myDatabaseConnection.setSyncDateforTable(tableName: "UserTeams", syncDate: syncDate, updateCloud: true)
+        }
+        
+        myCloudDB.saveOK = true
 
+        syncProgress += 1
         sleep(syncTime)
         
         if myDatabaseConnection.recordsProcessed < myDatabaseConnection.recordsToChange
         {
             sleep(1)
         }
+
+        myCloudDB.saveReportsToCloudKit()
+        myCloudDB.updateReportsInCoreData()
+        if myCloudDB.saveOK
+        {
+            myDatabaseConnection.setSyncDateforTable(tableName: "Reports", syncDate: syncDate, updateCloud: true)
+        }
         
+        myCloudDB.saveOK = true
+        
+        syncProgress += 1
+        sleep(syncTime)
+        
+        if myDatabaseConnection.recordsProcessed < myDatabaseConnection.recordsToChange
+        {
+            sleep(1)
+        }
+
         syncProgress += 1
         notificationCenter.post(name: NotificationCloudSyncFinished, object: nil)
     }
-    
-    func replaceWithCloudKit()
-    {
-print("Gre called - replaceWithCloudKit")
-//        progressMessage("replaceWithCloudKit Team")
-//        myCloudDB.replaceTeamInCoreData()
-//        
-//        progressMessage("replaceContractShiftsInCoreData replaceUserTeamsInCoreData")
-//        myCloudDB.replaceUserTeamsInCoreData()
-//        
-//        progressMessage("replaceDecodesInCoreData Decode")
-//        myCloudDB.replaceDecodesInCoreData()
-//        
-//        progressMessage("replaceAddressInCoreData Addresses")
-//        myCloudDB.replaceAddressInCoreData()
-//        
-//        progressMessage("replaceClientInCoreData Clients")
-//        myCloudDB.replaceClientInCoreData()
-//        
-//        progressMessage("replaceContactInCoreData Contacts")
-//        myCloudDB.replaceContactInCoreData()
-//        
-//        progressMessage("replaceDropdownsInCoreData Dropdowns")
-//        myCloudDB.replaceDropdownsInCoreData()
-//        
-//        progressMessage("replacePersonInCoreData Person")
-//        myCloudDB.replacePersonInCoreData()
-//        
-//        progressMessage("replacePersonAdditionalInfoInCoreData PersonAdditionalInfo")
-//        myCloudDB.replacePersonAdditionalInfoInCoreData()
-//        
-//        progressMessage("replacePersonAddInfoEntryInCoreData PersonAdditionalItem")
-//        myCloudDB.replacePersonAddInfoEntryInCoreData()
-//        
-//        progressMessage("replaceProjectsInCoreData Projects")
-//        myCloudDB.replaceProjectsInCoreData()
-//        
-//        progressMessage("replaceRatesInCoreData Rates")
-//        myCloudDB.replaceRatesInCoreData()
-//        
-//        progressMessage("replaceReportingMonthInCoreData ReportingMonth")
-//        myCloudDB.replaceReportingMonthInCoreData()
-//        
-//        progressMessage("replaceShiftsInCoreData Shifts")
-//        myCloudDB.replaceShiftsInCoreData()
-//        
-//        progressMessage("replaceUserRolesInCoreData UserRoles")
-//        myCloudDB.replaceUserRolesInCoreData()
-//        
-//        progressMessage("replaceContractShiftsInCoreData replaceEventTemplateInCoreData")
-//        myCloudDB.replaceEventTemplateInCoreData()
-//        
-//        progressMessage("replaceContractShiftsInCoreData replaceEventTemplateHeadInCoreData")
-//        myCloudDB.replaceEventTemplateHeadInCoreData()
-//        
-        notificationCenter.post(name: NotificationCloudSyncFinished, object: nil)
-    }
-    
+        
     func deleteAllFromCloudKit()
     {
 /*        progressMessage("deleteAllFromCloudKit Team")

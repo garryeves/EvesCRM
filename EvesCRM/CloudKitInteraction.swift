@@ -62,6 +62,7 @@ class CloudKitInteraction
     var recordCount: Int = 0
     var recordsInTable: Int = 0
     var returnUserEntry: returnUser!
+    var saveOK: Bool = true
     
     var workingCount: Int = 0
     

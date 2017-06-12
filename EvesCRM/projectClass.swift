@@ -14,6 +14,11 @@ let eventProjectType = "Event"
 let regularProjectType = "Regular"
 let projectProjectType = "Project"
 
+let alertProjectNoType = "project type"
+let alertProjectNoStartOrEnd = "project no start or end"
+let alertProjectNoStart = "project no start"
+let alertProjectNoEnd = "project no end"
+
 struct monthlyFinancialsStruct
 {
     var month: String
@@ -148,6 +153,41 @@ class projects: NSObject
         sortArrayByClient()
     }
 
+    init(teamID: Int, startWeeksAhead: Int)
+    {
+        super.init()
+        
+        let returnArray = myDatabaseConnection.getEvents(teamID: teamID, startWeeksAhead: startWeeksAhead)
+
+        for myItem in returnArray
+        {
+            let myObject = project(projectID: Int(myItem.projectID),
+                                   projectEndDate: myItem.projectEndDate! as Date,
+                                   projectName: myItem.projectName!,
+                                   projectStartDate: myItem.projectStartDate! as Date,
+                                   projectStatus: myItem.projectStatus!,
+                                   reviewFrequency: Int(myItem.reviewFrequency),
+                                   lastReviewDate: myItem.lastReviewDate! as Date,
+                                   GTDItemID: Int(myItem.areaID),
+                                   repeatInterval: Int(myItem.repeatInterval),
+                                   repeatType: myItem.repeatType!,
+                                   repeatBase: myItem.repeatBase!,
+                                   teamID: Int(myItem.teamID),
+                                   clientID: Int(myItem.clientID),
+                                   note: myItem.note!,
+                                   reviewPeriod: myItem.reviewPeriod!,
+                                   predecessor: Int(myItem.predecessor),
+                                   clientDept: myItem.clientDept!,
+                                   invoicingFrequency: myItem.invoicingFrequency!,
+                                   invoicingDay: Int(myItem.invoicingDay),
+                                   daysToPay: Int(myItem.daysToPay),
+                                   type: myItem.type!)
+            
+            
+            myProjects.append(myObject)
+        }
+    }
+
     init(query: String, teamID: Int)
     {
         super.init()
@@ -158,16 +198,16 @@ class projects: NSObject
 
         switch query
         {
-            case "project type":
+            case alertProjectNoType:
                 returnArray = myDatabaseConnection.getProjectsWithNoType(teamID: teamID)
         
-            case "project no start or end":
+            case alertProjectNoStartOrEnd:
                 returnArray = myDatabaseConnection.getProjectsWithNoStartOrEndDate(teamID: teamID)
                 
-            case "project no start":
+            case alertProjectNoStart:
                 returnArray = myDatabaseConnection.getProjectsWithNoStartDate(teamID: teamID)
                 
-            case "project no end":
+            case alertProjectNoEnd:
                 returnArray = myDatabaseConnection.getProjectsWithNoEndDate(teamID: teamID)
             
             default:
@@ -1003,6 +1043,94 @@ class project: NSObject // 10k level
     }
 }
 
+extension alerts
+{
+    func projectAlerts()
+    {
+        // check for projects with no type defined
+        
+        for myItem in projects(query: alertProjectNoType, teamID: currentUser.currentTeam!.teamID).projects
+        {
+            var projectName: String = "No name supplied"
+            
+            if myItem.projectName != ""
+            {
+                projectName = myItem.projectName
+            }
+            
+            let alertEntry = alertItem()
+            
+            alertEntry.displayText = "Contract does not have a Type assigned"
+            alertEntry.name = projectName
+            alertEntry.source = "Project"
+            alertEntry.object = myItem
+            
+            alertList.append(alertEntry)
+        }
+        
+        // check for projects with no start or end date
+        
+        for myItem in projects(query: alertProjectNoStartOrEnd, teamID: currentUser.currentTeam!.teamID).projects
+        {
+            var projectName: String = "No name supplied"
+            
+            if myItem.projectName != ""
+            {
+                projectName = myItem.projectName
+            }
+            
+            let alertEntry = alertItem()
+            alertEntry.displayText = "Contract does not have a start or end date"
+            alertEntry.name = projectName
+            alertEntry.source = "Project"
+            alertEntry.object = myItem
+            
+            alertList.append(alertEntry)
+        }
+        
+        // check for projects with no start date
+        
+        for myItem in projects(query: alertProjectNoStart, teamID: currentUser.currentTeam!.teamID).projects
+        {
+            var projectName: String = "No name supplied"
+            
+            if myItem.projectName != ""
+            {
+                projectName = myItem.projectName
+            }
+            
+            let alertEntry = alertItem()
+            alertEntry.displayText = "Contract does not have a start date"
+            alertEntry.name = projectName
+            alertEntry.source = "Project"
+            alertEntry.object = myItem
+            
+            alertList.append(alertEntry)
+        }
+        
+        // check for projects with no end date
+        
+        for myItem in projects(query: alertProjectNoEnd, teamID: currentUser.currentTeam!.teamID).projects
+        {
+            var projectName: String = "No name supplied"
+            
+            if myItem.projectName != ""
+            {
+                projectName = myItem.projectName
+            }
+            
+            let alertEntry = alertItem()
+            
+            alertEntry.displayText = "Contract does not have an end date"
+            alertEntry.name = projectName
+            alertEntry.source = "Project"
+            alertEntry.object = myItem
+            
+            alertList.append(alertEntry)
+        }
+    }
+}
+
 extension coreDatabase
 {
     func getOpenProjectsForGTDItem(_ GTDItemID: Int, teamID: Int)->[Projects]
@@ -1166,6 +1294,37 @@ extension coreDatabase
             // Set the predicate on the fetch request
             fetchRequest.predicate = predicate
         }
+        
+        let sortDescriptor = NSSortDescriptor(key: "projectStartDate", ascending: true)
+        let sortDescriptors = [sortDescriptor]
+        fetchRequest.sortDescriptors = sortDescriptors
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func getEvents(teamID: Int, startWeeksAhead: Int) -> [Projects]
+    {
+        let fetchRequest = NSFetchRequest<Projects>(entityName: "Projects")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        let tempDate = Date().add(.day, amount: startWeeksAhead * 7)
+        
+        let predicate = NSPredicate(format: "(type == \"\(eventProjectType)\") AND (projectStatus != \"Archived\") && (projectStatus != \"Deleted\") && (updateType != \"Delete\") && (teamID == \(teamID)) AND (projectStartDate <= %@)", tempDate as CVarArg)
+            
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
         
         let sortDescriptor = NSSortDescriptor(key: "projectStartDate", ascending: true)
         let sortDescriptors = [sortDescriptor]
@@ -1761,6 +1920,7 @@ extension CloudKitInteraction
                         if saveError != nil
                         {
                             NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            self.saveOK = false
                         }
                         else
                         {
@@ -1807,6 +1967,7 @@ extension CloudKitInteraction
                         if saveError != nil
                         {
                             NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            self.saveOK = false
                         }
                         else
                         {

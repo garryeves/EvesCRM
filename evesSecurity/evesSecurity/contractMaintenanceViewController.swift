@@ -340,28 +340,91 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
     
     func myPickerDidFinish(_ source: String, selectedDate:Date)
     {
+        Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(processDateChange(timer :)), userInfo: ["source": source, "selectedDate":selectedDate], repeats: false)
+    }
+    
+    func processDateChange(timer: Timer)
+    {
+        let info = timer.userInfo as! [String:Any]
+        let source = info["source"] as! String
+        let selectedDate = info["selectedDate"] as! Date
+        
         if source == "startDate"
         {
-            workingContract.projectStartDate = selectedDate
-            if workingContract.projectStartDate == getDefaultDate()
+            var boolSave: Bool = true
+            
+            if workingContract.projectEndDate != getDefaultDate()
             {
-                btnStartDate.setTitle("Set", for: .normal)
+                if selectedDate > workingContract.projectEndDate
+                {
+                    let alert = UIAlertController(title: "Contract Maintenance", message: "Start Date can not be after End Date of \(workingContract.displayProjectEndDate)", preferredStyle: .actionSheet)
+                    
+                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
+                                                  handler: { (action: UIAlertAction) -> () in
+                                                    let _ = 1
+                    }))
+                    
+                    alert.isModalInPopover = true
+                    let popover = alert.popoverPresentationController
+                    popover!.delegate = self
+                    popover!.sourceView = btnStartDate
+                    
+                    self.present(alert, animated: false, completion: nil)
+                    
+                    boolSave = false
+                }
             }
-            else
+            
+            if boolSave
             {
-                btnStartDate.setTitle(workingContract.displayProjectStartDate, for: .normal)
+                workingContract.projectStartDate = selectedDate
+                if workingContract.projectStartDate == getDefaultDate()
+                {
+                    btnStartDate.setTitle("Set", for: .normal)
+                }
+                else
+                {
+                    btnStartDate.setTitle(workingContract.displayProjectStartDate, for: .normal)
+                }
             }
         }
         else if source == "endDate"
         {
-            workingContract.projectEndDate = selectedDate
-            if workingContract.projectEndDate == getDefaultDate()
+            var boolSave: Bool = true
+            
+            if workingContract.projectStartDate != getDefaultDate()
             {
-                btnEndDate.setTitle("Set", for: .normal)
+                if selectedDate < workingContract.projectStartDate
+                {
+                    let alert = UIAlertController(title: "Contract Maintenance", message: "End Date can not be before Start Date of \(workingContract.displayProjectStartDate)", preferredStyle: .actionSheet)
+                    
+                    alert.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,
+                                                  handler: { (action: UIAlertAction) -> () in
+                                                    let _ = 1
+                    }))
+                    
+                    alert.isModalInPopover = true
+                    let popover = alert.popoverPresentationController
+                    popover!.delegate = self
+                    popover!.sourceView = btnEndDate
+                    
+                    self.present(alert, animated: false, completion: nil)
+                    
+                    boolSave = false
+                }
             }
-            else
+            
+            if boolSave
             {
-                btnEndDate.setTitle(workingContract.displayProjectEndDate, for: .normal)
+                workingContract.projectEndDate = selectedDate
+                if workingContract.projectEndDate == getDefaultDate()
+                {
+                    btnEndDate.setTitle("Set", for: .normal)
+                }
+                else
+                {
+                    btnEndDate.setTitle(workingContract.displayProjectEndDate, for: .normal)
+                }
             }
         }
     }

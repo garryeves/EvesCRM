@@ -8,7 +8,7 @@
 
 import UIKit
 
-class clientMaintenanceViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, myCommunicationDelegate, UIPopoverPresentationControllerDelegate
+class clientMaintenanceViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, myCommunicationDelegate, UIPopoverPresentationControllerDelegate, UITextViewDelegate
 {
     @IBOutlet weak var txtName: UITextField!
     @IBOutlet weak var txtNotes: UITextView!
@@ -29,7 +29,6 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
     @IBOutlet weak var lblClient: UILabel!
     @IBOutlet weak var lblGP: UILabel!
     @IBOutlet weak var btnBack: UIBarButtonItem!
-    @IBOutlet weak var btnSave: UIBarButtonItem!
     @IBOutlet weak var btnAddClient: UIBarButtonItem!
     
     var communicationDelegate: myCommunicationDelegate?
@@ -46,6 +45,7 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
         txtNotes.layer.borderWidth = 0.5
         txtNotes.layer.cornerRadius = 5.0
         txtNotes.layer.masksToBounds = true
+        txtNotes.delegate = self
         
         hideFields()
         refreshScreen()
@@ -174,31 +174,39 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath)
     {
-        if tableView == tblRates
+        if editingStyle == .delete
         {
-            if editingStyle == .delete
+            if tableView == tblRates
             {
                 ratesList.rates[indexPath.row].delete()
-                // Get row details to delete
                 ratesList = rates(clientID: selectedClient.clientID)
                 tblRates.reloadData()
+            }
+            else if tableView == tblClients
+            {
+                clientList.clients[indexPath.row].delete()
+                refreshScreen()
             }
         }
     }
 
     @IBAction func btnBack(_ sender: UIBarButtonItem)
     {
-        communicationDelegate?.refreshScreen!()
-        self.dismiss(animated: true, completion: nil)
-    }
-    
-    @IBAction func btnSave(_ sender: UIBarButtonItem)
-    {
-        selectedClient.name = txtName.text!
-        selectedClient.note = txtNotes.text!
-        selectedClient.save()
+        if txtName.isFirstResponder
+        {
+            if txtName.text != ""
+            {
+                selectedClient.name = txtName.text!
+            }
+        }
         
-        refreshScreen()
+        if txtNotes.isFirstResponder
+        {
+            selectedClient.note = txtNotes.text!
+        }
+
+        self.dismiss(animated: true, completion: nil)
+        communicationDelegate?.refreshScreen!()
     }
     
     @IBAction func btnContact(_ sender: UIButton)
@@ -247,6 +255,22 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
         self.present(rateMaintenanceEditViewControl, animated: true, completion: nil)
     }
     
+    @IBAction func txtName(_ sender: UITextField)
+    {
+        if txtName.text != ""
+        {
+            selectedClient.name = txtName.text!
+        }
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView)
+    {
+        if textView == txtNotes
+        {
+            selectedClient.note = txtNotes.text!
+        }
+    }
+    
     func hideFields()
     {
         txtName.isHidden = true
@@ -254,7 +278,6 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
         tblContracts.isHidden = true
         btnAddContract.isHidden = true
         btnContact.isHidden = true
-        btnSave.isEnabled = false
         lblContracts.isHidden = true
         lblContact.isHidden = true
         lblNote.isHidden = true
@@ -276,7 +299,6 @@ class clientMaintenanceViewController: UIViewController, UITableViewDataSource, 
         tblContracts.isHidden = false
         btnAddContract.isHidden = false
         btnContact.isHidden = false
-        btnSave.isEnabled = true
         lblContracts.isHidden = false
         lblContact.isHidden = false
         lblNote.isHidden = false

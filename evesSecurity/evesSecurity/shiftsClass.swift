@@ -10,6 +10,10 @@ import Foundation
 import CoreData
 import CloudKit
 
+let alertShiftNoPersonOrRate = "shifts no person or rate"
+let alertShiftNoPerson = "shifts no person"
+let alertShiftNoRate = "shifts no rate"
+
 struct mergedShiftList
 {
     var contract: String!
@@ -396,13 +400,13 @@ class shifts: NSObject
         
         switch query
         {
-            case "shifts no person or rate":
+            case alertShiftNoPersonOrRate:
                 returnArray = myDatabaseConnection.getShiftsNoPersonOrRate(teamID: teamID)
                 
-            case "shifts no person":
+            case alertShiftNoPerson:
                 returnArray = myDatabaseConnection.getShiftsNoPerson(teamID: teamID)
                 
-            case "shifts no rate":
+            case alertShiftNoRate:
                 returnArray = myDatabaseConnection.getShiftsNoRate(teamID: teamID)
                 
             default:
@@ -1105,6 +1109,575 @@ class shift: NSObject
     }
 }
 
+extension alerts
+{
+    func shiftAlerts()
+    {
+        // check for shifts with no person or rate
+        
+        for myItem in shifts(query: alertShiftNoPersonOrRate, teamID: currentUser.currentTeam!.teamID).shifts
+        {
+            let contractEntry = project(projectID: myItem.projectID)
+            
+            let alertEntry = alertItem()
+            
+            alertEntry.displayText = "Shift has no person or rate for \(myItem.workDateString) - \(myItem.startTimeString) - \(myItem.endTimeString)"
+            alertEntry.name = contractEntry.projectName
+            alertEntry.source = "Shift"
+            alertEntry.object = myItem
+            
+            alertList.append(alertEntry)
+        }
+        
+        // check for shifts with no person
+        
+        for myItem in shifts(query: alertShiftNoPerson, teamID: currentUser.currentTeam!.teamID).shifts
+        {
+            let contractEntry = project(projectID: myItem.projectID)
+            
+            let alertEntry = alertItem()
+            
+            alertEntry.displayText = "Shift has no person for \(myItem.workDateString) - \(myItem.startTimeString) - \(myItem.endTimeString)"
+            alertEntry.name = contractEntry.projectName
+            alertEntry.source = "Shift"
+            alertEntry.object = myItem
+            
+            alertList.append(alertEntry)
+        }
+        
+        // check for shifts with no rate
+        
+        for myItem in shifts(query: alertShiftNoRate, teamID: currentUser.currentTeam!.teamID).shifts
+        {
+            let contractEntry = project(projectID: myItem.projectID)
+            
+            let alertEntry = alertItem()
+            
+            alertEntry.displayText = "Shift has no rate for \(myItem.workDateString) - \(myItem.startTimeString) - \(myItem.endTimeString)"
+            alertEntry.name = contractEntry.projectName
+            alertEntry.source = "Shift"
+            alertEntry.object = myItem
+            
+            alertList.append(alertEntry)
+        }
+        
+        // check for events that do not have a shift 2 weeks prior to event
+
+        for myEvent in projects(teamID: currentUser.currentTeam!.teamID, startWeeksAhead: 2).projects
+        {
+            if myEvent.staff!.shifts.count == 0
+            {
+                let alertEntry = alertItem()
+                
+                alertEntry.displayText = "No Event Plan created for \(myEvent.projectName) - \(myEvent.displayProjectStartDate)"
+                alertEntry.name = myEvent.projectName
+                alertEntry.source = "Project"
+                alertEntry.object = myEvent
+                
+                alertList.append(alertEntry)
+            }
+        }
+        
+        // Check for weeks without a shift 2 weeks in advance
+        
+        // Calculate the weekending date we want to look at
+        let workingDateThisWeek = (Date().add(.day, amount: 1)).getWeekEndingDate
+        
+        if shifts(teamID: currentUser.currentTeam!.teamID, WEDate: workingDateThisWeek).shifts.count == 0
+        {
+            let alertEntry = alertItem()
+            
+            alertEntry.displayText = "No Shifts created for Week Ending \(workingDateThisWeek.formatDateToShortString)"
+            alertEntry.name = "Shifts for Week"
+            alertEntry.source = ""
+            alertEntry.object = nil
+            
+            alertList.append(alertEntry)
+        }
+
+        let workingDateNextWeek = (Date().add(.day, amount: 8)).getWeekEndingDate
+        
+        if shifts(teamID: currentUser.currentTeam!.teamID, WEDate: workingDateNextWeek).shifts.count == 0
+        {
+            let alertEntry = alertItem()
+            
+            alertEntry.displayText = "No Shifts created for Week Ending \(workingDateNextWeek.formatDateToShortString)"
+            alertEntry.name = "Shifts for Week"
+            alertEntry.source = ""
+            alertEntry.object = nil
+            
+            alertList.append(alertEntry)
+        }
+
+        let workingDate = (Date().add(.day, amount: 15)).getWeekEndingDate
+
+        if shifts(teamID: currentUser.currentTeam!.teamID, WEDate: workingDate).shifts.count == 0
+        {
+            let alertEntry = alertItem()
+            
+            alertEntry.displayText = "No Shifts created for Week Ending \(workingDate.formatDateToShortString)"
+            alertEntry.name = "Shifts for Week"
+            alertEntry.source = ""
+            alertEntry.object = nil
+            
+            alertList.append(alertEntry)
+        }
+    }
+}
+
+extension report
+{
+    func reportContractForMonth(_ contractList: projects)
+    {
+        var lastClientID: Int = -1
+        
+        for myItem in contractList.projects
+        {
+            let profit = myItem.financials[0].income - myItem.financials[0].expense
+            
+            let gp = (profit/myItem.financials[0].income)  * 100
+            
+            if myItem.financials[0].income != 0 || myItem.financials[0].expense != 0
+            {
+                let newReportLine = reportLine()
+                
+                var clientName: String = ""
+                if myItem.clientID != lastClientID
+                {
+                    let tempClient = client(clientID: myItem.clientID)
+                    clientName = tempClient.name
+                    lastClientID = myItem.clientID
+                }
+                
+                newReportLine.column1 = clientName
+                newReportLine.column2 = myItem.projectName
+                newReportLine.column3 = myItem.financials[0].hours.formatHours
+                newReportLine.column4 = myItem.financials[0].expense.formatCurrency
+                newReportLine.column5 = myItem.financials[0].income.formatCurrency
+                newReportLine.column6 = profit.formatCurrency
+                newReportLine.column7 = gp.formatPercent
+                newReportLine.sourceObject = myItem
+                
+                myLines.append(newReportLine)
+            }
+        }
+    }
+    
+    func reportWagesForMonth(month: String, year: String)
+    {
+        for myItem in people(teamID: currentUser.currentTeam!.teamID).people
+        {
+            let monthReport = myItem.getFinancials(month: month, year: year)
+            
+            if monthReport.hours != 0
+            {
+                let newReportLine = reportLine()
+                
+                newReportLine.column1 = myItem.name
+                newReportLine.column2 = monthReport.hours.formatHours
+                newReportLine.column3 = monthReport.wage.formatCurrency
+                
+                newReportLine.sourceObject = myItem
+                
+                myLines.append(newReportLine)
+            }
+        }
+    }
+    
+    func reportContractForYear(year: String)
+    {
+        var janTotalAmount: Double = 0.0
+        var febTotalAmount: Double = 0.0
+        var marTotalAmount: Double = 0.0
+        var aprTotalAmount: Double = 0.0
+        var mayTotalAmount: Double = 0.0
+        var junTotalAmount: Double = 0.0
+        var julTotalAmount: Double = 0.0
+        var augTotalAmount: Double = 0.0
+        var sepTotalAmount: Double = 0.0
+        var octTotalAmount: Double = 0.0
+        var novTotalAmount: Double = 0.0
+        var decTotalAmount: Double = 0.0
+        
+        for myClient in clients(teamID: currentUser.currentTeam!.teamID).clients
+        {
+            var janShowTotal: Bool = false
+            var febShowTotal: Bool = false
+            var marShowTotal: Bool = false
+            var aprShowTotal: Bool = false
+            var mayShowTotal: Bool = false
+            var junShowTotal: Bool = false
+            var julShowTotal: Bool = false
+            var augShowTotal: Bool = false
+            var sepShowTotal: Bool = false
+            var octShowTotal: Bool = false
+            var novShowTotal: Bool = false
+            var decShowTotal: Bool = false
+            
+            var janClientAmount: Double = 0.0
+            var febClientAmount: Double = 0.0
+            var marClientAmount: Double = 0.0
+            var aprClientAmount: Double = 0.0
+            var mayClientAmount: Double = 0.0
+            var junClientAmount: Double = 0.0
+            var julClientAmount: Double = 0.0
+            var augClientAmount: Double = 0.0
+            var sepClientAmount: Double = 0.0
+            var octClientAmount: Double = 0.0
+            var novClientAmount: Double = 0.0
+            var decClientAmount: Double = 0.0
+            
+            for myProject in myClient.projectList
+            {
+                var janShow: Bool = false
+                var febShow: Bool = false
+                var marShow: Bool = false
+                var aprShow: Bool = false
+                var mayShow: Bool = false
+                var junShow: Bool = false
+                var julShow: Bool = false
+                var augShow: Bool = false
+                var sepShow: Bool = false
+                var octShow: Bool = false
+                var novShow: Bool = false
+                var decShow: Bool = false
+                
+                myProject.loadFinancials(month: "January", year: year)
+                let janAmount = myProject.financials[0].income - myProject.financials[0].expense
+                if myProject.financials[0].income != 0 || myProject.financials[0].expense != 0
+                {
+                    janShow = true
+                }
+                
+                myProject.loadFinancials(month: "February", year: year)
+                let febAmount = myProject.financials[0].income - myProject.financials[0].expense
+                if myProject.financials[0].income != 0 || myProject.financials[0].expense != 0
+                {
+                    febShow = true
+                }
+                
+                myProject.loadFinancials(month: "March", year: year)
+                let marAmount = myProject.financials[0].income - myProject.financials[0].expense
+                if myProject.financials[0].income != 0 || myProject.financials[0].expense != 0
+                {
+                    marShow = true
+                }
+                
+                myProject.loadFinancials(month: "April", year: year)
+                let aprAmount = myProject.financials[0].income - myProject.financials[0].expense
+                if myProject.financials[0].income != 0 || myProject.financials[0].expense != 0
+                {
+                    aprShow = true
+                }
+                
+                myProject.loadFinancials(month: "May", year: year)
+                let mayAmount = myProject.financials[0].income - myProject.financials[0].expense
+                if myProject.financials[0].income != 0 || myProject.financials[0].expense != 0
+                {
+                    mayShow = true
+                }
+                
+                myProject.loadFinancials(month: "June", year: year)
+                let junAmount = myProject.financials[0].income - myProject.financials[0].expense
+                if myProject.financials[0].income != 0 || myProject.financials[0].expense != 0
+                {
+                    junShow = true
+                }
+                
+                myProject.loadFinancials(month: "July", year: year)
+                let julAmount = myProject.financials[0].income - myProject.financials[0].expense
+                if myProject.financials[0].income != 0 || myProject.financials[0].expense != 0
+                {
+                    julShow = true
+                }
+                
+                myProject.loadFinancials(month: "August", year: year)
+                let augAmount = myProject.financials[0].income - myProject.financials[0].expense
+                if myProject.financials[0].income != 0 || myProject.financials[0].expense != 0
+                {
+                    augShow = true
+                }
+                
+                myProject.loadFinancials(month: "September", year: year)
+                let sepAmount = myProject.financials[0].income - myProject.financials[0].expense
+                if myProject.financials[0].income != 0 || myProject.financials[0].expense != 0
+                {
+                    sepShow = true
+                }
+                
+                myProject.loadFinancials(month: "October", year: year)
+                let octAmount = myProject.financials[0].income - myProject.financials[0].expense
+                if myProject.financials[0].income != 0 || myProject.financials[0].expense != 0
+                {
+                    octShow = true
+                }
+                
+                myProject.loadFinancials(month: "November", year: year)
+                let novAmount = myProject.financials[0].income - myProject.financials[0].expense
+                if myProject.financials[0].income != 0 || myProject.financials[0].expense != 0
+                {
+                    novShow = true
+                }
+                
+                myProject.loadFinancials(month: "December", year: year)
+                let decAmount = myProject.financials[0].income - myProject.financials[0].expense
+                if myProject.financials[0].income != 0 || myProject.financials[0].expense != 0
+                {
+                    decShow = true
+                }
+                
+                let newReportLine = reportLine()
+                
+                let totAmount = janAmount + febAmount + marAmount + aprAmount + mayAmount + junAmount + julAmount + augAmount + sepAmount + octAmount + novAmount + decAmount
+                
+                newReportLine.column1 = myProject.projectName
+                
+                if janShow
+                {
+                    newReportLine.column2 = janAmount.formatIntString
+                    janShowTotal = true
+                }
+                
+                if febShow
+                {
+                    newReportLine.column3 = febAmount.formatIntString
+                    febShowTotal = true
+                }
+                
+                if marShow
+                {
+                    newReportLine.column4 = marAmount.formatIntString
+                    marShowTotal = true
+                }
+                
+                if aprShow
+                {
+                    newReportLine.column5 = aprAmount.formatIntString
+                    aprShowTotal = true
+                }
+                
+                if mayShow
+                {
+                    newReportLine.column6 = mayAmount.formatIntString
+                    mayShowTotal = true
+                }
+                
+                if junShow
+                {
+                    newReportLine.column7 = junAmount.formatIntString
+                    junShowTotal = true
+                }
+                
+                if julShow
+                {
+                    newReportLine.column8 = julAmount.formatIntString
+                    julShowTotal = true
+                }
+                
+                if augShow
+                {
+                    newReportLine.column9 = augAmount.formatIntString
+                    augShowTotal = true
+                }
+                
+                if sepShow
+                {
+                    newReportLine.column10 = sepAmount.formatIntString
+                    sepShowTotal = true
+                }
+                
+                if octShow
+                {
+                    newReportLine.column11 = octAmount.formatIntString
+                    octShowTotal = true
+                }
+                
+                if novShow
+                {
+                    newReportLine.column12 = novAmount.formatIntString
+                    novShowTotal = true
+                }
+                
+                if decShow
+                {
+                    newReportLine.column13 = decAmount.formatIntString
+                    decShowTotal = true
+                }
+                
+                newReportLine.column14 = totAmount.formatIntString
+                
+                newReportLine.sourceObject = myProject
+                
+                myLines.append(newReportLine)
+                
+                janClientAmount += janAmount
+                febClientAmount += febAmount
+                marClientAmount += marAmount
+                aprClientAmount += aprAmount
+                mayClientAmount += mayAmount
+                junClientAmount += junAmount
+                julClientAmount += julAmount
+                augClientAmount += augAmount
+                sepClientAmount += sepAmount
+                octClientAmount += octAmount
+                novClientAmount += novAmount
+                decClientAmount += decAmount
+                
+                janTotalAmount += janAmount
+                febTotalAmount += febAmount
+                marTotalAmount += marAmount
+                aprTotalAmount += aprAmount
+                mayTotalAmount += mayAmount
+                junTotalAmount += junAmount
+                julTotalAmount += julAmount
+                augTotalAmount += augAmount
+                sepTotalAmount += sepAmount
+                octTotalAmount += octAmount
+                novTotalAmount += novAmount
+                decTotalAmount += decAmount
+            }
+            
+            let drawLine = reportLine()
+            drawLine.drawLine = true
+            myLines.append(drawLine)
+            
+            let newReportLine = reportLine()
+            
+            let totClientAmount = janClientAmount + febClientAmount + marClientAmount + aprClientAmount + mayClientAmount + junClientAmount + julClientAmount + augClientAmount + sepClientAmount + octClientAmount + novClientAmount + decClientAmount
+            
+            newReportLine.column1 = myClient.name
+            
+            if janShowTotal
+            {
+                newReportLine.column2 = janClientAmount.formatIntString
+            }
+            
+            if febShowTotal
+            {
+                newReportLine.column3 = febClientAmount.formatIntString
+            }
+            
+            if marShowTotal
+            {
+                newReportLine.column4 = marClientAmount.formatIntString
+            }
+            
+            if aprShowTotal
+            {
+                newReportLine.column5 = aprClientAmount.formatIntString
+            }
+            
+            if mayShowTotal
+            {
+                newReportLine.column6 = mayClientAmount.formatIntString
+            }
+            
+            if junShowTotal
+            {
+                newReportLine.column7 = junClientAmount.formatIntString
+            }
+            
+            if julShowTotal
+            {
+                newReportLine.column8 = julClientAmount.formatIntString
+            }
+            
+            if augShowTotal
+            {
+                newReportLine.column9 = augClientAmount.formatIntString
+            }
+            
+            if sepShowTotal
+            {
+                newReportLine.column10 = sepClientAmount.formatIntString
+            }
+            
+            if octShowTotal
+            {
+                newReportLine.column11 = octClientAmount.formatIntString
+            }
+            
+            if novShowTotal
+            {
+                newReportLine.column12 = novClientAmount.formatIntString
+            }
+            
+            if decShowTotal
+            {
+                newReportLine.column13 = decClientAmount.formatIntString
+            }
+            
+            newReportLine.column14 = totClientAmount.formatIntString
+            
+            newReportLine.sourceObject = myClient
+            
+            myLines.append(newReportLine)
+            
+            let drawLine2 = reportLine()
+            drawLine2.drawLine = true
+            myLines.append(drawLine2)
+        }
+        
+        let newReportLine = reportLine()
+        
+        let totTotalAmount = janTotalAmount + febTotalAmount + marTotalAmount + aprTotalAmount + mayTotalAmount + junTotalAmount + julTotalAmount + augTotalAmount + sepTotalAmount + octTotalAmount + novTotalAmount + decTotalAmount
+        
+        newReportLine.column1 = "Total"
+        
+        newReportLine.column2 = janTotalAmount.formatIntString
+        newReportLine.column3 = febTotalAmount.formatIntString
+        newReportLine.column4 = marTotalAmount.formatIntString
+        newReportLine.column5 = aprTotalAmount.formatIntString
+        newReportLine.column6 = mayTotalAmount.formatIntString
+        newReportLine.column7 = junTotalAmount.formatIntString
+        newReportLine.column8 = julTotalAmount.formatIntString
+        newReportLine.column9 = augTotalAmount.formatIntString
+        newReportLine.column10 = sepTotalAmount.formatIntString
+        newReportLine.column11 = octTotalAmount.formatIntString
+        newReportLine.column12 = novTotalAmount.formatIntString
+        newReportLine.column13 = decTotalAmount.formatIntString
+        newReportLine.column14 = totTotalAmount.formatIntString
+        
+        myLines.append(newReportLine)
+    }
+    
+    func reportContractDates(_ contractList: projects)
+    {
+        var lastClientID: Int = -1
+        
+        for myItem in contractList.projects
+        {
+            let profit = myItem.financials[0].income - myItem.financials[0].expense
+            
+            let gp = (profit/myItem.financials[0].income)  * 100
+            
+            if myItem.financials[0].income != 0 || myItem.financials[0].expense != 0
+            {
+                let newReportLine = reportLine()
+                
+                var clientName: String = ""
+                if myItem.clientID != lastClientID
+                {
+                    let tempClient = client(clientID: myItem.clientID)
+                    clientName = tempClient.name
+                    lastClientID = myItem.clientID
+                }
+                
+                newReportLine.column1 = clientName
+                newReportLine.column2 = myItem.projectName
+                newReportLine.column3 = myItem.financials[0].hours.formatHours
+                newReportLine.column4 = myItem.financials[0].expense.formatCurrency
+                newReportLine.column5 = myItem.financials[0].income.formatCurrency
+                newReportLine.column6 = profit.formatCurrency
+                newReportLine.column7 = gp.formatPercent
+                newReportLine.sourceObject = myItem
+                
+                myLines.append(newReportLine)
+            }
+        }
+    }
+}
+
 extension team
 {
     var reportingMonths: [String]
@@ -1155,10 +1728,10 @@ extension team
                 {
                     case 1:
                         returnArray.append("January")
-                        
+                    
                     case 2:
                         returnArray.append("February")
-                        
+                    
                     case 3:
                         returnArray.append("March")
 
@@ -1957,7 +2530,7 @@ extension coreDatabase
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(personID == 0) AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(personID == 0) AND (rateID != 0) AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -1984,7 +2557,7 @@ extension coreDatabase
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(rateID == 0) AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(personID != 0) AND (rateID == 0) AND (teamID == \(teamID)) AND (updateType != \"Delete\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -2379,6 +2952,7 @@ print("Called deleteShifts")
                         if saveError != nil
                         {
                             NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            self.saveOK = false
                         }
                         else
                         {
@@ -2419,6 +2993,7 @@ print("Called deleteShifts")
                         if saveError != nil
                         {
                             NSLog("Error saving record: \(saveError!.localizedDescription)")
+                            self.saveOK = false
                         }
                         else
                         {
