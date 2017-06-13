@@ -575,7 +575,7 @@ class team: NSObject
         usleep(500)
     }
 
-    func populateReportsDropdown()
+    private func populateReportsDropdown()
     {
         myDatabaseConnection.saveDropdowns("Reports", dropdownValue: "Financial", teamID: myTeamID)
         usleep(500)
@@ -588,6 +588,8 @@ class team: NSObject
         let tempReport = report(teamID: myTeamID)
         tempReport.reportName = reportContractForMonth
         tempReport.subject = reportContractForMonth
+        tempReport.reportType = "Financial"
+        tempReport.systemReport = true
         tempReport.columnTitle1 = "Client"
         tempReport.columnTitle2 = "Contract"
         tempReport.columnTitle3 = "Hours"
@@ -607,6 +609,8 @@ class team: NSObject
         let tempReport2 = report(teamID: myTeamID)
         tempReport2.reportName = reportWagesForMonth
         tempReport2.subject = reportWagesForMonth
+        tempReport.reportType = "Financial"
+        tempReport.systemReport = true
         tempReport2.columnTitle1 = "Name"
         tempReport2.columnTitle2 = "Hours"
         tempReport2.columnTitle3 = "Pay"
@@ -618,6 +622,8 @@ class team: NSObject
         let tempReport3 = report(teamID: myTeamID)
         tempReport3.reportName = reportContractForYear
         tempReport3.subject = reportContractForYear
+        tempReport.reportType = "Financial"
+        tempReport.systemReport = true
         tempReport3.columnTitle1 = ""
         tempReport3.columnTitle2 = "Jan"
         tempReport3.columnTitle3 = "Feb"
@@ -652,6 +658,8 @@ class team: NSObject
         let tempReport4 = report(teamID: myTeamID)
         tempReport4.reportName = reportContractDates
         tempReport4.subject = reportContractDates
+        tempReport.reportType = "Financial"
+        tempReport.systemReport = true
         tempReport4.columnTitle1 = "Client"
         tempReport4.columnTitle2 = "Contract"
         tempReport4.columnTitle3 = "Hours"

@@ -58,11 +58,12 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     @IBOutlet weak var btnSelect2: UIButton!
     @IBOutlet weak var alertTableHeight: NSLayoutConstraint!
     @IBOutlet weak var lblAlerts: UILabel!
+    @IBOutlet weak var btnReportType: UIButton!
     
     fileprivate var contractList: projects!
     fileprivate var alertList: alerts!
     
-    fileprivate var reportList: reports = reports()
+    fileprivate var reportList: reports!
     fileprivate var displayList: [String] = Array()
     fileprivate var monthList: [String] = Array()
     
@@ -79,6 +80,8 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         
         btnSelect1.setTitle("Select", for: .normal)
         btnSelect2.setTitle("Select", for: .normal)
+        btnReportType.setTitle("Select", for: .normal)
+        btnReport.setTitle("Select", for: .normal)
         
         btnPeople.setTitle("Maintain People", for: .normal)
 
@@ -114,9 +117,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         {
             self.populateMonthList()
         }
-        
-        btnMaintainReports.isHidden = true
-        
+                
         Timer.scheduledTimer(timeInterval: 0.5, target: self, selector: #selector(self.buildReportList), userInfo: nil, repeats: false)
     }
     
@@ -138,15 +139,15 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         switch tableView
         {
             case tblData1:
-                for myItem in reportList.reports
+                if currentReport != nil
                 {
-                    if myItem.reportName == btnReport.currentTitle!
-                    {
-                        return myItem.count
-                    }
+                    return currentReport.lines.count
                 }
-            
-                return 0
+                else
+                {
+                    return 0
+                
+            }
             case tblAlerts:
                  return alertList.alertList.count
             
@@ -162,43 +163,37 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
             case tblData1:
                 let cell = tableView.dequeueReusableCell(withIdentifier:"cellData1", for: indexPath) as! contractsListItem
                 
-                for myItem in reportList.reports
+                if currentReport != nil
                 {
-                    if myItem.reportName == btnReport.currentTitle!
-                    {
-                        resetWidth(constraint: cell.constraintWidth1)
-                        resetWidth(constraint: cell.constraintWidth2)
-                        resetWidth(constraint: cell.constraintWidth3)
-                        resetWidth(constraint: cell.constraintWidth4)
-                        resetWidth(constraint: cell.constraintWidth5)
-                        resetWidth(constraint: cell.constraintWidth6)
-                        resetWidth(constraint: cell.constraintWidth7)
-                        resetWidth(constraint: cell.constraintWidth8)
-                        resetWidth(constraint: cell.constraintWidth9)
-                        resetWidth(constraint: cell.constraintWidth10)
-                        resetWidth(constraint: cell.constraintWidth11)
-                        resetWidth(constraint: cell.constraintWidth12)
-                        resetWidth(constraint: cell.constraintWidth13)
-                        resetWidth(constraint: cell.constraintWidth14)
-                        
-                        let reportEntry = myItem.lines[indexPath.row]
-                        buildReportCell(label: cell.lbl1, text: reportEntry.column1, width: myItem.columnWidth1, constraint: cell.constraintWidth1, drawLine: reportEntry.drawLine)
-                        buildReportCell(label: cell.lbl2, text: reportEntry.column2, width: myItem.columnWidth2, constraint: cell.constraintWidth2, drawLine: reportEntry.drawLine)
-                        buildReportCell(label: cell.lbl3, text: reportEntry.column3, width: myItem.columnWidth3, constraint: cell.constraintWidth3, drawLine: reportEntry.drawLine)
-                        buildReportCell(label: cell.lbl4, text: reportEntry.column4, width: myItem.columnWidth4, constraint: cell.constraintWidth4, drawLine: reportEntry.drawLine)
-                        buildReportCell(label: cell.lbl5, text: reportEntry.column5, width: myItem.columnWidth5, constraint: cell.constraintWidth5, drawLine: reportEntry.drawLine)
-                        buildReportCell(label: cell.lbl6, text: reportEntry.column6, width: myItem.columnWidth6, constraint: cell.constraintWidth6, drawLine: reportEntry.drawLine)
-                        buildReportCell(label: cell.lbl7, text: reportEntry.column7, width: myItem.columnWidth7, constraint: cell.constraintWidth7, drawLine: reportEntry.drawLine)
-                        buildReportCell(label: cell.lbl8, text: reportEntry.column8, width: myItem.columnWidth8, constraint: cell.constraintWidth8, drawLine: reportEntry.drawLine)
-                        buildReportCell(label: cell.lbl9, text: reportEntry.column9, width: myItem.columnWidth9, constraint: cell.constraintWidth9, drawLine: reportEntry.drawLine)
-                        buildReportCell(label: cell.lbl10, text: reportEntry.column10, width: myItem.columnWidth10, constraint: cell.constraintWidth10, drawLine: reportEntry.drawLine)
-                        buildReportCell(label: cell.lbl11, text: reportEntry.column11, width: myItem.columnWidth11, constraint: cell.constraintWidth11, drawLine: reportEntry.drawLine)
-                        buildReportCell(label: cell.lbl12, text: reportEntry.column12, width: myItem.columnWidth12, constraint: cell.constraintWidth12, drawLine: reportEntry.drawLine)
-                        buildReportCell(label: cell.lbl13, text: reportEntry.column13, width: myItem.columnWidth13, constraint: cell.constraintWidth13, drawLine: reportEntry.drawLine)
-                        buildReportCell(label: cell.lbl14, text: reportEntry.column14, width: myItem.columnWidth14, constraint: cell.constraintWidth14, drawLine: reportEntry.drawLine)
-                        
-                        break
-                    }
+                    resetWidth(constraint: cell.constraintWidth1)
+                    resetWidth(constraint: cell.constraintWidth2)
+                    resetWidth(constraint: cell.constraintWidth3)
+                    resetWidth(constraint: cell.constraintWidth4)
+                    resetWidth(constraint: cell.constraintWidth5)
+                    resetWidth(constraint: cell.constraintWidth6)
+                    resetWidth(constraint: cell.constraintWidth7)
+                    resetWidth(constraint: cell.constraintWidth8)
+                    resetWidth(constraint: cell.constraintWidth9)
+                    resetWidth(constraint: cell.constraintWidth10)
+                    resetWidth(constraint: cell.constraintWidth11)
+                    resetWidth(constraint: cell.constraintWidth12)
+                    resetWidth(constraint: cell.constraintWidth13)
+                    resetWidth(constraint: cell.constraintWidth14)
+                    
+                    buildReportCell(label: cell.lbl1, text: currentReport.lines[indexPath.row].column1, width: currentReport.columnWidth1, constraint: cell.constraintWidth1, drawLine: currentReport.lines[indexPath.row].drawLine)
+                    buildReportCell(label: cell.lbl2, text: currentReport.lines[indexPath.row].column2, width: currentReport.columnWidth2, constraint: cell.constraintWidth2, drawLine: currentReport.lines[indexPath.row].drawLine)
+                    buildReportCell(label: cell.lbl3, text: currentReport.lines[indexPath.row].column3, width: currentReport.columnWidth3, constraint: cell.constraintWidth3, drawLine: currentReport.lines[indexPath.row].drawLine)
+                    buildReportCell(label: cell.lbl4, text: currentReport.lines[indexPath.row].column4, width: currentReport.columnWidth4, constraint: cell.constraintWidth4, drawLine: currentReport.lines[indexPath.row].drawLine)
+                    buildReportCell(label: cell.lbl5, text: currentReport.lines[indexPath.row].column5, width: currentReport.columnWidth5, constraint: cell.constraintWidth5, drawLine: currentReport.lines[indexPath.row].drawLine)
+                    buildReportCell(label: cell.lbl6, text: currentReport.lines[indexPath.row].column6, width: currentReport.columnWidth6, constraint: cell.constraintWidth6, drawLine: currentReport.lines[indexPath.row].drawLine)
+                    buildReportCell(label: cell.lbl7, text: currentReport.lines[indexPath.row].column7, width: currentReport.columnWidth7, constraint: cell.constraintWidth7, drawLine: currentReport.lines[indexPath.row].drawLine)
+                    buildReportCell(label: cell.lbl8, text: currentReport.lines[indexPath.row].column8, width: currentReport.columnWidth8, constraint: cell.constraintWidth8, drawLine: currentReport.lines[indexPath.row].drawLine)
+                    buildReportCell(label: cell.lbl9, text: currentReport.lines[indexPath.row].column9, width: currentReport.columnWidth9, constraint: cell.constraintWidth9, drawLine: currentReport.lines[indexPath.row].drawLine)
+                    buildReportCell(label: cell.lbl10, text: currentReport.lines[indexPath.row].column10, width: currentReport.columnWidth10, constraint: cell.constraintWidth10, drawLine: currentReport.lines[indexPath.row].drawLine)
+                    buildReportCell(label: cell.lbl11, text: currentReport.lines[indexPath.row].column11, width: currentReport.columnWidth11, constraint: cell.constraintWidth11, drawLine: currentReport.lines[indexPath.row].drawLine)
+                    buildReportCell(label: cell.lbl12, text: currentReport.lines[indexPath.row].column12, width: currentReport.columnWidth12, constraint: cell.constraintWidth12, drawLine: currentReport.lines[indexPath.row].drawLine)
+                    buildReportCell(label: cell.lbl13, text: currentReport.lines[indexPath.row].column13, width: currentReport.columnWidth13, constraint: cell.constraintWidth13, drawLine: currentReport.lines[indexPath.row].drawLine)
+                    buildReportCell(label: cell.lbl14, text: currentReport.lines[indexPath.row].column14, width: currentReport.columnWidth14, constraint: cell.constraintWidth14, drawLine: currentReport.lines[indexPath.row].drawLine)
                 }
                 
                 return cell
@@ -371,11 +366,48 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     
     @IBAction func btnReport(_ sender: UIButton)
     {
+        if btnReportType.currentTitle! != "Select"
+        {
+            reportList = reports(reportType: btnReportType.currentTitle!)
+            
+            if reportList.reports.count > 0
+            {
+                displayList.removeAll()
+                
+                for myItem in reportList.reports
+                {
+                    displayList.append(myItem.reportName)
+                }
+                
+                let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+                pickerView.modalPresentationStyle = .popover
+                
+                let popover = pickerView.popoverPresentationController!
+                popover.delegate = self
+                popover.sourceView = sender
+                popover.sourceRect = sender.bounds
+                popover.permittedArrowDirections = .any
+                
+                pickerView.source = "report"
+                pickerView.delegate = self
+                pickerView.pickerValues = displayList
+                pickerView.preferredContentSize = CGSize(width: 400,height: 400)
+                
+                self.present(pickerView, animated: true, completion: nil)
+            }
+        }
+            
+        }
+    
+    @IBAction func btnReportType(_ sender: UIButton)
+    {
         displayList.removeAll()
         
-        for myItem in reportList.reports
+        displayList.append("")
+        
+        for myItem in (currentUser.currentTeam?.getDropDown(dropDownType: "Reports"))!
         {
-            displayList.append(myItem.reportName)
+            displayList.append(myItem)
         }
         
         let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
@@ -387,7 +419,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         popover.sourceRect = sender.bounds
         popover.permittedArrowDirections = .any
         
-        pickerView.source = "report"
+        pickerView.source = "Reports"
         pickerView.delegate = self
         pickerView.pickerValues = displayList
         pickerView.preferredContentSize = CGSize(width: 400,height: 400)
@@ -555,6 +587,8 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
         
         tblAlerts.reloadData()
         
+        displayReportFields()
+        
         if currentUser != nil
         {
             runReport()
@@ -592,7 +626,10 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     
     func buildReportList()
     {
-        reportList = reports()
+        if btnReportType.currentTitle! != "Select"
+        {
+            reportList = reports(reportType: btnReportType.currentTitle!)
+        }
     }
         
     func myPickerDidFinish(_ source: String, selectedItem:Int)
@@ -607,110 +644,33 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
             workingItem = selectedItem
         }
         
-        if source == "report"
+        switch source
         {
-            btnReport.setTitle(reportList.reports[workingItem].reportName, for: .normal)
-            
-            currentReport = reportList.reports[workingItem]
-            
-            switch workingItem
-            {
-                case 0:
-                    lblDropdown.text = "Month"
-                    lblYear.text = "Year"
-                    if btnDropdown.currentTitle == "Select"
-                    {
-                        tblData1.isHidden = true
-                    }
-                    else
-                    {
-                       tblData1.isHidden = false
-                    }
-                    
-                    lblDropdown.isHidden = false
-                    btnDropdown.isHidden = false
-                    btnSelect1.isHidden = true
-                    btnSelect2.isHidden = true
-                    lblYear.isHidden = false
-                    btnYear.isHidden = false
-                    
-                    populateDropdowns()
+            case "report":
+                btnReport.setTitle(reportList.reports[workingItem].reportName, for: .normal)
                 
-                case 1:
-                    lblDropdown.text = "Month"
-                    lblYear.text = "Year"
-                    if btnDropdown.currentTitle == "Select"
-                    {
-                        tblData1.isHidden = true
-                    }
-                    else
-                    {
-                        tblData1.isHidden = false
-                    }
-                    
-                    lblDropdown.isHidden = false
-                    btnDropdown.isHidden = false
-                    btnSelect1.isHidden = true
-                    btnSelect2.isHidden = true
-                    lblYear.isHidden = false
-                    btnYear.isHidden = false
-                    
-                    populateDropdowns()
+                currentReport = reportList.reports[workingItem]
                 
-                case 2:
-                    lblDropdown.text = "Month"
-                    lblYear.text = "Year"
-                    if btnDropdown.currentTitle == "Select"
-                    {
-                        tblData1.isHidden = true
-                    }
-                    else
-                    {
-                        tblData1.isHidden = false
-                    }
-                    
-                    lblDropdown.isHidden = true
-                    btnDropdown.isHidden = true
-                    btnSelect1.isHidden = true
-                    btnSelect2.isHidden = true
-                    lblYear.isHidden = false
-                    btnYear.isHidden = false
-                
-                case 3:
-                    lblDropdown.isHidden = false
-                    lblDropdown.text = "Start Date"
-                    lblYear.isHidden = false
-                    lblYear.text = "End Date"
-                    tblData1.isHidden = true
-                    btnDropdown.isHidden = true
-                    btnYear.isHidden = true
-                    btnSelect1.isHidden = false
-                    btnSelect2.isHidden = false
-                
-                default:
-                    print("unknow entry myPickerDidFinish - selectedItem - \(selectedItem)")
-            }
+                displayReportFields()
+                    //           writeDefaultInt("reportID", value: currentReportID)
 
- //           writeDefaultInt("reportID", value: currentReportID)
-
-        }
-        else if source == "dropdown"
-        {
-            btnDropdown.setTitle(displayList[workingItem], for: .normal)
+            case "dropdown":
+                btnDropdown.setTitle(displayList[workingItem], for: .normal)
+                
+                writeDefaultString("reportMonth", value: displayList[workingItem])
             
-            writeDefaultString("reportMonth", value: displayList[workingItem])
+            case "year":
+                btnYear.setTitle(displayList[workingItem], for: .normal)
+                writeDefaultInt("reportYear", value: Int(displayList[workingItem])!)
+
+            case "Reports":
+                btnReportType.setTitle(displayList[workingItem], for: .normal)
+                currentReport = nil
+                btnReport.setTitle("Select", for: .normal)
+            
+            default:
+                print("unknown entry myPickerDidFinish - source - \(source)")
         }
-        else if source == "year"
-        {
-            btnYear.setTitle(displayList[workingItem], for: .normal)
-            writeDefaultInt("reportYear", value: Int(displayList[workingItem])!)
-        }
-        else
-        {
-            print("unknown entry myPickerDidFinish - source - \(source)")
-        }
-        
-        // see if we can run the report, and if so do it
         
         runReport()
     }
@@ -746,6 +706,116 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
 
         }
         constraint.constant = width
+    }
+    
+    func displayReportFields()
+    {
+        if currentReport != nil
+        {
+            switch currentReport.reportName
+            {
+                case reportContractForMonth:
+                    lblDropdown.text = "Month"
+                    lblYear.text = "Year"
+                    if btnDropdown.currentTitle == "Select"
+                    {
+                        tblData1.isHidden = true
+                    }
+                    else
+                    {
+                        tblData1.isHidden = false
+                    }
+                    
+                    lblDropdown.isHidden = false
+                    btnDropdown.isHidden = false
+                    btnSelect1.isHidden = true
+                    btnSelect2.isHidden = true
+                    lblYear.isHidden = false
+                    btnYear.isHidden = false
+                    
+                    populateDropdowns()
+                    
+                case reportWagesForMonth:
+                    lblDropdown.text = "Month"
+                    lblYear.text = "Year"
+                    if btnDropdown.currentTitle == "Select"
+                    {
+                        tblData1.isHidden = true
+                    }
+                    else
+                    {
+                        tblData1.isHidden = false
+                    }
+                    
+                    lblDropdown.isHidden = false
+                    btnDropdown.isHidden = false
+                    btnSelect1.isHidden = true
+                    btnSelect2.isHidden = true
+                    lblYear.isHidden = false
+                    btnYear.isHidden = false
+                    
+                    populateDropdowns()
+                    
+                case reportContractForYear:
+                    lblDropdown.text = "Month"
+                    lblYear.text = "Year"
+                    if btnDropdown.currentTitle == "Select"
+                    {
+                        tblData1.isHidden = true
+                    }
+                    else
+                    {
+                        tblData1.isHidden = false
+                    }
+                    
+                    lblDropdown.isHidden = true
+                    btnDropdown.isHidden = true
+                    btnSelect1.isHidden = true
+                    btnSelect2.isHidden = true
+                    lblYear.isHidden = false
+                    btnYear.isHidden = false
+                    
+                case reportContractDates:
+                    lblDropdown.isHidden = false
+                    lblDropdown.text = "Start Date"
+                    lblYear.isHidden = false
+                    lblYear.text = "End Date"
+                    tblData1.isHidden = true
+                    btnDropdown.isHidden = true
+                    btnYear.isHidden = true
+                    btnSelect1.isHidden = false
+                    btnSelect2.isHidden = false
+                
+            default:
+                print("unknown entry displayReportFields - \(currentReport.reportName)")
+            }
+        }
+        else
+        {
+            lblDropdown.isHidden = true
+            lblDropdown.text = "Select"
+            lblYear.isHidden = true
+            lblYear.text = "End Date"
+            tblData1.isHidden = true
+            btnDropdown.isHidden = true
+            btnYear.isHidden = true
+            btnSelect1.isHidden = true
+            btnSelect2.isHidden = true
+            lbl1.isHidden = true
+            lbl2.isHidden = true
+            lbl3.isHidden = true
+            lbl4.isHidden = true
+            lbl5.isHidden = true
+            lbl6.isHidden = true
+            lbl7.isHidden = true
+            lbl8.isHidden = true
+            lbl9.isHidden = true
+            lbl10.isHidden = true
+            lbl11.isHidden = true
+            lbl12.isHidden = true
+            lbl13.isHidden = true
+            lbl14.isHidden = true
+        }
     }
     
     func resetWidth(constraint: NSLayoutConstraint)

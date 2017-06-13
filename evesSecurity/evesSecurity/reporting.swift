@@ -40,11 +40,11 @@ class reports: NSObject
 {
     fileprivate var myReports: [report] = Array()
     
-    override init()
+    init(reportType: String)
     {
         super.init()
         
-        for myReport in myDatabaseConnection.getReports(teamID: currentUser.currentTeam!.teamID)
+        for myReport in myDatabaseConnection.getReports(teamID: currentUser.currentTeam!.teamID, reportType: reportType)
         {
             let reportInstance = report(reportID: Int(myReport.reportID),
                                         reportTitle: myReport.reportTitle!,
@@ -1033,6 +1033,84 @@ class report: NSObject
         myTeamID = teamID
         myReportID = myDatabaseConnection.getNextID("Reports")
         
+    }
+    
+    init(reportID: Int)
+    {
+        super.init()
+        
+        for myRecord in myDatabaseConnection.getReportDetails(reportID)
+        {
+            myReportID = Int(myRecord.reportID)
+            myReportName = myRecord.reportTitle!
+            myReportName = myRecord.reportDescription!
+            myReportType = myRecord.reportType!
+            mySystemReport = myRecord.systemReport
+            myTeamID = Int(myRecord.teamID)
+            myPaperOrientation = myRecord.orientation!
+            myColumnTitle1 = myRecord.columnTitle1!
+            myColumnSource1 = myRecord.columnSource1!
+            myColumnWidth1 = CGFloat(myRecord.columnWidth1)
+            myColumnTitle2 = myRecord.columnTitle2!
+            myColumnSource2 = myRecord.columnSource2!
+            myColumnWidth2 = CGFloat(myRecord.columnWidth2)
+            myColumnTitle3 = myRecord.columnTitle3!
+            myColumnSource3 = myRecord.columnSource3!
+            myColumnWidth3 = CGFloat(myRecord.columnWidth3)
+            myColumnTitle4 = myRecord.columnTitle4!
+            myColumnSource4 = myRecord.columnSource4!
+            myColumnWidth4 = CGFloat(myRecord.columnWidth4)
+            myColumnTitle5 = myRecord.columnTitle5!
+            myColumnSource5 = myRecord.columnSource5!
+            myColumnWidth5 = CGFloat(myRecord.columnWidth5)
+            myColumnTitle6 = myRecord.columnTitle6!
+            myColumnSource6 = myRecord.columnSource6!
+            myColumnWidth6 = CGFloat(myRecord.columnWidth6)
+            myColumnTitle7 = myRecord.columnTitle7!
+            myColumnSource7 = myRecord.columnSource7!
+            myColumnWidth7 = CGFloat(myRecord.columnWidth7)
+            myColumnTitle8 = myRecord.columnTitle8!
+            myColumnSource8 = myRecord.columnSource8!
+            myColumnWidth8 = CGFloat(myRecord.columnWidth8)
+            myColumnTitle9 = myRecord.columnTitle9!
+            myColumnSource9 = myRecord.columnSource9!
+            myColumnWidth9 = CGFloat(myRecord.columnWidth9)
+            myColumnTitle10 = myRecord.columnTitle10!
+            myColumnSource10 = myRecord.columnSource10!
+            myColumnWidth10 = CGFloat(myRecord.columnWidth10)
+            myColumnTitle11 = myRecord.columnTitle11!
+            myColumnSource11 = myRecord.columnSource11!
+            myColumnWidth11 = CGFloat(myRecord.columnWidth11)
+            myColumnTitle12 = myRecord.columnTitle12!
+            myColumnSource12 = myRecord.columnSource12!
+            myColumnWidth12 = CGFloat(myRecord.columnWidth12)
+            myColumnTitle13 = myRecord.columnTitle13!
+            myColumnSource13 = myRecord.columnSource13!
+            myColumnWidth13 = CGFloat(myRecord.columnWidth13)
+            myColumnWidth14 = CGFloat(myRecord.columnWidth14)
+            myColumnTitle14 = myRecord.columnTitle14!
+            myColumnSource14 = myRecord.columnSource14!
+            mySelectionCriteria1 = myRecord.selectionCriteria1!
+            mySelectionCriteria2 = myRecord.selectionCriteria2!
+            mySelectionCriteria3 = myRecord.selectionCriteria3!
+            mySelectionCriteria4 = myRecord.selectionCriteria4!
+            mySortOrder1 = myRecord.sortOrder1!
+            mySortOrder2 = myRecord.sortOrder2!
+            mySortOrder3 = myRecord.sortOrder3!
+            mySortOrder4 = myRecord.sortOrder4!
+            
+            if myPaperOrientation == "Landscape"
+            {
+                paperSize = paperSizeLandscape
+            }
+            else
+            {
+                paperSize = paperSizePortrait
+            }
+            
+            createHeader()
+
+        }
     }
     
     init(name: String)
@@ -2024,13 +2102,38 @@ extension coreDatabase
         }
     }
     
+    func getReports(teamID: Int, reportType: String)->[Reports]
+    {
+        let fetchRequest = NSFetchRequest<Reports>(entityName: "Reports")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+
+        let predicate = NSPredicate(format: "(teamID == \(teamID)) AND (reportType == \"\(reportType)\") AND (updateType != \"Delete\")")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
     func getReportDetails(_ reportID: Int)->[Reports]
     {
         let fetchRequest = NSFetchRequest<Reports>(entityName: "Reports")
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(reportID == \(reportID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(reportID == \(reportID))")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
