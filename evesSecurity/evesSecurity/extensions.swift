@@ -324,4 +324,14 @@ extension Date
         
         return returnDate
     }
+    
+    var startOfDay: Date
+    {
+       // let calendar = Calendar.current
+        // get the start of the day of the selected date
+        
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(abbreviation: "UTC")!
+        return calendar.startOfDay(for: self)
+    }
 }

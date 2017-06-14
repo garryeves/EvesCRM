@@ -104,14 +104,85 @@ class ViewController: UIViewController, myCommunicationDelegate
     
     func loadMainScreen()
     {
+//        let myDateFormatter = DateFormatter()
+//        myDateFormatter.dateFormat = "dd MMM yy"
+//        
+//        let startArray = ["27 Mar 17",
+//                          "03 Apr 17",
+//                          "10 Apr 17",
+//                          "17 Apr 17",
+//                          "24 Apr 17",
+//                          "01 May 17",
+//                          "08 May 17",
+//                          "15 May 17",
+//                          "22 May 17",
+//                          "29 May 17",
+//                          "05 Jun 17",
+//                          "12 Jun 17",
+//                          "19 Jun 17",
+//                          "16 Jun 17"]
+//                          
+//        
+//        
+//        for myDate in startArray
+//        {
+//            // Monday
+//            let originalDate = myDateFormatter.date(from: myDate)!
+//            var startDate = originalDate.add(.day, amount: 1).startOfDay
+//print("Start = \(startDate)")
+//            var endDate = originalDate.add(.day, amount: 2).startOfDay
+//            
+//            let WEndDate = endDate.getWeekEndingDate
+//print("Orig = \(endDate) WE = \(WEndDate)")
+//            myDatabaseConnection.fixWorkDates(searchFrom: startDate, searchTo: endDate, newDate: startDate, newWEEndate: WEndDate)
+//            // Tuesday
+//            startDate = originalDate.add(.day, amount: 2).startOfDay
+//            endDate = originalDate.add(.day, amount: 3).startOfDay
+//            myDatabaseConnection.fixWorkDates(searchFrom: startDate, searchTo: endDate, newDate: startDate, newWEEndate: WEndDate)
+//            // Wednesday
+//            startDate = originalDate.add(.day, amount: 3).startOfDay
+//            endDate = originalDate.add(.day, amount: 4).startOfDay
+//            myDatabaseConnection.fixWorkDates(searchFrom: startDate, searchTo: endDate, newDate: startDate, newWEEndate: WEndDate)
+//            // Thursday
+//            startDate = originalDate.add(.day, amount: 4).startOfDay
+//            endDate = originalDate.add(.day, amount: 5).startOfDay
+//            myDatabaseConnection.fixWorkDates(searchFrom: startDate, searchTo: endDate, newDate: startDate, newWEEndate: WEndDate)
+//            // Friday
+//            startDate = originalDate.add(.day, amount: 5).startOfDay
+//            endDate = originalDate.add(.day, amount: 6).startOfDay
+//            myDatabaseConnection.fixWorkDates(searchFrom: startDate, searchTo: endDate, newDate: startDate, newWEEndate: WEndDate)
+//            // Saturday
+//            startDate = originalDate.add(.day, amount: 6).startOfDay
+//            endDate = originalDate.add(.day, amount: 7).startOfDay
+//            myDatabaseConnection.fixWorkDates(searchFrom: startDate, searchTo: endDate, newDate: startDate, newWEEndate: WEndDate)
+//            // Sunday
+//            startDate = originalDate.add(.day, amount: 7).startOfDay
+//            endDate = originalDate.add(.day, amount: 8).startOfDay
+//            myDatabaseConnection.fixWorkDates(searchFrom: startDate, searchTo: endDate, newDate: startDate, newWEEndate: WEndDate)
+//        }
+//        
+//        
         myDatabaseConnection.recordsProcessed = 0
         
-        DispatchQueue.global().async
+        let myReachability = Reachability()
+        if myReachability.isConnectedToNetwork()
         {
-            myDBSync.sync()
+            DispatchQueue.global().async
+            {
+                myDBSync.sync()
+            }
+            
+            Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(self.progressBarStatus), userInfo: nil, repeats: false)
         }
-        
-        Timer.scheduledTimer(timeInterval: 2, target: self, selector: #selector(self.progressBarStatus), userInfo: nil, repeats: false)
+        else
+        {
+            DispatchQueue.main.async
+            {
+                let mainViewControl = self.storyboard?.instantiateViewController(withIdentifier: "mainScreen") as! securityViewController
+                mainViewControl.communicationDelegate = self
+                self.present(mainViewControl, animated: true, completion: nil)
+            }
+        }
     }
     
     func progressBarStatus()

@@ -31,6 +31,8 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
     @IBOutlet weak var tblContacts: UITableView!
     @IBOutlet weak var tblAddresses: UITableView!
     @IBOutlet weak var tblShifts: UITableView!
+    @IBOutlet weak var lblRoster: UILabel!
+    @IBOutlet weak var switchRoster: UISwitch!
     
     var communicationDelegate: myCommunicationDelegate?
     var clientID: Int!
@@ -289,6 +291,18 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
             }
             
             refreshScreen()
+        }
+    }
+    
+    @IBAction func switchRoster(_ sender: UISwitch)
+    {
+        if sender.isOn
+        {
+            selectedPerson.canRoster = "True"
+        }
+        else
+        {
+            selectedPerson.canRoster = "False"
         }
     }
     
@@ -578,6 +592,8 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         tblContacts.isHidden = true
         tblAddresses.isHidden = true
         tblShifts.isHidden = true
+        lblRoster.isHidden = true
+        switchRoster.isHidden = true
     }
     
     func showFields()
@@ -598,6 +614,8 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         tblContacts.isHidden = false
         tblAddresses.isHidden = false
         tblShifts.isHidden = false
+        lblRoster.isHidden = false
+        switchRoster.isHidden = false
     }
     
     func keyboardWillShow(_ notification: Notification)
@@ -668,7 +686,14 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
             txtNotes.text = selectedPerson.note
             btnAddresses.setTitle("Addresses (\(selectedPerson.addresses.count))", for: .normal)
             btnContacts.setTitle("Contact Details (\(selectedPerson.contacts.count))", for: .normal)
-
+            if selectedPerson.canRoster == "True"
+            {
+                switchRoster.isOn = true
+            }
+            else
+            {
+                switchRoster.isOn = false
+            }
             tblAddInfo.reloadData()
             tblAddresses.reloadData()
             tblContacts.reloadData()

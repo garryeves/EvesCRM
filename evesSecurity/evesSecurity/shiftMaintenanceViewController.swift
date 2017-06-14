@@ -32,19 +32,8 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
     {
         if currentWeekEndingDate == nil
         {
-            // work out the current weekending date
-            let dateModifier = (7 - Date().getDayOfWeek) + 1
-            
-            if dateModifier != 7
-            {
-                currentWeekEndingDate = Date().add(.day, amount: dateModifier)
-            }
-            else
-            {
-                currentWeekEndingDate = Date()
-            }
+            currentWeekEndingDate = Date().getWeekEndingDate.startOfDay
         }
-        
         refreshScreen()
     }
     
@@ -413,22 +402,36 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
             {
                 // We have a new object, with a selected item, so we can go ahead and create a new summary row
                 
-                let tempShift = mergedShiftList(contract: contractList.projects[selectedItem - 1].projectName,
-                                                projectID: contractList.projects[selectedItem - 1].projectID,
-                                                description: nil,
-                                                WEDate: currentWeekEndingDate,
-                                                shiftLineID: nil,
-                                                monShift: nil,
-                                                tueShift: nil,
-                                                wedShift: nil,
-                                                thuShift: nil,
-                                                friShift: nil,
-                                                satShift: nil,
-                                                sunShift: nil,
-                                                type: nil
-                )
+//                let tempShift = mergedShiftList(contract: contractList.projects[selectedItem - 1].projectName,
+//                                                projectID: contractList.projects[selectedItem - 1].projectID,
+//                                                description: nil,
+//                                                WEDate: currentWeekEndingDate,
+//                                                shiftLineID: nil,
+//                                                monShift: nil,
+//                                                tueShift: nil,
+//                                                wedShift: nil,
+//                                                thuShift: nil,
+//                                                friShift: nil,
+//                                                satShift: nil,
+//                                                sunShift: nil,
+//                                                type: nil
+//                )
+//
+                // create a dummy shift entry so we can get the sort order correct
                 
-                shiftList.append(tempShift)
+                // Get the ntex shiftlineID
+                    
+                let lineID = myDatabaseConnection.getNextID("shiftLineID")
+                
+                let workDate = currentWeekEndingDate.add(.day, amount: -1)
+                
+                let newShift = shift(projectID: contractList.projects[selectedItem - 1].projectID, workDate: workDate, weekEndDate: currentWeekEndingDate, teamID: currentUser.currentTeam!.teamID, shiftLineID: lineID, type: shiftShiftType)
+                
+                newShift.startTime = getDefaultDate()
+                newShift.endTime = getDefaultDate()
+                newShift.save()
+                    
+                shiftList = shifts(teamID: currentUser.currentTeam!.teamID, WEDate: currentWeekEndingDate, type: shiftShiftType).weeklyShifts
                 
                 tblShifts.reloadData()
                 
@@ -445,7 +448,7 @@ class shiftMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopo
         
         lblWEDate.text = dateFormatter.string(from: currentWeekEndingDate)
         
-        peopleList = people(teamID: currentUser.currentTeam!.teamID)
+        peopleList = people(teamID: currentUser.currentTeam!.teamID, canRoster: true)
         shiftList = shifts(teamID: currentUser.currentTeam!.teamID, WEDate: currentWeekEndingDate, type: shiftShiftType).weeklyShifts
         
         if shiftList.count == 0

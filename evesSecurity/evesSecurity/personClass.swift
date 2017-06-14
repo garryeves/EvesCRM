@@ -45,6 +45,31 @@ class people: NSObject
         sortArray()
     }
     
+    init(teamID: Int, canRoster: Bool)
+    {
+        super.init()
+        
+        for myItem in myDatabaseConnection.getPeople(teamID: teamID, canRoster: canRoster)
+        {
+            let dob: Date = myItem.dob! as Date
+            
+            let myObject = person(personID: Int(myItem.personID),
+                                  name: myItem.name!,
+                                  dob: dob,
+                                  teamID: Int(myItem.teamID),
+                                  gender: myItem.gender!,
+                                  note: myItem.note!,
+                                  clientID: Int(myItem.clientID),
+                                  projectID: Int(myItem.projectID),
+                                  canRoster: myItem.canRoster!
+            )
+            myPeople.append(myObject)
+        }
+        sortArray()
+    }
+    
+    
+    
     init(clientID: Int)
     {
         super.init()
@@ -553,6 +578,39 @@ extension coreDatabase
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         let predicate = NSPredicate(format: "(updateType != \"Delete\") AND (teamID == \(teamID))")
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+    
+    func getPeople(teamID: Int, canRoster: Bool)->[Person]
+    {
+        let fetchRequest = NSFetchRequest<Person>(entityName: "Person")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        var predicate: NSPredicate!
+        
+        if canRoster
+        {
+            predicate = NSPredicate(format: "(updateType != \"Delete\") AND (teamID == \(teamID)) AND (canRoster == \"True\")")
+        }
+        else
+        {
+            predicate = NSPredicate(format: "(updateType != \"Delete\") AND (teamID == \(teamID))")
+        }
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

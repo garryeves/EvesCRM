@@ -39,7 +39,6 @@ class shifts: NSObject
     init(teamID: Int, WEDate: Date, type: String)
     {
         super.init()
-        
         myWeeklyShifts.removeAll()
         
         for myItem in myDatabaseConnection.getShifts(teamID: teamID, WEDate: WEDate, type: type)
@@ -1893,10 +1892,6 @@ extension person
 {
     func getFinancials(month: String, year: String) -> monthlyPersonFinancialsStruct
     {
-        // get the current calendar
-        let calendar = Calendar.current
-        // get the start of the day of the selected date
-        
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMMM yyyy"
         
@@ -1905,11 +1900,9 @@ extension person
         let dateString = "01 \(month) \(year)"
         let calculatedDate = dateFormatter.date(from: dateString)
 
- //       calendar.timeZone  = TimeZone(abbreviation: "GMT")!
-        
-        let startDate = calendar.startOfDay(for: calculatedDate!)
+        let startDate = calculatedDate!.startOfDay   //  calendar.startOfDay(for: calculatedDate!)
         // get the start of the day after the selected date
-        let endDate = calendar.date(byAdding: .month, value: 1, to: startDate)!
+        let endDate = startDate.add(.month, amount: 1) //  calendar.date(byAdding: .month, value: 1, to: startDate)!
 
         var wage: Double = 0.0
         var hours: Double = 0.0
@@ -1935,19 +1928,15 @@ extension person
     {
         tempArray.removeAll()
         
-        // get the current calendar
-        let calendar = Calendar.current
-        // get the start of the day of the selected date
-        
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMMM yyyy"
         
         let dateString = "01 \(month) \(year)"
         let calculatedDate = dateFormatter.date(from: dateString)
         
-        let startDate = calendar.startOfDay(for: calculatedDate!)
+        let startDate =  calculatedDate!.startOfDay  //  calendar.startOfDay(for: calculatedDate!)
         // get the start of the day after the selected date
-        let endDate = calendar.date(byAdding: .month, value: 1, to: startDate)!
+        let endDate = startDate.add(.month, amount: 1)    // calendar.date(byAdding: .month, value: 1, to: startDate)!
         
         let tempShifts = shifts(personID: personID, searchFrom: startDate, searchTo: endDate, teamID: currentUser.currentTeam!.teamID, type: "")
         
@@ -2031,12 +2020,10 @@ extension coreDatabase
     {
         var myItem: Shifts!
         
-        // get the current calendar
-        let calendar = Calendar.current
         // get the start of the day of the selected date
-        let adjustedWorkDate = calendar.startOfDay(for: workDate) as NSDate
+        let adjustedWorkDate = workDate.startOfDay as NSDate // calendar.startOfDay(for: workDate) as NSDate
         // get the start of the day of the selected date
-        let adjustedWEDate = calendar.startOfDay(for: weekEndDate) as NSDate
+        let adjustedWEDate = weekEndDate.startOfDay  //calendar.startOfDay(for: weekEndDate) as NSDate
         
         let myReturn = getShiftDetails(shiftID)
         
@@ -2056,7 +2043,7 @@ extension coreDatabase
             myItem.startTime = startTime as NSDate
             myItem.endTime = endTime as NSDate
             myItem.teamID = Int64(teamID)
-            myItem.weekEndDate = adjustedWEDate
+            myItem.weekEndDate = adjustedWEDate as NSDate
             myItem.status = status
             myItem.shiftLineID = Int64(shiftLineID)
             myItem.rateID = Int64(rateID)
@@ -2079,7 +2066,7 @@ extension coreDatabase
         else
         {
             myItem = myReturn[0]
-            myItem.weekEndDate = adjustedWEDate
+            myItem.weekEndDate = adjustedWEDate as NSDate
             myItem.workDate = adjustedWorkDate
             myItem.projectID = Int64(projectID)
             myItem.personID = Int64(personID)
@@ -2184,19 +2171,17 @@ extension coreDatabase
     {
         let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
         
-        // get the current calendar
-        let calendar = Calendar.current
         // get the start of the day of the selected date
-        let startDate = calendar.startOfDay(for: WEDate)
+        let startDate =  WEDate.startOfDay  // calendar.startOfDay(for: WEDate)
         // get the start of the day after the selected date
-        let endDate = calendar.date(byAdding: .day, value: 1, to: startDate)!
+        let endDate = startDate.add(.day, amount: 1)  // calendar.date(byAdding: .day, value: 1, to: startDate)!
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
         let predicate = NSPredicate(format: "(weekEndDate >= %@) AND (weekEndDate <= %@) AND (teamID == \(teamID)) AND (type == \"\(type)\") AND (updateType != \"Delete\")", startDate as CVarArg, endDate as CVarArg)
         
         
-//        let predicate = NSPredicate(format: "(weekEndDate >= %@) AND (weekEndDate <= %@) AND (teamID == \(teamID)) AND (type == \"\(type)\")", startDate as CVarArg, endDate as CVarArg)
+  //      let predicate = NSPredicate(format: "(weekEndDate >= %@) AND (weekEndDate <= %@) AND (teamID == \(teamID)) AND (type == \"\(type)\")", startDate as CVarArg, endDate as CVarArg)
         
         
         
@@ -2223,12 +2208,10 @@ extension coreDatabase
     {
         let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
         
-        // get the current calendar
-        let calendar = Calendar.current
         // get the start of the day of the selected date
-        let startDate = calendar.startOfDay(for: WEDate)
+        let startDate = WEDate.startOfDay  //  calendar.startOfDay(for: WEDate)
         // get the start of the day after the selected date
-        let endDate = calendar.date(byAdding: .day, value: 1, to: startDate)!
+        let endDate = startDate.add(.day, amount: 1)  //calendar.date(byAdding: .day, value: 1, to: startDate)!
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2267,19 +2250,15 @@ extension coreDatabase
     {
         let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
         
-        // get the current calendar
-        let calendar = Calendar.current
-        // get the start of the day of the selected date
-        
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMMM yyyy"
         
         let dateString = "01 \(month) \(year)"
         let calculatedDate = dateFormatter.date(from: dateString)
         
-        let startDate = calendar.startOfDay(for: calculatedDate!)
+        let startDate = calculatedDate!.startOfDay // calendar.startOfDay(for: calculatedDate!)
         // get the start of the day after the selected date
-        let endDate = calendar.date(byAdding: .month, value: 1, to: startDate)!
+        let endDate = startDate.add(.month, amount: 1) // calendar.date(byAdding: .month, value: 1, to: startDate)!
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2308,19 +2287,15 @@ extension coreDatabase
     {
         let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
         
-        // get the current calendar
-        let calendar = Calendar.current
-        // get the start of the day of the selected date
-        
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd MMMM yyyy"
         
         let dateString = "01 \(month) \(year)"
         let calculatedDate = dateFormatter.date(from: dateString)
         
-        let startDate = calendar.startOfDay(for: calculatedDate!)
+        let startDate = calculatedDate!.startOfDay   //    calendar.startOfDay(for: calculatedDate!)
         // get the start of the day after the selected date
-        let endDate = calendar.date(byAdding: .month, value: 1, to: startDate)!
+        let endDate = startDate.add(.month, amount: 1)  //  calendar.date(byAdding: .month, value: 1, to: startDate)!
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
@@ -2739,6 +2714,52 @@ extension coreDatabase
         }
         saveContext()
     }
+    
+    
+    
+    func fixWorkDates(searchFrom: Date, searchTo: Date, newDate: Date, newWEEndate: Date)
+    {
+        let fetchRequest = NSFetchRequest<Shifts>(entityName: "Shifts")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        print("Criteria = \(searchFrom) - \(searchTo)")
+        
+        let predicate = NSPredicate(format: "(workDate >= %@) AND (workDate < %@) AND (type == \"\(shiftShiftType)\") AND (updateType != \"Delete\")", searchFrom as CVarArg, searchTo as CVarArg)
+            
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        let sortDescriptor = NSSortDescriptor(key: "workDate", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            
+            for myItem in fetchResults
+            {
+                print("Workdate = \(myItem.workDate!) + WE Date = \(myItem.weekEndDate!)   - Changing to - \(newDate)  and WEend = \(newWEEndate)")
+             //   myItem.workDate = newDate as NSDate
+             //   myItem.weekEndDate = newWEEndate as NSDate
+                
+            }
+            
+            // saveContext()
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+        }
+    }
+    
+    
+    
+    
+    
 }
 
 extension CloudKitInteraction
