@@ -163,8 +163,8 @@ extension coreDatabase
     func saveDecodeToCloud()
     {
         DispatchQueue.global(qos: .background).async
-            {
-                myCloudDB.saveDecodesToCloudKit()
+        {
+            myCloudDB.saveDecodesToCloudKit()
         }
     }
 

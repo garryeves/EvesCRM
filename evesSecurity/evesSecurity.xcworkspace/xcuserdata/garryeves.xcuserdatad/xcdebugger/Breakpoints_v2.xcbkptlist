@@ -9,13 +9,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "evesSecurity/shiftsClass.swift"
-            timestampString = "519057346.309337"
+            filePath = "evesSecurity/evesSecurityShared.swift"
+            timestampString = "519191936.793067"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2900"
-            endingLineNumber = "2900"
-            landmarkName = "updateShiftsRecord(_:)"
+            startingLineNumber = "386"
+            endingLineNumber = "386"
+            landmarkName = "performSync()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -25,77 +25,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "evesSecurity/shiftsClass.swift"
-            timestampString = "519057346.309337"
+            filePath = "evesSecurity/userTeamsClass.swift"
+            timestampString = "519191707.095668"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2945"
-            endingLineNumber = "2945"
-            landmarkName = "saveShiftsRecordToCloudKit(_:teamID:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Shift_Dashboard.CloudKitInteraction.saveShiftsRecordToCloudKit(Shift_Dashboard.Shifts, teamID: Swift.Int) -&gt; ()"
-                  moduleName = "Shift Dashboard"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/garryeves/Documents/xcode/EvesCRM/evesSecurity/evesSecurity/shiftsClass.swift"
-                  timestampString = "519042692.862695"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "2923"
-                  endingLineNumber = "2923"
-                  offsetFromSymbolStart = "904">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Swift.Optional&lt;Swift.Array&lt;__C.CKRecord&gt;&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in Shift_Dashboard.CloudKitInteraction.saveShiftsRecordToCloudKit(Shift_Dashboard.Shifts, teamID: Swift.Int) -&gt; ()"
-                  moduleName = "Shift Dashboard"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/garryeves/Documents/xcode/EvesCRM/evesSecurity/evesSecurity/shiftsClass.swift"
-                  timestampString = "519042692.866051"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "2924"
-                  endingLineNumber = "2924"
-                  offsetFromSymbolStart = "64">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "evesSecurity/shiftsClass.swift"
-            timestampString = "519057346.309337"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2774"
-            endingLineNumber = "2774"
-            landmarkName = "CloudKitInteraction"
-            landmarkType = "4">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "evesSecurity/shiftMaintenanceViewController.swift"
-            timestampString = "519106699.453988"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "432"
-            endingLineNumber = "432"
-            landmarkName = "myPickerDidFinish(_:selectedItem:)"
+            startingLineNumber = "540"
+            endingLineNumber = "540"
+            landmarkName = "updateUserTeamsRecord(_:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -105,142 +41,14 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "evesSecurity/shiftMaintenanceViewController.swift"
-            timestampString = "519106699.454063"
+            filePath = "evesSecurity/reporting.swift"
+            timestampString = "519204130.711251"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "33"
-            endingLineNumber = "33"
-            landmarkName = "viewDidLoad()"
+            startingLineNumber = "2768"
+            endingLineNumber = "2768"
+            landmarkName = "updateReportsRecord(_:)"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "evesSecurity/shiftMaintenanceViewController.swift"
-            timestampString = "519106699.454121"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "37"
-            endingLineNumber = "37"
-            landmarkName = "viewDidLoad()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "evesSecurity/extensions.swift"
-            timestampString = "519056501.504086"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "334"
-            endingLineNumber = "334"
-            landmarkName = "startOfDay"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "evesSecurity/extensions.swift"
-            timestampString = "519056501.504144"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "335"
-            endingLineNumber = "335"
-            landmarkName = "startOfDay"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "evesSecurity/ViewController.swift"
-            timestampString = "519106699.454219"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "170"
-            endingLineNumber = "170"
-            landmarkName = "loadMainScreen()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "evesSecurity/ViewController.swift"
-            timestampString = "519106699.454287"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "179"
-            endingLineNumber = "179"
-            landmarkName = "loadMainScreen()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "evesSecurity/ViewController.swift"
-            timestampString = "519106699.454342"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "180"
-            endingLineNumber = "180"
-            landmarkName = "loadMainScreen()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Shift_Dashboard.ViewController.loadMainScreen() -&gt; ()"
-                  moduleName = "Shift Dashboard"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/garryeves/Documents/xcode/EvesCRM/evesSecurity/evesSecurity/ViewController.swift"
-                  timestampString = "519102939.672271"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "180"
-                  endingLineNumber = "180"
-                  offsetFromSymbolStart = "1080">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 () -&gt; () in Shift_Dashboard.ViewController.loadMainScreen() -&gt; ()"
-                  moduleName = "Shift Dashboard"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/garryeves/Documents/xcode/EvesCRM/evesSecurity/evesSecurity/ViewController.swift"
-                  timestampString = "519102939.675485"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "181"
-                  endingLineNumber = "181"
-                  offsetFromSymbolStart = "20">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

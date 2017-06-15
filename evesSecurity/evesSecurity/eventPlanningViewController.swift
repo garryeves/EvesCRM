@@ -120,6 +120,24 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
         {
             case tblEvents:
                 currentEvent = eventList.projects[indexPath.row]
+                
+                eventDays.removeAll()
+                eventDays.append(currentEvent.projectStartDate.add(.day, amount: -2).startOfDay)
+                eventDays.append(currentEvent.projectStartDate.add(.day, amount: -1).startOfDay)
+                eventDays.append(currentEvent.projectStartDate.startOfDay)
+                eventDays.append(currentEvent.projectStartDate.add(.day, amount: 1).startOfDay)
+                eventDays.append(currentEvent.projectStartDate.add(.day, amount: 2).startOfDay)
+                btnDate.setTitle(currentEvent.projectStartDate.formatDateToString, for: .normal)
+                if currentEvent.projectStatus != ""
+                {
+                    btnStatus.setTitle(currentEvent.projectStatus, for: .normal)
+                }
+                else
+                {
+                    btnStatus.setTitle("Select", for: .normal)
+                }
+                newRoleDate = currentEvent.projectStartDate.startOfDay
+                                
                 refreshScreen()
             
             case tblRoles:
@@ -167,11 +185,11 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
             let workDay: Date!
             if myItem.dateModifier == 0
             {
-                workDay = currentEvent.projectStartDate
+                workDay = currentEvent.projectStartDate.startOfDay
             }
             else
             {
-                workDay = currentEvent.projectStartDate.add(.day, amount: myItem.dateModifier)
+                workDay = currentEvent.projectStartDate.add(.day, amount: myItem.dateModifier).startOfDay
             }
             
             var roleCount: Int = 0
@@ -475,7 +493,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
             }
             
             btnDate.setTitle(displayList[workingItem], for: .normal)
-            newRoleDate = eventDays[workingItem]
+            newRoleDate = eventDays[workingItem].startOfDay
             
         case "status" :
             if selectedItem > 0
@@ -494,6 +512,7 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
         let WEDate = workDay.getWeekEndingDate
         
         let shiftLineID = myDatabaseConnection.getNextID("shiftLineID", saveToCloud: false)
+        
         let newShift = shift(projectID: projectID, workDate: workDay, weekEndDate: WEDate, teamID: teamID, shiftLineID: shiftLineID, type: eventShiftType, saveToCloud: saveToCloud)
         newShift.shiftDescription = shiftDescription
         newShift.startTime = startTime
@@ -600,23 +619,6 @@ class eventPlanningViewController: UIViewController, UITableViewDataSource, UITa
             }
             
             lblContractName.text = currentEvent.projectName
-            newRoleDate = currentEvent.projectStartDate
-            
-            eventDays.removeAll()
-            eventDays.append(currentEvent.projectStartDate.add(.day, amount: -2))
-            eventDays.append(currentEvent.projectStartDate.add(.day, amount: -1))
-            eventDays.append(currentEvent.projectStartDate)
-            eventDays.append(currentEvent.projectStartDate.add(.day, amount: 1))
-            eventDays.append(currentEvent.projectStartDate.add(.day, amount: 2))
-            btnDate.setTitle(currentEvent.projectStartDate.formatDateToString, for: .normal)
-            if currentEvent.projectStatus != ""
-            {
-                btnStatus.setTitle(currentEvent.projectStatus, for: .normal)
-            }
-            else
-            {
-                btnStatus.setTitle("Select", for: .normal)
-            }
             
             tblRoles.reloadData()
         }

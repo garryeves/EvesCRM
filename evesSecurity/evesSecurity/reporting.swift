@@ -108,6 +108,89 @@ class reports: NSObject
         }
     }
     
+    init(teamID: Int)
+    {
+        super.init()
+        
+        for myReport in myDatabaseConnection.getReports(teamID: currentUser.currentTeam!.teamID)
+        {
+            let reportInstance = report(reportID: Int(myReport.reportID),
+                                        reportTitle: myReport.reportTitle!,
+                                        reportDescription: myReport.reportDescription!,
+                                        reportType: myReport.reportType!,
+                                        systemReport: myReport.systemReport,
+                                        teamID: Int(myReport.teamID),
+                                        orientation: myReport.orientation!,
+                                        columnTitle1: myReport.columnTitle1!,
+                                        columnSource1: myReport.columnSource1!,
+                                        columnWidth1: myReport.columnWidth1,
+                                        columnTitle2: myReport.columnTitle2!,
+                                        columnSource2: myReport.columnSource2!,
+                                        columnWidth2: myReport.columnWidth2,
+                                        columnTitle3: myReport.columnTitle3!,
+                                        columnSource3: myReport.columnSource3!,
+                                        columnWidth3: myReport.columnWidth3,
+                                        columnTitle4: myReport.columnTitle4!,
+                                        columnSource4: myReport.columnSource4!,
+                                        columnWidth4: myReport.columnWidth4,
+                                        columnTitle5: myReport.columnTitle5!,
+                                        columnSource5: myReport.columnSource5!,
+                                        columnWidth5: myReport.columnWidth5,
+                                        columnTitle6: myReport.columnTitle6!,
+                                        columnSource6: myReport.columnSource6!,
+                                        columnWidth6: myReport.columnWidth6,
+                                        columnTitle7: myReport.columnTitle7!,
+                                        columnSource7: myReport.columnSource7!,
+                                        columnWidth7: myReport.columnWidth7,
+                                        columnTitle8: myReport.columnTitle8!,
+                                        columnSource8: myReport.columnSource8!,
+                                        columnWidth8: myReport.columnWidth8,
+                                        columnTitle9: myReport.columnTitle9!,
+                                        columnSource9: myReport.columnSource9!,
+                                        columnWidth9: myReport.columnWidth9,
+                                        columnTitle10: myReport.columnTitle10!,
+                                        columnSource10: myReport.columnSource10!,
+                                        columnWidth10: myReport.columnWidth10,
+                                        columnTitle11: myReport.columnTitle11!,
+                                        columnSource11: myReport.columnSource11!,
+                                        columnWidth11: myReport.columnWidth11,
+                                        columnTitle12: myReport.columnTitle12!,
+                                        columnSource12: myReport.columnSource12!,
+                                        columnWidth12: myReport.columnWidth12,
+                                        columnTitle13: myReport.columnTitle13!,
+                                        columnSource13: myReport.columnSource13!,
+                                        columnWidth13: myReport.columnWidth13,
+                                        columnWidth14: myReport.columnWidth14,
+                                        columnTitle14: myReport.columnTitle14!,
+                                        columnSource14: myReport.columnSource14!,
+                                        selectionCriteria1: myReport.selectionCriteria1!,
+                                        selectionCriteria2: myReport.selectionCriteria2!,
+                                        selectionCriteria3: myReport.selectionCriteria3!,
+                                        selectionCriteria4: myReport.selectionCriteria4!,
+                                        sortOrder1: myReport.sortOrder1!,
+                                        sortOrder2: myReport.sortOrder2!,
+                                        sortOrder3: myReport.sortOrder3!,
+                                        sortOrder4: myReport.sortOrder4!)
+            
+            myReports.append(reportInstance)
+        }
+        
+        if myReports.count > 1
+        {
+            myReports.sort
+            {
+                if $0.reportType == $1.reportType
+                {
+                    return $0.reportName < $1.reportName
+                }
+                else
+                {
+                    return $0.reportType < $1.reportType
+                }
+            }
+        }
+    }
+    
     var reports: [report]
     {
         get
@@ -1578,6 +1661,11 @@ class report: NSObject
                                         sortOrder3: mySortOrder3,
                                         sortOrder4: mySortOrder4)
     }
+    
+    func delete()
+    {
+        myDatabaseConnection.deleteReport(myReportID)
+    }
 }
 
 class reportShareSource: UIActivityItemProvider
@@ -2042,7 +2130,6 @@ extension coreDatabase
             myItem.sortOrder3 = sortOrder3
             myItem.sortOrder4 = sortOrder4
             myItem.orientation = orientation
-
             
             if updateType == "CODE"
             {
@@ -2064,7 +2151,7 @@ extension coreDatabase
         self.recordsProcessed += 1
     }
     
-    func deleteReports(_ reportID: Int)
+    func deleteReport(_ reportID: Int)
     {
         let myReturn = getReportDetails(reportID)
         
@@ -2084,7 +2171,7 @@ extension coreDatabase
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(teamID == \(teamID)) && (updateType != \"Delete\")")
+        let predicate = NSPredicate(format: "(teamID == \(teamID)) && (updateType != \"Delete\") AND (systemReport != \"True\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate
@@ -2736,5 +2823,6 @@ extension CloudKitInteraction
                                        sortOrder3: sortOrder3,
                                        sortOrder4: sortOrder4,
                                        updateTime: updateTime, updateType: updateType)
+        self.recordCount -= 1
     }
 }

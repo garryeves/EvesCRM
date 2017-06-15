@@ -353,7 +353,7 @@ extension DBSync
         myCloudDB.updateUserTeamsInCoreData()
         if myCloudDB.saveOK
         {
-            myDatabaseConnection.setSyncDateforTable(tableName: "UserTeams", syncDate: syncDate, updateCloud: true)
+            myDatabaseConnection.setSyncDateforTable(tableName: "UserTeams", syncDate: syncDate, updateCloud: false)
         }
         
         myCloudDB.saveOK = true

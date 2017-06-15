@@ -397,7 +397,7 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
             }
         }
             
-        }
+    }
     
     @IBAction func btnReportType(_ sender: UIButton)
     {
@@ -429,6 +429,9 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     
     @IBAction func btnMaintainReports(_ sender: UIButton)
     {
+        let reportsViewControl = reportsStoryboard.instantiateViewController(withIdentifier: "reportMaintenance") as! reportMaintenanceViewController
+        reportsViewControl.communicationDelegate = self
+        self.present(reportsViewControl, animated: true, completion: nil)
     }
     
     @IBAction func btnDropdown(_ sender: UIButton)

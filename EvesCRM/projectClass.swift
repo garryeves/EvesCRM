@@ -731,9 +731,9 @@ class project: NSObject // 10k level
         
         // Set dates to a really daft value so that it stores into the database
         
-        myProjectEndDate = getDefaultDate() as Date!
-        myProjectStartDate = getDefaultDate() as Date!
-        myLastReviewDate = getDefaultDate() as Date!
+        myProjectEndDate = Date().startOfDay
+        myProjectStartDate = Date().startOfDay
+        myLastReviewDate = Date().startOfDay
         myTeamID = teamID
         myType = type
         

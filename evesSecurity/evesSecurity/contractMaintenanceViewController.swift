@@ -191,13 +191,13 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
         
         pickerView.source = "startDate"
         pickerView.delegate = self
-        if workingContract.projectStartDate == getDefaultDate()
+        if workingContract.projectStartDate == getDefaultDate().startOfDay
         {
             pickerView.currentDate = Date()
         }
         else
         {
-            pickerView.currentDate = workingContract.projectStartDate
+            pickerView.currentDate = workingContract.projectStartDate.startOfDay
         }
         pickerView.showTimes = false
         
@@ -220,13 +220,13 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
         
         pickerView.source = "endDate"
         pickerView.delegate = self
-        if workingContract.projectEndDate == getDefaultDate()
+        if workingContract.projectEndDate.startOfDay == getDefaultDate().startOfDay
         {
             pickerView.currentDate = Date()
         }
         else
         {
-            pickerView.currentDate = workingContract.projectEndDate
+            pickerView.currentDate = workingContract.projectEndDate.startOfDay
         }
         pickerView.showTimes = false
         
@@ -353,9 +353,9 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
         {
             var boolSave: Bool = true
             
-            if workingContract.projectEndDate != getDefaultDate()
+            if workingContract.projectEndDate.startOfDay != getDefaultDate().startOfDay
             {
-                if selectedDate > workingContract.projectEndDate
+                if selectedDate.startOfDay > workingContract.projectEndDate.startOfDay
                 {
                     let alert = UIAlertController(title: "Contract Maintenance", message: "Start Date can not be after End Date of \(workingContract.displayProjectEndDate)", preferredStyle: .actionSheet)
                     
@@ -377,8 +377,8 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
             
             if boolSave
             {
-                workingContract.projectStartDate = selectedDate
-                if workingContract.projectStartDate == getDefaultDate()
+                workingContract.projectStartDate = selectedDate.startOfDay
+                if workingContract.projectStartDate.startOfDay == getDefaultDate().startOfDay
                 {
                     btnStartDate.setTitle("Set", for: .normal)
                 }
@@ -392,9 +392,9 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
         {
             var boolSave: Bool = true
             
-            if workingContract.projectStartDate != getDefaultDate()
+            if workingContract.projectStartDate.startOfDay != getDefaultDate().startOfDay
             {
-                if selectedDate < workingContract.projectStartDate
+                if selectedDate.startOfDay < workingContract.projectStartDate.startOfDay
                 {
                     let alert = UIAlertController(title: "Contract Maintenance", message: "End Date can not be before Start Date of \(workingContract.displayProjectStartDate)", preferredStyle: .actionSheet)
                     
@@ -416,8 +416,8 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
             
             if boolSave
             {
-                workingContract.projectEndDate = selectedDate
-                if workingContract.projectEndDate == getDefaultDate()
+                workingContract.projectEndDate = selectedDate.startOfDay
+                if workingContract.projectEndDate.startOfDay == getDefaultDate().startOfDay
                 {
                     btnEndDate.setTitle("Set", for: .normal)
                 }
@@ -448,7 +448,7 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
                 btnStatus.setTitle(workingContract.projectStatus, for: .normal)
             }
             
-            if workingContract.projectStartDate == getDefaultDate()
+            if workingContract.projectStartDate.startOfDay == getDefaultDate().startOfDay
             {
                 btnStartDate.setTitle("Set", for: .normal)
             }
@@ -457,7 +457,7 @@ class contractMaintenanceViewController: UIViewController, MyPickerDelegate, UIP
                 btnStartDate.setTitle(workingContract.displayProjectStartDate, for: .normal)
             }
             
-            if workingContract.projectEndDate == getDefaultDate()
+            if workingContract.projectEndDate.startOfDay == getDefaultDate().startOfDay
             {
                 btnEndDate.setTitle("Set", for: .normal)
             }

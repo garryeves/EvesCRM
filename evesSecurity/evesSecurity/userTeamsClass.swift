@@ -365,15 +365,7 @@ extension CloudKitInteraction
         waitFlag = true
         
         operation.recordFetchedBlock = { (record) in
-            while self.recordCount > 0
-            {
-                usleep(self.sleepTime)
-            }
-            
-            self.recordCount += 1
-            
             self.updateUserTeamsRecord(record)
-            self.recordCount -= 1
             
 //            usleep(self.sleepTime)
         }

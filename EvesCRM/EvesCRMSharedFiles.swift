@@ -32,6 +32,7 @@ let pickerStoryboard = UIStoryboard(name: "dropDownMenus", bundle: nil)
 let personStoryboard = UIStoryboard(name: "person", bundle: nil)
 let clientsStoryboard = UIStoryboard(name: "Clients", bundle: nil)
 let projectsStoryboard = UIStoryboard(name: "Projects", bundle: nil)
+let reportsStoryboard = UIStoryboard(name: "reports", bundle: nil)
 let shiftsStoryboard = UIStoryboard(name: "Shifts", bundle: nil)
 
 #if os(OSX)

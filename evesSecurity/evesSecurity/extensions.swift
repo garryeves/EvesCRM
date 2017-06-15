@@ -187,11 +187,11 @@ extension Date
         
         if dateModifier != 7
         {
-            return self.add(.day, amount: dateModifier)
+            return self.add(.day, amount: dateModifier).startOfDay
         }
         else
         {
-            return self
+            return self.startOfDay
         }
     }
     
