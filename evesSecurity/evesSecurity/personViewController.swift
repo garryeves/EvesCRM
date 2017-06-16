@@ -240,7 +240,15 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         {
             case tblPeople:
                 showFields()
+                if selectedPerson != nil
+                {
+                    if txtName.isFirstResponder
+                    {
+                        validateName("")
+                    }
+                }
                 selectedPerson = myPeople.people[indexPath.row]
+                
                 loadDetails()
             
             case tblAddInfo:
@@ -378,10 +386,11 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
         
         showFields()
         
-        txtName.text = ""
+        txtName.text = selectedPerson.name
         btnDOB.setTitle("Select", for: .normal)
         btnGender.setTitle("Select", for: .normal)
-        txtNotes.text = ""
+        txtNotes.text = selectedPerson.note
+        switchRoster.isOn = false
         
         tblAddInfo.reloadData()
     }
@@ -432,19 +441,18 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
     {
         if txtName.isFirstResponder
         {
-            if txtName.text != ""
-            {
-                selectedPerson.name = txtName.text!
-            }
+            validateName("exit")
         }
-        
-        if txtNotes.isFirstResponder
+        else
         {
-            selectedPerson.note = txtNotes.text!
+            if txtNotes.isFirstResponder
+            {
+                selectedPerson.note = txtNotes.text!
+            }
+            
+            self.dismiss(animated: true, completion: nil)
+            communicationDelegate?.refreshScreen!()
         }
-        
-        self.dismiss(animated: true, completion: nil)
-        communicationDelegate?.refreshScreen!()
     }
     
     @IBAction func btnImport(_ sender: UIButton)
@@ -550,9 +558,61 @@ class personViewController: UIViewController, UIPopoverPresentationControllerDel
     
     @IBAction func txtName(_ sender: UITextField)
     {
-        if txtName.text != ""
+        validateName("refresh")
+    }
+    
+    func validateName(_ postAction: String)
+    {
+        let workingPerson = selectedPerson!
+        let currentName = workingPerson.name
+        let newName = txtName.text!
+        
+        if currentName != "" && newName != currentName
         {
-            selectedPerson.name = txtName.text!
+            let alert = UIAlertController(title: "Change Name", message:
+                "Change name from \(currentName) to \(txtName.text!)", preferredStyle: UIAlertControllerStyle.alert)
+            
+            let yesOption = UIAlertAction(title: "Yes", style: UIAlertActionStyle.default, handler:  {(action: UIAlertAction) -> () in
+                workingPerson.name = newName
+                
+                if postAction == "refresh"
+                {
+                    self.refreshScreen()
+                }
+                else if postAction == "exit"
+                {
+                    self.dismiss(animated: true, completion: nil)
+                    self.communicationDelegate?.refreshScreen!()
+                }
+                else
+                {
+                    self.tblPeople.reloadData()
+                }
+            })
+            
+            let noOption = UIAlertAction(title: "No", style: UIAlertActionStyle.default, handler: {(action: UIAlertAction) -> () in
+                if postAction == "refresh"
+                {
+                    self.txtName.text! = currentName
+                }
+                else if postAction == "exit"
+                {
+                    self.dismiss(animated: true, completion: nil)
+                    self.communicationDelegate?.refreshScreen!()
+                }
+                else
+                {
+                    self.tblPeople.reloadData()
+                }
+            })
+            
+            alert.addAction(yesOption)
+            alert.addAction(noOption)
+            self.present(alert, animated: false, completion: nil)
+        }
+        else if workingPerson.name == "" && newName != ""
+        {
+            workingPerson.name = newName
         }
     }
     

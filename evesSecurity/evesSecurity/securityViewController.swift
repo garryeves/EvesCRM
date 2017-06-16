@@ -715,82 +715,236 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
     {
         if currentReport != nil
         {
-            switch currentReport.reportName
+            if currentReport.systemReport
             {
-                case reportContractForMonth:
-                    lblDropdown.text = "Month"
-                    lblYear.text = "Year"
-                    if btnDropdown.currentTitle == "Select"
-                    {
+                switch currentReport.reportName
+                {
+                    case reportContractForMonth:
+                        lblDropdown.text = "Month"
+                        lblYear.text = "Year"
+                        if btnDropdown.currentTitle == "Select"
+                        {
+                            tblData1.isHidden = true
+                        }
+                        else
+                        {
+                            tblData1.isHidden = false
+                        }
+                        
+                        lblDropdown.isHidden = false
+                        btnDropdown.isHidden = false
+                        btnSelect1.isHidden = true
+                        btnSelect2.isHidden = true
+                        lblYear.isHidden = false
+                        btnYear.isHidden = false
+                        
+                        populateDropdowns()
+                    
+                    case reportWagesForMonth:
+                        lblDropdown.text = "Month"
+                        lblYear.text = "Year"
+                        if btnDropdown.currentTitle == "Select"
+                        {
+                            tblData1.isHidden = true
+                        }
+                        else
+                        {
+                            tblData1.isHidden = false
+                        }
+                        
+                        lblDropdown.isHidden = false
+                        btnDropdown.isHidden = false
+                        btnSelect1.isHidden = true
+                        btnSelect2.isHidden = true
+                        lblYear.isHidden = false
+                        btnYear.isHidden = false
+                        
+                        populateDropdowns()
+                    
+                    case reportContractForYear:
+                        lblDropdown.text = "Month"
+                        lblYear.text = "Year"
+                        if btnDropdown.currentTitle == "Select"
+                        {
+                            tblData1.isHidden = true
+                        }
+                        else
+                        {
+                            tblData1.isHidden = false
+                        }
+                        
+                        lblDropdown.isHidden = true
+                        btnDropdown.isHidden = true
+                        btnSelect1.isHidden = true
+                        btnSelect2.isHidden = true
+                        lblYear.isHidden = false
+                        btnYear.isHidden = false
+                    
+                    case reportContractDates:
+                        lblDropdown.isHidden = false
+                        lblDropdown.text = "Start Date"
+                        lblYear.isHidden = false
+                        lblYear.text = "End Date"
                         tblData1.isHidden = true
-                    }
-                    else
-                    {
-                        tblData1.isHidden = false
-                    }
+                        btnDropdown.isHidden = true
+                        btnYear.isHidden = true
+                        btnSelect1.isHidden = false
+                        btnSelect2.isHidden = false
                     
-                    lblDropdown.isHidden = false
-                    btnDropdown.isHidden = false
-                    btnSelect1.isHidden = true
-                    btnSelect2.isHidden = true
-                    lblYear.isHidden = false
-                    btnYear.isHidden = false
-                    
-                    populateDropdowns()
-                    
-                case reportWagesForMonth:
-                    lblDropdown.text = "Month"
-                    lblYear.text = "Year"
-                    if btnDropdown.currentTitle == "Select"
-                    {
-                        tblData1.isHidden = true
-                    }
-                    else
-                    {
-                        tblData1.isHidden = false
-                    }
-                    
-                    lblDropdown.isHidden = false
-                    btnDropdown.isHidden = false
-                    btnSelect1.isHidden = true
-                    btnSelect2.isHidden = true
-                    lblYear.isHidden = false
-                    btnYear.isHidden = false
-                    
-                    populateDropdowns()
-                    
-                case reportContractForYear:
-                    lblDropdown.text = "Month"
-                    lblYear.text = "Year"
-                    if btnDropdown.currentTitle == "Select"
-                    {
-                        tblData1.isHidden = true
-                    }
-                    else
-                    {
-                        tblData1.isHidden = false
-                    }
-                    
-                    lblDropdown.isHidden = true
-                    btnDropdown.isHidden = true
-                    btnSelect1.isHidden = true
-                    btnSelect2.isHidden = true
-                    lblYear.isHidden = false
-                    btnYear.isHidden = false
-                    
-                case reportContractDates:
-                    lblDropdown.isHidden = false
-                    lblDropdown.text = "Start Date"
-                    lblYear.isHidden = false
-                    lblYear.text = "End Date"
-                    tblData1.isHidden = true
-                    btnDropdown.isHidden = true
-                    btnYear.isHidden = true
-                    btnSelect1.isHidden = false
-                    btnSelect2.isHidden = false
+                default:
+                    print("unknown entry displayReportFields - \(currentReport.reportName)")
+                }
+            }
+            else
+            {
+                lblDropdown.isHidden = true
+                lblYear.isHidden = true
+                tblData1.isHidden = true
+                btnDropdown.isHidden = true
+                btnYear.isHidden = true
+                btnSelect1.isHidden = true
+                btnSelect2.isHidden = true
                 
-            default:
-                print("unknown entry displayReportFields - \(currentReport.reportName)")
+                if currentReport.columnWidth1 > 0.0
+                {
+                    lbl1.isHidden = false
+                    lbl1.text = currentReport.columnTitle1
+                }
+                else
+                {
+                    lbl1.isHidden = true
+                }
+                
+                if currentReport.columnWidth2 > 0.0
+                {
+                    lbl2.isHidden = false
+                    lbl2.text = currentReport.columnTitle2
+                }
+                else
+                {
+                    lbl2.isHidden = true
+                }
+                
+                if currentReport.columnWidth3 > 0.0
+                {
+                    lbl3.isHidden = false
+                    lbl3.text = currentReport.columnTitle3
+                }
+                else
+                {
+                    lbl13.isHidden = true
+                }
+                
+                if currentReport.columnWidth4 > 0.0
+                {
+                    lbl4.isHidden = false
+                    lbl4.text = currentReport.columnTitle4
+                }
+                else
+                {
+                    lbl4.isHidden = true
+                }
+                
+                if currentReport.columnWidth5 > 0.0
+                {
+                    lbl5.isHidden = false
+                    lbl5.text = currentReport.columnTitle5
+                }
+                else
+                {
+                    lbl5.isHidden = true
+                }
+                
+                if currentReport.columnWidth6 > 0.0
+                {
+                    lbl6.isHidden = false
+                    lbl6.text = currentReport.columnTitle6
+                }
+                else
+                {
+                    lbl6.isHidden = true
+                }
+                
+                if currentReport.columnWidth7 > 0.0
+                {
+                    lbl7.isHidden = false
+                    lbl7.text = currentReport.columnTitle7
+                }
+                else
+                {
+                    lbl7.isHidden = true
+                }
+                
+                if currentReport.columnWidth8 > 0.0
+                {
+                    lbl8.isHidden = false
+                    lbl8.text = currentReport.columnTitle8
+                }
+                else
+                {
+                    lbl8.isHidden = true
+                }
+                
+                if currentReport.columnWidth9 > 0.0
+                {
+                    lbl9.isHidden = false
+                    lbl9.text = currentReport.columnTitle9
+                }
+                else
+                {
+                    lbl9.isHidden = true
+                }
+                
+                if currentReport.columnWidth10 > 0.0
+                {
+                    lbl10.isHidden = false
+                    lbl10.text = currentReport.columnTitle10
+                }
+                else
+                {
+                    lbl10.isHidden = true
+                }
+                
+                if currentReport.columnWidth11 > 0.0
+                {
+                    lbl11.isHidden = false
+                    lbl11.text = currentReport.columnTitle11
+                }
+                else
+                {
+                    lbl11.isHidden = true
+                }
+                
+                if currentReport.columnWidth12 > 0.0
+                {
+                    lbl12.isHidden = false
+                    lbl12.text = currentReport.columnTitle12
+                }
+                else
+                {
+                    lbl12.isHidden = true
+                }
+                
+                if currentReport.columnWidth13 > 0.0
+                {
+                    lbl13.isHidden = false
+                    lbl13.text = currentReport.columnTitle13
+                }
+                else
+                {
+                    lbl3.isHidden = true
+                }
+                
+                if currentReport.columnWidth14 > 0.0
+                {
+                    lbl14.isHidden = false
+                    lbl14.text = currentReport.columnTitle4
+                }
+                else
+                {
+                    lbl14.isHidden = true
+                }
+                
             }
         }
         else
@@ -837,44 +991,52 @@ class securityViewController: UIViewController, myCommunicationDelegate, UITable
             
             currentReport.displayWidth = tblData1.bounds.width
             
-            switch currentReport.reportName
+            if currentReport.systemReport
             {
-                case reportContractForMonth:  // Contract for month
-                    if btnDropdown.currentTitle! != "Select"
-                    {
-                        contractList = projects(teamID: currentUser.currentTeam!.teamID, includeEvents: true)
-                        
-                        contractList.loadFinancials(month: btnDropdown.currentTitle!, year: btnYear.currentTitle!)
-                        
-                        currentReport.reportContractForMonth(contractList)
-                        showReport = true
-                    }
-                
-                case reportWagesForMonth:  // Wage per person for month
-                    if btnDropdown.currentTitle! != "Select"
-                    {
-                        currentReport.reportWagesForMonth(month: btnDropdown.currentTitle!, year: btnYear.currentTitle!)
-                        showReport = true
-                    }
-                
-                case reportContractForYear:
-                    currentReport.reportContractForYear(year: btnYear.currentTitle!)
-                showReport = true
+                switch currentReport.reportName
+                {
+                    case reportContractForMonth:  // Contract for month
+                        if btnDropdown.currentTitle! != "Select"
+                        {
+                            contractList = projects(teamID: currentUser.currentTeam!.teamID, includeEvents: true)
+                            
+                            contractList.loadFinancials(month: btnDropdown.currentTitle!, year: btnYear.currentTitle!)
+                            
+                            currentReport.reportContractForMonth(contractList)
+                            showReport = true
+                        }
                     
-                case reportContractDates:
-                    if btnSelect1.currentTitle! != "Select" && btnSelect2.currentTitle! != "Select"
-                    {
-                        currentReport.subject = "Contracts between \(btnSelect1.currentTitle!) - \(btnSelect2.currentTitle!)"
-                        contractList = projects(teamID: currentUser.currentTeam!.teamID, includeEvents: true)
-                        
-                        contractList.loadFinancials(startDate: reportDate1, endDate: reportDate2)
-                        
-                        currentReport.reportContractDates(contractList)
-                        showReport = true
-                    }
+                    case reportWagesForMonth:  // Wage per person for month
+                        if btnDropdown.currentTitle! != "Select"
+                        {
+                            currentReport.reportWagesForMonth(month: btnDropdown.currentTitle!, year: btnYear.currentTitle!)
+                            showReport = true
+                        }
+                    
+                    case reportContractForYear:
+                        currentReport.reportContractForYear(year: btnYear.currentTitle!)
+                    showReport = true
+                    
+                    case reportContractDates:
+                        if btnSelect1.currentTitle! != "Select" && btnSelect2.currentTitle! != "Select"
+                        {
+                            currentReport.subject = "Contracts between \(btnSelect1.currentTitle!) - \(btnSelect2.currentTitle!)"
+                            contractList = projects(teamID: currentUser.currentTeam!.teamID, includeEvents: true)
+                            
+                            contractList.loadFinancials(startDate: reportDate1, endDate: reportDate2)
+                            
+                            currentReport.reportContractDates(contractList)
+                            showReport = true
+                        }
 
-                default:
-                    print("unknow entry myPickerDidFinish - selectedItem - \(currentReport.reportName)")
+                    default:
+                        print("unknown entry runReport - selectedItem - \(currentReport.reportName)")
+                }
+            }
+            else
+            {
+                currentReport.run()
+                showReport = true
             }
         }
         

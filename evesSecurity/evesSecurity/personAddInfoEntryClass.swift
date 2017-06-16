@@ -28,6 +28,34 @@ class personAddInfoEntries: NSObject
         }
     }
     
+    init(addInfoName: String)
+    {
+        for myItem in myDatabaseConnection.getPersonAddInfoEntryList(addInfoName)
+        {
+            let myObject = personAddInfoEntry(addInfoName: myItem.addInfoName!,
+                                              dateValue: myItem.dateValue! as Date,
+                                              personID: Int(myItem.personID),
+                                              stringValue: myItem.stringValue!,
+                                              teamID: Int(myItem.teamID)
+            )
+            myPersonAddEntries.append(myObject)
+        }
+    }
+    
+    init(addInfoName: String, searchString: String)
+    {
+        for myItem in myDatabaseConnection.getPersonAddInfoEntryList(addInfoName, searchString: searchString)
+        {
+            let myObject = personAddInfoEntry(addInfoName: myItem.addInfoName!,
+                                              dateValue: myItem.dateValue! as Date,
+                                              personID: Int(myItem.personID),
+                                              stringValue: myItem.stringValue!,
+                                              teamID: Int(myItem.teamID)
+            )
+            myPersonAddEntries.append(myObject)
+        }
+    }
+    
     var personAddEntries: [personAddInfoEntry]
     {
         get
@@ -228,6 +256,40 @@ extension coreDatabase
         saveContext()
     }
     
+    func getPersonAddInfoEntryList(_ addInfoName: String, searchString: String = "")->[PersonAddInfoEntry]
+    {
+        let fetchRequest = NSFetchRequest<PersonAddInfoEntry>(entityName: "PersonAddInfoEntry")
+        
+        // Create a new predicate that filters out any object that
+        // doesn't have a title of "Best Language" exactly.
+        
+        var predicate: NSPredicate!
+        
+        if searchString == ""
+        {
+            predicate = NSPredicate(format: "(addInfoName == \"\(addInfoName)\") AND (teamID == \(currentUser.currentTeam!.teamID)) AND (updateType != \"Delete\")")
+        }
+        else
+        {
+            predicate = NSPredicate(format: "(addInfoName == \"\(addInfoName)\") AND (stringValue == \"\(searchString)\") AND (teamID == \(currentUser.currentTeam!.teamID)) AND (updateType != \"Delete\")")
+        }
+        
+        // Set the predicate on the fetch request
+        fetchRequest.predicate = predicate
+        
+        // Execute the fetch request, and cast the results to an array of LogItem objects
+        do
+        {
+            let fetchResults = try objectContext.fetch(fetchRequest)
+            return fetchResults
+        }
+        catch
+        {
+            print("Error occurred during execution: \(error)")
+            return []
+        }
+    }
+
     func getPersonAddInfoEntryForPerson(_ personID: Int)->[PersonAddInfoEntry]
     {
         let fetchRequest = NSFetchRequest<PersonAddInfoEntry>(entityName: "PersonAddInfoEntry")
@@ -251,8 +313,6 @@ extension coreDatabase
             return []
         }
     }
-
-    
     func getPersonAddInfoEntryDetails(_ addInfoName: String, personID: Int)->[PersonAddInfoEntry]
     {
         let fetchRequest = NSFetchRequest<PersonAddInfoEntry>(entityName: "PersonAddInfoEntry")

@@ -19,6 +19,8 @@ let reportContractForYear = "Contract Profit for Year"
 let reportEventPlan = "Event Plan"
 let reportContractDates = "Contract between Dates"
 
+let reportPeopleType = "People"
+
 let shareExclutionArray = [ UIActivityType.addToReadingList,
                             //UIActivityType.airDrop,
                             UIActivityType.assignToContact,
@@ -280,6 +282,8 @@ class report: NSObject
     fileprivate var leftSide: CGFloat = 50
     fileprivate var myDisplayWidth: CGFloat = 0.0
     fileprivate var myTeamID: Int = 0
+    fileprivate var myFileCriteria1: String = ""
+    fileprivate var myFileCriteria2: String = ""
     
     var columnWidth1: CGFloat
     {
@@ -892,6 +896,7 @@ class report: NSObject
         set
         {
             mySelectionCriteria1 = newValue
+            myFileCriteria1 = ""
         }
     }
     
@@ -916,6 +921,7 @@ class report: NSObject
         set
         {
             mySelectionCriteria3 = newValue
+            myFileCriteria2 = ""
         }
     }
     
@@ -1109,6 +1115,103 @@ class report: NSObject
         {
             myDisplayWidth = newValue
         }
+    }
+    
+    var showCriteria1: Bool
+    {
+        var retVal: Bool = false
+        
+        if myReportType == ""
+        {
+            retVal = false
+        }
+        else if mySelectionCriteria1 == ""
+        {
+            retVal = false
+        }
+        else if myReportType == reportPeopleType
+        {
+            for myItem in personAdditionalInfos(teamID: currentUser.currentTeam!.teamID).personAdditionalInfos
+            {
+                if myItem.addInfoName == mySelectionCriteria1
+                {
+                    if myItem.addInfoType == perInfoText || myItem.addInfoType == perInfoYesNo
+                    {
+                        retVal = true
+                    }
+                    else
+                    {
+                        retVal = false
+                    }
+                    myFileCriteria1 = myItem.addInfoType
+                    
+                    break
+                }
+            }
+        }
+        else
+        {
+            retVal = false
+        }
+        
+        return retVal
+    }
+    
+    var showCriteria2: Bool
+    {
+        var retVal: Bool = false
+        
+        if myReportType == ""
+        {
+            retVal = false
+        }
+        else if mySelectionCriteria3 == ""
+        {
+            retVal = false
+        }
+        else if myReportType == reportPeopleType
+        {
+            for myItem in personAdditionalInfos(teamID: currentUser.currentTeam!.teamID).personAdditionalInfos
+            {
+                if myItem.addInfoName == mySelectionCriteria3
+                {
+                    if myItem.addInfoType == perInfoText || myItem.addInfoType == perInfoYesNo
+                    {
+                        retVal = true
+                    }
+                    else
+                    {
+                        retVal = false
+                    }
+                    myFileCriteria2 = myItem.addInfoType
+                    break
+                }
+            }
+        }
+        else
+        {
+            retVal = false
+        }
+        
+        return retVal
+    }
+    
+    var criteriaType1: String
+    {
+        if myFileCriteria1 == ""
+        {
+            let _ = showCriteria1
+        }
+        return myFileCriteria1
+    }
+    
+    var criteriaType2: String
+    {
+        if myFileCriteria2 == ""
+        {
+            let _ = showCriteria2
+        }
+        return myFileCriteria2
     }
     
     init(teamID: Int)
@@ -1666,6 +1769,184 @@ class report: NSObject
     {
         myDatabaseConnection.deleteReport(myReportID)
     }
+    
+    func run()
+    {
+        // Execute the query associated with the report, and run it
+        myLines.removeAll()
+        
+        if reportType == reportPeopleType
+        {
+            if mySelectionCriteria1 != ""
+            {
+                for myItem in personAdditionalInfos(teamID: currentUser.currentTeam!.teamID).personAdditionalInfos
+                {
+                    if myItem.addInfoName == mySelectionCriteria1
+                    {
+                        var dataList: personAddInfoEntries!
+                        
+                        if mySelectionCriteria2 == ""
+                        {
+                            dataList = personAddInfoEntries(addInfoName: myItem.addInfoName)
+                        }
+                        else
+                        {
+                            dataList = personAddInfoEntries(addInfoName: myItem.addInfoName, searchString: mySelectionCriteria2)
+                        }
+//                        
+                        for myDataItem in dataList.personAddEntries
+                        {
+                            let myPerson = person(personID: myDataItem.personID)
+                            
+                            let newLine = reportLine()
+                            
+                            newLine.column1 = myPerson.name
+                            if myItem.addInfoType == perInfoDate
+                            {
+                                newLine.column2 = myDataItem.dateString
+                            }
+                            else
+                            {
+                                newLine.column2 = myDataItem.stringValue
+                            }
+                            newLine.column3 = ""
+                            
+                            if criteriaType1 == perInfoDate
+                            {
+                                newLine.date = myDataItem.dateValue
+                            }
+                            
+                            myLines.append(newLine)
+                        }
+                        break
+                    }
+                }
+            }
+        }
+        
+        if myLines.count > 0
+        {
+            // Sorting
+            
+            if mySortOrder1 != ""
+            {
+                // Apply a sort order
+                
+                if myReportType == reportPeopleType
+                {
+                    if mySortOrder1 == "Name"
+                    {
+                        if mySortOrder2 == "Ascending"
+                        {
+                            myLines.sort
+                            {
+                                // Because workdate has time it throws everything out
+                                if $0.column1 == $1.column1
+                                {
+                                    if criteriaType1 == perInfoDate
+                                    {
+                                        return $0.date < $1.date
+                                    }
+                                    else
+                                    {
+                                        return $0.column2 < $1.column2
+                                    }
+                                }
+                                else
+                                {
+                                    return $0.column1 < $1.column1
+                                }
+                            }
+                        }
+                        else
+                        {
+                            myLines.sort
+                            {
+                                // Because workdate has time it throws everything out
+                                if $0.column1 == $1.column1
+                                {
+                                    if criteriaType1 == perInfoDate
+                                    {
+                                        return $0.date < $1.date
+                                    }
+                                    else
+                                    {
+                                        return $0.column2 < $1.column2
+                                    }
+                                }
+                                else
+                                {
+                                    return $0.column1 > $1.column1
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if mySortOrder2 == "Ascending"
+                        {
+                            myLines.sort
+                            {
+                                // Because workdate has time it throws everything out
+                                
+                                if criteriaType1 == perInfoDate
+                                {
+                                    if $0.date == $1.date
+                                    {
+                                        return $0.column1 < $1.column1
+                                    }
+                                    else
+                                    {
+                                        return $0.date < $1.date
+                                    }
+                                }
+                                else
+                                {
+                                    if $0.column2 == $1.column2
+                                    {
+                                        return $0.column1 < $1.column1
+                                    }
+                                    else
+                                    {
+                                        return $0.column2 < $1.column2
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            myLines.sort
+                            {
+                                // Because workdate has time it throws everything out
+                                if criteriaType1 == perInfoDate
+                                {
+                                    if $0.date == $1.date
+                                    {
+                                        return $0.column1 < $1.column1
+                                    }
+                                    else
+                                    {
+                                        return $0.date > $1.date
+                                    }
+                                }
+                                else
+                                {
+                                    if $0.column2 == $1.column2
+                                    {
+                                        return $0.column1 < $1.column1
+                                    }
+                                    else
+                                    {
+                                        return $0.column2 > $1.column2
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 class reportShareSource: UIActivityItemProvider
@@ -1728,6 +2009,7 @@ class reportLine: NSObject
     fileprivate var mySourceObject: Any!
     fileprivate var myDrawLine: Bool = false
     fileprivate var myLineColour: UIColor = UIColor.black
+    fileprivate var myDateValue: Date!
 
     var column1: String
     {
@@ -1930,6 +2212,18 @@ class reportLine: NSObject
         set
         {
             myLineColour = newValue
+        }
+    }
+    
+    var date: Date
+    {
+        get
+        {
+            return myDateValue
+        }
+        set
+        {
+            myDateValue = newValue
         }
     }
 }
@@ -2171,7 +2465,7 @@ extension coreDatabase
         
         // Create a new predicate that filters out any object that
         // doesn't have a title of "Best Language" exactly.
-        let predicate = NSPredicate(format: "(teamID == \(teamID)) && (updateType != \"Delete\") AND (systemReport != \"True\")")
+        let predicate = NSPredicate(format: "(teamID == \(teamID)) && (updateType != \"Delete\") AND (systemReport == \"False\")")
         
         // Set the predicate on the fetch request
         fetchRequest.predicate = predicate

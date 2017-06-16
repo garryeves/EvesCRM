@@ -161,7 +161,8 @@ class ViewController: UIViewController, myCommunicationDelegate
 //            myDatabaseConnection.fixWorkDates(searchFrom: startDate, searchTo: endDate, newDate: startDate, newWEEndate: WEndDate)
 //        }
 //        
-//        
+//    
+
         myDatabaseConnection.recordsProcessed = 0
         
         let myReachability = Reachability()

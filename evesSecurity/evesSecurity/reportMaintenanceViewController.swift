@@ -8,10 +8,9 @@
 
 import UIKit
 
-class reportMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopoverPresentationControllerDelegate
+class reportMaintenanceViewController: UIViewController, MyPickerDelegate, UIPopoverPresentationControllerDelegate, UITableViewDataSource, UITableViewDelegate
 {
     @IBOutlet weak var tblReports: UITableView!
-    @IBOutlet weak var btnAdd: UIBarButtonItem!
     @IBOutlet weak var lblType: UILabel!
     @IBOutlet weak var lblName: UILabel!
     @IBOutlet weak var lblReportingCriteria: UILabel!
@@ -19,12 +18,16 @@ class reportMaintenanceViewController: UIViewController, MyPickerDelegate, UIPop
     @IBOutlet weak var btnType: UIButton!
     @IBOutlet weak var btnSortType: UIButton!
     @IBOutlet weak var btnReport1: UIButton!
-    @IBOutlet weak var btnReport2: UIButton!
     @IBOutlet weak var btnReport3: UIButton!
-    @IBOutlet weak var btnReport4: UIButton!
     @IBOutlet weak var txtName: UITextField!
     @IBOutlet weak var tblResults: UITableView!
     @IBOutlet weak var btnSort: UIButton!
+    @IBOutlet weak var lblCriteria1: UILabel!
+    @IBOutlet weak var lblCriteria2: UILabel!
+    @IBOutlet weak var txtCriteria1: UITextField!
+    @IBOutlet weak var txtCriteria2: UITextField!
+    @IBOutlet weak var btnCriteria1: UIButton!
+    @IBOutlet weak var btnCriteria2: UIButton!
     
     var communicationDelegate: myCommunicationDelegate?
     fileprivate var currentReport: report!
@@ -36,6 +39,8 @@ class reportMaintenanceViewController: UIViewController, MyPickerDelegate, UIPop
     {
         btnType.setTitle("Select", for: .normal)
         hideFields()
+        
+        refreshScreen()
     }
     
     override func didReceiveMemoryWarning() {
@@ -86,18 +91,9 @@ class reportMaintenanceViewController: UIViewController, MyPickerDelegate, UIPop
             case tblResults:
                 let cell = tableView.dequeueReusableCell(withIdentifier:"cellResult", for: indexPath) as! resultListItem
                 
-//                cell.lblRole.text = shiftList[indexPath.row].shiftDescription
-//                cell.lblDate.text = shiftList[indexPath.row].workDateShortString
-//                cell.btnRate.setTitle(shiftList[indexPath.row].rateDescription, for: .normal)
-//                cell.btnPerson.setTitle(shiftList[indexPath.row].personName, for: .normal)
-//                cell.btnStart.setTitle(shiftList[indexPath.row].startTimeString, for: .normal)
-//                cell.btnEnd.setTitle(shiftList[indexPath.row].endTimeString, for: .normal)
-//
-//                cell.mainView = self
-//                cell.sourceView = cell
-//                cell.shiftRecord = shiftList[indexPath.row]
-//                cell.peopleList = peopleList
-//                cell.rateList = rateList
+                cell.lblData1.text = currentReport.lines[indexPath.row].column1
+                cell.lblData2.text = currentReport.lines[indexPath.row].column2
+                cell.lblData3.text = currentReport.lines[indexPath.row].column3
                 
                 return cell
             
@@ -111,6 +107,15 @@ class reportMaintenanceViewController: UIViewController, MyPickerDelegate, UIPop
         switch tableView
         {
             case tblReports:
+                if currentReport != nil
+                {
+                    if txtName.text! != currentReport.reportName
+                    {
+                        currentReport.reportName = txtName.text!
+                        currentReport.save()
+                    }
+                }
+                
                 currentReport = reportList.reports[indexPath.row]
                 
                 refreshScreen()
@@ -137,7 +142,7 @@ class reportMaintenanceViewController: UIViewController, MyPickerDelegate, UIPop
     {
         if currentReport != nil
         {
-            if txtName.text! != ""
+            if txtName.text! != currentReport.reportName
             {
                 currentReport.reportName = txtName.text!
                 currentReport.save()
@@ -145,10 +150,6 @@ class reportMaintenanceViewController: UIViewController, MyPickerDelegate, UIPop
         }
         communicationDelegate?.refreshScreen!()
         self.dismiss(animated: true, completion: nil)
-    }
-    
-    @IBAction func btnAdd(_ sender: UIBarButtonItem)
-    {
     }
     
     @IBAction func btnType(_ sender: UIButton)
@@ -183,7 +184,6 @@ class reportMaintenanceViewController: UIViewController, MyPickerDelegate, UIPop
     {
         displayList.removeAll()
         
-        displayList.append("")
         displayList.append("Ascending")
         displayList.append("Descending")
         
@@ -206,7 +206,17 @@ class reportMaintenanceViewController: UIViewController, MyPickerDelegate, UIPop
     
     @IBAction func btnSort(_ sender: UIButton)
     {
-        populatePeopleFields()
+        displayList.removeAll()
+        
+        displayList.append("Name")
+        
+        if currentReport != nil
+        {
+            if currentReport.selectionCriteria1 != ""
+            {
+                displayList.append(currentReport.selectionCriteria1)
+            }
+        }
         
         let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
         pickerView.modalPresentationStyle = .popover
@@ -245,20 +255,14 @@ class reportMaintenanceViewController: UIViewController, MyPickerDelegate, UIPop
             case btnReport1:
                 fieldType = "btnReport1"
             
-            case btnReport2:
-                fieldType = "btnReport2"
-            
             case btnReport3:
                 fieldType = "btnReport3"
-            
-            case btnReport4:
-                fieldType = "btnReport4"
             
             default:
                 print("Report maintenance btnReport - hit default - \(sender)")
         }
         
-        if currentReport.reportType == "People"
+        if currentReport.reportType == reportPeopleType
         {
             populatePeopleFields()
             
@@ -280,6 +284,37 @@ class reportMaintenanceViewController: UIViewController, MyPickerDelegate, UIPop
         }
     }
     
+    @IBAction func btnCriteria(_ sender: UIButton)
+    {
+        displayList.removeAll()
+        
+        displayList.append("Yes")
+        displayList.append("No")
+        
+        let pickerView = pickerStoryboard.instantiateViewController(withIdentifier: "pickerView") as! PickerViewController
+        pickerView.modalPresentationStyle = .popover
+        
+        let popover = pickerView.popoverPresentationController!
+        popover.delegate = self
+        popover.sourceView = sender
+        popover.sourceRect = sender.bounds
+        popover.permittedArrowDirections = .any
+        
+        if sender == btnCriteria1
+        {
+            pickerView.source = "btnCriteria1"
+        }
+        else
+        {
+            pickerView.source = "btnCriteria2"
+        }
+        pickerView.delegate = self
+        pickerView.pickerValues = displayList
+        pickerView.preferredContentSize = CGSize(width: 200,height: 250)
+        
+        self.present(pickerView, animated: true, completion: nil)
+    }
+    
     @IBAction func txtName(_ sender: UITextField)
     {
         if txtName.text != ""
@@ -289,14 +324,33 @@ class reportMaintenanceViewController: UIViewController, MyPickerDelegate, UIPop
         }
     }
     
+    @IBAction func txtCriteria(_ sender: UITextField)
+    {
+        if currentReport != nil
+        {
+            if sender == txtCriteria1
+            {
+                currentReport.selectionCriteria2 = sender.text!
+                currentReport.save()
+                currentReport.run()
+                tblResults.reloadData()
+            }
+            else if sender == txtCriteria2
+            {
+                currentReport.selectionCriteria4 = sender.text!
+                currentReport.save()
+                currentReport.run()
+                tblResults.reloadData()
+            }
+        }
+    }
+    
     func refreshScreen()
     {
         reportList = reports(teamID: currentUser.currentTeam!.teamID)
         
         if currentReport != nil
         {
-            showFields()
-            
             if currentReport.reportType != ""
             {
                 btnType.setTitle(currentReport.reportType, for: .normal)
@@ -333,14 +387,7 @@ class reportMaintenanceViewController: UIViewController, MyPickerDelegate, UIPop
                 btnReport1.setTitle("Select", for: .normal)
             }
             
-            if currentReport.selectionCriteria2 != ""
-            {
-                btnReport2.setTitle(currentReport.selectionCriteria2, for: .normal)
-            }
-            else
-            {
-                btnReport2.setTitle("Select", for: .normal)
-            }
+            txtCriteria1.text = currentReport.selectionCriteria2
             
             if currentReport.selectionCriteria3 != ""
             {
@@ -351,42 +398,122 @@ class reportMaintenanceViewController: UIViewController, MyPickerDelegate, UIPop
                 btnReport3.setTitle("Select", for: .normal)
             }
             
-            if currentReport.selectionCriteria4 != ""
-            {
-                btnReport4.setTitle(currentReport.selectionCriteria4, for: .normal)
-            }
-            else
-            {
-                btnReport4.setTitle("Select", for: .normal)
-            }
+            txtCriteria2.text = currentReport.selectionCriteria4
+            
+            btnCriteria1.setTitle(currentReport.selectionCriteria2, for: .normal)
+            btnCriteria2.setTitle(currentReport.selectionCriteria4, for: .normal)
             
             txtName.text = currentReport.reportName
+            
+            showFields()
+            
+            currentReport.run()
+            tblResults.reloadData()
         }
+        tblReports.reloadData()
     }
     
     func showFields()
     {
+        if currentReport != nil
+        {
+            if btnType.currentTitle! == reportPeopleType
+            {
+                btnReport1.isHidden = false
+                btnReport3.isHidden = true
+                
+                if currentReport.showCriteria1
+                {
+                    lblCriteria1.isHidden = false
+                    
+                    if currentReport.criteriaType1 == perInfoYesNo
+                    {
+                        txtCriteria1.isHidden = true
+                        btnCriteria1.isHidden = false
+                    }
+                    else
+                    {
+                        txtCriteria1.isHidden = false
+                        btnCriteria1.isHidden = true
+                    }
+                }
+                else
+                {
+                    lblCriteria1.isHidden = true
+                    txtCriteria1.isHidden = true
+                    btnCriteria1.isHidden = true
+                }
+                
+                if currentReport.showCriteria2
+                {
+                    lblCriteria2.isHidden = false
+                    if currentReport.criteriaType2 == perInfoYesNo
+                    {
+                        txtCriteria2.isHidden = true
+                        btnCriteria2.isHidden = false
+                    }
+                    else
+                    {
+                        txtCriteria2.isHidden = false
+                        btnCriteria2.isHidden = true
+                    }
+                }
+                else
+                {
+                    lblCriteria2.isHidden = true
+                    txtCriteria2.isHidden = true
+                    btnCriteria2.isHidden = true
+                }
+            }
+            else
+            {
+                btnReport1.isHidden = true
+                btnReport3.isHidden = true
+                lblCriteria1.isHidden = true
+                txtCriteria1.isHidden = true
+                lblCriteria2.isHidden = true
+                txtCriteria2.isHidden = true
+            }
+            
+            if currentReport.selectionCriteria1 == ""
+            {
+                lblSorting.isHidden = true
+                btnSortType.isHidden = true
+                btnSort.isHidden = true
+            }
+            else
+            {
+                lblSorting.isHidden = false
+                btnSortType.isHidden = false
+                btnSort.isHidden = false
+            }
+        }
+        else
+        {
+            btnReport1.isHidden = true
+            btnReport3.isHidden = true
+            lblCriteria1.isHidden = true
+            txtCriteria1.isHidden = true
+            lblCriteria2.isHidden = true
+            txtCriteria2.isHidden = true
+            lblSorting.isHidden = true
+            btnSortType.isHidden = true
+            btnSort.isHidden = true
+        }
+        
         tblReports.isHidden = false
-        btnAdd.isEnabled = false
         lblType.isHidden = true
         btnType.isHidden = true
         lblName.isHidden = false
         lblReportingCriteria.isHidden = false
-        lblSorting.isHidden = false
-        btnSortType.isHidden = false
         btnReport1.isHidden = false
-        btnReport2.isHidden = false
-        btnReport3.isHidden = false
-        btnReport4.isHidden = false
         txtName.isHidden = false
         tblResults.isHidden = false
-        btnSort.isHidden = false
     }
     
     func hideFields()
     {
         tblReports.isHidden = false
-        btnAdd.isEnabled = true
         lblType.isHidden = false
         btnType.isHidden = false
         lblName.isHidden = true
@@ -394,22 +521,27 @@ class reportMaintenanceViewController: UIViewController, MyPickerDelegate, UIPop
         lblSorting.isHidden = true
         btnSortType.isHidden = true
         btnReport1.isHidden = true
-        btnReport2.isHidden = true
         btnReport3.isHidden = true
-        btnReport4.isHidden = true
         txtName.isHidden = true
         tblResults.isHidden = true
         btnSort.isHidden = true
+        lblCriteria1.isHidden = true
+        lblCriteria2.isHidden = true
+        txtCriteria1.isHidden = true
+        txtCriteria2.isHidden = true
+        btnCriteria1.isHidden = true
+        btnCriteria2.isHidden = true
     }
     
     func myPickerDidFinish(_ source: String, selectedItem:Int)
     {
-        var workingItem = 0
+        var workingItem = selectedItem
         
         if selectedItem < 0
         {
             workingItem = 0
         }
+        
         switch source
         {
             case "btnType":
@@ -417,6 +549,11 @@ class reportMaintenanceViewController: UIViewController, MyPickerDelegate, UIPop
                 
                 currentReport = report(teamID: currentUser.currentTeam!.teamID)
                 currentReport.reportType = displayList[workingItem]
+                currentReport.reportName = displayList[workingItem]
+                currentReport.columnTitle1 = "Name"
+                currentReport.columnWidth1 = 20.0
+                currentReport.columnWidth2 = 70.0
+                
                 currentReport.save()
             
             case "btnSortType":
@@ -429,22 +566,37 @@ class reportMaintenanceViewController: UIViewController, MyPickerDelegate, UIPop
             
             case "btnReport1":
                 currentReport.selectionCriteria1 = displayList[workingItem]
-                currentReport.save()
-            
-            case "btnReport2":
-                currentReport.selectionCriteria1 = displayList[workingItem]
+                if currentReport.criteriaType1 == perInfoYesNo
+                {
+                    if currentReport.selectionCriteria2 == ""
+                    {
+                        currentReport.selectionCriteria2 = "Yes"
+                        btnCriteria1.setTitle("Yes", for: .normal)
+                    }
+                }
+                currentReport.columnTitle2 = displayList[workingItem]
                 currentReport.save()
             
             case "btnReport3":
-                currentReport.selectionCriteria1 = displayList[workingItem]
+                currentReport.selectionCriteria3 = displayList[workingItem]
+                if currentReport.criteriaType2 == perInfoYesNo
+                {
+                    if currentReport.selectionCriteria4 == ""
+                    {
+                        currentReport.selectionCriteria4 = "Yes"
+                        btnCriteria2.setTitle("Yes", for: .normal)
+                    }
+                }
                 currentReport.save()
             
-            case "btnReport4":
-                currentReport.selectionCriteria1 = displayList[workingItem]
-                currentReport.save()
+            case "btnCriteria1":
+                currentReport.selectionCriteria2 = displayList[workingItem]
             
-        default:
-            print("Report Maintenance - myPickerDidFinish hit default - \(source)")
+            case "btnCriteria2":
+                currentReport.selectionCriteria4 = displayList[workingItem]
+            
+            default:
+                print("Report Maintenance - myPickerDidFinish hit default - \(source)")
         }
         
         refreshScreen()
